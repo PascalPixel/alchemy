@@ -131,7 +131,7 @@ void FieldPsynergy_Retreat(void) {
   i = 0;
   effect = effectWork->particles;
   do {
-    s32 scale;
+    FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
@@ -163,9 +163,9 @@ void FieldPsynergy_Retreat(void) {
 /// the ground (4 on the World Map, MAP_INDEX_WORLD).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
-  s32 y;
-  s32 limit;
-  s32 scale;
+  FIXED y;
+  FIXED limit;
+  FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
@@ -192,9 +192,9 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 /// down, 16 pixels in front of the actor and up to 5 pixels nearer.
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
-  s32 y;
-  s32 limit;
-  s32 scale;
+  FIXED y;
+  FIXED limit;
+  FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;

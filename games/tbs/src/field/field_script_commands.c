@@ -367,17 +367,17 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
   struct Actor *leader;
   struct MapGridScrollWork *bounds;
   s32 minX;
-  s32 minZ;
+  FIXED minZ;
   s32 maxX;
-  s32 maxZ;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED maxZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 dz;
   s32 dy;
   s32 dx;
-  s32 distance;
-  s32 moveStep;
+  FIXED distance;
+  FIXED moveStep;
 
   // Use MapGrid_UpdateLayerScroll's viewport origin and the leader's elevation
   // when clamping its ground position to the viewport bounds.
@@ -462,13 +462,13 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 
   s32 distancePixels;
-  s32 moveZ;
-  s32 dx;
-  s32 dz;
+  FIXED moveZ;
+  FIXED dx;
+  FIXED dz;
   s32 deltaZPixels;
   s32 deltaXPixels;
   s32 remainingDistance;
-  s32 moveX;
+  FIXED moveX;
   struct Actor *watchedActor;
 
   watchedActor = actor->watchedActor;
@@ -509,7 +509,7 @@ s32 Actor_Wander(struct Actor *actor) {
   const s32 *operands;
   s32 distanceRange;
   s32 homeRadiusSquared;
-  s32 travelDistance;
+  FIXED travelDistance;
   s32 heading;
   s32 attempts;
   s32 dx;
@@ -601,7 +601,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   const s32 *operands;
   s32 distanceRange;
   s32 homeRadiusSquared;
-  s32 travelDistance;
+  FIXED travelDistance;
   u16 heading;
   u16 angle;
   s32 attempts;

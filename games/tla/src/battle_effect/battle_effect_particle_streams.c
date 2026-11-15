@@ -305,7 +305,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct Scale normal = gFormationObjects_Scale;
   struct Scale big = gFormationObjects_LargeScale;
-  s32 pos[4];
+  FIXED pos[4];
   s32 i;
   void **objects;
 
@@ -723,8 +723,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
   }
 
-  s32 position[4];
-  s32 vector[3];
+  FIXED position[4];
+  FIXED vector[3];
   struct ScreenPoint spot;
   struct ScreenPoint *pos;
   struct ScreenPoint point;

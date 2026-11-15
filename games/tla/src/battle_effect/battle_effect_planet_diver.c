@@ -32,7 +32,7 @@ enum GatheringLightsMode {
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 k;
   struct ScreenPoint pos;
-  s32 point[3];
+  FIXED point[3];
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -147,7 +147,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint screen;
   s32 member;
   s32 offsetX;

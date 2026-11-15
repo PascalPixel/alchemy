@@ -43,7 +43,7 @@
 /// impact burst ends the effect.
 void BattleEffect_RunThor(struct BattleEffectParams *args) {
   u8 ramp[32];
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint screen[11];
   s32 position[3];
   s32 scale[3];
@@ -325,8 +325,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
-    s32 formationX = toFIXED(80);
-    s32 formationY = toFIXED(64);
+    FIXED formationX = toFIXED(80);
+    FIXED formationY = toFIXED(64);
     s32 formationSpeedX = 0;
     s32 formationSpeedY = 0;
     s32 pillarX;

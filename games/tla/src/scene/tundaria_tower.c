@@ -336,7 +336,7 @@ void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
   s32 i;
   s32 velocityX;
   s32 velocityY;
-  s32 x;
+  FIXED x;
 
   options.priority = 1;
   options.type = SPRITE_BLUE_CRYSTAL;
@@ -840,7 +840,7 @@ void TundariaTower_LandFromSlide(void) {
   options.startScaleY = FIXED_ONE * 8 / 10;
   i = 0;
   do {
-    s32 velocity[3];
+    FIXED velocity[3];
 
     angle = i << 12;
     velocity[0] = Trig_Cos(angle);
@@ -1158,7 +1158,7 @@ done:
 UNUSED void TundariaTower_CheckCrumblingStep(const u16 *table) {
   struct Actor *leader;
   struct Actor *trap;
-  s32 position[3];
+  FIXED position[3];
   s32 id;
   s32 flag;
   s32 second;
@@ -1351,7 +1351,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
-  s32 position[3];
+  FIXED position[3];
   s32 id;
   s32 flag;
   s32 second;
@@ -1442,7 +1442,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
   do {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
-      s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
+      FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
@@ -1527,7 +1527,7 @@ void TundariaTower_UpdateFallingRocks(void) {
   struct Particle *particle = work->particles;
   struct ParticleSprite *sprite = work->sprites;
   s32 i;
-  s32 step = -(toFIXED(1) / 2);
+  FIXED step = -(toFIXED(1) / 2);
 
   i = 63;
 next:

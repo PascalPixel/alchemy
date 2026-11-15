@@ -59,8 +59,8 @@ void FieldPsynergy_Parch(void) {
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;
   struct ParchPuff *particle;
-  s32 screen[3];
-  s32 pos[3];
+  FIXED screen[3];
+  FIXED pos[3];
   s32 phase;
   s32 timer;
   s32 frame;

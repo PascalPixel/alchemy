@@ -51,7 +51,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 k;
   s32 lineCount;
   s32 value;
-  s32 radiusSquaredFixed;
+  FIXED radiusSquaredFixed;
   s32 delta;
   u32 horizontalExtent;
   s32 left;

@@ -544,7 +544,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         struct Particle *p = &work->particles[i];
 
         if (p->variant >= 0) {
-          s32 size = 30000;
+          FIXED size = 30000;
           s32 shade = -16;
 
           if (p->variant <= 6)

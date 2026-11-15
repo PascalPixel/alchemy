@@ -562,8 +562,8 @@ void IsletCave_SettleSeventhLog(void) {
 void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct Actor *leader;
   struct Actor *actor;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   actor = Actor_GetById(actorId);
@@ -628,8 +628,8 @@ DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, ACTOR_FIRST_LOG,
                                   -32, GameFlag_Set, FLAG_SCENE_TEMP_80)
 
 void IsletCave_RideSecondLogEast(void) {
-  s32 fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
-  s32 fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
+  FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
+  FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
 
   IsletCave_RideLog(ACTOR_SECOND_LOG, 112, 0);
   IsletCave_RideLog(ACTOR_SECOND_LOG, 96, 0);
@@ -644,8 +644,8 @@ void IsletCave_RideSecondLogEast(void) {
 }
 
 void IsletCave_RideSecondLogWest(void) {
-  s32 fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
-  s32 fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
+  FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
+  FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
 
   IsletCave_RideLog(ACTOR_SECOND_LOG, -112, 0);
   IsletCave_RideLog(ACTOR_SECOND_LOG, -96, 0);
@@ -684,7 +684,7 @@ DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, ACTOR_SIXTH_LOG,
                                   -80, GameFlag_Set, FLAG_SCENE_TEMP_85)
 
 void IsletCave_RideSeventhLogNorth(void) {
-  s32 fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
+  FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
   s32 step = 112;
   s32 fromRow = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
@@ -704,9 +704,9 @@ void IsletCave_RideSeventhLogNorth(void) {
 }
 
 void IsletCave_RideSeventhLogSouth(void) {
-  s32 fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
+  FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
-  s32 fromZ = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
+  FIXED fromZ = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
   s32 fromRow = fromZ;
 
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 112);

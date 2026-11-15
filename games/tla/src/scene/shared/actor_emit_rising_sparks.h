@@ -4,9 +4,9 @@ s32 Actor_EmitRisingSparks(struct Actor *object) {
   s32 frame = gFrameCount & 7;
 
   if (frame == 0) {
-    s32 x;
-    s32 y;
-    s32 speed;
+    FIXED x;
+    FIXED y;
+    FIXED speed;
 
     spark.priority = 3;
     spark.startScaleX = FIXED_ONE * 7 / 10;

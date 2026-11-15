@@ -440,10 +440,10 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   struct AffineTransform effect;
   s32 z;
   s32 roundedScale;
-  s32 scaleX;
-  s32 scaleY;
-  s32 offsetX;
-  s32 offsetY;
+  FIXED scaleX;
+  FIXED scaleY;
+  FIXED offsetX;
+  FIXED offsetY;
   s32 slot;
 
   // Project first, then discard sprites beyond the padded screen bounds.

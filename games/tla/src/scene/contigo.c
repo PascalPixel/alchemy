@@ -475,7 +475,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
+    FIXED target;
     s32 frames;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -709,10 +709,10 @@ struct OrbitEffect {
 };
 
 void Contigo_CircleGlow(struct OrbitEffect *effect) {
-  s32 radius;
+  FIXED radius;
   s32 angle;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   radius = Random16() + toFIXED(2);
   angle = effect->angle;
@@ -762,8 +762,8 @@ struct ContigoGlow {
 /// on.
 void Contigo_BabyThinks(void) {
   struct ContigoGlow *effect;
-  s32 x = toFIXED(706);
-  s32 z = toFIXED(116);
+  FIXED x = toFIXED(706);
+  FIXED z = toFIXED(116);
   u32 i;
 
   Event_Start();
@@ -1234,7 +1234,7 @@ void Contigo_ForceFreesDjinni(void) {
   struct Actor *object = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;
   struct EffectOptions options;
-  s32 velocity[3];
+  FIXED velocity[3];
   s32 angle;
   u32 i;
 
@@ -2619,7 +2619,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 /// starting when its counter is cleared, until both counters pass 31.
 void Contigo_RaiseSparkle(struct Actor *object) {
   struct Vector3 position;
-  s32 x, z, sine;
+  s32 x, z;
+  FIXED sine;
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;

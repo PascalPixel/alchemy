@@ -91,7 +91,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 streakIndex;
   s32 streaks = STREAKS_MAX;
-  s32 lift = toFIXED(20); // 20 pixels, 16.16
+  FIXED lift = toFIXED(20); // 20 pixels, 16.16
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);

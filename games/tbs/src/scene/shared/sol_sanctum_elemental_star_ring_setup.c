@@ -43,12 +43,12 @@ static void SolSanctum_UpdateRing(void) {
     s32 speedX;
     s32 speedY;
     s32 speedZ;
-    s32 scale;
+    FIXED scale;
     s32 step;
     u8 timer;
-    s32 x;
-    s32 y;
-    s32 z;
+    FIXED x;
+    FIXED y;
+    FIXED z;
     u8 hold;
 
     actor = entry->actor;
@@ -66,8 +66,8 @@ static void SolSanctum_UpdateRing(void) {
       u32 rx;
       u32 ry;
       u32 rz;
-      s32 dx;
-      s32 dy;
+      FIXED dx;
+      FIXED dy;
 
       timer = 3;
       if (hold == 0) {
@@ -115,7 +115,7 @@ static void SolSanctum_UpdateRing(void) {
       dx = Trig_Sin(speedX * gSolSanctum_RingSwing[i][0]) * 2;
       dy = Trig_Sin(speedY * gSolSanctum_RingSwing[i][1]) * 2;
       {
-        s32 dz = Trig_Cos(speedZ * gSolSanctum_RingSwing[i][2]) * 2;
+        FIXED dz = Trig_Cos(speedZ * gSolSanctum_RingSwing[i][2]) * 2;
 
         if (hold != 0) {
           x += dx;

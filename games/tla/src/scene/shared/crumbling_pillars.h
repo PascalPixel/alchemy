@@ -59,7 +59,7 @@ void CrumblingPillars_Place(u16 *list) {
 void CrumblingPillars_Step(u16 *list) {
   struct Actor *leader;
   struct Actor *pillar;
-  s32 position[3];
+  FIXED position[3];
 
   if (Field_TryJumpForward() != 0)
     return;
@@ -231,7 +231,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
   struct Actor *leader;
   struct Actor *helper;
   struct Actor *pillar;
-  s32 position[3];
+  FIXED position[3];
 
   if (Field_TryJumpForward() != 0)
     return;

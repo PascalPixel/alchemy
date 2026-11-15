@@ -170,7 +170,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         texture.logHeight = 7;
         texture.pixels = Ram_MapCellBuffer + 0x4000;
         if (frame > 15) {
-          s32 scale = (frame << 12) - FIXED_ONE;
+          FIXED scale = (frame << 12) - FIXED_ONE;
 
           if (scale > 0x1bd50) {
             scale = 0x1bd50;

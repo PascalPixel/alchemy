@@ -142,7 +142,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   s32 target[3];
   struct ScreenPoint base;
   struct ScreenPoint screen;
-  s32 point[3];
+  FIXED point[3];
   DrawRectangle blit[2];
 
   work = Ram_HeapSlots->battleEffect;

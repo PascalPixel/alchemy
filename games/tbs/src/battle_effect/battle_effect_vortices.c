@@ -35,7 +35,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct Particle *target;
   struct BattleCamera *camera;
   s32 frame;
-  s32 y;
+  FIXED y;
   s32 i;
   s8 *flags;
 
@@ -163,7 +163,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;
   void *canvas;
-  s32 wave;
+  FIXED wave;
   u8 *palette;
   struct Particle *point;
   s32 frame;

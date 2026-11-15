@@ -2824,7 +2824,7 @@ static void ShipRooms_EndFirstAttack(void) {
 static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   s32 rowerId;
   struct Actor *actor;
-  s32 halfStep;
+  FIXED halfStep;
   s32 leftSeat;
 
   Event_Start();

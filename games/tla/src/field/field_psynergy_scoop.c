@@ -205,7 +205,7 @@ void FieldPsynergy_Scoop(void) {
   s32 particleTile;
   s32 pictureEntry = 96;
   s32 pictureTile;
-  s32 pos[3];
+  FIXED pos[3];
   s32 failed;
   s8 *alternate;
   s32 stage;

@@ -46,7 +46,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   s32 wallX;
   s32 rockX;
   struct Scale scale;
-  s32 position[4];
+  FIXED position[4];
   u8 *source;
   u16 *color;
   void *palette = (void *)BG_PLTT;

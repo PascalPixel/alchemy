@@ -504,7 +504,7 @@ void Actor_StartIdle(struct Actor *object);
 void DailaInteriors_TakeSeaGodsTear(void) {
   s32 savedGravity;
   s32 savedVelocityY;
-  s32 savedY;
+  FIXED savedY;
   s32 item;
 
   savedGravity = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;

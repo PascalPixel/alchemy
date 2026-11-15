@@ -759,7 +759,7 @@ void ApojiiIslands_FlowWithStream(void) {
   s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *anchor = work->camera;
   struct Actor *leader = Actor_Get(owner);
-  s32 position[3];
+  FIXED position[3];
   s32 result;
 
   if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI ||

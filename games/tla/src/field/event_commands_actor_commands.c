@@ -103,7 +103,7 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
 /// frame turned, shifted by the side it falls to, and blocks its cell and the
 /// cell beyond it.
 void Actor_FallOverById(u32 id, u32 angle) {
-  s32 position[3];
+  FIXED position[3];
   struct Actor *object = Actor_GetById(id);
   struct Sprite *sprite = object->sprite;
 
@@ -143,7 +143,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
   struct Sprite *sprite = object->sprite;
-  s32 position[3];
+  FIXED position[3];
 
   if (object == NULL || sprite == NULL)
     return;

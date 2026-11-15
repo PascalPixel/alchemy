@@ -45,12 +45,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
   s32 scroll;
-  s32 baseX;
-  s32 baseY;
+  FIXED baseX;
+  FIXED baseY;
   s32 velX;
   s32 velY;
-  s32 cx;
-  s32 cy;
+  FIXED cx;
+  FIXED cy;
   u32 u;
   s32 count;
   s32 ring;
@@ -59,7 +59,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   u8 *cells;
   s32 fade;
   s16 list[UNIT_MAX];
-  s32 place[4];
+  FIXED place[4];
   struct Scale req;
   struct ModelTexture texture;
   struct ModelTexture breathTexture;
@@ -903,8 +903,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     }
 
     if (frame >= 0) {
-      s32 cx = INTtoFIXED(center.x / 2);
-      s32 cy = INTtoFIXED(center.y);
+      FIXED cx = INTtoFIXED(center.x / 2);
+      FIXED cy = INTtoFIXED(center.y);
       struct RenderModel *model;
       void *corners;
       s32 bias;

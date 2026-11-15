@@ -231,7 +231,7 @@ void Actor_ResetForLeader(s32 table) {
   entry->facing = gMainRoutineWork.heading;
   Event_SpawnObjectTable(entry, leader);
   {
-    s32 y = gMainRoutineWork.y;
+    FIXED y = gMainRoutineWork.y;
 
     if (y != 0) {
       object = work->actors[leader];
@@ -422,7 +422,7 @@ void Actor_Restore(void) {
   struct Actor *camera;
   s32 index;
   s32 priority;
-  s32 y;
+  FIXED y;
 
   count = 0;
   index = *indices++;

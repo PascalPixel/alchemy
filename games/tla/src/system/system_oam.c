@@ -49,8 +49,8 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     matrix->rows[0] = (u16)xReciprocal;
     matrix->rows[1] = reciprocal << 16;
   } else {
-    s32 sine;
-    s32 cosine;
+    FIXED sine;
+    FIXED cosine;
 
     sine = Trig_Sin(angle);
     cosine = Trig_Cos(angle);

@@ -76,7 +76,7 @@ void FieldPsynergy_Growth(void) {
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (i = 0; i < 5; i++) {
     struct Actor *particle;
-    s32 radius;
+    FIXED radius;
 
     pos.values[0] = effectWork->x;
     pos.values[2] = effectWork->z;
@@ -112,7 +112,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct Actor *particle;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
-    s32 radius;
+    FIXED radius;
 
     if (effectWork->angle == FACING_SOUTH) {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),

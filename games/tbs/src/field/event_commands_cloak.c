@@ -18,8 +18,8 @@ void FieldPsynergy_CheckCloakTile(void) {
   struct FieldWork *work;
   struct Actor *leader;
   u8 *tile;
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
 
   work = gFieldWork;
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);

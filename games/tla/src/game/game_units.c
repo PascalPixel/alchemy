@@ -446,7 +446,7 @@ FIXED Party_GetPpRatio(void) {
 
 /// Takes 1 PP from the member whose PP is fullest for its maximum.
 s32 Party_DrainPpFromFullest(void) {
-  s32 best = 0;
+  FIXED best = 0;
   s32 bestOwner = -1;
   s32 count = Party_CountMembers();
   s32 i;
@@ -454,7 +454,7 @@ s32 Party_DrainPpFromFullest(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    s32 ratio = Owner_GetPpRatio(gMainRoutineWork.party[i]);
+    FIXED ratio = Owner_GetPpRatio(gMainRoutineWork.party[i]);
 
     if (ratio > best) {
       best = ratio;

@@ -828,7 +828,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   struct Actor *flame = Import_ActorCreate_(403, source->x.fixed,
                                             source->y.fixed, source->z.fixed);
   struct Actor *other;
-  s32 position[3];
+  FIXED position[3];
   struct EffectOptions options;
   s32 step = Trig_Cos(source->facing) << 1;
   s32 cell;
@@ -980,9 +980,9 @@ void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
 void MagmaRockInside_PushPillarIntoLava(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *target;
-  s32 position[3];
-  s32 stepX;
-  s32 stepZ;
+  FIXED position[3];
+  FIXED stepX;
+  FIXED stepZ;
   s32 i;
   s32 angle = (leader->facing + DEGtoANG(45)) & 0xc000;
 
@@ -1031,7 +1031,7 @@ extern s32 gMagmaRockInside_FlameEmberScript[];
 void MagmaRockInside_RaiseLava(void) {
   s32 srcX;
   s32 srcZ;
-  s32 baseX = 0;
+  FIXED baseX = 0;
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1044,7 +1044,7 @@ void MagmaRockInside_RaiseLava(void) {
   s32 scene;
   s32 closing;
   typeof(gMainRoutineWork) *work;
-  s32 riseX;
+  FIXED riseX;
   u32 burstRandom, sparkRandom;
   u32 mask;
   u32 i;
@@ -1248,7 +1248,7 @@ void MagmaRockInside_DrainLava(void) {
   u32 facing = (leader->facing + DEGtoANG(45)) & 0xc000;
   s32 position[3];
   struct EffectOptions options;
-  s32 baseX = 0;
+  FIXED baseX = 0;
   s32 dstX = 0;
   s32 dstZ = 0;
   s32 open = 0;
@@ -1446,7 +1446,7 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
 }
 
 void MagmaRockInside_ReleaseRocks(void) {
-  s32 position[3];
+  FIXED position[3];
   struct EffectOptions options;
   s32 i;
 
@@ -1956,7 +1956,7 @@ s32 MagmaRockInside_DriftForSteps(struct Actor *object) {
 
 void MagmaRockInside_TrailSparks(struct Actor *object) {
   struct EffectOptions options;
-  s32 position[3];
+  FIXED position[3];
   u32 frame = gFrameCount & 7;
 
   if (frame != 0)
@@ -2720,7 +2720,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
-  s32 position[3];
+  FIXED position[3];
   s32 id;
   s32 flag;
   s32 second;
@@ -2812,7 +2812,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
-  s32 y;
+  FIXED y;
 
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);

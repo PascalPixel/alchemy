@@ -236,13 +236,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void SeaOfTime_CircleSwirl(void) {
   struct Actor *object = Actor_GetById(ACTOR_SHIP);
   s32 turn[1];
-  s32 center[3];
+  FIXED center[3];
   s32 *pos;
-  s32 sine;
-  s32 dx;
-  s32 dz;
-  s32 x;
-  s32 z;
+  FIXED sine;
+  FIXED dx;
+  FIXED dz;
+  FIXED x;
+  FIXED z;
 
   center[0] = ((object->x.fixed >> 21) << 21) + toFIXED(16);
   center[2] = ((object->z.fixed >> 21) << 21) + toFIXED(16);
@@ -283,24 +283,24 @@ void SeaOfTime_RideCurrent(void) {
   struct {
     s32 x, y, z;
   } center;
-  s32 ends[4];
+  FIXED ends[4];
   struct EffectOptions spark;
   s32 turn[1];
   s32 *pos;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
   s32 x;
   s32 z;
   s32 phase;
   s32 frame;
   s32 *counter;
-  s32 c;
-  s32 s;
+  FIXED c;
+  FIXED s;
   s32 flip;
   s32 speed;
-  s32 px;
-  s32 py;
-  s32 pz;
+  FIXED px;
+  FIXED py;
+  FIXED pz;
 
   switch (work->stepTrigger) {
   case CELL_BEHAVIOR_CURRENT_NORTH:
@@ -385,7 +385,7 @@ void SeaOfTime_RideCurrent(void) {
     spark.startScaleY = FIXED_ONE * 4 / 5;
     c = Trig_Cos(object->facing);
     {
-      s32 sine = Trig_Sin(object->facing);
+      FIXED sine = Trig_Sin(object->facing);
       ends[0] = c * 10;
       ends[1] = sine * 10;
       ends[2] = -(c * 10);
@@ -429,14 +429,16 @@ void SeaOfTime_RideCurrent(void) {
 /// Walks actor 8 along a run of cells in the facing the event work names,
 /// throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
-  s32 pos[4];
+  FIXED pos[4];
   struct EffectOptions spark;
   struct FieldWork *work;
   struct Actor *actor;
   s16 angle;
-  s32 x, z, dx, dz, targetX, targetZ;
-  s32 cosine, sine;
-  s32 x0, y0, z0, flip;
+  s32 x, z, dx, dz;
+  FIXED targetX, targetZ;
+  FIXED cosine, sine;
+  FIXED x0, y0, z0;
+  s32 flip;
 
   work = Ram_HeapSlots->fieldWork;
   actor = Actor_GetById(ACTOR_SHIP);
@@ -762,12 +764,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
 /// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
-  s32 sides[4];
+  FIXED sides[4];
   struct EffectOptions options;
   struct Actor *actor;
-  s32 cosine, sine;
-  s32 x, y, z;
-  s32 velocity, reverseVelocity, alternate;
+  FIXED cosine, sine;
+  FIXED x, y, z;
+  FIXED velocity, reverseVelocity;
+  s32 alternate;
 
   actor = Actor_GetById(ACTOR_SHIP);
   Event_Start();
@@ -845,7 +848,7 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
   s32 even = gFrameCount & 1;
 
   if (even == 0) {
-    s32 dx = ((Random16() & 31) << 16) + -0xe0000;
+    FIXED dx = ((Random16() & 31) << 16) + -0xe0000;
 
     spark.startScaleX = FIXED_ONE * 7 / 10;
     spark.startScaleY = FIXED_ONE * 7 / 10;
@@ -969,8 +972,8 @@ next:
       s32 x = Random16();
       s32 mask = 31;
       s32 z = Random16();
-      s32 offsetZ = (z & mask) << 16;
-      s32 offsetX = (x & mask) << 16;
+      FIXED offsetZ = (z & mask) << 16;
+      FIXED offsetX = (x & mask) << 16;
 
       rain.startScaleX = FIXED_ONE * 3 / 2;
       rain.startScaleY = FIXED_ONE * 3 / 2;
@@ -1146,8 +1149,8 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
 
 void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   struct EffectOptions spark;
-  s32 px;
-  s32 pz;
+  FIXED px;
+  FIXED pz;
   s32 i;
 
   FieldCamera_SetSpeed(6);

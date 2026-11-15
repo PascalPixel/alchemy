@@ -539,7 +539,10 @@ void GabombaStatue_RideTurntable(void) {
   struct Actor *actor, *table;
   struct Vector3 test;
   s32 step = -364;
-  s32 turn, x, z, dx, dz, back, tx, tz;
+  s32 turn;
+  FIXED x, z, dx, dz;
+  s32 back;
+  FIXED tx, tz;
 
   if (gGabombaStatue_CogDirection == 0)
     return;
@@ -573,7 +576,8 @@ void GabombaStatue_RideTurntable(void) {
       test.x = tx + actor->velocityX;
       test.z = tz + actor->velocityZ;
       if (MapGrid_CheckCollision(actor, &test) == 0) {
-        s32 s, c, angle;
+        FIXED s, c;
+        s32 angle;
         angle = back - 0x1555;
         s = Math_Sin(angle);
         c = Trig_Cos(angle);
@@ -604,7 +608,7 @@ void GabombaStatue_RideSlidingCog(void) {
     s32 dx = *speed << 15;
 
     if (found != NULL) {
-      s32 diff, x, foundX;
+      FIXED diff, x, foundX;
 
       if (found->facing == FACING_WEST)
         dx = -dx;
@@ -618,7 +622,7 @@ void GabombaStatue_RideSlidingCog(void) {
       diff = foundX - x;
       if (diff >= 0 ? diff >= toFIXED(20) : x - foundX >= toFIXED(20)) {
         s32 sign;
-        s32 offset;
+        FIXED offset;
 
         sign = 0;
         offset = actor->x.fixed - foundX;
@@ -674,7 +678,10 @@ void GabombaStatue_EndRide(struct Actor *object) {
 /// runs exit 5 or 6 (Import_EventSetExitRequest).
 void GabombaStatue_RideRollingCog(void) {
   struct Actor *actor, *platform;
-  s32 speed, d, sign, x, z, platformZ, offset;
+  s32 speed;
+  FIXED d;
+  s32 sign, x;
+  FIXED z, platformZ, offset;
 
   if (gGabombaStatue_CogDirection == 0)
     return;
@@ -1578,7 +1585,7 @@ void GabombaStatue_LandFromFall(void) {
   i = 0;
   do {
     s32 angle;
-    s32 velocity[3];
+    FIXED velocity[3];
 
     angle = i << 12;
     velocity[0] = Trig_Cos(angle);
@@ -1932,8 +1939,8 @@ void GabombaStatue_SeeHowItWorks(void) {
 
 void GabombaStatue_SawEnergyFlow(void) {
   s32 index = GabombaStatue_GetPuzzleSeed();
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   struct Actor *spark;
   struct Actor *actor;
   s32 south;
@@ -2935,12 +2942,12 @@ void GabombaStatue_DrawFloatingTiles(void) {
   }
   for (id = state->firstId; id < state->endId; id++) {
     struct Actor *piece = Actor_Get(id);
-    s32 px = piece->x.fixed;
+    FIXED px = piece->x.fixed;
     if (px != 0) {
       s32 x = px - scrollX;
-      s32 y = piece->y.fixed + toFIXED(16);
-      s32 pz = piece->z.fixed;
-      s32 z = pz - scrollZ;
+      FIXED y = piece->y.fixed + toFIXED(16);
+      FIXED pz = piece->z.fixed;
+      FIXED z = pz - scrollZ;
       s32 sy = z - y;
       s32 depth = FIXEDtoINT(y + z) + 58;
       s32 cellX = FIELD_CELL(px) - state->originX;
@@ -3008,8 +3015,8 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  s32 s = Math_MulFX(toFIXED(8), Trig_Sin(arc));
-  s32 c = Math_MulFX(toFIXED(8), Trig_Cos(arc));
+  FIXED s = Math_MulFX(toFIXED(8), Trig_Sin(arc));
+  FIXED c = Math_MulFX(toFIXED(8), Trig_Cos(arc));
   s32 z;
   s32 x;
 
@@ -3343,7 +3350,7 @@ s32 GabombaStatue_TickClock(s32 time) {
     *ringing = second;
   }
   if (second <= 19) {
-    s32 cosine = Trig_Cos((second << 15) / 10);
+    FIXED cosine = Trig_Cos((second << 15) / 10);
     s32 (*mul)(s32 a, s32 b);
     s32 scale = 128;
 

@@ -282,8 +282,8 @@ extern s16 gKibombo_HousesExitRegions[];
 
 s32 Kibombo_ShakeInPlace(struct Actor *object) {
   if (gFrameCount & 1) {
-    s32 dx;
-    s32 dy;
+    FIXED dx;
+    FIXED dy;
 
     dx = -0x10000;
     dy = dx;
@@ -1899,7 +1899,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
 }
 
 void Kibombo_LightFlameRow(void) {
-  s32 x;
+  FIXED x;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -1926,7 +1926,7 @@ void Scene_RunUnlessFlag(void) {
 /// opens.
 void Kibombo_HideGroundsPair(void) {
   u32 i;
-  s32 zero;
+  FIXED zero;
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + ACTOR_GROUNDS_SHADE_A;
@@ -1990,7 +1990,7 @@ union Whirl {
 };
 
 void Kibombo_SpinSpark(struct Actor *actor) {
-  s32 wobble = 0;
+  FIXED wobble = 0;
   union Whirl *object;
   u8 *timer = &((union Whirl *)actor)->whirl.timer;
   s16 *action;
@@ -2092,9 +2092,9 @@ void Kibombo_AkafubuChants(void) {
   s32 previous = 0;
   u32 i;
   u32 angle;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 
   Sound_Play(SE_CAST);
   for (i = 0; i <= 7; i++) {
@@ -2267,7 +2267,7 @@ void Kibombo_LeaveRoomFading(void) {
 void Kibombo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
-  s32 x;
+  FIXED x;
   s32 pixelX;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);

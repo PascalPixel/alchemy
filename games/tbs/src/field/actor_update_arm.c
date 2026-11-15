@@ -41,8 +41,8 @@ void Actor_UpdateAll(void) {
   s32 z;
   s32 deltaX;
   s32 deltaZ;
-  s32 velocityX;
-  s32 velocityZ;
+  FIXED velocityX;
+  FIXED velocityZ;
   s32 distance;
   s32 speedRatio;
   s32 groundY;

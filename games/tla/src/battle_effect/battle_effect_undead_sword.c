@@ -661,7 +661,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     Render_DrawModelList(model);
 
     if (frame == 0) {
-      s32 bubbleZ = -toFIXED(60);
+      FIXED bubbleZ = -toFIXED(60);
 
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         bubble->variant = Random16() % 6;

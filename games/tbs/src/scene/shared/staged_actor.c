@@ -61,7 +61,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   struct Actor *next;
   struct Actor *blocker;
   s32 dir;
-  s32 rate;
+  FIXED rate;
 
   lead = Actor_GetById(ACTOR_PARTY_LEADER);
   dir = FACING_INDEX(lead->facing);
@@ -268,7 +268,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   position.x =
       actor->x.fixed + (gPushedActor_DirectionSteps[direction] & 0xffff0000);
   {
-    s32 y = actor->y.fixed;
+    FIXED y = actor->y.fixed;
 
     position.y = y;
     position.z =

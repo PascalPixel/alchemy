@@ -346,9 +346,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
-    s32 blendedRed;
-    s32 blendedGreen;
-    s32 blendedBlue;
+    FIXED blendedRed;
+    FIXED blendedGreen;
+    FIXED blendedBlue;
     s32 clampedRed;
     s32 clampedGreen;
     s32 clampedBlue;

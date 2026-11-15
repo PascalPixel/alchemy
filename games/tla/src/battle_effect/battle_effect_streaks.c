@@ -294,7 +294,7 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint position;
   struct BattleEffectWork *work;
   void *canvas;

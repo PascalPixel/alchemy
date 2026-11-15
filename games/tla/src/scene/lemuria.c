@@ -373,8 +373,8 @@ void Lemuria_LeaveForAncientLemuria(void) {
 }
 
 void Lemuria_GrowVine(void) {
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 value;
 
   Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
@@ -515,7 +515,7 @@ void Party_RestoreHpPp(s32 value);
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!"
 void Lemuria_DrinkFromSpring(void) {
-  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < toFIXED(90)) {
     // "Felix and the others drank of the spring. Their HP and PP were..."
@@ -624,9 +624,9 @@ void Lemuria_StartRippleDma(void) {
 void Lemuria_ComputeRipple(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
-  s32 v[2];
+  FIXED v[2];
   s32 *count = &v[1];
-  s32 sine;
+  FIXED sine;
 
   for (*count = 0; *count != DISPLAY_HEIGHT; (*count)++) {
     sine = Math_Sin((*count + (u8)gFrameCount + (layer->y >> 16)) << 9);

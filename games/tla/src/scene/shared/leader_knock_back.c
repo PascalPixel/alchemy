@@ -59,7 +59,8 @@ s32 KNOCK_BACK(void) {
         s32 x, z, off;
         s32 i;
 #else
-        s32 x, z, off;
+        FIXED x, z;
+        s32 off;
 #endif
 
         position.x = actor->x.fixed + ((s16)work->direction.x << 19);

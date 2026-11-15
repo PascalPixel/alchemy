@@ -708,7 +708,7 @@ void FileList_UpdatePulse(void) {
   s32 *vblankCount;
   volatile u16 *palette;
   s32 colour;
-  s32 sine;
+  FIXED sine;
   s32 i;
 
   vblankCount = (s32 *)&gVBlankCount;
@@ -844,7 +844,7 @@ void FileList_HidePartySprites(void) {
 void FileList_PlacePartySprites(void) {
   struct FileListWork *state = (struct FileListWork *)Ram_HeapSlots->menuWork;
   s32 source[2];
-  s32 request[4];
+  FIXED request[4];
   s32 index = 0;
   s32 handle;
 

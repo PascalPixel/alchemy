@@ -16,14 +16,14 @@ void WorldPicture_Initialize(void) {
   u32 *markerTiles;
   struct WorldMapWork *work = Ram_WorldMapWork;
   u32 *oam;
-  s32 screenX;
-  s32 screenY;
+  FIXED screenX;
+  FIXED screenY;
   s32 tileAttributes;
   u32 i;
   u32 tile;
   u32 cursorAttributes;
-  s32 right;
-  s32 bottom;
+  FIXED right;
+  FIXED bottom;
   s32 left;
 
   markerTiles = Heap_AllocEwram(32);

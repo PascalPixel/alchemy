@@ -44,7 +44,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   s32 centerX;
   s16 *circles;
   s32 center[3];
-  s32 placement[4];
+  FIXED placement[4];
   struct Scale source;
   struct ModelTexture texture;
   struct RenderModel *model;
@@ -223,7 +223,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           s32 angle = Random16() & 0x7fff;
           s32 heading = angle + DEGtoANG(90);
           s32 speed = (Random16() & 511) + 512;
-          s32 sine;
+          FIXED sine;
 
           sine = Trig_Sin(heading) * speed;
           x = INTtoFIXED(centerX);

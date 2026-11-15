@@ -293,7 +293,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint target;
   s32 centerX;
   s32 step;
-  s32 origin;
+  FIXED origin;
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;

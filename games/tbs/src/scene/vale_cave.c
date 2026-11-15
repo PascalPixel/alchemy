@@ -206,8 +206,8 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
 /// Turns Kite to face the party leader each frame.
 static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 distanceZ = leader->z.fixed - actor->z.fixed;
-  s32 distanceX = leader->x.fixed - actor->x.fixed;
+  FIXED distanceZ = leader->z.fixed - actor->z.fixed;
+  FIXED distanceX = leader->x.fixed - actor->x.fixed;
 
   actor->facing = Trig_Atan(distanceZ, distanceX);
   RETURN_UNREAD(0);
@@ -276,8 +276,8 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = INTtoFIXED(Random_Below(17)) + baseX;
-    s32 particleZ = INTtoFIXED(Random_Below(14)) + baseZ;
+    FIXED particleX = INTtoFIXED(Random_Below(17)) + baseX;
+    FIXED particleZ = INTtoFIXED(Random_Below(14)) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,

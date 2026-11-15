@@ -23,7 +23,7 @@
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint base;
-  s32 scale[3];
+  FIXED scale[3];
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

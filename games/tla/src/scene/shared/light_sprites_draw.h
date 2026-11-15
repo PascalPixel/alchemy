@@ -14,7 +14,9 @@ void LightSprites_Draw(void) {
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
     if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox, y, z, oy, depth;
+      s32 big, ox;
+      FIXED y, z;
+      s32 oy, depth;
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;

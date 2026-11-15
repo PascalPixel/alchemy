@@ -50,14 +50,14 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
     struct Actor *target =
         GetBattleObjectSlotFar(work->args->targets[0])->actor;
-    s32 diffX = target->x.fixed - actor->x.fixed;
-    s32 startX = actor->x.fixed;
-    s32 deltaX = diffX * 80 / 100;
-    s32 diffZ = target->z.fixed - actor->z.fixed;
-    s32 startZ = actor->z.fixed;
-    s32 deltaZ = diffZ * 80 / 100;
-    s32 x = startX + deltaX;
-    s32 z = startZ + deltaZ;
+    FIXED diffX = target->x.fixed - actor->x.fixed;
+    FIXED startX = actor->x.fixed;
+    FIXED deltaX = diffX * 80 / 100;
+    FIXED diffZ = target->z.fixed - actor->z.fixed;
+    FIXED startZ = actor->z.fixed;
+    FIXED deltaZ = diffZ * 80 / 100;
+    FIXED x = startX + deltaX;
+    FIXED z = startZ + deltaZ;
     s32 shortX = deltaX >> 8;
     s32 shortZ = deltaZ >> 8;
     s32 distance;
@@ -219,7 +219,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   DrawRectangle additive;
   DrawRectangle maxBlend;
   u8 *sheet;
-  s32 orgX;
+  FIXED orgX;
   struct Particle *particle;
   s32 frame;
   s32 i;

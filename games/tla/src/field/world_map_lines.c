@@ -70,11 +70,11 @@ s32 Matrix_CallInThumb(s32 x, s32 y);
 void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                            struct ScanVertex *line, struct BgAffine *affine) {
   u32 angle;
-  s32 originX;
-  s32 originZ;
+  FIXED originX;
+  FIXED originZ;
   s32 sinYaw;
   s32 cosYaw;
-  s32 negativeSinYaw;
+  FIXED negativeSinYaw;
   s32 scanline;
   s32 depth;
   const struct FarCallRuntimeTrigView *table = &FarCall_RuntimeTable;
@@ -107,7 +107,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     cosYaw = table->cos.target(angle);
     negativeSinYaw = -sinYaw;
     for (scanline = 159; scanline >= 0; scanline--) {
-      s32 widthScale = line->x;
+      FIXED widthScale = line->x;
       s32 centerX;
       s32 horizontalOffset;
       s32 depthOffset;

@@ -1138,7 +1138,7 @@ static void MogallForest_KillerApeAttacks(void) {
   struct Actor *actor;
   u32 directionIndex;
   s32 x;
-  s32 z;
+  FIXED z;
 
   actor = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();

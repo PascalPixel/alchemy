@@ -4,14 +4,14 @@
 void Leader_SlideOnIceFromEdge(void) {
   struct Actor *object;
   s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
+  FIXED targetX;
+  FIXED targetZ;
+  FIXED x;
+  FIXED z;
   u8 *layer;
   s32 radius;
   s32 position[3];
-  s32 dx, dz;
+  FIXED dx, dz;
   s32 cell;
   s16 angle;
   s32 i;

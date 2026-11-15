@@ -4,7 +4,7 @@ void Actor_EmitBubbles(struct Actor *object) {
 
   if (phase == 0) {
     struct EffectOptions options;
-    s32 position[3];
+    FIXED position[3];
 
     options.palette = 7;
     options.type = 0x2a1;

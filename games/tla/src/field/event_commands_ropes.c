@@ -71,7 +71,7 @@ void Rope_Draw(void) {
   for (i = 7; i >= 0; i--, slot++) {
     for (node = slot->head; node != NULL; node = node->next) {
       s32 priority = slot->priority;
-      s32 y = node->y;
+      FIXED y = node->y;
       s32 x = node->x;
       s32 z = node->z;
 
@@ -159,7 +159,7 @@ void Rope_Update(void) {
   slot = work->slots;
   for (i = 0; i < 8; i++, slot++) {
     if (slot->swinging != 0) {
-      s32 swing = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
+      FIXED swing = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
 
       slot->phase += TRIG_TURN / 16;
       slot->amplitude = Iwram_MulFX(slot->amplitude, FIXED_ONE * 19 / 20);
@@ -229,8 +229,8 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   struct RopeNode **link;
   struct RopeNode *node;
   u16 angle;
-  s32 sin;
-  s32 cos;
+  FIXED sin;
+  FIXED cos;
   s32 i;
 
   count = Iwram_Sqrt(Iwram_MulFX(sx, sx) + Iwram_MulFX(sy, sy) +
@@ -244,7 +244,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   cos = Trig_Cos(angle);
   slot->segments = count;
   for (i = 0; i <= count; i++) {
-    s32 bow;
+    FIXED bow;
 
     node = Rope_AllocNode();
     if (node == NULL) {
@@ -301,14 +301,14 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
   u16 angle = Trig_Atan__f0d8ff8(ax, dy >> 8);
-  s32 sin = Trig_Sin(angle);
-  s32 cos = Trig_Cos(angle);
+  FIXED sin = Trig_Sin(angle);
+  FIXED cos = Trig_Cos(angle);
   s32 segments = slot->segments;
   s32 i;
   s32 kind = 1; // One constant for its whole life.
   {
     for (i = 0; i <= segments; i++) {
-      s32 bow = Iwram_MulFX(Trig_Sin((i << 15) / segments), height);
+      FIXED bow = Iwram_MulFX(Trig_Sin((i << 15) / segments), height);
 
       SET_POSITION(node, x + i * dx / segments + Iwram_MulFX(bow, cos),
                    y + i * dy / segments + Iwram_MulFX(bow, sin),
@@ -359,7 +359,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode **link = &slot->head;
   s32 angle = 0;
-  s32 radius = toFIXED(4);
+  FIXED radius = toFIXED(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -413,9 +413,9 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
   struct Actor *to = Actor_Lookup(toId);
 
   if (from != NULL && to != NULL) {
-    s32 toX = to->x.fixed;
-    s32 toY = to->y.fixed;
-    s32 toZ = to->z.fixed;
+    FIXED toX = to->x.fixed;
+    FIXED toY = to->y.fixed;
+    FIXED toZ = to->z.fixed;
     struct RopeSlot *slot = &work->slots[index];
     s32 x, y = 0, z; // Default: y.
     s32 xx, yy, length, segments, count;
@@ -471,8 +471,8 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 dz = toZ - z;
   s32 segments;
   s32 frame;
-  s32 sine;
-  s32 cosine;
+  FIXED sine;
+  FIXED cosine;
   s32 lastX;
   s32 lastY;
   s32 lastZ;
@@ -770,7 +770,7 @@ void Tightrope_Draw(void) {
   struct TightropeWork *work = TIGHTROPE_WORK;
   s32 i;
   s32 prevX = 0;
-  s32 prevY = 0;
+  FIXED prevY = 0;
   s32 prevZ = 0;
   s32 started = 0;
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
@@ -798,7 +798,7 @@ void Tightrope_Draw(void) {
       matrix = 0;
     }
     for (; node != NULL; node = node->next) {
-      s32 y = node->y;
+      FIXED y = node->y;
       s32 x = node->x;
       s32 z = node->z;
 
@@ -806,7 +806,7 @@ void Tightrope_Draw(void) {
 
       if (started) {
         s32 screenX = (prevX + x) / 2 - viewX;
-        s32 screenY;
+        FIXED screenY;
 
         prevY = (prevY + y) / 2 - originY;
         prevZ = (prevZ + z) / 2 - viewZ - originY;
@@ -875,7 +875,7 @@ void Tightrope_Update(void) {
   slot = work->slots;
   for (i = 0; i < 8; i++, slot++) {
     if (slot->wobbling != 0) {
-      s32 wobble = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
+      FIXED wobble = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
 
       slot->phase += TRIG_TURN / 16;
       slot->amplitude = Iwram_MulFX(slot->amplitude, FIXED_ONE * 19 / 20);
@@ -993,7 +993,7 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 one = 1;
 
   for (i = 0; i <= segments; i += one) {
-    s32 bow = IwramMulFX(Trig_Sin((i << 15) / segments), height);
+    FIXED bow = IwramMulFX(Trig_Sin((i << 15) / segments), height);
 
     SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
                  z + i * dz / segments);
@@ -1034,7 +1034,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 segments = length / 6 + 1;
   struct TightropeNode **link = &work->slots[index].head;
   s32 angle = 0;
-  s32 radius = toFIXED(4);
+  FIXED radius = toFIXED(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -1094,9 +1094,9 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
                  1;
   s32 frame;
   struct TightropeNode *node = work->slots[index].head;
-  s32 sine;
+  FIXED sine;
   s32 height;
-  s32 cosine;
+  FIXED cosine;
   s32 lastX, lastY, lastZ;
   struct TightropeNode **nodes;
   struct TightropeNode **cursor;
@@ -1124,8 +1124,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       node = nodes[i];
       node->slot = index + 1;
       if (i == segments) {
-        s32 offsetX;
-        s32 offsetY;
+        FIXED offsetX;
+        FIXED offsetY;
 
         height = Iwram_MulFX(Trig_Sin((frame << 14) / i), toFIXED(8));
         offsetX = Iwram_MulFX(height, cosine);
@@ -1546,7 +1546,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   struct MapCell *cell;
   s32 i;
   s32 x;
-  s32 top;
+  FIXED top;
   s32 z;
   s32 y;
   s32 frame;
@@ -1657,10 +1657,10 @@ void HangingVine_Swing(s32 id) {
   s32 start;
   s32 dir;
   u16 letGo;
-  s32 radius;
+  FIXED radius;
   s32 steps;
   s32 angle;
-  s32 sine;
+  FIXED sine;
   s32 i;
 
   if (leader == NULL || anchor == NULL)
@@ -1798,7 +1798,7 @@ void HangingVine_Swing(s32 id) {
 /// flags starts it only when force is set.
 void HangingVine_Place(s32 id, s32 force) {
   struct Actor *object = Actor_GetById(id);
-  s32 y;
+  FIXED y;
   s32 zero;
 
   if (object != NULL) {

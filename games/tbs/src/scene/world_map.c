@@ -451,9 +451,9 @@ static void WorldMap_ReleaseSparkAfterDelay(struct Actor *actor) {
 /// shrinks every four frames and gives off a sparkle every other frame.
 static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
   struct Actor *spark;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 
   if (gFrameCount & 4) {
     actor->scaleX = 13 * FIXED_ONE / 10;
@@ -691,10 +691,10 @@ static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
   struct Actor *actor;
-  s32 left;
-  s32 right;
-  s32 top;
-  s32 bottom;
+  FIXED left;
+  FIXED right;
+  FIXED top;
+  FIXED bottom;
   s32 leaderReach;
   u32 i;
 
@@ -708,9 +708,9 @@ static void WorldMap_UpdateAreaContacts(void) {
   bottom = actor->z.fixed + toFIXED(200);
 
   for (i = ACTOR_FIRST_PLACED; i <= CONTACT_LAST_ACTOR; i++) {
-    s32 x;
-    s32 z;
-    s32 dx;
+    FIXED x;
+    FIXED z;
+    FIXED dx;
     s32 reach;
     s32 scale;
 
@@ -1450,8 +1450,8 @@ static void WorldMap_ShowDjinnTutorial(void) {
 static void WorldMap_MeetFlint(void) {
   struct Actor *djinni;
   struct Actor *leader;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 count;
   s32 i;
 
@@ -2241,7 +2241,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
                         0, toFIXED(z) + toFIXED(QUAKE_DUST_TOP));
   if (actor != NULL) {
     struct Sprite *sprite = actor->sprite;
-    s32 scale = (Random_Below(32768)) + 6 * FIXED_ONE / 5;
+    FIXED scale = (Random_Below(32768)) + 6 * FIXED_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
@@ -2357,7 +2357,7 @@ static void WorldMap_SpawnIslandWake(void) {
   sprite = puff->sprite;
   // Up to 48 pixels behind the island, or up to 32 to the side.
   if ((Random_Below(2)) != 0) {
-    s32 behind = toFIXED(Random_Below(48));
+    FIXED behind = toFIXED(Random_Below(48));
 
     puff->x.fixed -= behind / 2;
     puff->z.fixed -= behind;

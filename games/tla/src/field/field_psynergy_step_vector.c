@@ -430,7 +430,7 @@ void Actor_VanishInSparks(s32 objectId) {
         if ((u32)spark->age < SPARK_LIFE) {
           s32 *pos = position;
           s32 sparkAngle = spark->angle;
-          s32 radius = spark->radius;
+          FIXED radius = spark->radius;
 
           pos[0] = spark->x;
           pos[1] = spark->y;
@@ -508,7 +508,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
-  s32 scale[2];
+  FIXED scale[2];
   s32 position[4];
 
   sprite = object->object;
@@ -530,7 +530,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
 void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 dx;
   s32 dz;
-  s32 distance;
+  FIXED distance;
   s32 ix;
   s32 iz;
   s32 speed;

@@ -220,10 +220,10 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *object) {
   struct Actor *anchor = Actor_GetById(ACTOR_BEACON_FIRE);
   u16 *pangle = (u16 *)&object->timer;
   s32 angle = *pangle;
-  s32 cosine;
-  s32 sine;
-  s32 along;
-  s32 across;
+  FIXED cosine;
+  FIXED sine;
+  FIXED along;
+  FIXED across;
   u8 *counter;
 
   cosine = Trig_Cos(angle);
@@ -380,7 +380,7 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object);
 /// Every sixteenth frame a flame rises from the beacon's fire.
 void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_FIRE);
-  s32 offset = (Random_Below(48)) << 16;
+  FIXED offset = (Random_Below(48)) << 16;
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
@@ -1808,9 +1808,9 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
 void Orbs_UpdateRising(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = self->timer;
-  s32 sine;
-  s32 x;
-  s32 z;
+  FIXED sine;
+  FIXED x;
+  FIXED z;
 
   self->x.fixed = centre->x.fixed + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
@@ -2001,7 +2001,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
   struct Actor *created, *object;
   s32 zero, firstBeam, tiles, glowTask, message;
   struct Actor *anchor, *spawned;
-  s32 y, x, z, block;
+  FIXED y, x, z;
+  s32 block;
   struct Actor *bottomBeam, *lowerBeam, *middleBeam;
   struct Actor *upperBeam, *topBeam;
   s32 owner;
@@ -3003,7 +3004,8 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 /// Rings of light rise round the actor, two at a time, until told to end.
 void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   struct Vector3 position;
-  s32 x, z, sine;
+  s32 x, z;
+  FIXED sine;
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;

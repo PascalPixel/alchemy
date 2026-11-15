@@ -140,7 +140,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
   struct Actor *object = Actor_Get(ACTOR_LEDGE_LOG);
   struct PushTarget target;
   s32 i;
-  s32 x;
+  FIXED x;
 
   object->update = (void (*)(void))JupiterLighthouse_DrawLogBelowLedge;
   if (PushTarget_FindSlide(&target))
@@ -213,7 +213,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   struct Actor *object;
   s32 i;
-  s32 x;
+  FIXED x;
 
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
@@ -406,7 +406,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 footprint;
   s32 width;
   s32 height;
@@ -498,7 +498,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 /// (Actor_FindAtCell) whose sprite shape is not in the footprint table, and
 /// again when its own cell test (MapGrid_CheckCollision) is positive.
 void PushTarget_UpdatePusher(struct Actor *object) {
-  s32 position[3];
+  FIXED position[3];
   struct Actor *other;
   u32 i;
   s32 angle;

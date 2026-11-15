@@ -316,7 +316,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object) {
 /// Returns the object's sort depth: from its projected z on the world map
 /// (mode 3), otherwise from its y and z against the map's scroll.
 s32 BattleEffect_GetObjectDepth(struct Actor *object) {
-  s32 point[3];
+  FIXED point[3];
   s32 screen[3];
   s32 depth;
   s32 *out;
@@ -357,7 +357,7 @@ void FieldPsynergy_StartSceneSprite(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor;
   struct EffectSprite *sprite;
-  s32 position[3];
+  FIXED position[3];
   void *buffer;
   s32 slot;
   s32 tiles;

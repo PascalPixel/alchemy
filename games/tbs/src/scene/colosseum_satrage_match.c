@@ -454,8 +454,8 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
                                                    s32 offsetZ) {
   struct Actor *pusher;
   struct Actor *log;
-  s32 destinationX;
-  s32 destinationZ;
+  FIXED destinationX;
+  FIXED destinationZ;
 
   pusher = Actor_Get(gMainRoutineWork.leaderActorId);
   log = Actor_Get(logId);
@@ -541,8 +541,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   struct Actor *log = Actor_Get(logId);
   s32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
   s32 alongX = FIELD_CELL(log->x.fixed) != halfCellX / 2;
-  s32 offsetX;
-  s32 offsetZ;
+  FIXED offsetX;
+  FIXED offsetZ;
 
   halfCellX <<= 19;
   halfCellZ <<= 19;
@@ -651,12 +651,12 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftId;
   struct Actor *rider;
   struct Actor *lift;
-  s32 liftX;
-  s32 riderX;
-  s32 deltaX;
-  s32 liftZ;
-  s32 riderZ;
-  s32 deltaZ;
+  FIXED liftX;
+  FIXED riderX;
+  FIXED deltaX;
+  FIXED liftZ;
+  FIXED riderZ;
+  FIXED deltaZ;
 
   rider = Actor_Get(gMainRoutineWork.leaderActorId);
   // Carry a rider only while both horizontal distances are less than ten
@@ -1347,8 +1347,8 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *obstacle = Actor_Get(obstacleId);
   s32 alongX = FIELD_CELL(obstacle->x.fixed) != column / 2;
-  s32 offsetX;
-  s32 offsetZ;
+  FIXED offsetX;
+  FIXED offsetZ;
 
   column <<= 16;
   row <<= 16;

@@ -313,8 +313,8 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 /// frame a small splash appears on its top.
 static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   struct EffectOptions options;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   if (gFrameCount & 2)
     Actor_SelectAnimation(actor, 1);
@@ -358,11 +358,11 @@ TunnelRuins_FrostTargetFollowsPillar(struct Actor *frostTarget) {
 /// ground.
 static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
   s32 remainingFrames = 60;
-  s32 groundHeight;
+  FIXED groundHeight;
 
   for (;;) {
     if (remainingFrames != 0) {
-      s32 height;
+      FIXED height;
 
       wait(1);
       height = actor->y.fixed;
@@ -411,7 +411,7 @@ static void TunnelRuins_HopDownStep(void) {
     if (i & 1) {
       s32 horizontalRoll = (u32)Random_Next() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
-      s32 velocityZ;
+      FIXED velocityZ;
 
       velocityZ =
           (u32)Random_Next() % 10 * -(toFIXED(1) / 10) - 5 * (toFIXED(1) / 10);
@@ -617,8 +617,8 @@ static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 effectX;
-  s32 effectZ;
+  FIXED effectX;
+  FIXED effectZ;
   struct EffectOptions options;
 
   Event_Start();
@@ -684,8 +684,8 @@ static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
 static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 effectX;
-  s32 effectZ;
+  FIXED effectX;
+  FIXED effectZ;
   struct EffectOptions options;
 
   Event_Start();
@@ -877,7 +877,7 @@ static void TunnelRuins_SettleBalance(s32 frames) {
 /// A carried stone drops onto the highest platform or carved stone in its cell
 /// and lands with a thud and a ring of dust.
 static void TunnelRuins_DropStoneOnStack(s32 actorId) {
-  s32 highestHeight = -toFIXED(80);
+  FIXED highestHeight = -toFIXED(80);
   u32 i;
 
   for (i = 0; i <= 4; i++) {
@@ -905,7 +905,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   {
     struct Actor *actor = Actor_Get(actorId);
     struct Actor *sourceActor = Actor_Get(actorId);
-    s32 z = Actor_Get(actorId)->z.fixed;
+    FIXED z = Actor_Get(actorId)->z.fixed;
 
     FieldActor_SetMoveTargetFX(actor, sourceActor->x.fixed, highestHeight, z);
   }

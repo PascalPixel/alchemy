@@ -308,7 +308,7 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.
 static void ColosseumAzartMatch_SettleRocks(void) {
   struct Actor *actor;
-  s32 blocked;
+  FIXED blocked;
 
   MapGrid_CopyCellAttributes(27, 13, 3, 1, 23, 12);
   actor = Actor_Get(ACTOR_ROCK_A);
@@ -381,8 +381,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
                                                       s32 dz) {
   struct Actor *leader;
   struct Actor *actor;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   actor = Actor_Get(actorId);
@@ -670,7 +670,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
 /// Sets up Colosseum Final 1 for the visit its entrance stands for.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  s32 hit;
+  FIXED hit;
   s32 x;
   s32 col;
 

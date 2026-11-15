@@ -81,8 +81,8 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
   struct Actor *object = Actor_CreateFar(sprite, toFIXED(x), 0, toFIXED(z));
-  s32 from[3];
-  s32 to[3];
+  FIXED from[3];
+  FIXED to[3];
   s32 i;
   s32 steps;
 
@@ -158,8 +158,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
-  s32 dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
+  FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
+  FIXED dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
   s32 heading = (u16)Trig_Atan(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;

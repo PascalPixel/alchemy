@@ -12,9 +12,9 @@
 /// its world point to world.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
                                     s32 *screen, s32 *world) {
-  s32 center[3];
-  s32 goal[3];
-  s32 step[3];
+  FIXED center[3];
+  FIXED goal[3];
+  FIXED step[3];
   s32 point[3];
   struct ScreenPoint position;
   struct BattleEffectWork *work;
@@ -1266,14 +1266,14 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   struct BattleObject *targetSlot = BattleObject_GetFar(targetId);
   struct Actor *obj = (struct Actor *)slot->object;
   struct Actor *target = (struct Actor *)targetSlot->object;
-  s32 diffX = target->x.fixed - obj->x.fixed;
-  s32 startX = obj->x.fixed;
-  s32 dx = rate * diffX / 100;
-  s32 diffZ = target->z.fixed - obj->z.fixed;
-  s32 startZ = obj->z.fixed;
-  s32 dz = rate * diffZ / 100;
-  s32 x = startX + dx;
-  s32 z = startZ + dz;
+  FIXED diffX = target->x.fixed - obj->x.fixed;
+  FIXED startX = obj->x.fixed;
+  FIXED dx = rate * diffX / 100;
+  FIXED diffZ = target->z.fixed - obj->z.fixed;
+  FIXED startZ = obj->z.fixed;
+  FIXED dz = rate * diffZ / 100;
+  FIXED x = startX + dx;
+  FIXED z = startZ + dz;
   s32 sx = dx >> 8; // the distance in 1/256 pixels
   s32 sz = dz >> 8;
   s32 dist;

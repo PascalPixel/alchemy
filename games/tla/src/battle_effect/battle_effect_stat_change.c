@@ -536,7 +536,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   struct BattleCamera *camera;
   s32 origin[3];
   struct ScreenPoint screen;
-  s32 point[3];
+  FIXED point[3];
   DrawRectangle callbacks[2];
   s32 i;
   void *palette;

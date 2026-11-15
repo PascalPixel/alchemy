@@ -308,7 +308,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   u32 angleStep;
   s32 angle;
   s32 velocityX;
-  s32 velocityZ;
+  FIXED velocityZ;
 
   actor = Actor_Get(actorId);
   options.update = FieldEffect_AdvanceMotion;
@@ -659,8 +659,8 @@ static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
-  s32 eastX = toFIXED(752);
-  s32 eastZ = toFIXED(320);
+  FIXED eastX = toFIXED(752);
+  FIXED eastZ = toFIXED(320);
 
   CrossboneIsle_GrowPlant(actorId, 3, 144, 320);
   MapGrid_SetCellBehaviorAt(0, eastX, eastZ, CELL_BEHAVIOR_CLIMB);
@@ -743,8 +743,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
                                                   s32 zOffset) {
   struct Actor *selectedActor;
   struct Actor *logActor;
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
 
   selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
   logActor = Actor_Get(actorId);

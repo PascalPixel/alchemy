@@ -325,7 +325,7 @@ void AirsRock_MoveThirdPillar(void) {
 /// pixels on and plays cue 390 again.
 void AirsRock_ClimbLedge(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 z = leader->z.fixed;
+  FIXED z = leader->z.fixed;
   u32 i;
 
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -616,7 +616,7 @@ void AirsRock_BlowGust(void) {
 /// it speeds up leftward and shrinks; its priority follows its direction and
 /// its sprite spins.
 void AirsRock_SwirlLeaf(struct Actor *object) {
-  s32 scale;
+  FIXED scale;
 
   object->y.fixed += object->gravity;
   object->x.fixed += object->bounce;
@@ -651,7 +651,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   u16 *cell;
   struct Actor *spark;
   u32 i;
-  s32 x;
+  FIXED x;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -832,7 +832,9 @@ void AirsRock_RideWhirlwind(void) {
   struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
   u8 *riding, *motion;
-  s32 rise, dx, dz, moved, i, height;
+  s32 rise;
+  FIXED dx, dz;
+  s32 moved, i, height;
   s32 angle;
   u16 facing;
   s32 still;
@@ -981,7 +983,7 @@ extern u32 gAirsRock_WhirlwindFadesScript[];
 void AirsRock_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 speed = toFIXED(3) / 2;
+  FIXED speed = toFIXED(3) / 2;
   s32 cue = 539;
   struct Actor *other, *launcher;
   s32 i;
@@ -1165,9 +1167,9 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   struct EffectOptions options;
   struct Vector3 scatter;
   s32 i;
-  s32 radius = toFIXED(64);
-  s32 shakeA = -1;
-  s32 shakeC = 0xe666;
+  FIXED radius = toFIXED(64);
+  FIXED shakeA = -1;
+  FIXED shakeC = 0xe666;
 
   first = FieldActor_Create(SPRITE_ROCK, x, 0, z);
   options.priority = 1;
@@ -1399,7 +1401,9 @@ void AirsRock_DriftFog(void) {
 void AirsRock_LiftFog(void) {
   s32 *scroll = &Ram_HeapSlots->mapGrid->layers[2].x;
   s16 *line = gAirsRock_WaveLines;
-  s32 i, wave, spread, value;
+  s32 i;
+  FIXED wave;
+  s32 spread, value;
   s16 *table;
   volatile u16 *channel;
 

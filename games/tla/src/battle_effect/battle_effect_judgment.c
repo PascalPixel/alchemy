@@ -61,8 +61,8 @@
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 anchor[3];
   struct ScreenPoint pos;
-  s32 place[4];
-  s32 drift[4];
+  FIXED place[4];
+  FIXED drift[4];
   struct Scale req;
   struct ModelTexture texture;
   struct ModelTexture glare;
@@ -73,7 +73,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   s32 frame;
   u8 *sprites;
-  s32 depth;
+  FIXED depth;
   s32 zoom;
   s32 addR, addG, addB;
   s32 step;

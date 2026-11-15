@@ -632,7 +632,8 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
 /// once stopped, the rings climb out and the actor's colours come back.
 void PsynergyTest_UpdateRings(struct Actor *object) {
   struct Vector3 position;
-  s32 x, z, sine;
+  s32 x, z;
+  FIXED sine;
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;

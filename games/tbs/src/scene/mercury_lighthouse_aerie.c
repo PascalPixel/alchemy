@@ -1559,8 +1559,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct Actor *left;
   struct Actor *right;
   u32 i;
-  s32 x;
-  s32 r;
+  FIXED x;
+  FIXED r;
 
   left = Actor_Get(ACTOR_SATUROS);
   right = Actor_Get(ACTOR_ALEX);
@@ -1610,8 +1610,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct Actor *left;
   struct Actor *right;
   u32 i;
-  s32 x;
-  s32 r;
+  FIXED x;
+  FIXED r;
 
   left = Actor_Get(ACTOR_SATUROS);
   right = Actor_Get(ACTOR_ALEX);
@@ -1688,7 +1688,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   u32 i;
   u32 j;
   u32 n;
-  s32 speed;
+  FIXED speed;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = toFIXED(1) / 10;
@@ -1726,7 +1726,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   u32 i;
   u32 j;
   u32 n;
-  s32 speed;
+  FIXED speed;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = toFIXED(3) / 2;
@@ -1793,7 +1793,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   s32 height;
-  s32 scale;
+  FIXED scale;
   s32 cycleFrame;
   u32 angle;
 

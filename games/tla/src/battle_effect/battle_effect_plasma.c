@@ -365,7 +365,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       // From the sixth frame the sparks fly, bounce off the ground at half
       // speed, and shrink as they die out.
       if (frame > start + 5) {
-        s32 gravity;
+        FIXED gravity;
 
         if (kind == SPARK_GROUPS_RISING)
           gravity = -toFIXED(1) / 16;

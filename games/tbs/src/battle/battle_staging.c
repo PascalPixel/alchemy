@@ -394,8 +394,8 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 frames;
   s32 missed;
   s32 index;
@@ -548,8 +548,8 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 frames;
   s32 missed;
 
@@ -657,7 +657,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   // none waits a second.
   Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
-    s32 fade;
+    FIXED fade;
 
     targetOrFadeIndex = 0;
     fade = 0;
@@ -666,7 +666,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = FIXED_ONE - fade;
+        FIXED value = FIXED_ONE - fade;
 
         battle->brightness = value;
         Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,

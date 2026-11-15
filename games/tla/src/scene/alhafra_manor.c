@@ -282,8 +282,8 @@ void AlhafraManor_TellOfTheEasternSea(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  s32 cameraY = -1;
-  s32 cameraZ = toFIXED(320);
+  FIXED cameraY = -1;
+  FIXED cameraZ = toFIXED(320);
   s16 *entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

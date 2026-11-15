@@ -17,7 +17,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   s32 frame;
   struct BattleCamera *camera;
   u8 *sheet;
-  s32 bodyTop;
+  FIXED bodyTop;
   struct ScreenPoint screen;
   BlitterPair draw;
   struct Actor *user;

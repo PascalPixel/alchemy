@@ -18,7 +18,7 @@
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 slotId) {
-  s32 z;
+  FIXED z;
   s32 zero;
   struct BattleObject *slot;
   struct MotionObject *object;
@@ -67,8 +67,8 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
                              s32 progress) {
   struct Actor *start = *startSlot;
   struct Actor *end = *endSlot;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   x = start->x.fixed + (end->x.fixed - start->x.fixed) * progress / 100;
   z = start->z.fixed + (end->z.fixed - start->z.fixed) * progress / 100;
@@ -307,7 +307,7 @@ void BattleMotion_PlayHitFlash(s32 slot) {
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
-  s32 scale;
+  FIXED scale;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
@@ -324,7 +324,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
 s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
-  s32 scale;
+  FIXED scale;
 
   BattleCamera_ApplyTransform();
   scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);

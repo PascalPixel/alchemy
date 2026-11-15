@@ -363,8 +363,8 @@ void GaiaRockInside_RaiseDust(void) {
   options.startScaleY = FIXED_ONE * 16 / 25;
   for (i = 0; i <= 16; i++) {
     s32 angle;
-    s32 velocity[3];
-    s32 cosine;
+    FIXED velocity[3];
+    FIXED cosine;
 
     angle = i << 12;
     cosine = Trig_Cos(angle);
@@ -839,8 +839,8 @@ void GaiaRockInside_SaveSusa(void) {
   gGaiaRockInside_SavedSusaAnimation = record[21];
   gGaiaRockInside_SavedSusaFrame = sprite->frame;
   {
-    s32 x = object->x.fixed;
-    s32 z;
+    FIXED x = object->x.fixed;
+    FIXED z;
 
     gGaiaRockInside_SavedSusaX = x;
     z = object->z.fixed;
@@ -1312,7 +1312,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 void GaiaRockInside_RingOfDust(void) {
-  s32 velocity[3];
+  FIXED velocity[3];
   struct EffectOptions options;
   u32 i;
 
@@ -2198,7 +2198,7 @@ s32 Scene_Initialize(void) {
     room = &gMainRoutineWork;
     entrance = &room->entrance;
     if (*entrance == ENTRANCE_LAIR) {
-      s32 none;
+      FIXED none;
       s32 found;
 
       if (Test(FLAG_SERPENT_SLAIN))
@@ -2213,7 +2213,7 @@ s32 Scene_Initialize(void) {
         s32 width;
         s32 height;
         s32 mask;
-        s32 fast;
+        FIXED fast;
         s32 i;
         s32 dx;
         s32 dz;
@@ -2400,7 +2400,7 @@ s32 Scene_Initialize(void) {
       }
     } else if (*entrance == ENTRANCE_SERPENT_BEATEN) {
       s32 flag;
-      s32 scale;
+      FIXED scale;
       struct Actor *susa;
       s32 slow;
       s32 *owner;

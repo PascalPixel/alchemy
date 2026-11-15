@@ -153,7 +153,7 @@ s32 LinkLobby_PollPeerReady(void) {
   s32 result;
   s32 i;
   s32 set;
-  s32 z;
+  FIXED z;
 
   work = Ram_HeapSlots->fieldWork;
   result = 1;

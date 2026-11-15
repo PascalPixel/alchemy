@@ -589,7 +589,9 @@ void AirsRockInside_RideWhirlwind(void) {
   struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
   u8 *riding, *motion, *priority;
-  s32 rise, dx, dz, moved, i, height;
+  s32 rise;
+  FIXED dx, dz;
+  s32 moved, i, height;
   u16 facing;
   s32 angle, noFlags;
 
@@ -762,7 +764,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = toFIXED(3) / 2;
+  FIXED speed = toFIXED(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || gMainRoutineWork.movementMode == 5) {
@@ -880,7 +882,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = toFIXED(3) / 2;
+  FIXED speed = toFIXED(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || work->transitionActive == 0) {
@@ -1106,7 +1108,7 @@ void AirsRockInside_PuffVents(void) {
     return;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
-    s32 x;
+    FIXED x;
 
     if ((frame & 1) &&
         !GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
@@ -1749,7 +1751,7 @@ next:
 }
 
 void AirsRockInside_SpiralGust(struct Actor *object) {
-  s32 radius = ((object->y.fixed - object->groundHeight) >> 1) + toFIXED(16);
+  FIXED radius = ((object->y.fixed - object->groundHeight) >> 1) + toFIXED(16);
 
   object->x.fixed =
       object->bounce +
@@ -1765,9 +1767,9 @@ void AirsRockInside_SpiralGust(struct Actor *object) {
 /// as wide as deep, the radius growing with its height; it rises by field 72
 /// each frame and switches its part attribute between 0 and 9 every two frames.
 void AirsRockInside_SpiralSpark(struct Actor *object) {
-  s32 y = object->y.fixed;
+  FIXED y = object->y.fixed;
   s32 phase;
-  s32 radius;
+  FIXED radius;
 
   phase = object->speedLimit;
   radius = toFIXED(12) + (y >> 2);
@@ -2406,7 +2408,7 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
 
 /// Moves around in a circle.
 s32 Orbit_Update(struct Orbit *object) {
-  s32 z;
+  FIXED z;
 
   object->angle += object->speed;
   object->x = IwramMulFX(Trig_Cos(object->angle), object->radius);
@@ -3053,7 +3055,7 @@ void AirsRockInside_LandInHall(void) {
   options.startScaleY = FIXED_ONE * 4 / 5;
   for (i = 0; i <= 16; i++) {
     s32 angle;
-    s32 velocity[3];
+    FIXED velocity[3];
 
     angle = i << 12;
     velocity[0] = Trig_Cos(angle);

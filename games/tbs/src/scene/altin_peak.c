@@ -335,7 +335,7 @@ static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *follower) {
 /// Actor script routine for a piece of flying rock debris. It moves by its
 /// velocity, grows by its z velocity and falls under its gravity.
 static s32 AltinPeak_FlyDebris(struct Actor *actor) {
-  s32 rise;
+  FIXED rise;
   s32 growth;
 
   actor->x.fixed += actor->velocityX;
@@ -834,10 +834,10 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
 static void AltinPeak_ForceLogOver(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  s32 originX;
-  s32 originHeight;
-  s32 cosine;
-  s32 sine;
+  FIXED originX;
+  FIXED originHeight;
+  FIXED cosine;
+  FIXED sine;
   u16 rotationStep;
 
   actor = Actor_Get(ACTOR_STANDING_LOG);
@@ -1215,7 +1215,7 @@ static inline void AltinPeak_PlayLandingShake(s32 amplitude, s32 holdFrames) {
 static void AltinPeak_ShowFirstBeastRoute(void) {
   struct Actor *beast;
   struct Actor *leader;
-  s32 jumpSpeed;
+  FIXED jumpSpeed;
 
   beast = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Event_Start();
@@ -1845,7 +1845,7 @@ static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing) {
 /// Task while the boulder crashes.
 static void AltinPeak_SpawnDebris(void) {
   struct Actor *debris;
-  s32 scale;
+  FIXED scale;
 
   if (gFrameCount % 3 == 0) {
     debris =
@@ -2174,7 +2174,7 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId) {
 static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   s32 x;
   s32 z;
-  s32 centerZ;
+  FIXED centerZ;
   struct Sprite *sprite;
   struct Actor *leader;
 
@@ -2295,8 +2295,8 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   s32 radius;
   s16 *timer;
   struct FieldPosition position;
-  s32 ahead;
-  s32 behind;
+  FIXED ahead;
+  FIXED behind;
 
   angle &= actor->facing;
   radius = actor->y.fixed / FIXED_ONE;

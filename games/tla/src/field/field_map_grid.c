@@ -306,14 +306,14 @@ void MapGrid_CenterOnFollowedPoint(void) {
     rectList = work->cameraBoxes;
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
-        s32 left = toFIXED(rect[0]) - toFIXED(120);
-        s32 top = toFIXED(rect[1]) + height - toFIXED(64);
-        s32 right = toFIXED(rect[2]) + toFIXED(120);
-        s32 bottom = toFIXED(rect[3]) + height + toFIXED(96);
+        FIXED left = toFIXED(rect[0]) - toFIXED(120);
+        FIXED top = toFIXED(rect[1]) + height - toFIXED(64);
+        FIXED right = toFIXED(rect[2]) + toFIXED(120);
+        FIXED bottom = toFIXED(rect[3]) + height + toFIXED(96);
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
-          s32 nearX = left;
-          s32 nearZ;
+          FIXED nearX = left;
+          FIXED nearZ;
 
           if (ABS(nearX - x) > ABS(right - x))
             nearX = right;

@@ -200,7 +200,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor = scene->mainActor;
-  s32 start[3];
+  FIXED start[3];
   s32 i = 0;
 
   if (scene->angle != TRIG_TURN * 3 / 4)
@@ -226,7 +226,7 @@ struct MapCell;
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
-  s32 start[3];
+  FIXED start[3];
   s32 i;
 
   i = 0;

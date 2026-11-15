@@ -105,7 +105,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   struct Actor *actor;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
-  s32 groundHeight;
+  FIXED groundHeight;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   offsetX *= toFIXED(16);

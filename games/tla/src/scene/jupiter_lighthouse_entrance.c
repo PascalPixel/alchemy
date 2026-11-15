@@ -226,7 +226,8 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
 
 s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
   struct SceneEffectParams params;
-  s32 phase, x, y, speed;
+  s32 phase;
+  FIXED x, y, speed;
 
   phase = gFrameCount & 7;
   if (phase == 0) {

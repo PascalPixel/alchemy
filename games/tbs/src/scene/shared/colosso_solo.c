@@ -117,7 +117,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
-  s32 nearestDistance = toFIXED(16);
+  FIXED nearestDistance = toFIXED(16);
   s32 supporterId = gMainRoutineWork.leaderActorId;
   struct Actor *supporter = Actor_GetById(supporterId);
   s32 actorId;

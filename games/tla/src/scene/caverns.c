@@ -215,7 +215,7 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
 /// Before a push, Move or Carry: finds the block ahead of the leader (or the
 /// one Psynergy holds) and frees its cell.
 void Caverns_StartMovingAngaraBlock(void) {
-  s32 position[3];
+  FIXED position[3];
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *current = Ram_HeapSlots->fieldEffectWork;
   const u16 *ids = (const u16 *)gCaverns_AngaraBlocks;
@@ -278,8 +278,8 @@ void Caverns_DriftDust(struct Actor *object) {
 /// south of it.
 void Caverns_LayerLeaderByStack(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 leaderZ = leader->z.fixed;
-  s32 z = object->z.fixed;
+  FIXED leaderZ = leader->z.fixed;
+  FIXED z = object->z.fixed;
   u8 *flags = &leader->priorityFlags;
 
   if (leaderZ > z) {
@@ -296,7 +296,7 @@ void Caverns_LayerLeaderByStack(struct Actor *object) {
 /// ring of dust, and one landing on the other block stacks on it; then its new
 /// cell rises under it.
 void Caverns_FinishMovingAngaraBlock(void) {
-  s32 velocity[3];
+  FIXED velocity[3];
   struct EffectOptions options;
   struct FieldWork *work;
   struct FieldEffectWork *current;
@@ -499,7 +499,7 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
 void Caverns_JumpEastAcrossGap(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
-  s32 x;
+  FIXED x;
 
   x = leader->x.fixed;
   x += toFIXED(32);

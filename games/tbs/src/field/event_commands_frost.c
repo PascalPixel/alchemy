@@ -10,7 +10,7 @@ DEFINE_FROST_GLINT(, Actor_SetSpriteColorModeFar)
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
-  s32 scale;
+  FIXED scale;
 
   if (particle != NULL) {
     scale = particle->scaleX - FIXED_ONE / 16;
@@ -100,7 +100,7 @@ void FieldPsynergy_Frost(void) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
-      s32 radius;
+      FIXED radius;
 
       scale = (Random16() >> 1) + FIXED_ONE / 2;
       particle->scaleY = scale;

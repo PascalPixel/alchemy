@@ -62,10 +62,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 spin[8];
   struct Point2D home[8];
   s32 baseAngle[8];
-  s32 vector[3];
+  FIXED vector[3];
   struct ScreenPoint screen;
   s32 shake[3];
-  s32 place[4];
+  FIXED place[4];
   struct Scale scale;
 
   canvas = Ram_HeapSlots->battleCanvas;

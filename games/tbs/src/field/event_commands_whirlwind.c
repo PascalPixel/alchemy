@@ -28,8 +28,8 @@ enum {
 /// drawn.
 void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   struct EffectOptions opt;
-  s32 vel[3];
-  s32 vz;
+  FIXED vel[3];
+  FIXED vz;
   s32 angle;
   u32 i;
 
@@ -54,10 +54,10 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 /// and then turning sharply; after 101 frames it hands over to the shared
 /// particle script.
 void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
-  s32 len;
+  FIXED len;
   s32 angle;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   // Random16 is 0 to 1 in 16.16, so 2 to 3 pixels.
   len = Random16() + toFIXED(2);
@@ -84,12 +84,12 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
 void FieldEffect_CircleAnchor(struct Actor *effect) {
   struct Actor *anchor;
   s32 angle;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   anchor = effect->watchedActor;
   {
-    s32 radius = WHIRLWIND_ORBIT_RADIUS;
+    FIXED radius = WHIRLWIND_ORBIT_RADIUS;
 
     angle = effect->facing;
     dx = Iwram_MulFX(radius, Trig_Cos(angle));
@@ -156,7 +156,7 @@ void FieldPsynergy_Whirlwind(void) {
   FieldPsynergy_FadeToCastColor();
   Actor_SelectAnimationFar(ball, 2);
   do {
-    s32 scale;
+    FIXED scale;
     ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
     ball->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
     ball->z.fixed = from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_FRAMES;
@@ -181,7 +181,7 @@ void FieldPsynergy_Whirlwind(void) {
     // pixels away.
     step = 0;
     do {
-      s32 dist;
+      FIXED dist;
 
       pos.x = ball->x.fixed;
       pos.y = ball->y.fixed + step * (toFIXED(4) / 5) + toFIXED(4);

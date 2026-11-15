@@ -353,7 +353,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct MotionObject *source;
   s32 *camera;
   u8 *palette;
-  s32 height;
+  FIXED height;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -415,7 +415,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
-      s32 aimZ;
+      FIXED aimZ;
 
       SET_POSITION(shot, source->x, height, source->z);
       aimZ = target->z + INTtoFIXED(((Random16() & 31) - 16) * 2);

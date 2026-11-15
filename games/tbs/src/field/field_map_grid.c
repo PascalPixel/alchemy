@@ -255,7 +255,7 @@ s32 MapGrid_LoadMap(s32 index) {
     u32 x = layerSource->x;
     u32 y = layerSource->y;
     s32 scaleX, scaleY;
-    s32 offsetX, offsetY;
+    FIXED offsetX, offsetY;
 
     layer->offsetX = offsetX = toFIXED(x * 8);
     layer->offsetY = offsetY = toFIXED(y * 8);
@@ -464,7 +464,7 @@ void MapGrid_UpdateLayerScroll(void) {
   if (grid->shakeY != 0) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
-    s32 shakeAmplitude = grid->shakeY;
+    FIXED shakeAmplitude = grid->shakeY;
     baseY += Iwram_MulFX(shakeAmplitude, shakeRollA - shakeRollB);
     grid->shakeY = Iwram_MulFX(shakeAmplitude, grid->shakeDecay);
   }

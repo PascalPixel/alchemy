@@ -381,7 +381,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   i = 5;
 next:
   {
-    s32 x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
+    FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *object = Import_ActorCreate_(
         0x145, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
@@ -881,7 +881,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// The leader drops through a cracked floor tile.
 void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 z = leader->z.fixed;
+  FIXED z = leader->z.fixed;
   s32 i = FIELD_CELL(leader->x.fixed);
 
   GameFlag_SetByte(0x340, i);
@@ -1485,7 +1485,8 @@ void FlameThrowers_Puff(void) {
   state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
     struct Actor *actor;
-    s32 flag, x, y, offScreen, value, dx, dz;
+    s32 flag, x, y, offScreen, value;
+    FIXED dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1775,7 +1776,7 @@ void MarsLighthouseEntrance_ScatterCrumbs(struct Actor *actor) {
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
-    s32 x, y, z;
+    FIXED x, y, z;
 
     a = Random16();
     b = Random16();
@@ -2108,7 +2109,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
+    FIXED target;
     s32 frames;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];

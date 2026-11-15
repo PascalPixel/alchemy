@@ -170,7 +170,7 @@ void LemurianShipDeck_ShowArrival(void) {
 /// A task: scrolls the waves' layer half a pixel a frame.
 void LemurianShipDeck_ScrollWaves(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
-  s32 phase = gLemurianShipDeck_WaveScroll;
+  FIXED phase = gLemurianShipDeck_WaveScroll;
 
   layer->offsetX = phase;
   phase += toFIXED(1) / 2;

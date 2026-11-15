@@ -452,7 +452,7 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
     if (FIELD_CELL(object->x.fixed) == 51) {
       object->motionFlags = 0;
       {
-        s32 step = -toFIXED(1);
+        FIXED step = -toFIXED(1);
 
         object->y.fixed += step;
       }
@@ -849,7 +849,8 @@ step:
     return;
   }
   {
-    s32 offset, x;
+    s32 offset;
+    FIXED x;
 
     object->z.fixed += toFIXED(2);
     x = object->x.fixed;
@@ -890,7 +891,7 @@ void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
 
 void AquaRockInside_RideFalls(s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 speed;
+  FIXED speed;
   s32 i;
   u8 *flags;
 
@@ -1501,7 +1502,7 @@ void AquaRockInside_FallThroughWater(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
-  s32 speed;
+  FIXED speed;
   s32 i;
 
   Event_Start();
@@ -1999,7 +2000,7 @@ void AquaRockInside_FlowWithStream(void) {
   struct Actor *center;
   s32 id;
   struct Actor *actor;
-  s32 position[3];
+  FIXED position[3];
   s32 hit;
 
   {
@@ -2248,7 +2249,7 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
       }
     }
     {
-      s32 next = (row << 16) + 0x10000;
+      FIXED next = (row << 16) + 0x10000;
       row = next >> 16;
       if ((s32)((u32)next >> 16) < depth)
         goto rowTop;

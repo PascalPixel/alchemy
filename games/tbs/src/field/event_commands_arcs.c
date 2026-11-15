@@ -11,7 +11,7 @@
 void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
-  s32 scale;
+  FIXED scale;
 
   anchor = arc->watchedActor;
   frame = ++arc->timer;
@@ -32,7 +32,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
 void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
-  s32 scale;
+  FIXED scale;
 
   anchor = arc->watchedActor;
   frame = ++arc->timer;

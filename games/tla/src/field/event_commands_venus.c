@@ -18,7 +18,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct FieldParticle *effect;
   s8 *slotState;
   s32 remaining;
-  s32 scale;
+  FIXED scale;
   struct Vector3 position;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);

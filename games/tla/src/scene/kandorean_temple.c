@@ -579,7 +579,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
 /// Moves an actor and the camera north by dz, unless the map stops it.
 void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
   struct Actor *focus = gFieldWork->camera;
-  s32 position[3];
+  FIXED position[3];
 
   position[0] = object->x.fixed;
   position[1] = object->y.fixed;
@@ -606,8 +606,8 @@ void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
 
 /// Whether actor a is within twelve pixels across and eight deep of actor b.
 s32 KandoreanTemple_IsOverActor(struct Actor *a, struct Actor *b) {
-  s32 left = b->x.fixed - toFIXED(12);
-  s32 right = b->x.fixed + toFIXED(12);
+  FIXED left = b->x.fixed - toFIXED(12);
+  FIXED right = b->x.fixed + toFIXED(12);
 
   if (a->x.fixed > left && a->x.fixed < right &&
       a->z.fixed > b->z.fixed - toFIXED(8) &&
@@ -621,8 +621,8 @@ s32 KandoreanTemple_IsOverActor(struct Actor *a, struct Actor *b) {
 void KandoreanTemple_UpdateVentSteam(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
-  s32 vx = object->bounce;
-  s32 vz;
+  FIXED vx = object->bounce;
+  FIXED vz;
   struct FieldSprite *sprite;
   s32 rate;
   s32 scale;
@@ -696,8 +696,8 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
 void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other = Actor_GetById(ACTOR_LIFT_ROOM_PILLAR);
-  s32 vx = object->bounce;
-  s32 vz;
+  FIXED vx = object->bounce;
+  FIXED vz;
   struct FieldSprite *sprite;
   s32 rate;
   s32 scale;
@@ -1381,9 +1381,9 @@ void KandoreanTemple_WatchVentPlatforms(void) {
 /// save while it does.
 void KandoreanTemple_WatchLifts(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x = leader->x.fixed;
+  FIXED x = leader->x.fixed;
   s32 cellX = FIELD_CELL(x);
-  s32 z = leader->z.fixed;
+  FIXED z = leader->z.fixed;
   s32 cellZ = FIELD_CELL(z);
   s32 riding = 0;
 
@@ -2138,7 +2138,7 @@ void KandoreanTemple_LandFromAbove(void) {
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
   for (i = 0; i <= 16; i++) {
-    s32 velocity[3];
+    FIXED velocity[3];
 
     velocity[0] = Trig_Cos(i << 12);
     velocity[1] = 0;

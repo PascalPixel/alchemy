@@ -102,8 +102,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 viewX;
   s32 viewZ;
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
 
   {
     s32 *view = grid->view;

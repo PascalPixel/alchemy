@@ -46,8 +46,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 *transition;
   u8 *sprites;
   s32 scroll;
-  s32 posX;
-  s32 posY;
+  FIXED posX;
+  FIXED posY;
   s32 angle;
   s32 spin;
   s32 spread;
@@ -60,7 +60,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 dx;
   s32 dy;
   u32 u;
-  s32 place[4];
+  FIXED place[4];
   struct Scale req;
   struct ModelTexture texture;
   struct RenderModel *model;
@@ -821,7 +821,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
   u32 enemy;
-  s32 x;
+  FIXED x;
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
@@ -886,7 +886,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     // The first frame lines the daggers up below the canvas, each spinning
     // the other way from its neighbour.
     if (frame == 0) {
-      s32 y;
+      FIXED y;
       s32 zero;
 
       for (i = 0, zero = 0, y = toFIXED(128), dagger = work->particles; i != 32;

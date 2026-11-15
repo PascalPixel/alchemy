@@ -539,7 +539,7 @@ static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
 static void LamakanDesert_BatheInOasis(void) {
   struct FieldWork *work;
   s32 frames;
-  s32 best;
+  FIXED best;
   s32 count;
   const s32 *oases;
   s32 total;
@@ -675,8 +675,8 @@ static void HeatGauge_CountStep(void) {
   struct Actor *actor;
   struct FieldWork *work;
   struct EffectOptions params;
-  s32 dx;
-  s32 z;
+  FIXED dx;
+  FIXED z;
   s32 phase;
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
@@ -803,7 +803,7 @@ static void LamakanDesert_SlideDownDune(void) {
   struct EffectOptions params;
   s32 hit;
   s32 phase;
-  s32 x;
+  FIXED x;
 
   HeatGauge_CountStep();
   {

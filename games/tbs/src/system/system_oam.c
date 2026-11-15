@@ -57,8 +57,8 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   } else {
     // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is
     // an 8.8 coefficient
-    s32 sine;
-    s32 cosine;
+    FIXED sine;
+    FIXED cosine;
 
     sine = Trig_Sin(angle);
     cosine = Trig_Cos(angle);

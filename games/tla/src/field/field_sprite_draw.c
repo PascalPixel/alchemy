@@ -447,8 +447,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     anchorX = object->offsetX * scaleX;
     anchorY = ((object->height >> 1) - object->offsetY) * scaleY;
   } else {
-    s32 sin = Trig_Sin(object->rotation);
-    s32 cos = Trig_Cos(object->rotation);
+    FIXED sin = Trig_Sin(object->rotation);
+    FIXED cos = Trig_Cos(object->rotation);
     s32 offsetX = object->offsetX * scaleX;
     s32 offsetY = ((object->height >> 1) - object->offsetY) * scaleY;
 
@@ -546,8 +546,8 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     anchorX = object->offsetX * scaleX;
     anchorY = ((object->height >> 1) - object->offsetY) * scaleY;
   } else {
-    s32 sin = Trig_Sin(object->rotation);
-    s32 cos = Trig_Cos(object->rotation);
+    FIXED sin = Trig_Sin(object->rotation);
+    FIXED cos = Trig_Cos(object->rotation);
 
     // extentX and extentY are reused for the anchor's offset; locals of their
     // own differ.
@@ -583,11 +583,11 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   s32 z;
   s32 flip;
   s32 rounded;
-  s32 scaleX;
-  s32 scaleY;
+  FIXED scaleX;
+  FIXED scaleY;
   s32 affine;
-  s32 offsetX;
-  s32 offsetY;
+  FIXED offsetX;
+  FIXED offsetY;
   u32 halfWidth;
   u32 halfHeight;
   u32 matrix;

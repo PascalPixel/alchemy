@@ -360,7 +360,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       }
       // The sparks fly and fall (or rise, for SPARK_GROUPS_RISING).
       if (frame > start + 5) {
-        s32 gravity;
+        FIXED gravity;
 
         if (mode == SPARK_GROUPS_RISING)
           gravity = -toFIXED(1) / 16;

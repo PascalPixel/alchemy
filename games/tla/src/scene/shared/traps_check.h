@@ -3,7 +3,7 @@
 void MagmaRockInside_CheckCrumblingStep(const u16 *table) {
   struct Actor *leader;
   struct Actor *trap;
-  s32 position[3];
+  FIXED position[3];
   s32 id;
   s32 flag;
   s32 second;

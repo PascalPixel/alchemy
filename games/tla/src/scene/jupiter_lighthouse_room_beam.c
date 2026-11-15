@@ -324,7 +324,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
   s32 angle;
-  s32 y;
+  FIXED y;
 
   y = object->y.fixed;
   if (y >= toFIXED(32)) {

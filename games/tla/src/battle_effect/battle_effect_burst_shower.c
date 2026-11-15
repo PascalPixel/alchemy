@@ -770,7 +770,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                   work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
                   width, height);
         } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
-          s32 wobble = Trig_Sin((i * 2 + frame) << 11);
+          FIXED wobble = Trig_Sin((i * 2 + frame) << 11);
           s32 y;
           cel = age >> 2;
           y = FIXEDtoINT(shot->y + (wobble << 5));

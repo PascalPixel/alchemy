@@ -344,8 +344,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
         s16 *camera = (s16 *)gStaffCredit_FlightEnds;
         s32 top;
         s32 left;
-        s32 z;
-        s32 x0;
+        FIXED z;
+        FIXED x0;
 
         zero = 0;
         top = camera[8];

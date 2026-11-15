@@ -176,14 +176,14 @@ void FieldPsynergy_Cyclone(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
-  s32 spread = toFIXED(4);
+  FIXED spread = toFIXED(4);
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
   struct Actor *ring;
   u16 *offsets;
   u8 *pixels;
   u16 *palette;
-  s32 pos[3];
+  FIXED pos[3];
   s32 mode;
   s32 frame;
   s32 i, j;
@@ -383,9 +383,9 @@ void Actor_DepartInRing(s32 actor) {
   s32 angle = object->facing;
   u8 motionFlags = object->motionFlags;
   struct Actor *ring;
-  s32 x, y, z;
+  FIXED x, y, z;
   s32 spin;
-  s32 position[3];
+  FIXED position[3];
   s32 i;
 
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);

@@ -470,12 +470,12 @@ void WorldPicture_Show(s32 picture) {
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateActorVisibilityBounds(void) {
   struct Actor *actor;
-  s32 x;
-  s32 y;
-  s32 left;
-  s32 right;
-  s32 top;
-  s32 bottom;
+  FIXED x;
+  FIXED y;
+  FIXED left;
+  FIXED right;
+  FIXED top;
+  FIXED bottom;
   u32 id;
 
   // The selected actor lookup has no used result; the bounds follow the
@@ -494,8 +494,8 @@ void Field_UpdateActorVisibilityBounds(void) {
     actor = Actor_Lookup(id);
 
     if (actor != 0) {
-      s32 ox = actor->x.fixed;
-      s32 oy = actor->z.fixed;
+      FIXED ox = actor->x.fixed;
+      FIXED oy = actor->z.fixed;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
         actor->spriteStorageKind = ACTOR_SPRITE_NONE;

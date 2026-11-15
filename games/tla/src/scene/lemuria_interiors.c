@@ -496,7 +496,8 @@ void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
   struct Actor *actor;
   s32 startBuf[3], targetBuf[3], posBuf[3];
   s32 *start, *target, *pos;
-  s32 radius, angle;
+  FIXED radius;
+  s32 angle;
   s32 result, i, phase, sine, answer;
 
   actor = Actor_GetById(ACTOR_BIRD);

@@ -18,7 +18,7 @@
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  s32 record[3];
+  FIXED record[3];
   struct ScreenPoint pos;
   DrawRectangle draw[2];
   struct Particle *star;
@@ -122,7 +122,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct Particle *step;
   s32 i;
   struct ScreenPoint screen;
-  s32 record[3];
+  FIXED record[3];
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;

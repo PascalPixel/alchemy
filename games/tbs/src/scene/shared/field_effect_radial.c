@@ -11,7 +11,7 @@ static void FieldEffect_SpawnNineRadialEffects(s32 actorId) {
   u32 i;
   s32 v;
   s32 x;
-  s32 z;
+  FIXED z;
 
   actor = Actor_GetById(actorId);
   params.priority = 1;

@@ -1,6 +1,6 @@
 /// 1 when two actors stand side by side.
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b) {
-  s32 dy;
+  FIXED dy;
 
   if (ABS(a->x.fixed - b->x.fixed) < toFIXED(12)) {
     dy = a->y.fixed - b->y.fixed;

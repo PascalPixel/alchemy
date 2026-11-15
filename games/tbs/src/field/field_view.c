@@ -76,16 +76,16 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline) {
   s32 groundPoint[3];
   s32 cameraPoint[3];
-  s32 horizon;
-  s32 focus;
+  FIXED horizon;
+  FIXED focus;
   s32 *cameraCoordinates;
   s32 line;
-  s32 distance;
-  s32 difference;
-  s32 scale;
-  s32 horizontalSquared;
+  FIXED distance;
+  FIXED difference;
+  FIXED scale;
+  FIXED horizontalSquared;
   s32 verticalSquared;
-  s32 diagonal;
+  FIXED diagonal;
   s32 vertical;
   s32 groundHeight = 0;
   s32 horizontal;

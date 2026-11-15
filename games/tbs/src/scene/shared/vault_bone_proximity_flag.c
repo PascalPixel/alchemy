@@ -10,7 +10,7 @@
 /// Keeps the girl at the inn from offering another Bone too soon.
 static void Vault_UpdateBoneProximityFlag(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  s32 fixedX = leader->x.fixed;
+  FIXED fixedX = leader->x.fixed;
   s32 column;
   s32 row;
 

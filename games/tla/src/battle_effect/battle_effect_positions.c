@@ -12,7 +12,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
   s32 *object;
   u8 *info;
-  s32 scale;
+  FIXED scale;
 
   camera = Ram_HeapSlots->cameraWork;
   object = BattleObject_GetFar(unit)->object;

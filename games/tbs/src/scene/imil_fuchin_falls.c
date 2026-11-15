@@ -1582,8 +1582,8 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
 static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   struct CaveDustOptions options;
   s32 framePhase;
-  s32 velocityX;
-  s32 velocityY;
+  FIXED velocityX;
+  FIXED velocityY;
 
   framePhase = gFrameCount & 3;
   if (framePhase != 0)
@@ -1748,8 +1748,8 @@ static void Imil_SlideActorAcrossIce(void) {
   s32 heading;
   s32 startBehavior;
   s32 nextBehavior;
-  s32 z;
-  s32 x;
+  FIXED z;
+  FIXED x;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 

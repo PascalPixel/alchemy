@@ -291,7 +291,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
+    FIXED target;
     s32 frames;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -639,7 +639,7 @@ frame:
     v[2] = -toFIXED(2);
     v[1] = 0;
     {
-      s32 x = ((Random16() & 127) << 16) + (208 << 15);
+      FIXED x = ((Random16() & 127) << 16) + (208 << 15);
 
       FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
                         v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
@@ -1635,8 +1635,8 @@ void ShamanVillage_ShowShamansRod(void) {
   // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   {
-    s32 y = toFIXED(80);
-    s32 z = toFIXED(242);
+    FIXED y = toFIXED(80);
+    FIXED z = toFIXED(242);
 
     DriftScene_SpawnObject(toFIXED(116), y, z, 0xe000);
     Event_Wait(10);

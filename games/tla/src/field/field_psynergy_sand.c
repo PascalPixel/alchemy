@@ -46,8 +46,8 @@ void FieldPsynergy_WatchSandGround(void) {
     reason = 2;
   if (party->movementMode == LEADER_MOVEMENT_SAND && object->userValue != 0 &&
       object->timer == 0) {
-    s32 x;
-    s32 z;
+    FIXED x;
+    FIXED z;
 
     if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
@@ -161,7 +161,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 position[3];
+  FIXED position[3];
 
   EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
@@ -194,8 +194,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
                      s32 tiles, s32 high) {
   struct Actor *mainActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
-  s32 position[3];
-  s32 y;
+  FIXED position[3];
+  FIXED y;
 
   position[0] = mainActor->x.fixed;
   position[1] = y = mainActor->y.fixed;
@@ -407,7 +407,7 @@ void FieldPsynergy_Sand(void) {
   s32 pictureEntry;
   s32 particleEntry;
   s32 particleTiles;
-  s32 savedY;
+  FIXED savedY;
   u8 savedFlags;
   u8 *motionFlags;
   s32 pictureTiles;

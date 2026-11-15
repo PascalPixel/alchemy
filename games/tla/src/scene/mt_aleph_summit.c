@@ -303,7 +303,9 @@ s32 Scene_Initialize(void) {
   struct PaletteFade *fade;
   void *buffer;
   s32 mode;
-  s32 i, j, scale, r, g, b, value;
+  s32 i, j;
+  FIXED scale;
+  s32 r, g, b, value;
   s32 c;
   u16 *color, *out;
   u8 *message;

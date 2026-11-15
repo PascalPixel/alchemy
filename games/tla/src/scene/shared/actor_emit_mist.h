@@ -4,8 +4,8 @@ s32 Actor_EmitMist(struct Actor *object) {
 
   if (gFrameCount & 1) {
     s32 drift;
-    s32 x;
-    s32 y;
+    FIXED x;
+    FIXED y;
 
     params[1] = 7;
     if ((gFrameCount & 2) == 0)

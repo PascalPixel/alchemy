@@ -641,7 +641,7 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
   s32 rise = 0x1c0000;
-  s32 y;
+  FIXED y;
 
   y = first->y.fixed;
   Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,

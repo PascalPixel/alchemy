@@ -262,7 +262,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   s32 frame;
   struct BattleCamera *bg;
   void *tiles;
-  s32 scrollA;
+  FIXED scrollA;
   s32 scrollB;
   s32 duration;
   s32 base[3];
@@ -614,7 +614,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     s32 count;
     s32 start;
     s32 half;
-    s32 height;
+    FIXED height;
     s32 angle;
     s32 top;
     s32 scroll;
@@ -1183,7 +1183,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 // DEAD: this arm runs only for kind 79, so the kind 89 test
                 // never holds; the ROM keeps the compare and both arms.
                 {
-                  s32 gravity;
+                  FIXED gravity;
                   if (kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
                     gravity = 0;
                   else

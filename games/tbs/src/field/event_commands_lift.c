@@ -13,10 +13,12 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   // Untyped: as struct Actor *, the load of pair[0] waits for the store to
   // the target's motion flags.
   void *pair[2];
-  s32 pos[3];
-  s32 x, y, z;
+  FIXED pos[3];
+  s32 x;
+  FIXED y;
+  s32 z;
   s32 handIndex;
-  s32 startY;
+  FIXED startY;
 
   effectWork = gFieldEffectWork;
   target = effectWork->child;
@@ -80,7 +82,7 @@ DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 /// full size over 24 frames; angle is the way it faces once grown.
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
-  s32 scale;
+  FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);

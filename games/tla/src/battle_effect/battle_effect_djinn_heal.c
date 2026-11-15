@@ -38,7 +38,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   // Unused: draws[1] gives the stack frame its 4 bytes.
   DrawRectangle draws[2];
   s32 i;
-  s32 height;
+  FIXED height;
   s32 fade;
 
   work = Ram_HeapSlots->battleEffect;
@@ -176,7 +176,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       job->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {
-        s32 scale;
+        FIXED scale;
         s32 delay;
 
         quad = &work->particles[i];
@@ -184,8 +184,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         scale = quad->variant;
 
         if (frame >= delay) {
-          s32 across;
-          s32 deep;
+          FIXED across;
+          FIXED deep;
 
           Matrix_Initialize();
           Matrix_RotateX(3000);
@@ -247,7 +247,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 skip;
   DrawRectangle blitters[2];
   struct Scale request;
-  s32 placement[4];
+  FIXED placement[4];
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
@@ -570,7 +570,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       model->scrollV = 0;
       for (k = 0; k != 4; k++) {
         s32 start = gZagan_RingStarts[k] + 157;
-        s32 scale;
+        FIXED scale;
         s32 shade;
 
         if (frame <= start) {

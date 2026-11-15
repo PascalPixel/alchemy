@@ -179,7 +179,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
       s32 life = spark->variant;
 
       if (life > 0) {
-        s32 x;
+        FIXED x;
         s32 y;
         s32 py;
 

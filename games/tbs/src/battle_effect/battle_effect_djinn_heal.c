@@ -23,7 +23,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   s32 position[3];
-  s32 target[3];
+  FIXED target[3];
   s32 delta[3];
   s32 djinniPoint[3];
   struct ScreenPoint screen;

@@ -348,7 +348,7 @@ static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
 /// Mercury Lighthouse, the doorway: touching cell behavior 41 while the Lizard
 /// Man stands in the doorway.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
-  s32 leaderX;
+  FIXED leaderX;
   s32 leaderColumn;
 
   leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;

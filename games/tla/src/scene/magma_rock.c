@@ -508,7 +508,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     struct EffectOptions config;
     s32 dz;
     s32 velocityZ;
-    s32 z;
+    FIXED z;
 
     config.type = 403;
     config.priority = 2;
@@ -530,7 +530,7 @@ FIXED Trig_Cos(s32 angle);
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
 void MagmaRock_RollMagmaRock(struct Actor *object) {
-  s32 step;
+  FIXED step;
   struct Actor *partner;
   struct Actor *leader;
 
@@ -738,7 +738,7 @@ s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
 
 s32 MagmaRock_FireFromStatue(struct Actor *source) {
-  s32 position[3];
+  FIXED position[3];
   struct EffectOptions options;
   struct Actor *object;
   struct Actor *other;
@@ -748,9 +748,9 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
   s32 attributes;
 
   {
-    s32 x = source->x.fixed;
-    s32 y = source->y.fixed;
-    s32 z = source->z.fixed;
+    FIXED x = source->x.fixed;
+    FIXED y = source->y.fixed;
+    FIXED z = source->z.fixed;
 
     object = FieldActor_Create(403, x, y, z);
   }
@@ -1087,8 +1087,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     } else if (gMainRoutineWork.next ==
                SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
       s16 entrance = gMainRoutineWork.entrance;
-      s32 x = object->x.fixed;
-      s32 z = object->z.fixed;
+      FIXED x = object->x.fixed;
+      FIXED z = object->z.fixed;
 
       if (entrance <= 3)
         id = MagmaRock_LookUpCellStatue(x, z,
@@ -1496,7 +1496,7 @@ void MagmaRock_LaunchLeader(void) {
   struct EffectOptions options;
   u32 i;
   s32 angle;
-  s32 velocity[3];
+  FIXED velocity[3];
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1654,8 +1654,8 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
   struct Actor *actor;
   // other serves in turn as a table, a step and a size.
-  s32 other, rise;
-  s32 offset;
+  FIXED other, rise;
+  FIXED offset;
   s32 priorityBit, destinationX, destinationColumn, width;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1955,7 +1955,7 @@ void MagmaRock_SpawnDustRing(void);
 void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   struct Actor *leader;
   struct Actor *target;
-  s32 position[3];
+  FIXED position[3];
 
   if (Field_TryJumpForward() != 0)
     return;
@@ -2090,7 +2090,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
   struct Actor *leader;
   struct Actor *actor8;
   struct Actor *target;
-  s32 position[3];
+  FIXED position[3];
 
   if (Field_TryJumpForward() != 0)
     return;
@@ -2177,7 +2177,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
-  s32 y;
+  FIXED y;
 
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);
@@ -2256,7 +2256,7 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 cell = Ram_HeapSlots->mapGrid->layers[layer].cells -
              (struct MapCell *)Ram_MapCellBuffer;
-  s32 z = actor->z.fixed;
+  FIXED z = actor->z.fixed;
   u8 *shapes = gMapShapeGrid + cell;
   s32 value;
   s32 height;

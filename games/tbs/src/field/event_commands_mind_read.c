@@ -220,7 +220,7 @@ s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
 
 /// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
 FIXED FixedPoint_Remainder(FIXED value, FIXED divisor) {
-  s32 quot;
+  FIXED quot;
 
   if (divisor == 0)
     return 0;

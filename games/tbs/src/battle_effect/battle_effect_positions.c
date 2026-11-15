@@ -65,7 +65,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera = gBattleCamera;
   struct Actor *actor;
   struct Sprite *info;
-  s32 scale;
+  FIXED scale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED s32 unused[3];

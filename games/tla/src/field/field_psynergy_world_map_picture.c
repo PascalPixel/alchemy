@@ -178,13 +178,13 @@ void WorldPicture_UpdateMarkers(void) {
   s32 height;
   s32 placeX;
   s32 placeY;
-  s32 pos[3];
+  FIXED pos[3];
   s32 x;
   s32 y;
   s32 dx;
   s32 dz;
-  s32 distance;
-  s32 step;
+  FIXED distance;
+  FIXED step;
   s32 cursorX;
   s32 cursorY;
   u16 angle;
@@ -483,8 +483,8 @@ void WorldMapPicture_Draw(void) {
   s32 bufferRow;
   s32 unwrapped;
   u32 i;
-  s32 right;
-  s32 bottom;
+  FIXED right;
+  FIXED bottom;
   s32 tile;
 
   if (work->centered != 0) {
@@ -644,8 +644,8 @@ void WorldMapPicture_UpdateScroll(void) {
   s32 y = *cursor - toFIXED(80);
   s32 dx;
   s32 dy;
-  s32 distance;
-  s32 step;
+  FIXED distance;
+  FIXED step;
   u32 column;
   u32 row;
   s32 limit;

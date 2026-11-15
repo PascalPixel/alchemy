@@ -113,7 +113,7 @@ void LemuriaDock_AskSettingOff(void) {
   struct MainRoutineWork *party;
   s32 id;
   s32 limit;
-  s32 z;
+  FIXED z;
 
   if (gFieldWork->psynergy != 0) {
     Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId, 0);

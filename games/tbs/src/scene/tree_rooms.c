@@ -1095,7 +1095,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   struct Actor *leader;
   u32 particleIndex;
   s32 velocityX;
-  s32 velocityZ;
+  FIXED velocityZ;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

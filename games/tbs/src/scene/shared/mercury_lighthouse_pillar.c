@@ -12,7 +12,7 @@
 static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
-  s32 scale;
+  FIXED scale;
 
   if (step > 31) {
     return 0;
@@ -57,8 +57,8 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
 /// parameter.
 static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   struct Actor *leader;
-  s32 targetZ;
-  s32 targetX;
+  FIXED targetZ;
+  FIXED targetX;
   s32 deltaX;
   s32 deltaZ;
   s32 distance;

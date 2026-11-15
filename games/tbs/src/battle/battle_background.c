@@ -187,9 +187,9 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   s32 panX;
   u16 *line;
   struct BattleAffine *affine;
-  s32 ratio;
+  FIXED ratio;
   s32 step;
-  s32 x;
+  FIXED x;
   s32 y;
   u32 scanline;
   u32 lowerHalfLine;
@@ -252,7 +252,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = BATTLE_CAMERA_DISTANCE;
+  FIXED span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is never set, so the scale is whatever its register held; UBFIX
   // takes it as a parameter.
 #ifndef UBFIX
@@ -260,13 +260,13 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
-  s32 scale = (zoom << 16) / 100;
+  FIXED scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 alpha;
-  s32 half;
-  s32 width;
+  FIXED alpha;
+  FIXED half;
+  FIXED width;
   u32 result;
 
   SET_VECTOR(focus, x, depth, y);
@@ -306,14 +306,14 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
-  s32 scale = (zoom << 16) / 100;
-  s32 renderBounds[3];
+  FIXED scale = (zoom << 16) / 100;
+  FIXED renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = BATTLE_CAMERA_DISTANCE;
-  s32 alpha;
-  s32 half;
-  s32 width;
+  FIXED span = BATTLE_CAMERA_DISTANCE;
+  FIXED alpha;
+  FIXED half;
+  FIXED width;
   u32 result;
 
   SET_VECTOR(focus, x, depth, y);
@@ -357,12 +357,12 @@ void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;
   struct Actor *secondActor = BattleObject_Get(secondUnitId)->actor;
-  s32 firstX = firstActor->x.fixed;
-  s32 secondX = secondActor->x.fixed;
-  s32 firstZ = firstActor->z.fixed;
-  s32 secondZ = secondActor->z.fixed;
-  s32 x = (secondX + firstX) / 2;
-  s32 z = (secondZ + firstZ) / 2;
+  FIXED firstX = firstActor->x.fixed;
+  FIXED secondX = secondActor->x.fixed;
+  FIXED firstZ = firstActor->z.fixed;
+  FIXED secondZ = secondActor->z.fixed;
+  FIXED x = (secondX + firstX) / 2;
+  FIXED z = (secondZ + firstZ) / 2;
 
   BattleCamera_SetView(x, 0, z, zoom);
 }

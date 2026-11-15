@@ -676,7 +676,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
 static void FuchinTemple_ToppleTreeSouth(void) {
   struct Actor *tree;
   u32 stepIndex;
-  s32 particleSpeed;
+  FIXED particleSpeed;
   s32 delay;
 
   tree = Actor_Get(ACTOR_TRAINING_TREE);
@@ -2576,8 +2576,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   struct EffectOptions options;
   struct Actor *hama;
   u32 particleIndex;
-  s32 particleX;
-  s32 particleY;
+  FIXED particleX;
+  FIXED particleY;
   s32 riseSpeed;
 
   Sound_Play(SE_PSYNERGY_SPARKLE);

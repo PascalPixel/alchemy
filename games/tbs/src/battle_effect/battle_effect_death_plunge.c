@@ -29,8 +29,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct BattleObject *second;
   struct Actor *user;
   struct Actor *target;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 userHeight;
   s32 targetHeight;
   s32 point[3];
@@ -551,7 +551,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   radius = 0;
   piece = work->particles;
   for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
-    s32 x, y, vx, vy;
+    FIXED x, y;
+    s32 vx, vy;
 
     x = INTtoFIXED(*startX++);
     y = INTtoFIXED(*startY++);

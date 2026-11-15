@@ -308,11 +308,11 @@ static void Xian_TalkToWaterCarrier(void) {
   struct Actor *leader;
   s32 leaderMustStepAside;
   s32 savedFacing;
-  s32 carrierX;
+  FIXED carrierX;
   s32 carrierCellZ;
   s32 carrierColumnX;
   s32 scaleY;
-  s32 scaleX;
+  FIXED scaleX;
 
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   Event_Start();
@@ -441,7 +441,7 @@ static void Xian_UpdatePuddlePriority(void) {
 /// leader can stand on, and there is nothing left to jump over.
 static void Xian_FreezeSpilledWater(void) {
   struct Actor *puddle;
-  s32 puddleX;
+  FIXED puddleX;
 
   Event_Start();
   Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
@@ -459,7 +459,7 @@ static void Xian_FreezeSpilledWater(void) {
 /// Talking to the kung fu student in Xian.
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
-  s32 reboundVelocity;
+  FIXED reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
 
@@ -768,7 +768,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_XIAN_SPILLED_WATER_FROZEN)) {
     Actor_SetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_PILLAR);
     {
-      s32 puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
+      FIXED puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
 
       MapGrid_CopyCellAttributeRect(3, 17, 1, 1, FIELD_CELL(puddleX),
                                     Actor_Get(ACTOR_SPILLED_WATER)->z.fixed >>

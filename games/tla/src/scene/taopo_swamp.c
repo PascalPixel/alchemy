@@ -304,7 +304,9 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   struct Actor *splash, *spark;
   struct FieldSprite *sprite, *splashSprite, *sparkSprite;
-  s32 i, x, z, k, zero;
+  s32 i;
+  FIXED x, z;
+  s32 k, zero;
 
   if (FIELD_CELL(actor->x.fixed) != 12)
     return;
@@ -527,7 +529,7 @@ test:
 /// level in three hops (flag 0x310).
 void TaopoSwamp_BlowFlowerOffLedge(void) {
   struct Actor *object = Actor_Get(ACTOR_FLOWER);
-  s32 speed;
+  FIXED speed;
   s32 i;
 
   Event_Start();
@@ -789,7 +791,8 @@ extern u32 gTaopoSwamp_TremorPillarScript[];
 void TaopoSwamp_TremorPillar(void) {
   struct Actor *rock = Actor_Get(ACTOR_TREMOR_BOULDER);
   struct Actor *clod;
-  s32 i, row, cosine;
+  s32 i, row;
+  FIXED cosine;
   s32 (*mul)(s32, s32);
   u32 angle, speed, scale;
   s32 turn = -256;
@@ -995,9 +998,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// A falling drop splashes where it lands.
 s32 TaopoSwamp_LandDrop(struct Actor *object) {
-  s32 y = object->y.fixed;
+  FIXED y = object->y.fixed;
   struct Actor *spark;
-  s32 scale;
+  FIXED scale;
 
   if (y + object->velocityY < object->groundHeight) {
     spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, y, object->z.fixed);
@@ -1022,9 +1025,9 @@ void TaopoSwamp_DripAtRandom(void) {
   if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {
     s32 x = (Random16() << 5) + 0x2080000;
     s32 z = 0xb00000 - (Random16() << 3);
-    s32 y = toFIXED(160);
+    FIXED y = toFIXED(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = FIXED_ONE * 33 / 100;
+    FIXED scale = FIXED_ONE * 33 / 100;
 
     if (object != NULL) {
       object->scaleX = scale;
@@ -1158,7 +1161,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
   s32 flag;
   s32 count;
   struct Actor *spark;
-  s32 scale;
+  FIXED scale;
 
   if (object->y.fixed + object->velocityY < object->groundHeight) {
     flag = Event_GetFlag(FLAG_SCENE_TEMP_21);
@@ -1199,11 +1202,11 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
 /// Every 64 frames a drop falls from the ceiling onto the vent spot.
 void TaopoSwamp_DripFromCeiling(void) {
   if ((gFrameCount & 63) == 0) {
-    s32 x = toFIXED(408);
-    s32 z = toFIXED(440);
-    s32 y = toFIXED(160);
+    FIXED x = toFIXED(408);
+    FIXED z = toFIXED(440);
+    FIXED y = toFIXED(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = FIXED_ONE * 33 / 100;
+    FIXED scale = FIXED_ONE * 33 / 100;
 
     if (object != NULL) {
       object->scaleX = scale;

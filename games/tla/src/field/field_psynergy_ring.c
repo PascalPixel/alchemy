@@ -536,8 +536,8 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *center = event->camera;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 edge;
 
   // Japanese does not check the map's rectangle list here.

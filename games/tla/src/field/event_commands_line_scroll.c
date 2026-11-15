@@ -61,7 +61,7 @@ void LineScroll_BuildPage(void) {
   u16 *row;
   s32 step;
   s32 phase;
-  s32 amplitude;
+  FIXED amplitude;
   s32 scanline;
   u16 wave;
   u16 waveX3;

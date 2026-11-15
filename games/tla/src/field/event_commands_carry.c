@@ -29,7 +29,7 @@ void FieldPsynergy_Carry(void) {
   struct ScatterPosition pos;
   struct Actor **walk;
   s32 n;
-  s32 dist;
+  FIXED dist;
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
@@ -70,7 +70,7 @@ void FieldPsynergy_Carry(void) {
 /// turn a frame, then faces it to angle.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
-  s32 scale;
+  FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);

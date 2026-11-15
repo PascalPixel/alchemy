@@ -51,7 +51,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct ScreenPoint pos;
   struct Particle *arrow;
-  s32 backgroundX;
+  FIXED backgroundX;
   s32 speed;
   s32 drawn;
   s32 row;
@@ -365,8 +365,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   DrawRectangle blit[2];
   struct ScreenPoint target;
   struct ModelTexture texture;
-  s32 reaperX;
-  s32 reaperY;
+  FIXED reaperX;
+  FIXED reaperY;
   s32 speed;
   struct ScreenPoint *position;
   s32 shift;
@@ -1276,7 +1276,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 zero;
   u8 *coilMesh = Ram_MapCellBuffer + 0x4800;
   s16 list[UNIT_MAX];
-  s32 place[4];
+  FIXED place[4];
   struct Scale req;
   struct ScreenPoint pos;
   struct ModelTexture texture;
@@ -1749,7 +1749,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
     }
     for (k = 0; k != 9; k++) {
-      s32 top = 0;
+      FIXED top = 0;
 
       for (i = 0; i != 7; i++) {
         struct Particle *step = &work->particles[k * 7 + i];

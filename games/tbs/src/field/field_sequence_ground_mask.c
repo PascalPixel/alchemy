@@ -16,8 +16,8 @@ void FadeOverlay_DrawMarks(void) {
   s32 cameraZ = (s16)FIXEDtoINT(view[1]);
   struct AnimationSpritePart *mark = work->marks;
   struct Actor *actor = work->actor;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 terrainFloor;
   s32 terrainLayer;
   u32 tile;

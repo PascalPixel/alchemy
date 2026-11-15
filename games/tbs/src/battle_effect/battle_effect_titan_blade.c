@@ -37,7 +37,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   s32 frame;
   s32 canvasCenterX;
   s32 step;
-  s32 sparkOriginX;
+  FIXED sparkOriginX;
   s32 i;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];

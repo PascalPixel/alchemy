@@ -241,11 +241,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   u8 *map;
   s32 *ctl;
   s32 *bank;
-  s32 camera;
-  s32 prevCamera;
-  s32 waveX;
+  FIXED camera;
+  FIXED prevCamera;
+  FIXED waveX;
   s32 waveScroll;
-  s32 shipY;
+  FIXED shipY;
   s32 wavePhase;
   s32 savedY;
   s32 bgX;
@@ -477,8 +477,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     u16 *pal;
     s32 swayX;
     s32 swayY;
-    s32 bobX;
-    s32 bobY;
+    FIXED bobX;
+    FIXED bobY;
     s32 *ringX;
     void *pixels;
 
@@ -1423,15 +1423,15 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   s32 j;
-  s32 centerX;
-  s32 centerY;
+  FIXED centerX;
+  FIXED centerY;
   s32 burst;
   struct Particle *spark;
   s32 mask;
-  s32 discX;
+  FIXED discX;
   s32 ringOffset;
-  s32 ringX;
-  s32 discY;
+  FIXED ringX;
+  FIXED discY;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;

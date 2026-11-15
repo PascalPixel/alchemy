@@ -740,12 +740,12 @@ static void MercuryLighthouse_SprayAtFountain(void) {
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   u32 row;
   s32 rowOffset;
-  s32 particleX;
+  FIXED particleX;
   u32 particleIndex;
   s32 sparkleOffset;
   s32 rowShift;
-  s32 velocityX;
-  s32 velocityZ;
+  FIXED velocityX;
+  FIXED velocityZ;
   u32 nextRow;
   struct EffectOptions options;
 
@@ -796,9 +796,9 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 static void MercuryLighthouse_StopFountainSpray(void) {
   u32 row;
   u32 particleIndex;
-  s32 offsetX;
-  s32 particleX;
-  s32 particleZ;
+  FIXED offsetX;
+  FIXED particleX;
+  FIXED particleZ;
   struct EffectOptions options;
 
   MapGrid_CopyCellsTo(78, 58, 110, 36, 1, 1);
@@ -1130,8 +1130,8 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 /// Sparkles rise from the sliding statue as it moves.
 static void MercuryLighthouse_SprayAboveStatue(void) {
   struct Actor *statue = Actor_Get(ACTOR_SLIDING_STATUE);
-  s32 particleY = statue->y.fixed + INTtoFIXED(Random_Below(4));
-  s32 particleZ = statue->z.fixed;
+  FIXED particleY = statue->y.fixed + INTtoFIXED(Random_Below(4));
+  FIXED particleZ = statue->z.fixed;
 
   MercuryLighthouse_SparkleAt(statue->x.fixed, particleY, particleZ);
 }
@@ -1191,7 +1191,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         if (MercuryLighthouse_StartStatueSlide() != 0) {
-          s32 x;
+          FIXED x;
 
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
           x = toFIXED(840);
@@ -1657,9 +1657,9 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct Actor *actor;
   u32 frame;
-  s32 particleX;
-  s32 particleY;
-  s32 riseSpeed;
+  FIXED particleX;
+  FIXED particleY;
+  FIXED riseSpeed;
 
   actor = Actor_Get(actorId);
   actor->motionFlags = 0;
@@ -1696,8 +1696,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 wave;
   u32 particleIndex;
-  s32 particleX;
-  s32 particleVelocityX;
+  FIXED particleX;
+  FIXED particleVelocityX;
   struct EffectOptions options;
 
   Event_Start();
@@ -1754,7 +1754,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.targetScaleX = 6 * FIXED_ONE / 5;
   options.targetScaleY = 6 * FIXED_ONE / 5;
   for (wave = 0; wave <= 3; wave++) {
-    s32 particleSpeed;
+    FIXED particleSpeed;
 
     MapGrid_CopyCellsTo(59, (12 - wave), 48, (12 - wave), 3, 1);
     particleIndex = 0;
@@ -1984,8 +1984,8 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
   for (row = 0; row <= 1; row++) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
-        s32 velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-        s32 velocityZ = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+        FIXED velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+        FIXED velocityZ = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
         FieldEffect_Spawn(
             toFIXED(105), 0,
@@ -2006,7 +2006,7 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
   struct EffectOptions options;
   u32 row;
   u32 particleIndex;
-  s32 offsetZ;
+  FIXED offsetZ;
 
   MapGrid_CopyCellsTo(76, 61, 74, 38, 1, 1);
   options.palette = SPRITE_COLOR_BRG;
@@ -2050,9 +2050,9 @@ static void MercuryLighthouse_SparkleAroundLeader(void) {
     options.startScaleX = 7 * FIXED_ONE / 10;
     options.startScaleY = 7 * FIXED_ONE / 10;
     {
-      s32 y = leader->y.fixed + INTtoFIXED(Random_Below(4));
-      s32 velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-      s32 velocityY = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+      FIXED y = leader->y.fixed + INTtoFIXED(Random_Below(4));
+      FIXED velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+      FIXED velocityY = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
       FieldEffect_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX,
                         velocityY, framePhase,
@@ -2073,8 +2073,8 @@ static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
     options.startScaleX = 7 * FIXED_ONE / 10;
     options.startScaleY = 7 * FIXED_ONE / 10;
     {
-      s32 velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-      s32 velocityY = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+      FIXED velocityX = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+      FIXED velocityY = (Random_Below(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
       FieldEffect_Spawn(x, y, z, velocityX, velocityY, framePhase,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
@@ -2086,8 +2086,8 @@ static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
 /// south.
 static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
-  s32 particleX;
-  s32 particleZ;
+  FIXED particleX;
+  FIXED particleZ;
 
   options.palette = SPRITE_COLOR_WHITE;
   options.priority = 1;
@@ -2122,8 +2122,8 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
       Vector_AddPolarOffset((6 - (particleIndex >> 1)) * (toFIXED(1) / 10),
                             angle, velocity);
       {
-        s32 particleX = x + INTtoFIXED(6 - Random_Below(6));
-        s32 particleZ = z + INTtoFIXED(6 - Random_Below(6));
+        FIXED particleX = x + INTtoFIXED(6 - Random_Below(6));
+        FIXED particleZ = z + INTtoFIXED(6 - Random_Below(6));
 
         FieldEffect_Spawn(
             particleX, y, particleZ, velocity[0], velocity[1], velocity[2],
@@ -2139,7 +2139,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
 s32 Scene_Initialize(void) {
   u32 statueIndex;
   s32 positionFlag;
-  s32 statueX;
+  FIXED statueX;
   s32 keepPartyPosition;
   s32 alpha;
 
@@ -2657,7 +2657,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
 /// the lift down from the Lighthouse Aerie beside its statue.
 static void MercuryLighthouse_RideLift(void) {
   struct MapGridLayerScroll *liftLayer;
-  s32 liftSpeed;
+  FIXED liftSpeed;
 
   liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];

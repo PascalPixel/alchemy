@@ -90,8 +90,8 @@ static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   struct Actor *leader;
   s32 opponentFirst;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   u16 *prizeActorId;
   s16 *raisedPrizeActorId;
 

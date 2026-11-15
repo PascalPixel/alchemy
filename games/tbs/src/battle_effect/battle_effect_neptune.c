@@ -37,8 +37,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   void *canvas;
   u8 *particleSheet;
   s32 windowEdgeStep;
-  s32 neptuneX;
-  s32 neptuneZ;
+  FIXED neptuneX;
+  FIXED neptuneZ;
   s32 neptuneVelocityX;
   s32 neptuneVelocityZ;
   s32 savedBg1ScrollX;

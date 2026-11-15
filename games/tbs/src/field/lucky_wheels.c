@@ -1038,7 +1038,7 @@ void LuckyWheels_InitializeTitle(void) {
   const u8 *width;
   s32 left;
   s32 step;
-  s32 y;
+  FIXED y;
   s32 i;
   s32 angle;
   struct Window *window;

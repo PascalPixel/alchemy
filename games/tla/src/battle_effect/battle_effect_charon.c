@@ -70,11 +70,11 @@ extern const struct Scale gCharon_FinaleScale;
 void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u16 tiles[CHARON_ARROW_FRAMES];
   s16 emptyList[UNIT_MAX];
-  s32 swarmPlace[4];
-  s32 pulsePlace[4];
-  s32 objectPlace[4];
-  s32 revealPlace[4];
-  s32 finalePlace[4];
+  FIXED swarmPlace[4];
+  FIXED pulsePlace[4];
+  FIXED objectPlace[4];
+  FIXED revealPlace[4];
+  FIXED finalePlace[4];
   DrawRectangleFn routine[2];
   struct ModelTexture lateTexture;
   struct ModelTexture revealTexture;
@@ -89,8 +89,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u8 *glyphs;
   struct BattleWork *battle;
   DrawRectangleFn *blit;
-  s32 posX;
-  s32 posZ;
+  FIXED posX;
+  FIXED posZ;
   s32 t56;
   s32 red;
   s32 green;
@@ -608,7 +608,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
       {
-        s32 objectScale[2];
+        FIXED objectScale[2];
 
         objectPlace[3] = 0;
         objectPlace[1] = toFIXED(255);
@@ -994,7 +994,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       s32 y;
       s32 w;
       s32 h;
-      s32 cosine;
+      FIXED cosine;
 
       if (row < 0) {
         row = 0;

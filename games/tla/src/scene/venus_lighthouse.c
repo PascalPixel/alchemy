@@ -190,7 +190,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -234,7 +234,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   struct Actor *blockingActor;
   s32 directionIndex;
   u32 step;
-  s32 moveRate;
+  FIXED moveRate;
   s32 transitionBusy;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -327,7 +327,8 @@ s32 VenusLighthouse_PulseChildEffect(void *actor) {
 /// Emits a rising particle near the actor every eight frames.
 s32 VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   struct EffectOptions options;
-  s32 framePhase, particleX, particleY, riseSpeed;
+  s32 framePhase;
+  FIXED particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     options.priority = 3 - (s32)(Random_Below(2));
@@ -461,7 +462,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 /// the way past it opens.
 void VenusLighthouse_SinkStatue(void) {
   struct Actor *obj;
-  s32 val;
+  FIXED val;
   s32 a;
   s32 b;
 

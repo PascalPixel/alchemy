@@ -24,7 +24,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   u8 *graphics;
   DrawRectangle draw[2];
-  s32 scale;
+  FIXED scale;
   s32 scroll;
   s32 overflow;
   s32 length;

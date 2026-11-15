@@ -10,7 +10,7 @@ void Rubble_Spray(s32 spread) {
   struct FieldEffect *effect;
   void *frame = 0;
   u32 i = 0;
-  s32 y;
+  FIXED y;
 
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);

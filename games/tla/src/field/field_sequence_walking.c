@@ -76,7 +76,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 position[3];
+  FIXED position[3];
   u8 *cell;
 
   if (object == NULL)
@@ -93,7 +93,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     cell = Ram_MapBlocks +
            ((((x / toFIXED(32)) & 31) + (((z / toFIXED(32)) & 31) << 5)) << 2);
   } else {
-    s32 x, z;
+    FIXED x, z;
 
     x = position[0];
     cell = (u8 *)map->layers[0].cells;

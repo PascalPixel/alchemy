@@ -17,7 +17,8 @@ void Kolima_UpdateCurseDust(void) {
   struct Actor *actor = NULL;
   s32 *origin;
   struct Sprite *sprite;
-  s32 x, z;
+  s32 x;
+  FIXED z;
 
   switch (gFallingEffectState) {
   case KOLIMA_DUST_CLOSING:

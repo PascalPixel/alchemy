@@ -48,14 +48,14 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
                                      FIXED requestedZ, s32 glide) {
   s32 shouldGlide;
   struct FieldWork *runtimeBlock;
-  s32 minimumX;
-  s32 minimumZ;
-  s32 maximumX;
-  s32 cameraY;
-  s32 maximumZ;
-  s32 positionX;
-  s32 positionZ;
-  s32 positionY;
+  FIXED minimumX;
+  FIXED minimumZ;
+  FIXED maximumX;
+  FIXED cameraY;
+  FIXED maximumZ;
+  FIXED positionX;
+  FIXED positionZ;
+  FIXED positionY;
   struct MapGridScrollWork *grid;
   struct Actor *camera;
 

@@ -411,7 +411,7 @@ s32 Scene_Initialize(void) {
                                  toFIXED(335), turn);
       {
         s32 angle = FACING_SOUTHWEST;
-        s32 z = toFIXED(336);
+        FIXED z = toFIXED(336);
 
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
                                                        toFIXED(345), z, angle);

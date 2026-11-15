@@ -61,7 +61,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s32 *transition;
   u8 *sprites;
   struct BattleWork *battle;
-  s32 camZ;
+  FIXED camZ;
   s32 swapped;
   s32 drift;
   s32 sway;
@@ -80,7 +80,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct Sprite *obj;
   struct ModelTexture aerialTexture;
   s16 list[UNIT_MAX];
-  s32 place[4];
+  FIXED place[4];
   struct ScreenPoint pos;
   struct Scale req;
   struct ModelTexture texture;
@@ -1027,7 +1027,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   {
-    s32 rise;
+    FIXED rise;
     s32 top;
     void *aerialVertices;
     s32 aerialShade;
@@ -1336,7 +1336,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
   }
   {
-    s32 slide;
+    FIXED slide;
     s32 slideStep;
     u8 *bolts;
     void *quads = Ram_MapCellBuffer + 0x1000;
@@ -1547,10 +1547,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Matrix_Translate(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
         Matrix_RotateZ(-TRIG_TURN / 32);
         {
-          s32 s0 = Trig_Sin(a);
+          FIXED s0 = Trig_Sin(a);
           s32 y0 = (s0 << 5) + Trig_Cos(b) * 24;
-          s32 s1;
-          s32 y1;
+          FIXED s1;
+          FIXED y1;
 
           a += 6096;
           s1 = Trig_Sin(a);

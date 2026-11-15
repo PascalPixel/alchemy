@@ -247,7 +247,8 @@ void FieldPsynergy_Douse(void) {
     {
       struct Vector3 *a = &end;
       struct Vector3 *b = &start;
-      s32 e, t;
+      s32 e;
+      FIXED t;
 
       e = b->x;
       t = a->x;
@@ -418,8 +419,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
     {
       struct Actor *second;
-      s32 x;
-      s32 z;
+      FIXED x;
+      FIXED z;
 
       Sound_PlayFar(SE_NOTE_HIGH);
       x = p->x;

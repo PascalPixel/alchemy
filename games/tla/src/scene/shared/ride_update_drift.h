@@ -1,8 +1,8 @@
 /// A drifting object's update, stopping against the leader.
 void Ride_UpdateDrift(struct Actor *object) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 dx = object->bounce;
-  s32 dz;
+  FIXED dx = object->bounce;
+  FIXED dz;
   struct SpriteParts *parts;
   s32 rate;
   s32 scale;

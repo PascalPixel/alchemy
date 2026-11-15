@@ -183,10 +183,10 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   u16 wrap;
   u16 *line;
   struct BattleAffine *affine;
-  s32 ratio;
+  FIXED ratio;
   s32 step;
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
   u32 scanline;
   u32 lowerHalfLine;
 
@@ -242,20 +242,20 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = BATTLE_CAMERA_DISTANCE;
+  FIXED span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
 #endif
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->focus;
-  s32 scale = (zoom << 16) / 100;
+  FIXED scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 alpha;
-  s32 half;
-  s32 width;
+  FIXED alpha;
+  FIXED half;
+  FIXED width;
   u32 result;
 
   pos[0] = x;
@@ -299,14 +299,14 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->focus;
-  s32 scale = (zoom << 16) / 100;
-  s32 renderBounds[3];
+  FIXED scale = (zoom << 16) / 100;
+  FIXED renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = BATTLE_CAMERA_DISTANCE;
-  s32 alpha;
-  s32 half;
-  s32 width;
+  FIXED span = BATTLE_CAMERA_DISTANCE;
+  FIXED alpha;
+  FIXED half;
+  FIXED width;
   u32 result;
 
   pos[0] = x;
@@ -715,8 +715,8 @@ void ElementGlow_UpdateStarField(void) {
   struct Ring *ring;
   s32 *pos;
   s32 k;
-  s32 dist;
-  s32 scale;
+  FIXED dist;
+  FIXED scale;
   s32 step;
   u32 radius;
   s32 angle;
@@ -872,7 +872,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     spark->life = (radius >> 13) + 1;
   }
   for (i = 0; i < STAR_FIELD_RINGS; i++) {
-    s32 radius = 0x1000;
+    FIXED radius = 0x1000;
     s32 angle;
 
     ring = &work->rings[i];

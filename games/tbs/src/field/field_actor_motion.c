@@ -74,22 +74,22 @@ void Actor_UpdateAllThumb(void) {
   struct Actor *actor;
   const ActorScriptWords *script;
   s32 actorsLeft;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 ground;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED ground;
   s32 arrivedAtTarget;
   s32 pos[3];
   s32 dx;
   s32 dy;
   s32 dz;
-  s32 velocityX;
+  FIXED velocityX;
   s32 velocityY;
-  s32 velocityZ;
+  FIXED velocityZ;
   s32 distance;
-  s32 speed;
-  s32 ratio;
-  s32 reducedSpeed;
+  FIXED speed;
+  FIXED ratio;
+  FIXED reducedSpeed;
   s32 maxTerrainChange;
   s32 facingStep;
   u32 command;
@@ -482,15 +482,15 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
 void Actor_UpdateAllMotion(void) {
   struct Actor *actor;
   s32 actorsLeft;
-  s32 y;
+  FIXED y;
   s32 arrivedAtTarget;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 dx;
   s32 dz;
-  s32 velocityX;
+  FIXED velocityX;
   s32 distance;
-  s32 ratio;
+  FIXED ratio;
   s32 facingStep;
 
   // Fourteen actors, as many as the battle has units (UNIT_MAX in

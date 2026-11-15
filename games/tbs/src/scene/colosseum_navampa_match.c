@@ -620,12 +620,12 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   struct FieldWork *work;
   s32 angle;
   s32 actorId;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 steps;
-  s32 nextX;
+  FIXED nextX;
   s32 column;
-  s32 acceleration;
+  FIXED acceleration;
   s32 mode;
   s32 step;
   s32 ahead[3];
@@ -742,7 +742,7 @@ ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Actor *interpreter) {
 /// Force on the Moving Sidewalk Stage's log makes it slide away.
 static void ColosseumNavampaMatch_ForceSidewalkLog(void) {
   struct Actor *effect;
-  s32 moveRate;
+  FIXED moveRate;
 
   effect = Actor_Get(ACTOR_SIDEWALK_LOG);
   effect->motionFlags = 0;
@@ -920,7 +920,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
-  s32 height;
+  FIXED height;
   s32 column;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1155,8 +1155,8 @@ static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
 static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   struct Actor *particle;
   struct Actor *source;
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
   s32 kind;
   s32 count;
 
@@ -1191,7 +1191,7 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   particle->scaleX = 2 * FIXED_ONE / 5;
   particle->scaleY = 2 * FIXED_ONE / 5;
   {
-    s32 height = toFIXED(4);
+    FIXED height = toFIXED(4);
     particle->x.fixed = x + height;
     height += y;
     particle->y.fixed = height;
@@ -1642,10 +1642,10 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
 static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
-  s32 x;
-  s32 y;
-  s32 raisedHeight;
-  s32 shiftedX;
+  FIXED x;
+  FIXED y;
+  FIXED raisedHeight;
+  FIXED shiftedX;
 
   if (gMainRoutineWork.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {

@@ -34,14 +34,14 @@
 ///
 /// Abilities: Neptune.
 void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
-  s32 position[4];
+  FIXED position[4];
   s32 target[3];
   void *canvas;
   struct BattleEffectWork *work;
   u8 *cells;
   s32 openStep;
-  s32 serpentX;
-  s32 serpentY;
+  FIXED serpentX;
+  FIXED serpentY;
   s32 serpentVX;
   s32 serpentVY;
   s32 savedScrollX;

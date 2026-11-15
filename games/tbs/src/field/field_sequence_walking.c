@@ -56,8 +56,8 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   struct MapGridScrollWork *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
 
   work = gFieldWork;
   leader = work->actors[gMainRoutineWork.leaderActorId];

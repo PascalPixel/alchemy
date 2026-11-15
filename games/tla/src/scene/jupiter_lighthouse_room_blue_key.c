@@ -131,7 +131,7 @@ void JupiterLighthouse_StartMovingBlock(void) {}
 void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
-  s32 y;
+  FIXED y;
   s32 floor;
 
   if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 14) {
@@ -367,7 +367,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 footprint;
   s32 width;
   s32 height;

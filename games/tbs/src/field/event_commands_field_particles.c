@@ -28,7 +28,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 /// exclusive.
 void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
   struct Sprite *sprite;
-  s32 offset;
+  FIXED offset;
   struct SpriteScale scale;
   struct SpritePlacement position;
 
@@ -53,7 +53,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
 void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 deltaX;
   s32 deltaZ;
-  s32 distance;
+  FIXED distance;
   s32 pixelX;
   s32 pixelZ;
   s32 speed;

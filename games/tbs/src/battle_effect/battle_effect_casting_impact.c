@@ -177,7 +177,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   struct BattleCamera *camera;
   u8 *sprites;
-  s32 scrollPos;
+  FIXED scrollPos;
   s32 scrollSpeed;
   s32 duration;
   struct Point *position;
@@ -593,7 +593,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     for (frame = 0; frame != duration; frame++) {
       if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
         if (mode != CASTING_IMPACT_IMPACT_ASURA) {
-          s32 base;
+          FIXED base;
           scanline = work->bg2xLines;
           i = 0;
           base = toFIXED(4);

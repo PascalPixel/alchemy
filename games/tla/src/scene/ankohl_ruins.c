@@ -253,7 +253,7 @@ void AnkohlRuins_LandFromFall(void) {
   struct EffectOptions options;
   u32 i;
   s32 angle;
-  s32 velocity[3];
+  FIXED velocity[3];
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -679,7 +679,7 @@ void AnkohlRuins_FlowWithSand(void) {
   struct MapCell *ground;
   struct MapCell *upper;
   s32 index;
-  s32 position[3];
+  FIXED position[3];
 
   if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS))
     return;
@@ -770,7 +770,7 @@ void AnkohlRuins_DrawSand(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < 0x200000) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
-      s32 x = sprite->x;
+      FIXED x = sprite->x;
       s32 y = sprite->y;
       s32 z = sprite->z;
       s32 sx, sy;
@@ -1568,7 +1568,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         GameFlag_Get(FLAG_SCENE_TEMP_04)) {
-      s32 level = 0x200000;
+      FIXED level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
@@ -1833,7 +1833,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         GameFlag_Get(FLAG_SCENE_TEMP_04)) {
-      s32 level = 0x200000;
+      FIXED level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.

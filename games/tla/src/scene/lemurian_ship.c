@@ -358,7 +358,7 @@ void LemurianShip_WalkIntoPassage(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MainRoutineWork *party = &gMainRoutineWork;
     struct Actor *leader;
-    s32 x;
+    FIXED x;
     s32 cell;
 
     leader = ((struct Actor *)Actor_GetById(party->leaderActorId));

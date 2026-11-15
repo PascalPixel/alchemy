@@ -102,7 +102,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK];

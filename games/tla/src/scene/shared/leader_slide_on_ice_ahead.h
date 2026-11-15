@@ -3,8 +3,8 @@ void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
   s32 heading;
   s32 startBehavior;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   struct Actor *actor;
   struct Vector3 *next;
   s32 nextBehavior;
@@ -13,8 +13,8 @@ void Leader_SlideOnIceAhead(void) {
   struct Vector3 *position;
   u8 *flags;
   s32 i;
-  s32 startX;
-  s32 startZ;
+  FIXED startX;
+  FIXED startZ;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   heading = (s16)((actor->facing + 0x2000) & -0x4000);

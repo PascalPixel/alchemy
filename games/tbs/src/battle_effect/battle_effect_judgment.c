@@ -108,7 +108,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 frame;
   u8 *ramp;
   struct BattleCamera *camera;
-  s32 depth;
+  FIXED depth;
   s32 zoom;
   s32 minimumDepth;
   s32 maximumDepth;

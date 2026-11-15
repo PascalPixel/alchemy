@@ -813,7 +813,7 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 flag;
-  s32 verticalScale;
+  FIXED verticalScale;
 
   if (GameFlag_Get((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY, 0, 0);

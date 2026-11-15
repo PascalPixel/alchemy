@@ -24,8 +24,8 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
 
   target = source->watchedActor;
   if (target != 0) {
-    s32 dx = target->x.fixed - source->x.fixed;
-    s32 dz = target->z.fixed - source->z.fixed;
+    FIXED dx = target->x.fixed - source->x.fixed;
+    FIXED dz = target->z.fixed - source->z.fixed;
 
     if (dx != 0 || dz != 0) {
       turn = (s16)(Trig_Atan(dz, dx) - source->facing);
@@ -63,8 +63,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   struct Actor *target;
   struct Actor *pusher;
   struct Actor *hit;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 angle;
   s32 moved;
   s32 direction;
@@ -312,8 +312,8 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   struct Actor *parent;
   struct Actor *child;
   s32 angle;
-  s32 radius;
-  s32 speed;
+  FIXED radius;
+  FIXED speed;
   s32 fragmentIndex;
   u32 spread;
   u32 jitter;
@@ -360,8 +360,8 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 /// FIXED_ONE - 1: exactly FIXED_ONE from a multiple of 1/16) when it is
 /// smaller, then waits, at most 600 frames, for it to arrive at its target.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
-  s32 next;
-  s32 scale;
+  FIXED next;
+  FIXED scale;
 
   if (actor != NULL) {
     scale = actor->scaleX;
@@ -382,7 +382,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 void UpdateRisingParticleBurst(struct Actor *hand) {
   struct Actor *child;
   s32 i;
-  s32 dist;
+  FIXED dist;
   u32 spread;
 
   Sound_PlayFar(SE_CAST);

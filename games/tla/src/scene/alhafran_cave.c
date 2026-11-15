@@ -237,7 +237,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Notes whether the leader stands on the cave's upper level.
 void AlhafranCave_TrackLeadersLevel(void) {
-  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < toFIXED(8))
     gMainRoutineWork.onUpperLevel = 0;
@@ -474,7 +474,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *eoleo;
   struct Actor *key;
   struct Actor *effect;
-  s32 position[3];
+  FIXED position[3];
 
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT) == 0)
     return;

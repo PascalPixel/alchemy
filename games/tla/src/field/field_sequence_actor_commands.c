@@ -434,8 +434,8 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
 /// velocity (kept in speed and acceleration), which drag slows by 1/18 and 1/16
 /// each frame, and rises 1/64 pixel a frame.
 void FieldEffect_UpdateDustPuff(struct Actor *particle) {
-  s32 velocityX = particle->speedLimit;
-  s32 velocityZ = particle->acceleration;
+  FIXED velocityX = particle->speedLimit;
+  FIXED velocityZ = particle->acceleration;
 
   particle->x.fixed += velocityX;
   particle->z.fixed += velocityZ;
@@ -451,7 +451,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *actor;
   struct Sprite *child;
   s32 speed;
-  s32 backStep = -(toFIXED(1) / 10); // 0.1 pixel a frame toward the back
+  FIXED backStep = -(toFIXED(1) / 10); // 0.1 pixel a frame toward the back
 
   actor =
       Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
@@ -497,8 +497,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// has bit 12 set.
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   struct Actor *actor = Actor_GetById(actorId);
-  s32 startZ = actor->z.fixed;
-  s32 x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  FIXED startZ = actor->z.fixed;
+  FIXED x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   s32 spriteFlags;
   u32 i;
 

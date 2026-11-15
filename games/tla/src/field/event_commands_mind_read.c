@@ -89,7 +89,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
       {
         s32 box = (s8)metadata->boxX;
-        s32 y = target->y.fixed;
+        FIXED y = target->y.fixed;
 
         y += INTtoFIXED(box);
         to.y = y - toFIXED(2);
@@ -236,8 +236,8 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
 
   target = source->watchedActor;
   if (target != 0) {
-    s32 dx = target->x.fixed - source->x.fixed;
-    s32 dz = target->z.fixed - source->z.fixed;
+    FIXED dx = target->x.fixed - source->x.fixed;
+    FIXED dz = target->z.fixed - source->z.fixed;
 
     if (dx != 0 || dz != 0) {
       turn = (s16)(Trig_Atan(dz, dx) - source->facing);
@@ -285,8 +285,8 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   struct Actor *target;
   struct Actor *pusher;
   struct Actor *hit;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 angle;
   s32 moved;
   s32 direction;
@@ -543,8 +543,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   struct Actor *parent;
   struct Actor *child;
   s32 angle;
-  s32 radius;
-  s32 speed;
+  FIXED radius;
+  FIXED speed;
   s32 fragmentIndex;
   u32 spread;
   u32 jitter;
@@ -588,8 +588,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
 /// Raises the object's scale in sixteenths to full size and commits its
 /// position.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
-  s32 next;
-  s32 scale;
+  FIXED next;
+  FIXED scale;
 
   if (actor != NULL) {
     scale = actor->scaleX;
@@ -668,7 +668,7 @@ loop:
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
-  s32 distanceX;
+  FIXED distanceX;
   s32 distanceZ;
 
   work = gFieldWork;
@@ -817,7 +817,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 
     do {
       struct Actor *piece;
-      s32 distance;
+      FIXED distance;
 
       p->values[0] = scene->x;
       p->values[2] = scene->z;
@@ -880,7 +880,7 @@ void FieldPsynergy_Growth(void) {
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *work;
   struct Actor *user;
-  s32 pos[3];
+  FIXED pos[3];
   s32 n;
   s32 *p;
 
@@ -893,7 +893,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct Actor *obj;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
-    s32 dist;
+    FIXED dist;
 
     if (*(u16 *)&work->angle == DEGtoANG(90)) {
       pos[0] = user->x.fixed;
@@ -953,8 +953,10 @@ void FieldPsynergy_LiftOnTarget(void) {
   struct Actor *caster;
   void *child;
   void *anchors[2];
-  s32 position[3];
-  s32 x, y, z;
+  FIXED position[3];
+  s32 x;
+  FIXED y;
+  s32 z;
   s32 index;
   s32 startY;
 
@@ -1017,7 +1019,7 @@ void FieldPsynergy_Lift(void) {
   struct ScatterPosition pos;
   struct Actor **walk;
   s32 n;
-  s32 dist;
+  FIXED dist;
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
@@ -1324,7 +1326,7 @@ s32 FieldEffect_UpdateFrostGlint(struct OrbitingParticle *particle) {
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
-  s32 scale;
+  FIXED scale;
 
   if (particle != NULL) {
     scale = particle->scaleX - FIXED_ONE / 16;
@@ -1417,7 +1419,7 @@ void FieldPsynergy_Frost(void) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
-      s32 dist;
+      FIXED dist;
 
       scale = (Random16() >> 1) + FIXED_ONE / 2;
       particle->scaleY = scale;
@@ -1482,7 +1484,7 @@ void FieldPsynergy_Frost(void) {
 /// Per-frame update: sways 4 pixels either side of targetX, once every 128
 /// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
-  s32 amplitude = toFIXED(4);
+  FIXED amplitude = toFIXED(4);
 
   actor->x.fixed =
       actor->targetX + Iwram_MulFX(amplitude, Trig_Sin(actor->timer << 9));
@@ -1525,11 +1527,11 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
 void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
   struct FieldEffectWork *effectWork;
   struct Actor *spark;
-  s32 pos[3];
+  FIXED pos[3];
 
   effectWork = Ram_HeapSlots->fieldEffectWork;
   if (emitter->timer != -1) {
-    s32 amplitude = toFIXED(6);
+    FIXED amplitude = toFIXED(6);
 
     SET_ACTOR_POSITION(
         emitter,

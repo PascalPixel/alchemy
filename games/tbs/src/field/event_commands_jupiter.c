@@ -12,7 +12,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldParticle *effect;
-  s32 scale;
+  FIXED scale;
   s32 remainingParticles;
 
   djinni = Actor_GetById(djinniId);

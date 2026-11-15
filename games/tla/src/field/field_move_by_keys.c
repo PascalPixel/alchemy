@@ -32,7 +32,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   s32 animation;
   s32 collisionFlags;
   s32 deltaZ;
-  s32 terrainHeight;
+  FIXED terrainHeight;
   struct MapWork *map;
   u32 keys;
   s32 half;
@@ -360,7 +360,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
 void Sand_JitterGrain(struct Actor *object) {
   u32 first;
   u32 second;
-  s32 x;
+  FIXED x;
 
   HALF_AT(object->sprite, 18) += 0x400;
   first = Random16();
@@ -411,9 +411,9 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   struct FieldPosition spawn;
   s32 collision;
   s32 heading;
-  s32 groundHere;
-  s32 y;
-  s32 groundAhead;
+  FIXED groundHere;
+  FIXED y;
+  FIXED groundAhead;
   s32 angle;
   s32 cellX;
   s32 cellZ;
@@ -441,7 +441,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   if ((s16)actor->userValue != 0) {
     if (groundAhead < y) {
-      s32 topZ = cellZ - toFIXED(8);
+      FIXED topZ = cellZ - toFIXED(8);
 
       if (MapGrid_CheckCollisionAt(actor->x.fixed, topZ, *terrainId,
                                    actor->groundHeight) == 2) {
@@ -712,7 +712,7 @@ counted:
     wakeTimer = &actor->wakeTimer;
     *wakeTimer = 0;
   } else {
-    s32 speed;
+    FIXED speed;
 
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);
     speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
@@ -780,9 +780,9 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   s32 angleIndex;
   s32 count;
   s32 difference;
-  s32 y;
+  FIXED y;
   s32 terrainCollision;
-  s32 speed;
+  FIXED speed;
   s32 targetCameraYaw;
   struct WorldMapView *camera;
   s32 yawStep;

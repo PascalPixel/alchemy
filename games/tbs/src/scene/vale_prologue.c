@@ -785,7 +785,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
 /// cannot get around it.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
-  s32 targetHeight;
+  FIXED targetHeight;
   struct Sprite *rockSprite;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) == 0) {
@@ -854,7 +854,7 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
-  s32 targetHeight;
+  FIXED targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
     Event_Start();
@@ -992,7 +992,7 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
-  s32 targetHeight;
+  FIXED targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
     Event_Start();
@@ -1266,7 +1266,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
 /// Called by the four rock events. x and y are the pixels where Garet stands.
 static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
-  s32 acceleration = (toFIXED(1) / 2);
+  FIXED acceleration = (toFIXED(1) / 2);
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
   if (leaderAtStart != NULL) {
@@ -1297,7 +1297,7 @@ static void ValePrologue_WatchBoulderFall(void) {
   s32 *shakeShift;
   struct Actor *actor;
   TaskFunc updateEffects;
-  s32 boulderHeight;
+  FIXED boulderHeight;
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     Event_Start();

@@ -284,7 +284,7 @@ lower:
   {
     object = Actor_GetById(i);
     {
-      s32 z = object->z.fixed - shift;
+      FIXED z = object->z.fixed - shift;
 
       Actor_SetMoveTarget(object, object->x.fixed, -toFIXED(8), z);
     }
@@ -386,8 +386,8 @@ void LightSprites_Draw(void) {
 
     if (actor != 0 && actor->x.fixed != 0) {
       s32 ox = actor->x.fixed - viewX;
-      s32 y = actor->y.fixed - viewY + toFIXED(8);
-      s32 z = actor->z.fixed - viewZ - viewY;
+      FIXED y = actor->y.fixed - viewY + toFIXED(8);
+      FIXED z = actor->z.fixed - viewZ - viewY;
       s32 oy = z - y;
       s32 depth = ((y + z) >> 16) + 58;
       s32 mode = gLightSpriteLargeOam;

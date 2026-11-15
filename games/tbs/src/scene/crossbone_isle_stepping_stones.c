@@ -403,12 +403,12 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   struct Actor *actor = Actor_Get(id);
   s32 found;
   struct Actor *temporaryActor;
-  s32 height;
+  FIXED height;
   s32 level;
   s32 top;
   u32 row;
   u32 rows;
-  s32 z;
+  FIXED z;
   s32 y;
   s32 x;
   s32 kind;
@@ -486,8 +486,8 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
 UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   struct Actor *leader;
   s32 cycleFrame;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 velocityY;
   struct EffectOptions options;
 
@@ -1206,7 +1206,7 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
 static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   struct EffectOptions options;
   s32 velocityX;
-  s32 velocityY;
+  FIXED velocityY;
   u32 draw;
   u32 mask;
 
@@ -1241,9 +1241,9 @@ static UNREAD_RESULT
 CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   struct EffectOptions options;
   u32 phase = gFrameCount & 7;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 scale;
 
   if (phase != 0)

@@ -116,12 +116,12 @@ s32 Actor_IgnoreRises(struct Actor *actor) {
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
-  s32 deltaX;
-  s32 deltaZ;
+  FIXED deltaX;
+  FIXED deltaZ;
   s32 pixelsX;
   s32 pixelsZ;
-  s32 newX;
-  s32 newZ;
+  FIXED newX;
+  FIXED newZ;
   s32 distance;
 
   target = actor->watchedActor;
@@ -261,7 +261,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   struct Actor *found;
   s32 cnt;
   s32 best;
-  s32 dy;
+  FIXED dy;
   s32 dx;
   s32 dz;
   s32 dist;
@@ -339,7 +339,7 @@ s32 Field_TryJumpForward(void) {
   u8 saved = *flags;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 spriteFlags = 1;
-  s32 position[3];
+  FIXED position[3];
   s32 *positionWords;
   struct Actor *entry;
   struct Actor *platform;
@@ -376,8 +376,8 @@ again:
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       s32 bound = 0x7ffff;
-      s32 delta;
-      s32 dy;
+      FIXED delta;
+      FIXED dy;
 
       if (entry->script == NULL)
         continue;
@@ -415,7 +415,7 @@ again:
         entry->collisionFlags != 0 &&
         FIELD_CELL(position[0] - entry->x.fixed + toFIXED(8)) == 0 &&
         FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) == 0) {
-      s32 d = position[1] - entry->y.fixed;
+      FIXED d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
           goto blocked;
@@ -517,7 +517,7 @@ s32 Field_ClimbDown(void) {
   struct MapCell *ground;
   s32 gridY;
   s32 gridZ;
-  s32 position[3];
+  FIXED position[3];
 
   spriteFlags = 1;
   gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
@@ -617,7 +617,7 @@ s32 Field_ClimbUp(void) {
   s32 gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
   s32 gridY = 8 + (FIXEDtoINT(leader->y.fixed) & ~15);
   s32 gridZ = 8 + (FIXEDtoINT(leader->z.fixed) & 0xfff0);
-  s32 position[3];
+  FIXED position[3];
   s32 result;
 
   Event_Start();
@@ -781,7 +781,7 @@ s32 Leader_StepOntoRope(void) {
 s32 Leader_StepOffRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *sprite = leader->sprite;
-  s32 position[3];
+  FIXED position[3];
   u32 angle;
 
   gFieldWork->blockedSteps = 0;
@@ -886,7 +886,7 @@ s32 Leader_StepOntoTightrope(void) {
 s32 Leader_StepOffTightrope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *sprite = leader->sprite;
-  s32 position[3];
+  FIXED position[3];
   u32 angle;
 
   gFieldWork->blockedSteps = 0;

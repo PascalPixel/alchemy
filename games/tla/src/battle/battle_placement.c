@@ -14,7 +14,7 @@
 void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
-  s32 zero;
+  FIXED zero;
 
   if (actor->object == 0)
     object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
@@ -51,8 +51,8 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
 /// Creates the battle object of a unit at (x, y) on the battlefield: its
 /// sprite, palette, size and weapon, turned to face the centre.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
   s32 palette;
   s32 sprite;
   s32 registeredSprite;

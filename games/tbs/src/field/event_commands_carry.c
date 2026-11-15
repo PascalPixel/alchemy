@@ -58,7 +58,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct Actor *right;
   s32 i;
   s32 angle;
-  s32 dist;
+  FIXED dist;
 
   effectWork = gFieldEffectWork;
   src = effectWork->mainActor;
@@ -164,8 +164,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     // The way is free: move the target there.
     {
       struct Actor *second;
-      s32 x;
-      s32 z;
+      FIXED x;
+      FIXED z;
 
       Sound_PlayFar(SE_NOTE_HIGH);
       x = pos.x;
@@ -262,7 +262,7 @@ DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
 /// is the way it faces once grown.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
-  s32 scale;
+  FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);

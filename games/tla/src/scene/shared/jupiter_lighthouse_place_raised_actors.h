@@ -49,7 +49,7 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
     leftAngel->y.fixed += toFIXED(6553) / 256;
     rightAngel->y.fixed += toFIXED(6553) / 256;
     {
-      s32 step = 0x1b8480;
+      FIXED step = 0x1b8480;
 
       lid->y.fixed += step;
     }

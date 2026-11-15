@@ -2,8 +2,8 @@
 void Actor_GrowDown(struct Actor *object) {
   struct Actor *parent = object->watchedActor;
   s32 step = ++object->timer;
-  s32 scale;
-  s32 rise;
+  FIXED scale;
+  FIXED rise;
 
   if (step > 31) {
     Actor_Release(object);

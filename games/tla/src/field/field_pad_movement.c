@@ -27,7 +27,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 count;
   s32 difference;
   s32 terrainCollision;
-  s32 speed;
+  FIXED speed;
   s32 targetCameraYaw;
   struct WorldMapView *camera;
   s32 yawStep;
@@ -280,7 +280,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
-      s32 dy;
+      FIXED dy;
 
       if (other->script == NULL)
         continue;
@@ -482,7 +482,7 @@ counted:
     object->timer = 0;
     object->userValue = FOOTPRINT_BOTH_FEET;
   } else {
-    s32 speed;
+    FIXED speed;
 
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = Math_SqrtFX(Iwram_MulFX(object->velocityX, object->velocityX) +
@@ -526,7 +526,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   s32 count;
   s32 difference;
   s32 terrain;
-  s32 speed;
+  FIXED speed;
   s32 targetCameraYaw;
   struct WorldMapView *camera;
   s32 yawStep;
@@ -742,8 +742,8 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   s32 count;
   s32 difference;
   s32 terrain;
-  s32 speed;
-  s32 targetCameraYaw;
+  FIXED speed;
+  FIXED targetCameraYaw;
   struct WorldMapView *camera;
   s32 yawStep;
   struct Actor *ripple;

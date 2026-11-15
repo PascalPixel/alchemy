@@ -115,9 +115,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   s32 nearestDistance;
   s32 facingQuadrant;
   s32 actorIndex;
-  s32 heightLimit;
+  FIXED heightLimit;
   s32 dx;
-  s32 dz;
+  FIXED dz;
   s32 pixelZ;
   s32 distance;
   s32 angle;
@@ -157,7 +157,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       heightLimit = toFIXED(16);
 
     {
-      s32 dy = candidate->y.fixed - source->y.fixed;
+      FIXED dy = candidate->y.fixed - source->y.fixed;
       if (dy >= 0) {
         if (dy > heightLimit)
           continue;

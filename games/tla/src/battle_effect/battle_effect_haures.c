@@ -57,7 +57,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   s32 dived;
   s32 i;
   s32 wingPlace[4];
-  s32 bodyPlace[4];
+  FIXED bodyPlace[4];
   struct Scale req;
   struct Scale openingScale;
   struct Scale orbitScale;
@@ -949,7 +949,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       s32 start = gHaures_BandStarts[i];
 
       if (frame >= start && frame < start + 16) {
-        s32 amp = Trig_Sin((frame - start) << 11) / 8;
+        FIXED amp = Trig_Sin((frame - start) << 11) / 8;
         s32 x;
         s32 m;
 

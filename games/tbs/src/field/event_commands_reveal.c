@@ -34,7 +34,7 @@ void Actor_SetRevealSpriteColor(s32 value) {
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
-  s32 distanceX;
+  FIXED distanceX;
   s32 distanceZ;
 
   work = gFieldWork;

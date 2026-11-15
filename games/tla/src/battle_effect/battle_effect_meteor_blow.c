@@ -44,10 +44,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   struct MeteorStar *stars;
   s32 pitch;
   s32 yaw;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 size;
-  s32 scale;
+  FIXED scale;
   s32 hx;
   s32 hz;
   void *verts;
@@ -66,8 +66,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 position[3];
   s32 screen[3];
   s32 point[3];
-  s32 place[4];
-  s32 summonPlace[4];
+  FIXED place[4];
+  FIXED summonPlace[4];
   struct ModelTexture waveTexture;
   struct Scale summonScale;
   s32 req[2];

@@ -13,7 +13,7 @@ void BattleEffect_UpdateGrowingParticleSprite(
     struct EffectSprite *sprite, struct FieldPsynergyParticle *particle,
     s32 tiles) {
   s32 position[3];
-  s32 scale;
+  FIXED scale;
 
   sprite->oam.index = tiles + ((particle->timer >> 2) & 7) * 8;
   scale = sprite->scaleX + FIXED_ONE / 10;

@@ -538,7 +538,7 @@ void Settlements_PuffChimneySmoke(void) {
 s32 Settlements_CircleCentre(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
-  s32 d = Math_Sin(p[12]) * 2;
+  FIXED d = Math_Sin(p[12]) * 2;
 
   if (d > 0)
     d = -d;
@@ -1078,7 +1078,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   u32 angleStep;
   s32 angle;
   s32 x;
-  s32 z;
+  FIXED z;
 
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;

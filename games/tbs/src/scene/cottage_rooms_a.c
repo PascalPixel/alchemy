@@ -853,7 +853,7 @@ static void CottageRoomsA_SpawnSleepZ(void) {
   actor->scaleX = 2 * FIXED_ONE / 5;
   actor->scaleY = 2 * FIXED_ONE / 5;
   {
-    s32 height = actor->y.fixed + toFIXED(24);
+    FIXED height = actor->y.fixed + toFIXED(24);
 
     actor->y.fixed = height;
     actor->targetY = height;

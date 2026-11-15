@@ -22,8 +22,8 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 #endif
   s32 cameraX;
   s32 cameraZ;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   if (object == 0)
     return -1;

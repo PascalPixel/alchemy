@@ -132,7 +132,7 @@ void RisingParticles_Start(void) {
   for (i = 0; i < 64; i++, particle++) {
     u32 *sprite = particle->sprite.words;
     s32 x;
-    s32 z;
+    FIXED z;
 
     *sprite++ = 0;
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);

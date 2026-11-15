@@ -95,11 +95,11 @@ void Actor_UpdateAllThumb(void) {
   struct MotionObject *object;
   s32 objectsRemaining;
   s32 x;
-  s32 y;
+  FIXED y;
   s32 z;
-  s32 ground;
+  FIXED ground;
   s32 arrivedAtTarget;
-  s32 pos[3];
+  FIXED pos[3];
   s32 dx;
   s32 dy;
   s32 dz;
@@ -107,9 +107,9 @@ void Actor_UpdateAllThumb(void) {
   s32 velocityY;
   s32 velocityZ;
   s32 distance;
-  s32 speed;
-  s32 reducedSpeed;
-  s32 ratio;
+  FIXED speed;
+  FIXED reducedSpeed;
+  FIXED ratio;
   s32 maximumChange;
   s32 standing;
 
@@ -322,7 +322,7 @@ void Actor_UpdateAllThumb(void) {
             object->velocityY -= object->gravity;
           if (y + object->velocityY <= ground) {
             if (object->velocityY < 0) {
-              s32 rebound = -IwramMulFX(object->velocityY, object->bounce);
+              FIXED rebound = -IwramMulFX(object->velocityY, object->bounce);
 
               object->velocityY = rebound;
               y = ground - rebound;
@@ -438,9 +438,9 @@ void Actor_MoveWithCarriers(void) {
 
   for (i = 63; i >= 0; i--, object++) {
     if (object->script != NULL) {
-      s32 x = object->x.fixed;
-      s32 y = object->y.fixed;
-      s32 z = object->z.fixed;
+      FIXED x = object->x.fixed;
+      FIXED y = object->y.fixed;
+      FIXED z = object->z.fixed;
 
       if (object->priorityFlags & 64) {
         struct Actor *carrier = object->carrier;
@@ -483,7 +483,7 @@ void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
 /// at once.
 void Actor_SetMoveTarget(struct Actor *object, FIXED x, FIXED y, FIXED z) {
   s32 dx;
-  s32 distance;
+  FIXED distance;
   s32 dz;
   s32 squaredZ;
   s32 dy;
@@ -509,8 +509,8 @@ void Actor_SetMoveTarget(struct Actor *object, FIXED x, FIXED y, FIXED z) {
     return;
   }
   if (object->snapToTarget == 0) {
-    s32 brakingDistance;
-    s32 ratio;
+    FIXED brakingDistance;
+    FIXED ratio;
 
     brakingDistance =
         Iwram_RatioMulQ14(object->acceleration,

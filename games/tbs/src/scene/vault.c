@@ -913,7 +913,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 x;
-  s32 y;
+  FIXED y;
   s32 z;
 
   anchor = Actor_Get(ACTOR_VAULT_DOG);

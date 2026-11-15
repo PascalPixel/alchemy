@@ -466,7 +466,7 @@ void FileList_UpdatePulse(void) {
   s32 *vblankCount;
   volatile u16 *palette;
   s32 colour;
-  s32 sine;
+  FIXED sine;
   s32 i;
 
   vblankCount = (s32 *)&gVBlankCount;
@@ -684,8 +684,8 @@ void FileList_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
-      s32 one = FIXED_ONE;
-      s32 height = toFIXED(500);
+      FIXED one = FIXED_ONE;
+      FIXED height = toFIXED(500);
 
       scale.x = one;
       scale.y = one;

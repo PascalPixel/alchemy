@@ -306,7 +306,7 @@ void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void) {
 /// Stepping onto one of the second room's grey pillars; on the low ones the
 /// leader is drawn behind the ledge.
 void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
-  s32 y;
+  FIXED y;
 
   CrumblingPillars_StepWithStandIn(
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
@@ -342,7 +342,7 @@ void DehkanPlateau_StepOnTightropesPillars(void) {
 /// Stepping onto the sixth room's grey pillar; from up on it the leader is out
 /// of the Pound pillar's cell.
 void DehkanPlateau_StepOnCannonPillar(void) {
-  s32 y;
+  FIXED y;
 
   CrumblingPillars_Step(gDehkanPlateau_CannonCrumblingPillar);
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
@@ -1155,7 +1155,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   struct Actor *leader;
   s32 frame;
   u32 i;
-  s32 y;
+  FIXED y;
 
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -1616,7 +1616,7 @@ void DehkanPlateau_ForgetCrackOnLeaving(void);
 /// flags for the room.
 void DehkanPlateau_InitializeTightropes(void) {
   struct Actor *object;
-  s32 zero, value;
+  FIXED zero, value;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -1836,8 +1836,8 @@ void DehkanPlateau_LandFromFall(void) {
 loop:
   {
     s32 angle;
-    s32 velocity[3];
-    s32 cosine;
+    FIXED velocity[3];
+    FIXED cosine;
 
     angle = i << 12;
     cosine = Trig_Cos(angle);

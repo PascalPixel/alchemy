@@ -140,8 +140,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
             // Frames 142-161: they swirl about the centre line.
             if ((u32)(frame - 142) <= 19) {
-              s32 distance = mote->x - toFIXED(96);
-              s32 pull;
+              FIXED distance = mote->x - toFIXED(96);
+              FIXED pull;
 
               if (distance < 0)
                 distance = -distance;
@@ -262,7 +262,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         model->scrollV = 0;
         for (i = 0; i != ARRAY_COUNT(gMoloch_RingStarts); i++) {
           s32 start = gMoloch_RingStarts[i] + 136;
-          s32 scale;
+          FIXED scale;
           s32 shade;
 
           if (frame <= start)
@@ -984,7 +984,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
   s32 motesMask;
   u8 *tileBuffer;
-  s32 pos[4];
+  FIXED pos[4];
   struct Scale scale;
   struct Scale shrink;
   struct ModelTexture texture;
@@ -2005,15 +2005,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 783) <= 46) {
-      s32 sinT = Trig_Sin(TRIG_TURN * 29 / 32);
-      s32 cosT = Trig_Cos(TRIG_TURN * 7 / 8);
+      FIXED sinT = Trig_Sin(TRIG_TURN * 29 / 32);
+      FIXED cosT = Trig_Cos(TRIG_TURN * 7 / 8);
       s32 t = frame - 782;
       s32 tile = gBattleEffect_MotePictures[5] + t / 6 * MOTE_SET_BYTES;
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;
-        s32 sx = Trig_Sin(a) * (t >> 1);
-        s32 sy = Trig_Cos(a) * (t << 1);
+        FIXED sx = Trig_Sin(a) * (t >> 1);
+        FIXED sy = Trig_Cos(a) * (t << 1);
         s32 px = FIXEDtoINT(Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy, sinT));
         s32 py = FIXEDtoINT(Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy, cosT));
 
@@ -2024,7 +2024,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if (frame > 758) {
       void *verts = Heap_AllocEwram(64);
       struct RenderModel *model = Render_AllocateModelList(1);
-      s32 place[3];
+      FIXED place[3];
       s32 grow[3];
       s32 s;
 
@@ -2188,9 +2188,11 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
   s32 *ax, *bx, *cx, *cy, *ay, *by;
   s32 facing;
   s32 (*mul)(s32, s32);
-  s32 slopeA, slopeB, top, middle, bottom;
+  FIXED slopeA, slopeB;
+  s32 top, middle, bottom;
   u8 color;
-  s32 edgeA, edgeB, row;
+  FIXED edgeA, edgeB;
+  s32 row;
 
   // From here on, the count of words: three to a point.
   vertexCount *= 3;
@@ -2343,8 +2345,8 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
   s32 *ax, *bx, *cx, *cy, *ay, *by;
   s32 uv[3][2];
   s32 width;
-  s32 dxA, dxB, duA, dvA, duB, dvB;
-  s32 xA, xB, uA, vA, uB, vB;
+  FIXED dxA, dxB, duA, dvA, duB, dvB;
+  FIXED xA, xB, uA, vA, uB, vB;
   s32 top, middle, bottom;
   s32 dudx, dvdx;
   struct BattleEffectWork *work;

@@ -3033,8 +3033,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
 /// Reserves a full cell around the leader and half a cell around each actor
 /// following a route.
 static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   if (stop == NULL) {
     return 1;

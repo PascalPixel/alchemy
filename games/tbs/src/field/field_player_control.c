@@ -463,7 +463,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
     actor->timer = 0;
     actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
-    s32 speed;
+    FIXED speed;
 
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);
     speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
@@ -543,7 +543,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   s32 count;
   s32 difference;
   s32 terrainCollision;
-  s32 speed;
+  FIXED speed;
   s32 targetCameraYaw;
   struct WorldMapView *perspective;
   s32 yawStep;
@@ -845,7 +845,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   s32 animation;
   s32 collisionFlags;
   s32 deltaZ;
-  s32 groundHeight;
+  FIXED groundHeight;
 
   actor->speedLimit = toFIXED(1) / 2;
   actor->acceleration = toFIXED(1) / 4;

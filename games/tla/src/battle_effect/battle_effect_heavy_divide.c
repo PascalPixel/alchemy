@@ -181,7 +181,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         }
       }
       if (frame > 7) {
-        s32 scale = 80000;
+        FIXED scale = 80000;
 
         texture.pixels = work->sheet;
         Matrix_Initialize();
@@ -544,7 +544,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     void *vertices;
 
     s32 level;
-    s32 splash;
+    FIXED splash;
 
     if (frame == 0) {
       s32 still;

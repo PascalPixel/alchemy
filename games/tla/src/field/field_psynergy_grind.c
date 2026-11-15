@@ -53,12 +53,12 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 next;
   s32 isWaterObject;
   s32 mode;
-  s32 radius;
+  FIXED radius;
   s32 selector;
   struct TriggerEvent *pending;
   u8 *picture;
   s32 counter;
-  s32 amplitude;
+  FIXED amplitude;
 
   shifts = 0;
   radius = toFIXED(14);

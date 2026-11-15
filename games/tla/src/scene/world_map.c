@@ -292,10 +292,10 @@ u32 __umodsi3(u32 a, u32 b);
 // As The Broken Seal's WorldMap_CircleEcho.
 void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   s16 *angle;
-  s32 y;
-  s32 z;
-  s32 radius;
-  s32 rise;
+  FIXED y;
+  FIXED z;
+  FIXED radius;
+  FIXED rise;
 
   if (gFrameCount & 2)
     Actor_SetSpriteColorMode(marker, 10);
@@ -350,7 +350,7 @@ s32 WorldMap_SetUpWave(struct Actor *object) {
 /// With flag 0x200 set the object is released, takes acceleration and speed
 /// limit 0x1000 and is sent to an offset of its position.
 s32 WorldMap_SendWaveIn(struct Actor *object) {
-  s32 x, z;
+  FIXED x, z;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     return 1;
@@ -537,7 +537,7 @@ void WorldMap_LeaveShip(void) {
   struct Actor *ship = Actor_GetById(ACTOR_SHIP);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 cell = WorldMap_GetCollision(&ship->x.fixed);
-  s32 position[3];
+  FIXED position[3];
   s32 shore = 0;
   s32 blocked;
   u8 *block;
@@ -746,8 +746,8 @@ void WorldMap_GazeIntoPond(void) {
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
     struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
     s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
-    s32 position[3];
-    s32 x;
+    FIXED position[3];
+    FIXED x;
 
     // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
@@ -1394,8 +1394,8 @@ void WorldMap_DeliverLohoCannon(void) {
 void WorldMap_MeetEcho(void) {
   struct Actor *djinni;
   struct Actor *leader;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 owner;
   s32 count;
   s32 i;
@@ -1645,8 +1645,8 @@ void WorldMap_SpawnCollapseDust(void) {
   struct Actor *obj;
   struct FieldSprite *sprite;
   u8 *motionFlags;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 scale;
 
   x = (Random_Below(40)) << 16;
@@ -1782,7 +1782,7 @@ void WorldMap_SpawnIdejimaWake(void) {
   obj->scaleY = FIXED_ONE / 2;
   spr = obj->sprite;
   if (Random_Below(2)) {
-    s32 back = (Random_Below(48)) << 16;
+    FIXED back = (Random_Below(48)) << 16;
 
     obj->x.fixed -= back >> 1;
     obj->z.fixed -= back;
@@ -2232,9 +2232,9 @@ extern s32 gWorldMap_AquaRockTrailScript[];
 
 void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
-    s32 x = parent->x.fixed;
-    s32 y = parent->y.fixed;
-    s32 z = parent->z.fixed;
+    FIXED x = parent->x.fixed;
+    FIXED y = parent->y.fixed;
+    FIXED z = parent->z.fixed;
     struct Actor *object = (FieldActor_Create(673, x, y, z));
 
     if (object != NULL) {

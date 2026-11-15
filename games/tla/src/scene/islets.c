@@ -1260,9 +1260,9 @@ void Islets_StartWaveDma(void) {
 void Islets_FillWaveLines(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
-  s32 v[2];
+  FIXED v[2];
   s32 *count = &v[1];
-  s32 sine;
+  FIXED sine;
 
   for (*count = 0; *count != 160; (*count)++) {
     sine = Math_Sin((*count + (u8)gFrameCount + (layer->y >> 16)) << 9);
@@ -1284,7 +1284,7 @@ void Islets_PengusGivesPrettyStone(void) {
   struct Actor *object = Actor_GetById(ACTOR_PENGULINA);
   struct Actor *leader;
   struct Actor *item;
-  s32 z;
+  FIXED z;
 
   if (object->x.fixed < toFIXED(228) || object->x.fixed > toFIXED(236))
     return;
@@ -1416,8 +1416,8 @@ void Islets_StartPushingCrate(void) {
   struct Actor *object;
   s32 *x0;
   s32 *z0;
-  s32 x1;
-  s32 z1;
+  FIXED x1;
+  FIXED z1;
 
   object = Actor_Get(ACTOR_CRATE_A);
   x0 = &gIslets_FirstCrateX;
@@ -1869,8 +1869,8 @@ void Islets_StartIceberg(s32 id) {
 
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
-  s32 x = toFIXED(column * 32 + object->timer);
-  s32 z = toFIXED(row * 32 + (s16)object->userValue);
+  FIXED x = toFIXED(column * 32 + object->timer);
+  FIXED z = toFIXED(row * 32 + (s16)object->userValue);
 
   FieldActor_SetMoveTargetFX(object, x, object->y.fixed, z);
 }
@@ -2110,7 +2110,7 @@ void Islets_InitializeTurtle(void) {
     Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
     Actor_Get(ACTOR_LIL_TURTLE)->motionFlags = done;
     {
-      s32 a1 = toFIXED(296);
+      FIXED a1 = toFIXED(296);
 
       Actor_SetPositionFX(ACTOR_LONESOME_GEORGE, a1, toFIXED(452));
     }
@@ -2185,7 +2185,7 @@ inner:
   }
   entry++;
   {
-    s32 next = (i << 16) + 0x10000;
+    FIXED next = (i << 16) + 0x10000;
 
     i = next >> 16;
     if (next != toFIXED(4))
@@ -2408,7 +2408,7 @@ void PushTarget_Push(struct PushTarget target) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 footprint;
   s32 width;
   s32 height;

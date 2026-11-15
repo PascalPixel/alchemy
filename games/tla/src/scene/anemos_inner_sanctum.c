@@ -383,7 +383,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = gAnemosInnerSanctum_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -415,7 +415,7 @@ s32 AnemosInnerSanctum_ClearScriptedActorSpriteFlags(s32 a0) {
 }
 
 s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
-  s32 radius;
+  FIXED radius;
 
   object->timer += object->userValue;
   SET_ACTOR_POSITION(object, object->bounce, object->gravity, toFIXED(152));
@@ -782,8 +782,8 @@ void AnemosInnerSanctum_LightThePillar(void) {
     FieldCamera_WaitForArrival();
     Event_PlaySound(SE_SHIMMER);
     {
-      s32 a = INTtoFIXED(targetX);
-      s32 b = INTtoFIXED(targetZ);
+      FIXED a = INTtoFIXED(targetX);
+      FIXED b = INTtoFIXED(targetZ);
 
       AnemosInnerSanctum_SparkRing(a, b, part, 0x800);
       FieldEvent_Wait(10);
@@ -1103,8 +1103,8 @@ extern s32 gAnemosInnerSanctum_DustScript[];
 /// 200. riseBaseY and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 next[2];
-  s32 ahead[3];
+  FIXED next[2];
+  FIXED ahead[3];
   struct Actor *dust;
   s32 kind;
 
@@ -1141,7 +1141,7 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   if (FieldMapGrid_GetCellBehaviorAt(self->layer, ahead[0], ahead[2]) == 255)
     return;
   {
-    s32 x = next[0];
+    FIXED x = next[0];
 
     self->x.fixed = x;
     self->z.fixed = next[1];
@@ -1194,7 +1194,7 @@ void AnemosInnerSanctum_RaiseDust(void) {
   struct Actor *object;
   struct Actor *effect;
   struct FieldSprite *sprite;
-  s32 position[3];
+  FIXED position[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A)
     object = Actor_Get(ACTOR_MIMIC_STONE_A);
@@ -1234,7 +1234,7 @@ void AnemosInnerSanctum_RaiseDust(void) {
 void AnemosInnerSanctum_MarkEntrance(void) {
   struct Actor *object;
   s32 column;
-  s32 target[3];
+  FIXED target[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A) {
     object = Actor_Get(ACTOR_MIMIC_STONE_A);
@@ -1681,7 +1681,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -1755,7 +1755,7 @@ void CrackedTile_DropIn(void) {
   for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
-    s32 cosine;
+    FIXED cosine;
 
     angle = i << 12;
     cosine = Trig_Cos(angle);

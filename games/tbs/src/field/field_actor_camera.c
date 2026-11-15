@@ -44,9 +44,9 @@ void ActorSystem_PlaceSprites(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   u32 kind;
-  s32 dx;
-  s32 dz;
-  s32 screenTop;
+  FIXED dx;
+  FIXED dz;
+  FIXED screenTop;
   struct ActorCameraTile *tile;
   u32 priority;
   struct SpriteScale scale;
@@ -177,8 +177,8 @@ void ActorSystem_ProjectSprites(void) {
   s32 *position;
   void **sprites;
   void *sprite;
-  s32 groupScale[2];
-  s32 scale[2];
+  FIXED groupScale[2];
+  FIXED scale[2];
   /* LEFTOVER(frame): two unused points the ROM's frame reserves and never
    * touches. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
@@ -213,7 +213,7 @@ void ActorSystem_ProjectSprites(void) {
   actor = gActors;
   actor += ACTOR_COUNT - 1;
   {
-    s32 fixedScale = FIXED_ONE;
+    FIXED fixedScale = FIXED_ONE;
 
     for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
       if (actor->script == 0)

@@ -8,7 +8,7 @@
 /// spot and dips up to two pixels below it, at a random pace.
 static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
   struct Sprite *sprite = (struct Sprite *)nut->sprite;
-  s32 dip = Trig_Sin(nut->orbitAngle) * 2;
+  FIXED dip = Trig_Sin(nut->orbitAngle) * 2;
 
   if (dip > 0)
     dip = -dip;

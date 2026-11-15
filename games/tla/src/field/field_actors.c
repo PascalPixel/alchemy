@@ -149,8 +149,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   s32 *view = &map->viewX;
   s32 viewX;
   s32 viewZ;
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
 
   viewX = view[0] & FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -676,18 +676,18 @@ void ActorSystem_PlaceSprites(void) {
   struct ObjectSystemWork *system;
   struct Actor *object;
   u32 kind;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
   s32 originY;
   struct PlacedSprite *sprite;
-  s32 screenTop;
+  FIXED screenTop;
   u8 *priorityFlags;
   s32 layer;
   u8 *terrainId;
   u32 *cells;
-  s32 feetZ;
+  FIXED feetZ;
   s32 objectHeight;
-  s32 probeX;
+  FIXED probeX;
   s32 priority;
   s32 leftPriority;
   s32 middlePriority;

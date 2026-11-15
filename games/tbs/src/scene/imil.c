@@ -1207,7 +1207,7 @@ static void Imil_SpawnChimneySmoke(void) {
 /// elsewhere, each frame while the party is in the village.
 static void Imil_UpdateFootprints(void) {
   struct Actor *actor;
-  s32 x;
+  FIXED x;
   s32 column;
   s32 isSet;
   s32 zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
@@ -1474,8 +1474,8 @@ static void Imil_RunIceSlide(void) {
   s32 heading;
   s32 startBehavior;
   s32 nextBehavior;
-  s32 z;
-  s32 x;
+  FIXED z;
+  FIXED x;
 
   subject = Actor_Lookup(gMainRoutineWork.leaderActorId);
 

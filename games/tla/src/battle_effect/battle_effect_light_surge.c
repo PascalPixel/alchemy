@@ -277,7 +277,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
-        s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
+        FIXED sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = INTtoFIXED(center.x / 2 - 64) -
                 (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);

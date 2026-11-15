@@ -1264,7 +1264,7 @@ void Ride_SpawnLandingBackward(struct MarsLighthouseRoomMVector *position,
 }
 
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
-  s32 height;
+  FIXED height;
 
   if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
                                     : b->x.fixed - a->x.fixed) < toFIXED(12)) {
@@ -1280,8 +1280,8 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 
 void Ride_UpdateDrift(struct Actor *object) {
   struct Actor *target = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 vx;
-  s32 vz;
+  FIXED vx;
+  FIXED vz;
   s32 rate;
   struct MarsLighthouseRoomMAnimation *animation;
 
@@ -1392,7 +1392,8 @@ void FlameThrowers_Puff(void) {
   state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
     struct Actor *actor;
-    s32 flag, x, y, offScreen, value, dx, dz;
+    s32 flag, x, y, offScreen, value;
+    FIXED dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1653,7 +1654,7 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
-    s32 x, y, z;
+    FIXED x, y, z;
 
     a = Random16();
     b = Random16();
@@ -1668,10 +1669,10 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
     if (object != NULL) {
       s32 angle, radius;
       u32 sum;
-      s32 scale;
+      FIXED scale;
       struct SpriteView *sprite;
       struct SpriteView *source;
-      s32 velocity;
+      FIXED velocity;
 
       angle = Random16();
       radius = Random16();

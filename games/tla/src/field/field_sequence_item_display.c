@@ -55,8 +55,8 @@
 void Leader_StepAwayFromNearbyActor(void) {
   struct Actor *leader;
   struct Actor *other;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
   s32 i;
 
   leader = Actor_Lookup(Party_GetLeaderActor());
@@ -138,7 +138,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   struct Actor *picture = work->actors[actor];
   struct Actor *object;
   struct Sprite *sprite;
-  s32 position[3];
+  FIXED position[3];
   u8 *buffer;
   s32 tile;
   s32 i;
@@ -343,9 +343,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 id;
   s32 flag;
   s32 i;
-  s32 x;
+  FIXED x;
   s32 y;
-  s32 z;
+  FIXED z;
   s32 dx;
   s32 dz;
 

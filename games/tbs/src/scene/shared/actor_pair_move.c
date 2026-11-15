@@ -7,8 +7,8 @@
 static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   struct Actor *actor;
   struct Actor *other;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   other = Actor_GetById(id);

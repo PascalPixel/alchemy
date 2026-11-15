@@ -689,7 +689,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   s32 leaderColumn;
   struct Actor *leader;
   struct Actor *statue;
-  s32 statueX;
+  FIXED statueX;
   s32 statueRow;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);

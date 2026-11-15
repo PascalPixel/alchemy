@@ -572,9 +572,9 @@ static void AltmillerCave_PulseLight(struct Actor *light) {
 /// Puts a light on the ring, radius pixels from its center above the rocks, at
 /// the given angle.
 static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
-  s32 centreX = toFIXED(504);
-  s32 centreHeight = toFIXED(24);
-  s32 depth = toFIXED(144);
+  FIXED centreX = toFIXED(504);
+  FIXED centreHeight = toFIXED(24);
+  FIXED depth = toFIXED(144);
   struct Actor *light = Actor_Get(actorId);
   s32 coordinates[3];
   s32 *position = coordinates;
@@ -659,7 +659,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   s8 state;
   s32 chosenLight;
   u8 previousLight;
-  s32 radius;
+  FIXED radius;
   u16 angle;
 
   Event_Start();
@@ -2164,7 +2164,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   Camera_WorldToScreen(&position);
   fragment = effectWork->particles;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
-    s32 scale;
+    FIXED scale;
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);

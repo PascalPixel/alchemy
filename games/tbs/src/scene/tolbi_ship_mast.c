@@ -451,7 +451,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 static void TolbiShipMast_RunAvastEvent(void) {
   s32 *cameraOrigin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct Actor *actor;
-  s32 sparkleX;
+  FIXED sparkleX;
   s32 sparkleY = 0;
 
   Event_Start();
@@ -827,7 +827,7 @@ static void TolbiShipMast_AnnounceLand(void) {
 /// Adds horizontal and vertical sway to the camera origin each frame.
 static void TolbiShipMast_UpdateSway(void) {
   s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  s32 swayX = Trig_Cos(gTolbiShipMast_SwayX);
+  FIXED swayX = Trig_Cos(gTolbiShipMast_SwayX);
   s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
 
   *camera++ += swayX;

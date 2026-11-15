@@ -42,9 +42,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   u8 *meshB;
   s32 casterValue;
   s32 *caster;
-  s32 x;
-  s32 z;
-  s32 scale;
+  FIXED x;
+  FIXED z;
+  FIXED scale;
   u8 *transformed;
   u8 *strip;
   u8 *fireRing;
@@ -57,7 +57,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   s16 list[UNIT_MAX];
   s16 targetList[14];
-  s32 place[4];
+  FIXED place[4];
   s32 screen[3];
   u8 req[8];
   struct ModelTexture scratchTexture;
@@ -89,7 +89,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   Render_BuildQuadStrip(strip, 8, 16, 32);
   Render_BuildQuadStrip(meshB, 2, 32, 15);
   for (j = 0; j != 16; j++) {
-    s32 c = -Trig_Cos(j * 1092) * 3;
+    FIXED c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
     s32 y = FIXEDtoINT(c * 16);
     s32 r = FIXEDtoINT(s * 48);
@@ -388,7 +388,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       } while (0);
       model->mesh = strip;
       {
-        s32 half = 0x8000;
+        FIXED half = 0x8000;
 
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));

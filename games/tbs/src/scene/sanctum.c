@@ -1558,9 +1558,9 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
 static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   u16 orbitAngle = effect->timer;
-  s32 x;
-  s32 z;
-  s32 currentX;
+  FIXED x;
+  FIXED z;
+  FIXED currentX;
 
   x = anchor->x.fixed + Trig_Cos(orbitAngle) * 14;
   effect->x.fixed = x;
@@ -1921,7 +1921,7 @@ static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
 static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
-  s32 scale;
+  FIXED scale;
   s32 framesLeft;
 
   // The timer stores the upward step in sixteenths of a pixel.
@@ -1953,7 +1953,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   struct Actor *actor;
   struct Actor *spark;
   struct Sprite *sprite;
-  s32 x;
+  FIXED x;
   s32 randomOffset;
 
   actor = Actor_Get(id);

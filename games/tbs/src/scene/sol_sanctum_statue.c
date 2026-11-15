@@ -617,7 +617,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
   struct MapGridScrollWork *grid;
   struct Actor *leader;
   s32 *savedOrigin;
-  s32 cameraPosition[3];
+  FIXED cameraPosition[3];
   s32 approachSide;
   s32 frame;
 
@@ -1007,7 +1007,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
 /// the statue into the floor.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
-  s32 statueZ;
+  FIXED statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
   Field_SetCellBehaviorAt(2, 272, 128, 0);

@@ -33,7 +33,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sprites;
   struct Actor *target;
-  s32 dx;
+  FIXED dx;
   struct Actor *actor;
   u8 *palette;
   s32 frame;

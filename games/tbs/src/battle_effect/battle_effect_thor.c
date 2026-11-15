@@ -66,7 +66,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
   u8 ramp[32];
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint screen[11];
   s32 position[3];
   s32 scale[3];
@@ -335,8 +335,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
-    s32 thorX;
-    s32 thorY;
+    FIXED thorX;
+    FIXED thorY;
     s32 thorSpeedX;
     s32 thorSpeedY;
     s32 pillarX = 60;

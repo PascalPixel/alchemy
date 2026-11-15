@@ -203,7 +203,7 @@ static void Ship_UpdateSwell(void) {
   struct Point sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
-  s32 swell;
+  FIXED swell;
   s32 x, z;
 
   grid = gMapGridWork[0];
@@ -583,7 +583,7 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 flash;
   s32 white;
   s32 dark;
-  s32 risen;
+  FIXED risen;
   // DEAD: each control passes through a halfword on the stack, which nothing
   // here needs; the ROM keeps the three strh.
   volatile u16 cnt;

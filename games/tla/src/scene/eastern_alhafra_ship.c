@@ -952,8 +952,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   emote = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
                                           EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   {
-    s32 x = emote->x.fixed;
-    s32 y = emote->y.fixed;
+    FIXED x = emote->x.fixed;
+    FIXED y = emote->y.fixed;
     emote->update = 0;
     Actor_SetPositionAndResetMotion(emote, x + toFIXED(22), y + toFIXED(8),
                                     emote->z.fixed);

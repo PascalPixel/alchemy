@@ -552,7 +552,7 @@ void Menu_PlacePartyFigures(void) {
   for (i = 0; i < count; i++) {
     struct Sprite *figure = menu->tabSprites[i];
     // 482 less the row's screen y, in 16.16.
-    s32 placeY = toFIXED(482) - toFIXED(menu->rowPositions[i]);
+    FIXED placeY = toFIXED(482) - toFIXED(menu->rowPositions[i]);
 
     if (figure != 0) {
       figure->image.priority = 0;

@@ -121,8 +121,8 @@ void Weather_StartRain(void) {
   work->tileBase = VramCache_Load(work->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
-    s32 x;
-    s32 z;
+    FIXED x;
+    FIXED z;
 
     words = (u32 *)particle;
     *words++ = 0;
@@ -271,8 +271,8 @@ void FieldEffect_UpdateSparkles(void) {
   u32 i;
   struct MapGridScrollWork *grid;
   s32 *camera;
-  s32 spawnX;
-  s32 spawnZ;
+  FIXED spawnX;
+  FIXED spawnZ;
   struct GroundParticle *sparkle;
   const u16 *frame;
   s32 *leader;

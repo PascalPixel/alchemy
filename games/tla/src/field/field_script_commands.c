@@ -38,14 +38,14 @@ void Actor_UpdateAllMotion(void) {
   struct Actor *list[15];
   struct Actor **next;
   struct Actor *actor;
-  s32 y;
+  FIXED y;
   s32 arrivedAtTarget;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 dx;
   s32 dz;
   s32 distance;
-  s32 ratio;
+  FIXED ratio;
   s32 facingStep;
 
   // The fourteen actors whose script is running.
@@ -448,7 +448,7 @@ s32 ActorScript_SetPositionAndResetMotion(struct Actor *actor) {
   s32 x = *argument++;
   s32 y = *argument++;
   s32 z = *argument;
-  s32 height;
+  FIXED height;
 
   Actor_SetPositionAndResetMotion(actor, x, y, z);
   if (y == -1 && (actor->motionFlags & 1)) {
@@ -464,7 +464,7 @@ s32 ActorScript_SetPositionAndResetMotion(struct Actor *actor) {
 /// Script command 0x03: puts the actor at x and z 0, keeping its height,
 /// with no destination or speed; with flag 1 it then follows the ground there.
 s32 ActorScript_ResetToOrigin(struct Actor *actor) {
-  s32 height;
+  FIXED height;
 
   Actor_SetPositionAndResetMotion(actor, 0, actor->y.fixed, 0);
   if (actor->motionFlags & 1) {
@@ -566,18 +566,18 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   struct Actor *camera = interpreter;
   struct Actor *leader;
   struct MapWork *bounds;
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED minX;
+  FIXED minZ;
+  FIXED maxX;
+  FIXED maxZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 dz;
   s32 dy;
   s32 dx;
-  s32 distance;
-  s32 moveStep;
+  FIXED distance;
+  FIXED moveStep;
   s16 *region;
 
   bounds = Ram_HeapSlots->mapGrid;
@@ -649,7 +649,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
         camera->z.fixed = z;
       } else {
         if (distance > moveStep) {
-          s32 ratio = Iwram_RatioMulQ14(distance, dx);
+          FIXED ratio = Iwram_RatioMulQ14(distance, dx);
           s32 (*mulFX)(s32, s32) = IwramMulFX;
           dx = mulFX(ratio, moveStep);
           dz = mulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
@@ -671,18 +671,18 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
   struct Actor *leader;
   struct MapWork *bounds;
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED minX;
+  FIXED minZ;
+  FIXED maxX;
+  FIXED maxZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 dz;
   s32 dy;
   s32 dx;
-  s32 distance;
-  s32 moveStep;
+  FIXED distance;
+  FIXED moveStep;
 
   bounds = Ram_HeapSlots->mapGrid;
   leader = camera->watchedActor;
@@ -750,13 +750,13 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
 /// within 16 it stands (animation 1) and waits for the next frame.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   s32 distancePixels;
-  s32 moveZ;
-  s32 dx;
-  s32 dz;
+  FIXED moveZ;
+  FIXED dx;
+  FIXED dz;
   s32 deltaZPixels;
   s32 deltaXPixels;
   s32 remainingDistance;
-  s32 moveX;
+  FIXED moveX;
   struct Actor *watchedObject;
 
   watchedObject = actor->watchedActor;
@@ -796,7 +796,7 @@ s32 Actor_Wander(struct Actor *actor) {
   const s32 *operands;
   s32 distanceRange;
   s32 homeRadiusSquared;
-  s32 travelDistance;
+  FIXED travelDistance;
   s32 heading;
   s32 attempts;
   s32 dx;
@@ -879,7 +879,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   const s32 *operands;
   s32 distanceRange;
   s32 homeRadiusSquared;
-  s32 travelDistance;
+  FIXED travelDistance;
   u16 heading;
   u16 angle;
   s32 attempts;

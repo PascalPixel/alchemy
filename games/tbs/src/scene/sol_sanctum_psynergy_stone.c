@@ -55,8 +55,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Opens the map with the window transition and blocks Retreat.
 s32 Scene_Initialize(void) {
-  s32 shakeX = toFIXED(1);
-  s32 shakeY = toFIXED(1);
+  FIXED shakeX = toFIXED(1);
+  FIXED shakeY = toFIXED(1);
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

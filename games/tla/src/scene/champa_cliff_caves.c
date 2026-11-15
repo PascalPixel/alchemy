@@ -638,7 +638,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
-    s32 landing[3];
+    FIXED landing[3];
     animations = gChampaCliffCaves_ThrowAnimations;
     Actor_SetAnimationById(ACTOR_OBABA, 9);
     Event_Wait(3);
@@ -1637,9 +1637,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   s32 slot;
   s32 tile;
   struct EffectSprite *sprite;
-  s32 position[3];
+  FIXED position[3];
   s32 i;
-  s32 z;
+  FIXED z;
 
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
@@ -1890,7 +1890,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
 
 void ChampaCliffCaves_UpdateForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
-  s32 position[3];
+  FIXED position[3];
   s32 state;
   s32 time;
 

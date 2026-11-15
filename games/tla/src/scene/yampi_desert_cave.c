@@ -209,10 +209,12 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 /// Returns 1 with the end position in position[0] to position[2], or 0 if it
 /// cannot move.
 s32 YampiDesertCave_FindLogSlide(s32 *position) {
-  s32 probe[3];
+  FIXED probe[3];
   s32 direction;
   struct Actor *object;
-  s32 kind, w, h, dx, dz, count, i, j;
+  s32 kind, w, h, dx;
+  FIXED dz;
+  s32 count, i, j;
   u8 *state;
   s32 offset;
 
@@ -376,9 +378,9 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 j;
-  s32 offset;
+  FIXED offset;
   s32 ax, az, bx, bz;
 
   from[0] = object->x.fixed;
@@ -462,7 +464,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
 
 /// The leader's update while pushing: it stops at a wall or another log.
 void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
-  s32 position[3];
+  FIXED position[3];
   struct Actor *hit;
   u32 i;
   s32 angle = object->facing >> 12;

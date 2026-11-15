@@ -21,7 +21,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   // Unused: the second position gives the stack frame its 72 bytes,.
   struct ScreenPoint pos[2];
-  s32 curve[2];
+  FIXED curve[2];
   s32 visible;
   s32 column;
   s32 row;

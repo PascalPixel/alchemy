@@ -55,10 +55,10 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   struct Ring *ring;
   s32 *axisPosition;
   s32 axis;
-  s32 distance;
-  s32 scale;
+  FIXED distance;
+  FIXED scale;
   s32 coordinate;
-  s32 acceleration;
+  FIXED acceleration;
   u32 radius;
   s32 angle;
   u32 halfRadius;
@@ -219,7 +219,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     spark->life = (radius >> 13) + 1;
   }
   for (effectIndex = 0; effectIndex < STAR_FIELD_RINGS; effectIndex++) {
-    s32 radius = 4096;
+    FIXED radius = 4096;
     s32 angle;
 
     ring = &work->rings[effectIndex];

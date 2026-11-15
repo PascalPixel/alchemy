@@ -1297,7 +1297,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   struct Actor *object = work->object;
   struct Actor *effect = work->effect;
   s32 i, y;
-  s32 scale;
+  FIXED scale;
   s32 frameStep;
   s32 mask;
   struct SparkState *state;

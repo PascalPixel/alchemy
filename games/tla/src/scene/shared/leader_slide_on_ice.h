@@ -2,22 +2,22 @@
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
   s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 startX;
-  s32 startZ;
+  FIXED x;
+  FIXED z;
+  FIXED startX;
+  FIXED startZ;
   u8 *layer;
   struct Actor *actor;
   struct Vector3 *position;
   struct Vector3 *next;
   s32 heading;
   s32 nextBehavior;
-  s32 distance;
+  FIXED distance;
   struct Actor *other;
   u8 *flags;
   s32 i;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 

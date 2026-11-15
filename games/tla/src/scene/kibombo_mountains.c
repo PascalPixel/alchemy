@@ -265,7 +265,7 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
 
     if (!Event_GetFlag(FLAG_GUARD_CRATE_DROPPED) &&
         FIELD_CELL(crate->x.fixed) == 53 && FIELD_CELL(crate->z.fixed) == 36) {
-      s32 dx;
+      FIXED dx;
 
       Actor_WaitToLand(ACTOR_GUARD_CRATE);
       Actor_SetSpritePriority(ACTOR_GUARD_CRATE, 2);

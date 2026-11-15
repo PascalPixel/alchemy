@@ -92,7 +92,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 member;
   s32 count;
   struct ScreenPoint screen;
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint base;
   DrawRectangle draw[2];
   void *palette;
@@ -335,7 +335,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   struct ScreenPoint middle;
-  s32 record[3];
+  FIXED record[3];
   struct Particle *one;
   struct Particle *sheep;
   s32 i;
@@ -554,12 +554,12 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct MotionObject *goal;
   s32 frame;
   s32 i;
-  s32 position[3];
-  s32 target[3];
-  s32 delta[3];
+  FIXED position[3];
+  FIXED target[3];
+  FIXED delta[3];
   s32 rider[3];
   struct ScreenPoint screen;
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint view;
   DrawRectangle callbacks[2];
 

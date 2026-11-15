@@ -622,14 +622,14 @@ void LemuriaSpring_UpdateTossSimulation(void) {
   struct SpringObstacle *obstacle;
   s32 index;
   s32 height;
-  s32 edgeInset;
+  FIXED edgeInset;
   s32 motionStep;
   s32 speedMode;
   s32 cycleFrame;
-  s32 minX;
-  s32 maxX;
-  s32 minZ;
-  s32 maxZ;
+  FIXED minX;
+  FIXED maxX;
+  FIXED minZ;
+  FIXED maxZ;
   // Unused: gives the stack frame its 12 bytes.
   struct Vector3 spare;
 
@@ -905,7 +905,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
       if (distanceSquared <= 119 && toss->attractionFrames > 30) {
         s32 nextMode;
-        s32 speed;
+        FIXED speed;
 
         speed = toFIXED(3);
         if (index <= 1) {

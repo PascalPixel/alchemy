@@ -164,7 +164,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
     {
       struct RenderModel *model;
       void *vertices;
-      s32 scale;
+      FIXED scale;
 
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -306,7 +306,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   DrawRectangle draw[2];
   u8 *graphics;
-  s32 scale;
+  FIXED scale;
   struct ScreenPoint card;
   struct ScreenPoint targets[8];
   struct ScreenPoint aim;

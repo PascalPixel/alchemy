@@ -927,7 +927,7 @@ void Garoh_PuffAround(s32 objectId) {
   u32 angleStep;
   s32 angle;
   s32 x;
-  s32 z;
+  FIXED z;
 
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
@@ -1052,8 +1052,8 @@ void Garoh_WerewolfProwls(void) {
   s32 i;
   s32 position[3];
   s32 *pos;
-  s32 x, z;
-  s32 toX, toZ;
+  FIXED x, z;
+  FIXED toX, toZ;
 
   Event_SetFlag(FLAG_GAROH_SAW_WEREWOLF_PROWL);
   Event_Start();
@@ -1143,7 +1143,7 @@ void Garoh_WerewolfProwls(void) {
   i = 0;
   do {
     s32 r;
-    s32 wave;
+    FIXED wave;
 
     wave = Math_Sin(i * (DEGtoANG(45)));
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
@@ -2014,7 +2014,7 @@ s32 __divsi3();
 /// werewolves' legend and Mt. Aleph.
 void Garoh_MahaTellsTheLegend(void) {
   s32 frames;
-  s32 total;
+  FIXED total;
   struct Actor *ether;
   struct Sprite *sprite;
 

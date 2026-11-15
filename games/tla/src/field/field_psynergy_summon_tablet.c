@@ -203,13 +203,13 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 state;
   s32 moteEntry;
   s32 sparkEntry;
-  s32 ownerX;
-  s32 ownerZ;
-  s32 targetX;
-  s32 targetZ;
+  FIXED ownerX;
+  FIXED ownerZ;
+  FIXED targetX;
+  FIXED targetZ;
   s32 sparks = 0;
   s32 nextSpark = 0;
-  s32 pos[3];
+  FIXED pos[3];
   struct EffectSprite *sprite;
   struct ChasingMote *mote;
   s32 moteTile;
@@ -219,8 +219,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 delay;
   s32 angle;
   s32 i;
-  s32 startX = 130 * FIXED_ONE;
-  s32 startZ = 30 * FIXED_ONE;
+  FIXED startX = 130 * FIXED_ONE;
+  FIXED startZ = 30 * FIXED_ONE;
 
   Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
   pos[0] = owner->x.fixed;

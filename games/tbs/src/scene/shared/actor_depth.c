@@ -13,8 +13,8 @@ static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
   flag = actor->priorityFlags | ACTOR_PRIORITY_UNDERFOOT;
   actor->priorityFlags = flag;
   if (ref->z.fixed < actor->z.fixed) {
-    s32 lim = actor->z.fixed - ref->z.fixed;
-    s32 ay;
+    FIXED lim = actor->z.fixed - ref->z.fixed;
+    FIXED ay;
     lim += toFIXED(4);
     ay = actor->y.fixed + lim;
     if (ref->y.fixed <= ay) {
@@ -32,7 +32,7 @@ static void Actor_SwapPositionsByDepth(s32 first, s32 second) {
   struct Actor *b = Actor_GetById(second);
 
   if (a->z.fixed <= b->z.fixed) {
-    s32 t;
+    FIXED t;
 
     t = a->x.fixed;
     a->x.fixed = b->x.fixed;

@@ -1695,7 +1695,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
 void EasternAlhafra_BriggsStealsShip(void) {
   struct MapWork *map;
   s32 i;
-  s32 step = toFIXED(1);
+  FIXED step = toFIXED(1);
 
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
@@ -2462,7 +2462,9 @@ FieldActor_CheckMovementCollision(struct Actor *actor,
 s32 PushTarget_FindSlide(struct PushTarget *push) {
   struct Actor *actor;
   struct FieldPosition cell;
-  s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
+  s32 direction, kind, width, height, dx;
+  FIXED dz;
+  s32 steps, i, j, offset;
   u8 *layer;
 
   actor = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
@@ -2525,7 +2527,7 @@ void PushTarget_Push(struct PushTarget target) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 footprint;
   s32 width;
   s32 height;

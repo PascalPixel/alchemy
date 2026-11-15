@@ -90,7 +90,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   s32 rate;
   s32 level;
   s32 bias;
-  s32 step;
+  FIXED step;
   s32 total;
   s32 sum;
   s32 pick;

@@ -12,7 +12,7 @@ next:
       s32 rise;
       s32 radius;
       u32 size;
-      s32 scale;
+      FIXED scale;
 
       rise = speed + (Random16() >> 4) - (Random16() >> 4);
       angle = 0x4000 + rise;

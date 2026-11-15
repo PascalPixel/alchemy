@@ -5,8 +5,8 @@ void Flame_UpdateForward(struct Actor *object) {
       (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 dx = object->bounce;
-  s32 dz;
+  FIXED dx = object->bounce;
+  FIXED dz;
   s32 i;
   s32 direction;
   s32 id;
@@ -53,7 +53,7 @@ void Flame_UpdateForward(struct Actor *object) {
     if (actor->y.fixed == actor->groundHeight &&
         Actor_IsBeside(object, actor)) {
       if (work->slots[i].blocked == 0) {
-        s32 speed;
+        FIXED speed;
 
         object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         speed = object->riseBaseY;

@@ -119,7 +119,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       s32 dy;
       s32 dz;
       s32 a;
-      s32 b;
+      FIXED b;
 
       member = i % args->targetCount;
       target = BattleObject_GetFar(args->targets[member])->object;
@@ -592,7 +592,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if ((u32)frame <= 133) {
       struct Particle *trail;
-      s32 startY;
+      FIXED startY;
       s32 slot;
       s32 first;
       s32 y;
@@ -628,7 +628,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     {
       struct Particle *spark;
-      s32 gravity = -toFIXED(1) / 16;
+      FIXED gravity = -toFIXED(1) / 16;
 
       if (frame > 59) {
         gravity = toFIXED(1) / 4;

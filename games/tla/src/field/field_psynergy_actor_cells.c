@@ -128,7 +128,7 @@ void Actor_PlaceMovedBlock(void) {
     key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                     target->z.fixed);
     {
-      s32 x = target->x.fixed;
+      FIXED x = target->x.fixed;
 
       level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
     }
@@ -151,7 +151,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 /// at the leader's height, or NULL.
 struct Actor *Leader_FindActorAhead(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 position[3];
+  FIXED position[3];
   s32 angle = ((leader->facing >> 12) + 2) & 12;
   struct Actor *found;
 
@@ -237,8 +237,8 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 void EffectSprite_Draw(struct EffectSprite *sprite) {
   s32 affineMode;
   s32 matrix;
-  s32 x = sprite->x;
-  s32 y = sprite->y;
+  FIXED x = sprite->x;
+  FIXED y = sprite->y;
   s32 scaleX = sprite->scaleX;
   s32 scaleY = sprite->scaleY;
   s32 width = sprite->width;
@@ -290,12 +290,12 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
           height / 2;
     }
   } else {
-    s32 sin = Trig_Sin(sprite->angle);
-    s32 cos = Trig_Cos(sprite->angle);
+    FIXED sin = Trig_Sin(sprite->angle);
+    FIXED cos = Trig_Cos(sprite->angle);
     s32 halfWidth = sprite->width * scaleX / 2;
     s32 halfHeight = sprite->height * scaleY / 2;
-    s32 cornerX = Iwram_MulFX(cos, halfWidth) - Iwram_MulFX(sin, halfWidth);
-    s32 cornerY = Iwram_MulFX(cos, halfHeight) + Iwram_MulFX(sin, halfHeight);
+    FIXED cornerX = Iwram_MulFX(cos, halfWidth) - Iwram_MulFX(sin, halfWidth);
+    FIXED cornerY = Iwram_MulFX(cos, halfHeight) + Iwram_MulFX(sin, halfHeight);
     s32 pivotX = scaleX * sprite->pivotX;
     s32 pivotY = sprite->pivotY * scaleY;
     s32 turnedX = Iwram_MulFX(cos, pivotX) - Iwram_MulFX(sin, pivotY);

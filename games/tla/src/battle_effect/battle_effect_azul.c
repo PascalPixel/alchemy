@@ -67,7 +67,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   s32 n;
   u32 t;
   u32 u;
-  s32 place[4];
+  FIXED place[4];
   struct ModelTexture texture;
   struct ModelTexture scratchTexture;
   struct Particle *p;
@@ -226,7 +226,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       p = &work->particles[31];
       for (; i != 27; i++, p++) {
         if (p->variant >= 0) {
-          s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
+          FIXED s = Trig_Sin((frame << 10) + i * 0x1a16);
 
           blit(canvas, work->sheet + AZUL_BEAM_DROP,
                (FIXEDtoINT(p->x + (s << 4))) - 6, FIXED_INTEGER_PART(p->y) - 12,

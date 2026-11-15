@@ -29,7 +29,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT];
   s32 *cameraPosition;
   volatile u32 fill;
-  s32 farPlane;
+  FIXED farPlane;
   s32 tileIndex;
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
@@ -425,8 +425,8 @@ void WorldMap_UpdateView(void) {
   s32 distance = perspective->farPlane;
   s32 height = perspective->distance;
   s32 tileRow;
-  s32 shakeOffsetX;
-  s32 shakeOffsetY;
+  FIXED shakeOffsetX;
+  FIXED shakeOffsetY;
   struct Point eyeOffset;
 
   shakeOffsetX = 0;
@@ -438,8 +438,8 @@ void WorldMap_UpdateView(void) {
     WorldMap_PreloadCurrentTileBlock();
   }
   if (followedPosition != NULL) {
-    s32 x = followedPosition[0];
-    s32 y = followedPosition[2];
+    FIXED x = followedPosition[0];
+    FIXED y = followedPosition[2];
     s32 tileColumn;
 
     if (perspective->shakeX != 0) {
@@ -499,8 +499,8 @@ void WorldMap_UpdateView(void) {
   Matrix_Initialize();
   Matrix_SetLookAt((s32 *)camera, cameraPosition);
   if (gScanlinePitch != perspective->pitch) {
-    s32 cosine = Trig_Cos(perspective->pitch);
-    s32 sine = Trig_Sin(perspective->pitch);
+    FIXED cosine = Trig_Cos(perspective->pitch);
+    FIXED sine = Trig_Sin(perspective->pitch);
 
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
                                 affineWork);

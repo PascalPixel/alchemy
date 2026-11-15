@@ -1,6 +1,6 @@
 /// Stops an object at its push target, or at what blocks it.
 void Actor_StopAtPushTarget(struct Actor *object) {
-  s32 position[3];
+  FIXED position[3];
   struct Actor *hit;
   u32 i;
   s32 angle = object->facing >> 12;

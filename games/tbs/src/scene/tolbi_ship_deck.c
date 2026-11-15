@@ -2091,8 +2091,8 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 *origin = grid->origin;
-  s32 dx = Trig_Cos(sSwayAngleX);
-  s32 dy = Trig_Sin(sSwayAngleY);
+  FIXED dx = Trig_Cos(sSwayAngleX);
+  FIXED dy = Trig_Sin(sSwayAngleY);
   struct MapGridLayerScroll *layer;
 
   *origin++ += dx >> 1;
@@ -2272,7 +2272,7 @@ static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct Actor *actor = Actor_Get(id);
   struct Sprite *sprite = actor->sprite;
-  s32 sine;
+  FIXED sine;
 
   if ((flags & 2) == 0) {
     switch (sOarStroke[slot]) {

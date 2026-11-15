@@ -22,7 +22,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   void *sharedSprite;
   s32 dir;
   s32 back;
-  s32 dist;
+  FIXED dist;
   s32 sprite;
   s32 tint;
   s32 i;

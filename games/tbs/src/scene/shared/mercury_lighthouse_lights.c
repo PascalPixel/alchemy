@@ -14,7 +14,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
   struct Actor *obj;
   struct Sprite *animation;
   struct MapGridCell *cell;
-  s32 z;
+  FIXED z;
   s32 flag;
 
   *(struct MercuryLighthouseLights **)HeapSlot_AllocEwram(

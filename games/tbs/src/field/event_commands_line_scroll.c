@@ -50,8 +50,8 @@ void LineScroll_BuildPage(void) {
   s32 y1 = (s16)gBgScroll[1].y;
   u16 *row;
   s32 step;
-  s32 phase;
-  s32 amplitude;
+  FIXED phase;
+  FIXED amplitude;
   s32 scanline;
   u16 wave;
 

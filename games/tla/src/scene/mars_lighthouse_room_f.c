@@ -549,7 +549,7 @@ void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   const s16 *table;
   s32 offset;
-  s32 x;
+  FIXED x;
   s32 kind;
 
   table = gMarsLighthouseRoomF_StatueFlameThrowers;
@@ -674,7 +674,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
 
   for (i = 11; i >= 0; i--) {
     s32 a = Random16();
-    s32 x = origin->x.fixed + (a << 4) - (Random16() << 4);
+    FIXED x = origin->x.fixed + (a << 4) - (Random16() << 4);
     s32 b = Random16();
     s32 c = Random16();
     struct Actor *object = FieldActor_Create(
@@ -697,7 +697,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
       object->velocityY = (angle << 2) + toFIXED(2);
       object->velocityZ = Iwram_MulFX(speed, Trig_Cos(angle));
       {
-        s32 vx = Iwram_MulFX(speed, Math_Sin(angle));
+        FIXED vx = Iwram_MulFX(speed, Math_Sin(angle));
 
         object->acceleration = 0;
         object->scaleX = scale;
@@ -980,7 +980,7 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 row = FIELD_CELL(object->z.fixed) << 7;
-  s32 x = object->x.fixed;
+  FIXED x = object->x.fixed;
   u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
@@ -994,7 +994,7 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 row = FIELD_CELL(object->z.fixed) << 7;
-  s32 x = object->x.fixed;
+  FIXED x = object->x.fixed;
   u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
@@ -1498,7 +1498,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
     leftAngel->y.fixed += 0x199900;
     rightAngel->y.fixed += 0x199900;
     {
-      s32 step = 0x1b8480;
+      FIXED step = 0x1b8480;
 
       lid->y.fixed += step;
     }
@@ -1684,7 +1684,8 @@ void FlameThrowers_Puff(void) {
   state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
     struct Actor *actor;
-    s32 flag, x, y, offScreen, value, dx, dz;
+    s32 flag, x, y, offScreen, value;
+    FIXED dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1879,7 +1880,8 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         s32 x, z, off;
         s32 i;
 #else
-        s32 x, z, off;
+        FIXED x, z;
+        s32 off;
 #endif
 
         position.x = actor->x.fixed + ((s16)work->direction.x << 19);
@@ -2062,7 +2064,7 @@ void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
-    s32 x, y, z;
+    FIXED x, y, z;
 
     a = Random16();
     b = Random16();
@@ -2077,7 +2079,7 @@ void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
     if (object != NULL) {
       s32 angle, radius;
       u32 sum;
-      s32 scale;
+      FIXED scale;
       struct SpriteView *sprite;
       struct SpriteView *source;
 
@@ -2396,7 +2398,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -2626,7 +2628,7 @@ void PushTarget_Push(struct PushTarget target) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
-  s32 from[3];
+  FIXED from[3];
   s32 footprint;
   s32 width;
   s32 height;
@@ -2731,7 +2733,9 @@ void LightSprites_Draw(void) {
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
     if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox, y, z, oy, depth;
+      s32 big, ox;
+      FIXED y, z;
+      s32 oy, depth;
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;

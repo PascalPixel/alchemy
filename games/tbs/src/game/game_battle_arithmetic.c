@@ -155,7 +155,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 /// chance. Returns the unleash action, or 1 for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
   const struct ItemDefinition *item;
-  s32 rate;
+  FIXED rate;
 
   if (unit->classId == CLASS_NONE) {
     return 1;

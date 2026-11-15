@@ -21,12 +21,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct Actor *user;
   struct Actor *target;
   s32 percent;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 userHeight;
   s32 targetHeight;
   struct ScreenPoint targetScreen;
-  s32 point[3];
+  FIXED point[3];
   struct ScreenPoint screen;
   struct ModelTexture texture;
   struct Particle *spark;
@@ -179,7 +179,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       vertices = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame > 55) {
-        s32 scale = ((frame - 56) << 13) + FIXED_ONE / 4;
+        FIXED scale = ((frame - 56) << 13) + FIXED_ONE / 4;
         s32 alpha = 0;
 
         if (frame > 63)

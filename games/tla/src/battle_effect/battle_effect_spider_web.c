@@ -216,7 +216,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   s32 i;
   u8 *cells;
   u8 *picture;
-  s32 place[4];
+  FIXED place[4];
   DrawRectangle blits[2];
   struct ModelTexture texture;
   struct ModelTexture quadTexture;
@@ -395,7 +395,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 92) <= 39) {
       s32 t = frame - 92;
-      s32 z = Trig_Cos(t * 800) / 3 + TRIG_TURN;
+      FIXED z = Trig_Cos(t * 800) / 3 + TRIG_TURN;
       s32 q16;
       s32 level = -1;
 
@@ -579,11 +579,11 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           t = step->variant;
         }
         if ((u32)(t - 44) <= 21) {
-          s32 s = (Trig_Sin((t - 44) << 10) * 48) / 64;
+          FIXED s = (Trig_Sin((t - 44) << 10) * 48) / 64;
           s32 vx;
           s32 x = step->x;
-          s32 mx = x - toFIXED(64);
-          s32 my = step->y - toFIXED(64);
+          FIXED mx = x - toFIXED(64);
+          FIXED my = step->y - toFIXED(64);
           s32 u = t - 59;
 
           if (u < 0) {

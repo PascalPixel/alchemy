@@ -4,8 +4,8 @@ void Flame_UpdateLanding(struct Actor *object) {
       (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 dx = object->bounce;
-  s32 dz;
+  FIXED dx = object->bounce;
+  FIXED dz;
   s32 i;
   struct RideDirection *direction;
 

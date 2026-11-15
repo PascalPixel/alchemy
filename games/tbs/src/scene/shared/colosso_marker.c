@@ -212,7 +212,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 speed = toFIXED(2);
+    FIXED speed = toFIXED(2);
     s32 unpaused = 0;
 
     actor->speedLimit = speed;
@@ -230,7 +230,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 speed = toFIXED(5) / 4;
+    FIXED speed = toFIXED(5) / 4;
     s32 unpaused = 0;
 
     actor->speedLimit = speed;

@@ -422,7 +422,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     DjinnFigures_SetSlotPhase(1, 0xffff4000);
 
     if (mode <= DJINN_COMPARE_GIVE) {
-      s32 rise;
+      FIXED rise;
       s32 slide;
 
       rise = -Iwram_MulFX(16, Trig_Sin((step % 30) * 1092));

@@ -85,7 +85,7 @@ void HoverGlow_Update(void) {
   struct Actor *player = Actor_Lookup(Party_GetLeaderActor());
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
-  s32 position[3];
+  FIXED position[3];
   s32 level;
   s32 i;
   s32 scaleX;
@@ -162,7 +162,7 @@ void FieldPsynergy_Hover(void) {
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
   struct Actor *other;
-  s32 position[3];
+  FIXED position[3];
   s32 blocked;
   s32 slot;
   struct Actor **list;

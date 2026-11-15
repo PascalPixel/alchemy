@@ -575,7 +575,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   struct Actor *second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
-  s32 position[3];
+  FIXED position[3];
   s32 found = 0;
   s32 x;
   s32 z;

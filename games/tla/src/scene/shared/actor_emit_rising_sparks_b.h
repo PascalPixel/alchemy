@@ -3,8 +3,8 @@ s32 Actor_EmitRisingSparksB(struct Actor *object) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {
-    s32 x;
-    s32 y;
+    FIXED x;
+    FIXED y;
 
     params[0] = 3;
     params[2] = 0xb333;

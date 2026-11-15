@@ -352,7 +352,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
       // Core's glowing orb.
       if (mode == DJINNI_CHARGE_CORE && frame <= 89) {
-        s32 scale;
+        FIXED scale;
 
         model = Render_AllocateModelList(1);
         if (frame == 0) {

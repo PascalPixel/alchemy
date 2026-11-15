@@ -194,11 +194,11 @@ s32 Actor_SetSpriteColorMode();
   }
 
 void NorthernReaches_FireMagmaBall(void) {
-  s32 from[3];
+  FIXED from[3];
   struct Actor *ship;
   struct Actor *ball;
   struct Actor *blast;
-  s32 to[3];
+  FIXED to[3];
   s32 count, message;
   s32 told;
 

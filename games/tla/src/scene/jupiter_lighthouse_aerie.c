@@ -538,9 +538,9 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
   s32 frame = gFrameCount & 7;
 
   if (frame == 0) {
-    s32 x;
-    s32 y;
-    s32 speed;
+    FIXED x;
+    FIXED y;
+    FIXED speed;
 
     spark.priority = 3;
     spark.startScaleX = FIXED_ONE * 7 / 10;
@@ -618,9 +618,9 @@ void JupiterLighthouse_UpdateBeam(void) {
   struct Actor *carrier = gFieldWork->camera;
   s32 t = work->frame;
   s32 position[3];
-  s32 a[3];
-  s32 b[3];
-  s32 aside;
+  FIXED a[3];
+  FIXED b[3];
+  FIXED aside;
   s32 scale;
   s32 *pos;
   struct BeamSpark *spark;

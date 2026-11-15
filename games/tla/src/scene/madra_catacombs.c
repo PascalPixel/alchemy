@@ -393,7 +393,7 @@ void MadraCatacombs_HearEyesOfTruth(void) {
 /// it falls through to the room below.
 void MadraCatacombs_ShakeBookshelf(void) {
   struct Actor *object;
-  s32 x;
+  FIXED x;
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0) {
     object = Actor_GetById(ACTOR_SHAKEN_CHEST);

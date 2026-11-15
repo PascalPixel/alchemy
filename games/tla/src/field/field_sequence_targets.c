@@ -221,7 +221,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 // has none.
 s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
-  s32 above[3];
+  FIXED above[3];
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *target;
   struct Actor *hit;

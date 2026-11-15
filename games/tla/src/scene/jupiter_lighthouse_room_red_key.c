@@ -194,9 +194,9 @@ void JupiterLighthouse_ShimmerColors(struct Actor *object) {
 void Orb_Update(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_LOWER_BEAM);
   u16 angle = self->timer;
-  s32 sine;
-  s32 x;
-  s32 z;
+  FIXED sine;
+  FIXED x;
+  FIXED z;
 
   self->x.fixed = centre->x.fixed + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
@@ -295,8 +295,8 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   struct Actor *b = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 1);
   struct Actor *c = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 2);
   struct Actor *d = Actor_GetById(ACTOR_LAST_ROW_BLOCK);
-  s32 from[3];
-  s32 to[3];
+  FIXED from[3];
+  FIXED to[3];
   s32 i;
 
   if (FIELD_CELL(leader->x.fixed) != 42 || FIELD_CELL(leader->z.fixed) != 41)
@@ -435,7 +435,7 @@ void JupiterLighthouse_AlexAppears(void) {
   struct EffectParams *p;
   struct SparkActor *actor;
   u32 i;
-  s32 x;
+  FIXED x;
   s32 y;
   u32 random;
   u32 randomY;
@@ -699,7 +699,8 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
 
 s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   struct EffectOptions options;
-  s32 phase, x, y, speed;
+  s32 phase;
+  FIXED x, y, speed;
 
   phase = gFrameCount & 7;
   if (phase != 0)
@@ -755,7 +756,7 @@ void JupiterLighthouse_UpdateSparkRing(void) {
     if (spark->age < 0 || spark->age > duration)
       continue;
     {
-      s32 sine = Math_Sin((s32)((spark->age << 15) / duration));
+      FIXED sine = Math_Sin((s32)((spark->age << 15) / duration));
       s32 *p = position;
       p[0] = work->from[0] +
              (work->to[0] - work->from[0]) * spark->age / duration +
@@ -784,7 +785,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
   struct Spark *spark;
   s32 angle;
   s32 i;
-  s32 radius;
+  FIXED radius;
   s32 speed;
 
   if (count > 0) {
@@ -894,7 +895,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
-  s32 target;
+  FIXED target;
   s32 count;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)

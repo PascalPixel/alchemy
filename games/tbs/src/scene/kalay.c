@@ -2227,7 +2227,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
 static void Kalay_UpdateNutOrbit(void) {
   OrbitingMapActor *effect = (OrbitingMapActor *)Actor_Get(ACTOR_TOWN_NUT);
   struct Sprite *sprite = (struct Sprite *)effect->sprite;
-  s32 offset = Trig_Sin(effect->orbitAngle) * 2;
+  FIXED offset = Trig_Sin(effect->orbitAngle) * 2;
 
   if (offset > 0) {
     offset = -offset;

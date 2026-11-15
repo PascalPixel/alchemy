@@ -1166,7 +1166,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 static void BabiLighthouse_PushRoadPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
-  s32 heightDifference;
+  FIXED heightDifference;
 
   if (ahead == NULL) {
     return;

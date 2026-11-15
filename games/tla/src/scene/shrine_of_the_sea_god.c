@@ -244,7 +244,7 @@ enum ShrineOfTheSeaGodIslandActorId {
 void ShrineOfTheSeaGod_FightBreath(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u8 *state = &Actor_GetById(ACTOR_BREATH)->riseCounter;
-  s32 y;
+  FIXED y;
 
   if ((u8)(*state - 4) > 1)
     return;
@@ -867,8 +867,8 @@ void ShrineOfTheSeaGod_TrackUpperLevel(void) {
 /// leader by where it stands.
 void ShrineOfTheSeaGod_LayerPuddles(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 y;
-  s32 z;
+  FIXED y;
+  FIXED z;
 
   y = leader->y.fixed;
   if (y < toFIXED(16)) {
@@ -1055,7 +1055,7 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   options.startScaleX = FIXED_ONE * 64 / 100;
   options.startScaleY = FIXED_ONE * 64 / 100;
   for (i = 0; i <= 16;) {
-    s32 velocity[3];
+    FIXED velocity[3];
 
     velocity[0] = Trig_Cos(i << 12);
     velocity[1] = 0;

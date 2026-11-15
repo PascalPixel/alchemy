@@ -137,7 +137,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
-  s32 scroll;
+  FIXED scroll;
   s32 scrollSpeed;
   s32 cueTimer;
   struct MotionObject *user;
@@ -782,7 +782,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         struct Actor *to =
             (struct Actor *)BattleObject_GetFar(args->targets[0])->object;
         s32 x = caster->x.fixed;
-        s32 z;
+        FIXED z;
         s32 dx = (to->x.fixed - x) * 80 / 100;
         s32 dz;
         s32 speed;

@@ -577,7 +577,7 @@ void Geysers_Update(void) {
     if (entry->height == 0) {
       rider->y.fixed = object->y.fixed + -toFIXED(16);
     } else {
-      s32 wave;
+      FIXED wave;
 
       entry->phase += 0x1000;
       wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) + -toFIXED(14);
@@ -605,7 +605,11 @@ void Geysers_Draw(void) {
   s32 *view = &map->viewX;
   s32 scrollX, scrollZ, lift;
   struct Actor *actor;
-  s32 h, x, y, screenY, z, depth;
+  s32 h, x;
+  FIXED y;
+  s32 screenY;
+  FIXED z;
+  s32 depth;
   u32 *p;
 
   scrollX = view[0];

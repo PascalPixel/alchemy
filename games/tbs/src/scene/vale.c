@@ -715,7 +715,7 @@ static void Vale_WatchThePuppies(void) {
   s32 *savedOrigin;
   struct Actor *leader;
   s32 frame;
-  s32 cameraPosition[3];
+  FIXED cameraPosition[3];
 
   if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     grid = gMapGridWork[0];
@@ -3016,7 +3016,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
     if (particle != NULL) {
-      s32 verticalSpeed;
+      FIXED verticalSpeed;
 
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);

@@ -109,13 +109,13 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct ScanlineRow *row) {
   s32 vector[3];
   s32 result[3];
-  s32 height;
-  s32 nearZ;
+  FIXED height;
+  FIXED nearZ;
   s32 i;
   s32 z;
-  s32 ratio;
+  FIXED ratio;
   s32 dx;
-  s32 sum;
+  FIXED sum;
   s32 zero;
 
   zero = 0;

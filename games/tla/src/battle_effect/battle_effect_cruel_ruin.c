@@ -115,7 +115,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // frame.
   r = 0;
   for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
-    s32 x, y, vx, vy;
+    FIXED x, y;
+    s32 vx, vy;
 
     piece = &work->particles[i];
     x = INTtoFIXED(gDeathPlunge_PieceStartX[i]);
@@ -758,7 +759,7 @@ void BattleEffect_EndElementStreaks(void) {
 /// bursts over the foes.
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
-  s32 place[4];
+  FIXED place[4];
   struct ModelTexture texture;
   struct ModelTexture blastTexture;
   struct Scale req;
@@ -770,18 +771,18 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   u8 *sprites;
   s32 *transition;
   s32 savedScroll;
-  s32 scrollX;
+  FIXED scrollX;
   s32 phase;
   struct MotionObject *actor;
   s32 i;
   s32 j;
   s32 k;
-  s32 fr;
-  s32 fg;
-  s32 fb;
-  s32 dr;
-  s32 dg;
-  s32 db;
+  FIXED fr;
+  FIXED fg;
+  FIXED fb;
+  FIXED dr;
+  FIXED dg;
+  FIXED db;
   s32 steps;
   s32 u;
   struct RuinObject *obj;
@@ -1400,8 +1401,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         if (frame >= start && frame < start + 32) {
           s32 size = 0;
-          s32 px = 0;
-          s32 py = 0;
+          FIXED px = 0;
+          FIXED py = 0;
           s32 angle = 0;
           s32 scale = 0;
           size = gCruelRuin_StreakSizes[i];

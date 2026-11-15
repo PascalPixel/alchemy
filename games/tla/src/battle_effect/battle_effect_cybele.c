@@ -67,8 +67,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
-  s32 height;
-  s32 speed;
+  FIXED height;
+  FIXED speed;
   s32 phase;
   s32 rise;
   s32 i;

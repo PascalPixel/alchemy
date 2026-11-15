@@ -9,7 +9,7 @@
 /// (FieldEffect_UpdateMarsSpark).
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
-  s32 scale;
+  FIXED scale;
   s32 remaining;
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
@@ -114,7 +114,7 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   struct Actor *leader;
   s32 timer;
   s16 frames;
-  s32 y;
+  FIXED y;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   timer = mote->orbitFrames - 1;

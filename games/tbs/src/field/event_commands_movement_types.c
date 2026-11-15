@@ -16,12 +16,12 @@ s32 Actor_ClearChildAndCollisionFlags(void *obj) {
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
-  s32 deltaX;
-  s32 deltaZ;
+  FIXED deltaX;
+  FIXED deltaZ;
   s32 pixelsX;
   s32 pixelsZ;
-  s32 newX;
-  s32 newZ;
+  FIXED newX;
+  FIXED newZ;
   s32 distance;
 
   target = actor->watchedActor;
@@ -117,7 +117,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
   struct Actor *found;
   s32 slotIndex;
   s32 nearestDistance;
-  s32 heightDifference;
+  FIXED heightDifference;
   s32 pixelX;
   s32 pixelZ;
   s32 distance;

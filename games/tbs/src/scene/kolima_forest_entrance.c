@@ -1080,7 +1080,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
 /// are told.
 static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
-  s32 x;
+  FIXED x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0
             ? (x = sparkle->x.fixed,

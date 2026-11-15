@@ -519,7 +519,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   struct Actor *pillar;
   struct Actor *blockingActor;
   s32 directionIndex;
-  s32 moveRate;
+  FIXED moveRate;
   s32 transitionBusy;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -619,7 +619,9 @@ static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *actor) {
 /// Emit a rising particle near the actor every eight frames.
 static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   struct EffectOptions options;
-  s32 framePhase, particleX, particleY, riseSpeed;
+  s32 framePhase;
+  FIXED particleX, particleY;
+  s32 riseSpeed;
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     options.priority = 3 - (Random_Below(2));
@@ -647,7 +649,7 @@ static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *actor) {
 static UNREAD_RESULT
 VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   struct EffectOptions options;
-  s32 fallSpeed;
+  FIXED fallSpeed;
   s32 framePhase;
 
   options.startScaleX = 4 * FIXED_ONE / 5;
@@ -840,8 +842,8 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
 static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
                                                  const s32 *script) {
   struct Actor *effect;
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
 
   fixedX = toFIXED(x);
   fixedZ = toFIXED(z);
@@ -1243,8 +1245,8 @@ static void VenusLighthouse_SearchStatue(void) {
 static void VenusLighthouse_MovePillarTowardWall(void) {
   struct Actor *actor;
   s32 talked = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
-  s32 walkSpeed;
-  s32 walkAcceleration;
+  FIXED walkSpeed;
+  FIXED walkAcceleration;
   s32 emote;
   walkSpeed = toFIXED(4) / 5;
   walkAcceleration = toFIXED(2) / 5;
@@ -1299,7 +1301,7 @@ static void VenusLighthouse_PushPillarTowardWall(void) {
 /// On the switch it sinks in and holds it down (FLAG_SCENE_TEMP_00).
 static void VenusLighthouse_MovePillarOntoSwitch(void) {
   struct Actor *pillar;
-  s32 switchHeight;
+  FIXED switchHeight;
 
   pillar = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
@@ -1561,7 +1563,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
   s32 leaderZ;
   s32 tileDelay;
   u32 frame;
-  s32 dustX;
+  FIXED dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1884,13 +1886,13 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
 /// Moves a floating pillar atop the highest support in its map cell.
 static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
   struct Actor *candidate;
-  s32 supportHeight = -toFIXED(80);
+  FIXED supportHeight = -toFIXED(80);
   struct Actor *pillar = 0;
   u32 candidateIndex;
 
   for (candidateIndex = 0; candidateIndex <= 5; candidateIndex++) {
     s32 candidateId = candidateIndex + ACTOR_BALANCE_WEST;
-    s32 candidateTop;
+    FIXED candidateTop;
 
     if (candidateId == pillarId) {
       continue;
@@ -2050,7 +2052,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
   s32 leaderZ;
   s32 tileDelay;
   u32 frame;
-  s32 dustX;
+  FIXED dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2116,7 +2118,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
   s32 leaderZ;
   s32 tileDelay;
   u32 frame;
-  s32 dustX;
+  FIXED dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2927,7 +2929,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   struct EffectOptions options;
   s32 collision;
   s32 framePhase;
-  s32 particleX;
+  FIXED particleX;
 
   {
     struct FieldWork *work = gFieldWork;
@@ -3213,7 +3215,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase;
-  s32 particleX, particleY, particleZ, riseSpeed;
+  FIXED particleX, particleY, particleZ, riseSpeed;
 
   options.priority = 1;
   options.palette = SPRITE_COLOR_BRG;

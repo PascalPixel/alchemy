@@ -79,7 +79,12 @@ void Matrix_ResetUnit(void) {
 
 /// Rotates gCurrentMatrix by `angles` about the X, Y and Z axes.
 void Matrix_Rotate(s32 *angles) {
-  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  FIXED sinX;
+  s32 cosX;
+  FIXED sinY;
+  s32 cosY;
+  FIXED sinZ;
+  s32 cosZ;
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
@@ -124,7 +129,8 @@ static __inline__ void Matrix_StoreUnit(void *matrix) {
 /// Applies a rotation about the X axis.
 void Matrix_RotateX(s32 angle) {
   MATRIX matrix;
-  s32 sine, cosine;
+  FIXED sine;
+  s32 cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -140,7 +146,8 @@ void Matrix_RotateX(s32 angle) {
 /// Applies a rotation about the Y axis.
 void Matrix_RotateY(s32 angle) {
   MATRIX matrix;
-  s32 sine, cosine;
+  FIXED sine;
+  s32 cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -156,7 +163,8 @@ void Matrix_RotateY(s32 angle) {
 /// Makes the current matrix a rotation about the Y axis.
 void Matrix_SetRotateY(s32 angle) {
   FIXED *matrix = gCurrentMatrix;
-  s32 sine, cosine;
+  FIXED sine;
+  s32 cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -171,7 +179,8 @@ void Matrix_SetRotateY(s32 angle) {
 /// Applies a rotation about the Z axis.
 void Matrix_RotateZ(s32 angle) {
   MATRIX matrix;
-  s32 sine, cosine;
+  FIXED sine;
+  s32 cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -253,7 +262,12 @@ void Matrix_ScaleUniform(FIXED scale) {
 /// Rotates gCurrentMatrix by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
 void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
-  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  FIXED sinX;
+  s32 cosX;
+  FIXED sinY;
+  s32 cosY;
+  FIXED sinZ;
+  s32 cosZ;
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
@@ -283,8 +297,11 @@ void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
 /// Applies rotation, scaling by row and translation together.
 /// scale: scale factors for rows 1-3 of the rotation matrix.
 void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
-  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 axisScale;
+  FIXED sinX, cosX, sinY;
+  s32 cosY;
+  FIXED sinZ;
+  s32 cosZ;
+  FIXED axisScale;
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
@@ -347,7 +364,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 scale;
   s32 ez;
   s32 t;
-  s32 w;
+  FIXED w;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
   /* FAKEMATCH(pin): divide held in r9. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
@@ -434,8 +451,8 @@ void Matrix_LookAt(FIXED *eye, FIXED *target) {
 void Projection_SetFieldOfView(s32 fieldOfView, FIXED nearDepth,
                                FIXED farDepth) {
   s32 halfAngle;
-  s32 sine;
-  s32 focal;
+  FIXED sine;
+  FIXED focal;
 
   halfAngle = fieldOfView / 2;
   sine = Trig_Sin(halfAngle);

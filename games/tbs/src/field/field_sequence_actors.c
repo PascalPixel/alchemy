@@ -204,7 +204,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct MapGridCell *above;
   s32 leader;
   s32 pos;
-  s32 height;
+  FIXED height;
 
   work = gFieldWork;
   leader = gMainRoutineWork.leaderActorId;
@@ -334,12 +334,12 @@ void Scene_AssignViewFlags(struct ActorPlacement *entry) {
 void Actor_ClearOutOfBounds(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *camera;
-  s32 centerX;
-  s32 centerZ;
-  s32 left;
-  s32 right;
-  s32 top;
-  s32 bottom;
+  FIXED centerX;
+  FIXED centerZ;
+  FIXED left;
+  FIXED right;
+  FIXED top;
+  FIXED bottom;
   struct Actor **actorSlot;
   s32 releaseCacheMask;
   s32 i;
@@ -358,8 +358,8 @@ void Actor_ClearOutOfBounds(void) {
     struct Actor *actor = *actorSlot;
 
     if (actor != NULL) {
-      s32 actorX = actor->x.fixed;
-      s32 actorZ = actor->z.fixed;
+      FIXED actorX = actor->x.fixed;
+      FIXED actorZ = actor->z.fixed;
 
       if (actorX != 0 || actorZ != 0) {
         if (actorX < left || actorX > right || actorZ < top ||
@@ -516,7 +516,7 @@ void Actor_Restore(void) {
   s32 actorIndex;
   s32 animation;
   s32 priority;
-  s32 y;
+  FIXED y;
   struct FieldWork **work = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 

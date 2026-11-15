@@ -227,7 +227,7 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
 void Menu_UpdateEntryObjectTransforms(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 scale[2];
-  s32 transform[4];
+  FIXED transform[4];
   s32 i;
 
   if (menu->memberSpritesShown != 0) {

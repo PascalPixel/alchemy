@@ -91,16 +91,16 @@ void WorldMap_UpdatePlacedActors(void) {
       ((struct WorldMapSprite *)leader->sprite)->scale * leader->radius;
   u32 i;
   s32 next;
-  s32 left, right, top, bottom;
+  FIXED left, right, top, bottom;
   struct Actor **slot;
   /* FAKEMATCH(pin): the form kept. */
   register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = work->camera;
   s32 zoom = map->zoom;
-  s32 x = object->x.fixed;
+  FIXED x = object->x.fixed;
   u8 kind = placement->kind;
-  s32 z = object->z.fixed;
+  FIXED z = object->z.fixed;
   struct Actor **objects = gWorldMap_PlacedActors;
 
   if (zoom <= 0x10000) {
@@ -122,7 +122,7 @@ void WorldMap_UpdatePlacedActors(void) {
   /* FAKEMATCH(barrier): the form kept. */
   asm("" : "+g"(leader));
   while (next != 0) {
-    s32 px, pz;
+    FIXED px, pz;
 
     if (placement->unk01 == 15)
       goto next;
@@ -158,8 +158,9 @@ void WorldMap_UpdatePlacedActors(void) {
         }
         if (gMainRoutineWork.ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->sprite)->scale;
-          s32 dx;
-          s32 reach, dz;
+          FIXED dx;
+          s32 reach;
+          FIXED dz;
 
           dx = object->x.fixed - leader->x.fixed;
           if (dx < 0)
@@ -218,7 +219,7 @@ s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
 s32 WorldMap_RiseFromAnchor(struct Actor *object) {
   struct Actor *parent = object->watchedActor;
   s32 step = ++object->timer;
-  s32 scale;
+  FIXED scale;
 
   if (step > 31)
     return 0;

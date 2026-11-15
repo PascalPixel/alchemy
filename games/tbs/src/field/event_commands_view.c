@@ -49,7 +49,7 @@ UNREAD_RESULT WorldMap_StepZoom(void) {
 /// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(FIXED zoom, s32 frames) {
   struct WorldMapView *perspective = gMapGridWork[0];
-  s32 inverse;
+  FIXED inverse;
 
   if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
                                                sizeof(struct FieldWork)))

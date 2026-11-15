@@ -150,7 +150,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       model->shade = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
       for (i = 0; i != 2; i++) {
-        s32 scale = FIXED_ONE * 2 - frame * 0x800;
+        FIXED scale = FIXED_ONE * 2 - frame * 0x800;
 
         if (frame > 31 && i == 1)
           continue;
@@ -180,7 +180,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
         if (star->variant == 4 && (i & 3) == 0)
           Sound_PlayFar(SE_PSYNERGY_START);
         if (star->variant >= 0 && star->variant < 16) {
-          s32 swell = Trig_Sin(star->variant << 11) * star->z;
+          FIXED swell = Trig_Sin(star->variant << 11) * star->z;
           s32 size;
 
           Matrix_Initialize();

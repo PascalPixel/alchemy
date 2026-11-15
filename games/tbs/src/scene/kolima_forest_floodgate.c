@@ -459,7 +459,7 @@ s32 Scene_Initialize(void) {
 /// Makes each log at the middle of its four cells, standing on the ground.
 static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   struct Actor *actor;
-  s32 height;
+  FIXED height;
   s32 x;
   s32 z;
 
@@ -564,8 +564,8 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   s32 facing;
   s32 moved;
   s32 i;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 quarter;
 
   moved = 0;

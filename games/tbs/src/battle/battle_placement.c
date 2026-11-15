@@ -7,8 +7,8 @@
 /// Creates the battle object of a unit at (x, y) on the battlefield: its
 /// sprite, palette, size and weapon, turned to face the centre.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
   s32 palette;
   s32 sprite;
   s32 registeredSprite;

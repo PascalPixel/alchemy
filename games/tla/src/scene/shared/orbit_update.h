@@ -1,6 +1,6 @@
 /// Moves an orbiting actor round its centre as its circle grows.
 s32 Orbit_Update(struct Orbit *object) {
-  s32 z;
+  FIXED z;
 
   object->angle += object->speed;
   object->x = IwramMulFX(Trig_Cos(object->angle), object->radius);

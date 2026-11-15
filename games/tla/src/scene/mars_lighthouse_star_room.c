@@ -178,7 +178,7 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   i = 5;
 next:
   {
-    s32 x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
+    FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *object = ObjectCreate_(
         ICE_CHIP_SPRITE, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
@@ -1374,7 +1374,8 @@ void FlameThrowers_Puff(void) {
   state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
     struct Actor *actor;
-    s32 flag, x, y, offScreen, value, dx, dz;
+    s32 flag, x, y, offScreen, value;
+    FIXED dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1709,7 +1710,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
-    s32 x, y, z;
+    FIXED x, y, z;
 
     a = Random16();
     b = Random16();
@@ -1727,7 +1728,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       s32 scale;
       struct SpriteView *sprite;
       struct SpriteView *source;
-      s32 velocity;
+      FIXED velocity;
 
       angle = Random16();
       radius = Random16();
@@ -2022,7 +2023,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
+    FIXED targetX;
     s32 count;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];

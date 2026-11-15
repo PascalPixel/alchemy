@@ -919,7 +919,7 @@ void EndingPicture_Scroll(void) {
   {
     /* FAKEMATCH(temporary): the scroll read through a word pointer. */
     s32 *word = (s32 *)&gEndingPicture_Scroll;
-    s32 target = gEndingPicture_Row << 16;
+    FIXED target = gEndingPicture_Row << 16;
 
     scroll = *word;
     if (scroll != target) {

@@ -2143,8 +2143,8 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   struct EffectOptions options;
   struct Actor *alex;
   u32 frame;
-  s32 x;
-  s32 xOffset;
+  FIXED x;
+  FIXED xOffset;
 
   alex = Actor_Get(ACTOR_ALEX);
   Sound_Play(SE_WARP);

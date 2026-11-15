@@ -328,7 +328,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       rings->scrollV = 0;
       for (i = 0; i != 4; i++) {
         s32 start = gGeode_WaveStarts[i] + 48;
-        s32 scale;
+        FIXED scale;
         s32 shade;
 
         if (frame <= start) {

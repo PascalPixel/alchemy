@@ -942,8 +942,8 @@ static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
 /// rebuilt from its height and column.
 static void CrossboneIsleKeys_MoveFirstPillar(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PILLAR);
-  s32 x = actor->x.fixed;
-  s32 height = actor->y.fixed;
+  FIXED x = actor->x.fixed;
+  FIXED height = actor->y.fixed;
   s32 column = x / toFIXED(16);
 
   if (height == 0) {

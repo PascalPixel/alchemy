@@ -265,8 +265,8 @@ s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
     matrix->rows[0] = (u16)x_reciprocal;
     matrix->rows[1] = reciprocal << 16;
   } else {
-    s32 sine;
-    s32 cosine;
+    FIXED sine;
+    FIXED cosine;
 
     sine = Trig_Sin(angle);
     cosine = Trig_Cos(angle);

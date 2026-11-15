@@ -32,7 +32,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   /* LEFTOVER(frame): position[1], which the ROM's frame reserves and never
    * touches. */
   struct ScreenPoint position[2];
-  s32 swayCenter[2];
+  FIXED swayCenter[2];
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;

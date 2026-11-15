@@ -118,7 +118,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           frame < gTripleChomp_BiteFrames[i] + 16) {
         s32 age = frame - gTripleChomp_BiteFrames[i];
         s32 alpha = 64 - age * 8;
-        s32 scale = age * 10192 + FIXED_ONE / 4;
+        FIXED scale = age * 10192 + FIXED_ONE / 4;
 
         if (alpha > 0)
           alpha = 0;

@@ -599,7 +599,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
 s32 Field_PlaceAtEntrance(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *work = &gMainRoutineWork;
-  s32 xFixed;
+  FIXED xFixed;
   u8 *cursor = gMapScene;
   s32 *angle;
   u16 *layer;
@@ -607,7 +607,7 @@ s32 Field_PlaceAtEntrance(void) {
   s32 height;
   s32 x;
   s32 z;
-  s32 zFixed;
+  FIXED zFixed;
   s32 base;
   s32 flags;
   s32 left;

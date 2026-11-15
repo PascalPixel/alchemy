@@ -371,7 +371,7 @@ void LuckyDice_Run(void) {
   s32 separation;
   s32 bounceSpeed;
   u32 bounceAngle;
-  s32 scale;
+  FIXED scale;
   s32 pairCount;
   s16 affineScale;
 

@@ -7,7 +7,7 @@
 /// turns.
 static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *actor) {
   struct EffectOptions options;
-  s32 velocityY;
+  FIXED velocityY;
 
   options.palette = SPRITE_COLOR_WHITE;
   if ((gFrameCount & 1) == 0) {

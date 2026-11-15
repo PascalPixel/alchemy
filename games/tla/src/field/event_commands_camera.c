@@ -15,13 +15,13 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   s32 shouldUseSetter;
   struct FieldWork *runtimeBlock;
   s32 minimumX;
-  s32 minimumZ;
+  FIXED minimumZ;
   s32 maximumX;
-  s32 objectZOffset;
-  s32 maximumZ;
-  s32 positionX;
-  s32 positionZ;
-  s32 positionY;
+  FIXED objectZOffset;
+  FIXED maximumZ;
+  FIXED positionX;
+  FIXED positionZ;
+  FIXED positionY;
   struct MapWork *map;
   struct Actor *object;
 

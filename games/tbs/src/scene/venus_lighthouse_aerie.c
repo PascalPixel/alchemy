@@ -384,7 +384,7 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *platform;
   s32 platformId;
-  s32 reboundStep;
+  FIXED reboundStep;
 
   Event_Start();
   platformId = Actor_FindNearestFloatingPlatform();
@@ -438,7 +438,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up the beacon's statues and the six platforms.
 s32 Scene_Initialize(void) {
-  s32 mirroredScale;
+  FIXED mirroredScale;
   u32 platformId;
   s16 entrance;
   struct Actor *platform;
@@ -1841,10 +1841,10 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
 static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
-  s32 cosine;
-  s32 sine;
-  s32 along;
-  s32 across;
+  FIXED cosine;
+  FIXED sine;
+  FIXED along;
+  FIXED across;
 
   cosine = Trig_Cos(angle);
   along =

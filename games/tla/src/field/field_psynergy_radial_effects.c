@@ -52,8 +52,8 @@ struct OrbitEffect {
 /// drawn.
 void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
-  s32 velocity[3];
-  s32 sine;
+  FIXED velocity[3];
+  FIXED sine;
   s32 angle;
   u32 i;
 
@@ -78,10 +78,10 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
 /// and then turning sharply; after 101 frames it hands over to the shared
 /// particle script.
 void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
-  s32 radius;
+  FIXED radius;
   s32 angle;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   radius = Random16() + toFIXED(2);
   angle = effect->angle;
@@ -108,9 +108,9 @@ void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
 void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
   struct OrbitEffect *anchor;
   s32 angle;
-  s32 radius;
-  s32 dx;
-  s32 dz;
+  FIXED radius;
+  FIXED dx;
+  FIXED dz;
 
   anchor = effect->anchor;
   radius = toFIXED(8);
@@ -205,7 +205,7 @@ void FieldPsynergy_Whirlwind(void) {
   Actor_SelectAnimationFar(orb, 2);
   step = 0;
   do {
-    s32 scale;
+    FIXED scale;
 
     SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
                        from.y + (to.y - from.y) * step / 10,
@@ -615,7 +615,7 @@ void FieldPsynergy_UpdateLash(void) {
 
   work->flash = 0;
   for (i = 0; i < work->spawnCount; i++) {
-    s32 distance;
+    FIXED distance;
     s32 speed;
 
     particle = &work->particles[work->next];
@@ -933,7 +933,7 @@ void FieldPsynergy_Retreat(void) {
   effect = effectWork->particles;
   effects = effect;
   do {
-    s32 scale;
+    FIXED scale;
 
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
@@ -970,9 +970,9 @@ void FieldPsynergy_Retreat(void) {
 /// the ground (4 on the World Map).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
-  s32 y;
-  s32 limit;
-  s32 scale;
+  FIXED y;
+  FIXED limit;
+  FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
@@ -999,9 +999,9 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 /// down, 16 pixels in front of the actor and up to 5 pixels nearer.
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
-  s32 y;
-  s32 limit;
-  s32 scale;
+  FIXED y;
+  FIXED limit;
+  FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
@@ -1270,17 +1270,17 @@ void BattleEffect_UpdateArcEffect(void) {
   struct ArcWork *work = Ram_HeapSlots->arcEffect;
   struct Actor *target = work->target;
   s32 group;
-  s32 position[3];
+  FIXED position[3];
   s32 i;
 
   for (group = 0; group < 2; group++) {
-    s32 scale = Trig_Sin(work->age[group] << 10);
+    FIXED scale = Trig_Sin(work->age[group] << 10);
 
     if (work->age[group] < 0)
       continue;
     if (work->age[group] < 32) {
       struct EffectSprite *sprite;
-      s32 x, y;
+      FIXED x, y;
 
       position[0] = target->x.fixed;
       position[1] = target->y.fixed + toFIXED(work->age[group]);
@@ -1623,7 +1623,7 @@ void FieldPsynergy_Arrow(void) {
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
-  s32 pos[3];
+  FIXED pos[3];
   s32 arrowSlot;
   s32 bowSlot;
   s32 tile;
@@ -1744,8 +1744,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
   struct CycloneWork *work = Ram_HeapSlots->battleEffect;
   s16 *points = event->points;
   struct Actor *owner = effect->mainActor;
-  s32 position[3];
-  s32 x, z;
+  FIXED position[3];
+  FIXED x, z;
   s32 kind;
   u32 i;
   s32 count = 0;

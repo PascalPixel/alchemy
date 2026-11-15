@@ -3,8 +3,8 @@
 void Whirlwind_Update(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
+  FIXED position[3];
+  FIXED distance;
   s32 near;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
@@ -55,7 +55,7 @@ void Whirlwind_Update(struct Actor *self) {
       }
       {
         s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
+        FIXED cosine = Trig_Cos(self->facing);
         s32 speed = self->speedLimit;
         /* FAKEMATCH(dead): the routine address taken inside a once-only
          * block. */

@@ -162,7 +162,7 @@ void FieldPsynergy_Pound(void) {
   s32 starTile;
   s32 glowEntry;
   s32 inReach;
-  s32 lift;
+  FIXED lift;
   s32 glowTile;
   s32 spot;
   s32 size = 0x800;
@@ -357,10 +357,11 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   // Set after the clear, which keeps it out of the call's registers.
   height = 32;
   for (column = 0; column < width; column++) {
-    s32 wave = (Trig_Sin(column << 13) << 3) + FIXED_ONE * 8;
+    FIXED wave = (Trig_Sin(column << 13) << 3) + FIXED_ONE * 8;
 
     for (row = 0; row < height; row++) {
-      s32 position = phase * 0x19999 - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
+      FIXED position =
+          phase * 0x19999 - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
       // In two steps: the wave subtracted, then the shift.
       s32 shift = position - wave;
       shift >>= 16;

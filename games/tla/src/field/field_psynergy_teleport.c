@@ -43,7 +43,7 @@ void Teleport_PlayWhirl(void) {
   s32 i;
   s32 angle;
   s32 frame;
-  s32 radius;
+  FIXED radius;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                       work);

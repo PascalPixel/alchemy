@@ -44,7 +44,7 @@ void FieldPsynergy_Blaze(void) {
   s32 look;
   s32 best;
   s32 distance;
-  s32 height;
+  FIXED height;
   s32 id;
   s32 resourceId;
   s32 dropSlot;

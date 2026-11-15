@@ -315,8 +315,8 @@ FIXED Trig_Cos(s32 angle);
 void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   radius = Random16() + 0x20000;
   angle = effect->facing;
@@ -345,7 +345,7 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
     {
       struct OrbitEffect *effect;
       s32 radius;
-      s32 position[3];
+      FIXED position[3];
 
       position[0] = source->x;
       position[1] = source->y + i * 0xcccc + toFIXED(4);

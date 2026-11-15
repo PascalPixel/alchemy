@@ -20,12 +20,12 @@ void TreasureSpot_MoveLeaderAway(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct TreasureSpot *marker = gFieldWork->treasureSpots;
   s32 markerIndex = 0;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 cellX;
   s32 cellZ;
-  s32 dx;
-  s32 dz;
+  FIXED dx;
+  FIXED dz;
 
   // The slots are filled in order, so the first with id 0 ends the list.
   if (marker->id != 0) {
@@ -105,7 +105,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
 
   s32 srcZ = (s32)*(struct Actor **)(work + actorOffset);
   union PolarOffsetPosition picturePosition;
-  s32 pictureX;
+  FIXED pictureX;
 
   if (srcZ == 0)
     return 0;

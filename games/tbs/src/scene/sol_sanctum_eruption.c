@@ -630,8 +630,8 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   u32 crystalIndex;
   s32 angle;
   struct Sprite *sprite;
-  s32 offsetX;
-  s32 offsetZ;
+  FIXED offsetX;
+  FIXED offsetZ;
 
   for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
     actor = Actor_Get(crystalIndex);
@@ -697,8 +697,8 @@ static void SolSanctumEruption_StepEmbers(void) {
   struct Actor *landedEmber;
   struct Actor *ember;
   s16 angle;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   sparkles = gWeatherWork;
   shakePixels = (u32)gEmberTimer / 10;
@@ -1550,7 +1550,9 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   void Sound_Play(s32);
 
   u32 arcIndex, clear;
-  s32 x, y, z;
+  FIXED x;
+  s32 y;
+  FIXED z;
   s32 *origin;
   struct Actor *actor;
   struct Sprite *sprite;

@@ -358,7 +358,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > 0)
           shade = 0;
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 scale = (age << 14) + FIXED_ONE / 4;
+          FIXED scale = (age << 14) + FIXED_ONE / 4;
 
           model->shade = shade;
           Matrix_Initialize();
@@ -378,7 +378,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     flatKind = 3;
     if (frame > 89) {
       u8 color[1];
-      s32 center;
+      FIXED center;
       s32 x;
       s32 y;
 
@@ -446,8 +446,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   const u8 *palette;
   s32 frame;
   s32 enabled;
-  s32 sine;
-  s32 cosine;
+  FIXED sine;
+  FIXED cosine;
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;

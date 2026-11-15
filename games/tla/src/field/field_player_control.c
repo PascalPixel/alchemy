@@ -112,8 +112,8 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     other = (struct Actor *)Ram_HeapSlots->actors;
     withinHalfCell = 0x7ffff;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
-      s32 delta;
-      s32 dy;
+      FIXED delta;
+      FIXED dy;
 
       if (other->script == NULL)
         continue;
@@ -530,7 +530,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     angleIndex = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (; angleIndex < 64; angleIndex++, other++) {
-      s32 dy;
+      FIXED dy;
 
       if (other->script == NULL)
         continue;
@@ -744,7 +744,7 @@ counted:
     object->timer = 0;
     object->userValue = 2;
   } else {
-    s32 speed;
+    FIXED speed;
 
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = Math_SqrtFX(Iwram_MulFX(object->velocityX, object->velocityX) +

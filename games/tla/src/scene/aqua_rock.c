@@ -261,7 +261,11 @@ s32 AquaRock_PickRandomSpot(struct Actor *object) {
   struct Vector3 spot;
   struct Vector3 unused; // Unused: gives the stack frame its 12 bytes.
   struct Vector3 *p;
-  s32 x, coordinate, tries, maxDistanceSquared, distance, dx, dz;
+  s32 x;
+  FIXED coordinate;
+  s32 tries, maxDistanceSquared;
+  FIXED distance;
+  s32 dx, dz;
   u32 a, b;
 
   tries = 0;
@@ -345,7 +349,7 @@ void AquaRock_DripAtRandom(struct Actor *object) {
   if ((u32)Random16() < 0x1000) {
     struct Actor *child;
     s32 spread = Random16();
-    s32 x = object->x.fixed;
+    FIXED x = object->x.fixed;
 
     x += spread * 48;
     child = Import_ActorCreate(SPRITE_GLINT, x - toFIXED(24), object->y.fixed,
@@ -1209,7 +1213,7 @@ void AquaRock_FlowWithStream(void) {
   struct Actor *anchor;
   s32 owner;
   struct Actor *leader;
-  s32 position[3];
+  FIXED position[3];
   s32 result;
 
   {

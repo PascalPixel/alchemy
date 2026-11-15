@@ -257,8 +257,8 @@ static void GomaCavePillar_MoveWestPillar(void) {
 /// frame, two on every sixteenth.
 static void GomaCavePillar_SpawnStumpDust(void) {
   s32 framePhase;
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
   struct Actor *heightSource;
   struct Actor *firstXSource;
   s32 firstRandomX, firstStyle, firstSpeedBand, firstBandScaled,
@@ -315,8 +315,8 @@ s32 gGomaCavePillar_WitnessFrames;
 /// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL).
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
-  s32 fixedX;
-  s32 fixedZ;
+  FIXED fixedX;
+  FIXED fixedZ;
   struct Actor *heightSource;
   struct Actor *stump;
   s32 style, speedBand, bandScaled, fallingSpeed;

@@ -115,8 +115,8 @@ void MercuryLighthouse_SpawnMotes(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
   s32 phase;
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
 
   Actor_SetSpritePriority(ACTOR_BOY, 3);
   Actor_SetSpritePriority(ACTOR_GIRL, 3);

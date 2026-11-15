@@ -242,7 +242,7 @@ void Actor_WaitForMoveById(u32 actorId) {
 /// pixels, at rest.
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
   struct Actor *actor;
-  s32 groundHeight;
+  FIXED groundHeight;
   s32 tileX;
   s32 tileZ;
   s32 terrainId;
@@ -282,7 +282,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
 /// read as Actor_SetHorizontalPositionWithTerrain reads it.
 void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor;
-  s32 groundHeight;
+  FIXED groundHeight;
   s32 tileX;
   s32 tileZ;
 
@@ -411,10 +411,10 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
 /// each frame, and rises 1/64 pixel a frame.
 void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   s32 velocityX;
-  s32 x;
+  FIXED x;
   s32 velocityZ;
-  s32 z;
-  s32 y;
+  FIXED z;
+  FIXED y;
   s32 roundedZ;
   velocityX = particle->speedLimit;
   x = particle->x.fixed + velocityX;
@@ -487,8 +487,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// frame (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands.
 void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
-  s32 nextY;
-  s32 startZ;
+  FIXED nextY;
+  FIXED startZ;
   struct Actor *actor;
 
   actor = Actor_GetById(actorId);

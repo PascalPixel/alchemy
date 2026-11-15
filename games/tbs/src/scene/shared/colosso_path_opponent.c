@@ -34,7 +34,7 @@ static void Colosso_UpdatePathOpponent(void) {
     x = work->path[(s16)rec->pathIndex++];
     z = work->path[(s16)rec->pathIndex++];
     if (x == 0 && z == 0) {
-      s32 fz;
+      FIXED fz;
       rec->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, ANIM_STAND);
       if (work->gauge.finishX < actor->x.fixed) {

@@ -29,9 +29,9 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   s32 count;
   s32 ymin;
   s32 ymax;
-  s32 xyz[3];
+  FIXED xyz[3];
   struct ScreenPoint screen;
-  s32 point[3];
+  FIXED point[3];
   DrawRectangle pair[2];
   struct Particle *mote;
   s32 i;

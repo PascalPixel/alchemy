@@ -350,9 +350,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// actor.
 UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
   struct EffectOptions options;
-  s32 x;
-  s32 y;
-  s32 velocityY;
+  FIXED x;
+  FIXED y;
+  FIXED velocityY;
 
   if ((gFrameCount & 7) == 0) {
     options.priority = 3;
@@ -454,7 +454,9 @@ void LightSprites_Draw(void) {
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
     if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox, y, z, oy, depth;
+      s32 big, ox;
+      FIXED y, z;
+      s32 oy, depth;
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;

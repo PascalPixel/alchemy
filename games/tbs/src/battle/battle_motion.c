@@ -62,11 +62,11 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 /// Unused: sends one unit leaping progress percent of the way toward another.
 void BattleMotion_LeapToward(struct BattleObject *startSlot,
                              struct BattleObject *endSlot, s32 progress) {
-  s32 zStep;
-  s32 startX;
-  s32 x;
-  s32 startZ;
-  s32 endZ;
+  FIXED zStep;
+  FIXED startX;
+  FIXED x;
+  FIXED startZ;
+  FIXED endZ;
   struct Actor *start;
   struct Actor *end;
 
@@ -174,14 +174,14 @@ void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
   struct Actor *actor = actorSlot->actor;
   struct Actor *target = targetSlot->actor;
   s32 percent = 75;
-  s32 dx = target->x.fixed - actor->x.fixed;
-  s32 startX = actor->x.fixed;
-  s32 stepX = percent * dx / 100;
-  s32 dz = target->z.fixed - actor->z.fixed;
-  s32 startZ = actor->z.fixed;
-  s32 stepZ = percent * dz / 100;
-  s32 x = startX + stepX;
-  s32 z = startZ + stepZ;
+  FIXED dx = target->x.fixed - actor->x.fixed;
+  FIXED startX = actor->x.fixed;
+  FIXED stepX = percent * dx / 100;
+  FIXED dz = target->z.fixed - actor->z.fixed;
+  FIXED startZ = actor->z.fixed;
+  FIXED stepZ = percent * dz / 100;
+  FIXED x = startX + stepX;
+  FIXED z = startZ + stepZ;
   // The distance is taken in 1/256 pixels, so its square fits 32 bits.
   s32 cellX = stepX >> 8;
   s32 cellZ = stepZ >> 8;
@@ -224,10 +224,10 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObject *secondSlot;
   struct Actor *first;
   struct Actor *second;
-  s32 firstX;
-  s32 secondX;
-  s32 firstZ;
-  s32 secondZ;
+  FIXED firstX;
+  FIXED secondX;
+  FIXED firstZ;
+  FIXED secondZ;
   struct Point position;
 
   first = BattleObject_Get(firstId)->actor;
@@ -284,7 +284,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
   s32 projectionScale;
-  s32 spriteScale;
+  FIXED spriteScale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED struct ScreenPoint input;
@@ -304,7 +304,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
   s32 projectedHeight;
-  s32 spriteScale;
+  FIXED spriteScale;
 
   BattleCamera_ApplyTransform();
   projectedHeight = Matrix_ProjectPoint(&actor->x.fixed, projected);

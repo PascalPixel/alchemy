@@ -10,12 +10,12 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 s32 PushTarget_FindSlide(struct PushTarget *target) {
   struct Actor *object;
   s32 direction;
-  s32 position[3];
+  FIXED position[3];
   s32 footprint;
   s32 width;
   s32 height;
   s32 dx;
-  s32 dz;
+  FIXED dz;
   s32 count;
   s32 row;
   s32 col;

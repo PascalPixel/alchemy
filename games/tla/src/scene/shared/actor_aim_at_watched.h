@@ -2,7 +2,7 @@
 s32 Actor_AimAtWatched(struct Actor *object) {
   struct Actor *target = object->watchedActor;
   s32 steps;
-  s32 from;
+  FIXED from;
 
   object->bounce = (target->x.fixed - object->x.fixed) / (steps = 10);
   from = object->y.fixed;

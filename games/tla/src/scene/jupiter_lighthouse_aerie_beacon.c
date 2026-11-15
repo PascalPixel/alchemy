@@ -120,9 +120,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void JupiterLighthouse_CircleBeacon(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_BEAM_A);
   u16 angle = self->timer;
-  s32 sine;
-  s32 x;
-  s32 z;
+  FIXED sine;
+  FIXED x;
+  FIXED z;
 
   self->x.fixed = centre->x.fixed + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
@@ -143,7 +143,7 @@ void JupiterLighthouse_CircleBeacon(struct Actor *self) {
 void JupiterLighthouse_CircleBeaconWide(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_BEACON_ORB);
   u16 angle = self->timer;
-  s32 cosine = Trig_Cos(angle);
+  FIXED cosine = Trig_Cos(angle);
   s32 radius = self->speedLimit + BYTE_AT(self, 98);
   self->x.fixed = centre->x.fixed + cosine * (radius + 6);
   self->z.fixed = centre->z.fixed + Math_Sin(angle) * (BYTE_AT(self, 98) + 4);
@@ -1620,7 +1620,7 @@ static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0, s32 a1) {
 
 void JupiterLighthouse_WeBeatThem(void) {
   s32 fast;
-  s32 slow;
+  FIXED slow;
   s32 mid;
   s32 t2;
   s32 t3;
@@ -2098,7 +2098,7 @@ extern s32 gJupiterLighthouse_FourthBeamObjects[];
 extern s32 gJupiterLighthouse_BeamObjects[];
 
 void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
-  s32 speed;
+  FIXED speed;
   u32 count;
   s32 *list;
   s32 *p;
@@ -2438,7 +2438,7 @@ void Whirlwind_Update(struct WhirlwindActor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Vector3 position;
-  s32 distance;
+  FIXED distance;
   s32 near;
   s32 timer;
   u8 *flags;

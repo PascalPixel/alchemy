@@ -967,8 +967,8 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
 /// along x and z, all in 16.16 pixels.
 FIXED MapGrid_GetHighestTerrainHeightAround(s32 layer, FIXED x, FIXED z,
                                             FIXED reach) {
-  s32 best;
-  s32 height;
+  FIXED best;
+  FIXED height;
 
   best = MapGrid_GetTerrainHeight(layer, x, z);
   height = MapGrid_GetTerrainHeight(layer, x - reach, z);

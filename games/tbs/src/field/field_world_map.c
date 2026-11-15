@@ -116,7 +116,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   s32 *cameraPosition;
   s32 *distance;
   s16 *zoomTransitionFrames;
-  s32 farPlane;
+  FIXED farPlane;
   s32 tileIndex;
 
   // Hide the backgrounds and sprites while their memory is replaced.
@@ -499,8 +499,8 @@ void WorldMap_UpdateView(void) {
 
   WorldMap_PreloadCurrentTileBlock();
   if (followedPosition != NULL) {
-    s32 x;
-    s32 y;
+    FIXED x;
+    FIXED y;
     s32 tileColumn;
     s32 tileRow;
 
@@ -518,7 +518,7 @@ void WorldMap_UpdateView(void) {
     }
     if (perspective->shakeY != 0) {
       s32 shakeDifference = Random16();
-      s32 shakeAmplitude;
+      FIXED shakeAmplitude;
 
       shakeDifference -= Random16();
       shakeAmplitude = perspective->shakeY;
@@ -568,8 +568,8 @@ void WorldMap_UpdateView(void) {
   // The scanline table depends only on the pitch, so it is rebuilt only when
   // the pitch has changed.
   if (gScanlinePitch != perspective->pitch) {
-    s32 cosine = Trig_Cos(perspective->pitch);
-    s32 sine = Trig_Sin(perspective->pitch);
+    FIXED cosine = Trig_Cos(perspective->pitch);
+    FIXED sine = Trig_Sin(perspective->pitch);
 
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
                                 affineWork->scanlines);

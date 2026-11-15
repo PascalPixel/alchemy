@@ -1201,8 +1201,8 @@ void Madra_StopPartyAfterRaid(void) {
 /// and Karst comes in at the gate looking for Menardi.
 void Madra_MeetKarst(void) {
   struct Actor *object;
-  s32 x = toFIXED(153);
-  s32 z;
+  FIXED x = toFIXED(153);
+  FIXED z;
 
   z = toFIXED(259);
   Event_Start();

@@ -804,7 +804,7 @@ void TrialRoad_OpenSpoutCell(s32 id) {
 }
 
 void TrialRoad_TrackLeaderOnPillars(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y == toFIXED(32))
     Event_SetFlag(FLAG_SCENE_TEMP_08);
@@ -1004,7 +1004,7 @@ void TrialRoad_PoundEastPillar(s32 a, s32 b) {
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
-  s32 t;
+  FIXED t;
 
   if (PILLAR_TOP_HEIGHT(object) != 0)
     return;
@@ -1053,7 +1053,7 @@ void TrialRoad_StepOnEastPillar(void) {
 }
 
 void TrialRoad_LandOnPillar(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y >= toFIXED(16)) {
     Field_TryJumpForward();
@@ -1297,7 +1297,7 @@ void TrialRoad_StandOnBlock(void) {
 
   if (FIELD_CELL(block->x.fixed) == FIELD_CELL(leader->x.fixed) &&
       FIELD_CELL(block->z.fixed) == FIELD_CELL(leader->z.fixed)) {
-    s32 y = leader->y.fixed;
+    FIXED y = leader->y.fixed;
 
     if (y < toFIXED(32))
       leader->y.fixed = toFIXED(32);
@@ -1373,7 +1373,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
+    FIXED target;
     s32 frames;
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
@@ -1756,7 +1756,7 @@ void TrialRoad_GaspFlees(void) {
   s32 dz;
   s32 near;
   s32 far;
-  s32 y;
+  FIXED y;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_88))
     return;
@@ -2897,7 +2897,7 @@ void TrialRoad_UpdateFountains(void) {
       if (mover->height == 0) {
         marker->y.fixed = actor->y.fixed - toFIXED(16);
       } else {
-        s32 wave;
+        FIXED wave;
         mover->bob += TRIG_TURN / 16;
         wave = Iwram_MulFX(toFIXED(2), Trig_Sin(mover->bob)) - toFIXED(14);
         marker->y.fixed = actor->y.fixed + toFIXED(mover->height) + wave;
@@ -2926,7 +2926,7 @@ void TrialRoad_DrawFountains(void) {
   s32 viewX;
   s32 viewZ;
   s32 viewY;
-  s32 rise;
+  FIXED rise;
   struct MapWork *map;
   s32 *view;
   struct Actor *object;
@@ -2935,10 +2935,10 @@ void TrialRoad_DrawFountains(void) {
   s32 lift;
   s32 x;
   s32 height;
-  s32 z;
+  FIXED z;
   s32 sy;
   s32 depth;
-  s32 bob;
+  FIXED bob;
 
   tile = gVramCacheEntries[base->vramEntry].offset >> 5;
   entry = base->sprites;
@@ -3141,7 +3141,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
-  s32 position[3];
+  FIXED position[3];
   s32 id;
   s32 flag;
   s32 second;
@@ -3270,7 +3270,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   do {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
-      s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
+      FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
@@ -3412,7 +3412,8 @@ void TrialRoad_MoveRival(void) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x, z, turn, dx, dz;
+  s32 x, z, turn;
+  FIXED dx, dz;
   u16 heading;
 
   if (rival == 0)

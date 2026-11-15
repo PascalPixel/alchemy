@@ -44,7 +44,7 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
     obj->y.fixed = position;
   }
   {
-    s32 position = obj->z.fixed;
+    FIXED position = obj->z.fixed;
 
     position += (target->z.fixed - position) / 2;
     obj->z.fixed = position;

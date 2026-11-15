@@ -339,7 +339,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   battleObject = BattleObject_Get(actorId);
   {
     s32 x = battleObject->anchorX;
-    s32 z;
+    FIXED z;
 
     battleObject->object->x = x;
     z = battleObject->anchorZ;
@@ -538,7 +538,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
   Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
   if (work.kind != 0) {
-    s32 fade;
+    FIXED fade;
     struct HeapSlots *heap;
 
     targetOrFadeIndex = 0;
@@ -549,7 +549,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = FIXED_ONE - fade;
+        FIXED value = FIXED_ONE - fade;
 
         battle->brightness = value;
         ColorBuffer_Scale(palette, (u32)BATTLE_BG_PALETTE, value,

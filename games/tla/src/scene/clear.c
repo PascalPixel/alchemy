@@ -575,14 +575,6 @@ finish:
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The places of the password level menu (RESOURCE_LAYOUT_PASSWORD_LEVEL), as
-/// The Broken Seal's file screen numbers them.
-enum PasswordLevel {
-  PASSWORD_LEVEL_GOLD = 0,
-  PASSWORD_LEVEL_SILVER = 1,
-  PASSWORD_LEVEL_BRONZE = 2
-};
-
 /// The symbols of each level's password: The Broken Seal packs 173, 39 or 9
 /// bytes (FileScreen_PackPasswordData), then two of its checksum, six bits a
 /// symbol and a tenth symbol after every nine.

@@ -20,6 +20,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/scene.h"
 #include "flags.h"
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
@@ -195,7 +196,7 @@ extern u16 gPushKinds[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *cell);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
 void Actor_StopAtPushTarget(struct Actor *object);
 
@@ -1214,32 +1215,24 @@ void EasternAlhafra_AskIfFinished(void) {
 
 extern u32 gEasternAlhafra_PuffScript[];
 
-void Actor_StartScript(struct SpawnObject *object, const void *script);
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
-
 /// Spawns a puff (actor type 0x1e8) at x, y, z, turned to value, for timer
 /// frames.
 void EasternAlhafra_SpawnPuff(x, y, z, value, timer) s32 x, y, z;
 s16 value;
 s32 timer;
 {
-  struct SpawnObject *object;
-  struct FieldSprite *sprite;
+  struct Actor *object;
+  struct Sprite *sprite;
 
-  object = ((struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z));
-  if (object != 0) {
+  object = FieldActor_Create(0x1e8, x, y, z);
+  if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gEasternAlhafra_PuffScript);
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
-    {
-      /* FAKEMATCH(signature): the timer copied into an s64 local. */
-      s64 wide = timer;
-
-      object->unk5e = wide;
-    }
-    sprite->nextFrame = 0;
+    object->wait = timer;
+    sprite->flags = 0;
     sprite->rotation = value;
   }
 }
@@ -2447,9 +2440,12 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 extern s32 gPushLeaderSteps[];
 
-static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
-                                                struct Vector3 *cell) {
-  return MapGrid_CheckCollision(actor, cell);
+/// Whether an actor at `position` would collide there, 2 for a wall: The Broken
+/// Seal's system_call.h layer over MapGrid_CheckCollision.
+static inline s32
+FieldActor_CheckMovementCollision(struct Actor *actor,
+                                  struct FieldPosition *position) {
+  return MapGrid_CheckCollision(actor, position);
 }
 
 /// Measures a push: finds the pushable actor ahead of the leader
@@ -2460,7 +2456,7 @@ static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
 /// returns 1, else 0. The actor stays on layer 2 while it is measured.
 s32 PushTarget_FindSlide(struct PushState *push) {
   struct Actor *actor;
-  struct Vector3 cell;
+  struct FieldPosition cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;
 
@@ -2486,8 +2482,7 @@ s32 PushTarget_FindSlide(struct PushState *push) {
       for (j = 0; j < height; j++) {
         cell.x = push->x + px(gPushFootprints[kind][0]);
         for (i = 0; i < width; i++) {
-          /* FAKEMATCH(wrapper): the call through PushTarget_CheckCollision. */
-          if (PushTarget_CheckCollision(actor, &cell) == 2)
+          if (FieldActor_CheckMovementCollision(actor, &cell) == 2)
             goto blocked;
           cell.x += px(16);
         }

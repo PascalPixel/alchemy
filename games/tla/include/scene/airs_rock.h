@@ -7,15 +7,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-struct MarkedBlock {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x63 - 0x14];
-  u8 unk63;
-};
-
 struct AirsRockMapLayer {
   u8 unk00[0x30];
   u8 *cells;

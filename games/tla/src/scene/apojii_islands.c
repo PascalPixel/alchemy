@@ -51,8 +51,6 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
 void Shop_Run(s32 a, s32 b);
 void Inn_CheckIn(s32 a, s32 b);
 
@@ -109,11 +107,6 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
-static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
-                                                      s32 d, s32 e, s32 f,
-                                                      s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
-}
 #include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -133,6 +126,7 @@ static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
 #include "field/field_bank.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "scene/shared.h"
 #include "system/system.h"
 #include "system/task.h"
@@ -444,7 +438,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
 }
 
 void ApojiiIslands_ClearFirstBush(void) {
-  ApojiiIslands_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
+  FieldTileCopies_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
 }
 
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
@@ -452,7 +446,7 @@ void ApojiiIslands_ClearFirstBush(void) {
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
                                                                                \
-    ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
+    FieldTileCopies_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);               \
     if (Event_GetFlag(n5) == 0) {                                              \
       Actor_SetPosition(n6, n7, n8);                                           \
       if (FIELD_CELL(leader->x.fixed) == n9 &&                                 \
@@ -477,7 +471,7 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
 void ApojiiIslands_ClearRoom3Bushes(void) {
-  ApojiiIslands_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
+  FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearRoom3SmallBush, 67,

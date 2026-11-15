@@ -246,22 +246,6 @@ struct HeapSlotWords {
   u32 mapWork;
 };
 
-struct Sprite020003e8 {
-  u8 unk00[18];
-  s16 rotation;
-  u8 unk14[6];
-  u8 nextFrame;
-};
-
-struct Actor020003e8 {
-  u8 unk00[0x50];
-  struct Sprite020003e8 *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[8];
-  s16 unk5e;
-};
-
 struct EpilogueSprite {
   u8 unk00[5];
   u8 unk05_0 : 5;

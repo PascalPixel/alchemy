@@ -240,26 +240,21 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u32 gEasternAlhafraShip_NoteScript[];
 
-void Actor_SelectAnimation(struct Actor020003e8 *object, s32 mode);
-void Actor_StartScript(struct Actor020003e8 *object, const void *script);
-
-void EasternAlhafraShip_SpawnNote(x, y, z, value, fifth) s32 x, y, z;
+void EasternAlhafraShip_SpawnNote(x, y, z, value, timer) s32 x, y, z;
 s16 value;
-s32 fifth;
+s32 timer;
 {
-  struct Actor020003e8 *object;
-  struct Sprite020003e8 *sprite;
+  struct Actor *object;
+  struct Sprite *sprite;
 
-  object = ((struct Actor020003e8 *)Import_ActorCreate(0x1e8, x, y, z));
-  if (object != 0) {
+  object = Import_ActorCreate(0x1e8, x, y, z);
+  if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gEasternAlhafraShip_NoteScript);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__("");
-    object->unk5e = fifth;
-    sprite->nextFrame = 0;
+    object->wait = timer;
+    sprite->flags = 0;
     sprite->rotation = value;
   }
 }

@@ -118,17 +118,12 @@ void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Contigo_SendToLuckyWheels(s32 mode);
 void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 mode);
 
-static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 mode) {
-  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
-}
 #include "system/task.h"
 #include "field/actor.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "shared/tables.h"
@@ -1050,9 +1045,13 @@ void Contigo_TeleportOut(void) {
   Contigo_StopPaletteCycle();
 }
 
-void Contigo_ClearFirstBushes(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
+void Contigo_ClearFirstBushes(void) {
+  FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
+}
 
-void Contigo_ClearSecondBushes(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
+void Contigo_ClearSecondBushes(void) {
+  FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
+}
 
 static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f, s32 g) {
@@ -1079,34 +1078,44 @@ void Contigo_ClearBushesBySalt(void) {
   }
 }
 
-void Contigo_ClearFourthBushes(void) { Contigo_Tiles(29, 35, 1, 2, 23, 47, 0); }
+void Contigo_ClearFourthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(29, 35, 1, 2, 23, 47, 0);
+}
 
-void Contigo_ClearFifthBushes(void) { Contigo_Tiles(32, 55, 2, 3, 29, 58, 0); }
+void Contigo_ClearFifthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(32, 55, 2, 3, 29, 58, 0);
+}
 
-void Contigo_ClearSixthBushes(void) { Contigo_Tiles(3, 60, 1, 1, 3, 56, 0); }
+void Contigo_ClearSixthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(3, 60, 1, 1, 3, 56, 0);
+}
 
-void Contigo_ClearSeventhBushes(void) { Contigo_Tiles(7, 62, 2, 1, 7, 58, 0); }
+void Contigo_ClearSeventhBushes(void) {
+  FieldTileCopies_CopyTouchedCells(7, 62, 2, 1, 7, 58, 0);
+}
 
-void Contigo_ClearEighthBushes(void) { Contigo_Tiles(10, 63, 2, 1, 10, 59, 0); }
+void Contigo_ClearEighthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(10, 63, 2, 1, 10, 59, 0);
+}
 
 void Contigo_ClearFirstHedgeRow(void) {
-  Contigo_Tiles(32, 55, 3, 1, 40, 57, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 57, 0);
 }
 
 void Contigo_ClearSecondHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 58, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 58, 0);
 }
 
 void Contigo_ClearThirdHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 59, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 59, 0);
 }
 
 void Contigo_ClearFourthHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 60, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 60, 0);
 }
 
 void Contigo_ClearFifthHedgeRow(void) {
-  Contigo_Tiles(32, 55, 3, 1, 40, 61, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
 
 void Contigo_WidenCameraBounds(void) {

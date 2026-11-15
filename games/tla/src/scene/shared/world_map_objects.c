@@ -238,11 +238,9 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 void WorldMap_SpawnSparkPair(struct Actor *object) {
   struct Actor *spark;
   struct FieldSprite *sprite;
-  s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
-  /* FAKEMATCH(temporary): the resident multiply called through a local pointer.
-   */
-  mulQ16(object->scaleX, Q16_ONE * 3 / 2);
+  // DEAD: a scale multiplied and dropped; the ROM keeps the call.
+  Math_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
   spark =
       FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
   if (spark != NULL) {

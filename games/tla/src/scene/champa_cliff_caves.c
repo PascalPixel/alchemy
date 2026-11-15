@@ -1612,11 +1612,6 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_End();
 }
 
-static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline. */
-  EffectSprite_Init(a, b, c, d, e);
-}
-
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
   struct Actor *object = Actor_GetById(id);
@@ -1645,7 +1640,8 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   slot = VramCache_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
   sprite = &work->sprite;
-  Place(sprite, 8, 16, 0x40000000, tile);
+  FieldEffectSprite_Init((struct EffectSprite *)sprite, 8, 16, 0x40000000,
+                         tile);
   sprite->unk1e = 240;
   sprite->priority = 1;
   sprite->fullColor = 0;
@@ -1719,7 +1715,8 @@ next:
   work->discEntry = entry;
   work->discVram = vram;
   sprite = &work->disc;
-  Place(sprite, 31, 31, 0xc0000000, vram);
+  FieldEffectSprite_Init((struct EffectSprite *)sprite, 31, 31, 0xc0000000,
+                         vram);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = 2;
@@ -1752,7 +1749,8 @@ next:
   work->columnEntry = entry;
   work->columnVram = vram;
   sprite = &work->column;
-  Place(sprite, 15, 47, 0xc0008000, vram);
+  FieldEffectSprite_Init((struct EffectSprite *)sprite, 15, 47, 0xc0008000,
+                         vram);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 1;
   sprite->oam.priority = 1;

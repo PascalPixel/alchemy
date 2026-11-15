@@ -28,17 +28,12 @@
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 
 void AncientLemuria_StillTheStatue(s32 id);
 void AncientLemuria_MeetTheLemurians(void);
 void Field_TryJumpForward(void);
-void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 layer);
 
-static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                           s32 destY, s32 layer) {
-  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
-}
 #include "text/msg_ids.h"
 /// The twelve colours, a frame in four, the water's shimmer takes in turn.
 extern s16 gAncientLemuria_ShimmerColors[];
@@ -137,8 +132,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *object;
   s32 i;
 
-  /* FAKEMATCH(wrapper): scene.h's MapCopy. */
-  MapCopy(7, 13, 1, 1, 5, 13, 0);
+  FieldTileCopies_CopyTouchedCells(7, 13, 1, 1, 5, 13, 0);
   if (Event_GetFlag(FLAG_RIME_REVEALED))
     return;
   object = Actor_GetById(ACTOR_RIME);
@@ -188,15 +182,25 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
-void AncientLemuria_CycloneSecondBush(void) { MapCopy(9, 9, 2, 3, 8, 9, 0); }
+void AncientLemuria_CycloneSecondBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 9, 2, 3, 8, 9, 0);
+}
 
-void AncientLemuria_CycloneThirdBush(void) { MapCopy(38, 0, 5, 2, 12, 7, 0); }
+void AncientLemuria_CycloneThirdBush(void) {
+  FieldTileCopies_CopyTouchedCells(38, 0, 5, 2, 12, 7, 0);
+}
 
-void AncientLemuria_CycloneFourthBush(void) { MapCopy(39, 2, 4, 3, 14, 11, 0); }
+void AncientLemuria_CycloneFourthBush(void) {
+  FieldTileCopies_CopyTouchedCells(39, 2, 4, 3, 14, 11, 0);
+}
 
-void AncientLemuria_CycloneFifthBush(void) { MapCopy(39, 2, 3, 3, 21, 9, 0); }
+void AncientLemuria_CycloneFifthBush(void) {
+  FieldTileCopies_CopyTouchedCells(39, 2, 3, 3, 21, 9, 0);
+}
 
-void AncientLemuria_CycloneSixthBush(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
+void AncientLemuria_CycloneSixthBush(void) {
+  FieldTileCopies_CopyTouchedCells(39, 0, 4, 3, 25, 8, 0);
+}
 
 void AncientLemuria_StartTremorOnTheStatue(void) {
   AncientLemuria_StillTheStatue(13);

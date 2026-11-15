@@ -33,6 +33,7 @@
 #include "field/field_sprite.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "text/msg_ids.h"
 
 /// The inlet's own story, which no other scene reads.
@@ -356,14 +357,6 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   }
 }
 
-void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 layer);
-
-static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                           s32 destY, s32 layer) {
-  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
-}
-
 void AttekaInlet_CheckForHammetsMessenger(void) {
   if (GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP) &&
       GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS) &&
@@ -375,7 +368,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   struct Actor *object;
   s32 moved;
 
-  MapCopy(9, 23, 1, 1, 7, 23, 0);
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     Event_Start();
@@ -397,23 +390,41 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   }
 }
 
-void AttekaInlet_CycloneFirstBush(void) { MapCopy(9, 23, 1, 1, 4, 10, 0); }
+void AttekaInlet_CycloneFirstBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 4, 10, 0);
+}
 
-void AttekaInlet_CycloneSecondBush(void) { MapCopy(9, 23, 1, 1, 6, 9, 0); }
+void AttekaInlet_CycloneSecondBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 9, 0);
+}
 
-void AttekaInlet_CycloneThirdBush(void) { MapCopy(9, 23, 1, 1, 6, 6, 0); }
+void AttekaInlet_CycloneThirdBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 6, 0);
+}
 
-void AttekaInlet_CycloneFourthBush(void) { MapCopy(12, 5, 1, 1, 12, 6, 0); }
+void AttekaInlet_CycloneFourthBush(void) {
+  FieldTileCopies_CopyTouchedCells(12, 5, 1, 1, 12, 6, 0);
+}
 
-void AttekaInlet_CycloneFifthBush(void) { MapCopy(9, 23, 1, 1, 13, 7, 0); }
+void AttekaInlet_CycloneFifthBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 13, 7, 0);
+}
 
-void AttekaInlet_CycloneSixthBush(void) { MapCopy(9, 23, 1, 1, 14, 6, 0); }
+void AttekaInlet_CycloneSixthBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 14, 6, 0);
+}
 
-void AttekaInlet_CycloneSeventhBush(void) { MapCopy(9, 23, 1, 1, 21, 6, 0); }
+void AttekaInlet_CycloneSeventhBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 21, 6, 0);
+}
 
-void AttekaInlet_CycloneEighthBush(void) { MapCopy(9, 23, 1, 1, 22, 6, 0); }
+void AttekaInlet_CycloneEighthBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 22, 6, 0);
+}
 
-void AttekaInlet_CycloneNinthBush(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
+void AttekaInlet_CycloneNinthBush(void) {
+  FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 23, 7, 0);
+}
 
 /// 23; flag FLAG_HAMMETS_GIFT_DELIVERED is set.
 void AttekaInlet_HammetsMessengerArrives(void) {

@@ -212,17 +212,17 @@ void Blocks_MarkCells(u16 *ids) {
   }
 }
 
-void Blocks_UnmarkCells(struct MarkedBlock *unk) {
+void Blocks_UnmarkCells(struct Actor *block) {
   struct MapWork *map;
 
-  if (unk->unk63 != 0) {
+  if (block->blockMarked != 0) {
     map = Ram_HeapSlots->mapGrid;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
       /* FAKEMATCH(dead): cell's initial value, overwritten unread. */
       struct MapCell *cell = *cells;
-      s32 x = FIELD_CELL(unk->x);
-      s32 row = FIELD_CELL(unk->z - unk->y);
+      s32 x = FIELD_CELL(block->x.fixed);
+      s32 row = FIELD_CELL(block->z.fixed - block->y.fixed);
 
       cell = *cells;
       cell += x + ((row + 1) << 7);
@@ -230,7 +230,7 @@ void Blocks_UnmarkCells(struct MarkedBlock *unk) {
       cell = *cells;
       cell += x + ((row - 1) << 7);
       cell->collisionCode = 0;
-      unk->unk63 = 0;
+      block->blockMarked = 0;
     }
   }
 }

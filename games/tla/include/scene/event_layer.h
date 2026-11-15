@@ -8,6 +8,7 @@
 /// image's routine.
 
 #include "types.h"
+#include "field/effect_sprite.h"
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
@@ -24,6 +25,29 @@ void Field_StartColorTransition(s32 frames, s32 color);
 /// colours to fade back to (Field_StartColorTransition).
 static inline void Event_StartColorTransition(s32 frames, s32 color) {
   Field_StartColorTransition(frames, color);
+}
+
+void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
+                                 s32 height, s32 windowX, s32 windowZ,
+                                 s32 layer);
+
+/// Opens the cells of a window that the leader can reach, taking their pictures
+/// from the same place of another window, as Cyclone clears a bush
+/// (TileCopies_CopyTouchedCells).
+static inline void FieldTileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ,
+                                                    s32 width, s32 height,
+                                                    s32 windowX, s32 windowZ,
+                                                    s32 layer) {
+  TileCopies_CopyTouchedCells(sourceX, sourceZ, width, height, windowX, windowZ,
+                              layer);
+}
+
+/// Sets up an effect sprite: its pivot, its OAM attributes and its first tile
+/// (EffectSprite_Init).
+static inline void FieldEffectSprite_Init(struct EffectSprite *sprite,
+                                          s32 pivotX, s32 pivotY,
+                                          u32 attributes, s32 tile) {
+  EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
 }
 
 #endif

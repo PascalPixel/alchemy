@@ -143,6 +143,8 @@ void FieldPsynergy_Carry(void);
 /// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
 /// axis.
 #define FIELD_CELL(coordinate) ((coordinate) >> 20)
+/// The whole pixels of a 16.16 coordinate or distance, px() undone.
+#define FIELD_PIXEL(coordinate) ((coordinate) >> 16)
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 

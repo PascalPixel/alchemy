@@ -101,7 +101,7 @@ void ActorSystem_PlaceSprites(void) {
         // row holds 128 of them.
         tile = &((struct ActorCameraTile *)grid->layers[actor->layer]
                      .cells)[(FIELD_CELL(actor->x.fixed)) +
-                             (FIELD_CELL(actor->z.fixed) << 7)];
+                             FIELD_CELL(actor->z.fixed) * MAPGRID_SIZE];
         if (actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
@@ -196,7 +196,8 @@ void ActorSystem_ProjectSprites(void) {
   // The camera's heading over the ground, from the eye's offset from the
   // target in whole pixels; each sprite's facing is drawn relative to it, so
   // a sprite keeps its world heading as the camera turns.
-  angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
+  angle = (s16)ArcTan2(FIELD_PIXEL(eye->x - target->x),
+                       FIELD_PIXEL(eye->z - target->z));
   system->used = 0;
   Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn

@@ -262,12 +262,12 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
       if (tileX < 0) {
         tileX += 0xFFFF;
       }
-      tileX >>= 16;
+      tileX = FIELD_PIXEL(tileX);
       tileZ = z;
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
-      tileZ >>= 16;
+      tileZ = FIELD_PIXEL(tileZ);
       groundHeight = px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
@@ -297,13 +297,13 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
       if (tileX < 0) {
         tileX += 0xFFFF;
       }
-      tileX >>= 16;
+      tileX = FIELD_PIXEL(tileX);
       tileZ = z;
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
       groundHeight =
-          px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 16));
+          px(MapGrid_GetTerrainHeightFar(terrainId, tileX, FIELD_PIXEL(tileZ)));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
     }

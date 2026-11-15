@@ -403,9 +403,11 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     } else {
       u8 *cells = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells;
 
-      cell = cells + (((probePosition.vector.x / px(16)) +
-                       ((probePosition.vector.z / px(16)) << 7))
-                      << 2);
+      cell =
+          cells +
+          (((probePosition.vector.x / px(MAPGRID_CELL_PIXELS)) +
+            ((probePosition.vector.z / px(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE))
+           << 2);
     }
     behavior = cell[2];
     if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {

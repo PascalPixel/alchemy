@@ -108,6 +108,14 @@ extern u8 gMapGridShapes[];
 /// after the still picture.
 extern u8 gBgTileBuffer[];
 
+/// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
+/// edges.
+#define MAPGRID_SIZE 128
+#define MAPGRID_CELL_PIXELS 16
+/// The low four bits of a shape's first byte: its kind, which height
+/// function reads its samples (gMapGrid_TerrainHeightFunctions).
+#define MAPGRID_SHAPE_KIND_MASK 0xf
+
 /// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
 /// world map keeps its struct WorldMapAffineWork in the slot.
 #define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])

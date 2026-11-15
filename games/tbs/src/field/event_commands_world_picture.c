@@ -122,7 +122,7 @@ void WorldPicture_Initialize(void) {
     work->cursorX.fixed = px(WORLD_MAP_SCREEN_WIDTH) / 2;
     work->cursorY.fixed = px(WORLD_MAP_SCREEN_HEIGHT) / 2;
   } else {
-    work->cursorX.fixed = px(((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    work->cursorX.fixed = px(FIELD_PIXEL(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
                              WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
     work->cursorY.fixed =
         px((actor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT) /
@@ -223,7 +223,7 @@ void WorldPicture_UpdateMarkers(void) {
       return;
 #endif
     if (areaActor != NULL) {
-      cursorX = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+      cursorX = FIELD_PIXEL(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
       cursorY = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
@@ -290,7 +290,7 @@ void WorldPicture_UpdateMarkers(void) {
       continue;
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
-    x = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    x = FIELD_PIXEL(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
     y = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;

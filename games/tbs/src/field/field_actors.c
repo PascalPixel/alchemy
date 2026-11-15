@@ -116,8 +116,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
   // below the view's top and above 224.
   if ((x >= -(px(32) - 1) && x <= px(272) - 1) && y > 0 && y < px(224)) {
-    *screenPosition++ = x >> 16;
-    *screenPosition = y >> 16;
+    *screenPosition++ = FIELD_PIXEL(x);
+    *screenPosition = FIELD_PIXEL(y);
     return 0;
   }
   *screenPosition++ = 0;

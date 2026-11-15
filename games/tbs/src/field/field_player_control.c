@@ -126,9 +126,9 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
       (const struct FieldPosition *)secondPosition;
   const s32 *firstCoordinate = &firstPoint->x;
   const s32 *secondCoordinate = &secondPoint->x;
-  s32 dx = (*firstCoordinate++ - *secondCoordinate++) >> 16;
-  s32 dy = (*firstCoordinate++ - *secondCoordinate++) >> 16;
-  s32 dz = (*firstCoordinate - *secondCoordinate) >> 16;
+  s32 dx = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
+  s32 dy = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
+  s32 dz = FIELD_PIXEL(*firstCoordinate - *secondCoordinate);
   s32 radius = radiusA + radiusB;
 
   // The bound is 64 pixels in 16.16, the units before the shift, but dx and dz
@@ -865,12 +865,16 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
     position.z = actor->z.fixed;
     // The cells (16 pixels) under the actor and the step; a step
     // into a cell with another cell behavior is refused.
-    sourceCell = &((struct MapGridCell *)
-                       Ram_MapGridCellBuffer)[actor->x.fixed / px(16) +
-                                              (position.z / px(16)) * 128];
-    destinationCell = &((struct MapGridCell *)
-                            Ram_MapGridCellBuffer)[position.x / px(16) +
-                                                   (position.z / px(16)) * 128];
+    sourceCell =
+        &((struct MapGridCell *)
+              Ram_MapGridCellBuffer)[actor->x.fixed / px(MAPGRID_CELL_PIXELS) +
+                                     (position.z / px(MAPGRID_CELL_PIXELS)) *
+                                         MAPGRID_SIZE];
+    destinationCell =
+        &((struct MapGridCell *)
+              Ram_MapGridCellBuffer)[position.x / px(MAPGRID_CELL_PIXELS) +
+                                     (position.z / px(MAPGRID_CELL_PIXELS)) *
+                                         MAPGRID_SIZE];
     if (MapGrid_IsWallAt((struct WorldPosition *)&position) != 0 ||
         sourceCell->behavior != destinationCell->behavior) {
       collisionFlags = 4;

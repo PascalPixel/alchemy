@@ -323,18 +323,18 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
-  x = (screenX >> 16) - halfWidth;
+  x = FIELD_PIXEL(screenX) - halfWidth;
   // The point is offsetY pixels above the image's bottom edge: the box is
   // raised by half the height less offsetY, scaled and rounded up to a whole
   // pixel.
-  y = ((screenY - height) >> 16) - halfHeight -
+  y = FIELD_PIXEL(screenY - height) - halfHeight -
       ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
   // Place the shadow at ground height independently of the raised image.
-  x = (screenX >> 16) - marginX;
-  y = ((screenY - groundHeight) >> 16) - marginY;
+  x = FIELD_PIXEL(screenX) - marginX;
+  y = FIELD_PIXEL(screenY - groundHeight) - marginY;
   shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
@@ -403,19 +403,20 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     depth = 2;
   }
   // Queue the shadow at ground height before the raised image.
-  y = ((screenY - groundHeight) >> 16) - shadowHalfHeight;
+  y = FIELD_PIXEL(screenY - groundHeight) - shadowHalfHeight;
   if (sprite->flags & SPRITE_FLAG_SHADOW) {
     if (y < DISPLAY_HEIGHT) {
       part = &sprite->shadow;
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = (screenX >> 16) - shadowHalfWidth;
+      part->x = FIELD_PIXEL(screenX) - shadowHalfWidth;
       part->y = y;
       Oam_AddSpriteAtDepth(part, depth);
     }
   }
-  x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
-  y = ((screenY - height) >> 16) - halfHeight -
+  x = FIELD_PIXEL(screenX) - halfWidth +
+      FIELD_PIXEL(sprite->offsetX * scaleX + 0xffff);
+  y = FIELD_PIXEL(screenY - height) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.

@@ -721,7 +721,7 @@ void LuckyDice_Run(void) {
         screen[2] = 650;
       }
       spriteDepth[2 + index] = screen[2] - 350;
-      spriteDepth[2 + index] += diceWork->particles[index].y >> 16;
+      spriteDepth[2 + index] += FIELD_PIXEL(diceWork->particles[index].y);
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
@@ -748,9 +748,9 @@ void LuckyDice_Run(void) {
         for (otherIndex = 0; otherIndex != DICE_COUNT; otherIndex++) {
           otherDie = &diceWork->particles[otherIndex];
           if (index != otherIndex) {
-            separationX = (rollingDie->x - otherDie->x) >> 16;
-            separationY = (rollingDie->y - otherDie->y) >> 16;
-            separationZ = (rollingDie->z - otherDie->z) >> 16;
+            separationX = FIELD_PIXEL(rollingDie->x - otherDie->x);
+            separationY = FIELD_PIXEL(rollingDie->y - otherDie->y);
+            separationZ = FIELD_PIXEL(rollingDie->z - otherDie->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
                 50 * 50 - 1) {

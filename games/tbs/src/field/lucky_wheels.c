@@ -849,13 +849,13 @@ void LuckyWheels_Update(void) {
 #if LANGUAGE == LANGUAGE_SPANISH
       if (i == 0)
         work->oam[sprite].attr01 =
-            ((((s16)(p->x >> 16) + 0x1f0) & 0x1ff) << 16) | objMode |
-            (((s16)(p->y >> 16) + 0x108) & 255) | OBJ_SIZE_32X32 | OBJ_HFLIP |
-            OBJ_VFLIP;
+            ((((s16)FIELD_PIXEL(p->x) + 0x1f0) & 0x1ff) << 16) | objMode |
+            (((s16)FIELD_PIXEL(p->y) + 0x108) & 255) | OBJ_SIZE_32X32 |
+            OBJ_HFLIP | OBJ_VFLIP;
       else
 #endif
-        work->oam[sprite].attr01 = ((s16)(p->x >> 16) << 16) | objMode |
-                                   (((s16)(p->y >> 16) + 256) & 255) |
+        work->oam[sprite].attr01 = ((s16)FIELD_PIXEL(p->x) << 16) | objMode |
+                                   (((s16)FIELD_PIXEL(p->y) + 256) & 255) |
                                    OBJ_SIZE_32X32;
       work->oam[sprite].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
@@ -1292,8 +1292,8 @@ void LuckyWheels_Run(void) {
 
               if (y <= 0x7fffff) {
                 if (y >= 0) {
-                  s32 drawX = x >> 16;
-                  s32 drawY = y >> 16;
+                  s32 drawX = FIELD_PIXEL(x);
+                  s32 drawY = FIELD_PIXEL(y);
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,

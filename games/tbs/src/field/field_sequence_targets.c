@@ -170,12 +170,12 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     dx = candidate->x.fixed - source->x.fixed;
     if (dx < 0)
       dx += 0xffff;
-    dx >>= 16;
+    dx = FIELD_PIXEL(dx);
 
     dz = candidate->z.fixed - source->z.fixed;
     if (dz < 0)
       dz += 0xffff;
-    pixelZ = dz >> 16;
+    pixelZ = FIELD_PIXEL(dz);
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
     if ((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)

@@ -47,7 +47,7 @@ void Weather_UpdateRain(void) {
       particle->positionX = x;
       particle->positionZ = y;
       particle->positionY =
-          px(MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16));
+          px(MapGrid_GetTerrainHeightFar(0, FIELD_PIXEL(x), FIELD_PIXEL(y)));
       particle->timer = 16;
     }
   }
@@ -131,7 +131,8 @@ void Weather_StartRain(void) {
     z = leader[2];
     particle->positionX = x;
     particle->positionZ = z;
-    particle->positionY = px(MapGrid_GetTerrainHeightFar(0, x >> 16, z >> 16));
+    particle->positionY =
+        px(MapGrid_GetTerrainHeightFar(0, FIELD_PIXEL(x), FIELD_PIXEL(z)));
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -176,9 +177,9 @@ void FieldMotes_Update(void) {
       // further.
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
-      x = ((mote->positionX - cameraX) >> 16) +
+      x = FIELD_PIXEL(mote->positionX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
-      y = ((mote->positionZ - mote->positionY - cameraZ) >> 16) - age;
+      y = FIELD_PIXEL(mote->positionZ - mote->positionY - cameraZ) - age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;
@@ -207,7 +208,8 @@ void FieldMotes_Update(void) {
       y = leader[2] + (Random16() << 8) - px(128);
       mote->positionZ = y;
       mote->positionX = x;
-      mote->positionY = px(MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16));
+      mote->positionY =
+          px(MapGrid_GetTerrainHeightFar(0, FIELD_PIXEL(x), FIELD_PIXEL(y)));
       mote->timer = 120;
       mote->delay = 0;
       spawned++;
@@ -301,7 +303,8 @@ void FieldEffect_UpdateSparkles(void) {
       frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
-      x = ((sparkle->positionX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
+      x = FIELD_PIXEL(sparkle->positionX - cameraX) +
+          (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
       sy = (sparkle->positionZ - sparkle->positionY - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
@@ -329,8 +332,8 @@ void FieldEffect_UpdateSparkles(void) {
         // The rest of a burst, on the first sparkle's spot.
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY =
-            px(MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16));
+        sparkle->positionY = px(
+            MapGrid_GetTerrainHeightFar(0, FIELD_PIXEL(sx), FIELD_PIXEL(sy)));
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -342,8 +345,8 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - px(128);
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY =
-            px(MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16));
+        sparkle->positionY = px(
+            MapGrid_GetTerrainHeightFar(0, FIELD_PIXEL(sx), FIELD_PIXEL(sy)));
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;

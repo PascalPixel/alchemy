@@ -913,9 +913,9 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
     PART_Y(part) = owner->y.fixed + px(32);
     PART_Y(part) += (owner->timer << 19) + (px(-280));
   } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
-    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + 0x200000;
+    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
   } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
-    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + 0x200000;
+    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
     PART_Y(part) -= (owner->timer << 19) - (px(2656));
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
     Actor_Release(part);
@@ -960,11 +960,11 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
       EFFECT_Y(object) =
-          watched->y.fixed + (object->effect.riseCounter << 20) + 0x180000;
+          watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
     } else if (watched->timer > 332 &&
                watched->timer < (object->effect.riseCounter << 1) + 333) {
       EFFECT_Y(object) =
-          watched->y.fixed + (object->effect.riseCounter << 20) + 0x180000;
+          watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
       EFFECT_Y(object) -= (watched->timer << 19) - (px(2656));
     } else if ((object->effect.riseCounter << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.groundHeight;
@@ -1248,7 +1248,7 @@ first:
     s32 r = Random16();
 
     offset = position;
-    offset[0] = ((r & 15) << 16) - 0x80000;
+    offset[0] = ((r & 15) << 16) - px(8);
   }
   offset[1] = (Random16() & 15) << 16;
   FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
@@ -1268,7 +1268,7 @@ first:
 second:
   phase = gFrameCount & 1;
   if (phase == 0) {
-    offset[0] = ((Random16() & 15) << 16) - 0x80000;
+    offset[0] = ((Random16() & 15) << 16) - px(8);
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
                       leader->z.fixed, 0, 0x13333, phase, px(11), opt);
@@ -1714,7 +1714,7 @@ s32 Scene_Initialize(void) {
     switch (work->entrance) {
     case 3:
     case 4:
-      offset = 0x100000;
+      offset = px(16);
       goto move;
     }
     goto settle;
@@ -1805,7 +1805,7 @@ s32 Scene_Initialize(void) {
           }
           Leader_Lift(-0x300000);
         } else if (id == 8) {
-          offset = 0x680000;
+          offset = px(104);
           goto move;
         }
       } else if (*entrance <= 12) {
@@ -1836,7 +1836,7 @@ s32 Scene_Initialize(void) {
         MagmaRock_RebuildFlameParts(10);
         MagmaRock_RebuildFlameParts(12);
         if (*entrance == 9 || *entrance == 10) {
-          offset = 0x300000;
+          offset = px(48);
           goto move;
         }
       } else {
@@ -1868,7 +1868,7 @@ s32 Scene_Initialize(void) {
             actor = Actor_GetById(work->leaderActorId);
             actor->z.fixed += px(16);
           }
-          offset = -0x200000;
+          offset = -px(32);
         move:
           Leader_Lift(offset);
         }
@@ -2197,7 +2197,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
-        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
+        285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2282,7 +2282,7 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   height =
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
   height += heightOffset;
-  shapes += actor->x.fixed / 0x100000 + (actor->z.fixed / 0x100000 << 7);
+  shapes += actor->x.fixed / px(16) + (actor->z.fixed / px(16) << 7);
   *shapes = MapCollision_FindOrAddTag(actor->layer, value, height);
 }
 
@@ -2325,11 +2325,11 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       entry->x = x;
       entry->y = y;
       entry->z = z;
-      FieldVector_AddPolarOffsetFixed(Random16() * 8 + 0x80000, angle, entry);
+      FieldVector_AddPolarOffsetFixed(Random16() * 8 + px(8), angle, entry);
       entry->velocityX = 0;
       entry->velocityY = px(5);
       entry->velocityZ = 0;
-      FieldVector_AddPolarOffsetFixed(Random16() * 2 + 0x20000, angle,
+      FieldVector_AddPolarOffsetFixed(Random16() * 2 + px(2), angle,
                                       &entry->velocityX);
       {
         s32 mask = 63;

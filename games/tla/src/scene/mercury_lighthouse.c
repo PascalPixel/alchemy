@@ -127,10 +127,10 @@ void MercuryLighthouse_SpawnMotes(void) {
     object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
     if (object != NULL) {
       sprite = object->sprite;
-      x = Random16() * 40 + 0x32c0000;
+      x = Random16() * 40 + px(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored. */
-      z = 0x2b80000;
+      z = px(696);
       object->motionFlags = phase;
       object->x.fixed = x;
       object->y.fixed = px(160);

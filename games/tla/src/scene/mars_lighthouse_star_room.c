@@ -216,7 +216,7 @@ next:
       /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
       do {
       } while (0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
@@ -344,7 +344,7 @@ s32 Scene_Initialize(void) {
 
       x = FIELD_CELL_CENTER(column);
       leader->x.fixed = x;
-      leader->z.fixed = (row << 20) - 0x1280000;
+      leader->z.fixed = (row << 20) - px(296);
       other = work->camera;
       other->x.fixed = x;
       other->z.fixed = leader->z.fixed;
@@ -1178,8 +1178,8 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
   x += column;
   z = (u32)z >> 16;
   z <<= 16;
-  z += 0x1cc0000;
-  object = ObjectCreate_(SPARK_SPRITE, x, 0x200000, z);
+  z += px(460);
+  object = ObjectCreate_(SPARK_SPRITE, x, px(32), z);
   if (object != NULL) {
     /* FAKEMATCH(barrier): an empty asm clobbering r0. */
     asm("" : : : "r0");
@@ -1761,7 +1761,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gMarsLighthouseStarRoom_CrumbScript);
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -1900,7 +1900,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     fieldWork = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->active = 2;

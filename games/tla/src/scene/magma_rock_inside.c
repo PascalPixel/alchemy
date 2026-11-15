@@ -1939,17 +1939,17 @@ s32 MagmaRockInside_OrbitParent(struct Orbiter__magma_rock_inside *object) {
                                   position = &object->x);
   if (--object->timer == 0)
     return 0;
-  if (object->radius == 0x20000)
+  if (object->radius == px(2))
     return 1;
   MagmaRockInside_SpawnSpark(object);
-  object->radius -= 0x40000;
+  object->radius -= px(4);
   object->angle += (s16)*speed >> 1;
   *position = parent->x;
   object->y = parent->y + px(8);
   object->z = parent->z;
   FieldVector_AddPolarOffsetFixed(object->radius, (s16)*angle, position);
   MagmaRockInside_SpawnSpark(object);
-  object->radius -= 0x40000;
+  object->radius -= px(4);
   return 1;
 }
 
@@ -1986,7 +1986,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   options.type = SPRITE_SPARKLE;
   options.priority = 1;
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
-  position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
+  position[1] = object->y.fixed + ((Random16() & 31) << 16) + px(8);
   position[2] = object->z.fixed;
   FieldEffect_Spawn(
       position[0], position[1], position[2] + px(4), 0, px(1) / 2, frame,
@@ -2608,7 +2608,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE) {
     i = 0;
-  room7:
+  sinkPillar:
     {
       struct Actor *object = Actor_GetById(i + ACTOR_SUNKEN_PILLAR_A);
 
@@ -2617,7 +2617,7 @@ s32 Scene_Initialize(void) {
       object->y.fixed = object->groundHeight = -px(32);
     }
     if (++i != 3)
-      goto room7;
+      goto sinkPillar;
     if (Event_GetFlag(FLAG_LEDGE_PILLAR_PUSHED)) {
       Actor_SetAnimation(ACTOR_LEDGE_PILLAR, 4);
       Actor_SetPosition(ACTOR_LEDGE_PILLAR, 696, 648);
@@ -2649,7 +2649,7 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_StartStepCells();
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
     i = 0;
-  room8:
+  litMarker:
     if (Event_GetFlag(FLAG_MARKER_LIT(i + 2))) {
       s32 y = 24 - i * 2;
 
@@ -2657,7 +2657,7 @@ s32 Scene_Initialize(void) {
       Call4((void (*)())MagmaRockInside_SwapCells, 0, 16, y, 0xff00);
     }
     if (++i != 6)
-      goto room8;
+      goto litMarker;
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_FLAME), 0);
     if (Event_GetFlag(FLAG_TABLET_TORCH_LIT)) {
@@ -2856,7 +2856,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
-        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
+        285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2979,12 +2979,12 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       rock->position[0] = x;
       rock->position[1] = y;
       rock->position[2] = z;
-      FieldVector_AddPolarOffsetFixed((Random16() << 3) + 0x80000, angle,
+      FieldVector_AddPolarOffsetFixed((Random16() << 3) + px(8), angle,
                                       rock->position);
       rock->velocity[0] = 0;
       rock->velocity[1] = px(5);
       rock->velocity[2] = 0;
-      FieldVector_AddPolarOffsetFixed((Random16() << 1) + 0x20000, angle,
+      FieldVector_AddPolarOffsetFixed((Random16() << 1) + px(2), angle,
                                       rock->velocity);
       work->next++;
       work->next &= 63;

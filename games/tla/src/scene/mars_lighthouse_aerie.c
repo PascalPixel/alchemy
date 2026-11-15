@@ -404,7 +404,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
     object =
         FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed + px(8),
                           anchor->y.fixed + offset + px(8), anchor->z.fixed);
-    offset = (offset / 0x60000) << 16;
+    offset = (offset / px(6)) << 16;
     if (object != NULL) {
       u8 zero;
 
@@ -435,7 +435,7 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object) {
 
   object->x.fixed =
       parent->x.fixed + Trig_Cos(angle) * (object->speedLimit + 28);
-  object->z.fixed = (Math_Sin(angle) << 4) + 0x1080000;
+  object->z.fixed = (Math_Sin(angle) << 4) + px(264);
   object->targetX = object->x.fixed;
   object->targetZ = object->z.fixed;
   if (object->z.fixed < px(264))
@@ -2058,7 +2058,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   anchor = Actor_Get(ACTOR_FELIX);
   y = anchor->y.fixed;
   x = anchor->x.fixed;
-  y += 0x80000;
+  y += px(8);
   z = anchor->z.fixed;
   spawned = FieldActor_Create(0x1e9, x, y, z);
   created = spawned;
@@ -3061,7 +3061,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
             sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
             sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->y -= 0x10000;
+            sprite->y -= px(1);
             sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);

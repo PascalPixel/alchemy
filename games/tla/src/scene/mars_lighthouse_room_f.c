@@ -718,7 +718,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
           Actor_StartScript(object, gMarsLighthouseRoomF_RubbleScriptB);
       }
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = (angle << 2) + 0x20000;
+      object->velocityY = (angle << 2) + px(2);
       object->velocityZ = Iwram_MulQ16(speed, Trig_Cos(angle));
       {
         s32 vx = Iwram_MulQ16(speed, Math_Sin(angle));
@@ -1513,9 +1513,9 @@ void Whirlwind_Update(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
@@ -1524,7 +1524,7 @@ void Whirlwind_Update(struct Actor *self) {
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
@@ -1572,8 +1572,8 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Iwram_MulQ16(px(8), Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                   source->y, position.z);
   Actor_SelectAnimation(object, 2);
@@ -2458,7 +2458,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;

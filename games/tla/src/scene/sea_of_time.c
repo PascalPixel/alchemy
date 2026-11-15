@@ -264,8 +264,8 @@ void SeaOfTime_CircleSwirl(void) {
   s32 x;
   s32 z;
 
-  center[0] = ((object->x.fixed >> 21) << 21) + 0x100000;
-  center[2] = ((object->z.fixed >> 21) << 21) + 0x100000;
+  center[0] = ((object->x.fixed >> 21) << 21) + px(16);
+  center[2] = ((object->z.fixed >> 21) << 21) + px(16);
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
@@ -356,8 +356,8 @@ void SeaOfTime_RideCurrent(void) {
     center.z = -1;
     break;
   }
-  center.x = (((object->x.fixed >> 21) + center.x) << 21) + 0x100000;
-  center.z = (((object->z.fixed >> 21) + center.z) << 21) + 0x100000;
+  center.x = (((object->x.fixed >> 21) + center.x) << 21) + px(16);
+  center.z = (((object->z.fixed >> 21) + center.z) << 21) + px(16);
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
@@ -1191,8 +1191,8 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   s32 i;
 
   FieldCamera_SetSpeed(6);
-  px = (x << 19) + 0x80000;
-  pz = (z << 19) + 0x80000;
+  px = (x << 19) + px(8);
+  pz = (z << 19) + px(8);
   FieldCamera_MoveToFixed(px, -1, pz, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_CLATTER);
@@ -1271,7 +1271,7 @@ void SeaOfTime_Open(void) {
       params.palette = 7;
       x &= mask;
       x <<= 16;
-      x += 0x1500000;
+      x += px(336);
       FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                             EFFECT_USE_PALETTE,
@@ -1290,7 +1290,7 @@ void SeaOfTime_Open(void) {
     burst.priority = 1;
     x &= mask;
     x <<= 16;
-    x += 0x1500000;
+    x += px(336);
     FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,

@@ -417,7 +417,7 @@ next:
       /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
       do {
       } while (0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
@@ -1829,7 +1829,7 @@ void MarsLighthouseEntrance_ScatterCrumbs(struct Actor *actor) {
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gMarsLighthouseEntrance_CrumbScript);
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius, Trig_Sin(angle));
       object->gravity = 0x547a;
@@ -1980,7 +1980,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2860 *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;

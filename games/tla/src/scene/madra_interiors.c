@@ -967,14 +967,14 @@ void MadraInteriors_GiveHealingFungus(void) {
 /// right one.
 /// "No, dear... They look similar, but these aren't quite right."
 void MadraInteriors_GiveLaughingFungus(void) {
-  struct Actor *object0;
+  struct Actor *felix;
 
   Event_SetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object0 = Actor_Get(ACTOR_FELIX);
-  if (object0->z.fixed > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object0->x.fixed / Q16_ONE, 95);
+  felix = Actor_Get(ACTOR_FELIX);
+  if (felix->z.fixed > px(95))
+    Actor_WalkToAndWait(ACTOR_FELIX, felix->x.fixed / Q16_ONE, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsOhMy);

@@ -1315,7 +1315,7 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
                                     : b->x.fixed - a->x.fixed) < px(12)) {
     height = a->y.fixed - b->y.fixed;
-    if (height > 0 && height < 0x100000) {
+    if (height > 0 && height < px(16)) {
       if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
                                         : b->z.fixed - a->z.fixed) < px(8))
         return 1;
@@ -1876,7 +1876,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4 *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;

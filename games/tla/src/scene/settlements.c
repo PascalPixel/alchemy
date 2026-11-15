@@ -253,7 +253,7 @@ struct OrbitObject {
   s32 y;
   s32 z;
   u8 unk14[15];
-  u8 flags23;
+  u8 priorityFlags;
   u8 unk24[12];
   s32 orbitAngle;
   u8 unk34[4];
@@ -607,7 +607,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->mode = 0;
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += px(16);
-  actor->flags23 &= 0xfe;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Item_LoadIcon(ITEM_APPLE);
@@ -1060,7 +1060,7 @@ void Settlements_SplashCrate(s32 id) {
   spawn.kind = 0x115;
   spawn.scaleX = 0xcccc;
   spawn.scaleY = 0xcccc;
-  spawn.speed = 0x10000;
+  spawn.speed = px(1);
   spawn.acceleration = px(1);
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);

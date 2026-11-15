@@ -270,23 +270,23 @@ void LemurianShip_OpenDoor(void) {
   Event_ResolvePendingActions(0);
   found = 0;
   i = 8;
-next:
+nextActor:
   object = ((struct Actor *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
   if (i < 64)
-    goto next;
+    goto nextActor;
   entry = (u8 *)gLemurianShip_Doors;
   i = 0;
   offset = 0;
-next2:
+nextDoor:
   if (work->stepTrigger == *(u16 *)(entry + offset))
     found = i;
   i++;
   offset += 12;
   if (i < 10)
-    goto next2;
+    goto nextDoor;
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   MapGrid_CopyCellsTo(0, 0, gLemurianShip_Doors[found].x,
@@ -320,23 +320,23 @@ void LemurianShip_OpenLowerDoor(void) {
   Event_ResolvePendingActions(0);
   found = 0;
   i = 8;
-next:
+nextActor:
   object = ((struct Actor *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
   if (i < 64)
-    goto next;
+    goto nextActor;
   entry = (u8 *)gLemurianShip_LowerDoors;
   i = 0;
   offset = 0;
-next2:
+nextDoor:
   if (work->stepTrigger == *(u16 *)(entry + offset))
     found = i;
   i++;
   offset += 12;
   if (i < 4)
-    goto next2;
+    goto nextDoor;
   if (found < 2 && Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN) &&
       Event_GetFlag(FLAG_HOLD_PARCHED) == 0)
     found += 4;
@@ -874,7 +874,7 @@ void LemurianShip_ParchHold(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
+  Field_SetCameraBounds(px(8), px(16), px(248), px(256));
   Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x.fixed,
                          leader->z.fixed - px(304));
   object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
@@ -1003,7 +1003,7 @@ void LemurianShip_DrawLightToOrb(void) {
   struct Actor *object;
 
   SET_VECTOR(position, px(808), px(8), px(140));
-  Vector_AddPolarOffset(0x200000, Random16(), position);
+  Vector_AddPolarOffset(px(32), Random16(), position);
   object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, position[0],
                                                position[1], position[2]));
   if (object != NULL) {
@@ -1064,7 +1064,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Event_Wait(20);
   Task_Remove(LemurianShip_DrawLightToOrb);
   Event_PlaySound(SE_BLACK_CRYSTAL_SET);
-  Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
+  Field_SetCameraBounds(px(688), 0, px(928), px(544));
   FieldCamera_MoveTo(808, CAMERA_KEEP, 448, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 808, 480);
   Actor_SetPosition(ACTOR_PIERS, 808, 420);
@@ -1234,7 +1234,7 @@ s32 Scene_PrepareMap(void) {
   u32 i;
 
   i = 0;
-next:
+nextActor:
   if (Event_GetFlag(FLAG_FIGHTING_JELLY + i)) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1246,7 +1246,7 @@ next:
   Event_ClearFlag(FLAG_FIGHTING_JELLY + i);
   i++;
   if (i < 16)
-    goto next;
+    goto nextActor;
   return 0;
 }
 
@@ -1638,7 +1638,7 @@ void LemurianShip_SetUpHold(void) {
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
-    MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
+    MapGrid_SetCameraBounds(px(8), px(16), px(248), px(256));
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);

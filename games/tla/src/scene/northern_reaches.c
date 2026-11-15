@@ -273,9 +273,9 @@ growBall:
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
   Event_PlaySound(SE_CRASH);
-  from[0] = ((v_r6->x.fixed) - 0x20000);
+  from[0] = ((v_r6->x.fixed) - px(2));
   from[1] = (v_r6->y.fixed);
-  from[2] = ((v_r6->z.fixed) - 0x80000);
+  from[2] = ((v_r6->z.fixed) - px(8));
   to[0] = 0x1900000;
   to[1] = 0;
   to[2] = 0x500000;
@@ -414,7 +414,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     sprite++;
     particle->z = position[2];
     particle->velocityX = (Random16() * 3 >> 1) * column;
-    particle->velocityY = (Random16() << 2) + 0x20000;
+    particle->velocityY = (Random16() << 2) + px(2);
     particle->velocityZ = zero;
     particle->age = zero;
     particle++;

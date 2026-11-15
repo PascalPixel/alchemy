@@ -305,7 +305,7 @@ UNUSED void Naribwe_SetRopeWork(void) {
 /// Reveal shows the stone that hides the Unicorn Ring.
 void Naribwe_RevealStone(void) {
   Actor_SetPosition(ACTOR_STONE, 0, 0);
-  TreasureSpot_SetPosition(65, 0x680000, 0x680000);
+  TreasureSpot_SetPosition(65, px(104), px(104));
 }
 
 void Naribwe_HideStone(void) {

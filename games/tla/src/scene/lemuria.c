@@ -389,13 +389,13 @@ void Lemuria_GrowVine(void) {
   flag = 0x900;
   /* FAKEMATCH(barrier): the empty asm on flag. */
   asm volatile("" : "+l"(flag));
-  x = 0x3580000;
-  z = 0x3f80000;
+  x = px(856);
+  z = px(1016);
   Event_SetFlag(flag + 0x63);
   value = MapGrid_GetAttributeBAt(x, z, 0);
   /* FAKEMATCH(temporary): the first z copied to old. */
   old = z;
-  z = 0x4080000;
+  z = px(1032);
   MapGrid_SetAttributeBAt(x, old, 0, value | 64);
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
@@ -537,7 +537,7 @@ void Party_RestoreHpPp(s32 value);
 void Lemuria_DrinkFromSpring(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y < 0x5a0000) {
+  if (y < px(90)) {
     // "Felix and the others drank of the spring. Their HP and PP were..."
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
     Event_PlaySound(SE_RECOVERY);

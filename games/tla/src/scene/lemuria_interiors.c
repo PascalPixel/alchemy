@@ -664,9 +664,9 @@ visited:
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
   target = targetBuf;
-  target[0] = 0x740000;
+  target[0] = px(116);
   target[1] = 0;
-  target[2] = 0x6e0000;
+  target[2] = px(110);
   angle = FACING_NORTH_NORTHWEST;
   for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
@@ -728,9 +728,9 @@ visited:
   start[0] = actor->x.fixed;
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
-  target[0] = 0x840000;
-  target[1] = 0x200000;
-  target[2] = 0x640000;
+  target[0] = px(132);
+  target[1] = px(32);
+  target[2] = px(100);
   angle = 0x4200;
   for (i = 0; i <= 191; i++) {
     radius = Trig_Sin(i * 16384 / 192) * 40;
@@ -754,9 +754,9 @@ visited:
   start[0] = actor->x.fixed;
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
-  target[0] = 0x5a0000;
-  target[1] = 0x40000;
-  target[2] = 0x400000;
+  target[0] = px(90);
+  target[1] = px(4);
+  target[2] = px(64);
   for (i = 0; i <= 15; i++) {
     actor->x.fixed = start[0] + (target[0] - start[0]) * i / 16;
     actor->y.fixed = start[1] + (target[1] - start[1]) * i / 16;

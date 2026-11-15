@@ -669,7 +669,7 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_TREMOR);
     i = 0;
   L14:
-    MapGrid_SetShakeFixed((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
+    MapGrid_SetShakeFixed((i << 16) + px(1), (i << 16) + px(1), px(1));
     FieldEvent_Wait(8);
     i++;
     if (i != 2)
@@ -683,7 +683,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_WISE_ONE, 8);
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
-      MapGrid_SetShakeFixed(j, j, 0x10000);
+      MapGrid_SetShakeFixed(j, j, px(1));
       FieldEvent_Wait(8);
     }
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);

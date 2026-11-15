@@ -11,9 +11,11 @@
 #define REG_BG3CNT (*(volatile u16 *)0x0400000e)
 
 #define BGCNT_PRIORITY(n) (n)
+/// The 16 KB character block, 0 to 3, the layer's tiles are read from.
 #define BGCNT_CHAR_BASE(block) ((block) << 2)
 #define BGCNT_MOSAIC 0x0040
 #define BGCNT_256_COLORS 0x0080
+/// The 2 KB screen block, 0 to 31, the layer's map is read from.
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
 /// Affine backgrounds only: wrap around instead of showing the backdrop.
 #define BGCNT_WRAP 0x2000
@@ -21,6 +23,8 @@
 /// pixels square.
 #define BGCNT_SIZE(n) ((n) << 14)
 
+/// REG_DISPCNT's video modes and bits: each _ON bit shows its layer or turns
+/// its window on.
 enum DisplayControl {
   DISPCNT_MODE_0 = 0x0000, ///< four text backgrounds
   DISPCNT_MODE_1 = 0x0001, ///< BG0 and BG1 text, BG2 affine
@@ -134,18 +138,29 @@ enum DisplayControl {
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
+/// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
+/// tile.
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
+/// BG0HOFS as an address for a DMA: copies of gBgScroll over all four
+/// backgrounds' scroll registers start here, and Mind Read's HBlank DMA writes
+/// one halfword a line into it.
 #define REG_BG0HOFS ((void *)0x04000010)
 
+/// DMA channel 0's registers as halfwords, for the line scrolls that set
+/// the whole channel up.
 #define REG_DMA0 ((volatile u16 *)0x040000b0)
 
+/// DMA channel 3's registers as words: the channel Dma_Set copies with.
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
+/// Background colour 0, the backdrop shown where no layer draws.
 #define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
 
 #define BG_PLTT ((volatile u16 *)0x05000000)
+/// Colour `color` of 16-colour background palette `palette`.
 #define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
 #define OBJ_PLTT ((volatile u16 *)0x05000200)
+/// Colour `color` of 16-colour sprite palette `palette`.
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
 
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
@@ -168,12 +183,16 @@ enum DisplayControl {
 /// the EWRAM heap's allocators test.
 #define EWRAM_END 0x02040000
 
+/// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
+/// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32
 /// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
+/// Timer 3's reload value and control as one word; it paces the serial
+/// transfers.
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 
@@ -181,9 +200,13 @@ enum DisplayControl {
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080
 
+/// The serial data: the 32-bit mode's word, or multiplayer's four received
+/// halfwords.
 #define REG_SIODATA32 ((volatile u32 *)0x04000120)
+/// Serial control read as a word, with SIODATA8 above it.
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 #define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
+/// The 8-bit mode's data, which multiplayer mode sends from.
 #define REG_SIODATA8 (*(volatile u16 *)0x0400012a)
 #define REG_KEYINPUT (*(volatile u16 *)0x04000130)
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
@@ -230,8 +253,10 @@ enum DisplayControl {
 /// drives a window edge, a scroll or an affine register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
+/// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
+/// A word each HBlank, as for a pair of registers written together.
 #define DMA_HBLANK_WORD_PER_LINE                                               \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)  \
        << 16 |                                                                 \
@@ -242,6 +267,8 @@ enum DisplayControl {
 #define CPU_SET_32BIT 0x04000000
 
 #define OAM ((void *)0x07000000)
+/// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
+/// key state (gKeysHeld and the rest) holds them set for a pressed key.
 enum KeyMask {
   KEY_A = 0x001,
   KEY_B = 0x002,
@@ -269,6 +296,7 @@ enum KeyMask {
 #define SOUND_CGB_MIX_FULL 0x0002
 #define SOUND_A_MIX_FULL 0x0004
 #define SOUND_B_MIX_FULL 0x0008
+/// The tone channels and both direct sound channels all at full volume.
 #define SOUND_ALL_MIX_FULL                                                     \
   (SOUND_CGB_MIX_FULL | SOUND_A_MIX_FULL | SOUND_B_MIX_FULL)
 #define SOUND_A_RIGHT_OUTPUT 0x0100
@@ -318,6 +346,8 @@ enum KeyMask {
 #define KEYCNT_SHOULDERS_WAKE 0xc300
 #define KEYCNT_SLEEP_WAKE 0xc304
 
+/// ROM wait states 3 and 1 with the prefetch buffer on, SRAM at 4; written by
+/// the power-on set-up.
 #define WAITCNT_GAME 0x4014
 
 // From The Broken Seal's io_reg.h: the same registers, bits and sizes.

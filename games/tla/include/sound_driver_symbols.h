@@ -5,13 +5,20 @@
 #include "types.h"
 
 struct MusicPlayerInfo;
+/// Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
+/// ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 
+/// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or
+/// with AUDIO_COMMAND_TOGGLE the bits to flip in it.
 enum AudioCommandMask {
   AUDIO_COMMAND_TOGGLE = 0x80,
   AUDIO_COMMAND_MASK = 0x7f
 };
 
+/// The sound driver's mode at start (m4aSoundInit, m4aSoundMode): 8 PCM notes
+/// (bits 11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a VBlank or
+/// 21024 a second, and sound bias resolution 1 (from bits 23..20).
 #define AUDIO_INITIAL_MODE 0x0099FA00
 
 /// A sound for Sound_Play, as The Broken Seal's: bits 11..0 the sound number,
@@ -79,7 +86,10 @@ extern volatile struct SoundVBlankState gSoundVBlankState;
 extern u16 gBgmVolume;
 extern u16 gBgmVolumeTarget;
 extern u16 gBgmVolumeStep;
+/// VBlanks after a jingle starts before the music waits for its end; held
+/// at 1 until the jingle's player stops, then 0.
 extern u8 gBgmRestoreDelay;
+/// Set by Sound_UpdateCommandMask; nothing reads it.
 extern u8 gSoundCommandMask;
 
 extern u16 gBgmTempoPitchTarget;

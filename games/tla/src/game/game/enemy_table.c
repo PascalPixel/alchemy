@@ -6,6 +6,7 @@
 #include "../game_internal.h"
 
 // clang-format off
+/// The 380 enemies, by enemy id less ENEMY_ID_FIRST (Enemy_GetDefinition).
 const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???
     {

@@ -5,6 +5,8 @@
 #include "../system_internal.h"
 #include "system/ram_code.h"
 
+/// Decompresses the halfword LZ stream at `source` to `destination`, with a
+/// copy of the ARM decoder on the stack.
 void Decompress_Halfwords(const void *source, void *destination) {
   u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];
 

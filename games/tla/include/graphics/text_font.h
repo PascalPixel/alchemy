@@ -4,9 +4,12 @@
 #include "edition.h"
 #include "types.h"
 
+/// In Japanese, the glyphs of character codes from 256: 24 bytes each, drawn
+/// 10 pixels wide.
 extern const u8 gFont_KanjiGlyphs[];
 extern const u16 gFont_MarkGlyphCodes[];
 
+/// The marks a kana is drawn with: their character codes.
 enum TextMarkGlyph {
   TEXT_MARK_NONE = 0,
   TEXT_MARK_VOICED = 0xDE,    ///< the voiced mark (dakuten)

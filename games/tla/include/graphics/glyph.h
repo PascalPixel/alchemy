@@ -11,6 +11,8 @@ enum { FONT_GLYPH_ROWS = 12 };
 enum { FONT_GLYPH_ROWS = 15 };
 #endif
 
+/// A compact palette shared by a selection's command icons: the slot each
+/// icon colour was given, or 255 for none yet, and how many slots are taken.
 struct GlyphPalette {
   u8 slot[256];
   s32 count;
@@ -19,6 +21,7 @@ struct GlyphPalette {
 STATIC_ASSERT(sizeof(struct GlyphPalette) == 0x104);
 STATIC_ASSERT(offsetof(struct GlyphPalette, count) == 0x100);
 
+/// A character of the text font: its width and its rows of pixels.
 struct FontGlyph {
   u16 width;
   u16 rows[FONT_GLYPH_ROWS];
@@ -27,6 +30,7 @@ struct FontGlyph {
 STATIC_ASSERT(offsetof(struct FontGlyph, rows) == 2);
 STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 
+/// The main font, from character code 32: its glyphs in code order.
 extern const struct FontGlyph gFont_Glyphs[];
 
 typedef struct {

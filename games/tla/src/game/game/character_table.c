@@ -7,6 +7,7 @@
 #include "game/character_ids.h"
 
 // clang-format off
+/// The eight characters' definitions, by character id.
 const struct CharacterDefinition gCharacter_DefinitionTable[] = {
     [ISAAC] = {
         .hp = {30, 182, 334, 486, 638, 790},

@@ -24,8 +24,9 @@ struct ElementLevelBonus gElement_PowerResistByLevel[16]
         {135, 145}, {140, 150}, {145, 160}, {150, 165},
 };
 
-/// The 48 enemy element presets, by EnemyDefinition.elementPreset.
 // clang-format off
+/// The 48 enemy element presets, by EnemyDefinition.elementPreset; each is
+/// named by the enemies that have it, in the English release's words.
 const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,

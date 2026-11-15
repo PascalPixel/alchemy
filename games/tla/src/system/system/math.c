@@ -15,12 +15,17 @@ u32 Random16(void) {
   return (value << 8) >> 16;
 }
 
+/// Moves the point `position` by `radius` in direction `angle` on the ground
+/// plane: x by the cosine, z by the sine.
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position) {
   *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));
   position++;
   *position += Iwram_MulQ16(radius, Trig_Sin(angle));
 }
 
+/// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 65535,
+/// measured from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives
+/// 0. It binary-searches the tangent table to 1/256 of a quarter turn.
 s32 ArcTan2(s32 x, s32 y) {
   const u16 *table;
   s32 value;
@@ -133,6 +138,7 @@ s32 Math_IntegerSqrt(s32 value) {
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
+/// Returns the basic sprite palettes (gSystem_BasicColorPalette).
 s32 Palette_GetBasicSpriteColors(void) {
   return (s32)gSystem_BasicColorPalette;
 }

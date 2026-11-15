@@ -102,6 +102,8 @@ extern const u16 gBattle_Effect91Classes[29];
 extern const struct AbilityDefinition gAbilityDefinitions[];
 extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 extern const struct EnemyDefinition gEnemy_Definitions[];
+/// The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit
+/// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);
 s32 Djinn_GiveFar(s32, s32, s32);
@@ -119,6 +121,7 @@ void Message_DecodeRawUnboundedFar(s32, u16 *);
 /// How many summons there are (summon_table.c), and the number that ends a
 /// list of them (Summon_ListLearned).
 #define SUMMON_COUNT 29
+/// Ends the summon lists, and marks a summon already moved to the front.
 #define SUMMON_END 32
 /// The summons in the order the Summon command lists them (summon_table.c).
 extern const u8 gSummon_OrderList[SUMMON_COUNT];
@@ -137,7 +140,11 @@ extern const u16 gItem_ArtifactSlotTable[512];
 
 extern const u8 gCharacter_ElementGroupTable[];
 
+/// The Djinni sprite of each element, SPRITE_VENUS_DJINNI to
+/// SPRITE_JUPITER_DJINNI, whose picture Djinn_ShowJoinedMessage shows as the
+/// portrait.
 extern const s16 gDjinn_ElementSprites[];
+/// Each party member's sprite, by character; each is the character's own id.
 extern const s16 gCharacter_SpriteTable[];
 
 #endif

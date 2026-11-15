@@ -187,6 +187,7 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 0x276);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2c4);
 STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2e0);
 
+/// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
 s32 Party_CountMembers(void);
 s32 Party_ListMembers(s16 *owners);

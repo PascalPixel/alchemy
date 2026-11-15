@@ -10,6 +10,8 @@
 #define Iwram_FillWordsEntry                                                   \
   FIXED_ADDRESS((s32 (*)(void *destination, s32 size, u32 value)), 0x03000260, \
                 IwramFillWords)
+/// (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
+/// numbers.
 #define Iwram_MulQ16                                                           \
   FIXED_ADDRESS((s32 (*)(s32 a, s32 b)), 0x0300021c, IwramMulQ16)
 /// The 16.16 product of two 16.16 numbers (Iwram_MulQ16), written as a call.

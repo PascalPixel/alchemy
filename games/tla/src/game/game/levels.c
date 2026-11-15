@@ -213,6 +213,9 @@ const struct CharacterDefinition *Character_GetDefinition(s32 index) {
   return &base[index];
 }
 
+/// Sets up all eight characters for a new game: names from the message table,
+/// starting equipment equipped, class and elements worked out, and levels
+/// raised to their starting level.
 void Party_InitializeCharacters(void) {
   struct BattleUnit *unit;
   const struct CharacterDefinition *character;

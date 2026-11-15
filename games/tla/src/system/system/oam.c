@@ -5,6 +5,8 @@
 #include "../system_internal.h"
 #include "fixed_math.h"
 
+/// Starts a new frame of sprites: frees the affine matrices and empties the 256
+/// depth slots sprites are linked into.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
   Iwram_ClearWordsEntry(gOamBucketMasks, 32);

@@ -65,6 +65,8 @@ union FieldObject {
 #define SCRIPT_REPEAT(count, label) 12, (count), (label)
 #define SCRIPT_DELETE 27
 
+/// The flags of a scene's effect spawner (FieldEffect_Spawn): a script number
+/// in the low bits and which of the spawn options' fields to use.
 enum EffectSpawnFlags {
   /// Picks one of the spawner's effect scripts; the object's mode is this
   /// plus 1.

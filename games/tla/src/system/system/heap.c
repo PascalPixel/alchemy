@@ -4,6 +4,9 @@
 
 #include "../system_internal.h"
 
+/// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
+/// every heap slot) and sets the pools' next addresses to gIwramHeap and
+/// gEwramHeap.
 void Heap_Initialize(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
@@ -12,18 +15,24 @@ void Heap_Initialize(void) {
   Ram_HeapSlots->nextEwram = gEwramHeap;
 }
 
+/// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
+/// (0x03007800), the same end the allocators test.
 s32 Heap_GetRemainingIwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
   return (s32)IwramSoundMixWorkspace - (s32)work->nextIwram;
 }
 
+/// Returns the EWRAM bytes left to allocate, up to the end of EWRAM.
+/// Nothing calls it or its far-call export.
 s32 Heap_GetRemainingEwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
   return EWRAM_END - (s32)work->nextEwram;
 }
 
+/// Returns heap slot `kind`'s block, first allocating `size` bytes for it
+/// (rounded up to words), from IWRAM when they fit and EWRAM otherwise.
 void *HeapSlot_Alloc(s32 kind, s32 size) {
   u32 *allocator_state;
   s32 kind_offset;
@@ -57,6 +66,8 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
   return (void *)cached_address;
 }
 
+/// As HeapSlot_Alloc, but tries EWRAM first, for blocks that need
+/// room more than speed: the battle, shop and save work, among others.
 void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   u32 *allocator_state;
   s32 kind_offset;
@@ -101,6 +112,8 @@ void Heap_FillFreeWords(u32 value) {
   Iwram_FillWordsEntry((void *)address, (u32)EWRAM_END - address, value);
 }
 
+/// Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
+/// when they fit and EWRAM otherwise, and advances that pool's next address.
 void *Heap_Alloc(s32 size) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 other;
@@ -128,6 +141,8 @@ void *Heap_Alloc(s32 size) {
   return (void *)address;
 }
 
+/// As Heap_Alloc, but tries EWRAM first. Called mostly by the battle code and
+/// the credits for buffers too large to want IWRAM.
 void *Heap_AllocEwram(s32 size) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 other;

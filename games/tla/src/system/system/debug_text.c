@@ -7,6 +7,7 @@
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
 
+/// Writes `value` as eight hexadecimal digits to the number buffer.
 void String_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
   const u8 *digits = gString_HexDigits;
@@ -24,6 +25,8 @@ void String_FormatHex(u32 value) {
   }
 }
 
+/// Writes `number` to the number buffer as eleven characters: spaces, a sign (a
+/// space or '-') and its decimal digits, right-aligned.
 void String_FormatDecimal(s32 value) {
   s32 negative;
   s32 i;
@@ -53,6 +56,8 @@ void String_FormatDecimal(s32 value) {
     gNumberTextBuffer[i] = ' ';
 }
 
+/// Writes `count` blank characters (tile 0 in WINDOW_PALETTE) at the debug text
+/// cursor and moves it on.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 i;
@@ -64,6 +69,9 @@ void DebugText_PrintBlanks(u32 count) {
   }
 }
 
+/// Prints the string `text` (at most 32 characters) at the debug text cursor,
+/// wrapping from the end of the screen to its start, when debug text is on; the
+/// cursor moves past it.
 void DebugText_Print(const u8 *src) {
   if (gDebugTextEnabled != 0) {
     u32 addr = ((u32)&gDebugTextCursor);
@@ -126,6 +134,9 @@ void DebugText_Clear(void) {
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
+/// Loads the window font and border tiles into BG character block 0, the window
+/// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
+/// palettes.
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           (void *)BG_CHAR_BLOCK(0), 0x84000800, REG_DMA3);
@@ -162,6 +173,7 @@ void Window_LoadGraphics(void) {
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
 
+/// Loads the basic sprite palettes (palettes 0 to 13).
 void Palette_LoadBasicSpriteColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);

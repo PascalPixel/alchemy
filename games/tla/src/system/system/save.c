@@ -20,6 +20,8 @@ enum {
 
 // The save code starts each DMA through Dma_Set, where serial.h's
 // SAVE_START_DMA writes DMA3's registers itself.
+/// DMA 3's enable bit in its count and control word, which the hardware
+/// clears when the transfer is done.
 #define DMA3_BUSY (DMA_ENABLE << 16)
 
 #define SAVE_START_DMA(source_, destination_, control_)                        \
@@ -30,10 +32,17 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
+/// Waits until a START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
 extern const u8 gSave_HeaderTemplate[];
 
+/// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
+/// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
+/// tries, a frame apart) and scans all 16 sectors into the workspace's
+/// occupied, partId and counter tables: a sector counts as taken when its
+/// signature and checksum are good, and of two copies of a part only the newer
+/// stays taken.
 s32 Save_InitializeWork(void) {
   struct SaveWorkspace *work;
   struct SaveSectorHeader header;
@@ -97,6 +106,7 @@ s32 Save_InitializeWork(void) {
 /// a copy, so replacing a save always has room. Returns 15 when there is no
 /// sector to use.
 // As ☀️'s Save_SelectWriteSector.
+/// Picks the free sector to write part `mode` to, at random.
 u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[15];
   s32 count;
@@ -129,6 +139,8 @@ u32 Save_SelectWriteSector(s32 mode) {
   return index;
 }
 
+/// Programs the workspace's sector buffer into flash sector `sector` and
+/// verifies it, through the flash library's routine for this chip.
 u32 Save_WriteSector(s32 sector) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   void (*progress)(s32) = work->progress;
@@ -153,6 +165,7 @@ u32 Save_WriteSector(s32 sector) {
   return 0;
 }
 
+/// Reads flash sector `index` into the workspace's sector buffer.
 s32 Save_ReadSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
@@ -165,6 +178,9 @@ s32 Save_ReadSector(s32 index) {
   return (u16)Save_ChecksumSector() - header.checksum;
 }
 
+/// Saves 4080 bytes from `source` as part `partId`: writes the new copy with
+/// the next counter, then invalidates the old one, updating the workspace's
+/// sector tables.
 s32 Save_WritePart(s32 partId, void *source) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
@@ -215,6 +231,8 @@ s32 Save_WritePart(s32 partId, void *source) {
   return 0;
 }
 
+/// Loads the current copy of part `partId` (4080 bytes) into `destination`.
+/// Returns 1 when there is none and 0 otherwise.
 u32 Save_ReadPart(s32 partId, void *destination) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 index;
@@ -229,6 +247,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   return 0;
 }
 
+/// Invalidates the current copy of part `partId`. Called when the file list
+/// erases a file.
 u32 Save_DeletePart(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   s32 index;
@@ -243,6 +263,8 @@ u32 Save_DeletePart(s32 partId) {
   return (u32)((0 - result) | result) >> 31;
 }
 
+/// Sums the first 4072 payload bytes of the workspace's sector buffer; the
+/// final eight payload bytes are excluded.
 s32 Save_ChecksumSector(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 limit;
@@ -266,6 +288,8 @@ s32 Save_ChecksumSector(void) {
   return sum;
 }
 
+/// Returns the occupied sector holding the newest copy of part `partId`, or
+/// SAVE_SECTOR_COUNT.
 u32 Save_FindLatestSector(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 latestCounter;
@@ -285,6 +309,8 @@ u32 Save_FindLatestSector(s32 partId) {
   return latestSlot;
 }
 
+/// Overwrites sector `index` with a header for no part (SAVE_PART_NONE) and
+/// clears its occupied entry. Returns 0 on success and 1 on failure.
 s32 Save_InvalidateSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
@@ -323,6 +349,7 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   return difference;
 }
 
+/// Returns the highest counter among the copies of part `partId`.
 u32 Save_GetLatestCounter(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 latestCounter;
@@ -380,6 +407,8 @@ s32 Save_LoadExtraSummary(void) {
   return 0;
 }
 
+/// Removes the flash timer handler and frees the save workspace's heap slot,
+/// with every block allocated after it in the same pool.
 void Save_ReleaseWork(void) {
   Irq_SetHandler(5, 0, NULL);
   HeapSlot_Release(HEAP_SLOT_SAVE);

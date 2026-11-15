@@ -4,6 +4,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The map's running blend script, which sets the blend registers over time
+/// (BlendScript_Run, each frame from BlendScript_Start).
 struct BlendScriptState {
   u16 *script;
   u16 *cursor;
@@ -24,6 +26,8 @@ struct MapCell {
   u8 attributeB;
 };
 
+/// One background layer's setup in a layout's header: its origin, its
+/// parallax and drift, and where it wraps.
 struct MapLayer {
   s32 x, y;
   u8 unk08[8];
@@ -91,6 +95,7 @@ struct MapViewWork {
   s8 area;
 };
 
+/// A position on the world map, as its walkability check reads it.
 struct WorldPosition {
   s32 x;
   u8 unk04[4];

@@ -24,13 +24,20 @@ typedef unsigned long long u64;
     __asm__("" : "+r"(modern_address));                                        \
     modern_address;                                                            \
   })
+/// One of Camelot's fixed addresses, as a constant of `type`; `linked` names
+/// the symbol the modern build reaches it by, where `make modern` resolves it
+/// by name.
 #define FIXED_ADDRESS(type, address, linked) (type FIXED_LINKED(linked))
+/// The distance between two fixed places, `value`, which the modern build
+/// computes from their linked names.
 #define FIXED_OFFSET(value, linked, from)                                      \
   ((u32)FIXED_LINKED(linked) - (u32)FIXED_LINKED(from))
 #else
 #define FIXED_ADDRESS(type, address, linked) (type address)
 #define FIXED_OFFSET(value, linked, from) value
 #endif
+/// Marks one of the few proven handwritten helpers inside C; proof says what
+/// no C compiles to. It expands to nothing.
 #define CAMELOT_ASM(proof)
 
 /// The old compilers' soft frame pointer as an asm clobber, which a current GCC

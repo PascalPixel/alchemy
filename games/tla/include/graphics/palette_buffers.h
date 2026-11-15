@@ -89,6 +89,8 @@ void TitlePaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                      s32 frames);
 void TitlePaletteFade_Release(void);
 
+/// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
+/// for all.
 enum PaletteTint {
   PALETTE_TINT_FROM_SOURCE = 0x8000,
   PALETTE_TINT_NONE = 0x10000,

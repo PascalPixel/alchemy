@@ -7,6 +7,7 @@
 #include "ability_ids.h"
 
 // clang-format off
+/// The 734 abilities, by ability id.
 const struct AbilityDefinition gAbilityDefinitions[] = {
     [ABILITY_NOTHING] = {
         .targetMode = ABILITY_TARGET_FOES,

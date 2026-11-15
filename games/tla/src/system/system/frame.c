@@ -97,6 +97,7 @@ static __inline__ void Bios_Stop(void) {
   __asm__ volatile("swi 3");
 }
 
+/// The game's frame loop: runs `frames` frames and returns.
 void wait(s32 frames) {
   u32 i;
   u32 line;
@@ -226,6 +227,7 @@ void wait(s32 frames) {
   }
 }
 
+/// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gInput.repeatTimer = 19; }
 
 /// Frames a key is held before it first repeats, and between later repeats.
@@ -325,6 +327,7 @@ static __inline__ void Copy16Bytes(const void *source,
                    : "r2", "r3", "r4", "r5", "memory");
 }
 
+/// The VBlank interrupt handler, installed by System_Initialize.
 void System_VBlankHandler(void) {
   u32 keys;
   u32 vblankCount;
@@ -409,6 +412,8 @@ void System_VBlankHandler(void) {
 
 #define SOUND_PRESET_COUNT 5
 
+/// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
+/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode.
 s32 Sound_LoadReverbCode(s32 preset) {
   if ((u32)preset > SOUND_PRESET_COUNT - 1)
     preset = 0;

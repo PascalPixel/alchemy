@@ -8,6 +8,7 @@
 // built in a word before the address and the store stays where it is written.
 // An inline function with a u32 parameter builds the same value but lets the
 // store move.
+/// Writes a value to a 16-bit register or memory location.
 #define Io_Write16(v, reg)                                                     \
   do {                                                                         \
     u32 value_ = (v);                                                          \

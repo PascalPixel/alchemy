@@ -69,6 +69,11 @@
 /// Set while the field sequence handles its requests, and cleared while the
 /// party walks (FieldSequence_Run), as ☀️'s.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
+/// The next field scene starts where the party was, as after a battle: the
+/// scene's flags are not reset, the actors come back from their snapshot,
+/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
+/// one (a random battle clears it, so the scene's own music plays).
+/// FieldSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.

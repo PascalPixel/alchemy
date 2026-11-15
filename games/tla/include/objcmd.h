@@ -25,6 +25,8 @@
 #define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) ///< move by an offset
 #define SC_FACE_WATCHED 0x06                    ///< face the watched object
 #define SC_MOVE_TO_WATCHED 0x07                 ///< move to the watched object
+/// Move toward the actor's position plus an offset that is never filled in;
+/// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
 #define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)
@@ -63,6 +65,7 @@
 #define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
 #define SC_HIDE_SPRITES 0x2c
 #define SC_SHOW_SPRITE 0x2d
+/// Call fn with the actor each frame until it returns zero.
 #define SC_CALL(fn) 0x2e, (s32)(fn)
 #define SC_CAMERA_IN_BOUNDS 0x2f
 #define SC_MOVE_XZ(x, z) 0x30, (x), (z) ///< move to (x, z) at the same height

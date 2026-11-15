@@ -3,8 +3,10 @@
 
 /// The signature that marks a save sector.
 const u8 gSave_Signature[] = "CAMELOT";
+/// The sector header's first eight bytes, with no terminator.
 const u8 gSave_HeaderTemplate[8] = "CAMELOTT";
 
+/// Nothing in the game reads it.
 const u32 gLink_TestWord = 0;
 
 // The data the link test sends.

@@ -96,6 +96,7 @@ struct ClassScaleView {
   u8 luck;
 };
 
+/// The running totals Unit_Calculate builds a unit's stats in.
 struct StatWork {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP

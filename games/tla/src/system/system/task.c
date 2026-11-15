@@ -4,6 +4,8 @@
 
 #include "../system_internal.h"
 
+/// Empties the task table: every slot gets no routine, priority
+/// TASK_PRIORITY_EMPTY and no flags.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
   s32 i;
@@ -12,7 +14,7 @@ void Task_ResetAll(void) {
   gTasksRunning = 0;
   for (i = 0; i < TASK_COUNT; i++) {
     task->func = 0;
-    task->priority |= 0xffff;
+    task->priority |= TASK_PRIORITY_EMPTY;
     task->flags = 0;
     task++;
   }
@@ -122,6 +124,8 @@ UNUSED void Task_Idle(void) {}
 /// Unused: an empty routine.
 UNUSED void Task_Empty(void) {}
 
+/// Removes the task running `func`: clears its routine and gives it priority
+/// TASK_PRIORITY_REMOVED, which no pass matches. Returns its old index, or -1.
 s32 Task_Remove(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -134,7 +138,7 @@ s32 Task_Remove(TaskFunc func) {
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (task->func == (u32)func) {
       task->func = 0;
-      task->priority = 0x7fff;
+      task->priority = TASK_PRIORITY_REMOVED;
       result = i;
       break;
     }
@@ -143,6 +147,8 @@ s32 Task_Remove(TaskFunc func) {
   return result;
 }
 
+/// Suspends the task running `func`, or every task when `func` is null, by
+/// setting bit 0 of its priority's high byte, which then matches neither pass.
 s32 Task_SuspendAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -168,6 +174,8 @@ s32 Task_SuspendAll(TaskFunc func) {
   return result;
 }
 
+/// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
+/// unless its flag bit 0 asks to keep it running, as Task_SuspendAll does.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;

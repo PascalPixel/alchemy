@@ -5,12 +5,16 @@
 #include "irq_lock.h"
 #include "types.h"
 
+/// The register writes VBlank carries out once the frame loop has finished a
+/// frame; IoWriteQueue_FlushPending empties it.
 struct IoWriteQueue {
   u16 count;
   u16 pad;
   u32 entries[32][3];
 };
 
+/// The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueue_Store writers fill, and
+/// IoWriteQueue_FlushPending empties at VBlank.
 extern struct IoWriteQueue gIoWriteQueue;
 
 // A control word's bits 16 and 17 give a register write's width and bits 18

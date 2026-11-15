@@ -34,9 +34,15 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// wait() runs TASK_PASS_FRAME's once a frame.
 #define TASK_PASS_VBLANK 0x480
 #define TASK_PASS_FRAME 0xc80
+/// An empty slot's priority, sorted last.
+#define TASK_PRIORITY_EMPTY 0xffff
+/// A removed task's priority: its odd high byte matches no pass, and it sorts
+/// to the front of the table.
+#define TASK_PRIORITY_REMOVED 0x7fff
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
+/// 1 while wait() runs the frame pass's tasks (TASK_PASS_FRAME).
 extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];

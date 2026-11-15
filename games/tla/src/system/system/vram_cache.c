@@ -11,6 +11,8 @@
 // There are 96 cache entries; byte offset 0xffff marks a free entry.
 // Entries with size <= 16 do not own VRAM.
 
+/// Finds the first run of free blocks that holds `size` bytes and gives it to
+/// entry `id`, writing `id` into gVramCacheBlockOwners for each block.
 s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
   u32 blocks;
   s32 ret;
@@ -125,6 +127,8 @@ s32 VramCache_FreeEntry(u32 resourceIndex) {
   return 0;
 }
 
+/// Gives back entry `no`'s blocks but keeps the entry taken, with size 1, so a
+/// later VramCache_Load can refill it.
 s32 VramCache_ReleaseVram(u32 resourceIndex) {
   u16 *entry = (u16 *)&gVramCacheEntries[resourceIndex];
 

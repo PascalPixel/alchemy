@@ -14,6 +14,8 @@ struct DmaRegisters {
   u32 control;
 };
 
+/// Fills `size` bytes at `destination` with the halfword `value` by DMA3, from
+/// a volatile copy of it on the stack.
 #define Dma_Fill16(value, destination, size)                                   \
   {                                                                            \
     volatile u16 fill_ = (value);                                              \
@@ -21,6 +23,7 @@ struct DmaRegisters {
             (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2), REG_DMA3);      \
   }
 
+/// Fills `size` bytes at `destination` with the word `value` by DMA3.
 #define Dma_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \

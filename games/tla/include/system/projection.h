@@ -7,6 +7,8 @@
 
 #include "types.h"
 
+/// The 3D projection onto the screen: its focal length, near and far depths,
+/// and the screen point the view centres on.
 struct Projection {
   s32 focal;
   s32 near;

@@ -18,6 +18,9 @@
 #define SUFFIX_COUNT 9
 #endif
 
+/// Fills a battle unit with an enemy: its stats, its name with its letter, its
+/// items, rewards and elements. A Djinni fought is put on the party's side
+/// (README.md, "The unit"). Returns 0 for an id out of range.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -215,6 +218,7 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
+/// Returns summon `summonId`'s definition, or NULL past the last.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 28)
     return NULL;

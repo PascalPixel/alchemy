@@ -5,6 +5,8 @@
 #include "static_assert.h"
 #include "edition.h"
 
+/// An animation's metadata: the sprite's size, scale and offsets, how its
+/// pictures are drawn and decoded, its pictures and its animation scripts.
 struct AnimationMetadata {
   u8 width;
   u8 height;
@@ -29,6 +31,9 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
 
+/// Looks up animation metadata using the descriptor ID in the low twelve bits:
+/// that row of gSprite_AnimationMetadata (graphics/sprite/sprites.s), with no
+/// bounds check.
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number);
 struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number);

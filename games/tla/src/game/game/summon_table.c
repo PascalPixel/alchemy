@@ -12,6 +12,8 @@ const u8 gSummon_OrderList[SUMMON_COUNT] = {
 };
 
 // clang-format off
+/// The 29 summons, by summon id, the numbers gSummon_OrderList lists; read
+/// through SummonDefinition_Get.
 const struct SummonDefinition gSummon_DefinitionTable[] = {
     // Venus
     {

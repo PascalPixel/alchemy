@@ -90,6 +90,7 @@ enum ClassSeries {
 /// How many actions a unit's list holds (BattleUnit.psynergy), and how
 /// many a class teaches (ClassDefinition.abilities).
 #define PSYNERGY_SLOTS 32
+/// How many actions a class can teach (ClassDefinition.abilities).
 #define CLASS_ABILITY_SLOTS 16
 
 /// Unit ids from 128 are the enemies', as The Broken Seal's.

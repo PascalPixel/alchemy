@@ -8,6 +8,10 @@
 #include "gamepak/far_call/sound.h"
 #include "resource_ids.h"
 
+/// Powers the game up: stops any HBlank DMA left running, sets the cartridge
+/// wait states, clears IWRAM, installs the interrupt handlers and the resident
+/// IWRAM code, loads the window graphics and the sound driver, then enters
+/// MainRoutine_Run and never returns.
 void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
@@ -43,6 +47,8 @@ void System_Initialize(void) {
   MainRoutine_RunFar(GAME_START_TITLE);
 }
 
+/// Unused: waits out frames forever; the frame loop still runs the
+/// tasks.
 void System_IdleForever(void) {
   volatile struct InputState *input = &gInput;
 
@@ -196,6 +202,11 @@ void Overlay_Load(u32 index, void *destination) {
 /// The handler of every interrupt nobody has claimed.
 void Irq_Ignore(void) {}
 
+/// Copies the resident code to IWRAM, points the BIOS interrupt vector
+/// (gIrqVector) at its dispatcher, installs the default handler table and
+/// enables the VBlank and keypad interrupts (and, in the German, French,
+/// Spanish and Italian editions, the cartridge-removed interrupt, which halts
+/// the game).
 void System_InstallIwramAndIrqs(void) {
   Io_Write16(0, &REG_IME);
   Dma_Set(IwramResident_Rom, Ram_IwramIrqMain, DMA_COPY_WORDS(1024), REG_DMA3);

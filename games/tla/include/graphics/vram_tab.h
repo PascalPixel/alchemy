@@ -13,6 +13,7 @@ enum VramBlockLimits {
   VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
+/// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 
 struct VramBlockCacheEntry {
@@ -23,6 +24,7 @@ struct VramBlockCacheEntry {
 STATIC_ASSERT(sizeof(struct VramBlockCacheEntry) == 4);
 STATIC_ASSERT(offsetof(struct VramBlockCacheEntry, offset) == 2);
 
+/// The cache entries by number: the slot a sprite or loaded picture holds.
 extern struct VramBlockCacheEntry gVramCacheEntries[];
 
 #endif

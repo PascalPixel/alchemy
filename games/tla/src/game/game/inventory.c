@@ -56,6 +56,8 @@ s32 Item_GetEquipmentGroup(s32 item_id) {
   return group;
 }
 
+/// Returns how many of the item in `slot` the unit carries (0 for an empty
+/// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 item_id;
 
@@ -223,6 +225,10 @@ s32 PartyInventory_FindMember(s32 itemId) {
   return -1;
 }
 
+/// Equips the item in `slot`, clearing the equipped bit of the item of the same
+/// type it replaces. Psynergy items may coexist. Recomputes the unit's Psynergy
+/// and stats. Returns 0, -1 when the unit cannot equip it, or -2 when the item
+/// it would replace is cursed on.
 s32 Inventory_Equip(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);
   u32 item_id = inv->inventory[slot];
@@ -342,6 +348,8 @@ s32 Inventory_Remove(s32 unitId, s32 slot) {
   return result;
 }
 
+/// Removes one item as Inventory_Remove does, and puts a rare item back into
+/// circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory[slot];
   s32 removed_slot = Inventory_Remove(owner, slot);
@@ -374,6 +382,8 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   return result;
 }
 
+/// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
+/// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 raw = inv->inventory[slot];

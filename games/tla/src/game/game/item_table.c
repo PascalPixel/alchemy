@@ -9,6 +9,7 @@
 #include "game/character_ids.h"
 
 // clang-format off
+/// The 516 items, by item id, read through Item_GetDirect.
 const struct ItemDefinition gItem_DefinitionTable[] = {
     // ???
     [ITEM_000] = {

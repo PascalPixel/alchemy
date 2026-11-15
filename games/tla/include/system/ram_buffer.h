@@ -16,8 +16,13 @@
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
+/// The sound driver's mixer, SoundMainRAM, 932 bytes. m4aSoundInit copies
+/// SOUND_MIXER_CODE_SIZE (1 KB) there at once, so the 92 bytes after the mixer
+/// in the ROM land just after it.
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundMainRAM)
 
+/// The end of the IWRAM heap, which the allocators test against, and the
+/// bottom of the stacks.
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
@@ -52,6 +57,8 @@
 
 extern u8 gMapShapeGrid[];
 
+/// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
+/// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
 extern u32 gCellPictures[];
 
 extern void (*gVBlankCallback)(void);

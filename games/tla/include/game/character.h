@@ -134,6 +134,9 @@ struct EnemyElementPreset {
 
 STATIC_ASSERT(sizeof(struct EnemyElementPreset) == 24);
 
+/// A level up's result: the level reached and the gain in each stat. The
+/// caller provides it; Unit_LevelUp fills it, and
+/// Battle_AwardSpoils reports each gain that is not zero.
 struct LevelUpResult {
   s16 level;
   u16 ability;

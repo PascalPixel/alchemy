@@ -8,6 +8,7 @@
 #include "djinn_ids.h"
 
 // clang-format off
+/// The 80 Djinn, 20 of each element in element order.
 const struct DjinnDefinition gDjinn_DefinitionTable[] = {
     [DJINNI_FLINT] = {
         .abilityId = ABILITY_FLINT,

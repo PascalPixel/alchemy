@@ -243,6 +243,8 @@ void SceneTransform_ApplyUniformScale(s32 scale) {
   m[8] = scale;
   Iwram_TransformMatrix(m);
 }
+/// Rotates gTransform by `angles` and translates it by `position` in one
+/// matrix. Reached through the far-call table.
 void Transform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
@@ -306,9 +308,15 @@ void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   Iwram_TransformMatrix(m);
 }
 
+/// Square root of a 16.16 fixed-point value, in 16.16. The square root of
+/// the raw value is the result in 8.8, so the low eight bits are always 0.
 #define FixedSqrt(v) (Iwram_Sqrt(v) << 8)
+/// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
+/// stack to run.
 #define RelocatedQ16DotProduct Math_DotProductQ16Code
 
+/// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
+/// The camera's sideways axis is kept level (no Y component).
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   /* FAKEMATCH(pin): dot held in r10. */
   register Dot3Fn dot asm("r10");
@@ -404,24 +412,30 @@ void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   Iwram_TransformMatrix(work);
 }
 
-void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
-  s32 half;
-  s32 first;
-  s32 result;
+/// Sets the projection from a vertical field of view (1/65536 turns): the focal
+/// length, in 16.16 pixels, is 80 (half the screen height) over the tangent of
+/// half the angle.
+void Projection_SetFieldOfView(s32 fieldOfView, s32 nearDepth, s32 farDepth) {
+  s32 halfAngle;
+  s32 sine;
+  s32 focal;
 
-  half = value / 2;
-  first = Trig_Sin(half);
-  result = Iwram_RatioMulQ14(first, Trig_Sin(half + TRIG_TURN / 4) * 0x50);
-  gCameraSceneParameters[1] = param1;
-  gCameraSceneParameters[0] = result;
-  gCameraSceneParameters[2] = param2;
+  halfAngle = fieldOfView / 2;
+  sine = Trig_Sin(halfAngle);
+  // The cosine, as the sine a quarter turn on: 80 * cos / sin.
+  focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + TRIG_TURN / 4) * 80);
+  gCameraSceneParameters[1] = nearDepth;
+  gCameraSceneParameters[0] = focal;
+  gCameraSceneParameters[2] = farDepth;
 }
 
-void Projection_Set(u32 value0, u32 value1, u32 value2) {
-  u32 *work = gCameraSceneParameters;
-  work[0] = value0;
-  work[1] = value1;
-  work[2] = value2;
+/// Sets the projection's focal length and depth range directly.
+void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
+  u32 *projection = gCameraSceneParameters;
+
+  projection[0] = focal;
+  projection[1] = nearDepth;
+  projection[2] = farDepth;
 }
 
 static inline void Render_TransformVector(const void *vector, s32 *result) {

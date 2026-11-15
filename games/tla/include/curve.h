@@ -4,6 +4,8 @@
 #include "types.h"
 
 extern u8 gTerrain_LerpWeightTable[];
+/// The sample Terrain_GetSampleTableHeight reads at each position: 0, 1 or 2,
+/// split along two diagonals.
 extern u8 gTerrain_SampleIndexTable[];
 
 enum {

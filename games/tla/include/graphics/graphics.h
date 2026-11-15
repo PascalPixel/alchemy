@@ -9,30 +9,51 @@
 
 struct Window;
 
+/// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
 // volatile: ScreenFade_Update, which the VBlank handler runs, clears it at the
 // fade's end while ScreenFade_Wait waits on it, so it is no device.
 extern volatile u8 gScreenFadeVBlanks;
 extern u8 gScreenFadeVBlanksLeft;
+/// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
+/// The brightness the running fade started from, 0 to 16.
 extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
 // handler runs, so it is no device.
 extern volatile u8 gScreenFadeTargetLevel;
 extern u8 gRomShiftedTilePair[];
+/// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
+/// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
 extern u8 Resource_Decode2CodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
+/// The Japanese status panel's PP row, "EP    /": label and slash in one
+/// string, drawn by the unit summary.
 extern const u8 gStatusPanel_PpRowString[];
 extern s32 gWindow_FixedTileBlocks[];
+/// The Japanese status panel's HP row, "HP    /", the slash already in its
+/// cell at 48.
 extern const u8 gStatusPanel_HpRowString[];
+/// The HP label outside Japan, in each language's form ("KP" in German, "PV"
+/// in Spanish and French, "PS" in Italian).
 extern const u8 gStatusPanel_HpString[];
+/// The PP label outside Japan, which every language writes "PP".
 extern const u8 gStatusPanel_PpString[];
+/// The slash between a current and maximum figure on the status panel,
+/// outside Japan.
 extern const u8 gStatusPanel_SlashString[];
+/// The compressed item icons, indexed by an item's icon field.
 extern u8 *gItemIcons[];
+/// The end of gItemIcons, so Icon_CountItemIcons can count
+/// them.
 extern u8 *gItemIconsEnd[];
+/// The other compressed icons, among them the Status screen's status
+/// icons.
 extern u8 *gIcon_MiscIconPointers[];
+/// The compressed Psynergy icons, drawn over the shared icon base.
 extern u8 *gPsynergyIcons[];
+/// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
@@ -110,18 +131,33 @@ void WindowSystem_StartBattleUpdate(s32 kind);
 s32 Text_SetColorFar(s32 color);
 void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 
+/// The colour index Render_DecodePicture paints every pixel of a layer drawn
+/// with SPRITE_COLOR_FILL; the sprite viewer sets it to 3.
 extern u8 gDecodeFillByte;
 
+/// The Title's "Press Start" prompt, byte-LZ compressed, in each
+/// language.
 extern const u8 gTitle_PromptTiles[];
 
+/// Each main font glyph's width in pixels, from the space (32) on.
 extern const u8 gFont_GlyphWidths[];
+/// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
+/// settings menu's selected icon through.
 extern s32 gWindowSprite_PulseScales[];
+/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
+/// circle: the x offset leads the y offset by five steps.
 extern const s8 gNameEntry_CaretWave[];
 
+/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
+/// with its own letters.
 extern const u8 gNameEntry_KeyboardTilemap[];
 
+/// The party status window's column lines, ended by -1: the Djinn column's
+/// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
 
+/// Tile_BuildCellPictures, copied to the heap by ScanlineWindow_FillSpans for
+/// each frame of a window transition.
 extern u8 Tile_BuildCellPicturesCodeSize[];
 
 #endif

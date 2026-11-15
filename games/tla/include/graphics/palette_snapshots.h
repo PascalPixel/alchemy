@@ -36,6 +36,8 @@ s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
 void PaletteQueue_Stop(void);
 void PaletteCycle_Step(void);
 
+/// A palette cycle: a run of up to 16 background palette colours, saved and
+/// rotated by one colour every delay + 1 frames.
 struct PaletteCycle {
   u16 *source;
   s16 position;
@@ -45,6 +47,8 @@ struct PaletteCycle {
   u16 colors[16];
 };
 
+/// The palette cycling queue (HEAP_SLOT_PALETTE_CYCLES): four cycles and how
+/// many are in use.
 struct PaletteCycleWork {
   u8 unk000[0x166];
   s16 unk166;

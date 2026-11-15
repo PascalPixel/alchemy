@@ -7,6 +7,8 @@
 #include "owner_state.h"
 #include "system/ram_buffer.h"
 
+/// Returns the unit of unitId: ISAAC to PIERS the characters, the six from
+/// FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
 void *Unit_Get(s32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
@@ -33,6 +35,7 @@ s32 GameFlag_Get(s32 flag) {
   return (gGameFlagBytes[flag] >> bit) & 1;
 }
 
+/// Sets `flag` and returns its byte number.
 s32 GameFlag_Set(s32 flag) {
   s32 bit;
   s32 mask;
@@ -58,6 +61,8 @@ void GameFlag_Clear(s32 flag) {
   bytes[flag] &= ~mask;
 }
 
+/// Flips `flag` and returns its new value. Nothing calls it or its far-call
+/// export.
 u32 GameFlag_Toggle(s32 flag) {
   s32 mask;
   u8 *bytes;
@@ -71,11 +76,13 @@ u32 GameFlag_Toggle(s32 flag) {
   return (u32)((0 - value) | value) >> 31;
 }
 
+/// Returns the whole byte `flag` is in, a counter kept among the flags.
 u8 GameFlag_GetByte(s32 flag) {
   flag = ((u32)flag << 20) >> 23;
   return gGameFlagBytes[flag];
 }
 
+/// Sets the whole byte `flag` is in.
 u32 GameFlag_SetByte(u32 flag, u8 value) {
   u32 shifted = flag << 20;
   flag = shifted >> 23;
@@ -104,6 +111,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
   return bytes[flag];
 }
 
+/// Returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   u32 shifted = flag << 20;
   u32 shift;

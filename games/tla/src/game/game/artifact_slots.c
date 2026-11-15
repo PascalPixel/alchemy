@@ -15,6 +15,8 @@ const u8 Data_080b1f2c[4][5] = {
 /// Each item's rare item counter number plus one, 0 for an ordinary item; the
 /// shops' stock of a rare item is counted by it (Item_AdjustCounter).
 // clang-format off
+/// Each item's rare item counter number plus one, or 0 for an ordinary item
+/// (Item_AdjustCounter).
 const u16 gItem_ArtifactSlotTable[512] = {
     0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
     0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,

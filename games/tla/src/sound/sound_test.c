@@ -29,6 +29,7 @@ static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 /// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2
 /// and the commands 0, 78 and 390.
 // As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
+/// Runs the sound test's three sound selectors and five reverb codes forever.
 void SoundTest_Run(void) {
   struct SoundTestCues cues;
   s32 preset;
@@ -87,6 +88,8 @@ void SoundTest_Run(void) {
   }
 }
 
+/// Replaces the audio command mask, or toggles its requested bits when
+/// flagged.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -97,6 +100,8 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
+/// Returns the music Sound_Play last chose: 0xff before any, MUS_SILENCE after
+/// a fade, else the last music.
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 s32 SoundFlag_Test(s32 sound) {

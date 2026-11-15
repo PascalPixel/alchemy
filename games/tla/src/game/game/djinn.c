@@ -5,6 +5,8 @@
 #include "../game_internal.h"
 #include "module/game/game.h"
 
+/// Returns the definition of Djinni `index` of element `group`; anything out of
+/// range gives DJINNI_FLINT's.
 const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 

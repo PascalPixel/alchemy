@@ -115,6 +115,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, unk868) == 0x868);
 
 struct LinkRuntimeState;
 
+/// The battle's work: heap slot HEAP_SLOT_BATTLE's block under its own name.
 extern struct LinkRuntimeState *gBattleWork;
 
 #endif

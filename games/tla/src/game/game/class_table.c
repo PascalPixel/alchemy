@@ -6,6 +6,7 @@
 #include "../game_internal.h"
 
 // clang-format off
+/// The 244 classes, by class id.
 const struct ClassDefinition gClass_DefinitionTable[] = {
     // NPC
     {

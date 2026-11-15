@@ -4,6 +4,8 @@
 
 #include "../game_internal.h"
 
+/// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
+/// a point, the difference held to -200 to 200, its effect half with halve.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 min;
   s32 max;
@@ -141,6 +143,8 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
   return chanceBonus;
 }
 
+/// Rolls whether a character's weapon unleashes, 5 percent a point of its
+/// chance. Returns the unleash action, or 1 for a plain attack.
 s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
@@ -270,6 +274,8 @@ s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
   return 0;
 }
 
+/// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on a
+/// downed unit.
 s32 Battle_IsReviveEffect(s32 effect_id) {
   if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39) ||
       (effect_id == 0x49)) {

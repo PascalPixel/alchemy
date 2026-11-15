@@ -12,6 +12,9 @@
 #include "static_assert.h"
 #include "types.h"
 
+/// The running battle effect's work: its canvas image, 64 particles, the
+/// display registers it stages and its sprites. It lives in the
+/// HEAP_SLOT_BATTLE_EFFECT heap slot.
 struct BattleEffectWork {
   struct Particle particles[64];
   u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets

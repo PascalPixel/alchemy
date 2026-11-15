@@ -4,9 +4,15 @@
 #include "edition.h"
 #include "types.h"
 
+/// The current 3D transform, twelve 16.16 words: a 3x3 rotation, then a
+/// translation. Iwram_TransformMatrix multiplies the matrix it is given into
+/// it.
 extern s32 gTransform[12];
 
+/// Matrices saved by Transform_Push, 0 or 1: the save area holds one.
 extern s32 gTransformStackDepth;
+/// Where Transform_Push saves gTransform next: the save area in heap slot
+/// HEAP_SLOT_TRANSFORM_STACK, or just past it while a matrix is saved.
 extern u8 *gTransformStackTop;
 
 void SceneTransform_RewindStack(void);
@@ -17,6 +23,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void Transform_ApplyLookAt(s32 *eye, s32 *target);
 
+/// Sets a twelve-word matrix to identity: Q16_ONE (1.0) on the rotation's
+/// diagonal, the rest 0.
 static __inline__ void Transform_SetIdentity(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")
   __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"

@@ -32,6 +32,8 @@ struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
 }
 
+/// Returns the average level of the party members, rounded down (0 with no
+/// party members).
 u32 Party_GetAverageLevel(void) {
   s32 count;
   s32 total;
@@ -517,8 +519,13 @@ u32 BuildStamp_GetTime(void) {
   return (u16)stamp;
 }
 
+/// DMA3, the channel the game copies with, as its three registers.
 #define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+/// DMA 3's enable bit in its count and control word, which the hardware
+/// clears when the transfer is done.
 #define DMA3_BUSY (DMA_ENABLE << 16)
+/// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
+/// << 16.
 #define START_DMA(source_, destination_, control_)                             \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 

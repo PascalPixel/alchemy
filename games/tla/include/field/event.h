@@ -23,6 +23,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"
+#include "field/map_grid.h"
 #include "system/iwram_call.h"
 #include "system/task.h"
 
@@ -32,8 +33,6 @@ struct Actor;
 /// sourceY over the destination, then wait frames.
 #define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames)        \
   (sourceX), (sourceY), (width), (height), (frames)
-#define MAPGRID_ANIMATION_STEPS_END                                            \
-  0xffff ///< a source column that ends the steps
 
 /// A cell animation, such as a door opening: its steps and the cell they are
 /// copied to (MapGrid_PlayMapEdit, which blocks until the last).

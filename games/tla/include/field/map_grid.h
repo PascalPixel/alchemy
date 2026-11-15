@@ -157,4 +157,7 @@ STATIC_ASSERT(offsetof(struct MapViewWork, dispcnt) == 0x14);
 STATIC_ASSERT(offsetof(struct MapViewWork, windowTop) == 0x104);
 STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 0x10c);
 
+/// A cell animation step's source column that ends the steps.
+#define MAPGRID_ANIMATION_STEPS_END 0xffff
+
 #endif

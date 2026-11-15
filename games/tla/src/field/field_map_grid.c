@@ -8,6 +8,7 @@
 #include "sounds.h"
 #include "field/field_bank.h"
 #include "field/map.h"
+#include "field/map_grid.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
 #include "system/ram_buffer.h"
@@ -722,52 +723,46 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 /// picture numbers to (destinationX, destinationY) and waits its delay in
 /// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
-  struct MapGridCellAnimationStep *copyCommand =
+  struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
-  u32 sourceX = copyCommand->source;
-  u32 endMarker;
-  u32 firstSourceCopy = sourceX;
+  u32 source = step->source;
+  /* FAKEMATCH(temporary): the end test reads a copy of source, and the updates
+   * that cancel out end CSE's knowledge of it. */
+  u32 test = source;
 
-  // endMarker set after the copy, which puts the ip copy among its
-  endMarker = 0xffff;
-  /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
-   * before the comparison. */
-  if (copyCommand) {
-    sourceX ^= firstSourceCopy;
-    sourceX ^= firstSourceCopy;
+  if (step) {
+    source ^= test;
+    source ^= test;
   }
-  if (firstSourceCopy != endMarker) {
-    u32 endMarkerCopy = endMarker;
-    s16 *rectangleArgs = (s16 *)(steps + 1);
+  if (test != MAPGRID_ANIMATION_STEPS_END) {
+    u32 end = MAPGRID_ANIMATION_STEPS_END;
+    // Each step's rectangle and delay, read a step at a time beside it.
+    s16 *rectangle = (s16 *)(steps + 1);
 
     while (1) {
-      s32 sourceY = rectangleArgs[0];
-      s32 width = rectangleArgs[1];
-      s32 height = rectangleArgs[2];
-      s32 delay = rectangleArgs[3];
-      rectangleArgs += 5;
+      s32 sourceY = rectangle[0];
+      s32 width = rectangle[1];
+      s32 height = rectangle[2];
+      s32 delay = rectangle[3];
 
-      MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
+      rectangle += 5;
+      MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
                                          destinationY, (u16)width, (u16)height);
-      copyCommand++;
+      step++;
       wait((u16)delay);
-      sourceX = copyCommand->source;
-      /* FAKEMATCH(dead): updates that cancel out between the load and its copy.
-       */
-      if (copyCommand) {
-        sourceX++;
-        sourceX--;
+      source = step->source;
+      if (step) {
+        source++;
+        source--;
       }
       {
-        u32 nextSourceCopy = sourceX;
+        u32 next = source;
 
-        /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
-         * knowledge of source. */
-        if (copyCommand) {
-          sourceX++;
-          sourceX--;
+        if (step) {
+          source++;
+          source--;
         }
-        if (nextSourceCopy == endMarkerCopy)
+        if (next == end)
           break;
       }
     }

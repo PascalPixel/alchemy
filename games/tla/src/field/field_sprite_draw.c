@@ -263,23 +263,10 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
 
     if (obj->flags & 14) {
       if (obj->flags & 2) {
-        u32 codeSize = (u32)Grid_DrawOutlineCodeSize;
-        OutlineFn outline = Heap_Alloc(codeSize);
-        u32 outlineHeight;
+        OutlineFn outline;
 
-        Dma_Set(Grid_DrawOutlineCode, outline, DMA_COPY_WORDS(codeSize >> 2),
-                REG_DMA3);
-        {
-          /* FAKEMATCH(temporary): the width read into a local before the asm
-           * below. */
-          u32 outlineWidth = obj->width;
-
-          /* FAKEMATCH(barrier): an empty asm after the width. */
-          asm("");
-          outlineHeight = obj->height;
-          outline(outlineWidth, outlineHeight, pixels, system->edge,
-                  system->fill);
-        }
+        RamCode_Load(outline, Grid_DrawOutlineCode, Grid_DrawOutlineCodeSize);
+        outline(obj->width, obj->height, pixels, system->edge, system->fill);
         Heap_Release(outline);
       }
       if (obj->flags & 8) {

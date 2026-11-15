@@ -168,7 +168,7 @@ void WorldMap_UpdatePlacedActors(void) {
           dz = object->z.fixed - leader->z.fixed;
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z.fixed - object->z.fixed) < reach) {
-            if (GameFlag_Get(0x104) == 0) {
+            if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
               if (gMainRoutineWork.movementMode == 9)
                 work->psynergy = 0x208b;
               else

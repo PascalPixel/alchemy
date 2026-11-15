@@ -61,6 +61,16 @@
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
 
+/// The hall's entrance from the Reveal tablet's room, and where the party
+/// lands after dropping from the Vial chest room (AirsRockInside_LandInHall);
+/// the Vial chest room's entrance on the lift from the hall
+/// (AirsRockInside_RiseOnLift).
+enum {
+  ENTRANCE_HALL_FROM_REVEAL_TABLET = 16,
+  ENTRANCE_HALL_LANDING = 11,
+  ENTRANCE_VIAL_CHEST_ON_THE_LIFT = 3
+};
+
 void Actor_StartScript(struct Actor *object, const u8 *data);
 
 /// The actors of each inner room, numbering its placement table. The wind
@@ -2297,7 +2307,7 @@ void AirsRockInside_StepOnVanishingStone(void) {
   if (cell != 1 && cell != 7) {
     AirsRockInside_StampCellUnderLeader();
     AirsRockInside_VanishStone(264, row * 8 + 10);
-    if (!Event_GetFlag(0x200))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     GameFlag_Set(*(s16 *)work + 312);
   } else if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
@@ -3077,14 +3087,15 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_HALL) {
     AirsRockInside_StartRestoringCells();
     // The Japanese release arrives here whatever flag 265 says.
-    if (gMainRoutineWork.entrance == 16 &&
+    if (gMainRoutineWork.entrance == ENTRANCE_HALL_FROM_REVEAL_TABLET &&
         (!TLA_PATCH_1 || !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))) {
       Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
       wait(8);
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }
-    if (gMainRoutineWork.entrance <= 11 || gMainRoutineWork.entrance == 16) {
+    if (gMainRoutineWork.entrance <= 11 ||
+        gMainRoutineWork.entrance == ENTRANCE_HALL_FROM_REVEAL_TABLET) {
       Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
       REG_BLDALPHA = BLEND_ALPHA(8, 16);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -3120,7 +3131,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HALL_WEST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HALL_EAST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HALL_POOL_STATUE), 0);
-    if (gMainRoutineWork.entrance == 11 &&
+    if (gMainRoutineWork.entrance == ENTRANCE_HALL_LANDING &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_LandInHall();
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST) {
@@ -3140,7 +3151,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 0);
-    if (gMainRoutineWork.entrance == 3 &&
+    if (gMainRoutineWork.entrance == ENTRANCE_VIAL_CHEST_ON_THE_LIFT &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_RiseOnLift();
   } else if (gMainRoutineWork.next ==

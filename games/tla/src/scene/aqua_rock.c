@@ -102,10 +102,14 @@ enum AquaRockSlopesActorId {
 enum AquaRockMistSabreChestActorId {
   ACTOR_MIST_SABRE_WATER_STONE = ACTOR_FIRST_PLACED,
   /// The three puddles Frost freezes.
-  ACTOR_FIRST_PUDDLE,
+  ///@{
+  ACTOR_PUDDLE_A,
+  ACTOR_PUDDLE_B,
+  ACTOR_PUDDLE_C,
+  ///@}
   /// The two fires Douse puts out.
   ///@{
-  ACTOR_FIRST_FIRE = ACTOR_FIRST_PUDDLE + 3,
+  ACTOR_FIRST_FIRE,
   ACTOR_SECOND_FIRE,
   ///@}
   ACTOR_FIRE_GLOW,
@@ -593,7 +597,7 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
     row = FIELD_CELL(first->z.fixed);
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
-    GameFlag_ClearBit_(0x320);
+    GameFlag_ClearBit_(FLAG_AREA_TEMP_20);
     GameFlag_Clear(FLAG_AREA_TEMP_21);
     if (column == 7 && row == 35)
       GameFlag_Set(FLAG_AREA_TEMP_20);
@@ -1071,7 +1075,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI))
       Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 584);
     x = GameFlag_GetByte(0x310);
-    z = GameFlag_GetByte(0x318);
+    z = GameFlag_GetByte(FLAG_AREA_TEMP_18);
     if (z != 0)
       Actor_SetHorizontalPositionWithTerrain(
           ACTOR_FIRST_PILLAR, (x << 20) + px(8), (z << 20) + px(8));
@@ -1817,9 +1821,9 @@ LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_SCENE_TEMP_21, EVENT(AquaRock_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, FLAG_SCENE_TEMP_22, EVENT(AquaRock_FreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_SCENE_TEMP_23, EVENT(AquaRock_FreezeThirdPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_21, EVENT(AquaRock_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_22, EVENT(AquaRock_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_23, EVENT(AquaRock_FreezeThirdPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FIRE, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, EVENT(AquaRock_DropFirstRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_FIRE, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
     {TRIGGER_PUSHED, 0, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},

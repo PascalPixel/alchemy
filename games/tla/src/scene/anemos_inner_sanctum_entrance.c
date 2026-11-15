@@ -66,8 +66,15 @@ enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
   /// The six stone beasts set in place before the way opens.
-  ACTOR_FIRST_STATUE,
-  ACTOR_BLUE_ORB = ACTOR_FIRST_STATUE + 6,
+  ///@{
+  ACTOR_STATUE_A,
+  ACTOR_STATUE_B,
+  ACTOR_STATUE_C,
+  ACTOR_STATUE_D,
+  ACTOR_STATUE_E,
+  ACTOR_STATUE_F,
+  ///@}
+  ACTOR_BLUE_ORB,
   /// The room's fourteen torches.
   ACTOR_FIRST_TORCH
 };
@@ -289,7 +296,7 @@ lower:
   }
   if (++i <= 14)
     goto lower;
-  Actor_WaitForMove(Actor_GetById(ACTOR_FIRST_STATUE));
+  Actor_WaitForMove(Actor_GetById(ACTOR_STATUE_A));
   wait(40);
   i = 9;
 land:
@@ -338,19 +345,19 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
-    SetObjectValue(ACTOR_FIRST_STATUE, 0);
-    SetObjectValue(ACTOR_FIRST_STATUE + 1, 1);
-    SetObjectValue(ACTOR_FIRST_STATUE + 2, 2);
-    SetObjectValue(ACTOR_FIRST_STATUE + 3, 3);
-    SetObjectValue(ACTOR_FIRST_STATUE + 4, 128);
-    SetObjectValue(ACTOR_FIRST_STATUE + 5, 129);
+    SetObjectValue(ACTOR_STATUE_A, 0);
+    SetObjectValue(ACTOR_STATUE_B, 1);
+    SetObjectValue(ACTOR_STATUE_C, 2);
+    SetObjectValue(ACTOR_STATUE_D, 3);
+    SetObjectValue(ACTOR_STATUE_E, 128);
+    SetObjectValue(ACTOR_STATUE_F, 129);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-    Actor_GetById(ACTOR_FIRST_STATUE)->priorityFlags |= 0xc0;
-    Actor_GetById(ACTOR_FIRST_STATUE + 1)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 2)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 3)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 4)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 5)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_A)->priorityFlags |= 0xc0;
+    Actor_GetById(ACTOR_STATUE_B)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_C)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_D)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_E)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_F)->priorityFlags |= 0x80;
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       AnemosInnerSanctumEntrance_SetLightPicture(1);
       AnemosInnerSanctumEntrance_PlaceStatues();
@@ -675,19 +682,20 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
     {STEP_TRIGGER_WALKING, 77, CONDITION_ALWAYS,
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STATUE, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_A, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_B, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_C, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_D, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_E, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_F, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 77,
-     IF_FLAG_SET(0x200), EVENT(AnemosInnerSanctumEntrance_OpenTheWay)},
+     IF_FLAG_SET(FLAG_SCENE_TEMP_00),
+     EVENT(AnemosInnerSanctumEntrance_OpenTheWay)},
     {TRIGGER_TABLE_END},
 };

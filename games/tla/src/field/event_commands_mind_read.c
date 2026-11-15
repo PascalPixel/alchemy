@@ -218,7 +218,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// pad's keys held.
 u16 BattleEffect_GetEightWayHeadingWord(void) {
   struct InputState *input = &gInput;
-  u16 *words = gBattleEffect_EightWayHeadingWords;
+  const u16 *words = gBattleEffect_EightWayHeadingWords;
 
   return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
 }

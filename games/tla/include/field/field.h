@@ -547,6 +547,9 @@ void Actor_ResetForLeader(s32 table);
 void Portrait_CloseWindowFar(s32 sprite);
 
 extern const s32 gFieldEffect_HeavyImpactScript[];
+extern const s32 gFieldEffect_ShortEffectScript[];
+extern const s32 gFieldEffect_MediumEffectScript[];
+extern const s32 gFieldEffect_LongEffectScript[];
 
 extern const s32 gFieldEffect_FragmentScript[];
 

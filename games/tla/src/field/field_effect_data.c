@@ -32,7 +32,7 @@ const s32 gBattleEffect_UntargetedObjectScript[] = {
 };
 
 const s32 *const gFieldEffect_DurationScripts[3] = {
-    &gFieldEffect_HeavyImpactScript[8],
-    &gFieldEffect_HeavyImpactScript[11],
-    &gFieldEffect_HeavyImpactScript[14],
+    gFieldEffect_ShortEffectScript,
+    gFieldEffect_MediumEffectScript,
+    gFieldEffect_LongEffectScript,
 };

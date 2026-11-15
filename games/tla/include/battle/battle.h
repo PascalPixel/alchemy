@@ -42,7 +42,7 @@ struct Actor;
 struct SceneAreaNameRule;
 
 extern u16 gBattleEffect_CyclePatternWords[];
-extern s8 gBattleEffect_RandomChildValues[];
+extern const s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
 extern u16 gBattleUnit_WeaponKinds[];
@@ -133,7 +133,7 @@ struct ParticlePosition {
   FIXED z;
 };
 extern const u8 gBattleEffect_ArcTiles[];
-extern u16 gBattleEffect_EightWayHeadingWords[];
+extern const u16 gBattleEffect_EightWayHeadingWords[];
 extern const s32 gBattleEffect_ParticleScript[];
 extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];

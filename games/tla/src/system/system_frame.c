@@ -318,10 +318,7 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   }
 
   gInput.pressed = held & ~gInput.previousHeld;
-  /* FAKEMATCH(dead): an empty once-only block after pressed is stored. */
-  do {
-  } while (0);
-  gInput.previousHeld = held;
+  Io_Write16(held, &gInput.previousHeld);
 }
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
@@ -414,10 +411,7 @@ void System_VBlankHandler(void) {
     }
     *count = vblankCount + 1;
   }
-  /* FAKEMATCH(dead): the frame count's step in a once-only block. */
-  do {
-    gFrameVBlanks++;
-  } while (0);
+  Io_Write32(gFrameVBlanks + 1, &gFrameVBlanks);
   gVBlankDone = 1;
 }
 

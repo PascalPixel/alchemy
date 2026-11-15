@@ -12,6 +12,7 @@
 #include "sound/sound_driver.h"
 #include "system/input.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "system/system.h"
 
@@ -35,10 +36,7 @@ void SoundTest_Run(void) {
   cues = sSoundTestCues;
   row = 0;
   preset = 3;
-  /* FAKEMATCH(dead): the store in a once-only block. */
-  do {
-    gBuildStamp[0] = 0;
-  } while (0);
+  Io_Write32(0, &gBuildStamp[0]);
   gSoundVBlankState.soundTestActive = 1;
   timer = 20;
 
@@ -160,23 +158,14 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   work->pcmSamplesPerVBlank = samples;
   work->rateStep = 266;
   control = 0;
-  /* FAKEMATCH(dead): the timer's stop in a once-only block. */
-  do {
-    REG_TM0CNT_H = control;
-  } while (0);
-  /* FAKEMATCH(dead): the reload's store in a once-only block. */
-  do {
-    REG_TM0CNT_L = __divsi3(-140448, samples);
-  } while (0);
+  Io_Write16(control, &REG_TM0CNT_H);
+  Io_Write16(__divsi3(-140448, samples), &REG_TM0CNT_L);
   buffer = gData_02003a90;
   Iwram_ClearWords(buffer, 0x18c0);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
   buffer += 0xc60;
-  /* FAKEMATCH(dead): the second source's store in a once-only block. */
-  do {
-    REG_DMA2SAD = (u32)buffer;
-  } while (0);
+  Io_Write32((u32)buffer, &REG_DMA2SAD);
   vcount = (volatile u8 *)&REG_VCOUNT;
   while (*vcount == 159)
     ;

@@ -14,4 +14,12 @@
     *(reg) = value_;                                                           \
   } while (0)
 
+/// Writes a value to a 32-bit register or memory location, in Io_Write16's
+/// shape.
+#define Io_Write32(v, reg) Io_Write16(v, reg)
+
+/// Writes a value to an 8-bit register or memory location, in Io_Write16's
+/// shape.
+#define Io_Write8(v, reg) Io_Write16(v, reg)
+
 #endif

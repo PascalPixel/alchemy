@@ -542,17 +542,11 @@ s32 Serial_GetActiveTransfers(void) {
 /// send or receive, no flags, and status 0x80.
 void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
-  volatile u16 *ime;
   u32 saved;
   u32 zero;
 
   state = &gSerialTransfer;
-  ime = &REG_IME;
-  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
-  do {
-    saved = *ime;
-    *ime = (u16)ime;
-  } while (0);
+  IRQ_LOCK(saved);
   zero = 0;
   state->status = 0x80;
   *(u8 *)&state->peerFlags = zero;
@@ -561,7 +555,7 @@ void LinkBattle_ResetTransferState(void) {
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;
   gSerialReceivedSize = zero;
-  *ime = saved;
+  IRQ_UNLOCK(saved);
 }
 
 /// Runs each VBlank after the exchange, called by System_VBlankHandler: moves

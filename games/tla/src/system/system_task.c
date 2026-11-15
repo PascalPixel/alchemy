@@ -163,11 +163,7 @@ s32 Task_SuspendAll(TaskFunc func) {
       if (task->func != (u32)func)
         continue;
     }
-    TASK_STATE_HIGH(task) |= 1;
-    /* FAKEMATCH(dead): an empty once-only block after the priority's high byte
-     * store. */
-    do {
-    } while (0);
+    Io_Write8(TASK_STATE_HIGH(task) | 1, &TASK_STATE_HIGH(task));
     result = i;
   }
   IRQ_UNLOCK(savedInterruptMaster);
@@ -187,11 +183,7 @@ s32 Task_SuspendOverlayTasks(void) {
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
-      TASK_STATE_HIGH(task) |= 1;
-      /* FAKEMATCH(dead): an empty once-only block after the priority's high
-       * byte store. */
-      do {
-      } while (0);
+      Io_Write8(TASK_STATE_HIGH(task) | 1, &TASK_STATE_HIGH(task));
       result = i;
     }
   }

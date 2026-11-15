@@ -166,7 +166,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   canvas = *cursor;
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -211,12 +211,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
     if (frame <= 16) {
-      REG_BLDALPHA = BLEND_ALPHA(frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
       if (frame == 16)
         REG_BLDCNT = 0;
     }
     if (frame > 103) {
-      REG_BLDALPHA = BLEND_ALPHA(120 - frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(120 - frame);
       if (frame == 104)
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     }
@@ -321,7 +321,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = BLEND_ALPHA(12, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
@@ -362,7 +362,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     Projection_Unit(work->args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
     if (frame == 16)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                TINT_KEEP, 0, 20);
@@ -511,7 +511,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, work->imageStorage,
                              1, 1);
@@ -555,7 +555,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       IO_WRITE_16);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256,
-                  RGB(31, 31, 31) << 16 | RGB(31, 31, 31));
+                  RGB_WHITE << 16 | RGB_WHITE);
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                            POSE_CAST, 0, 30);
@@ -584,12 +584,12 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
       color = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++) {
-        s32 red = *color & 0x1f;
-        s32 green = (*color >> 5) & 0x1f;
-        s32 blue = (*color >> 10) & 0x1f;
-        s32 goalRed = battle->palette[i] & 0x1f;
-        s32 goalGreen = (battle->palette[i] >> 5) & 0x1f;
-        s32 goalBlue = (battle->palette[i] >> 10) & 0x1f;
+        s32 red = RGB_RED(*color);
+        s32 green = RGB_GREEN(*color);
+        s32 blue = RGB_BLUE(*color);
+        s32 goalRed = RGB_RED(battle->palette[i]);
+        s32 goalGreen = RGB_GREEN(battle->palette[i]);
+        s32 goalBlue = RGB_BLUE(battle->palette[i]);
 
         if (red < goalRed)
           red++;
@@ -696,8 +696,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       s32 v;
 
       v = frame - 8;
-      if (v > 31)
-        v = 31;
+      if (v > RGB_LEVEL_MAX)
+        v = RGB_LEVEL_MAX;
       BG_PLTT[1] = RGB(v, v, v);
     }
 
@@ -796,7 +796,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // Setup, as for the element pillar.
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = BLEND_ALPHA(12, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
@@ -837,7 +837,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     Projection_ScaledUnit(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
@@ -964,7 +964,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   switch (element) {
   case ELEMENT_VENUS:
     id = RESOURCE_YELLOW_PALETTE_B;

@@ -163,7 +163,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   palette = Resource_GetTableEntry(RESOURCE_TORNADO_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
@@ -182,7 +182,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     point->variant = -(Random16() & 15);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); // invisible to start with
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
@@ -201,9 +201,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     else
       wave -= px(32);
     if (frame <= 16)
-      REG_BLDALPHA = BLEND_ALPHA(frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
     if (frame > 63)
-      REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frame);
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
       x = Q_16_16_TO_INT(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *

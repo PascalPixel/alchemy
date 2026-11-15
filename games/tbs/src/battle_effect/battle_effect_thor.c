@@ -311,7 +311,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              work->sheet + THOR_MOTE_PICTURE, 1, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     s32 thorX;
     s32 thorY;

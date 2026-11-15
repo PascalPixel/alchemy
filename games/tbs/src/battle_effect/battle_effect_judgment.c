@@ -485,7 +485,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++, pal++) {
-        *pal ^= RGB(31, 31, 31);
+        *pal ^= RGB_WHITE;
       }
     }
 
@@ -538,7 +538,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Fill32Cell(fill, 0, work, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
       Dma_Fill32Cell(fill, CANVAS_FILL_WORD(1), canvas, CANVAS_BYTES);
       view->busy = 0;
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = px((Random16() & 63) + 256);
@@ -555,20 +555,20 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
       for (i = 0; i != 63; i++, pal++) {
         s32 c = *pal;
-        s32 b = ((u16)c >> 10) & 31;
-        s32 g = ((u16)c >> 5) & 31;
-        s32 r = c & 31;
+        s32 b = RGB_BLUE((u16)c);
+        s32 g = RGB_GREEN((u16)c);
+        s32 r = RGB_RED(c);
         b++;
         g++;
         r++;
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
         *pal = RGB(r, g, b);
       }

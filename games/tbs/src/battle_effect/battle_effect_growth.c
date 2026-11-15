@@ -131,7 +131,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     if (frame >= duration - 20 && frame < duration - 4) {
       // Fade out over the last 16 frames.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frame) - 5);
     }
     if (frame < duration - 4) {
       for (i = 0; i != gGrowth_ColumnCounts[work->args->variant]; i++) {
@@ -344,7 +344,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_THORN_SHEET, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8); // 112 pixels right
@@ -372,7 +372,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = BLEND_ALPHA(frameCount - frame - 1, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(frameCount - frame - 1);
     }
 
     for (i = 0; i != gGrowth_Counts[work->args->variant]; i++) {

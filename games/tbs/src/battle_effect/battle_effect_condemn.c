@@ -49,7 +49,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     work->args = args;
     BattleEffect_StartTiledCanvas(0);
     REG_BG2PA = Q_8_8(1);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
 
     sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
     Iwram_CopyWords(BG_PLTT, sheet, 128);
@@ -105,7 +105,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       drawReaper = 0;
     }
     if (frame == 33) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // The last pass, on the first target.
@@ -120,7 +120,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       drawReaper = 0;
     }
     if (frame == 65) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // Each of the first two passes ripples harder as the reaper fades out.
@@ -129,12 +129,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame <= 31) {
       if (frame > 15) {
         ripple = (frame * 2) - 32;
-        REG_BLDALPHA = BLEND_ALPHA(31 - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frame);
       }
     } else if (frame <= 63) {
       if (frame > 47) {
         ripple = (frame * 2) - 96;
-        REG_BLDALPHA = BLEND_ALPHA(63 - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(63 - frame);
       }
     }
     if (ripple < 0) {

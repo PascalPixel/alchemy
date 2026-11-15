@@ -33,7 +33,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);

@@ -337,7 +337,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   BattleEffect_SetupBlendedDisplay();
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {

@@ -109,7 +109,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (work->args->prelude == 1)
     BattleEffect_RunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
                                    work->args->side, DJINNI_ANCHOR_OVER_USER,

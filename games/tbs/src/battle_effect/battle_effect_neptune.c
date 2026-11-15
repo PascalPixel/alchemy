@@ -426,7 +426,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, work->sheet, 1, 1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   for (frame = 0; frame != 144; frame++) {
     if (frame == 96) {

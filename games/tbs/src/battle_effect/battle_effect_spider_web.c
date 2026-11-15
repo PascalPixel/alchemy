@@ -129,7 +129,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); // invisible to start with
   Projection_ScaledUnit(work->args->targets[0], &first);
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
@@ -140,9 +140,9 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_CRACK);
   for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
     if (frame <= 8)
-      REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame << 1);
     if (frame > 53)
-      REG_BLDALPHA = BLEND_ALPHA(124 - (frame << 1), 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(124 - (frame << 1));
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, 32, 32);

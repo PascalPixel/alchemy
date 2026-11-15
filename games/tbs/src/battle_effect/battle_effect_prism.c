@@ -30,7 +30,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -173,9 +173,9 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     green = (index + greenOffset) / 2;
     blue = (index + blueOffset) / 2;
 
-    CLAMP(red, 0, 31);
-    CLAMP(green, 0, 31);
-    CLAMP(blue, 0, 31);
+    CLAMP(red, 0, RGB_LEVEL_MAX);
+    CLAMP(green, 0, RGB_LEVEL_MAX);
+    CLAMP(blue, 0, RGB_LEVEL_MAX);
 
     *output++ = RGB(red, green, blue);
     index++;

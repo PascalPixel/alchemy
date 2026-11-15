@@ -43,7 +43,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
                                  &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -103,12 +103,12 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame <= 8) {
       level = frame * 2;
       wave = level;
-      REG_BLDALPHA = BLEND_ALPHA(level, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
     } else {
       wave = frame * 2;
     }
     if (frame > 88)
-      REG_BLDALPHA = BLEND_ALPHA(192 - frame * 2, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(192 - frame * 2);
 
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {

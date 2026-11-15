@@ -16,12 +16,12 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
   Iwram_CopyWords(target, Resource_GetTableEntry(resourceId), 128);
   target[0] = 0;
   for (i = 0; i != 64; i++, color++) {
-    s32 red = *color & 0x1f;
-    s32 green = (*color >> 5) & 0x1f;
-    s32 blue = (*color >> 10) & 0x1f;
-    s32 targetRed = target[i] & 0x1f;
-    s32 targetGreen = (target[i] >> 5) & 0x1f;
-    s32 targetBlue = (target[i] >> 10) & 0x1f;
+    s32 red = RGB_RED(*color);
+    s32 green = RGB_GREEN(*color);
+    s32 blue = RGB_BLUE(*color);
+    s32 targetRed = RGB_RED(target[i]);
+    s32 targetGreen = RGB_GREEN(target[i]);
+    s32 targetBlue = RGB_BLUE(target[i]);
 
     if (red < targetRed)
       red++;
@@ -175,7 +175,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   } else {
     BattleEffect_StartCanvasLayer(0);
   }
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // Setup: the pictures.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
@@ -471,13 +471,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, pictures, 1, 0);
-      REG_BLDALPHA = BLEND_ALPHA(16, 14);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (mode == CASTING_IMPACT_IMPACT_ASURA) {
       Resource_LoadAndDecompress(RESOURCE_BLUE_BEAST_SHEET, work->imageStorage,
                                  1, 1);
       Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_B, pictures, 1, 0);
-      REG_BLDALPHA = BLEND_ALPHA(16, 14);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     // The impact's own particles fly out from the target.
     if (mode != CASTING_IMPACT_IMPACT_SAP &&
@@ -848,7 +848,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         // A tornado stands over the target.
         s32 image;
         if (frame > 15) {
-          REG_BLDALPHA = BLEND_ALPHA(32 - frame, 16);
+          REG_BLDALPHA = EFFECT_BLEND_CANVAS(32 - frame);
         }
         if (frame > 5) {
           stripX = targetPos.x / 2 - 20;
@@ -948,7 +948,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           s32 fade;
           fade = frame - 16;
           if (fade >= 0 && fade <= 15) {
-            REG_BLDALPHA = BLEND_ALPHA(16 - fade, 16);
+            REG_BLDALPHA = EFFECT_BLEND_CANVAS(BLEND_WEIGHT_MAX - fade);
           }
         }
         if (frame == 4 || frame == 5) {
@@ -1102,7 +1102,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
         // Skulls rise from the target and fade.
         if (frame > 47) {
-          REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
+          REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
         }
         {
           struct Particle *step;

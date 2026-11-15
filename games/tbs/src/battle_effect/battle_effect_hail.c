@@ -52,7 +52,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame > 47)
-      REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
     // whatever the sheet holds.
     if (frame == 1) {
@@ -166,7 +166,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (work->args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,

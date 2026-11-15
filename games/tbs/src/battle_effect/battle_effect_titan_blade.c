@@ -47,7 +47,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Projection_Unit(work->args->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 

@@ -68,9 +68,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   color = &BG_PLTT[1];
   for (i = 0; i != 63; i++) {
     s32 entry = *color;
-    s32 blue = ((u16)entry >> 10) & 31;
-    s32 green = ((u16)entry >> 5) & 31;
-    s32 red = entry & 31;
+    s32 blue = RGB_BLUE((u16)entry);
+    s32 green = RGB_GREEN((u16)entry);
+    s32 red = RGB_RED(entry);
 
     blue -= 8;
     green -= 8;
@@ -127,7 +127,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Rocks wait their turn and tumble up through the wall.

@@ -110,7 +110,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords(BG_PLTT, skulls, 128);
   Decompress_TaggedLz(skulls + 128, work->sheet);

@@ -59,6 +59,16 @@
 #include "system/transform.h"
 #include "window/menu_list.h"
 
+/// A blend weight's whole: REG_BLDALPHA's two weights and REG_BLDY's level
+/// run from 0 to 16.
+#define BLEND_WEIGHT_MAX 16
+/// The canvas added to the battle under it: both blend weights whole.
+#define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
+/// The canvas at `level` sixteenths over the whole battle under it.
+#define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+
 // Display, palette and per-line work (README.md, "Around the canvas").
 // The tasks read the current effect's work block, so the runner that
 // adds them must remove them before that block is released.

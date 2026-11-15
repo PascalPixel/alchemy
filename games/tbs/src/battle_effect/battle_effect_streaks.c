@@ -163,7 +163,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       for (k = 0; k != DISPLAY_HEIGHT; k++)
         *row++ = (px(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > totalFrames - 16)
-        REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
       EFFECT_VIEW_FROM_CAMERA(camera);
       EFFECT_FOR_EACH_TARGET(k, work->args) {
         if (frame >= k * STREAKS_TARGET_DELAY) {

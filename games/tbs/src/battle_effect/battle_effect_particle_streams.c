@@ -35,19 +35,19 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   s32 i;
 
   for (i = 0; i != 63; i++) {
-    s32 blue = (*color >> 10) & 0x1f;
-    s32 green = (*color >> 5) & 0x1f;
-    s32 red = *color & 0x1f;
+    s32 blue = RGB_BLUE(*color);
+    s32 green = RGB_GREEN(*color);
+    s32 red = RGB_RED(*color);
 
     blue += blueStep;
     green += greenStep;
     red += redStep;
-    if (blue > 31)
-      blue = 31;
-    if (green > 31)
-      green = 31;
-    if (red > 31)
-      red = 31;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     *color++ = RGB(red, green, blue);
   }
 }
@@ -247,7 +247,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   // The fall.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
@@ -333,8 +333,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         blue = level - 32;
         green = level - 80;
 
-        CLAMP(blue, 0, 31);
-        CLAMP(green, 0, 31);
+        CLAMP(blue, 0, RGB_LEVEL_MAX);
+        CLAMP(green, 0, RGB_LEVEL_MAX);
         *line++ = RGB(green >> 1, green, blue);
       }
       for (; i != 160; i++)
@@ -449,7 +449,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = -(16 << 8);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

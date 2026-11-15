@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame > 75)
-      REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(168 - frame * 2);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -214,7 +214,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   Task_Remove(Palette_StepFadeTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST                                  \

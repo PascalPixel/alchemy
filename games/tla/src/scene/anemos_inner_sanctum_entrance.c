@@ -338,12 +338,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 /// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
 /// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
 s32 Scene_Initialize(void) {
-  s32 *route = &gFieldWork->transition;
-  s32 value = 0x204;
-
-  /* FAKEMATCH(barrier): an empty asm after the address and the value. */
-  __asm__("");
-  *route = value;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);

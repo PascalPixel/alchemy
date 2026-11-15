@@ -23,6 +23,7 @@
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
+#include "scene/field_map_grid.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -146,7 +147,6 @@ struct AlhafranCaveSwitch {
 
 void Actor_ApplyRandomChildValues(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
@@ -164,11 +164,6 @@ extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 extern u8 gAlhafranCave_CrateSprite[];
-
-/// Sets the height of the map cell under a 16.16 position.
-static __inline__ void MapGrid_SetCellHeight_(s32 x, s32 z, s32 a, s32 b) {
-  MapGrid_SetCellHeight(x, z, a, b);
-}
 
 /// Sets the behavior of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
@@ -223,22 +218,22 @@ void AlhafranCave_FreezePuddle(void) {
 /// level.
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(px(400), px(304), 0, 4);
-  MapGrid_SetCellHeight_(px(416), px(304), 0, 4);
+  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 4);
+  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 4);
   MapGrid_SetCellHeight(px(432), px(304), 0, 4);
   MapGrid_SetCellBehavior_(px(384), px(288), 0, 255);
-  MapGrid_SetCellHeight_(px(288), px(384), 0, 4);
+  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 4);
   MapGrid_SetCellHeight(px(336), px(384), 0, 4);
 }
 
 /// Closes the way down to the jail as the leader steps off the ledge.
 void AlhafranCave_CloseWayToJail(void) {
   Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(px(400), px(304), 0, 0);
-  MapGrid_SetCellHeight_(px(416), px(304), 0, 0);
+  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 0);
+  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 0);
   MapGrid_SetCellHeight(px(432), px(304), 0, 0);
   MapGrid_SetCellBehavior_(px(384), px(288), 0, 0);
-  MapGrid_SetCellHeight_(px(288), px(384), 0, 0);
+  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 0);
   MapGrid_SetCellHeight(px(336), px(384), 0, 0);
 }
 

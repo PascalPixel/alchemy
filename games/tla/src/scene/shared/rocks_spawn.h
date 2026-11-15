@@ -3,9 +3,6 @@ void Rocks_Spawn(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
 
-  /* FAKEMATCH(barrier): an empty asm before the work is read keeps the
-   * spills of x and y at the entry. */
-  asm("");
   work = Ram_HeapSlots->menuWork;
   /* A goto loop carries no loop notes, so the offsets are rebuilt on every
    */

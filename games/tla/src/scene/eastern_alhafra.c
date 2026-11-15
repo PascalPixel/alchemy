@@ -829,10 +829,6 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     Actor_SetPosition(ACTOR_FIRST_CRATE, 504, 520);
     Actor_SetAnimation(ACTOR_FIRST_CRATE, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-     */
-    do {
-    } while (0);
     object->priorityFlags |= 2;
     FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
@@ -842,10 +838,6 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     Actor_SetPosition(ACTOR_SECOND_CRATE, 408, 536);
     Actor_SetAnimation(ACTOR_SECOND_CRATE, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-     */
-    do {
-    } while (0);
     object->priorityFlags |= 2;
     FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);

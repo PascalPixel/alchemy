@@ -55,6 +55,7 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "field/event_commands.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/field_map_grid.h"
 #include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "system/system.h"
@@ -66,6 +67,12 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "sound/sound.h"
 #include "scene_ids.h"
 #include "version.h"
+
+/// Sets how the next battle starts (gMainRoutineWork.battleType).
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
 #include "field/call.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
@@ -510,10 +517,9 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  /* FAKEMATCH(signature): called through a type returning s32. */
   // "You seem unsure... You don't think I'll pull a fast one on you, do you?"
   // Yes: "Kids today. So mistrustful." No: "Ah, that's nice. Don't you worry!"
-  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     // "Kids today. So mistrustful."
@@ -737,15 +743,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_End();
 }
 
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
-
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
-
-static __inline__ void ChampaCliffCaves_PlaceThrown(s32 x, s32 z, s32 a,
-                                                    s32 b) {
-  /* FAKEMATCH(wrapper): forwarded through this inline. */
-  MapGrid_SetCellHeight(x, z, a, b);
-}
 
 void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   s32 item;
@@ -783,15 +781,15 @@ chosen:
       ChampaCliffCaves_ObabaAsksForSecondPiece(item);
     } else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED)) {
       GameFlag_Set(FLAG_TRIDENT_FORGED);
-      ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, -4);
-      ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
-      ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
-      ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
+      FieldMapGrid_SetCellHeight(px(656), px(208), 0, -4);
+      FieldMapGrid_SetCellHeight(px(656), px(224), 0, -4);
+      FieldMapGrid_SetCellHeight(px(656), px(240), 0, -4);
+      FieldMapGrid_SetCellHeight(px(656), px(256), 0, -4);
       ChampaCliffCaves_ObabaForgesTrident(item);
-      ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, 0);
-      ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, 0);
-      ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, 0);
-      ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, 0);
+      FieldMapGrid_SetCellHeight(px(656), px(208), 0, 0);
+      FieldMapGrid_SetCellHeight(px(656), px(224), 0, 0);
+      FieldMapGrid_SetCellHeight(px(656), px(240), 0, 0);
+      FieldMapGrid_SetCellHeight(px(656), px(256), 0, 0);
     }
   } else {
     Actor_FaceActorById(actor, gMainRoutineWork.leaderActorId, 5);
@@ -819,17 +817,11 @@ struct Position {
   s32 z;
 };
 
-static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
-  /* FAKEMATCH(wrapper): forwarded through this inline. */
-  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags);
-}
-
 void ChampaCliffCaves_FightAvimander(void) {
   u16 current[5];
   u16 target[5];
   struct Position position;
   const u16 *colour;
-  struct MainRoutineWork *party;
   struct Actor *object = Actor_GetById(ACTOR_AVIMANDER);
 
   if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
@@ -946,7 +938,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   Actor_GetById(ACTOR_SALAMANDER)->scaleX = Q16_ONE * 6 / 5;
   Actor_GetById(ACTOR_SALAMANDER)->scaleY = Q16_ONE * 6 / 5;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
-  FieldMessage_ShowAtActor_(0x2008, 0);
+  Event_OpenMessage(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Scene_PlayMusic();
     Event_Wait(15);
@@ -964,10 +956,10 @@ void ChampaCliffCaves_FightAvimander(void) {
     FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, -4);
-    ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
-    ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
-    ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
+    FieldMapGrid_SetCellHeight(px(656), px(208), 0, -4);
+    FieldMapGrid_SetCellHeight(px(656), px(224), 0, -4);
+    FieldMapGrid_SetCellHeight(px(656), px(240), 0, -4);
+    FieldMapGrid_SetCellHeight(px(656), px(256), 0, -4);
     object->gravity = px(1) / 4;
     object->motionFlags = 2;
     object->groundHeight = -px(999);
@@ -1017,11 +1009,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Actor_WalkToAndWait(ACTOR_AVIMANDER, 584, 248);
     Event_SetDefeatDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER, 98);
     Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER, 99);
-    party = &gMainRoutineWork;
-    /* FAKEMATCH(dead): holds the 2's store after the party pointer. */
-    do {
-    } while (0);
-    party->battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(12, 5);
   }
   Event_End();

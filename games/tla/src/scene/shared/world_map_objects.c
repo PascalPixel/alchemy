@@ -24,55 +24,37 @@
 
 extern struct Actor *gWorldMap_PlacedActors[];
 
-/// The event countdown takes before when the party leader's x is less than
-/// that of the object in slot - 100 of the overlay's table, else after.
-void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry. */
-  register s32 elseValue asm("r6") = after;
-  struct Actor *target = gWorldMap_PlacedActors[slot - 100];
-  struct Actor *owner;
+/// Chooses a passage exit from the leader's east-west approach: exitBefore
+/// while the leader is west of the placed object in slot - 100, else exitAfter.
+void WorldMap_SetCountdownByX(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
+  struct Actor *area;
+  struct Actor *leader;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset. */
-  asm volatile("");
-  {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
-     */
-    register s32 thenValue asm("r7") = before;
-
-    owner = Actor_Get(gMainRoutineWork.leaderActorId);
-    work = Ram_HeapSlots->fieldWork;
-    if (owner->x.fixed < target->x.fixed)
-      work->exit = thenValue;
-    else
-      work->exit = elseValue;
+  area = gWorldMap_PlacedActors[slot - 100];
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  work = Ram_HeapSlots->fieldWork;
+  if (leader->x.fixed < area->x.fixed) {
+    work->exit = exitBefore;
+  } else {
+    work->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
 
-/// The same on z.
-void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry. */
-  register s32 elseValue asm("r6") = after;
-  struct Actor *target = gWorldMap_PlacedActors[slot - 100];
-  struct Actor *owner;
+/// Chooses a passage exit from the leader's north-south approach.
+void WorldMap_SetCountdownByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
+  struct Actor *area;
+  struct Actor *leader;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset. */
-  asm volatile("");
-  {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
-     */
-    register s32 thenValue asm("r7") = before;
-
-    owner = Actor_Get(gMainRoutineWork.leaderActorId);
-    work = Ram_HeapSlots->fieldWork;
-    if (owner->z.fixed < target->z.fixed)
-      work->exit = thenValue;
-    else
-      work->exit = elseValue;
+  area = gWorldMap_PlacedActors[slot - 100];
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  work = Ram_HeapSlots->fieldWork;
+  if (leader->z.fixed < area->z.fixed) {
+    work->exit = exitBefore;
+  } else {
+    work->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }

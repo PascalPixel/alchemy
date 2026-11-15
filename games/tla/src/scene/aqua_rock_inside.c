@@ -1165,7 +1165,6 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   struct Actor *riser;
   s32 i;
   u16 noMotion;
-  s32 probe;
   const u8 *script;
   // Unused: gives the stack frame its 12 bytes.
   s32 unused[3];
@@ -1191,99 +1190,82 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   Actor_ConfigureSpriteColor(firstId, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  i = 0;
-burst:
-  object = ((void *)Import_ActorCreate(672, first->x.fixed, first->y.fixed,
-                                       first->z.fixed));
-  Sound_Play(SE_GLITTER);
-  object->x.fixed += ((Random16() & 31) - 16) << 16;
-  object->y.fixed += ((Random16() & 15) - 8) << 16;
-  object->speedLimit = px(8);
-  object->acceleration = px(1) / 5;
-  object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 2);
-  Scene_SetActorSpritePriority(object, 1);
-  Actor_SelectAnimation(object, 7);
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SetBlendMode(object, 1);
-  Actor_StartScript(object, gAquaRockInside_TabletGlowScript);
-  REG_BLDALPHA = 0x1004;
-  wait(2);
-  REG_BLDALPHA = 0x100a;
-  wait(2);
-  REG_BLDALPHA = 0x1010;
-  wait(2);
-  REG_BLDALPHA = 0x100a;
-  wait(2);
-  i++;
-  if (i != 16)
-    goto burst;
+  for (i = 0; i != 16; i++) {
+    object = ((void *)Import_ActorCreate(672, first->x.fixed, first->y.fixed,
+                                         first->z.fixed));
+    Sound_Play(SE_GLITTER);
+    object->x.fixed += ((Random16() & 31) - 16) << 16;
+    object->y.fixed += ((Random16() & 15) - 8) << 16;
+    object->speedLimit = px(8);
+    object->acceleration = px(1) / 5;
+    object->motionFlags = 0;
+    Actor_SetSpriteColor(object, 2);
+    Scene_SetActorSpritePriority(object, 1);
+    Actor_SelectAnimation(object, 7);
+    Actor_SetSpriteFlags(object, 0);
+    Actor_SetBlendMode(object, 1);
+    Actor_StartScript(object, gAquaRockInside_TabletGlowScript);
+    REG_BLDALPHA = 0x1004;
+    wait(2);
+    REG_BLDALPHA = 0x100a;
+    wait(2);
+    REG_BLDALPHA = 0x1010;
+    wait(2);
+    REG_BLDALPHA = 0x100a;
+    wait(2);
+  }
   REG_BLDALPHA = 0x1008;
   wait(30);
-  i = 0;
-  /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1. */
-  probe = second->conditionResult;
-  if (probe & 0x100) {
-    wait(1);
-    goto tail;
+  for (i = 0; i != 16; i++) {
+    spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
+                              second->z.fixed);
+    Sound_Play(SE_195);
+    spark->timer = (Random16() & 0x7fff) + 0x8000;
+    spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
+    noMotion = 0;
+    spark->motionFlags = noMotion;
+    spark->riseBaseY = 0x7a0000;
+    spark->watchedActor = second;
+    ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+    Actor_SetSpriteColor(spark, 2);
+    Scene_SetActorSpritePriority(spark, 1);
+    Actor_SelectAnimation(spark, 7);
+    Actor_SetSpriteFlags(spark, 0);
+    Actor_SetBlendMode(spark, 1);
+    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
+                                    &spark->x.fixed);
+    Actor_StartScript(spark, gAquaRockInside_RisingSparkScript);
+    if (i == 3) {
+      Actor_SetSpriteColorById(secondId, 256);
+      second->motionFlags = noMotion;
+      second->acceleration = px(1) / 5;
+      second->speedLimit = px(1) / 5;
+      Actor_SetMovementTypeById(secondId, script);
+    }
+    wait(8);
   }
-spiral:
-  spark =
-      FieldActor_Create(672, second->x.fixed, second->y.fixed, second->z.fixed);
-  Sound_Play(SE_195);
-  spark->timer = (Random16() & 0x7fff) + 0x8000;
-  spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
-  noMotion = 0;
-  spark->motionFlags = noMotion;
-  spark->riseBaseY = 0x7a0000;
-  spark->watchedActor = second;
-  ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  Actor_SetSpriteColor(spark, 2);
-  Scene_SetActorSpritePriority(spark, 1);
-  Actor_SelectAnimation(spark, 7);
-  Actor_SetSpriteFlags(spark, 0);
-  Actor_SetBlendMode(spark, 1);
-  FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
-                                  &spark->x.fixed);
-  Actor_StartScript(spark, gAquaRockInside_RisingSparkScript);
-  if (i == 3) {
-    Actor_SetSpriteColorById(secondId, 256);
-    second->motionFlags = noMotion;
-    second->acceleration = px(1) / 5;
-    second->speedLimit = px(1) / 5;
-    Actor_SetMovementTypeById(secondId, script);
-  }
-tail:
-  wait(8);
-  i++;
-  if (i != 16)
-    goto spiral;
   Sound_Play(SE_SHIMMER);
   wait(16);
-  i = 2;
-column:
-  riser =
-      FieldActor_Create(672, second->x.fixed,
-                        second->y.fixed + i * px(1) - px(8), second->z.fixed);
-  riser->timer = Random16();
-  riser->userValue = 0x800;
-  ((union ActorView *)riser)->bytes.unk62 = i;
-  ((union ActorView *)riser)->bytes.unk63 = 1;
-  riser->bounce = riser->x.fixed;
-  riser->riseBaseY = 0;
-  riser->gravity = riser->z.fixed;
-  riser->watchedActor = second;
-  riser->motionFlags = (u16)0;
-  riser->priorityFlags = 1;
-  Actor_SetSpriteColor(riser, 2);
-  Actor_SelectAnimation(riser, 7);
-  Actor_SetSpriteFlags(riser, 0);
-  Actor_SetBlendMode(riser, 1);
-  Actor_StartScript(riser, gAquaRockInside_RiserScript);
-  i += 2;
-  if (i != 32)
-    goto column;
+  for (i = 2; i != 32; i += 2) {
+    riser =
+        FieldActor_Create(672, second->x.fixed,
+                          second->y.fixed + i * px(1) - px(8), second->z.fixed);
+    riser->timer = Random16();
+    riser->userValue = 0x800;
+    ((union ActorView *)riser)->bytes.unk62 = i;
+    ((union ActorView *)riser)->bytes.unk63 = 1;
+    riser->bounce = riser->x.fixed;
+    riser->riseBaseY = 0;
+    riser->gravity = riser->z.fixed;
+    riser->watchedActor = second;
+    riser->motionFlags = (u16)0;
+    riser->priorityFlags = 1;
+    Actor_SetSpriteColor(riser, 2);
+    Actor_SelectAnimation(riser, 7);
+    Actor_SetSpriteFlags(riser, 0);
+    Actor_SetBlendMode(riser, 1);
+    Actor_StartScript(riser, gAquaRockInside_RiserScript);
+  }
   Sound_Play(SE_SHIMMER);
   wait(50);
   PaletteFade_SetTarget(0x7fff, 0);

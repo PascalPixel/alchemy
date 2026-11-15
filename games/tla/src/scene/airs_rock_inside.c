@@ -14,6 +14,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
 #include "system/iwram_call.h"
+#include "system/io_write.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
 #include "field/actor_script.h"
@@ -186,20 +187,12 @@ extern s32 gAirsRockInside_StampedHeight;
 extern s32 gAirsRockInside_StampedX;
 extern s32 gAirsRockInside_StampedZ;
 
-void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 src_z, s32 width,
-                                      s32 height, s32 destX, s32 destZ);
-
-static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
-                             s32 destX, s32 destZ) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
-  /* FAKEMATCH(wrapper): CopyCells forwarded inline. */
-  MapGrid_CopyCellPictureCellsRect(srcX, srcZ, width, height, destX, destZ);
-}
 #include "system/system.h"
 #include "field/actor.h"
 #include "types.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/field_map_grid.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
 #include "field/map_grid.h"
@@ -360,7 +353,6 @@ void AirsRockInside_IgnoreStep(void);
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gAirsRockInside_StatueScript[];
 
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 struct Actor *FieldCamera_GetActor(void);
 void Actor_PlaySoundInView(struct Actor *object, s32 cue);
 s32 Actor_HasArrived(struct Actor *object);
@@ -450,27 +442,14 @@ void TilesetAnim_ResumeAll(void);
 /// the previous one and sets mode 9 after action 212, mode 10 otherwise.
 void AirsRockInside_ScatterMote(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *self = (struct Actor *)object;
 
   if (Random16() & 0xff) {
     object->x.fixed = px(Random16() & 0xff) + px(176);
-    {
-      s32 r = Random16();
-      /* FAKEMATCH(pin): the leader's y pinned to r3. */
-      register s32 y asm("r3") = leader->y.fixed;
-
-      object->y.fixed = y + px(r & 31);
-    }
-    {
-      s32 r = Random16();
-      /* FAKEMATCH(pin): as for y, the leader's z pinned to r3. */
-      register s32 z asm("r3") = leader->z.fixed;
-
-      object->z.fixed = z + px(r & 127);
-    }
+    object->y.fixed = leader->y.fixed + px(Random16() & 31);
+    object->z.fixed = leader->z.fixed + px(Random16() & 127);
   }
-  self->userValue = self->timer;
-  if (self->timer == 212)
+  object->userValue = object->timer;
+  if (object->timer == 212)
     Actor_SelectAnimation(object, 9);
   else
     Actor_SelectAnimation(object, 10);
@@ -496,10 +475,6 @@ void AirsRockInside_DriftMote(struct Actor *object) {
   if (object->userValue == 0)
     AirsRockInside_ScatterMote(object);
   object->userValue--;
-  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block. */
-  do {
-  } while (0);
   object->x.fixed +=
       Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
   object->y.fixed += object->speedLimit;
@@ -672,9 +647,7 @@ void AirsRockInside_PlaceCones(u16 *list) {
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
     object->timer = flag;
-    /* FAKEMATCH(wrapper): AirsRockInside_SetConeCells called through Call1, the
-     * step behind it. */
-    AirsRockInside_SetConeCells((s32)object);
+    AirsRockInside_SetConeCells(object);
     entry += 3;
   } while (*entry != 0xffff);
 }
@@ -941,7 +914,6 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
-      /* FAKEMATCH(wrapper): forwarded. */
       position.x =
           object->x.fixed + Math_MulQ16(px(8), Trig_Cos(object->facing));
       position.z =
@@ -1071,7 +1043,6 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
-      /* FAKEMATCH(wrapper): forwarded. */
       position.x =
           object->x.fixed + Math_MulQ16(px(8), Trig_Cos(object->facing));
       position.z =
@@ -1143,16 +1114,8 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   }
   if (Position_FlatDistance(&leader->x.fixed, pos = &object->x.fixed) <= 8 &&
       leader->y.part[0].pixel == object->y.part[0].pixel) {
-    {
-      s16 *counter = &work->raisedTrigger;
-      s32 value = 201;
-
-      *counter = value;
-    }
+    work->raisedTrigger = 201;
     object->riseBaseY = 0;
-    /* FAKEMATCH(barrier): an empty asm holds the next statement after this one.
-     */
-    asm("");
     object->speedLimit = -object->speedLimit >> 1;
     object->z.fixed = leader->z.fixed - px(8);
   }
@@ -1686,17 +1649,15 @@ void AirsRockInside_RestoreCellBehindLeader(void) {
   x = last >> 16;
   z = last & 0xffff;
   gAirsRockInside_StampedCell = -1;
-  CopyCells(73, 72, gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight,
-            gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
+  MapGrid_CopyCellsLayered(73, 72, gAirsRockInside_StampedWidth,
+                           gAirsRockInside_StampedHeight,
+                           gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
   if (gMainRoutineWork.next != SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
     return;
   work = Ram_HeapSlots->fieldWork;
   value = MapCell_GetAttributes(2, x, z) >> 8;
   if (value != 0) {
-    /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
-     */
-    s32 delay = value + 200;
-    work->raisedTrigger = delay;
+    work->raisedTrigger = value + 200;
   }
 }
 
@@ -1792,10 +1753,10 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
       gAirsRockInside_StampedHeight = 3;                                       \
       gAirsRockInside_StampedX = x;                                            \
       gAirsRockInside_StampedZ = z - y + n1;                                   \
-      CopyCells(x, gAirsRockInside_StampedZ, 1, 3, 73, 72);                    \
-      CopyCells(72, 72, gAirsRockInside_StampedWidth,                          \
-                gAirsRockInside_StampedHeight, gAirsRockInside_StampedX,       \
-                gAirsRockInside_StampedZ);                                     \
+      MapGrid_CopyCellsLayered(x, gAirsRockInside_StampedZ, 1, 3, 73, 72);     \
+      MapGrid_CopyCellsLayered(                                                \
+          72, 72, gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight, \
+          gAirsRockInside_StampedX, gAirsRockInside_StampedZ);                 \
     }                                                                          \
   }
 
@@ -1881,10 +1842,7 @@ void AirsRockInside_SpiralSpark(struct Actor *object) {
   s32 radius;
 
   phase = object->speedLimit;
-  radius = px(12);
-  /* FAKEMATCH(barrier): the radius constant is built before y >> 2. */
-  __asm__("");
-  radius += y >> 2;
+  radius = px(12) + (y >> 2);
   object->x.fixed =
       object->bounce + Iwram_MulQ16(Trig_Cos((phase & 255) << 11), radius) * 2;
   object->z.fixed =
@@ -1919,13 +1877,7 @@ void AirsRockInside_WakeHallStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address. */
-  do {
-    s32 control = BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                       buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
@@ -1962,14 +1914,9 @@ row:
           0x2a0, Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->z.fixed);
-      {
-        s32 priority =
-            ((s8 *)Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->sprite)[9] & 12;
-
-        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
-        cell = spark->sprite;
-        ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
-      }
+      ((struct FieldSprite *)spark->sprite)->priority =
+          ((struct FieldSprite *)Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->sprite)
+              ->priority;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -2091,11 +2038,6 @@ void AirsRockInside_StepOntoLedge(void) {
   Event_End();
 }
 
-static inline void ClearLayer2Shape(s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
-  MapGrid_SetCellHeight(x, z, 2, 0);
-}
-
 /// Runs each room's list on entering it; the paired statues room also clears
 /// two cells' shapes and the coins chest room stops object 10's timer.
 void AirsRockInside_StartPushingPillar(void) {
@@ -2110,7 +2052,7 @@ void AirsRockInside_StartPushingPillar(void) {
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_4) {
     Actor_LiftTargetBlock(gAirsRockInside_TightropesPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
-    ClearLayer2Shape(0x2600000, 0x1500000);
+    FieldMapGrid_SetCellHeight(0x2600000, 0x1500000, 2, 0);
     MapGrid_SetCellHeight(0x2700000, 0x1500000, 2, 0);
     Actor_LiftTargetBlock(gAirsRockInside_PairedStatuesPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
@@ -2236,13 +2178,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address. */
-  do {
-    s32 control = BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                       buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
@@ -2280,15 +2216,10 @@ row:
           0x2a0, Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->z.fixed);
-      {
-        s32 priority =
-            ((s8 *)Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->sprite)[9] &
-            12;
-
-        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
-        cell = spark->sprite;
-        ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
-      }
+      ((struct FieldSprite *)spark->sprite)->priority =
+          ((struct FieldSprite *)Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)
+               ->sprite)
+              ->priority;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -2488,10 +2419,11 @@ void AirsRockInside_StampWideCellUnderLeader(void) {
     gAirsRockInside_StampedHeight = 2;
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
-    CopyCells(gAirsRockInside_StampedX, gAirsRockInside_StampedZ, 1, 2, 73, 72);
-    CopyCells(70, 74, gAirsRockInside_StampedWidth,
-              gAirsRockInside_StampedHeight, gAirsRockInside_StampedX,
-              gAirsRockInside_StampedZ);
+    MapGrid_CopyCellsLayered(gAirsRockInside_StampedX, gAirsRockInside_StampedZ,
+                             1, 2, 73, 72);
+    MapGrid_CopyCellsLayered(
+        70, 74, gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight,
+        gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
   }
 }
 
@@ -2596,7 +2528,6 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   struct Actor *b = Actor_GetById(idB);
   s32 i;
   s16 *angle;
-  s32 never;
   // Unused: gives the stack frame its 12 bytes.
   s32 unused[3];
 
@@ -2620,9 +2551,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   Actor_ConfigureSpriteColor(idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  i = 0;
-first:
-  {
+  for (i = 0; i != 16; i++) {
     struct Actor *spark =
         Import_ActorCreate(0x2a0, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);
@@ -2646,20 +2575,9 @@ first:
     REG_BLDALPHA = 0x100a;
     wait(2);
   }
-  i++;
-  if (i != 16)
-    goto first;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  /* FAKEMATCH(dead): the never-true jump into the loop. */
-  never = idB << 1;
-  i = 0;
-  if (never & 1) {
-    i = 1;
-    goto tail;
-  }
-second:
-  {
+  for (i = 0; i != 16; i++) {
     struct Actor *spark =
         FieldActor_Create(0x2a0, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_195);
@@ -2683,21 +2601,13 @@ second:
       b->motionFlags = 0;
       b->acceleration = px(1) / 5;
       b->speedLimit = px(1) / 5;
-      /* FAKEMATCH(barrier): the empty asm before the call. */
-      asm("");
       Actor_SetMovementTypeById(idB, gAirsRockInside_ShebaRiseScript);
     }
-  tail:
     wait(8);
   }
-  i++;
-  if (i != 16)
-    goto second;
   Sound_Play(SE_SHIMMER);
   wait(16);
-  i = 2;
-third:
-  {
+  for (i = 2; i != 32; i += 2) {
     struct Actor *spark = FieldActor_Create(
         0x2a0, b->x.fixed, b->y.fixed + i * 65536 - px(8), b->z.fixed);
     spark->timer = Random16();
@@ -2716,9 +2626,6 @@ third:
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gAirsRockInside_SeekingSparkScript);
   }
-  i += 2;
-  if (i != 32)
-    goto third;
   Sound_Play(SE_SHIMMER);
   wait(50);
   PaletteFade_SetTarget(0x7fff, 0);
@@ -2751,12 +2658,6 @@ s32 Actor_MoveToObject();
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_WaitForMoveById(s32 actorId);
 void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
-
-static inline void Call0(void (*f)()) {
-  /* FAKEMATCH(wrapper): the call layer without arguments, through which the two
-   * -1s before the call are negated in this order. */
-  f();
-}
 
 /// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
 /// the scene with actor 6 follows, as Magma Rock's tablet does for Blaze.
@@ -2801,7 +2702,6 @@ void AirsRockInside_ReadRevealTablet(void) {
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     MapGrid_SetShake(5, 7, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    /* FAKEMATCH(wrapper): the call through Call0's pointer. */
     MapGrid_WaitForShakeToSettle();
     AirsRockInside_ShebaLearnsReveal(8, 6);
     Party_LearnAbility(SHEBA, ABILITY_REVEAL);

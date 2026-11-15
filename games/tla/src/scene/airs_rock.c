@@ -101,6 +101,7 @@ enum AirsRockFujinShieldChestActorId {
 #include "field/scene_tables.h"
 #include "field/field_event.h"
 #include "system/iwram_call.h"
+#include "system/io_write.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -1248,13 +1249,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address. */
-  do {
-    s32 control = BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                       buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);

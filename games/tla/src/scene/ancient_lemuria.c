@@ -151,16 +151,8 @@ void AncientLemuria_CycloneRevealsRime(void) {
   object->scaleX = Q16_ONE / 2;
   for (i = 29; i >= 0; i--) {
     object->facing += 0x1000;
-    {
-      /* FAKEMATCH(pin): the limit's first half stays in r2. */
-      register s32 limit asm("r2") = 255;
-
-      /* FAKEMATCH(barrier): the barrier starts the 0xffff limit before the
-       * scale's load and finishes it after. */
-      asm("" : "+r"(limit) : "r"(object->scaleX));
-      if (object->scaleX <= (limit << 8) + 255)
-        object->scaleX += Q16_ONE * 5 / 128;
-    }
+    if (object->scaleX <= 0xffff)
+      object->scaleX += Q16_ONE * 5 / 128;
     object->scaleY = object->scaleX;
     wait(1);
   }
@@ -215,7 +207,6 @@ void AncientLemuria_StartTremorOnTheStatue(void) {
 void AncientLemuria_TremorShakesOutRime(void) {
   struct Actor *object;
   s32 i;
-  struct Actor *p;
 
   if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
     return;
@@ -233,21 +224,15 @@ void AncientLemuria_TremorShakesOutRime(void) {
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
   for (i = 23; i >= 0; i--) {
-    {
-      s32 turn = 0x2000;
-
-      object->facing += turn;
-    }
-    /* FAKEMATCH(temporary): the object read again through p after the turn. */
-    p = object;
-    if (p->scaleX <= 0xffff)
-      p->scaleX += Q16_ONE * 5 / 128;
-    p->scaleY = p->scaleX;
+    object->facing += 0x2000;
+    if (object->scaleX <= 0xffff)
+      object->scaleX += Q16_ONE * 5 / 128;
+    object->scaleY = object->scaleX;
     wait(1);
   }
-  p->facing = FACING_SOUTH_SOUTHEAST;
-  p->scaleY = Q16_ONE;
-  p->scaleX = Q16_ONE;
+  object->facing = FACING_SOUTH_SOUTHEAST;
+  object->scaleY = Q16_ONE;
+  object->scaleX = Q16_ONE;
   Actor_WaitForMoveById(ACTOR_RIME);
 }
 

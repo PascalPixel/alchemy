@@ -2,7 +2,7 @@
 /// The clear-data screen: Golden Sun's data brought over by password or link
 /// cable (Clear_EnterPassword, Clear_ReceiveByLink) and applied to Isaac's
 /// party (Clear_ApplyImportedData), with two secret button codes on its title
-/// (Clear_FollowSecretCodes).
+/// (Clear_CheckButtonCodes).
 #include "system/task.h"
 #include "flags.h"
 #include "battle/battle.h"
@@ -51,7 +51,7 @@
 #include "macros.h"
 
 /// The two secret button codes: unlocked, held and progress of each.
-extern s16 gClear_CodeEntered;
+extern s16 gClear_CodeUnlocked;
 
 extern u16 gClear_PackedKeptItems[];
 
@@ -64,13 +64,13 @@ struct Panel_02001804 {
 };
 
 extern u16 gClear_BlendFrame[];
-extern s16 gClear_SecondCodeStarted;
-extern s16 gClear_FirstCodeStep;
-extern s16 gClear_SecondCodeStep;
-extern s16 gClear_FirstCodeStarted;
-extern s16 gClear_SecondCodeDone;
-extern u16 gClear_FirstCode[];
-extern u16 gClear_SecondCode[];
+extern s16 gClear_ExtraCodeUnlocked;
+extern s16 gClear_CodeProgress;
+extern s16 gClear_ExtraCodeProgress;
+extern s16 gClear_CodeHeld;
+extern s16 gClear_ExtraCodeHeld;
+extern u16 gClear_ButtonCode[];
+extern u16 gClear_ExtraButtonCode[];
 
 s32 Clear_ReceiveByLink(void);
 
@@ -112,10 +112,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-static __inline__ void Decode_(void *source, void *destination) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
-   * a constant of each call. */
-  Decompress_TaggedLz(source, destination);
+/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
+/// `destination`.
+static inline s32 FieldDecompress_TaggedLz(const void *source,
+                                           void *destination) {
+  return Decompress_TaggedLz(source, destination);
 }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
@@ -139,45 +140,27 @@ void Clear_LoadBackground(void) {
   res = Resource_GetTableEntry(id);
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
-  Decode_(res, Ram_MapCellBuffer);
+  FieldDecompress_TaggedLz(res, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   map = (u16 *)0x06003000;
   tile = 0x1a0;
-  y = 0;
-row:
-  x = 0;
-column:
-  *map++ = tile++;
-  x++;
-  if (x <= 29)
-    goto column;
-  *map++ = blank;
-  *map++ = blank;
-  y++;
-  if (y <= 19)
-    goto row;
+  for (y = 0; y < 20; y++) {
+    for (x = 0; x < 30; x++)
+      *map++ = tile++;
+    *map++ = blank;
+    *map++ = blank;
+  }
   scroll = gBgScroll;
-  y = 0;
-scroll_pair:
-  scroll->y = 0;
-  scroll->x = 0;
-  scroll++;
-  y++;
-  if (y <= 3)
-    goto scroll_pair;
+  for (y = 0; y <= 3; y++) {
+    scroll->y = 0;
+    scroll->x = 0;
+    scroll++;
+  }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct ClearWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
-  {
-    struct Actor *leader;
-    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
-    register u16 zero asm("r5");
-
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    zero = 0;
-    leader->motionFlags = zero;
-  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
 /// Queues an alpha blend of BG0 and the sprites over the rest whose first
@@ -205,51 +188,38 @@ void Clear_FadeInBlend(void) {
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
 /// code unlocks it with a sound.
-void Clear_FollowSecretCodes(void) {
-  if (gClear_CodeEntered == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
-     * to r3 below. */
-    register volatile u32 *held asm("r4") = &gInput.held;
-
-    if (gClear_FirstCodeStarted != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
-      register u32 keys asm("r3") = *held;
-
-      if (keys == 0)
-        gClear_FirstCodeStarted = keys;
-    } else if (*held != 0) {
-      if (*held == gClear_FirstCode[gClear_FirstCodeStep]) {
-        gClear_FirstCodeStep++;
-        gClear_FirstCodeStarted = 1;
-        if (gClear_FirstCode[gClear_FirstCodeStep] == 0) {
-          gClear_CodeEntered = 1;
+void Clear_CheckButtonCodes(void) {
+  if (gClear_CodeUnlocked == 0) {
+    if (gClear_CodeHeld != 0) {
+      if (gInput.held == 0)
+        gClear_CodeHeld = 0;
+    } else if (gInput.held != 0) {
+      if (gInput.held == gClear_ButtonCode[gClear_CodeProgress]) {
+        gClear_CodeProgress++;
+        gClear_CodeHeld = 1;
+        if (gClear_ButtonCode[gClear_CodeProgress] == 0) {
+          gClear_CodeUnlocked = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gClear_FirstCodeStep = 0;
+        gClear_CodeProgress = 0;
       }
     }
   }
-  if (gClear_SecondCodeStarted == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4. */
-    register volatile u32 *held asm("r4") = &gInput.held;
-
-    if (gClear_SecondCodeDone != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3. */
-      register u32 keys asm("r3") = *held;
-
-      if (keys == 0)
-        gClear_SecondCodeDone = keys;
-    } else if (*held != 0) {
-      if (*held == gClear_SecondCode[gClear_SecondCodeStep]) {
-        gClear_SecondCodeStep++;
-        gClear_SecondCodeDone = 1;
-        if (gClear_SecondCode[gClear_SecondCodeStep] == 0) {
-          gClear_SecondCodeStarted = 1;
+  if (gClear_ExtraCodeUnlocked == 0) {
+    if (gClear_ExtraCodeHeld != 0) {
+      if (gInput.held == 0)
+        gClear_ExtraCodeHeld = 0;
+    } else if (gInput.held != 0) {
+      if (gInput.held == gClear_ExtraButtonCode[gClear_ExtraCodeProgress]) {
+        gClear_ExtraCodeProgress++;
+        gClear_ExtraCodeHeld = 1;
+        if (gClear_ExtraButtonCode[gClear_ExtraCodeProgress] == 0) {
+          gClear_ExtraCodeUnlocked = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gClear_SecondCodeStep = 0;
+        gClear_ExtraCodeProgress = 0;
       }
     }
   }
@@ -320,7 +290,7 @@ s32 Scene_Initialize(void) {
   s32 result, i, limit, status, message, failure, recovery;
 
   Clear_LoadBackground();
-  Task_Add(Clear_FollowSecretCodes, TASK_PASS_VBLANK);
+  Task_Add(Clear_CheckButtonCodes, TASK_PASS_VBLANK);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -383,7 +353,7 @@ top:
       i--;
       goto open;
     }
-    if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0)
+    if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0)
       limit = 8;
     if (++i < limit)
       goto open;
@@ -434,7 +404,7 @@ top:
       i--;
       goto close;
     }
-    if (gClear_SecondCodeStarted != 0)
+    if (gClear_ExtraCodeUnlocked != 0)
       limit = 4;
     if (++i < limit)
       goto close;
@@ -580,7 +550,7 @@ again:
       goto again;
     DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
   }
-  if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0) {
+  if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
     i = 0;
     limit = 1;
   shut:
@@ -592,7 +562,7 @@ again:
       i--;
       goto shut;
     }
-    if (gClear_SecondCodeStarted != 0)
+    if (gClear_ExtraCodeUnlocked != 0)
       limit = 4;
     if (++i < limit)
       goto shut;
@@ -1838,7 +1808,7 @@ u16 Clear_Crc16(u32 length, u8 *p) {
   return ~crc;
 }
 
-u16 gClear_FirstCode[] = {
+u16 gClear_ButtonCode[] = {
     4,
     4,
     4,
@@ -1846,7 +1816,7 @@ u16 gClear_FirstCode[] = {
 };
 
 // clang-format off
-u16 gClear_SecondCode[] = {
+u16 gClear_ExtraButtonCode[] = {
     64, 128, 64, 128, 32, 16, 32, 16,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     64, 16, 128, 32, 64, 4, 0,
@@ -1912,17 +1882,17 @@ u16 gClear_BlendFrame[] = {
     0,
 };
 
-s16 gClear_CodeEntered = 0;
+s16 gClear_CodeUnlocked = 0;
 
-s16 gClear_SecondCodeStarted = 0;
+s16 gClear_ExtraCodeUnlocked = 0;
 
-s16 gClear_FirstCodeStep = 0;
+s16 gClear_CodeProgress = 0;
 
-s16 gClear_SecondCodeStep = 0;
+s16 gClear_ExtraCodeProgress = 0;
 
-s16 gClear_FirstCodeStarted = 0;
+s16 gClear_CodeHeld = 0;
 
-s16 gClear_SecondCodeDone = 0;
+s16 gClear_ExtraCodeHeld = 0;
 
 #undef MAP_CELL_BACKUP
 #undef YEAH_WIDTH

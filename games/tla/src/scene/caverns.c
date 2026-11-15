@@ -62,6 +62,7 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "field/scene_tables.h"
 #include "field/object.h"
 #include "scene/scene.h"
+#include "scene/field_map_grid.h"
 #include "scene/shared.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
@@ -93,8 +94,6 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "../field/field_effect_spawn.c"
 
 struct Actor;
-
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
@@ -205,10 +204,6 @@ static __inline__ s32 GetHeight(s32 x, s32 z) {
   return Map_GetTerrainHeight(2, x, z);
 }
 
-static __inline__ void SetHeight(s32 x, s32 z, s32 height) {
-  MapGrid_SetCellHeight(x, z, 2, height);
-}
-
 /// The whole pixels of an actor's z coordinate.
 static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
   return actor->z.part[0].pixel;
@@ -216,7 +211,7 @@ static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
 
 #define SET_CELL_HEIGHT(x, z)                                                  \
   height = (GetHeight(x, z) >> 19) + offset;                                   \
-  SetHeight(x, z, height)
+  FieldMapGrid_SetCellHeight(x, z, 2, height)
 
 /// Raises (offset 1) or lowers (-1) by a step the cells about the moving
 /// block's path, by where the block stands.

@@ -839,7 +839,7 @@ void ActorSystem_PlaceSprites(void) {
         if (*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
           Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
                                                 object->facing,
-                                                ((u8 *)object)[0x63]);
+                                                object->riseEnabled);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
                                          scale.values, object->facing);

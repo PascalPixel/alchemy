@@ -921,8 +921,8 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   work->heights[0] = 999;
   work->heights[1] = 999;
   work->object = object;
-  ((u8 *)object)[0x62] = 0;
-  ((u8 *)object)[0x63] = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedActor = (struct Actor *)work;

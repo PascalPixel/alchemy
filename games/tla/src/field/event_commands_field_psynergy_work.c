@@ -170,7 +170,8 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     terrain = user->priorityFlags;
 
     scene->savedPriorityFlags = terrain;
-    scene->savedSpritePriority = (u32)(((u8 *)user->sprite)[9] << 28) >> 30;
+    scene->savedSpritePriority =
+        ((struct Sprite *)user->sprite)->image.priority;
   }
   if (target != NULL) {
     // Save target motion and colors for later restoration.

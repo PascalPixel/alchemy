@@ -297,11 +297,11 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   ret = NULL;
   if (obj != NULL) {
     if (alt == NULL) {
-      *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+      ((struct Sprite *)obj)->retainCacheEntry = 1;
     } else {
       VramCache_FreeEntry(obj->vramBlock);
       obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
-      *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+      ((struct Sprite *)obj)->retainCacheEntry = 1;
       obj = alt;
     }
     ret = obj;

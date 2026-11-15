@@ -182,7 +182,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       wait(1);
   }
   work->messageWindow = (s32)handle;
-  *(s32 *)((u8 *)work + 0x1e8) = portrait;
+  work->sideWindow = (struct Window *)portrait;
   work->message++;
   return handle;
 }

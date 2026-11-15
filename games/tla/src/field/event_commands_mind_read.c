@@ -863,7 +863,7 @@ void FieldPsynergy_Growth(void) {
     object = Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
-      *((u8 *)object + 0x55) = 2;
+      ((struct Actor *)object)->motionFlags = 2;
     }
     wait((Random_Below(2)) + 2);
     entryCount--;

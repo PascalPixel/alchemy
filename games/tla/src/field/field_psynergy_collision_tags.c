@@ -67,14 +67,14 @@ struct RestoreMap {
 /// set its cell is lowered 32 pixels and the flag cleared, with it clear the
 /// cell is raised and the flag set; the event work remembers the block.
 void FlagBlock_ApplyFlags(struct ActorFlag *list) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *grid = gMapShapeGrid;
 
-  *(struct Actor **)(event + 0xcbc) = NULL;
+  event->movedBlock = NULL;
   for (; list->actor != 0xffff; list++) {
     s32 change = 0;
     struct Actor *object = Actor_GetById(list->actor);
-    u8 frame = ((u8 *)object->sprite)[24];
+    u8 frame = ((struct Sprite *)object->sprite)->lastNo;
     u16 flag = list->flag;
 
     if (GameFlag_Get(flag)) {
@@ -101,7 +101,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
                                            object->z.fixed) >>
                19;
 
-      *(struct Actor **)(event + 0xcbc) = object;
+      event->movedBlock = object;
       if (GameFlag_Get(flag)) {
         height -= 4;
         GameFlag_Clear(flag);

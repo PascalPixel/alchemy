@@ -236,7 +236,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == CONTAINER_POND)
         found = 32;
       Event_Start();
-      busy = &((u8 *)object)[91];
+      busy = &object->paused;
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
@@ -435,7 +435,7 @@ s32 Scene_TalkToActor(s32 id) {
   if (talk->result == 0)
     goto resume;
   if (!paused) {
-    ((u8 *)object)[91] = 1;
+    object->paused = 1;
     Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
@@ -463,7 +463,7 @@ s32 Scene_TalkToActor(s32 id) {
         Actor_StartScriptFar(object, gActor_StepAngleScript);
       }
     }
-    ((u8 *)object)[91] = 0;
+    object->paused = 0;
     Actor_SetAnimationSpeedFar(object, 16);
   }
   result = 0;

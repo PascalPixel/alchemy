@@ -262,11 +262,13 @@ void FieldPsynergy_Scoop(void) {
   Sound_PlayFar(SE_WATER);
 
   failed = 0;
-  for (i = 0; i < 80; i++) {
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     target = event->actors[i];
     if (target != NULL && target->script != NULL &&
-        (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
-        target != scene->mainActor && ((u8 *)target->sprite)[27] != 0 &&
+        (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
+         (target->collisionFlags & ACTOR_SOLID)) &&
+        target != scene->mainActor &&
+        ((struct Sprite *)target->sprite)->count != 0 &&
         FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                    target->radius - 2) >= 0) {
       failed = 1;

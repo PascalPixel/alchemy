@@ -122,7 +122,7 @@ void FieldPsynergy_Blaze(void) {
     object = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
-    ((u8 *)object)[85] = 0;
+    object->motionFlags = 0;
     object->scaleX = Q16_ONE * 5 / 4;
     object->scaleY = Q16_ONE * 5 / 4;
     Actor_SelectAnimationFar(object, 2);
@@ -139,7 +139,7 @@ void FieldPsynergy_Blaze(void) {
     object = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
-    ((u8 *)object)[85] = mode;
+    object->motionFlags = mode;
     Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(45);

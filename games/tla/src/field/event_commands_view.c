@@ -5,6 +5,7 @@
 #include "event_commands_internal.h"
 #include "sounds.h"
 #include "field/field.h"
+#include "field/perspective.h"
 #include "field/emote.h"
 #include "sprite_ids.h"
 
@@ -43,7 +44,7 @@ void WorldMap_StepZoom(void) {
   (*step)++;
   offset = *from + __divsi3(delta * *step, *duration);
   map->zoom = Iwram_MulQ16(map->farPlane, offset);
-  gScanlinePitch = *(u16 *)((u8 *)map + 0x11c) + 1;
+  gScanlinePitch = ((struct WorldMapView *)map)->pitch + 1;
   if (*step == *duration) {
     *duration = 0;
     Task_Remove((TaskFunc)WorldMap_StepZoom);

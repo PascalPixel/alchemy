@@ -201,7 +201,7 @@ void FieldPsynergy_Pound(void) {
     }
   } else {
     inReach = 1;
-    if (child != NULL && ((u8 *)child)[99] != 0) {
+    if (child != NULL && child->riseEnabled != 0) {
     outOfReach:
       inReach = 0;
     }
@@ -214,17 +214,17 @@ void FieldPsynergy_Pound(void) {
   if (shine == NULL)
     goto end;
   shine->motionFlags = 0;
-  if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
+  if (event->unkd4c & 2) {
     if ((shine->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
-      ((u8 *)shine)[35] &= 254;
+      shine->priorityFlags &= 254;
     }
   } else {
-    ((u8 *)shine)[35] = 1;
+    shine->priorityFlags = 1;
   }
   shine->facing = caster->facing;
   Actor_SelectAnimationFar(shine, 2);
-  if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
+  if (!(event->unkd4c & 1))
     FieldPsynergy_StartSceneSprite();
 
   BattleEffect_StartCanvasSprite();
@@ -320,7 +320,7 @@ void FieldPsynergy_Pound(void) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;
-      if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
+      if (event->mode != ACTOR_SYSTEM_WORLD_MAP && !(event->unkd4c & 1)) {
         glow = &work->glow;
         EffectSprite_Draw(glow);
       }

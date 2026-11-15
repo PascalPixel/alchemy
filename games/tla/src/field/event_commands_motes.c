@@ -37,8 +37,8 @@ void FieldMotes_Start(void) {
   for (; i < 64; i++) {
     struct MapWork *view = slots->mapGrid;
     s32 *pos;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
-     * height's x. */
+    // p walks the sprite's attribute words, then holds the x, as size carries
+    // the fill's 0 above.
     u32 p;
     s32 z;
 
@@ -94,8 +94,8 @@ void Weather_StartRain(s32 withCue) {
   for (; i < 64; i++, particle++) {
     struct MapWork *view = slots->mapGrid;
     s32 *focus;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
-     * height's x. */
+    // p walks the sprite's attribute words, then holds the x, as size carries
+    // the fill's 0 above.
     u32 p;
     s32 z;
 
@@ -249,7 +249,7 @@ void FieldEffect_InitializeSparkles(void) {
   do {
     struct MapWork *view = slots->mapGrid;
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
+    // attr walks the sprite's attribute words, then holds the x.
     u32 attr;
     s32 z;
 

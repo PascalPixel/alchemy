@@ -1447,7 +1447,7 @@ void Prox_GiveThanksForBeacon(void) {
   s32 t207;
   s32 angleC000;
   s32 angleB000;
-  s32 angle3000;
+  s32 facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1462,9 +1462,9 @@ void Prox_GiveThanksForBeacon(void) {
   angleB000 = FACING_NORTH_NORTHWEST;
   Actor_SetPositionAndFacing(ACTOR_ISAAC, px(168), px(484), angleC000);
   Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, px(200), px(484), angleB000);
-  angle3000 = FACING_SOUTH_SOUTHEAST;
+  facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, px(138), px(412),
-                             angle3000);
+                             facing);
   Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, px(220), px(600),
                              angleB000);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);

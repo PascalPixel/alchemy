@@ -1609,7 +1609,7 @@ s32 Scene_Initialize(void) {
   // other serves in turn as a table, a step and a size.
   s32 other, rise;
   s32 offset;
-  s32 value1, value2, value3, value4;
+  s32 priorityBit, destinationX, destinationColumn, width;
   u8 zero;
 
   gFieldWork->transition = 0x204;
@@ -1619,10 +1619,10 @@ s32 Scene_Initialize(void) {
   scene = work->next;
   zero = 0;
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
-    value1 = 32;
-    Actor_GetById(work->leaderActorId)->priorityFlags |= value1;
-    Actor_GetById(8)->priorityFlags |= value1;
-    Actor_GetById(10)->priorityFlags |= value1;
+    priorityBit = 32;
+    Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
+    Actor_GetById(8)->priorityFlags |= priorityBit;
+    Actor_GetById(10)->priorityFlags |= priorityBit;
     MagmaRockInside_RaiseActorCells(gMagmaRock_Room1Statues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       MagmaRock_PlaceVolley(21, 13, 0);
@@ -1631,10 +1631,10 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0x8d6))
       Actor_SetPosition(10, 248, 408);
     other = (s32)gMagmaRock_Room1Pillars;
-    value2 = 78;
+    destinationX = 78;
     Actor_PlaceBlocks(other);
-    MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
-    MapGrid_CopyCellAttributes(98, 27, 4, 3, value2, 24);
+    MapGrid_CopyCellAttributes(98, 21, 4, 3, destinationX, 21);
+    MapGrid_CopyCellAttributes(98, 27, 4, 3, destinationX, 24);
     Blocks_MarkCells(other);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(20);
@@ -1813,13 +1813,13 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_MAGMA_ROCK_STATUE) {
     if (Event_GetFlag(0x8dc)) {
       Actor_SetPosition(8, 0, 0);
-      value3 = 42;
-      MapGrid_CopyCellAttributes(0, 32, 5, 8, value3, 17);
-      MapGrid_CopyCellAttributes(0, 96, 5, 8, value3, 81);
-      value4 = 5;
+      destinationColumn = 42;
+      MapGrid_CopyCellAttributes(0, 32, 5, 8, destinationColumn, 17);
+      MapGrid_CopyCellAttributes(0, 96, 5, 8, destinationColumn, 81);
+      width = 5;
       other = 8;
-      MapGrid_CopyCellsTo(0, 32, 42, 17, value4, other);
-      MapGrid_CopyCellsTo(0, 96, 42, 81, value4, other);
+      MapGrid_CopyCellsTo(0, 32, 42, 17, width, other);
+      MapGrid_CopyCellsTo(0, 96, 42, 81, width, other);
     }
     leader = &work->leaderActorId;
     Actor_GetById(*leader)->priorityFlags |= 32;

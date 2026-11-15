@@ -1896,7 +1896,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct Work020023c4__s2860 *other;
     struct Actor *target;
 
@@ -1967,7 +1967,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2860 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
@@ -1975,7 +1975,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->stepTrigger = other->unk0a + 2;
+      fieldWork->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;

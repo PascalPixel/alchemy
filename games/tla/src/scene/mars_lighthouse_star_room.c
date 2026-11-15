@@ -961,10 +961,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
 /// ice melts away and the lighthouse turns to fire; the star falls back out.
 void MarsLighthouseStarRoom_UseMarsStar(void) {
   s32 flag;
-  struct Actor **slot, **slot2;
-  struct Actor *object, *object2;
-  struct FieldSprite *sprite, *sprite2;
-  u8 *buffer, *buffer2;
+  struct Actor **slot, **placedStarSlot;
+  struct Actor *object, *placedStar;
+  struct FieldSprite *sprite, *placedStarSprite;
+  u8 *buffer, *placedStarGlyphs;
   u16 *screen;
 
   flag = Event_GetFlag(FLAG_MARS_STAR_SET);
@@ -1042,22 +1042,22 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
-  slot2 = &gMarsLighthouseStarRoom_MarsStar;
-  object2 = FieldActor_Create(BLANK_SPRITE, px(680), px(8), px(147));
-  *slot2 = object2;
-  if (object2 != 0) {
-    sprite2 = object2->sprite;
-    sprite2->nextFrame = 0;
-    sprite2->unk1b[0] = 0;
-    sprite2->fullColor = 0;
-    sprite2->palette = 0;
-    sprite2->priority = 2;
-    object2->motionFlags = 0;
-    object2->retainSpriteCache = 1;
-    object2->priorityFlags |= 2;
-    buffer2 = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  placedStarSlot = &gMarsLighthouseStarRoom_MarsStar;
+  placedStar = FieldActor_Create(BLANK_SPRITE, px(680), px(8), px(147));
+  *placedStarSlot = placedStar;
+  if (placedStar != 0) {
+    placedStarSprite = placedStar->sprite;
+    placedStarSprite->nextFrame = 0;
+    placedStarSprite->unk1b[0] = 0;
+    placedStarSprite->fullColor = 0;
+    placedStarSprite->palette = 0;
+    placedStarSprite->priority = 2;
+    placedStar->motionFlags = 0;
+    placedStar->retainSpriteCache = 1;
+    placedStar->priorityFlags |= 2;
+    placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
+    Vram_Load(placedStarSprite->vramBlock, 128, placedStarGlyphs + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
@@ -1104,21 +1104,21 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldCamera_MoveTo(680, CAMERA_KEEP, 186, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  object2 = *slot2;
-  if (object2 != 0) {
-    object2->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    object2->velocityY = px(2);
-    object2->speedLimit = px(2);
-    object2->acceleration = px(1);
-    FieldActor_SetMoveTarget(object2, 672, 0, 160);
-    FieldActor_WaitForMove((s32)*slot2);
+  placedStar = *placedStarSlot;
+  if (placedStar != 0) {
+    placedStar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    placedStar->velocityY = px(2);
+    placedStar->speedLimit = px(2);
+    placedStar->acceleration = px(1);
+    FieldActor_SetMoveTarget(placedStar, 672, 0, 160);
+    FieldActor_WaitForMove((s32)*placedStarSlot);
     Event_PlaySound(SE_CLICK);
-    object2 = *slot2;
-    object2->acceleration = px(1) / 2;
-    object2->velocityY = px(4);
-    object2->speedLimit = px(1);
-    FieldActor_SetMoveTarget(object2, 664, 0, 158);
-    FieldActor_WaitForMove((s32)*slot2);
+    placedStar = *placedStarSlot;
+    placedStar->acceleration = px(1) / 2;
+    placedStar->velocityY = px(4);
+    placedStar->speedLimit = px(1);
+    FieldActor_SetMoveTarget(placedStar, 664, 0, 158);
+    FieldActor_WaitForMove((s32)*placedStarSlot);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -1128,9 +1128,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
       ACTOR_FACES_MOTION;
-  object2 = *slot2;
-  if (object2 != 0)
-    Actor_Release(object2);
+  placedStar = *placedStarSlot;
+  if (placedStar != 0)
+    Actor_Release(placedStar);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
@@ -1916,7 +1916,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct FlameHitWork *other;
     struct Actor *target;
 
@@ -1987,7 +1987,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
@@ -1995,7 +1995,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->active = 2;
       other->car = actor;
-      work2->stepTrigger = other->value0a + 2;
+      fieldWork->stepTrigger = other->value0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;

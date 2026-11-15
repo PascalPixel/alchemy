@@ -183,10 +183,10 @@ s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 extern struct WarpTarget gLemuria_FirstDoor;
 extern struct WarpTarget gLemuria_SecondDoor;
 extern struct WarpTarget gLemuria_PalaceDoor;
-extern struct WarpTarget gLemuria_Door12;
-extern struct WarpTarget gLemuria_Door11;
-extern struct WarpTarget gLemuria_Door10;
-extern struct WarpTarget gLemuria_Door16;
+extern struct WarpTarget gLemuria_ThirdDoor;
+extern struct WarpTarget gLemuria_PalaceFrontDoor;
+extern struct WarpTarget gLemuria_PalaceUpperDoor;
+extern struct WarpTarget gLemuria_FourthDoor;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -255,19 +255,19 @@ void Lemuria_EnterDoor(s32 door) {
     mode = 1;
   }
   if (door == 12) {
-    warp = &gLemuria_Door12;
+    warp = &gLemuria_ThirdDoor;
     mode = 0;
   }
   if (door == 11) {
-    warp = &gLemuria_Door11;
+    warp = &gLemuria_PalaceFrontDoor;
     mode = 1;
   }
   if (door == 10) {
-    warp = &gLemuria_Door10;
+    warp = &gLemuria_PalaceUpperDoor;
     mode = 1;
   }
   if (door == 16) {
-    warp = &gLemuria_Door16;
+    warp = &gLemuria_FourthDoor;
     mode = 0;
   }
   Lemuria_OpenDoorAndEnter(warp, door, mode);
@@ -1274,13 +1274,15 @@ struct WarpTarget gLemuria_SecondDoor = {(s32)gLemuria_DoorOpening, 35, 47};
 
 struct WarpTarget gLemuria_PalaceDoor = {(s32)gLemuria_WideDoorOpening, 9, 40};
 
-struct WarpTarget gLemuria_Door12 = {(s32)gLemuria_ThirdDoorOpening, 54, 45};
+struct WarpTarget gLemuria_ThirdDoor = {(s32)gLemuria_ThirdDoorOpening, 54, 45};
 
-struct WarpTarget gLemuria_Door11 = {(s32)gLemuria_WideDoorOpening, 28, 20};
+struct WarpTarget gLemuria_PalaceFrontDoor = {(s32)gLemuria_WideDoorOpening, 28,
+                                              20};
 
-struct WarpTarget gLemuria_Door10 = {(s32)gLemuria_WideDoorOpening, 28, 13};
+struct WarpTarget gLemuria_PalaceUpperDoor = {(s32)gLemuria_WideDoorOpening, 28,
+                                              13};
 
-struct WarpTarget gLemuria_Door16 = {(s32)gLemuria_DoorOpening, 54, 50};
+struct WarpTarget gLemuria_FourthDoor = {(s32)gLemuria_DoorOpening, 54, 50};
 
 struct Trigger gSceneEvents[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,

@@ -160,10 +160,10 @@ void MagmaRockInside_PressGateSwitch1(void);
 void MagmaRockInside_PressGateSwitch2(void);
 void MagmaRockInside_PressGateSwitch3(void);
 
-extern s16 gMagmaRockInside_PlatformPath6[];
-extern s16 gMagmaRockInside_PlatformPath7[];
-extern s16 gMagmaRockInside_PlatformPath8[];
-extern s16 gMagmaRockInside_PlatformPath9[];
+extern s16 gMagmaRockInside_PlatformPathF[];
+extern s16 gMagmaRockInside_PlatformPathG[];
+extern s16 gMagmaRockInside_PlatformPathH[];
+extern s16 gMagmaRockInside_PlatformPathI[];
 
 void FieldEffect_StartBlankOverlay(s32 value);
 
@@ -2185,22 +2185,22 @@ void MagmaRockInside_PressGateSwitch3(void) {
   // called directly differs in 56 instructions.
   Event_SetFlag(FLAG_AREA_TEMP_02);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_4) {
-    s16 *script = gMagmaRockInside_PlatformPath6;
+    s16 *script = gMagmaRockInside_PlatformPathF;
 
     MagmaRockInside_StartLavaPlatform(15, script, 0x302);
-    MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPath6,
+    MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPathF,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPath7,
+    MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPathG,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPath7,
+    MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPathG,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPath8,
+    MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPathH,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPath8,
+    MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPathH,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPath9,
+    MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPathI,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPath9,
+    MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPathI,
                                       0x302);
     if (Actor_Get(16)->scriptCursor == 0) {
       Actor_Get(16)->scriptCursor = 10;
@@ -2250,14 +2250,14 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 void Tightrope_Initialize(void);
 
-extern s16 gMagmaRockInside_PlatformPath1[];
-extern u32 gMagmaRockInside_PlatformPath2[];
-extern u16 gMagmaRockInside_PlatformPath3[];
-extern u32 gMagmaRockInside_PlatformPath4[];
-extern s16 gMagmaRockInside_PlatformPath5[];
-extern s16 gMagmaRockInside_PlatformPath10[];
-extern s16 gMagmaRockInside_PlatformPath11[];
-extern s16 gMagmaRockInside_PlatformPath12[];
+extern s16 gMagmaRockInside_PlatformPathA[];
+extern u32 gMagmaRockInside_PlatformPathB[];
+extern u16 gMagmaRockInside_PlatformPathC[];
+extern u32 gMagmaRockInside_PlatformPathD[];
+extern s16 gMagmaRockInside_PlatformPathE[];
+extern s16 gMagmaRockInside_PlatformPathJ[];
+extern s16 gMagmaRockInside_PlatformPathK[];
+extern s16 gMagmaRockInside_PlatformPathL[];
 extern s32 gMagmaRockInside_Statues[];
 
 void Actor_PlaceBlocks(const u8 *table);
@@ -2289,7 +2289,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 516;
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath1, 768);
+    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPathA, 768);
     if (!Event_GetFlag(FLAG_AREA_TEMP_00)) {
       CLOSED_BLEND();
       MapGrid_CopyCellsTo(71, 64, 47, 98, 1, 1);
@@ -2328,8 +2328,8 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     Raise(9);
-    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath2, 769);
-    MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath3, 769);
+    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathB, 769);
+    MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPathC, 769);
     if (Event_GetFlag(FLAG_AREA_TEMP_01))
       MagmaRockInside_PressGateSwitch2();
     else
@@ -2339,9 +2339,9 @@ s32 Scene_Initialize(void) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Room4Statues);
     if (gMainRoutineWork.entrance <= 7) {
-      MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath4,
+      MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathD,
                                         769);
-      MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath5,
+      MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPathE,
                                         769);
       if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
         MagmaRockInside_PressGateSwitch2();
@@ -2372,21 +2372,21 @@ s32 Scene_Initialize(void) {
       Actor_GetById(20)->retainSpriteCache = 3;
       Actor_GetById(21)->retainSpriteCache = 3;
       Actor_GetById(22)->retainSpriteCache = 3;
-      MagmaRockInside_StartLavaPlatform(15, gMagmaRockInside_PlatformPath6,
+      MagmaRockInside_StartLavaPlatform(15, gMagmaRockInside_PlatformPathF,
                                         770);
-      MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPath6,
+      MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPathF,
                                         770);
-      MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPath7,
+      MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPathG,
                                         770);
-      MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPath7,
+      MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPathG,
                                         770);
-      MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPath8,
+      MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPathH,
                                         770);
-      MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPath8,
+      MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPathH,
                                         770);
-      MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPath9,
+      MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPathI,
                                         770);
-      MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPath9,
+      MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPathI,
                                         770);
       if (Event_GetFlag(FLAG_AREA_TEMP_02))
         MagmaRockInside_PressGateSwitch3();
@@ -2418,9 +2418,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(2550))
       Actor_SetPosition(12, 920, 616);
     Actor_PlaceBlocks(gMagmaRockInside_Room6Pillars);
-    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath10, 770);
-    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath11, 770);
-    MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPath12, 770);
+    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPathJ, 770);
+    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathK, 770);
+    MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPathL, 770);
     if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       Actor_SetAnimation(9, 4);
       if (Event_GetFlag(2550))
@@ -2922,13 +2922,13 @@ u32 gMagmaRockInside_FlameEmberScript[] = {
     SC_END,
 };
 
-s16 gMagmaRockInside_PlatformPath1[] = {                                                               
+s16 gMagmaRockInside_PlatformPathA[] = {                                                               
       4, 0,  0, 776, 0, 16, 0, 680, 1,  0,  4,  0,  0, 744, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 744, 0,  16, 0,  632, 1, 0,  4,  0,                
       0, 776, 0, 16, 0, 632, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-u32 gMagmaRockInside_PlatformPath2[] = {                                                               
+u32 gMagmaRockInside_PlatformPathB[] = {                                                               
       SC_MOVE(216, 16, 568),                             
       SC_SYNC,                                                                 
       SC_MOVE(216, 16, 584),                             
@@ -2941,7 +2941,7 @@ u32 gMagmaRockInside_PlatformPath2[] = {
       SC_END,                                                                  
   };
 
-u16 gMagmaRockInside_PlatformPath3[] = {
+u16 gMagmaRockInside_PlatformPathC[] = {
     4, 0, 0, 600, 0, 16, 0, 664,
     1, 0, 4, 0, 0, 728, 0, 16,
     0, 664, 1, 0, 4, 0, 0, 728,
@@ -2951,7 +2951,7 @@ u16 gMagmaRockInside_PlatformPath3[] = {
     1, 0, 17, 0,
 };
 
-u32 gMagmaRockInside_PlatformPath4[] = {                                                               
+u32 gMagmaRockInside_PlatformPathD[] = {                                                               
       SC_MOVE(184, 16, 232),                             
       SC_SYNC,                                                                 
       SC_MOVE(280, 16, 232),                             
@@ -2964,49 +2964,49 @@ u32 gMagmaRockInside_PlatformPath4[] = {
       SC_END,                                                                  
   };
 
-s16 gMagmaRockInside_PlatformPath5[] = {                                                               
+s16 gMagmaRockInside_PlatformPathE[] = {                                                               
       4, 0,  0, 472, 0, 16, 0, 296, 1,  0,  4,  0,  0, 424, 0,  16,               
       0, 296, 1, 0,  4, 0,  0, 424, 0,  16, 0,  264, 1, 0,  4,  0,                
       0, 472, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath6[] = {                                                               
+s16 gMagmaRockInside_PlatformPathF[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 600, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 280, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath7[] = {                                                               
+s16 gMagmaRockInside_PlatformPathG[] = {                                                               
       4, 0,  0, 312, 0, 16, 0, 664, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 376, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 312, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath8[] = {                                                               
+s16 gMagmaRockInside_PlatformPathH[] = {                                                               
       4, 0,  0, 440, 0, 16, 0, 600, 1,  0,  4,  0,  0, 504, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 504, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 440, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath9[] = {                                                               
+s16 gMagmaRockInside_PlatformPathI[] = {                                                               
       4, 0,  0, 536, 0, 16, 0, 664, 1,  0,  4,  0,  0, 600, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 600, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 536, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath10[] = {                                                               
+s16 gMagmaRockInside_PlatformPathJ[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 264, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 232, 1, 0,  4, 0,  0, 408, 0,  16, 0,  232, 1, 0,  4,  0,                
       0, 408, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath11[] = {                                                               
+s16 gMagmaRockInside_PlatformPathK[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 680, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 280, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath12[] = {                                                               
+s16 gMagmaRockInside_PlatformPathL[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 680, 1,  0,  4,  0,  0, 312, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 312, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 376, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                

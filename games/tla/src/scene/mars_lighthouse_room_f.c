@@ -1561,60 +1561,70 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
+/// The Jupiter Lighthouse aerie's actors the copy below moves, as
+/// jupiter_lighthouse_aerie.c names them.
+enum {
+  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LID = ACTOR_FIRST_PLACED + 15
+};
+
 /// Unused here: the Jupiter Lighthouse's angels where their flags leave them.
 UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
-  struct PositionedActor *actor9 = Actor_GetById(9);
-  struct PositionedActor *actor10 = Actor_GetById(10);
-  struct PositionedActor *actor23 = Actor_GetById(23);
-  struct FieldSprite *sprite = actor23->animation;
+  struct PositionedActor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
+  struct PositionedActor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
+  struct PositionedActor *lid = Actor_GetById(ACTOR_LID);
+  struct FieldSprite *sprite = lid->animation;
 
   Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(23, 512, 248);
-  Actor_SetPosition(9, 472, 256);
-  Actor_SetPosition(10, 552, 256);
+  Actor_SetPosition(ACTOR_LID, 512, 248);
+  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
+  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_GetById(24)->scaleX = 0;
-  actor23->motionFlags = 0;
-  actor23->y.fixed = actor23->terrainHeight;
-  actor9->motionFlags = 0;
-  actor9->y.fixed = actor9->terrainHeight;
-  actor10->motionFlags = 0;
-  actor10->y.fixed = actor10->terrainHeight;
+  lid->motionFlags = 0;
+  lid->y.fixed = lid->terrainHeight;
+  leftAngel->motionFlags = 0;
+  leftAngel->y.fixed = leftAngel->terrainHeight;
+  rightAngel->motionFlags = 0;
+  rightAngel->y.fixed = rightAngel->terrainHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    actor9->y.fixed += 0x66640;
+    leftAngel->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor23->x.fixed -= 0x28f40;
+    lid->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    actor10->y.fixed += 0x66640;
+    rightAngel->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor23->x.fixed += 0x28f40;
+    lid->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    actor9->y.fixed += 0x199900;
-    actor10->y.fixed += 0x199900;
+    leftAngel->y.fixed += 0x199900;
+    rightAngel->y.fixed += 0x199900;
     {
       s32 step = 0x1b8480;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor9->motionFlags = ACTOR_FLOATS;
-    actor10->motionFlags = ACTOR_FLOATS;
-    actor23->motionFlags = ACTOR_FLOATS;
+    leftAngel->motionFlags = ACTOR_FLOATS;
+    rightAngel->motionFlags = ACTOR_FLOATS;
+    lid->motionFlags = ACTOR_FLOATS;
   }
 }
 
@@ -2353,7 +2363,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct Work020023c4__s2f80 *other;
     struct Actor *target;
 
@@ -2424,7 +2434,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
@@ -2432,7 +2442,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->stepTrigger = other->unk0a + 2;
+      fieldWork->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;

@@ -1492,12 +1492,12 @@ s32 PsynergyMenu_SelectAction(void) {
       refresh = 1;
     if (navigation == -1)
       refresh = 0;
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & 2) {
+    if (KEYS_PRESSED & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

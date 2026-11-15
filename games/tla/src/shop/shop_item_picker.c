@@ -29,7 +29,7 @@ s32 Forge_Run(s32 actorId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   icon =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
-  icon->sentinel = 255;
+  icon->sentinel = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -425,7 +425,7 @@ void ItemIconGrid_Draw(void) {
 
     for (i = INVENTORY_SLOTS - 1; i >= 0; i--) {
       if (*iconSlot++ != ICON_NONE)
-        Oam_AddSpriteAtDepth(sprite, 240);
+        Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
       sprite++;
     }
   }

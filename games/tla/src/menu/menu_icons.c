@@ -498,7 +498,7 @@ void MenuIcon_PushSlots(void) {
   if (menu->menuIconsShown != 0) {
     slot = menu->menuIcons;
     for (i = 4; i >= 0; i--) {
-      Oam_AddSpriteAtDepth(slot, 240);
+      Oam_AddSpriteAtDepth(slot, OAM_DEPTH_WINDOW);
       slot++;
     }
   }

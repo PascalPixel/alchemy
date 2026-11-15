@@ -549,7 +549,7 @@ struct RenderInput *MenuCursor_Create(void *source) {
   icon->motion = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
-  sentinel = 254;
+  sentinel = OAM_DEPTH_FRONT - 1;
   icon->sentinel = sentinel;
   sentinel -= 255;
   work->tabIndex[1] = zero;

@@ -137,7 +137,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     window = Window_CreateFar(30, 0, 2, 2, WINDOW_FLAG_INSTANT);
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
-  anchor->sentinel = 255;
+  anchor->sentinel = OAM_DEPTH_FRONT;
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it

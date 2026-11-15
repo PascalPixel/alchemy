@@ -238,8 +238,8 @@ struct RenderInput *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles((s32)MsgSpeechLabel, win, 8, 64);
   Text_DrawMessageAsTiles((s32)MsgAutoSleepLabel, win, 8, 88);
 
-  out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000,
-                            win, 0, 0);
+  out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
+                            OUTPUT_SIZE_16X16, win, 0, 0);
   work->cursor.sprite = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
@@ -747,7 +747,7 @@ s32 PauseMenu_Choose(s32 initial) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (KEYS_PRESSED & 10) {
+    if (KEYS_PRESSED & (KEY_B | KEY_START)) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
       break;

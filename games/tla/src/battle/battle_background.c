@@ -67,7 +67,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
@@ -175,7 +175,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
   Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   view->mode = mode;
   if (mode == 1)
     REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);

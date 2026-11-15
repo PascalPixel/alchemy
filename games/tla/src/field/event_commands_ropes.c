@@ -1333,7 +1333,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
 
     Task_Add(HangingVine_Draw, priority);
   }
-  Task_Add(HangingVine_Update, 0x48f);
+  Task_Add(HangingVine_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(pictures);
   return work;
 }

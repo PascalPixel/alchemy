@@ -161,7 +161,7 @@ void FieldEffect_StartBlankOverlay(s32 object) {
 
   Dma_Fill32(0, buffer, 0x200);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
-  Task_Add(BlankOverlay_DrawMarks, 0x480);
+  Task_Add(BlankOverlay_DrawMarks, TASK_PASS_VBLANK);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (object == 0)
     object = Actor_Lookup(gMainRoutineWork.leaderActorId);

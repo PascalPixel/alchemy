@@ -286,7 +286,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
-  Task_Add(SummonTablet_UpdateMotes, 0x480);
+  Task_Add(SummonTablet_UpdateMotes, TASK_PASS_VBLANK);
   state = 0;
   timer = 0;
   do {

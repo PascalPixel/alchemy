@@ -272,7 +272,7 @@ s32 MapGrid_LoadMap(s32 index) {
   do {
     REG_DISPCNT = displayFlags;
   } while (0);
-  Task_Add(MapGrid_UpdateLayerScroll, 0x485);
+  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_VBLANK + 5);
   return 2;
 }
 

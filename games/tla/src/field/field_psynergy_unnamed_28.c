@@ -234,7 +234,7 @@ void FieldPsynergy_Unnamed28(void) {
     event->ringTimerRunning = 1;
     event->ringFrames = 999;
     off = 0;
-    Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
+    Task_Add(FieldPsynergy_UpdateUnnamed28, TASK_PASS_VBLANK);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -343,7 +343,7 @@ void FieldPsynergy_Unnamed28(void) {
   event->ringActive = 1;
   event->ringTimerRunning = 1;
   event->ringFrames = 600;
-  Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
+  Task_Add(FieldPsynergy_UpdateUnnamed28, TASK_PASS_VBLANK);
 }
 
 /// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)

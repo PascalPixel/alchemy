@@ -523,7 +523,7 @@ void FieldPsynergy_Sand(void) {
   event->unkd4a = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
-    Task_Add(FieldPsynergy_WatchSandGround, 0x480);
+    Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
   Actor_SetOthersPaused(owner, 0, 16);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);

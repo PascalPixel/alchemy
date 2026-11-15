@@ -314,7 +314,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = event->unkd40 << 16;
     work->to[1] = owner->y.fixed + px(32);
     work->to[2] = event->unkd42 << 16;
-    Task_Add(Cyclone_LiftLeader, 0x480);
+    Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
@@ -346,7 +346,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = event->unkd3c << 16;
     work->to[1] = owner->y.fixed;
     work->to[2] = event->unkd3e << 16;
-    Task_Add(Cyclone_CarryLeader, 0x480);
+    Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */

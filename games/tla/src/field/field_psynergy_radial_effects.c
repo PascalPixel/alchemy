@@ -779,7 +779,7 @@ void FieldPsynergy_Lash(void) {
       work->next = 0;
       work->spawnCount = 1;
       work->hit = 0;
-      Task_Add(FieldPsynergy_UpdateLash, 0x480);
+      Task_Add(FieldPsynergy_UpdateLash, TASK_PASS_VBLANK);
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_LASH);

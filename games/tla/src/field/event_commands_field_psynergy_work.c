@@ -149,7 +149,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   event->unkd38 = 0;
   event->unkd30 = 255;
   BattleEffect_StartArcEffect();
-  Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
+  Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_VBLANK);
 }
 
 /// Records the caster and the target of a field Psynergy.

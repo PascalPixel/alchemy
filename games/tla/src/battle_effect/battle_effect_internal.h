@@ -279,6 +279,150 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
 
+// The sheets' pictures, as The Broken Seal names them: this game draws the same
+// sheets at the same sizes.
+
+/// The bytes of the six glint pictures that open the tornado sheet.
+#define GLINT_SET_BYTES                                                        \
+  (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
+
+/// Draws flare picture `size`, a square, centred on (x, y).
+#define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
+  (draw)(canvas, (sheet) + gBattleEffect_FlarePictures[(size) - 1],            \
+         (x) - (size), (y) - (size), (size) * 2, (size) * 2)
+
+/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
+/// the reaper with its scythe raised, then swung, then the red crescent the
+/// swing leaves.
+#define REAPER_SHEET_RAISED_WIDTH 57
+#define REAPER_SHEET_RAISED_HEIGHT 98
+#define REAPER_SHEET_SWUNG_WIDTH 99
+#define REAPER_SHEET_SWUNG_HEIGHT 69
+#define REAPER_SHEET_CRESCENT_WIDTH 128
+#define REAPER_SHEET_CRESCENT_HEIGHT 91
+enum ReaperSheetPicture {
+  REAPER_SHEET_RAISED = 0,
+  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
+};
+
+/// RedCrescentSheetA: the swing's crescent fading in four pictures.
+#define RED_CRESCENT_FADE_A_WIDTH 128
+#define RED_CRESCENT_FADE_A_HEIGHT 91
+#define RED_CRESCENT_FADE_B_WIDTH 128
+#define RED_CRESCENT_FADE_B_HEIGHT 59
+#define RED_CRESCENT_FADE_C_WIDTH 122
+#define RED_CRESCENT_FADE_C_HEIGHT 29
+#define RED_CRESCENT_FADE_D_WIDTH 76
+#define RED_CRESCENT_FADE_D_HEIGHT 25
+enum RedCrescentPicture {
+  RED_CRESCENT_FADE_A = 0,
+  RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +
+      PICTURE_BYTES(RED_CRESCENT_FADE_A),
+  RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B +
+      PICTURE_BYTES(RED_CRESCENT_FADE_B),
+  RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
+};
+
+/// Closing bolts and lightning columns use the same 24x120 pictures.
+#define LIGHTNING_BOLT_WIDTH 24
+#define LIGHTNING_BOLT_HEIGHT 120
+#define LIGHTNING_BOLT_PICTURE_BYTES PICTURE_BYTES(LIGHTNING_BOLT)
+
+/// BlueFlameSheet: the column of flame, then the flame that splashes from it,
+/// twice its width.
+#define BLUE_FLAME_COLUMN_WIDTH 17
+#define BLUE_FLAME_COLUMN_HEIGHT 104
+#define BLUE_FLAME_SPLASH_WIDTH 34
+#define BLUE_FLAME_SPLASH_HEIGHT 65
+/// WaveSheet's six pictures, BlueArcSheetA and B's six, and YellowOrbSheet's.
+#define WAVE_WIDTH 48
+#define WAVE_HEIGHT 16
+#define BLUE_ARC_WIDTH 48
+#define BLUE_ARC_HEIGHT 72
+#define YELLOW_ORB_WIDTH 40
+#define YELLOW_ORB_HEIGHT 48
+/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+#define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
+#define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
+#define YELLOW_ORB_PICTURES 6
+
+/// FireStreakSheet's six pictures and FireBurstSheet's.
+#define FIRE_STREAK_WIDTH 48
+#define FIRE_STREAK_HEIGHT 72
+#define FIRE_BURST_WIDTH 40
+#define FIRE_BURST_HEIGHT 80
+/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
+/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+#define MERCURY_SMALL_DJINNI_HEIGHT 34
+#define VENUS_SMALL_DJINNI_HEIGHT 38
+/// FireBlobSheet's blobs and CrystalSheet's crystal.
+#define FIRE_BLOB_WIDTH 48
+#define FIRE_BLOB_HEIGHT 32
+#define CRYSTAL_WIDTH 32
+#define CRYSTAL_HEIGHT 64
+
+/// LightningPillarSheet's pillar, in two pictures.
+#define LIGHTNING_PILLAR_WIDTH 48
+#define LIGHTNING_PILLAR_HEIGHT 112
+/// FirePillarSheetA: the pillar of fire, then two flames.
+#define FIRE_PILLAR_WIDTH 34
+#define FIRE_PILLAR_HEIGHT 104
+#define FIRE_PILLAR_FLAME_WIDTH 20
+#define FIRE_PILLAR_FLAME_HEIGHT 37
+/// SpiralSheet's pictures.
+#define SPIRAL_WIDTH 32
+#define SPIRAL_HEIGHT 32
+
+/// FlameballSheet and FireballSheet's pictures.
+#define FLAMEBALL_WIDTH 40
+#define FLAMEBALL_HEIGHT 64
+
+/// Each half of RuneSheet's rune, the second drawn mirrored.
+#define RUNE_HALF_WIDTH 24
+#define RUNE_HALF_HEIGHT 48
+
+/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
+/// and its kind), and the one picture of the small sheets.
+#define DJINNI_WIDTH 40
+#define DJINNI_HEIGHT 40
+#define SMALL_DJINNI_WIDTH 20
+#define SMALL_DJINNI_HEIGHT 40
+
+/// The pictures of the sheets several effects share, each sheet's pictures
+/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
+/// skulls and the tornado strips after TornadoSheet's glints.
+#define SMOKE_PUFF_WIDTH 24
+#define SMOKE_PUFF_HEIGHT 48
+#define FLASH_BURST_WIDTH 32
+#define FLASH_BURST_HEIGHT 64
+#define SKULL_WIDTH 24
+#define SKULL_HEIGHT 24
+#define TORNADO_STRIP_WIDTH 40
+#define TORNADO_STRIP_HEIGHT 32
+/// The pictures of DaggerSheet, ShieldSheet, GlowOrbSheet, VioletStreakSheet
+/// and WispSheet.
+#define DAGGER_WIDTH 24
+#define DAGGER_HEIGHT 40
+#define SHIELD_WIDTH 40
+#define SHIELD_HEIGHT 40
+#define GLOW_ORB_WIDTH 40
+#define GLOW_ORB_HEIGHT 40
+#define VIOLET_STREAK_WIDTH 32
+#define VIOLET_STREAK_HEIGHT 64
+#define WISP_WIDTH 64
+#define WISP_HEIGHT 32
+/// VortexSheet's six pictures and HeartSheet's heart.
+#define VORTEX_WIDTH 24
+#define VORTEX_HEIGHT 48
+#define HEART_WIDTH 22
+#define HEART_HEIGHT 42
+/// WaterSpraySheet: the wave, then the splash's pictures.
+#define WATER_WAVE_WIDTH 32
+#define WATER_WAVE_HEIGHT 32
+#define WATER_SPLASH_WIDTH 48
+#define WATER_SPLASH_HEIGHT 48
+
 // The canvas life cycle, shared by every canvas effect.
 
 /// The bytes an effect's work block is lent: more than struct

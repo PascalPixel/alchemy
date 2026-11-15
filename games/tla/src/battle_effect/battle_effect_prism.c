@@ -186,7 +186,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     if (blue > 31)
       blue = 31;
 
-    palette[index] = (blue << 10) | (green << 5) | red;
+    palette[index] = RGB(red, green, blue);
     index++;
   } while (index != 64);
 

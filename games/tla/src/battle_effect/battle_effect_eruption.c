@@ -53,7 +53,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
 
-      BG_PLTT[i] = (level << 10) | (level << 5) | level;
+      BG_PLTT[i] = RGB(level, level, level);
     }
     variant = 1;
   } else {

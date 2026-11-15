@@ -111,7 +111,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     red >>= 3;
     green >>= 3;
     blue >>= 3;
-    ramp[i] = ((u16 *)BG_PLTT)[i] = blue << 10 | green << 5 | red;
+    ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
   // Blit the disc once; from here on only the palette and the scanline

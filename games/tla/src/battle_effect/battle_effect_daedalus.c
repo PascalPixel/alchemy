@@ -302,9 +302,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         s32 mid;
         s32 s;
 
-        s = *col & 0x1f;
-        mid = (*col >> 5) & 0x1f;
-        b = ((*col >> 10) & 0x1f) - 4;
+        s = RGB_RED(*col);
+        mid = RGB_GREEN(*col);
+        b = RGB_BLUE(*col) - 4;
         g = mid - 4;
         r = s - 4;
         if (g < 0)
@@ -319,7 +319,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           r = 31;
         if (b > 31)
           b = 31;
-        *col = (b << 10) | (r << 5) | g;
+        *col = RGB(g, r, b);
       }
       work->scrollTimer = 0;
       work->scrollInterval = 5;
@@ -506,7 +506,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     for (i = 0; i != 224; i++) {
       pal = (u16 *)OBJ_PLTT + i;
-      if (((*pal >> 5) & 0x1f) == 31)
+      if (RGB_GREEN(*pal) == 31)
         break;
     }
     for (i = 0; i != 512; i++)
@@ -568,30 +568,30 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       if (frame >= 542 && frame < 558) {
         s32 r, g, b;
 
-        r = *pal & 0x1f;
-        g = (*pal >> 5) & 0x1f;
-        b = (*pal >> 10) & 0x1f;
+        r = RGB_RED(*pal);
+        g = RGB_GREEN(*pal);
+        b = RGB_BLUE(*pal);
         if (r < 31)
           r++;
         if (g < 20)
           g++;
         if (b < 6)
           b++;
-        *pal = (b << 10) | (g << 5) | r;
+        *pal = RGB(r, g, b);
       }
       if (frame > 557) {
         s32 r, g, b;
 
-        r = *pal & 0x1f;
-        g = (*pal >> 5) & 0x1f;
-        b = (*pal >> 10) & 0x1f;
+        r = RGB_RED(*pal);
+        g = RGB_GREEN(*pal);
+        b = RGB_BLUE(*pal);
         if (r > 20)
           r--;
         if (g > 0)
           g--;
         if (b > 0)
           b--;
-        *pal = (b << 10) | (g << 5) | r;
+        *pal = RGB(r, g, b);
       }
       if (frame == 280) {
         Iwram_CopyWords(
@@ -1190,7 +1190,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Sprite_DestroyFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
-    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BG2X = 0;
@@ -1278,7 +1279,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             }
             Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != args->targetCount; j++) {
-              BattleEffect_StartActorMotion(args->targets[j], 1, 0, 0, 0x20000,
+              BattleEffect_StartActorMotion(args->targets[j], 1, 0, 0, px(2),
                                             100);
               BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, j, 7);
@@ -1425,8 +1426,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
     for (i = 0; i != 7; i++) {
       if (frame == gDaedalusAlt_StrikeFrames[i]) {
         for (j = 0; j != args->targetCount; j++) {
-          BattleEffect_StartActorMotion(args->targets[j], 1, 0x20000, 0x80000,
-                                        0x20000, 120);
+          BattleEffect_StartActorMotion(args->targets[j], 1, px(2), px(8),
+                                        px(2), 120);
           BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 7);
         }

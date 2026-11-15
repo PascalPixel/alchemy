@@ -229,8 +229,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x80000,
-                                          0x20000, i * 10 + 110);
+            BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8),
+                                          px(2), i * 10 + 110);
             Sound_PlayFar(SE_IMPACT);
           }
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -1168,7 +1168,7 @@ struct SpriteView {
         r_ = 0;                                                                \
       if (r_ > 31)                                                             \
         r_ = 31;                                                               \
-      c = b_ << 10 | g_ << 5 | r_;                                             \
+      c = RGB(r_, g_, b_);                                                     \
       *table++ = c;                                                            \
     }                                                                          \
     for (; i != 160; i++) {                                                    \
@@ -1493,7 +1493,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (cr < 0) {
           cr = 0;
         }
-        *dst = cb << 10 | cg << 5 | cr;
+        *dst = RGB(cr, cg, cb);
       }
     }
     if (frame > 519) {
@@ -1528,7 +1528,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (b > 31) {
           b = 31;
         }
-        *dst = b << 10 | g << 5 | r;
+        *dst = RGB(r, g, b);
       }
     }
     if ((u32)(frame - 292) <= 253) {

@@ -83,8 +83,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       work->shakeFrames = 8;
-      BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
-                                    0x20000, 120);
+      BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4), px(2),
+                                    120);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 20);
       for (i = 0; i != 32; i++) {

@@ -55,7 +55,7 @@ void Graphics_LoadGreyRamp(void) {
       s32 level = i / 2;
 
       i++;
-      *color = level << 10 | level << 5 | level;
+      *color = RGB(level, level, level);
     }
     color++;
   } while (i != 63);
@@ -245,7 +245,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (g > 0) {
         g--;
       }
-      *c = b << 10 | g << 5 | r;
+      *c = RGB(r, g, b);
     }
     wait(1);
   }
@@ -437,7 +437,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           g = 0;
         if (b < 0)
           b = 0;
-        *c = b << 10 | g << 5 | r;
+        *c = RGB(r, g, b);
       }
     }
     if (frame == 132) {
@@ -627,8 +627,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           for (j = 0; j != args->targetCount; j++) {
             s32 m = (Random16() << 2) + 0x10000;
 
-            BattleEffect_StartActorMotion(args->targets[j], 1, 0x20000, 0x80000,
-                                          m, delay + (Random16() & 31) + 52);
+            BattleEffect_StartActorMotion(args->targets[j], 1, px(2), px(8), m,
+                                          delay + (Random16() & 31) + 52);
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      TINT_KEEP, j, 4);
           }
@@ -849,7 +849,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       } else if (nb > b) {
         nb = b;
       }
-      *dst = nb << 10 | ng << 5 | nr;
+      *dst = RGB(nr, ng, nb);
     }
     wait(1);
   }

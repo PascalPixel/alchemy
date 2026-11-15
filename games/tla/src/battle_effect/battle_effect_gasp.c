@@ -295,7 +295,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           g = 31;
         if (b > 31)
           b = 31;
-        *pal = b << 10 | g << 5 | r;
+        *pal = RGB(r, g, b);
       }
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
     }

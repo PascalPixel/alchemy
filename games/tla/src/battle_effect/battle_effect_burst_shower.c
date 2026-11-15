@@ -435,7 +435,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       for (i = 0; i != 64; i++) {
         s32 level = i / 4;
 
-        BG_PLTT[i] = (level << 10) | (level << 5) | level;
+        BG_PLTT[i] = RGB(level, level, level);
       }
       REG_BLDCNT = 0;
     } else {
@@ -454,7 +454,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           for (i = 0; i != 64; i++) {
             s32 level = i / 4;
 
-            BG_PLTT[i] = (level << 10) | (level << 5) | level;
+            BG_PLTT[i] = RGB(level, level, level);
           }
           palette = NULL;
         } else if (mode == BURST_SHOWER_MODE_SAND_BREATH) {
@@ -897,8 +897,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                        POSE_DAMAGE, i, 3);
             if (mode != BURST_SHOWER_MODE_FIRE_DANCE &&
                 mode != BURST_SHOWER_MODE_DESERT_GASP)
-              BattleEffect_StartActorMotion(args->targets[i], 1, 0x10000,
-                                            0x40000, 0x20000, frame + 100);
+              BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
+                                            px(2), frame + 100);
           }
         }
       }

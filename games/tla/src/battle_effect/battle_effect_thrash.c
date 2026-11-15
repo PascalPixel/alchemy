@@ -116,7 +116,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
       s32 green = (((u16 *)BG_PLTT)[i] >> 5) & 0x1f;
       s32 red = ((u16 *)BG_PLTT)[i] & 0x1f;
 
-      ((u16 *)BG_PLTT)[i] = (red << 10) | (blue << 5) | green;
+      ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
   } else if (variant == 3) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);

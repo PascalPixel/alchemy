@@ -257,9 +257,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         volatile u16 *dst = (volatile u16 *)OBJ_PLTT;
 
         for (i = 0; i != 256; i++, src++, dst++) {
-          s32 r = (*src & 31) + addR;
-          s32 g = ((*src >> 5) & 31) + addG;
-          s32 b = ((*src >> 10) & 31) + addB;
+          s32 r = RGB_RED(*src) + addR;
+          s32 g = RGB_GREEN(*src) + addG;
+          s32 b = RGB_BLUE(*src) + addB;
 
           if (r > 31)
             r = 31;
@@ -273,7 +273,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             g = 0;
           if (b < 0)
             b = 0;
-          *dst = b << 10 | g << 5 | r;
+          *dst = RGB(r, g, b);
         }
       }
     }
@@ -329,8 +329,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
   wait(1);
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj = Sprite_CreateFar(0x28d);
@@ -504,7 +504,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           g = 31;
         if (r > 31)
           r = 31;
-        *c = b << 10 | g << 5 | r;
+        *c = RGB(r, g, b);
       }
     }
     if (frame == 182) {

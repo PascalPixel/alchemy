@@ -322,9 +322,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         src2 = battle->palette;
 
         for (i = 0; i != 128; i++) {
-          s32 r = *src2 & 31;
-          s32 g = (*src2 >> 5) & 31;
-          s32 b = ((*src2 >> 10) & 31) + level;
+          s32 r = RGB_RED(*src2);
+          s32 g = RGB_GREEN(*src2);
+          s32 b = RGB_BLUE(*src2) + level;
 
           if (r > 31) {
             r = 31;
@@ -336,7 +336,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             b = 31;
           }
           src2++;
-          *dst++ = b << 10 | g << 5 | r;
+          *dst++ = RGB(r, g, b);
         }
       }
     }
@@ -425,9 +425,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             n = 128;
           }
           for (i = 1; i != n; i++) {
-            s32 r = (*src & 31) + fr;
-            s32 g = ((*src >> 5) & 31) + fg;
-            s32 b = ((*src >> 10) & 31) + fb;
+            s32 r = RGB_RED(*src) + fr;
+            s32 g = RGB_GREEN(*src) + fg;
+            s32 b = RGB_BLUE(*src) + fb;
 
             if (r > 31) {
               r = 31;
@@ -447,7 +447,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             if (b < 0) {
               b = 0;
             }
-            *dst++ = b << 10 | g << 5 | r;
+            *dst++ = RGB(r, g, b);
             src++;
           }
         }
@@ -1351,8 +1351,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       if (frame == 66) {
         for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                        0x40000, 150);
+          BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8),
+                                        px(4), 150);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
           {

@@ -427,8 +427,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             else
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 3);
-            BattleEffect_StartActorMotion(args->targets[i], 1, 0x10000, 0x40000,
-                                          0x20000, frame + 100);
+            BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
+                                          px(2), frame + 100);
           }
         }
       } else if (frame == gBreaths_FlashFrames[mode]) {
@@ -531,8 +531,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_StartActorMotion(args->targets[0], 1, 0x40000, 0x100000,
-                                    0x40000, 250);
+      BattleEffect_StartActorMotion(args->targets[0], 1, px(4), px(16), px(4),
+                                    250);
       work->shakeFrames = 4;
     }
 

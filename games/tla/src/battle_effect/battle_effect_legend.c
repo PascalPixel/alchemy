@@ -500,8 +500,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-          BattleEffect_StartActorMotion(args->targets[i], 1, 0x20000, 0x80000,
-                                        0x10000, 100 + speed);
+          BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(8),
+                                        px(1), 100 + speed);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
           burst = 0;

@@ -158,7 +158,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   Dma_Set(Resource_GetTableEntry(args->user > 7
                                      ? (s32)&ResourceId_MarsDjinnSmallSheet
                                      : (s32)&ResourceId_StarCrescentSheet),
-          (void *)BG_PLTT, 0x84000020, REG_DMA3);
+          (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
@@ -214,8 +214,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       else if (kind == 5 || kind == 6)
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       else if (kind == 8)
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0x10000, 0x40000,
-                                      0x30000, 150);
+        BattleEffect_StartActorMotion(args->targets[0], 1, px(1), px(4), px(3),
+                                      150);
       else
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
@@ -368,7 +368,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   // An enemy caster's sparks take the Mars Djinn's colours.
   if (args->user > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-            (void *)BG_PLTT, 0x84000020, REG_DMA3);
+            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);

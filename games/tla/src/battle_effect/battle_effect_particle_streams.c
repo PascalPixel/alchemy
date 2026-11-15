@@ -88,7 +88,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
-  Dma_Set(palette, (void *)BG_PLTT, 0x84000020, REG_DMA3);
+  Dma_Set(palette, (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
+          REG_DMA3);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
@@ -513,9 +514,9 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
   s32 i;
 
   for (i = 0; i != 63; i++) {
-    s32 blue = (*color >> 10) & 0x1f;
-    s32 green = (*color >> 5) & 0x1f;
-    s32 red = *color & 0x1f;
+    s32 blue = RGB_BLUE(*color);
+    s32 green = RGB_GREEN(*color);
+    s32 red = RGB_RED(*color);
 
     blue += blue_delta;
     green += green_delta;
@@ -532,7 +533,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 }
 
@@ -543,9 +544,9 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
   s32 i;
 
   for (i = 0; i != 128; i++) {
-    s32 blue = (*color >> 10) & 0x1f;
-    s32 green = (*color >> 5) & 0x1f;
-    s32 red = *color & 0x1f;
+    s32 blue = RGB_BLUE(*color);
+    s32 green = RGB_GREEN(*color);
+    s32 red = RGB_RED(*color);
 
     red += red_delta;
     green += green_delta;
@@ -562,7 +563,7 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
       green = 0;
     if (blue < 0)
       blue = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 }
 
@@ -575,9 +576,9 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
   s32 i;
 
   for (i = 0; i != 128; i++) {
-    s32 blue = (*source >> 10) & 0x1f;
-    s32 green = (*source >> 5) & 0x1f;
-    s32 red = *source & 0x1f;
+    s32 blue = RGB_BLUE(*source);
+    s32 green = RGB_GREEN(*source);
+    s32 red = RGB_RED(*source);
 
     red += redDelta;
     green += greenDelta;
@@ -594,7 +595,7 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
       green = 0;
     if (blue < 0)
       blue = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
     source++;
   }
 }
@@ -778,7 +779,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)(BG_PLTT + 8 * 16))[i] = (blue << 10) | (green << 5) | red;
+    ((u16 *)(BG_PLTT + 8 * 16))[i] = RGB(red, green, blue);
   }
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 

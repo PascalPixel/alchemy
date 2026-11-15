@@ -108,7 +108,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 
   // The picture, laid out again in the effect work:

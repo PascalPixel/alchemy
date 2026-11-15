@@ -269,7 +269,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (r > 31) {
           r = 31;
         }
-        *c++ = b << 10 | g << 5 | r;
+        *c++ = RGB(r, g, b);
       }
       for (; i != 160; i++) {
         *c++ = 0;
@@ -291,7 +291,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != args->targetCount; i++) {
         s32 *actor = BattleObject_GetFar(args->targets[i])->object;
 
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x40000, 100);
+        BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(4), 100);
         actor[18] = 0;
       }
     }

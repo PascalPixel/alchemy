@@ -515,7 +515,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     if (mode == WATER_SHEET_DREAMTIDE) {
       if (frame == 17) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0x80000, 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(8), 100);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 16);
         work->shakeFrames = 8;
@@ -533,8 +533,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (frame == 46) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x80000,
-                                        100);
+          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(8), 100);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }

@@ -256,7 +256,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         if (r > tr) {
           r--;
         }
-        w->palette[i] = b << 10 | g << 5 | r;
+        w->palette[i] = RGB(r, g, b);
       }
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
     }

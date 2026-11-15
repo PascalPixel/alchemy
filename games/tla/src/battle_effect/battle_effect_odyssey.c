@@ -622,7 +622,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   for (i = 0; i != 63; i++) {
     s32 level = i >> 1;
 
-    ramp[i] = level << 10 | level << 5 | level;
+    ramp[i] = RGB(level, level, level);
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)ramp, 0x8000003f);
 

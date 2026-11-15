@@ -323,11 +323,11 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
-      s32 red = *color & 0x1f;
-      s32 green = (*color >> 5) & 0x1f;
-      s32 blue = (*color >> 10) & 0x1f;
+      s32 red = RGB_RED(*color);
+      s32 green = RGB_GREEN(*color);
+      s32 blue = RGB_BLUE(*color);
 
-      *color++ = (red << 10) | (blue << 5) | green;
+      *color++ = RGB(green, blue, red);
     }
   }
 

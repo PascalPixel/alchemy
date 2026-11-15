@@ -174,9 +174,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
       pal = (u16 *)(BG_PLTT + 6 * 16);
       for (i = 0; i != 128; i++) {
-        s32 red = *pal & 0x1f;
-        s32 green = (*pal >> 5) & 0x1f;
-        s32 blue = (*pal >> 10) & 0x1f;
+        s32 red = RGB_RED(*pal);
+        s32 green = RGB_GREEN(*pal);
+        s32 blue = RGB_BLUE(*pal);
         s32 goalRed = battle->palette[i] & 0x1f;
         s32 goalGreen = (battle->palette[i] >> 5) & 0x1f;
         s32 goalBlue = (battle->palette[i] >> 10) & 0x1f;
@@ -193,7 +193,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           blue++;
         else if (blue > goalBlue)
           blue--;
-        *pal++ = (blue << 10) | (green << 5) | red;
+        *pal++ = RGB(red, green, blue);
       }
     }
 
@@ -207,7 +207,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
       v = frame * 4 + 8;
       rmax = frame * 32;
-      BG_PLTT[2] = (v << 10) | (v << 5) | v;
+      BG_PLTT[2] = RGB(v, v, v);
       cx = 96;
       cy = 60;
       for (; r != rmax; r++) {
@@ -304,7 +304,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       v = frame - 8;
       if (v > 31)
         v = 31;
-      BG_PLTT[1] = (v << 10) | (v << 5) | v;
+      BG_PLTT[1] = RGB(v, v, v);
     }
 
     // Frame 51: the flash pictures and colours, and 32 flashes placed at
@@ -1273,9 +1273,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           i = 0;
           add = 32 - frame * fadeStep;
           for (; i != 16; i++, e++, dst++) {
-            s32 cr = (*e & 31) + add;
-            s32 cg = (u16)((*e >> 5) & 31) + add;
-            s32 cb = (u16)((*e >> 10) & 31) + add;
+            s32 cr = RGB_RED(*e) + add;
+            s32 cg = (u16)RGB_GREEN(*e) + add;
+            s32 cb = (u16)RGB_BLUE(*e) + add;
 
             if (cr > 31) {
               cr = 31;
@@ -1286,7 +1286,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             if (cb > 31) {
               cb = 31;
             }
-            *dst = cb << 10 | cg << 5 | cr;
+            *dst = RGB(cr, cg, cb);
           }
         }
       }

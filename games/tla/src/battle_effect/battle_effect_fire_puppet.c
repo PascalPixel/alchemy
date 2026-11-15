@@ -111,8 +111,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x20000, 0x40000,
-                                      0x40000, 150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(4), px(4),
+                                      150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
       }

@@ -371,41 +371,41 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       u16 *color = PLTT + 0x60;
 
       for (i = 0; i != 128; i++, target++, color++) {
-        s32 r = (*color >> 10) & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = *color & 31;
-        s32 tr;
-        s32 tg;
+        s32 b = RGB_BLUE(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 r = RGB_RED(*color);
         s32 tb;
+        s32 tg;
+        s32 tr;
 
         if (frame < 168) {
-          tr = (*target >> 10) & 31;
-          tg = (*target >> 5) & 31;
-          tb = *target & 31;
+          tb = RGB_BLUE(*target);
+          tg = RGB_GREEN(*target);
+          tr = RGB_RED(*target);
         } else {
-          tr = ((*target >> 10) & 31) - 16;
-          tg = ((*target >> 5) & 31) - 16;
-          tb = (*target & 31) + 8;
+          tb = RGB_BLUE(*target) - 16;
+          tg = RGB_GREEN(*target) - 16;
+          tr = RGB_RED(*target) + 8;
         }
-        if (tr < 0) {
-          tr = 0;
+        if (tb < 0) {
+          tb = 0;
         }
         if (tg < 0) {
           tg = 0;
         }
-        if (tb > 31) {
-          tb = 31;
-        }
-        if (r > tr) {
-          r--;
-        }
-        if (g > tg) {
-          g--;
+        if (tr > 31) {
+          tr = 31;
         }
         if (b > tb) {
           b--;
         }
-        *color = (r << 10) | (g << 5) | b;
+        if (g > tg) {
+          g--;
+        }
+        if (r > tr) {
+          r--;
+        }
+        *color = RGB(r, g, b);
       }
       for (i = 0; i != 15; i++) {
         s32 r = 31 - (frame - 132) / 4;
@@ -430,7 +430,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (b < 4) {
           b = 4;
         }
-        PLTT[0x1e1 + i] = (b << 10) | (g << 5) | r;
+        PLTT[0x1e1 + i] = RGB(r, g, b);
       }
     }
     if (frame >= 132 && frame < 240) {
@@ -438,23 +438,23 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       u16 *color = PLTT + 0x100;
 
       for (i = 0; i != 192; i++, target++, color++) {
-        s32 r = (*color >> 10) & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = *color & 31;
-        s32 tr = (*target >> 10) & 31;
-        s32 tg = (*target >> 5) & 31;
-        s32 tb = *target & 31;
+        s32 b = RGB_BLUE(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 r = RGB_RED(*color);
+        s32 tb = RGB_BLUE(*target);
+        s32 tg = RGB_GREEN(*target);
+        s32 tr = RGB_RED(*target);
 
-        if (r > tr) {
-          r--;
+        if (b > tb) {
+          b--;
         }
         if (g > tg) {
           g--;
         }
-        if (b > tb) {
-          b--;
+        if (r > tr) {
+          r--;
         }
-        *color = (r << 10) | (g << 5) | b;
+        *color = RGB(r, g, b);
       }
     }
     fade = 0;
@@ -484,9 +484,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       u16 *color = Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
 
       for (i = 0; i != 192; i++, color++) {
-        s32 r = (*color & 31) + red;
-        s32 g = ((*color >> 5) & 31) + green;
-        s32 b = ((*color >> 10) & 31) + blue;
+        s32 r = RGB_RED(*color) + red;
+        s32 g = RGB_GREEN(*color) + green;
+        s32 b = RGB_BLUE(*color) + blue;
 
         if (r > 31) {
           r = 31;
@@ -506,7 +506,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (b < 0) {
           b = 0;
         }
-        PLTT[0x100 + i] = (b << 10) | (g << 5) | r;
+        PLTT[0x100 + i] = RGB(r, g, b);
       }
     }
     if (frame >= 132 && frame < 860) {
@@ -750,23 +750,23 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           u16 *color = PLTT + 0x1c0;
 
           for (i = 0; i != 32; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr = (*target >> 10) & 31;
-            s32 tg = (*target >> 5) & 31;
-            s32 tb = *target & 31;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
+            s32 tb = RGB_BLUE(*target);
+            s32 tg = RGB_GREEN(*target);
+            s32 tr = RGB_RED(*target);
 
-            if (r < tr) {
-              r++;
+            if (b < tb) {
+              b++;
             }
             if (g < tg) {
               g++;
             }
-            if (b < tb) {
-              b++;
+            if (r < tr) {
+              r++;
             }
-            *color = (r << 10) | (g << 5) | b;
+            *color = RGB(r, g, b);
           }
         }
       }
@@ -791,32 +791,32 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           u16 *color = PLTT + 0x60;
 
           for (i = 0; i != 128; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr = ((*target >> 10) & 31) - 20;
-            s32 tg = ((*target >> 5) & 31) - 20;
-            s32 tb = (*target & 31) + 8;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
+            s32 tb = RGB_BLUE(*target) - 20;
+            s32 tg = RGB_GREEN(*target) - 20;
+            s32 tr = RGB_RED(*target) + 8;
 
-            if (tr < 0) {
-              tr = 0;
+            if (tb < 0) {
+              tb = 0;
             }
             if (tg < 0) {
               tg = 0;
             }
-            if (tb > 31) {
-              tb = 31;
-            }
-            if (r > tr) {
-              r--;
-            }
-            if (g > tg) {
-              g--;
+            if (tr > 31) {
+              tr = 31;
             }
             if (b > tb) {
               b--;
             }
-            *color = (r << 10) | (g << 5) | b;
+            if (g > tg) {
+              g--;
+            }
+            if (r > tr) {
+              r--;
+            }
+            *color = RGB(r, g, b);
           }
         }
         if (frame > 301) {
@@ -939,41 +939,41 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           u16 *color = PLTT + 0x60;
 
           for (i = 0; i != 128; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr;
-            s32 tg;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
             s32 tb;
+            s32 tg;
+            s32 tr;
 
             if (t < 8) {
-              tr = (*target >> 10) & 31;
-              tg = (*target >> 5) & 31;
-              tb = *target & 31;
+              tb = RGB_BLUE(*target);
+              tg = RGB_GREEN(*target);
+              tr = RGB_RED(*target);
             } else {
-              tr = ((*target >> 10) & 31) - 16;
-              tg = ((*target >> 5) & 31) - 16;
-              tb = (*target & 31) + 8;
+              tb = RGB_BLUE(*target) - 16;
+              tg = RGB_GREEN(*target) - 16;
+              tr = RGB_RED(*target) + 8;
             }
-            if (tr < 0) {
-              tr = 0;
+            if (tb < 0) {
+              tb = 0;
             }
             if (tg < 0) {
               tg = 0;
             }
-            if (tb > 31) {
-              tb = 31;
-            }
-            if (r > tr + 1) {
-              r -= 2;
-            }
-            if (g > tg + 1) {
-              g -= 2;
+            if (tr > 31) {
+              tr = 31;
             }
             if (b > tb + 1) {
               b -= 2;
             }
-            *color = (r << 10) | (g << 5) | b;
+            if (g > tg + 1) {
+              g -= 2;
+            }
+            if (r > tr + 1) {
+              r -= 2;
+            }
+            *color = RGB(r, g, b);
           }
         }
       }
@@ -1003,9 +1003,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       u16 *color;
 
       for (i = 0, color = PLTT + 0x60; i != 128; i++, color++) {
-        s32 r = *color & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = (*color >> 10) & 31;
+        s32 r = RGB_RED(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 b = RGB_BLUE(*color);
 
         g--;
         if (g < 0) {
@@ -1026,7 +1026,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         } else if (b < 0) {
           b = 0;
         }
-        *color = (b << 10) | (g << 5) | r;
+        *color = RGB(r, g, b);
       }
     }
     if (t56 >= 0 && t56 < 36) {
@@ -1062,9 +1062,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         for (i = 0; i != 16; i++, color++, entry++) {
           s32 add = (Q_16_16_TO_INT(Trig_Cos(t56 << 9) * 12)) + 16;
-          s32 r = (*color & 31) + add;
-          s32 g = ((*color >> 5) & 31) + add;
-          s32 b = ((*color >> 10) & 31) + add;
+          s32 r = RGB_RED(*color) + add;
+          s32 g = RGB_GREEN(*color) + add;
+          s32 b = RGB_BLUE(*color) + add;
 
           if (r > 31) {
             r = 31;
@@ -1075,7 +1075,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           if (b > 31) {
             b = 31;
           }
-          *entry = (b << 10) | (g << 5) | r;
+          *entry = RGB(r, g, b);
         }
       }
     }
@@ -1238,7 +1238,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (b < 0) {
       b = 0;
     }
-    PLTT[i] = (b << 10) | (g << 5) | r;
+    PLTT[i] = RGB(r, g, b);
   }
   arg->targets[arg->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar((struct SpawnList *)arg->targets, 0);
@@ -1357,8 +1357,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 delay = (Random16() & 31) + 120;
           s32 speed = spin * 2 + 0x20000;
 
-          BattleEffect_StartActorMotion(arg->targets[i], 1, 0x40000, 0x80000,
-                                        speed, delay);
+          BattleEffect_StartActorMotion(arg->targets[i], 1, px(4), px(8), speed,
+                                        delay);
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 32);
         }
@@ -1414,12 +1414,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           u16 *color = PLTT + 0x60;
 
           for (j = 0; j != 128; j++) {
-            s32 tr = (target[j] & 31) - twenty / 2;
-            s32 tg = ((target[j] >> 5) & 31) - 20;
-            s32 tb = ((target[j] >> 10) & 31) - twenty / 2;
-            s32 r = color[j] & 31;
-            s32 g = (color[j] >> 5) & 31;
-            s32 b = (color[j] >> 10) & 31;
+            s32 tr = RGB_RED(target[j]) - twenty / 2;
+            s32 tg = RGB_GREEN(target[j]) - 20;
+            s32 tb = RGB_BLUE(target[j]) - twenty / 2;
+            s32 r = RGB_RED(color[j]);
+            s32 g = RGB_GREEN(color[j]);
+            s32 b = RGB_BLUE(color[j]);
 
             if (tr < 0) {
               tr = 0;
@@ -1439,7 +1439,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             if (tb < b - 1) {
               b -= 2;
             }
-            color[j] = (b << 10) | (g << 5) | r;
+            color[j] = RGB(r, g, b);
           }
         }
       }
@@ -1558,7 +1558,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->x = px(Random16() % 24 + shake - i * 2);
             drop->y = (160 << 15) + i * (192 << 10);
             drop->velocityX = -(Random16() & TRIG_ANGLE_MASK) - 0x4000;
-            drop->velocityY = -0x10000;
+            drop->velocityY = -px(1);
           }
           if (drop->variant >= 0) {
             Canvas_BlitAtFoot(work->sheet + 0x1000, Q_16_16_TO_INT(drop->x),

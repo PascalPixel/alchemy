@@ -279,8 +279,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           for (k = 0; k != work->args->targetCount; k++) {
             BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, k, 8);
-            BattleEffect_StartActorMotion(args->targets[k], 1, 0x10000, 0x40000,
-                                          0x10000, i * 16 + 100);
+            BattleEffect_StartActorMotion(args->targets[k], 1, px(1), px(4),
+                                          px(1), i * 16 + 100);
           }
         }
       }
@@ -376,7 +376,7 @@ void Iris_ChangeBackdrop(void) {
       green = 0;
     if (blue < 0)
       blue = 0;
-    *palette++ = green << 10 | red << 5 | blue;
+    *palette++ = RGB(blue, red, green);
   }
   transition->active = 1;
   gBgScroll[1].x = 0;
@@ -1143,7 +1143,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               {
                 /* FAKEMATCH(temporary): the colour copied into a u16 before its
                  * store. */
-                u16 v = b << 10 | g << 5 | r;
+                u16 v = RGB(r, g, b);
 
                 *fade++ = v;
               }
@@ -1176,7 +1176,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       battle[0x867] = 1;
       BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
       colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
-      Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
+      Dma_Set(colors, (void *)(PLTT + 0x200), DMA_COPY_WORDS(128), REG_DMA3);
       colors += 0x200;
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
@@ -1186,7 +1186,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         work->sprites[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), 0x84000100,
+        Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
                 REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
@@ -1203,15 +1203,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         sparks->tiles[i] = obj->tile;
         sparks->frames[i] = i;
         Dma_Set(work->sheet + i * 128,
-                (void *)(0x06010000 + table[obj->resource].offset), 0x84000020,
-                REG_DMA3);
+                (void *)(0x06010000 + table[obj->resource].offset),
+                DMA_COPY_WORDS(32), REG_DMA3);
       }
       for (; i != 36; i++) {
         struct IrisSprite *obj =
             EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
 
         objects[i] = obj;
-        Dma_Set(objects[0], obj, 0x84000006, REG_DMA3);
+        Dma_Set(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);
         sparks->frames[i] = Random16() % 15;
         objects[i]->tile = sparks->tiles[sparks->frames[i]];
       }
@@ -1265,7 +1265,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             g++;
           if (b != 31)
             b++;
-          *pal++ = b << 10 | g << 5 | r;
+          *pal++ = RGB(r, g, b);
         }
       }
       if (frame <= 385) {
@@ -1465,7 +1465,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       BattleEffect_DrawShadedCircles(work->sheet + 0x3e8, 16, 0x10000);
       for (i = 0; i != 16; i++) {
         Dma_Set(work->sheet + 0x3e8 + (i << 3), work->sheet + 0x302 + (i << 4),
-                0x80000008, REG_DMA3);
+                DMA_COPY_HALFWORDS(8), REG_DMA3);
         for (j = 0; j != 8; j++)
           work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
       }
@@ -1583,7 +1583,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             g -= 2;
           if (b > 3)
             b -= 2;
-          *fade++ = b << 10 | g << 5 | r;
+          *fade++ = RGB(r, g, b);
         }
       }
     }
@@ -1870,13 +1870,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       BattleEffect_DrawShadedCircles(work->sheet + 0x1c10, 32, 0x10000);
       for (i = 0; i != 32; i++) {
         Dma_Set(work->sheet + (i << 4) + 0x1c10,
-                work->sheet + (i << 5) + 0x1810, 0x84000008, REG_DMA3);
+                work->sheet + (i << 5) + 0x1810, DMA_COPY_WORDS(8), REG_DMA3);
         for (j = 0; j != 16; j++)
           work->sheet[0x1820 + i * 32 + j] = work->sheet[0x181f + i * 32 - j];
       }
       for (i = 0; i != 32; i++)
         Dma_Set(work->sheet + 0x1bf0 - (i << 5),
-                work->sheet + 0x1c10 + (i << 5), 0x84000010, REG_DMA3);
+                work->sheet + 0x1c10 + (i << 5), DMA_COPY_WORDS(16), REG_DMA3);
       white = 64;
       for (i = 1; i != 8; i++) {
         u8 *src = work->sheet + 0x1810;
@@ -2023,7 +2023,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           {
             /* FAKEMATCH(temporary): the colour copied into a u16 before its
              * store. */
-            u16 v = b << 10 | g << 5 | r;
+            u16 v = RGB(r, g, b);
 
             *fade++ = v;
           }
@@ -2120,9 +2120,9 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
     by = ax + 4;
     // A local holding the multiply routine's address (one value throughout).
     mul = Iwram_MulQ16;
-    Dma_Set(&vertices[faces[i].corner[0]], ax, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[1]], bx, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[2]], cx, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[0]], ax, DMA_COPY_WORDS(3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[1]], bx, DMA_COPY_WORDS(3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[2]], cx, DMA_COPY_WORDS(3), REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
     facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
@@ -2434,9 +2434,9 @@ void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
     s32 *y0 = x0 + 1;
     s32 *y1 = x0 + 4;
 
-    Dma_Set(&vertices[faces[i].corner[0]], x0, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[1]], x1, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[2]], x2, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[0]], x0, DMA_COPY_WORDS(3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[1]], x1, DMA_COPY_WORDS(3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[2]], x2, DMA_COPY_WORDS(3), REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
     facing =

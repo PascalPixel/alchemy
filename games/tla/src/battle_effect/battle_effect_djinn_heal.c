@@ -379,12 +379,12 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
-        s32 b = (*to >> 10) & 31;
-        s32 g = (*to >> 5) & 31;
-        s32 r = *to & 31;
-        s32 blue = ((*from >> 10) & 31) - 2;
-        s32 green = ((*from >> 5) & 31) - 10;
-        s32 red = (*from & 31) - 6;
+        s32 b = RGB_BLUE(*to);
+        s32 g = RGB_GREEN(*to);
+        s32 r = RGB_RED(*to);
+        s32 blue = RGB_BLUE(*from) - 2;
+        s32 green = RGB_GREEN(*from) - 10;
+        s32 red = RGB_RED(*from) - 6;
 
         if (blue < 0) {
           blue = 0;
@@ -404,7 +404,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (r > red) {
           r--;
         }
-        *to = (b << 10) | (g << 5) | r;
+        *to = RGB(r, g, b);
       }
     }
     if ((u32)(frame - 64) <= 35) {

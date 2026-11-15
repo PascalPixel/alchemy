@@ -136,8 +136,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       work->shakeFrames = 16;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x20000, 0x80000,
-                                      0x80000, 120);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(8), px(8),
+                                      120);
       }
     }
     if (frame == 0) {
@@ -747,8 +747,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     if (mode == LEAPING_STRIKE_PLANETARY && frame == 50) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++)
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x100000,
-                                      0x10000, 250);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(16), px(1),
+                                      250);
     }
 
     // The sparks fall, bounce off the ground at 112 and shrink.

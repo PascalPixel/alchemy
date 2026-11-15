@@ -51,9 +51,9 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
             pixel = PIXEL_BUFFER + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
                                     ((y / 8) << 11));
             color = ((s16 *)BG_PLTT)[*pixel];
-            red = color & 31;
-            green = (color >> 5) & 31;
-            blue = (color >> 10) & 31;
+            red = RGB_RED(color);
+            green = RGB_GREEN(color);
+            blue = RGB_BLUE(color);
             if (red < green)
               red = green;
             if (red < blue)

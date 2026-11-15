@@ -174,8 +174,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       }
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       Sound_PlayFar(SE_CRASH);
-      BattleEffect_StartActorMotion(args->targets[member], 1, 0x20000, 0x80000,
-                                    0x20000, i * 5 + 110);
+      BattleEffect_StartActorMotion(args->targets[member], 1, px(2), px(8),
+                                    px(2), i * 5 + 110);
       BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, member, 16);
       work->shakeFrames = 4;
@@ -396,7 +396,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           blue = 31;
         }
         green = green > 31 ? 31 : green;
-        *color = (red << 10) | (red << 5) | blue;
+        *color = RGB(blue, red, red);
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;

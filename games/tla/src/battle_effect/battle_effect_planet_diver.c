@@ -422,8 +422,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
                 if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
-                  BattleEffect_StartActorMotion(args->targets[k], 1, 0x20000,
-                                                0x20000, 0x20000, i * 8 + 100);
+                  BattleEffect_StartActorMotion(args->targets[k], 1, px(2),
+                                                px(2), px(2), i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);
                 }

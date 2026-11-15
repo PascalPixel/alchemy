@@ -252,7 +252,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           g = 0;
         if (g > 31)
           g = 31;
-        *dst++ = b << 10 | g << 5 | g >> 1;
+        *dst++ = RGB(g >> 1, g, b);
       }
       for (; i != 160; i++) {
         *dst++ = 0;

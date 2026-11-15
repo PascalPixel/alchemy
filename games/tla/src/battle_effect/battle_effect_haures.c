@@ -186,7 +186,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           b = 31;
         }
       }
-      *dst++ = b << 10 | g << 5 | r;
+      *dst++ = RGB(r, g, b);
     }
   }
   {
@@ -881,8 +881,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 14) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -894,8 +894,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 34) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 50);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      50);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -904,8 +904,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 58) {
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 200);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      200);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;

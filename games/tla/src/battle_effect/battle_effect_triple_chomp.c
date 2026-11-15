@@ -104,7 +104,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x80000, 0,
+        BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8), 0,
                                       i * 20 + 120);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);

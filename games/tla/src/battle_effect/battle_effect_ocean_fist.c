@@ -72,7 +72,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       if (frame == 32) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0xf0000, 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(15), 100);
       }
       if (frame == 38) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

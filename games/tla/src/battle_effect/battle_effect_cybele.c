@@ -294,9 +294,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       u16 *color = (u16 *)BG_PLTT;
 
       for (i = 0; i != 64; i++) {
-        s32 red = *color & 31;
-        s32 green = (*color >> 5) & 31;
-        s32 blue = (*color >> 10) & 31;
+        s32 red = RGB_RED(*color);
+        s32 green = RGB_GREEN(*color);
+        s32 blue = RGB_BLUE(*color);
         s32 grey = (red + green + blue) / 3;
 
         if (red > grey)
@@ -311,7 +311,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           blue--;
         if (blue < grey)
           blue++;
-        *color++ = (blue << 10) | (green << 5) | red;
+        *color++ = RGB(red, green, blue);
       }
     }
 

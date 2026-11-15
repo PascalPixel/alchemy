@@ -116,12 +116,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
-        s32 red = *from & 31;
-        s32 green = (*from >> 5) & 31;
-        s32 blue = (*from >> 10) & 31;
-        s32 r = *to & 31;
-        s32 g = (*to >> 5) & 31;
-        s32 b = (*to >> 10) & 31;
+        s32 red = RGB_RED(*from);
+        s32 green = RGB_GREEN(*from);
+        s32 blue = RGB_BLUE(*from);
+        s32 r = RGB_RED(*to);
+        s32 g = RGB_GREEN(*to);
+        s32 b = RGB_BLUE(*to);
 
         if (r > red + 3) {
           r -= 4;
@@ -138,7 +138,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         } else {
           b = blue;
         }
-        *to = (b << 10) | (g << 5) | r;
+        *to = RGB(r, g, b);
       }
     }
     if (frame == 1) {

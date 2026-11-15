@@ -214,8 +214,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
               target[6] = work->particles[63].velocityX;
               target[7] = work->particles[63].velocityY;
-              BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000,
-                                            0x80000, 0x40000, 150);
+              BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8),
+                                            px(4), 150);
             }
           } else if (frame <= 19) {
             target[18] = mode;
@@ -371,8 +371,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         EffectPosition_ProjectBattler(args->targets[0], &apos);
         if (frame == 16) {
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
-          BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0x70000,
-                                        100);
+          BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(7), 100);
           work->shakeFrames = 8;
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
@@ -471,7 +470,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           if (frame == i * 4 + 16) {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x70000,
+            BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(7),
                                           100);
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, i, 8);

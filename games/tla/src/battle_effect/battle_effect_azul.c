@@ -13,9 +13,9 @@ struct StripQuad;
 /// coordinates.
 struct AzulFace {
   u8 corner[3];
-  u8 unk3;
+  u8 pad;
   u8 uv[3][2];
-  u8 unkA[2];
+  u8 endPad[2];
 };
 
 /// Clamps a sprite's projected y to the screen's band.

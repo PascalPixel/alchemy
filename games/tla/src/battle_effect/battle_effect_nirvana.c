@@ -562,7 +562,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  mistSheet = gData_02014000;
+  mistSheet = Ram_MapCellBuffer + 0x4000;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CF,
@@ -862,7 +862,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           // Set before the branch below and stored after it; the second value
           // stays apart from the 7 beside it.
           s32 spireShade;
-          const void *mesh = Data_02012000;
+          const void *mesh = Ram_MapCellBuffer + 0x2000;
 
           // The spire, then the mist inside it.
           texture.logWidth = 5;

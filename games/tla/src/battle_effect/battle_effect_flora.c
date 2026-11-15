@@ -125,7 +125,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
       }
       i = 0;
-      phase = Data_0201401e;
+      phase = (u16 *)(Ram_MapCellBuffer + 0x401e);
       for (; i != 32; i++, phase++) {
         *phase = (Random16() % 15) << 8;
         ((struct Sprite *)work->sprites[12 + i])->image.tile =
@@ -213,10 +213,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 108) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
+      // The four petals (gFlora_PetalPictures), each a shaded circle half as
+      // wide as it is tall, packed one after another.
       BattleEffect_DrawShadedCircles(source, 8, Q16_ONE);
-      BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
-      BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
-      BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8, 16,
+                                     Q16_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(
+          Ram_MapCellBuffer + 8 / 2 * 8 + 16 / 2 * 16, 32, Q16_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8 +
+                                         16 / 2 * 16 + 32 / 2 * 32,
+                                     48, Q16_ONE * 3 / 4);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;

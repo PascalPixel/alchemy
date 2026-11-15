@@ -121,10 +121,6 @@
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the
 // effects draw with.
 
-#define Texture Texture__summon_effects
-
 #include "battle_effect_megiddo.c"
 #include "battle_effect_odyssey.c"
 #include "battle_effect_moloch.c"
-
-#undef Texture

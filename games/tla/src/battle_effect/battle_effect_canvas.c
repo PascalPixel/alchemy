@@ -792,7 +792,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
                              work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             (Ram_MapCellBuffer + 0x2000), 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -983,7 +984,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->texture = &texture;
       model->vertices = corners;
       texture.logWidth = 6;
-      texture.pixels = Data_02012000;
+      texture.pixels = (Ram_MapCellBuffer + 0x2000);
       model->kind = MODEL_SHADED_ADDITIVE;
       texture.logHeight = 6;
       model->mesh = gBattleEffect_RingMesh;

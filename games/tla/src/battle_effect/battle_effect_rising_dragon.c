@@ -22,7 +22,7 @@ struct StripVertex {
   s8 x;
   s8 y;
   s8 z;
-  s8 unk3;
+  s8 pad;
 };
 
 /// Where ClawSlashSheet is decoded in the effect's pictures.

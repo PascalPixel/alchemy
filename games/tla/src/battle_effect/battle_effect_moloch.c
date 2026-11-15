@@ -2979,16 +2979,6 @@ struct PoolEntry *Render_AllocateModelList(s32 count) {
   return entries;
 }
 
-/* VIEW(summon_effects): tag struct Texture as struct Texture__summon_effects;
- * battle_effect/battle_effect.h has another definition; not tried: struct
- * Texture__summon_effects was not found. */
-struct Texture {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
-  u32 pixels;
-};
-
 /// Copies a texture's pixels into a heap block when IWRAM has room for them;
 /// returns 1 with copy set up, 0 when there is no room.
 s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
@@ -2999,12 +2989,12 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   if (Heap_GetRemainingIwram() < size + 8)
     return 0;
   *(u16 *)copy = *(u16 *)source;
-  copy->pixels = (u32)Heap_Alloc(size + 8);
-  pixels = source->pixels;
+  copy->pixels = Heap_Alloc(size + 8);
+  pixels = (u32)source->pixels;
   misalign = pixels & 3;
-  Iwram_CopyWordsEntry((void *)copy->pixels, (void *)(pixels - misalign),
+  Iwram_CopyWordsEntry(copy->pixels, (void *)(pixels - misalign),
                        (size + misalign + 3) & -4);
-  copy->pixels += misalign;
+  copy->pixels = (u8 *)copy->pixels + misalign;
   return 1;
 }
 

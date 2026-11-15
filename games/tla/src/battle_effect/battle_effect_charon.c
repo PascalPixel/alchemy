@@ -1665,9 +1665,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 /// pair for each corner.
 struct StripTriangle {
   u8 vertex[3];
-  u8 unk03;
+  u8 pad;
   u8 uv[3][2];
-  u8 unk0a[2];
+  u8 endPad[2];
 };
 
 struct StripQuad {

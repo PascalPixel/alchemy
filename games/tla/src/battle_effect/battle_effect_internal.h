@@ -1693,17 +1693,12 @@ extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
 // geode.c
 
 /// nirvana.c
-extern u8 Data_02012000[];
 extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
-extern u8 Data_02010020[];
-extern u8 Data_020100a0[];
-extern u8 Data_020102a0[];
-extern u16 Data_0201401e[];
 extern u16 gFlora_PetalTiles[];
 extern u16 gFlora_SpritePalettes[];
 

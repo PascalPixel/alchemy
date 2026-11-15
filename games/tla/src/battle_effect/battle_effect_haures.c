@@ -162,6 +162,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     gHaures_WingStrip[i * 8 + 5] = i * 2 + 3;
     gHaures_WingStrip[i * 8 + 6] = i * 2 + 2;
   }
+  // The strip ends with a face of no corners, cleared through the end's own
+  // name.
   Data_02010be0[0] = 0;
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;

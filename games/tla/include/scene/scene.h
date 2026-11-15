@@ -176,18 +176,6 @@ struct MapBits {
   u8 mode : 2;
 };
 
-struct CurrentUnit {
-  u8 unk00[0x14];
-  struct Actor *object;
-  u8 unk18[4];
-  s16 unk1c;
-};
-
-struct EventTransition {
-  u8 unk000[0x1ac];
-  s32 type;
-};
-
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
 struct ActorSolid {
   u8 unk00[0x5a];
@@ -275,47 +263,6 @@ struct TalkActor {
 struct ContigoEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
-};
-
-struct DailaMapWork {
-  u8 unk000[0x17];
-  u8 low17 : 2;
-  u8 mode17 : 2;
-  u8 high17 : 4;
-};
-
-struct CellRecord {
-  u16 present;
-  u16 x;
-  u16 y;
-  u16 unk06[3];
-};
-
-struct EffectWork7c4 {
-  u8 unk000[0x7c4];
-  s16 active;
-  s16 timer;
-};
-
-/// The effect fields of an Actor, as field_effect.h names them.
-struct EffectView {
-  u8 unk00[0x30];
-  s32 scaleRateX;
-  s32 scaleRateY;
-  u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  struct FieldSprite *sprite;
-  u8 unk54[0x10];
-  u16 spin;
-  u8 unk66[6];
-  void (*update)(struct Actor *object);
-};
-
-struct MapCells {
-  u8 unk000[0x138];
-  u8 *cells;
 };
 
 /* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
@@ -604,27 +551,9 @@ struct MadraPlacement {
   u16 y;
 };
 
-/// A map edit and where it applies (MapGrid_PlayMapEdit forwards
-/// to MapGrid_PlayMapEdit).
-struct CellPictureCopyEntry {
-  const s16 *steps;
-  u16 unk04;
-  u16 unk06;
-};
-
-struct EventWork154 {
-  u8 unk000[0x154];
-  s16 returnEntrance;
-};
-
 struct AnimationRecord18 {
   u8 unk00[0x12];
   u16 frame;
-};
-
-struct EventObjects {
-  u8 unk00[20];
-  struct Actor *objects[64];
 };
 
 struct StagedActor {
@@ -861,13 +790,6 @@ struct SceneEffectParams {
 };
 
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
-
-struct SparkRecord {
-  u8 unk00[100];
-  u16 delay;
-  u8 unk66[6];
-  s32 update;
-};
 
 struct GlowState {
   s32 x; ///< 16.16 pixels

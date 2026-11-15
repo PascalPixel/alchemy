@@ -1,5 +1,5 @@
 /// Raises the cell under the held actor.
-void HeldActor_RaiseCell(void) {
+void HeldActor_RaiseCell() {
   struct Actor *held = gFieldWork->movedBlock;
   u8 *layer;
   u8 *cells;

@@ -20,7 +20,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void DehkanPlateau_SetActorsHidden(s32 show);
 
 void Actor_DropAndWait(struct Actor *object);
-void DehkanPlateau_SetRoom3SecondPillarInPlace(void);
+void DehkanPlateau_SetTightropesSecondPillarInPlace(void);
 
 void Import_ActorRelease(struct Actor *object);
 
@@ -40,7 +40,7 @@ void Leader_SetCellShapeAt(s32 a, s32 b);
 
 extern u16 gDehkanPlateau_FullMetalVestChestHolePictures[];
 extern u16 gDehkanPlateau_ThemisAxeChestHolePictures[];
-extern u16 gDehkanPlateau_Room3HolePictures[];
+extern u16 gDehkanPlateau_TightropesHolePictures[];
 extern u16 gDehkanPlateau_PoundCubeHolePictures[];
 
 void DehkanPlateau_JoltCamera(void);
@@ -50,7 +50,7 @@ void DehkanPlateau_FightCannon(void);
 
 void DehkanPlateau_StepOnFullMetalVestChestPillars(void);
 void DehkanPlateau_StepOnThemisAxeChestPillars(void);
-void DehkanPlateau_StepOnRoom3Pillars(void);
+void DehkanPlateau_StepOnTightropesPillars(void);
 void DehkanPlateau_StepOnCannonPillar(void);
 void DehkanPlateau_HideActors(void);
 
@@ -61,15 +61,15 @@ void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void);
 void DehkanPlateau_LiftThemisAxeChestPillar(void);
 
 void DehkanPlateau_PlaceThemisAxeChestPillar(void);
-void DehkanPlateau_LiftRoom3Pillar(void);
+void DehkanPlateau_LiftTightropesPillar(void);
 
-void DehkanPlateau_PushRoom3SecondPillar(void);
+void DehkanPlateau_PushTightropesSecondPillar(void);
 
 void DehkanPlateau_StepOffCrack(void);
 
 void DehkanPlateau_StepOnCrack(void);
 void DehkanPlateau_PushRaisedPillar(void);
-void DehkanPlateau_LiftRoom3RaisedPillar(void);
+void DehkanPlateau_LiftTightropesRaisedPillar(void);
 void DehkanPlateau_FinishMovingRaisedPillar(void);
 void DehkanPlateau_CannonFleesOverCracks(void);
 void DehkanPlateau_CannonPoundsPillar(void);
@@ -108,8 +108,8 @@ void DehkanPlateau_InitializeFullMetalVestChest(void);
 
 void DehkanPlateau_InitializeThemisAxeChest(void);
 
-void DehkanPlateau_InitializeRoom3(void);
-void DehkanPlateau_InitializeRoom4(void);
+void DehkanPlateau_InitializeTightropes(void);
+void DehkanPlateau_InitializeMintChest(void);
 void DehkanPlateau_InitializePoundCube(void);
 void DehkanPlateau_InitializeCannon(void);
 
@@ -118,13 +118,13 @@ void CrumblingPillars_Place(u16 *list);
 void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void);
 void DehkanPlateau_HideThemisAxeChestActors(void);
 
-void DehkanPlateau_SetRoom3StandingPillarCells(void);
-void DehkanPlateau_RestoreRoom3Cracks(void);
-void DehkanPlateau_HideRoom3Actors(void);
+void DehkanPlateau_SetTightropesStandingPillarCells(void);
+void DehkanPlateau_RestoreTightropesCracks(void);
+void DehkanPlateau_HideTightropesActors(void);
 
 void DehkanPlateau_InitializeRopes(void);
 
-void DehkanPlateau_HideRoom4Actors(void);
+void DehkanPlateau_HideMintChestActors(void);
 
 void DehkanPlateau_LandFromFall(void);
 

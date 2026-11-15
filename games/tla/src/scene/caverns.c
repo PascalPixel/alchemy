@@ -26,21 +26,6 @@
 #define FLAG_ANGARA_BLOCKS_STACKED FLAG_SCENE_TEMP_12
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-struct CavernsMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct CavernsMapWork {
-  u8 unk000[0x108];
-  struct CavernsMapLayer layers[3];
-};
-
 extern u8 gMapGridCellBuffer[];
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
@@ -87,6 +72,10 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "macros.h"
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
+#include "field/field_work.h"
+#include "field/map_grid.h"
+#include "field/field_psynergy_work.h"
+#include "ability_ids.h"
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
@@ -137,22 +126,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
 
   if (map == NULL)
     return 0;
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
+    cell = (struct MapCell *)gMapGridCellBuffer;
+  cell += x + (y << 7);
+  return (cell->collisionCode << 8) | cell->attributeB;
 }
 
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
   s32 old;
 
   if (map == NULL)
@@ -160,11 +149,11 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
+    cell = (struct MapCell *)gMapGridCellBuffer;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
   return old;
 }
 
@@ -220,8 +209,9 @@ static __inline__ void SetHeight(s32 x, s32 z, s32 height) {
   MapGrid_SetCellHeight(x, z, 2, height);
 }
 
-static __inline__ s32 Half(u8 *base, s32 offset) {
-  return HALF_AT(base, offset);
+/// The whole pixels of an actor's z coordinate.
+static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
+  return actor->z.part[0].pixel;
 }
 
 #define SET_CELL_HEIGHT(x, z)                                                  \
@@ -231,29 +221,30 @@ static __inline__ s32 Half(u8 *base, s32 offset) {
 /// Raises (offset 1) or lowers (-1) by a step the cells about the moving
 /// block's path, by where the block stands.
 void Caverns_ShiftAngaraCellHeights(s32 offset) {
-  u8 *work = (u8 *)gFieldWork->movedBlock;
+  struct Actor *block = gFieldWork->movedBlock;
   s32 height;
 
   offset <<= 3;
-  if (HALF_AT(work, 14) > 31 || Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
-    SET_CELL_HEIGHT(142 << 18, 134 << 18);
-    SET_CELL_HEIGHT(146 << 18, 138 << 18);
+  if (block->y.part[0].pixel > 31 || Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
+    SET_CELL_HEIGHT(px(568), px(536));
+    SET_CELL_HEIGHT(px(584), px(552));
     if (offset == 8)
       Event_SetFlag(FLAG_ANGARA_CELLS_RAISED);
     else
       Event_ClearFlag(FLAG_ANGARA_CELLS_RAISED);
-  } else if (Half(work, 18) == 536 || Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
-    SET_CELL_HEIGHT(134 << 18, 138 << 18);
-    SET_CELL_HEIGHT(138 << 18, 138 << 18);
-    SET_CELL_HEIGHT(142 << 18, 138 << 18);
+  } else if (Actor_GetPixelZ(block) == 536 ||
+             Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
+    SET_CELL_HEIGHT(px(536), px(552));
+    SET_CELL_HEIGHT(px(552), px(552));
+    SET_CELL_HEIGHT(px(568), px(552));
     if (offset == 6)
       Event_SetFlag(FLAG_ANGARA_CELLS_RAISED);
     else
       Event_ClearFlag(FLAG_ANGARA_CELLS_RAISED);
   } else {
-    SET_CELL_HEIGHT(134 << 18, 134 << 18);
-    SET_CELL_HEIGHT(138 << 18, 134 << 18);
-    SET_CELL_HEIGHT(142 << 18, 134 << 18);
+    SET_CELL_HEIGHT(px(536), px(536));
+    SET_CELL_HEIGHT(px(552), px(536));
+    SET_CELL_HEIGHT(px(568), px(536));
   }
 }
 
@@ -261,19 +252,18 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
 /// one Psynergy holds) and frees its cell.
 void Caverns_StartMovingAngaraBlock(void) {
   s32 position[3];
-  u8 *work = Ram_HeapSlots->fieldWork;
-  struct CurrentUnit *current =
-      (struct CurrentUnit *)Ram_HeapSlots->fieldEffectWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldEffectWork *current = Ram_HeapSlots->fieldEffectWork;
   const u16 *ids = (const u16 *)gCaverns_AngaraBlocks;
   struct Actor *object = NULL;
   struct Actor *leader;
   s32 height;
   s32 angle;
 
-  WORD_AT(work, 0xcbc) = 0;
-  if (current != NULL && HALF_AT(work, 358) != 0) {
-    object = (struct Actor *)(WORD_AT(work, 0xcbc) = (s32)current->object);
-    if (current->unk1c != 147)
+  work->movedBlock = NULL;
+  if (current != NULL && work->psynergy != 0) {
+    object = work->movedBlock = current->child;
+    if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(1);
   } else {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -297,7 +287,7 @@ void Caverns_StartMovingAngaraBlock(void) {
   search_done:
     if (object == NULL)
       return;
-    WORD_AT(work, 0xcbc) = (s32)object;
+    work->movedBlock = object;
     Caverns_ShiftAngaraCellHeights(1);
   }
   height =
@@ -338,13 +328,6 @@ void Caverns_LayerLeaderByStack(struct Actor *object) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -356,8 +339,8 @@ void Actor_Release(struct Actor *object);
 void Caverns_FinishMovingAngaraBlock(void) {
   s32 velocity[3];
   struct EffectOptions options;
-  u8 *work;
-  u8 *current;
+  struct FieldWork *work;
+  struct FieldEffectWork *current;
   struct Actor *object;
   struct Actor *other;
   s32 kind;
@@ -371,9 +354,9 @@ void Caverns_FinishMovingAngaraBlock(void) {
 
   work = Ram_HeapSlots->fieldWork;
   current = Ram_HeapSlots->fieldEffectWork;
-  object = FIELD_AT(work, struct Actor *, 3260);
-  if (current != NULL && FIELD_AT(work, s16, 358) != 0) {
-    if (FIELD_AT(current, s16, 28) != 147)
+  object = work->movedBlock;
+  if (current != NULL && work->psynergy != 0) {
+    if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(-1);
   } else {
     Caverns_ShiftAngaraCellHeights(-1);
@@ -568,10 +551,10 @@ void Caverns_JumpEastAcrossGap(void) {
 void Caverns_OpenOseniaPassage(void);
 
 void Caverns_PrepareOsenia(void) {
-  s32 result0;
+  s32 scooped;
 
-  result0 = Event_GetFlag(FLAG_OSENIA_CAVERN_SCOOPED);
-  if (result0 != 0) {
+  scooped = Event_GetFlag(FLAG_OSENIA_CAVERN_SCOOPED);
+  if (scooped != 0) {
     Caverns_OpenOseniaPassage();
   }
   return;
@@ -587,7 +570,7 @@ void Caverns_OpenOseniaPassage(void) {
 /// Osenia Cavern: the leader steps down into a passage and leaves for its other
 /// end, by the trigger stepped on.
 void Caverns_WalkIntoPassage(void) {
-  s32 value = HALF_AT(Ram_HeapSlots->fieldWork, 340);
+  s32 value = ((struct FieldWork *)Ram_HeapSlots->fieldWork)->stepTrigger;
 
   if (value == 2)
     Actor_SetPosition(8, 144, 224);
@@ -631,8 +614,8 @@ void Caverns_WalkSouthIntoPassage(void) {
   return;
 }
 
-void Caverns_ScoopOseniaPassage(s32 arg0) {
-  if (arg0 == 1) {
+void Caverns_ScoopOseniaPassage(s32 mode) {
+  if (mode == 1) {
     Caverns_OpenOseniaPassage();
     GameFlag_Set(FLAG_OSENIA_CAVERN_SCOOPED);
   }
@@ -640,10 +623,10 @@ void Caverns_ScoopOseniaPassage(s32 arg0) {
 }
 
 void Caverns_PrepareAtteka(void) {
-  s32 result0;
+  s32 parched;
 
-  result0 = Event_GetFlag(FLAG_ATTEKA_CAVERN_PARCHED);
-  if (result0 != 0) {
+  parched = Event_GetFlag(FLAG_ATTEKA_CAVERN_PARCHED);
+  if (parched != 0) {
     MapGrid_CopyCellAttributes(31, 43, 9, 12, 48, 47);
     MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
     MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
@@ -669,12 +652,23 @@ void Caverns_PrepareAngara(void) {
   }
 }
 
+/// Angara Cavern's actors, numbering gCaverns_AngaraPlacements.
+enum CavernsAngaraActorId {
+  /// The two grey blocks carried and stacked (sprite SPRITE_SPIRAL_PILLAR).
+  ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_BLOCK,
+  /// The two stones on either side of Haurus's tablet, which the searches for
+  /// a block skip.
+  ACTOR_WEST_OF_TABLET,
+  ACTOR_EAST_OF_TABLET
+};
+
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
-  Actor_GetById(8)->priorityFlags |= 0x20;
-  Actor_GetById(9)->priorityFlags |= 0x20;
-  Actor_GetById(10)->collisionFlags |= 8;
-  Actor_GetById(11)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_WEST_OF_TABLET)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_EAST_OF_TABLET)->collisionFlags |= 8;
 }
 
 /// Walking into Angara Cavern's door opens it and leaves by exit 8.
@@ -722,7 +716,7 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 s16 gCaverns_AngaraBlocks[] = {
-    8, 9, -1, 0,
+    ACTOR_FIRST_BLOCK, ACTOR_SECOND_BLOCK, -1, 0,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

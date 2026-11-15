@@ -89,8 +89,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  ((volatile u16 *)BG_PLTT)[0] = 0;
-  ((volatile u16 *)BG_PLTT)[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   blank = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

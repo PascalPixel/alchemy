@@ -1138,11 +1138,6 @@ struct MeshVertex;
 
 #define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
 
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
-#define COLOR_RED(c) ((c) & 31)
-#define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
-#define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
-
 /// Fills the scanline gradient behind the serpent: dark rows above and below,
 /// a ramp shaded by level in between.
 #define FILL_GRADIENT(table, i, level, c)                                      \
@@ -1447,12 +1442,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       for (i = 0; i != 256; i++, e++, dst++) {
         s32 c = *dst;
         s32 s = *e;
-        s32 cb = COLOR_BLUE(c);
-        s32 cg = COLOR_GREEN(c);
-        s32 cr = COLOR_RED(c);
-        s32 sb = COLOR_BLUE(s) + k;
-        s32 sg = COLOR_GREEN(s) + tg;
-        s32 t = COLOR_RED(s);
+        s32 cb = RGB_BLUE((u16)c);
+        s32 cg = RGB_GREEN((u16)c);
+        s32 cr = RGB_RED(c);
+        s32 sb = RGB_BLUE((u16)s) + k;
+        s32 sg = RGB_GREEN((u16)s) + tg;
+        s32 t = RGB_RED(s);
         s32 sr;
 
         /* FAKEMATCH(barrier): t held apart from s through an empty asm. */
@@ -1514,8 +1509,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         t = 31;
         t &= s;
         r = t + d;
-        g = COLOR_GREEN(s) + half;
-        b = COLOR_BLUE(s) + d / 4;
+        g = RGB_GREEN((u16)s) + half;
+        b = RGB_BLUE((u16)s) + d / 4;
 
         if (r > RGB_LEVEL_MAX) {
           r = RGB_LEVEL_MAX;
@@ -2147,10 +2142,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 #undef BUBBLE_COUNT
 #undef BUBBLE_FRAMES
 #undef EFFECT_STEPS
-#undef OBJ_TILES
-#undef COLOR_RED
-#undef COLOR_GREEN
-#undef COLOR_BLUE
 #undef FILL_GRADIENT
 #undef BLIT_CELL
 #undef DRAW_SPARK

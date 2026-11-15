@@ -477,7 +477,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   return found;
 }
 #undef Actor_SetAnimationSpeedFar
-#undef PARTICLES
 #undef CLIP
 #undef BLITTER
 #undef SPARKS

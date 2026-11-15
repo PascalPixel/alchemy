@@ -18,7 +18,6 @@ enum GatheringLightsMode {
 };
 
 /// The skulls live in the map buffer, 64 for each target.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 #define SKULLS 8 ///< per target
 #define SKULL_SIZE 24

@@ -8,7 +8,6 @@
 #define KIRIN_BLOB_BYTES (48 * 32)
 
 /// The hit bursts, 32 for each target, in the map cell buffer.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 extern struct SpriteScale gKirin_SweepScale;
 extern struct SpriteScale gKirin_ChargeScale;

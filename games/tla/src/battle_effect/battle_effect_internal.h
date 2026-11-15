@@ -217,6 +217,13 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
+/// The particles an effect keeps in the map cell buffer, from its start.
+#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
+
+/// The VRAM address of a sprite's tiles, from its VRAM cache entry.
+#define OBJ_TILES(sprite)                                                      \
+  (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(sprite))->slot].offset)
+
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 

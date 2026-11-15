@@ -546,5 +546,4 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
 /// Rocks, spray and puffs live in the map cell buffer; the spray's trails
 /// follow the first 128 particles.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 0xe00))

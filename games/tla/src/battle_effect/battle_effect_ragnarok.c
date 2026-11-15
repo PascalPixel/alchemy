@@ -636,7 +636,6 @@ static inline void BattleEffect_FillWords(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only

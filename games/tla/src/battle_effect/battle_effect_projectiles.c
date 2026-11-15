@@ -471,7 +471,6 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 
 /// The particle buffer at the map cell buffer: flashes from 0, sparks from
 /// 100, smoke from 512, the falling-streak particles from 960.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define PTCL_SPARKS 100
 #define PTCL_SMOKE 512
 #define PTCL_STREAKS 960

@@ -26,7 +26,7 @@ struct SpawnList {
 #define SPRITE_BUFFER gMapGridCellBuffer
 #define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 0x4000))
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
-#define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
+#define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
 
@@ -253,8 +253,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u32 *a;
 
         for (i = 0, hidden = (240 << 16) + 160, mask.value = 0xf000,
-            timer = &PARTICLES[0].variant, b = (u32 *)(REVEAL_BUFFER + 4),
-            a = OAM_BUFFER;
+            timer = &CHARON_PARTICLES[0].variant,
+            b = (u32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
              i != 64; i++) {
           s32 t;
 
@@ -274,11 +274,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       swarmScale.x = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
-          PARTICLES[i].x = px(Random16() % 160 + 40);
-          PARTICLES[i].y = px((Random16() & 63) + 32);
-          PARTICLES[i].variant = Random16() & 255;
-          PARTICLES[i].velocityX = ((Random16() & 255) - 127) << 9;
-          PARTICLES[i].velocityY = (-(Random16() & 255) - 128) << 8;
+          CHARON_PARTICLES[i].x = px(Random16() % 160 + 40);
+          CHARON_PARTICLES[i].y = px((Random16() & 63) + 32);
+          CHARON_PARTICLES[i].variant = Random16() & 255;
+          CHARON_PARTICLES[i].velocityX = ((Random16() & 255) - 127) << 9;
+          CHARON_PARTICLES[i].velocityY = (-(Random16() & 255) - 128) << 8;
         }
       }
       for (i = 0; i != 48; i++) {
@@ -288,21 +288,22 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         swarmPlace[3] = 0;
         swarmPlace[1] = 0xff0000;
-        swarmPlace[0] = PARTICLES[64 + i].x;
-        swarmPlace[2] = PARTICLES[64 + i].y + px(32);
+        swarmPlace[0] = CHARON_PARTICLES[64 + i].x;
+        swarmPlace[2] = CHARON_PARTICLES[64 + i].y + px(32);
         Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, &swarmScale.x,
                                           0);
-        SPRITES[i]->image.tile = tiles[PARTICLES[64 + i].variant / 16];
+        SPRITES[i]->image.tile = tiles[CHARON_PARTICLES[64 + i].variant / 16];
       }
       for (i = 0; i != 128; i++) {
-        if (PARTICLES[i].y > -px(16) && PARTICLES[i].x > -px(16) &&
-            PARTICLES[i].x < px(256)) {
-          PARTICLES[i].x += PARTICLES[i].velocityX;
-          PARTICLES[i].y += PARTICLES[i].velocityY;
+        if (CHARON_PARTICLES[i].y > -px(16) &&
+            CHARON_PARTICLES[i].x > -px(16) &&
+            CHARON_PARTICLES[i].x < px(256)) {
+          CHARON_PARTICLES[i].x += CHARON_PARTICLES[i].velocityX;
+          CHARON_PARTICLES[i].y += CHARON_PARTICLES[i].velocityY;
         }
-        PARTICLES[i].variant += i / 16 + 2;
-        if (PARTICLES[i].variant > 255) {
-          PARTICLES[i].variant -= 256;
+        CHARON_PARTICLES[i].variant += i / 16 + 2;
+        if (CHARON_PARTICLES[i].variant > 255) {
+          CHARON_PARTICLES[i].variant -= 256;
         }
       }
     }
@@ -1240,7 +1241,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     DROPS[i].variant = -i;
   }
   for (i = 0; i != 128; i++) {
-    PARTICLES[i].variant = -1;
+    CHARON_PARTICLES[i].variant = -1;
   }
   for (i = 0; i != arg->targetCount; i++) {
     struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
@@ -1295,21 +1296,21 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 speed = (Random16() & 511) + 32;
           s32 angle = Random16();
 
-          PARTICLES[96 + i].x = 240 << 14;
-          PARTICLES[96 + i].y = 240 << 14;
-          PARTICLES[96 + i].velocityX = (Trig_Sin(angle) * speed) >> 5;
-          PARTICLES[96 + i].velocityY = (Trig_Cos(angle) * speed) >> 5;
-          PARTICLES[96 + i].variant = 0;
+          CHARON_PARTICLES[96 + i].x = 240 << 14;
+          CHARON_PARTICLES[96 + i].y = 240 << 14;
+          CHARON_PARTICLES[96 + i].velocityX = (Trig_Sin(angle) * speed) >> 5;
+          CHARON_PARTICLES[96 + i].velocityY = (Trig_Cos(angle) * speed) >> 5;
+          CHARON_PARTICLES[96 + i].variant = 0;
         }
         for (i = 0; i != 128; i++) {
           s32 speed = (Random16() & 255) + 32;
           s32 angle = Random16();
 
-          PARTICLES[128 + i].x = 240 << 14;
-          PARTICLES[128 + i].y = 240 << 14;
-          PARTICLES[128 + i].velocityX = (Trig_Sin(angle) * speed) >> 6;
-          PARTICLES[128 + i].velocityY = (Trig_Cos(angle) * speed) >> 6;
-          PARTICLES[128 + i].variant = (Random16() & 15) + 16;
+          CHARON_PARTICLES[128 + i].x = 240 << 14;
+          CHARON_PARTICLES[128 + i].y = 240 << 14;
+          CHARON_PARTICLES[128 + i].velocityX = (Trig_Sin(angle) * speed) >> 6;
+          CHARON_PARTICLES[128 + i].velocityY = (Trig_Cos(angle) * speed) >> 6;
+          CHARON_PARTICLES[128 + i].variant = (Random16() & 15) + 16;
         }
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
@@ -1340,7 +1341,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
       for (i = 0; i != 16; i++) {
-        struct Particle *p = &PARTICLES[96 + i];
+        struct Particle *p = &CHARON_PARTICLES[96 + i];
 
         if (p->variant >= 0 && p->variant < 24) {
           s32 row = (p->variant / 4) * 2048;
@@ -1356,7 +1357,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         p->variant++;
       }
       for (i = 0; i != 128; i++) {
-        struct Particle *p = &PARTICLES[128 + i];
+        struct Particle *p = &CHARON_PARTICLES[128 + i];
 
         if (p->variant >= 0) {
           s32 size = (p->variant >> 3) + 2;
@@ -1465,7 +1466,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               for (j = 0; j != 16; j++) {
                 s32 angle = Random16() & 0x7fff;
                 s32 speed;
-                struct Particle *p = &PARTICLES[i * 16 + j];
+                struct Particle *p = &CHARON_PARTICLES[i * 16 + j];
 
                 speed = (Random16() & 255) + 256;
 
@@ -1558,7 +1559,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                             BLITTER_TRANSPARENT);
         routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
         for (i = 0; i != 96; i++) {
-          struct Particle *p = &PARTICLES[i];
+          struct Particle *p = &CHARON_PARTICLES[i];
 
           if (p->variant >= 0) {
             s32 size = (p->variant >> 3) + 2;
@@ -1667,7 +1668,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER
 #undef REVEAL_BUFFER
-#undef PARTICLES
 #undef OBJ_VRAM
 #undef BG_VRAM_A900
 #undef DROPS

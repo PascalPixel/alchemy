@@ -13,8 +13,6 @@
 /// The flashes, after the map cells.
 #define FLASHES ((struct Particle *)gData_02014000)
 
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
-
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define ECLIPSE_TORNADO_PICTURES 0x2000
 
@@ -1720,5 +1718,4 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 }
 
 #undef FLASHES
-#undef OBJ_TILES
 #undef CLIP

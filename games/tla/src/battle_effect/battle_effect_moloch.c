@@ -574,7 +574,6 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 #define SCENE (&IRIS_SCENE)
 #define STREAK(i, j) (((struct IrisPoint *)IRIS_STREAKS)[(i) * 10 + (j)])
 /// The 128 background colours the scene fades (entries 96 to 223).
@@ -3016,7 +3015,6 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef BLITTER
 #undef HALF
 #undef IRIS_STREAKS
-#undef OBJ_TILES
 #undef SCENE
 #undef STREAK
 #undef FADE_PLTT

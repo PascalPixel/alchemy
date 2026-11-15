@@ -13,7 +13,6 @@
 #define RAMSES_SPARKS 512         ///< sparks of the strike
 
 /// The sparks of the strike, in the map cell buffer.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 extern struct SpriteScale gRamses_UnitScale; ///< one to one
 
@@ -275,4 +274,3 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 #undef RAMSES_SPARKS
 #undef SPRITE_RAMSES
 #undef SPRITE_BATTLE_ROCKS
-#undef PARTICLES

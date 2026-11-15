@@ -24,7 +24,6 @@ struct FloraWork {
 };
 
 #define w ((struct FloraWork *)petals)
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -1159,7 +1158,6 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef w
-#undef OBJ_TILES
 #undef DAGGER_FRAMES
 #undef DAGGER_COUNT
 #undef DAGGER_FALL_FRAME

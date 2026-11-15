@@ -736,7 +736,6 @@ void BattleEffect_EndElementStreaks(void) {
 }
 
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -1734,5 +1733,4 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 #undef PLOT
 #undef gSparkles
 #undef ALT_BLITTER
-#undef OBJ_TILES
 #undef WAIT_TRANSFER

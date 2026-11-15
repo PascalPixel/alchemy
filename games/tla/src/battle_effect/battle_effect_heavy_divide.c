@@ -860,7 +860,6 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 }
 
 /// The map cell buffer holds 1,024 more particles while an effect runs.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 #define STREAKS 64
 
@@ -1045,7 +1044,6 @@ void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
 #undef WYRD_FRAMES
 #undef WYRD_DROPS
 #undef FLAMES
-#undef PARTICLES
 #undef STREAKS
 #undef SPLASH_OFFSET
 #undef SPLASH_SIZE

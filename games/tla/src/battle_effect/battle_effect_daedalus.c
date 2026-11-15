@@ -222,7 +222,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define Iwram_Clear Iwram_ClearWordsEntry
 
 #define DECODE_BUFFER Ram_MapCellBuffer
-#define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define DAEDALUS_FLASH_BURST_PICTURES 0x6c0
@@ -516,7 +516,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         break;
     }
     for (i = 0; i != 512; i++)
-      PARTICLES[i].variant = -1;
+      DAEDALUS_PARTICLES[i].variant = -1;
 
     frame = 0;
     if (!(gInput.held & KEY_B) && !(gInput.repeat & KEY_A)) {
@@ -633,7 +633,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         for (i = 0; i != 10; i++) {
           struct Particle *p;
 
-          p = &PARTICLES[502 + i];
+          p = &DAEDALUS_PARTICLES[502 + i];
           p->x = px(gDaedalus_DriftStarts[i][0]);
           p->y = px(gDaedalus_DriftStarts[i][1]);
           p->velocityX = gDaedalus_DriftSpeeds[i][0];
@@ -644,7 +644,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != 10; i++) {
         struct Particle *p;
 
-        p = &PARTICLES[502 + i];
+        p = &DAEDALUS_PARTICLES[502 + i];
         if (frame >= gDaedalus_DriftFrames[i]) {
           ((BlitFunc)blit[0])(
               dest,
@@ -726,7 +726,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           }
           if (p->velocityX > -px(8))
             p->velocityX -= px(1) / 2;
-          q = &PARTICLES[i * 32 + (p->variant & 31)];
+          q = &DAEDALUS_PARTICLES[i * 32 + (p->variant & 31)];
           q->variant = 0;
           q->x = p->x / 2;
           q->y = p->y - px(20);
@@ -822,7 +822,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != 16; i++) {
             struct Particle *q;
 
-            q = &PARTICLES[312 + i];
+            q = &DAEDALUS_PARTICLES[312 + i];
             q->x = px((Random16() & 15) + 56);
             q->y = px((Random16() & 31) + 64);
             q->velocityX = -((Random16() & 31) + 8) << 12;
@@ -830,15 +830,15 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->variant = 0;
           }
           for (i = 0; i != 32; i++)
-            PARTICLES[400 + i].variant = -1;
+            DAEDALUS_PARTICLES[400 + i].variant = -1;
           for (i = 0; i != 32; i++)
-            PARTICLES[432 + i].variant = -1;
+            DAEDALUS_PARTICLES[432 + i].variant = -1;
         }
         if (p->variant != 0) {
           if (p->variant > 9) {
             struct Particle *q;
 
-            q = &PARTICLES[400 + (p->variant & 31)];
+            q = &DAEDALUS_PARTICLES[400 + (p->variant & 31)];
             q->variant = 0;
             q->velocityX = -(Trig_Sin(work->sprites[39]->rotation) * 2);
             q->velocityY = Trig_Cos(work->sprites[39]->rotation) * 2;
@@ -851,7 +851,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               (p->variant & 3) == 0) {
             struct Particle *q;
 
-            q = &PARTICLES[432 + (p->variant & 31)];
+            q = &DAEDALUS_PARTICLES[432 + (p->variant & 31)];
             q->variant = 0;
             q->velocityX = ((Random16() & 31) + 16) << 12;
             q->velocityY = (-Random16() | ~15) << 14;
@@ -901,7 +901,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != 32; i++) {
             struct Particle *q;
 
-            q = &PARTICLES[400 + i];
+            q = &DAEDALUS_PARTICLES[400 + i];
             if ((u32)q->variant <= 5) {
               ((BlitFunc)blits[1])(dest, &work->frames[q->variant * 288],
                                    (Q_16_16_TO_INT(q->x)) - 2,
@@ -913,7 +913,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != 32; i++) {
             struct Particle *q;
 
-            q = &PARTICLES[432 + i];
+            q = &DAEDALUS_PARTICLES[432 + i];
             if ((u32)q->variant <= 23) {
               ((BlitFunc)blits[1])(
                   dest, &work->frames[(q->variant / 4 << 11) + 0x6c0],
@@ -1156,7 +1156,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         for (j = 0; j != 32; j++) {
           struct Particle *q;
 
-          q = &PARTICLES[i * 32 + j];
+          q = &DAEDALUS_PARTICLES[i * 32 + j];
           if ((u32)q->variant <= 5) {
             ((BlitFunc)blit[0])(dest, &work->frames[q->variant * 288],
                                 (Q_16_16_TO_INT(q->x)) - 2,
@@ -1253,7 +1253,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           work->sprites[i]->offsetY = 8;
         }
         for (i = 0; i != 512; i++)
-          PARTICLES[i].variant = -1;
+          DAEDALUS_PARTICLES[i].variant = -1;
       }
       particleScale = gDaedalus_ParticleScale;
       particlePlace.groundHeight = 0;
@@ -1275,7 +1275,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               s32 angle;
               struct Particle *q;
 
-              q = &PARTICLES[i * 8 + j];
+              q = &DAEDALUS_PARTICLES[i * 8 + j];
               speed = (Random16() & 31) + 32;
               angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
               q->x = p->x / 2;
@@ -1297,7 +1297,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
             {
               s32 m = (frame - gDaedalus_ParticleStarts[i]) % 16;
-              q = &PARTICLES[(i << 4) + m + 256];
+              q = &DAEDALUS_PARTICLES[(i << 4) + m + 256];
             }
             q->x = p->x / 2;
             q->y = p->y - px(16);
@@ -1315,7 +1315,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != 256; i++) {
         struct Particle *q;
 
-        q = &PARTICLES[256 + i];
+        q = &DAEDALUS_PARTICLES[256 + i];
         if ((u32)q->variant <= 7) {
           s32 v;
 
@@ -1330,7 +1330,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != 128; i++) {
         struct Particle *q;
 
-        q = &PARTICLES[i];
+        q = &DAEDALUS_PARTICLES[i];
         if ((u32)q->variant <= 17) {
           s32 v;
 
@@ -1617,6 +1617,5 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 #undef IWRAM_COPY_WORDS_LINKED
 #undef Iwram_Clear
 #undef DECODE_BUFFER
-#undef PARTICLES
 #undef DAEDALUS_FRAMES
 #undef DAEDALUS_SPARKS

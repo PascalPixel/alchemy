@@ -12,10 +12,6 @@ struct MeshVertex {
   s8 z;
 };
 
-/// The VRAM address of an effect sprite's tiles.
-#define OBJ_TILES(obj)                                                         \
-  (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(obj))->slot].offset)
-
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define CATASTROPHE_FLASH_BURST_PICTURES 0x1800
 
@@ -79,8 +75,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   VramBlock_Reset93Far();
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  *(volatile u16 *)BG_PLTT = 0;
-  *(volatile u16 *)(BG_PLTT + 1) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY;
@@ -1621,4 +1617,3 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
 }
 #undef BLITTER
-#undef OBJ_TILES

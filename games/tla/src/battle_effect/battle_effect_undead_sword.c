@@ -1275,8 +1275,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT
-#undef OBJ_TILES
-#undef PARTICLES
 #undef SPARK_LIFE
 #undef BLAST_SHEET_OFFSET
 #undef BURST_FRAMES

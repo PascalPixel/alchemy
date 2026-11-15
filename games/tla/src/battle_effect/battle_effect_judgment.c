@@ -70,8 +70,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   cells = Ram_MapCellBuffer;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  ((volatile u16 *)BG_PLTT)[0] = 0;
-  ((volatile u16 *)BG_PLTT)[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   work->transferMode = CANVAS_COPY;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

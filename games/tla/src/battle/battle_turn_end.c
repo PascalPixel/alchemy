@@ -367,7 +367,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
           BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, id);
           if (BattleUnit_IsListed(id)) {
             Actor_SelectAnimationFar(
-                (struct Actor *)BattleObject_Get(id)->object, 3);
+                (struct Actor *)BattleObject_Get(id)->object, POSE_CAST);
             Actor_SetAnimationSpeedFar(
                 (struct Actor *)BattleObject_Get(id)->object, 32);
           }
@@ -376,7 +376,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
           Unit_CalculateFar(id);
           if (BattleUnit_IsListed(id))
-            ElementGlow_Play(id, element, 3, 0);
+            ElementGlow_Play(id, element, GLOW_BURST, 0);
           BattlePlayback_WaitForReady();
         }
       } else {
@@ -878,9 +878,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = SE_HEAVY_IMPACT;
+        state->events.pendingSound = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = SE_IMPACT;
+        state->events.pendingSound = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {

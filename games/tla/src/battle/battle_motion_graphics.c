@@ -394,19 +394,19 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
 
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0x1088;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0x1088;
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN0V = WIN_RANGE(16, 136);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN1V = WIN_RANGE(16, 136);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-  REG_DISPCNT |= 0x6000;
+  REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 
   if (missed != 0) {
     wait(10);
@@ -454,7 +454,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (work.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & 0x4000)
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
         BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
@@ -467,7 +467,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (critical != 0) {
       view->flag = 0;
       BattleUnit_ListAllAndSubmit();
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(work.actors[0]);
   }
@@ -551,11 +551,11 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
         s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
-        ColorBuffer_Scale(palette, 0x050000c0, value, 128);
+        ColorBuffer_Scale(palette, (u32)&BG_PLTT_COLOR(6, 0), value, 128);
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += 0x444;
+      fade += Q16_ONE / 60;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);
@@ -823,7 +823,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
 removed:
   BattleEnemy_ReleaseNameLetter(id);
-  for (j = 0; j < 20; j++) {
+  for (j = 0; j < BATTLE_ACTION_CAPACITY; j++) {
     if (work->actions[j].unitId == id)
       work->actions[j].unitId = BATTLE_UNIT_LIST_END;
   }

@@ -109,6 +109,14 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255
 
+/// WindowSprite.kind: what a window sprite owns besides itself, which
+/// WindowSprite_Release frees.
+enum WindowSpriteKind {
+  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
+  WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
+};
+
 /// How a window sprite moves (WindowSprite.motion); 0 is a free one.
 enum {
   WINDOW_SPRITE_MOTION_PAGE_ARROW = 2 ///< the next-page arrow, bobbing
@@ -473,6 +481,9 @@ enum WindowBattleMode {
   /// In battle, while BattleMessage_Open decodes a battle message: the
   /// Japanese decoder then sets names off with spaces and style codes.
   WINDOW_BATTLE_MESSAGE = 2,
+  /// A flag with WINDOW_BATTLE: glyphs are drawn blended (semi-transparent),
+  /// while the Djinn tutorial's line shows over the command row.
+  WINDOW_GLYPHS_BLENDED = 4,
 };
 
 /// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots

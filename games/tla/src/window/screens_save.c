@@ -415,7 +415,7 @@ s32 Save_BuildFileSummary(void) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->reunited = GameFlag_Get(34) != 0;
+  summary->reunited = GameFlag_Get(FLAG_REUNITED) != 0;
   {
     s32 n;
     u32 frames;
@@ -447,10 +447,10 @@ s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else if (Save_WritePartMasked(file, gSaveBuffer) != 0) {
-    FieldMessage_Show((s32)&MsgSaveFailed, 1);
+    FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
     result = -3;
   }
   Save_ReleaseWork();
@@ -470,7 +470,7 @@ s32 Save_ProcessSelectedFile(void) {
   if (value != -1) {
     found = Save_InitializeWork();
     if (found != 0) {
-      FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+      FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
       result = -9;
     } else {
       u8 *dst;
@@ -487,7 +487,7 @@ s32 Save_ProcessSelectedFile(void) {
       found = Save_WritePartMasked(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);
       if (found != 0) {
-        FieldMessage_Show((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = -3;
       }
     }
@@ -588,7 +588,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 file;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -596,7 +596,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
     if (file == -1) {
       result = file;
     } else if (Save_ReadPart(file, gSaveBuffer) != 0) {
-      FieldMessage_Show((s32)&MsgLoadFailed, 1);
+      FieldMessage_Show((s32)&MsgLoadFailed, FIELD_MESSAGE_ZOOM);
       result = -2;
     } else {
       gPlayTimeFrames = SAVE_GAME_WORDS->playTime;
@@ -616,7 +616,7 @@ s32 Save_CopyFile(void) {
   s32 token;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -640,10 +640,10 @@ s32 Save_CopyFile(void) {
           value = Save_WritePartMasked(value, buffer);
           SaveProgress_Close((struct Window *)token);
           if (value != 0) {
-            FieldMessage_Show((s32)&MsgEraseFailed, 1);
+            FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
             result = -3;
           } else {
-            FieldMessage_Show((s32)&MsgFileCopied, 1);
+            FieldMessage_Show((s32)&MsgFileCopied, FIELD_MESSAGE_ZOOM);
           }
         }
       }

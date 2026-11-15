@@ -36,15 +36,15 @@ struct BattlePlaybackWork {
   s32 eventIndex; ///< the next queued event to play
   s32 timer;      ///< frames to wait
   struct AdvanceArrowSprite arrow; ///< the advance arrow
-  s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
-  s32 unitId;        ///< the unit of the hit or defeat being played
-  s16 pendingCue;    ///< hit sound, played on the next hit
-  s16 unk16a;        ///< while nonzero, a resumed phase keeps pendingCue
-  s32 flags;         ///< cleared when playback starts
+  s32 arrowResource;    ///< the arrow's resource entry; -1 until it is shown
+  s32 unitId;           ///< the unit of the hit or defeat being played
+  s16 pendingSound;     ///< hit sound (an SE_ id), played on the next hit
+  s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
+  s32 flags;            ///< cleared when playback starts
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingCue) == 0x168);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 0x168);
 
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };

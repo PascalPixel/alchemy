@@ -25,14 +25,14 @@ s32 Shop_ChooseMember(void) {
   listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = listWindow;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
@@ -60,7 +60,7 @@ s32 Shop_ChooseMember(void) {
           break;
       }
       shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-      shop->mode = 12;
+      shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
       redraw = 2;
     } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
@@ -128,7 +128,7 @@ s32 Shop_SelectSell(s32 unitId) {
   do {
     nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
     shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-    shop->mode = 12;
+    shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     redraw = 1;
     while (1) {
       if (redraw != 0) {
@@ -139,7 +139,7 @@ s32 Shop_SelectSell(s32 unitId) {
         itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
         MenuCursor_Place(shop->itemWindow, slot % SHOP_INVENTORY_COLUMNS * 16,
                          slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
-        shop->mode = 3;
+        shop->cursorFrames = 3;
         if (shop->action == SHOP_ACTION_SELL)
           Shop_DrawItemPrice(priceWindow, itemId,
                              Shop_SalePrice(unit->inventory[slot]),
@@ -299,7 +299,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
     shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-    shop->mode = SHOP_CURSOR_ENTER_FRAMES;
+    shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, selection, price);
     wait(1);

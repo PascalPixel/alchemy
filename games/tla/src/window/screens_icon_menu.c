@@ -9,6 +9,7 @@
 #include "window_internal.h"
 #include "flags.h"
 #include "sounds.h"
+#include "menu/djinn_menu.h"
 #include "system/affine.h"
 #include "field/flag_call.h"
 #include "gamepak/far_call/game.h"
@@ -190,7 +191,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, 0x480);
+  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_VBLANK);
 
   for (;;) {
     commandsOut = commands;
@@ -606,7 +607,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                            Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
             void *hint =
-                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() + 14, 15, 8);
+                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                        DJINN_TUTORIAL_LINE_UNLEASH_HINT,
+                                    15, 8);
 
             while (Message_AllTyped() == 0)
               wait(1);

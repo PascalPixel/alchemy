@@ -1332,7 +1332,7 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  Oam_AddSpriteAtDepth(sprite, 252);
+  Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 
 /// Frees an arrow sprite's tile slot.

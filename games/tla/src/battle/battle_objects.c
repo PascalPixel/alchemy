@@ -70,6 +70,11 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 /// The frames each status icon shows before the next one's turn.
 #define ICON_CYCLE_FRAMES 80
 
+/// The icons' first animations, for units 32 pixels wide and for the rest:
+/// each adds the icon's bit number.
+#define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
+#define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
+
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
@@ -112,9 +117,9 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
     if (rec != 0) {
       if (anim >= 0) {
         if (rec->width == 32)
-          anim += 702;
+          anim += ICON_ANIMATION_NARROW;
         else
-          anim += 688;
+          anim += ICON_ANIMATION_WIDE;
       }
 
       if (slot->animationEntry != 0 && changed != 0) {
@@ -153,7 +158,7 @@ void BattleObject_UpdatePose(s32 id) {
   value = POSE_STANDING;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
-      value = (state->side != 1) * 4;
+      value = (state->side != BATTLE_UNIT_ENEMY) * 4;
   } else {
     s32 changed = state->side ^ value;
     value = NONZERO(changed);
@@ -403,7 +408,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       }
       objects[unitIndex] = object;
       unitIndex++;
-      if (unitIndex >= 14 || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
+      if (unitIndex >= UNIT_MAX || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
         break;
     }
   }
@@ -422,8 +427,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   for (unitIndex = 0; unitIndex < partyCount; unitIndex++) {
     object = objects[unitIndex];
     if (object != 0) {
-      switch (object->recordStorageKind & 15) {
-      case 1:
+      switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+      case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = partyPriority;
         if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
@@ -431,7 +436,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         else
           record->flags &= ~2;
         break;
-      case 2:
+      case ACTOR_SPRITE_GROUP:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
           struct Sprite *part = *records++;
@@ -450,8 +455,8 @@ void BattleObject_UpdateSpritePriorities(void) {
        unitIndex++) {
     object = objects[unitIndex];
     if (object != 0) {
-      switch (object->recordStorageKind & 15) {
-      case 1:
+      switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+      case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = enemyPriority;
         if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
@@ -459,7 +464,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         else
           record->flags &= ~2;
         break;
-      case 2:
+      case ACTOR_SPRITE_GROUP:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
           struct Sprite *part = *records++;
@@ -538,7 +543,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
   i = 0;
   do {
     no = i + 0x78;
-    if (i <= 7) {
+    if (i <= ALLY_MAX) {
       no = i;
     }
     slot = BattleObject_FindSlot(no);

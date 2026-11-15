@@ -67,7 +67,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
@@ -175,7 +175,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
   Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   view->mode = mode;
   if (mode == 1)
     REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -251,7 +251,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
@@ -312,7 +312,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   s32 alpha;
   s32 half;
   s32 width;
@@ -450,11 +450,13 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #else
 #define DEBUG_VALUE_SELECT 544
 #endif
+/// What R picks, in every release.
+#define DEBUG_VALUE_R 399
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
 /// the battle work's debugValue (by 1, 10 and 100) until A takes it; Select
-/// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
-/// unchanged.
+/// held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value
+/// comes back unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
@@ -482,7 +484,7 @@ s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
   if (gInput.held & KEY_R)
-    value = 399;
+    value = DEBUG_VALUE_R;
   return value;
 }
 
@@ -888,7 +890,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     s32 angle;
 
     ring = &work->rings[i];
-    angle = i * 0x5555;
+    angle = i * (TRIG_TURN / 3);
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
     ring->velX = PolarX(angle, 0x200);
@@ -932,8 +934,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
-  Task_Add(ElementGlow_UpdateStarField, 0x480);
-  return Task_Add(ElementGlow_UploadStarField, 0x480);
+  Task_Add(ElementGlow_UpdateStarField, TASK_PASS_VBLANK);
+  return Task_Add(ElementGlow_UploadStarField, TASK_PASS_VBLANK);
 }
 
 /// Ends a star field: clears the tiles in character block 1, releases its
@@ -984,16 +986,17 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                                               DISPCNT_WIN0_ON);
-  IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                                             BGCNT_SCREEN_BASE(7));
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   wait(1);
   Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
-  Io_Write16(0x1088, &REG_WIN0V);
+  Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
       brightness = &session->brightness;
@@ -1085,7 +1088,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (enemy == 0)
       continue;
     if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
-        !GameFlag_Get(enemyId + 0x608))
+        !GameFlag_Get(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;

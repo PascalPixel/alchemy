@@ -56,8 +56,9 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
 /// tiles 24 and 25 (as entries `0xf018` and `0xf019`) to tiles 512, 513, 528
 /// and 529 as they open.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
-  Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
-          BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
+  Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
+          BG_CHAR_BLOCK(0) +
+              (destinationTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           DMA_COPY_WORDS(8), REG_DMA3);
 }
 
@@ -159,10 +160,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
-  Vram_CopyTile(0xf018, 0x200);
-  Vram_CopyTile(0xf018, 0x201);
-  Vram_CopyTile(0xf019, 0x210);
-  Vram_CopyTile(0xf019, 0x211);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
 
   for (;;) {
     /* LEFTOVER(template): sprite holds &cursorStorage, as

@@ -179,7 +179,7 @@ enum DjinnCompareOperation {
 #include "game/owner_state.h"
 #include "game/inventory.h"
 #include "system/heap_release.h"
-#include "menu/menu_result.h"
+#include "menu/paged_list.h"
 #include "battle/battle_type.h"
 #include "battle/battle_system.h"
 #include "graphics/display_transition.h"

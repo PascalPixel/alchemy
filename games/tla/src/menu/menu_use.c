@@ -82,7 +82,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     amount = effect->power;
     switch (effect->flags & ABILITY_FORMULA_MASK) {
-    case BATTLE_DAMAGE_HP_HEAL:
+    case ABILITY_FORMULA_HEAL_HP:
       if (fixedScale == 0) {
         if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
@@ -168,7 +168,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case BATTLE_DAMAGE_PP_HEAL:
+    case ABILITY_FORMULA_HEAL_PP:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_PP_FULL;

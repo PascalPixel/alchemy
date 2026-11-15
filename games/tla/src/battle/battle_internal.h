@@ -189,7 +189,7 @@ struct DebugPartyEntry {
   s8 djinnCounts[4];
   u16 items[6];
   u16 actions[2];
-  u16 unk16;
+  u16 unused; ///< 0 in every row; nothing reads it
 };
 
 /// The packet the two consoles exchange each turn of a link battle: how many
@@ -219,6 +219,11 @@ struct BattleLinkedActionState {
 
 /// The battle camera's distance from its focus in the default view.
 #define BATTLE_CAMERA_DISTANCE px(510)
+
+/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
+/// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
+/// spot.
+#define BATTLE_UNIT_GRAVITY (px(67) / 100)
 
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
@@ -320,7 +325,7 @@ extern struct SnapshotCopy Data_0200ff6c[];
 /// The last two units' HP and PP within the snapshot.
 extern struct SnapshotVitals Data_0200ffec[];
 
-/// The five units the scripted battles of formations 74 to 76 carry over:
+/// The five units Karst and Agatio's battle carries over between its parts:
 /// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
 

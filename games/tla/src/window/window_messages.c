@@ -712,7 +712,7 @@ void Portrait_ClearSlots(void) {
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = 999;
+    work->resourceIds[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }
@@ -730,30 +730,31 @@ s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;
 
+  // The party members' small sprites speak as the party members.
   switch (value) {
-  case 47:
-    value = 4;
+  case SPRITE_JENNA_SMALL - 1: // Felix's small sprite
+    value = FELIX;
     break;
-  case 49:
-    value = 6;
+  case SPRITE_SHEBA_SMALL:
+    value = SHEBA;
     break;
-  case 48:
-    value = 5;
+  case SPRITE_JENNA_SMALL:
+    value = JENNA;
     break;
-  case 50:
-    value = 7;
+  case SPRITE_PIERS_SMALL:
+    value = PIERS;
     break;
-  case 51:
-    value = 0;
+  case SPRITE_ISAAC_SMALL:
+    value = ISAAC;
     break;
-  case 52:
-    value = 1;
+  case SPRITE_GARET_SMALL:
+    value = GARET;
     break;
-  case 53:
-    value = 2;
+  case SPRITE_IVAN_SMALL:
+    value = IVAN;
     break;
-  case 54:
-    value = 3;
+  case SPRITE_MIA_SMALL:
+    value = MIA;
     break;
   }
   if (value < 16) {
@@ -843,7 +844,7 @@ void Portrait_CloseWindow(s32 id) {
 
   for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;
-    if ((u8)entity->kind == 2 && (u8)entity->index == id) {
+    if ((u8)entity->kind == WINDOW_SPRITE_PORTRAIT && (u8)entity->index == id) {
       Window_Close(work, 2);
       return;
     }

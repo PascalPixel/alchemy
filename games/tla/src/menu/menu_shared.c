@@ -549,20 +549,20 @@ struct RenderInput *MenuCursor_Create(void *source) {
   icon->motion = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
-  sentinel = 254;
+  sentinel = OAM_DEPTH_FRONT - 1;
   icon->sentinel = sentinel;
   sentinel -= 255;
   work->tabIndex[1] = zero;
   work->sideIcon[1]->sentinel = sentinel;
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;

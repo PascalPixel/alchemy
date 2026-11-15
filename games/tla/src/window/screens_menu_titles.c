@@ -8,22 +8,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
-struct Object {
-  u8 filler0[6];
-  u16 src6;
-  u8 src8;
-  u8 filler9[6];
-  u8 out15;
-  u8 filler16[4];
-  u8 out20;
-  u8 mode21 : 2;
-  u8 rest21 : 6;
-  u16 pos22 : 9;
-  u16 affine22 : 5;
-  u16 rest22 : 2;
-};
-
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
@@ -35,7 +19,7 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
-  if (resourceIndex <= 0x5F) {
+  if (resourceIndex < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)resourceAddress, stagingBuffer);
     VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -52,7 +36,7 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
   struct WindowSprite *second;
 
   index = VramCache_FindFreeEntry();
-  if (index > 95)
+  if (index >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
   MenuTitle_Load(group, index);
@@ -72,14 +56,14 @@ extern volatile u32 gVBlankCount;
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gWindow_PairBobOffsets, one step every four VBlanks.
-void MenuTitle_Bob(struct BobPairObject *obj) {
+void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
   obj = obj->next;
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
@@ -90,7 +74,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  if (value <= 95) {
+  if (value < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);
@@ -123,22 +107,21 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// Makes the sprite `obj` pulse: scales it about its centre by
 /// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
 /// frames, and puts it on draw layer 252.
-void WindowSprite_Pulse(struct Object *obj) {
-  s32 v;
-  struct Effect effect;
-
-  v = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+void WindowSprite_Pulse(struct WindowSprite *obj) {
+  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+  struct AffineTransform effect;
 
   if (obj != 0) {
-    effect.x = v;
-    effect.y = v;
-    effect.z = 0;
-    obj->affine22 =
-        OamMatrix_AllocFromTransform((struct AffineTransform *)&effect);
-    obj->mode21 = 3;
-    obj->pos22 = obj->src6 + 0xfff0;
-    obj->out20 = obj->src8 + 0xf0;
-    obj->out15 = OAM_DEPTH_FRONT - 3;
+    effect.scaleX = scale;
+    effect.scaleY = scale;
+    effect.angle = 0;
+    obj->sprite.oam.matrix = OamMatrix_AllocFromTransform(&effect);
+    // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
+    // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
+    obj->sprite.oam.affineMode = 3;
+    obj->sprite.oam.x = obj->x + 0xfff0;
+    obj->sprite.oam.y = (u8)obj->y + 0xf0;
+    obj->sentinel = OAM_DEPTH_FRONT - 3;
   }
 }
 

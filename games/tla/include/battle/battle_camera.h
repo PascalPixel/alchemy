@@ -22,11 +22,11 @@ struct BattleCamera {
   s32 followEye;       ///< cleared beside followPosition; nothing reads it
   s32 *followPosition; ///< when set, followed instead of focus
 
-  s32 distance; ///< eye to focus, 16.16 fixed-point pixels
-  u8 unk24[16]; ///< not named by TLA code
-  u16 pitch;    ///< 1/65536 turns
-  u16 yaw;      ///< 1/65536 turns
-  u8 unk38[20]; ///< not named by TLA code
+  s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
+  u8 unusedAfterDistance[16]; ///< no code names it
+  u16 pitch;                  ///< 1/65536 turns
+  u16 yaw;                    ///< 1/65536 turns
+  u8 unusedAfterYaw[20];      ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);

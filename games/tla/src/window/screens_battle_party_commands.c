@@ -153,7 +153,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
                               s32 *forcedCount) {
   u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
-  s32 count = BattleUnit_ListLivingFar(1, unitIds);
+  s32 count = BattleUnit_ListLivingFar(BATTLE_SIDE_MASK_PARTY, unitIds);
   s32 readyCount = 0;
   s32 forced = 0;
   s32 i;
@@ -169,7 +169,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
 
         entry->unitId = unitIds[i];
         entry->priority = unit->agi;
-        entry->command = 8;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = 384;
         forced++;

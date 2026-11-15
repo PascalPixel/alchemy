@@ -406,7 +406,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     Menu_SpawnIconEntries(menu, menu->psynergyWindow);
   if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
-        2, 0, menu->shortcutWindow, 0, result);
+        ICON_KIND_ITEM, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->motion = ICON_HIDDEN;
   }
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
@@ -414,7 +414,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       window = menu->statusWindow;
       unit = Unit_Get(ownerIds[selection]);
       PsynergyMenu_RefreshMemberPsynergy(ownerIds[selection]);
-      StatusPanel_Draw(window, ownerIds[selection], 0, 0);
+      StatusPanel_Draw(window, ownerIds[selection], 0, STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
       PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
       if (redraw == 2) {
@@ -436,7 +436,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       if (menu->psynergyCount) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
@@ -447,11 +447,12 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     if ((KEYS_PRESSED & KEY_L) || (KEYS_PRESSED & KEY_R)) {
       result = ownerIds[selection];
       if (KEYS_PRESSED & KEY_L)
-        menu->mode = 1;
+        menu->mode = PSYNERGY_MODE_SET_L;
       else
-        menu->mode = 2;
+        menu->mode = PSYNERGY_MODE_SET_R;
       actions = Heap_Alloc(32 * sizeof(u16));
-      fieldCount = PsynergyMenu_CollectActions(unit, actions, 1);
+      fieldCount =
+          PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_SHORTCUTS);
       Heap_Release(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
@@ -462,7 +463,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         break;
       }
     }
-    if (KEYS_PRESSED & 2) {
+    if (KEYS_PRESSED & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -758,19 +759,6 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 
 #undef OWNER_NAME_WIDTH_LIMIT
 
-/// A Psynergy entry's icon sprite as the Psynergy menu reads its VRAM cache
-/// slot.
-struct PsynergyEntryIcon {
-  u8 unk00[14];
-  u8 slot;
-};
-
-/// The menu work as the Psynergy menu's icons read it: each entry's icon.
-struct PsynergyEntryMenu {
-  u8 unk000[0x4c];
-  struct PsynergyEntryIcon *entryIcons[32];
-};
-
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
@@ -847,7 +835,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
 // Psynergy menu workspace (known fields only).
 
 /// Split the selected slot owner's Psynergy into pages of five rows.
-s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
+s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 ownerState;
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 entryCount;
@@ -870,7 +858,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if (entryCount % LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
-  result->ownerState = ownerState;
+  result->memberState = ownerState;
   result->page = page;
   result->pageCount = pageCount;
   result->row = row;
@@ -886,7 +874,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 /// description in the info window, unless a kept message is there, and
 /// highlights its row of the five. window and work are not used.
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
-                                struct MenuResult *state) {
+                                struct PagedList *state) {
   struct PsynergyMenuWork *menu;
   s32 combined;
   s32 row;
@@ -962,7 +950,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 /// short or the action restricted): The Broken Seal's
 /// PsynergyMenu_DrawActionPage with this game's work-block offsets.
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
-                                const struct MenuResult *state) {
+                                const struct PagedList *state) {
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
@@ -1062,7 +1050,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   s32 previous;
   s32 shortcutHelp;
   s32 work[5];
-  struct MenuResult state;
+  struct PagedList state;
 
   menu = Ram_HeapSlots->menuWork;
   result = 0;

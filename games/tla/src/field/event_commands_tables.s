@@ -118,45 +118,6 @@ gEncounter_EnemyGroupTable:
 	.2byte 35, 27, 451, 452, 453, 454, 455, 456, 457, 458; .byte 20, 20, 20, 10, 0, 0, 0, 0
 	.2byte 35, 34, 495, 496, 497, 498, 501, 502, 503, 504; .byte 5, 3, 15, 15, 15, 3, 15, 15
 	.2byte 10, 34, 495, 496, 497, 498, 501, 502, 503, 504; .byte 5, 3, 15, 15, 15, 3, 15, 15
-	.section .rodata.a
-@ A copy of The Broken Seal's gScreenTransition_NoiseWidths
-	.global gScreenTransition_NoiseWidths
-gScreenTransition_NoiseWidths:
-	.byte 0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13
-	.byte 16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240
-@ A copy of The Broken Seal's gScreenTransition_EdgeOffsets
-	.global gScreenTransition_EdgeOffsets
-gScreenTransition_EdgeOffsets:
-	.byte -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3
-	.byte 4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3
-@ A copy of The Broken Seal's gScreenTransition_DitherTable
-	.global gScreenTransition_DitherTable
-gScreenTransition_DitherTable:
-	.byte 0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31
-	.byte 16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24
-	.byte 58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22
-	.byte 62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21
-@ A copy of The Broken Seal's gColorBuffer_ChannelCurve
-	.global gFieldEffect_ChannelCurve
-gFieldEffect_ChannelCurve:
-	.2byte 0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f
-	.2byte 0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4
-	.2byte 0x2dc3, 0x31b9, 0x35d7, 0x3a1d, 0x3e8e, 0x432b, 0x47f6, 0x4cee
-	.2byte 0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00
-@ A copy of The Broken Seal's gColorBuffer_ChannelCurveLight
-	.global gFieldEffect_ChannelCurveLight
-gFieldEffect_ChannelCurveLight:
-	.2byte 0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291
-	.2byte 0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0
-	.2byte 0x3182, 0x3583, 0x39a3, 0x3de3, 0x4245, 0x46c9, 0x4b70, 0x503a
-	.2byte 0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00
-@ A copy of The Broken Seal's gColorBuffer_ChannelCurveContrast
-	.global gFieldEffect_ChannelCurveContrast
-gFieldEffect_ChannelCurveContrast:
-	.2byte 0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a
-	.2byte 0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65
-	.2byte 0x31f0, 0x37f5, 0x3e7c, 0x458e, 0x4d37, 0x5580, 0x5e77, 0x6826
-	.2byte 0x729c, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00
 	.section .rodata.b
 @ The heading the direction pad points, by its four bits (0xffff for none
 @ or opposed keys), where Leader_StepOffRope and Leader_StepOffTightrope

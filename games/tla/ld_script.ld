@@ -225,7 +225,7 @@ SECTIONS
         "*/games/tla/src/field/field_sequence_tables.o"(.rodata)
         "*/games/tla/src/field/psynergy_reach.o"(.rodata)
         "*/games/tla/src/field/field_effect_scripts.o"(.rodata)
-        "*/games/tla/src/field/event_commands_tables.o"(.rodata.a)
+        "*/games/tla/src/field/field_effect_scripts.o"(.data)
         "*/games/tla/src/field/actor_variant_motion.o"(.rodata)
         "*/games/tla/src/field/event_commands_tables.o"(.rodata.b)
         "*/games/tla/src/field/field_effect_tables.o"(.rodata)

@@ -219,7 +219,7 @@ s32 Scene_PrepareMap(void) {
   struct Actor *object;
   u8 flags;
 
-  object = Actor_GetById(16);
+  object = Actor_GetById(ACTOR_CHICKEN);
   flags = object->priorityFlags & ~1;
   do {
     party = &gMainRoutineWork;

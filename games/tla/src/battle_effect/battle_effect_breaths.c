@@ -468,6 +468,18 @@ static inline s32 Nothing(void) {}
 
 #define CRESCENT_SLASH_FRAMES 32
 
+/// The crescent slash's steps, three frames each from frame 8.
+enum CrescentSlashStep {
+  CRESCENT_SLASH_STAR,     ///< the star crescent
+  CRESCENT_SLASH_FLASH,    ///< the canvas filled at its brightest
+  CRESCENT_SLASH_GREY_A,   ///< the grey crescent's first half
+  CRESCENT_SLASH_GREY_B,   ///< its second half
+  CRESCENT_SLASH_STAR_LAST ///< the star crescent's last cell
+};
+
+/// Each half of GreyCrescentSheet is a 128x128 picture.
+#define GREY_CRESCENT_SIZE 128
+
 /// The crescent slash of Human Hunt (mode 0) and Echo Cut (kind 390,
 /// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
 /// in five steps of three frames: the star crescent, a blank frame, the two
@@ -550,38 +562,48 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         x = position[0] / 2 - 80;
       if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
         switch (step) {
-        case CRESCENT_SLASH_HUMAN_HUNT:
-          draw[0](canvas, work->sheet, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR:
+          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+                  SLASH_PICTURE_SIZE);
           break;
-        case CRESCENT_SLASH_ECHO_CUT:
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        case CRESCENT_SLASH_FLASH:
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           break;
-        case 2:
-          draw[0](canvas, cells, x - 4, y, 128, 128);
+        case CRESCENT_SLASH_GREY_A:
+          draw[0](canvas, cells, x - 4, y, GREY_CRESCENT_SIZE,
+                  GREY_CRESCENT_SIZE);
           break;
-        case 3:
-          draw[0](canvas, cells + 0x4000, x - 4, y, 128, 128);
+        case CRESCENT_SLASH_GREY_B:
+          draw[0](canvas, cells + GREY_CRESCENT_SIZE * GREY_CRESCENT_SIZE,
+                  x - 4, y, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
-        case 4:
-          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR_LAST:
+          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
+                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       } else {
         switch (step) {
-        case CRESCENT_SLASH_ECHO_CUT:
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        case CRESCENT_SLASH_FLASH:
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           break;
-        case CRESCENT_SLASH_HUMAN_HUNT:
-          draw[0](canvas, work->sheet, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR:
+          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+                  SLASH_PICTURE_SIZE);
           break;
-        case 2:
-          draw[0](canvas, cells, x - 4, y - 8, 128, 128);
+        case CRESCENT_SLASH_GREY_A:
+          draw[0](canvas, cells, x - 4, y - 8, GREY_CRESCENT_SIZE,
+                  GREY_CRESCENT_SIZE);
           break;
-        case 3:
-          draw[0](canvas, cells + 0x4000, x - 4, y - 8, 128, 128);
+        case CRESCENT_SLASH_GREY_B:
+          draw[0](canvas, cells + GREY_CRESCENT_SIZE * GREY_CRESCENT_SIZE,
+                  x - 4, y - 8, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
-        case 4:
-          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR_LAST:
+          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
+                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       }

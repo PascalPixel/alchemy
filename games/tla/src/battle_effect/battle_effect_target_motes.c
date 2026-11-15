@@ -696,8 +696,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       rider[2] = 0;
       EffectPosition_ProjectPoint(rider, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20,
-              MERCURY_SMALL_DJINNI_HEIGHT);
+      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17,
+              SMALL_DJINNI_WIDTH, MERCURY_SMALL_DJINNI_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }

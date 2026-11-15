@@ -1453,12 +1453,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           h = RUNE_HALF_HEIGHT;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
-          ALT_BLITTER(screen, buffer, x - RUNE_HALF_WIDTH, h, 24, h);
+          ALT_BLITTER(screen, buffer, x - RUNE_HALF_WIDTH, h, RUNE_HALF_WIDTH,
+                      h);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
-          ALT_BLITTER(screen, buffer, x, h, 24, h);
+          ALT_BLITTER(screen, buffer, x, h, RUNE_HALF_WIDTH, h);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);

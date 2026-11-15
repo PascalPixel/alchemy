@@ -217,6 +217,22 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 }
 
 #define SWING_FRAMES 52
+/// Whiplash's sheet: the whip's slash in five cels, one after another.
+#define WHIPLASH_SLASH_A 0
+#define WHIPLASH_SLASH_A_WIDTH 48
+#define WHIPLASH_SLASH_A_HEIGHT 96
+#define WHIPLASH_SLASH_B (WHIPLASH_SLASH_A + PICTURE_BYTES(WHIPLASH_SLASH_A))
+#define WHIPLASH_SLASH_B_WIDTH 38
+#define WHIPLASH_SLASH_B_HEIGHT 92
+#define WHIPLASH_SLASH_C (WHIPLASH_SLASH_B + PICTURE_BYTES(WHIPLASH_SLASH_B))
+#define WHIPLASH_SLASH_C_WIDTH 30
+#define WHIPLASH_SLASH_C_HEIGHT 76
+#define WHIPLASH_SLASH_D (WHIPLASH_SLASH_C + PICTURE_BYTES(WHIPLASH_SLASH_C))
+#define WHIPLASH_SLASH_D_WIDTH 56
+#define WHIPLASH_SLASH_D_HEIGHT 96
+#define WHIPLASH_SLASH_E (WHIPLASH_SLASH_D + PICTURE_BYTES(WHIPLASH_SLASH_D))
+#define WHIPLASH_SLASH_E_WIDTH 56
+#define WHIPLASH_SLASH_E_HEIGHT 88
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256
 
@@ -267,45 +283,47 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
       switch (frame / 6) {
       case 0:
-        draw[0](canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+                            caster.x / 2 - 48, caster.y - 120);
         break;
       case 1:
-        draw[0](canvas, work->sheet + 0x1200, caster.x / 2 - 38, caster.y - 120,
-                38, 92);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+                            caster.x / 2 - 38, caster.y - 120);
         break;
       case 2:
-        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2 - 38, caster.y - 100,
-                30, 76);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+                            caster.x / 2 - 38, caster.y - 100);
         break;
       case 3:
-        draw[0](canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88,
-                56, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+                            caster.x / 2 - 64, caster.y - 88);
         break;
       case 4:
-        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88,
-                56, 88);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+                            caster.x / 2 - 64, caster.y - 88);
         break;
       }
     } else {
       switch (frame / 6) {
       case 0:
-        draw[0](canvas, work->sheet, caster.x / 2, caster.y - 120, 48, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+                            caster.x / 2, caster.y - 120);
         break;
       case 1:
-        draw[0](canvas, work->sheet + 0x1200, caster.x / 2, caster.y - 120, 38,
-                92);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+                            caster.x / 2, caster.y - 120);
         break;
       case 2:
-        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2, caster.y - 100, 30,
-                76);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+                            caster.x / 2, caster.y - 100);
         break;
       case 3:
-        draw[0](canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56,
-                96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+                            caster.x / 2, caster.y - 88);
         break;
       case 4:
-        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56,
-                88);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+                            caster.x / 2, caster.y - 88);
         break;
       }
     }

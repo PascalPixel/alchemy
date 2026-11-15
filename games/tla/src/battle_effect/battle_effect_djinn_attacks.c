@@ -53,6 +53,16 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// side, and Venus draws the flame as its rising columns.
 #define BLUE_FLAME_SHEET_FLAME PICTURE_BYTES(BLUE_FLAME_COLUMN)
 
+/// Mercury's sheet: its Djinni, then the blue flame sheet's two pictures turned
+/// on their side.
+enum MercurySheetPicture {
+  /// The shaft turned; never drawn.
+  MERCURY_TURNED_SHAFT = SMALL_DJINNI_WIDTH * MERCURY_SMALL_DJINNI_HEIGHT,
+  /// The flame turned to fly left.
+  MERCURY_TURNED_FLAME = MERCURY_TURNED_SHAFT +
+      BLUE_FLAME_COLUMN_HEIGHT * BLUE_FLAME_COLUMN_WIDTH
+};
+
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -90,11 +100,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17,
-                             BLUE_FLAME_COLUMN_HEIGHT);
+  BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT,
+                             BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
   BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
-                             work->sheet + 0x990, BLUE_FLAME_SPLASH_WIDTH,
-                             BLUE_FLAME_SPLASH_HEIGHT);
+                             work->sheet + MERCURY_TURNED_FLAME,
+                             BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -114,8 +124,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     for (i = 0; i != FLAME_COUNT; i++) {
       flame = &work->particles[i];
       if (flame->variant != -1) {
-        blit[0](canvas, work->sheet + 0x990, flame->x - 16, flame->y - 17, 65,
-                MERCURY_SMALL_DJINNI_HEIGHT);
+        blit[0](canvas, work->sheet + MERCURY_TURNED_FLAME, flame->x - 16,
+                flame->y - BLUE_FLAME_SPLASH_WIDTH / 2,
+                BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH);
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {

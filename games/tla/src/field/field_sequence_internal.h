@@ -99,7 +99,6 @@ extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
 #include "scene_tables.h"
 #include "inventory.h"
 #include "graphics/uiwindow.h"
-#include "field/facing_object.h"
 #include "actor_view.h"
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);

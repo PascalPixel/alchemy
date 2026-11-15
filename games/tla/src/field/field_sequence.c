@@ -57,6 +57,5 @@ void Actor_MoveToObject(u32 objectId, u32 otherId);
 #undef Field_RequestDjinnBattle
 #undef EventWork1cc
 #undef Actor_SetHorizontalPositionAndAngleWithTerrain
-#undef ParticleSprite
 #undef GameFlag_GetByte
 #undef Actor_SetHorizontalPositionWithTerrain

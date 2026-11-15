@@ -14,30 +14,6 @@ struct AnimationEntry;
 struct Effect04Vector;
 struct EffectVector;
 
-struct ObjectPairPosition {
-  u8 unk00[6];
-  s16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ObjectPart {
-  u8 unk00[5];
-  u8 attribute;
-  u8 unk06[0xa];
-  void *graphics;
-};
-
-struct ObjectPartList {
-  u8 unk00[0x19];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[0xc];
-  struct ObjectPart *parts[1];
-};
-
 struct ItemHead {
   u8 unk00[3];
   u8 flags;

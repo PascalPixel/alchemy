@@ -140,28 +140,27 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
-/// Turns the object toward its facing target, if it has one, by at most
-/// 0x1000 (22.5 degrees).
-/// obj: object to turn.
-s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
+/// Per-frame update that turns an actor toward its watched actor, if it has
+/// one, at most 1/16 turn a frame, and stops it facing where it moves.
+s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s32 turn;
   u16 old;
-  s32 dir;
-  struct FacingObject *target;
+  s32 angle;
+  struct Actor *target;
 
-  target = obj->facingTarget;
+  target = actor->watchedActor;
   if (target != NULL) {
-    obj->facingFlags = 0xfe & obj->facingFlags;
-    dir = (u16)ArcTan2(target->positionZ - obj->positionZ,
-                       target->positionX - obj->positionX);
-    old = obj->facing;
-    turn = (s16)(dir - old);
+    actor->steeringFlags = 0xfe & actor->steeringFlags;
+    angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+                         target->x.fixed - actor->x.fixed);
+    old = actor->facing;
+    turn = (s16)(angle - old);
     if (turn != 0) {
-      if (turn > 0x1000)
-        turn = 0x1000;
-      if (turn < -0x1000)
-        turn = -0x1000;
-      obj->facing = old + turn;
+      if (turn > TRIG_TURN / 16)
+        turn = TRIG_TURN / 16;
+      if (turn < -(TRIG_TURN / 16))
+        turn = -(TRIG_TURN / 16);
+      actor->facing = old + turn;
     }
   }
   return 1;

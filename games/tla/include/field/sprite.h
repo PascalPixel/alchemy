@@ -94,31 +94,40 @@ struct AnimationSpritePart {
   u8 unk0a[2];
 };
 
+/// An animated sprite: its image, scale, rotation, size, its shadow and up to
+/// four sprite animations.
 struct AnimationObject {
   struct AnimationSpritePart image;
-  struct AnimationSpritePart shadow;
-  s32 scale;
-  u8 slot;
+  s32 scale; ///< 16.16 fixed point, Q16_ONE full size
+  u8 slot;   ///< VRAM cache entry holding its tiles
+  /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;
+  /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 unk1d2 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
+  u8 unusedFlags : 6; ///< no code names them
+  u16 rotation;       ///< 1/65536 turns
+  u8 width;           ///< pixels; zero marks a free sprite
+  u8 height;          ///< pixels
+  s8 offsetX;         ///< pixels
+  s8 offsetY;         ///< pixels
+  /// The animation number last selected, which selecting again skips.
   u8 lastNo;
-  u8 dirty;
+  u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
+  /// bits: 1 outlined in the actor system's edge and fill colours |
+  /// 0 shadow drawn (set when created)
   u8 flags;
-  u8 count;
-  struct AnimationEntry *entries[4];
+  u8 count; ///< layers in use, up to the last one present
+  /// Its shadow, shown while flags bit 0 is set.
+  struct AnimationSpritePart shadow;
+  struct AnimationEntry *entries[4]; ///< its layers; empty ones null
 };
 
 STATIC_ASSERT(sizeof(struct AnimationEntry) == 0x18);
 STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
-STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x18);
-STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x1e);
-STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x20);
+STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x0c);
+STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x12);
+STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x14);
+STATIC_ASSERT(offsetof(struct AnimationObject, shadow) == 0x1c);
 STATIC_ASSERT(sizeof(struct AnimationObject) == 0x38);
 STATIC_ASSERT(offsetof(struct AnimationObject, entries) == 0x28);
 

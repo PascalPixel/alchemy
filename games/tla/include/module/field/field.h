@@ -850,7 +850,7 @@ void WorldMap_ReloadPendingAreaGraphics(void);
 
 void Event_NoOp(void);
 
-void Actor_ApplyIndexedChildValue(struct Actor *object);
+void Actor_UpdateBlink(struct Actor *object);
 
 extern u32 gScanlineAngle;
 

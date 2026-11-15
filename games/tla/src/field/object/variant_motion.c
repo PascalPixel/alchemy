@@ -285,7 +285,7 @@ const u32 Data_080f085c[] = {
 const u32 Data_080f0874[] = {
     0, 1, 13, 18, 0, 38,
 };
-const u8 gActor_BlinkChildValues[] = {
+const u8 gActor_BlinkSpriteColors[] = {
     7, 0, 0, 0,
 };
 // clang-format on

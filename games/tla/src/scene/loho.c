@@ -662,11 +662,9 @@ enum { SHOP_LOHO = 30 };
 enum { LOHO_INN = 13 };
 
 void Loho_TalkToInnkeeper(void) {
-  s32 count = 8;
-
-  /* FAKEMATCH(barrier): the empty asm on count. */
-  asm("" : "+l"(count));
-  Inn_CheckIn(LOHO_INN, count);
+  // XXX: the lines take actor 8's portrait, not the innkeeper's (9); a render
+  // of the inn's counter would show whose face they carry.
+  Inn_CheckIn(LOHO_INN, ACTOR_VILLAGER_ON_COMMERCE);
 }
 
 /// "Commerce really took off when we started this mining colony in Loho."

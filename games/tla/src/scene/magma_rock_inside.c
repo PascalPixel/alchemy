@@ -370,49 +370,29 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
 void Actor_SelectAnimation();
 void Actor_StartScript();
 s32 GameFlag_Get();
-/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
- * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
- * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja (magma_rock_inside.c):
- * games/tla/src/scene/magma_rock_inside.c:383: too few arguments to function
- * `Actor_GetById'. */
-extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
-void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
-  s32 t1, t4, v5, v6, v7;
+void MagmaRockInside_StartLavaPlatform(s32 id, s32 path, s16 flag) {
+  struct Actor *platform;
+  s32 risen;
 
-  v5 = (a2 << 16);
-  v7 = a1;
-  t1 = Actor_GetById__s0800();
-  v6 = t1;
-  Actor_SelectAnimation(t1, 4);
-  FIELD_AT(v6, u8, 90) = 0;
-  FIELD_AT(v6, s32, 48) = 0x8000;
-  FIELD_AT(v6, s32, 52) = 0x8000;
-  FIELD_AT(v6, u8, 85) = 2;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
-  asm("");
-  v5 = (v5 >> 16);
-  v5 = (v5 << 16);
-  FIELD_AT(v6, u8, 35) = (128 | FIELD_AT(v6, u8, 35));
-  v5 = ((u32)v5 >> 16);
-  Actor_SetSpriteFlags(v6, 0);
-  t4 = Event_GetFlag(v5);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
-  asm("");
-  if (t4 == 0)
-    goto sunk;
-  FIELD_AT(v6, s32, 20) = 0x100000;
-  FIELD_AT(v6, s32, 12) = 0x100000;
-  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    goto hook;
-  Actor_StartScript(v6, v7);
-  goto hook;
-sunk:
-  FIELD_AT(v6, s32, 20) = -0xe0000;
-  FIELD_AT(v6, s32, 12) = -0xe0000;
-hook:
-  FIELD_AT(v6, s32, 108) = (s32)MagmaRockInside_PausePlatform;
+  platform = Actor_GetById(id);
+  Actor_SelectAnimation(platform, 4);
+  platform->steeringFlags = 0;
+  platform->speedLimit = px(1) / 2;
+  platform->acceleration = px(1) / 2;
+  platform->motionFlags = ACTOR_FALLS;
+  platform->priorityFlags |= 0x80;
+  Actor_SetSpriteFlags(platform, 0);
+  if (Event_GetFlag((u16)flag)) {
+    platform->groundHeight = px(16);
+    platform->y.fixed = px(16);
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
+      Actor_StartScript(platform, path);
+  } else {
+    platform->groundHeight = -px(14);
+    platform->y.fixed = -px(14);
+  }
+  platform->update = (void (*)(void))MagmaRockInside_PausePlatform;
 }
 #undef FIELD_AT
 
@@ -2813,9 +2793,6 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
 
-  /* FAKEMATCH(barrier): an empty asm before the work is read keeps the
-   * spills of x and y at the entry. */
-  asm("");
   work = Ram_HeapSlots->menuWork;
   /* A goto loop carries no loop notes, so the offsets are rebuilt on every
    */

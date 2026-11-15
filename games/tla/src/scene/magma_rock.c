@@ -1156,14 +1156,6 @@ void MagmaRock_ClearLedgeBehavior(void) {
 }
 
 void Actor_SetAnimationSpeedById(s32 id, s32 action);
-/* VIEW(s1c00): routine FieldCamera_MoveToActor as void
- * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
- * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
- * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
- * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1149: conflicting
- * types for `FieldCamera_MoveToActor'. */
-extern void
-FieldCamera_MoveToActor__s1c00(s32 a, s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
 
 void MagmaRock_AmplifyBurst(void) {
@@ -1230,7 +1222,7 @@ second:
   MapGrid_SetShake(5, 8, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldCamera_MoveToActor__s1c00(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_MoveToActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_SHAKE_HEAD);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 0);

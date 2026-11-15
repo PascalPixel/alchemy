@@ -387,11 +387,6 @@ struct BattleFxRequest {
   u8 unk26[0x32];
 };
 
-struct Layout {
-  u8 pad[4];
-  s16 field[6];
-};
-
 /// The battle work past BattleWork's members, as the staging reads it: the
 /// backdrop's brightness and background, the plan of the action being played,
 /// the flag that skips its playback, and how the acting unit is shown.

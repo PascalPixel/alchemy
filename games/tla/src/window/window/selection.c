@@ -306,8 +306,7 @@ void SelectionMenu_Draw(void) {
     cnt++;
   }
   if (transfer->kind != 0) {
-    node = (struct SelectionNode *)SelectionMenu_GetCursorNode(
-        (struct NodeChainState *)state);
+    node = SelectionMenu_GetCursorNode(state);
     te = &transfer->sprite;
     te->mode = 0;
     te->affine = 0;
@@ -467,8 +466,7 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   struct Window *window;
 
   screen = Ram_HeapSlots->selectionMenu;
-  node = (struct SelectionNode *)SelectionMenu_GetCursorNode(
-      (struct NodeChainState *)screen);
+  node = SelectionMenu_GetCursorNode(screen);
   slot = &screen->window;
   window = *slot;
   if (window == 0) {
@@ -621,11 +619,13 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
   }
 }
 
-struct NodeChainNode *SelectionMenu_GetCursorNode(struct NodeChainState *st) {
-  struct NodeChainNode *node = st->node;
+/// Returns the icon under the cursor: the row's icon at place cursorIndex.
+struct SelectionNode *
+SelectionMenu_GetCursorNode(struct SelectionScreen *screen) {
+  struct SelectionNode *node = screen->head;
   s32 i;
 
-  for (i = 0; i != st->count; ++i) {
+  for (i = 0; i != screen->cursorIndex; ++i) {
     node = node->next;
   }
   return node;
@@ -954,16 +954,16 @@ void SelectionMenu_HighlightIcon(struct SelectionScreen *state, u32 rowIndex) {
 /// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
 /// passes a unit list with one place an icon, of which only the end marker
 /// (BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
-void Menu_ClearBattleHighlight(u8 *arg0) {
+void Menu_ClearBattleHighlight(struct SelectionScreen *screen) {
   u16 data[6];
-  struct NodeChainNode *node = ((struct NodeChainState *)arg0)->node;
+  struct SelectionNode *node = screen->head;
   s32 count = 0;
 
   while (node != 0) {
     node = node->next;
     count++;
   }
-  data[count] = 0xff;
+  data[count] = BATTLE_UNIT_LIST_END;
   BattleHighlight_SetModesFar(data, HIGHLIGHT_OFF);
 }
 
@@ -1190,7 +1190,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionSprite *sprite;
 
   index = screen->top + screen->cursorIndex;
-  Menu_ClearBattleHighlight((u8 *)screen);
+  Menu_ClearBattleHighlight(screen);
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
@@ -1335,9 +1335,7 @@ extern char ResourceId_CommandIcons;
 /// Resource_ResetPendingTransfer.
 void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
-  struct SelectionNode *selection =
-      (struct SelectionNode *)SelectionMenu_GetCursorNode(
-          (struct NodeChainState *)state);
+  struct SelectionNode *selection = SelectionMenu_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;

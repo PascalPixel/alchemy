@@ -37,10 +37,6 @@ struct SummonDefinition {
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };
 
-struct BattleSummonState {
-  u32 availableMask;
-};
-
 /// Returns a summon's definition, or NULL past the last.
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
 s32 Enemy_GetFreeUnitId(void);

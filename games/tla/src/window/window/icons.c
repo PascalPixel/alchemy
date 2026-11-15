@@ -214,11 +214,6 @@ void Icon_DrawItem(s32 code) {
   Icon_Decode(state, 0);
 }
 
-struct BattleActionGlyph {
-  u8 unk00[4];
-  u16 icon;
-};
-
 extern u8 *gIcon_BasePointerTable[];
 
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
@@ -229,9 +224,8 @@ s32 Icon_CountPsynergyIcons(void);
 /// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
-  Icon_BuildAbilityIconTiles(
-      ((struct BattleActionGlyph *)Ability_Get(action))->icon, with_base, slot,
-      tile, reuse);
+  Icon_BuildAbilityIconTiles(Ability_Get(action)->icon, with_base, slot, tile,
+                             reuse);
 }
 
 /// Builds Psynergy icon glyph, over the icon base when withBase is set, and

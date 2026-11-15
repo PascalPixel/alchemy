@@ -9,21 +9,6 @@
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
-struct PreviewUnit {
-  u8 unk000[0x38];
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 unk043[0x15];
-  u16 psynergy[1];
-  u8 unk05a[0xcf];
-  u8 classId;
-  u8 unk12a[0x22];
-};
-
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *dst;
   s32 n;
@@ -176,8 +161,8 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                                  s32 member, s32 encodedDjinn,
                                                  s32 page, s32 *pageCount) {
-  struct PreviewUnit *unit;
-  struct PreviewUnit *savedUnit;
+  struct BattleUnit *unit;
+  struct BattleUnit *savedUnit;
   struct BattleAct *ability;
   s16 *numberText;
   s32 oldHp;

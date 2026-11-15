@@ -41,7 +41,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// COMMAND_ROW_PARTY is the party's row at the start of a turn: Fight, Flee
 /// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
 /// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
-/// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
+/// (DjinnRecoveryTable.summonMask), Summon while any Djinni is on standby,
 /// Item and Defend. Each row remembers its choice in
 /// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
 /// presses the keys for the player.

@@ -53,25 +53,6 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   return 0;
 }
 
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
-struct FxGroup {
-  u8 unk00[32];
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern struct DescriptorEntry gData_080eff28[];
-
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
 /// tiles 24 and 25 (as entries `0xf018` and `0xf019`) to tiles 512, 513, 528

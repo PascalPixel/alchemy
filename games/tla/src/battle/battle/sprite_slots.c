@@ -37,17 +37,17 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
 s32 Enemy_HasSpriteRoom(s32 arg0) {
   s32 retval;
   s32 i;
-  struct Layout *ptr;
+  struct BattleWork *battle;
 
   retval = BattleSprite_IsSmall(arg0);
-  ptr = (struct Layout *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {
-    if (ptr->field[i] != 0)
+    if (battle->spriteSlots[i] != 0)
       continue;
     if (retval != 0)
       break;
-    if (i <= 4 && ptr->field[i + 1] == 0)
+    if (i <= 4 && battle->spriteSlots[i + 1] == 0)
       break;
   }
   return i != 6;

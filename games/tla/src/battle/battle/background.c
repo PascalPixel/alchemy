@@ -400,6 +400,7 @@ UNUSED void Battle_BrightenAllLayers(void) {
 /// Returns the 16.16 product of a and b.
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
+/// A transform as BattleTransition_InitializeEntries reads its first two words.
 struct BattleTransitionEntry {
   u32 value;
   u32 sum;
@@ -416,26 +417,6 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   Transform_SetIdentity(entries);
   entries[0].sum = previous + entries[0].value;
 }
-
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
-struct FxGroup {
-  u8 unk00[32];
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern void *gOverlayArea[];
-extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
@@ -952,14 +933,6 @@ s32 ElementGlow_End(s32 unused) {
 /// Does nothing; nothing calls it.
 void ElementGlow_ReservedNoOp(void) {}
 
-// The parts of the battle work this effect uses.
-struct ElementSession {
-  u8 unk000[0x56c];
-  u16 palette[128];
-  s32 brightness;
-  u16 background;
-};
-
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
 void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 void BattleEffect_StartElementStreaksFar(s32 mode);
@@ -975,8 +948,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
   s32 origin[2];
-  struct ElementSession *session =
-      (struct ElementSession *)Ram_HeapSlots->battleWork;
+  struct BattleWork *session = Ram_HeapSlots->battleWork;
   volatile u16 *ime;
   struct SparkWork *work;
   s32 frame;

@@ -282,9 +282,7 @@ void BattleSummon_UpdateAvailability(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
-  availableMask = ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
-                      ->availableMask &
-                  0xffff0000;
+  availableMask = Djinn_GetRecoveryTableFar(0)->summonMask & 0xffff0000;
 
   element = 0;
   do {
@@ -328,8 +326,7 @@ void BattleSummon_UpdateAvailability(void) {
     element++;
   } while (element <= 15);
 
-  ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))->availableMask =
-      availableMask;
+  Djinn_GetRecoveryTableFar(0)->summonMask = availableMask;
 }
 
 /// An empty function, right after BattleSummon_UpdateAvailability.

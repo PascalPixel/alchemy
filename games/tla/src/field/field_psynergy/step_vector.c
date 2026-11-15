@@ -351,21 +351,11 @@ void BattleEffect_EndCanvasSprite(void) {
   HeapSlot_Release(HEAP_SLOT_CANVAS_SPRITE);
 }
 
-// One spark: where it circles round, its angle and radius, and its age in
-// frames (-1: unused).
-struct Spark {
-  s32 centre[3];
-  s32 angle;
-  s32 unk10;
-  s32 radius;
-  s32 age;
-};
-
 /// Actor_VanishInSparks' work, in heap slot 92: the sparks' picture, then the
 /// sparks and their sprites.
 struct VanishSparksWork {
   u8 picture[0x400];
-  struct Spark sparks[64];
+  struct WhirlSpark sparks[64];
   struct EffectSprite sprites[64];
 };
 
@@ -387,7 +377,7 @@ void Actor_VanishInSparks(s32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   s32 angle = (u16)object->facing;
-  struct Spark *spark;
+  struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 i;
   s32 next;
@@ -426,10 +416,10 @@ void Actor_VanishInSparks(s32 objectId) {
         spark = &work->sparks[next];
 
         spark->age = 0;
-        spark->centre[0] = object->x.fixed;
-        spark->centre[1] = object->y.fixed + 0x140000;
-        spark->centre[2] = object->z.fixed;
-        Vector_AddPolarOffset(Random16(), sparkAngle, spark->centre);
+        spark->x = object->x.fixed;
+        spark->y = object->y.fixed + 0x140000;
+        spark->z = object->z.fixed;
+        Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
         spark->angle = sparkAngle;
         spark->radius = radius;
@@ -450,9 +440,9 @@ void Actor_VanishInSparks(s32 objectId) {
           s32 sparkAngle = spark->angle;
           s32 radius = spark->radius;
 
-          pos[0] = spark->centre[0];
-          pos[1] = spark->centre[1];
-          pos[2] = spark->centre[2];
+          pos[0] = spark->x;
+          pos[1] = spark->y;
+          pos[2] = spark->z;
           Vector_AddPolarOffset(radius, sparkAngle, pos);
           if (pos[2] > object->z.fixed)
             sprite->depth = depth + 2;
@@ -465,7 +455,7 @@ void Actor_VanishInSparks(s32 objectId) {
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= 0x3333;
-          spark->centre[1] -= 0x4000;
+          spark->y -= 0x4000;
         }
         if (++spark->age == SPARK_LIFE)
           spark->age = -1;

@@ -138,7 +138,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 0;
   if (work->fieldPsynergy != 28)
-    event->unkcad = 0;
+    event->ringTimerRunning = 0;
   event->targetX = 0;
   event->targetY = 0;
   event->targetZ = 0;
@@ -286,7 +286,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 1;
   if (work->fieldPsynergy != 28)
-    event->unkcad = 1;
+    event->ringTimerRunning = 1;
   Event_NoOp();
   HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
 }

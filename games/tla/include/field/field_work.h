@@ -145,9 +145,11 @@ struct FieldWork {
   s16 revealFrames;      ///< the frames Reveal has left
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
-  s8 unkcac; ///< a lasting Psynergy (155) is active
-  s8 unkcad;
-  s16 unkcae;
+  /// Field Psynergy 28's ring is shown (FieldPsynergy_Unnamed28); A, Select,
+  /// Start or a shortcut ends it.
+  s8 ringActive;
+  s8 ringTimerRunning; ///< off while another field Psynergy is cast
+  s16 ringFrames;      ///< frames left of the ring; 0 ends it
   /// The first of the two names the next yes/no choice shows in place of Yes
   /// and No (YesNoMenu_Run), 0 for those.
   s16 choiceMessage;

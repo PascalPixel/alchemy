@@ -336,7 +336,7 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (work->unkcac != 0) {
+  if (work->ringActive != 0) {
     if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
         (gInput.pressed & gMainRoutineWork.aKeys) ||
         (gInput.pressed & gMainRoutineWork.startKeys) ||

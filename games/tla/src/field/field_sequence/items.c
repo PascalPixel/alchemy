@@ -21,7 +21,7 @@ void Event_RunMessage(s32 actor, s32 message) {
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 /// Ends the lasting Psynergy and runs their end events: Reveal unless skip bit
-/// 0 is set, the lasting Psynergy unkcac marks unless bit 1, and the one
+/// 0 is set, field Psynergy 28's ring unless bit 1, and the one
 /// pendingThird marks unless bit 2.
 void Event_ResolvePendingActions(s32 skip) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
@@ -29,7 +29,7 @@ void Event_ResolvePendingActions(s32 skip) {
   state->busy = 0;
   if (state->revealActive != 0 && !(skip & 1))
     Field_RunPsynergyEndEvents(0x2090);
-  if (state->unkcac != 0 && !(skip & 2))
+  if (state->ringActive != 0 && !(skip & 2))
     Field_RunPsynergyEndEvents(0x209b);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
     Field_RunPsynergyEndEvents(0x208b);

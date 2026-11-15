@@ -13,16 +13,6 @@
 
 #define WHIRL_COUNT 100
 
-struct WhirlSpark {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 angle;
-  s32 unk10;
-  s32 radius;
-  s32 age;
-};
-
 // Heap block 92: the decoded picture, then the sparks and their sprites.
 struct TeleportWhirlWork {
   u8 picture[0x400];
@@ -164,20 +154,10 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
-struct TeleportSpark {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
 // Heap block 92: the decoded picture, then the sparks and their sprites.
 struct SparkWork {
   u8 picture[0x400];
-  struct TeleportSpark particles[SPARK_COUNT];
+  struct FieldPsynergyParticle particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
 
@@ -188,7 +168,7 @@ void Teleport_PlaySparks(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
-  struct TeleportSpark *particle;
+  struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 state;
   s32 entry;
@@ -215,7 +195,7 @@ void Teleport_PlaySparks(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    particle->age = -1;
+    particle->timer = -1;
   }
   wait(10);
   Actor_FaceDirectionById(owner, 0x4000, 0);
@@ -239,7 +219,7 @@ void Teleport_PlaySparks(void) {
     for (i = 0; i < count; i++) {
       angle = Random16();
       particle = &work->particles[next];
-      particle->age = zero;
+      particle->timer = zero;
       SET_POSITION(particle, object->x.fixed, object->y.fixed + Random16() * 20,
                    object->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
@@ -262,22 +242,22 @@ void Teleport_PlaySparks(void) {
 
     for (i = 0, particle = work->particles, sprite = work->sprites;
          i < SPARK_COUNT; i++, sprite++, particle++) {
-      age = particle->age;
+      age = particle->timer;
       if (age >= 0) {
         if ((u32)age < 20) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
-            age = particle->age;
+            age = particle->timer;
           } else {
             BattleEffect_IntegrateVector3(&particle->x, 63, -0xa000);
-            age = particle->age;
+            age = particle->timer;
           }
         }
-        particle->age = ++age;
+        particle->timer = ++age;
         if (age == 20)
-          particle->age = -1;
+          particle->timer = -1;
       }
     }
 

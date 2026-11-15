@@ -56,4 +56,16 @@
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
+/// A spark that circles a centre: the centre in 16.16 fixed-point pixels, the
+/// angle and radius it is drawn at, and its age in frames (-1 while unused).
+struct WhirlSpark {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 angle; ///< 1/65536 turns
+  s32 unused10;
+  s32 radius; ///< 16.16 fixed-point pixels
+  s32 age;
+};
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

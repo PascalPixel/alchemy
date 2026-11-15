@@ -16,39 +16,34 @@
 #include "view_move.h"
 #include "version.h"
 
-struct Unk_080e807cEntry {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 timer;
-};
-
-struct Unk_080e807cWork {
-  u8 unk0000[0x2100];
-  struct EffectSprite sprites[16];
-  u8 unk2380[0x280];
-  struct Unk_080e807cEntry entries[16];
-  u8 unk27c0[0x1c2];
-  u16 tile;
-  s8 unk2984;
-  s8 unk2985;
-  s8 unk2986;
-  u8 unk2987;
-  u16 phase;
+/// The work of field Psynergy 28 (heap slot battleEffect): the sparkle
+/// picture, the 64 sparkles that rise round the caster as the ring is drawn,
+/// the motes that circle it after, and what the per-frame task shows.
+struct RingWork {
+  u8 tiles[0x1000]; ///< the decoded sparkle picture, then the mote picture
+  struct EffectSprite sparkSprites[64];
+  struct FieldPsynergyParticle sparks[64];
+  /// The motes: on screen as they gather, then 16 round the caster.
+  struct EffectSprite sprites[32];
+  struct FieldPsynergyParticle motes[32];
+  u16 entry;    ///< the motes' VRAM cache entry
+  u16 tile;     ///< the motes' first tile
+  s8 sparkling; ///< the task draws 16 motes round the caster
+  s8 orbiting;  ///< the ring sways round the caster as its time runs down
+  s8 cycling;   ///< the task cycles BG and OBJ palette 15
+  u8 unused;
+  u16 phase; ///< the colour cycle's step
 };
 
 /// Task of field Psynergy 28 (its name is question marks): its motes and
 /// colours each frame.
 void FieldPsynergy_UpdateUnnamed28(void) {
-  struct Unk_080e807cWork *work = Ram_HeapSlots->battleEffect;
+  struct RingWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 *pos = position;
-  struct Unk_080e807cEntry *entry;
+  struct FieldPsynergyParticle *entry;
   struct EffectSprite *sprite;
   s32 x;
   s32 y;
@@ -61,8 +56,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   pos[0] = actor->x.fixed;
   pos[1] = actor->y.fixed + 0x100000;
   pos[2] = actor->z.fixed;
-  if (work->unk2985 != 0)
-    Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
+  if (work->orbiting != 0)
+    Vector_AddPolarOffset(px(2), -(event->ringFrames << 11), pos);
   Camera_WorldToScreen(pos);
   x = pos[0] >> 16;
   gBgScroll[0].x = 64 - x;
@@ -70,7 +65,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
-  if (work->unk2986 != 0) {
+  if (work->cycling != 0) {
     i = 0;
     phase = &work->phase;
     red = 28;
@@ -98,8 +93,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     work->phase++;
   }
 
-  if (work->unk2984 != 0) {
-    entry = work->entries;
+  if (work->sparkling != 0) {
+    entry = work->motes;
     sprite = work->sprites;
     tile = &work->tile;
     for (i = 15; i >= 0; i--, sprite++, entry++) {
@@ -126,46 +121,26 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     }
   }
 
-  if (event->unkcad != 0 && event->unkcae != 0)
-    event->unkcae--;
-  if (event->unkcae == 0)
+  if (event->ringTimerRunning != 0 && event->ringFrames != 0)
+    event->ringFrames--;
+  if (event->ringFrames == 0)
     event->psynergy = 0x209b;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT
 #undef SPARK_COUNT
 
-struct RingMote {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 timer;
-};
-
-struct RingWork {
-  u8 tiles[0x1000];
-  struct EffectSprite sparkSprites[64];
-  struct RingMote sparks[64];
-  struct EffectSprite sprites[32];
-  struct RingMote motes[32];
-  u16 entry;
-  u16 tile;
-  s8 sparkling;
-  s8 orbiting;
-  s8 cycling;
-  u8 unk2987;
-  u16 phase;
-};
-
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
 
+/// Field Psynergy 28: a ring of light is drawn round the caster among rising
+/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateUnnamed28 keeps
+/// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndUnnamed28).
+/// Cast again while it lasts, it only starts the 600 frames again.
 void FieldPsynergy_Unnamed28(void) {
-  struct RingWork *work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x298c);
+  struct RingWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
@@ -178,7 +153,7 @@ void FieldPsynergy_Unnamed28(void) {
   s32 drawing;
   s32 *pos;
   struct EffectSprite *sprite;
-  struct RingMote *mote;
+  struct FieldPsynergyParticle *mote;
   s32 position[3];
   s16 off; // Cycling is switched off through a halfword zero.
   s32 phase;
@@ -191,7 +166,7 @@ void FieldPsynergy_Unnamed28(void) {
   angle = 0;
   repeat = 1;
   drawing = 0;
-  if (event->unkcac == 0) {
+  if (event->ringActive == 0) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
     BattleEffect_StartCanvasSprite();
@@ -257,9 +232,9 @@ void FieldPsynergy_Unnamed28(void) {
     work->orbiting = 0;
     work->cycling = 1;
     work->phase = 0;
-    event->unkcac = 1;
-    event->unkcad = 1;
-    event->unkcae = 999;
+    event->ringActive = 1;
+    event->ringTimerRunning = 1;
+    event->ringFrames = 999;
     off = 0;
     Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
     wait(1);
@@ -368,9 +343,9 @@ void FieldPsynergy_Unnamed28(void) {
     FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
-  event->unkcac = 1;
-  event->unkcad = 1;
-  event->unkcae = 600;
+  event->ringActive = 1;
+  event->ringTimerRunning = 1;
+  event->ringFrames = 600;
   Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
@@ -412,11 +387,11 @@ void FieldPsynergy_EndUnnamed28(void) {
   s32 i;
   s32 frame;
 
-  if (event->unkcac == 0)
+  if (event->ringActive == 0)
     return;
-  event->unkcac = 0;
-  event->unkcad = 0;
-  event->unkcae = 0;
+  event->ringActive = 0;
+  event->ringTimerRunning = 0;
+  event->ringFrames = 0;
   Task_Remove(FieldPsynergy_UpdateUnnamed28);
   wait(1);
   /* FAKEMATCH(dead): a once-only block. */

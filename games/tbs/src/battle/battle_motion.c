@@ -124,9 +124,9 @@ void BattleMotion_LeapBack(s32 unitId) {
   struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct Actor *actor = battleObject->actor;
 
-  actor->acceleration = 128 << 9;
-  actor->speedLimit = 128 << 11;
-  actor->velocityY = 128 << 11;
+  actor->acceleration = px(1);
+  actor->speedLimit = px(4);
+  actor->velocityY = px(4);
   actor->gravity = px(3) / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;

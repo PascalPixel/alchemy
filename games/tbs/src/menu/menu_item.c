@@ -1563,6 +1563,13 @@ s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
   return result;
 }
 
+/// The item command cursor on the command grid's rows, 8 pixels apart from y
+/// 30, and in Japanese on its columns, 40 pixels apart from x 86.
+#define ITEM_COMMAND_CURSOR_Y(row) ((row) * 8 + 30)
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define ITEM_COMMAND_CURSOR_X(column) ((column) * 40 + 86)
+#endif
+
 #if LANGUAGE != LANGUAGE_JAPANESE
 
 /// Returns the x of the item command cursor on column and row of the command
@@ -1573,14 +1580,15 @@ s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
-/// Returns the y of the item command cursor: 30 on the top row, 38 below.
+/// Returns the y of the item command cursor: its top row, or the row below
+/// for any other row.
 s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
   s32 y;
 
   (void)column;
-  y = 30;
+  y = ITEM_COMMAND_CURSOR_Y(0);
   if (row != 0) {
-    y = 38;
+    y = ITEM_COMMAND_CURSOR_Y(1);
   }
   return y;
 }
@@ -1668,7 +1676,7 @@ s32 ItemMenu_ChooseCommand(void) {
   cursorY = ItemMenu_CommandCursorY(column, row);
   MenuCursor_Slide(cursorX, cursorY);
 #else
-  MenuCursor_Slide(column * 40 + 86, row * 8 + 30);
+  MenuCursor_Slide(ITEM_COMMAND_CURSOR_X(column), ITEM_COMMAND_CURSOR_Y(row));
 #endif
 
   for (;;) {
@@ -1705,7 +1713,8 @@ s32 ItemMenu_ChooseCommand(void) {
     cursorY = ItemMenu_CommandCursorY(column, row);
     MenuCursor_Position(cursorX, cursorY);
 #else
-    MenuCursor_Position(column * 40 + 86, row * 8 + 30);
+    MenuCursor_Position(ITEM_COMMAND_CURSOR_X(column),
+                        ITEM_COMMAND_CURSOR_Y(row));
 #endif
     wait(1);
 

@@ -5,6 +5,11 @@
 
 #include "menu_internal.h"
 
+/// A Psynergy shortcut, and the field's Psynergy request packed the same way:
+/// its party member above bit 10, the Psynergy's id below.
+#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
+#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
+
 // The German, Spanish, French and Italian Psynergy menus save the window
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
@@ -72,7 +77,7 @@ s32 PsynergyMenu_Run(void) {
     u16 request;
     // The action looked up here is not used.
     Ability_Get(PSYNERGY_ABILITY_MASK & menu->sideAction[0]);
-    request = psynergy | (member << 10);
+    request = psynergy | (member << PSYNERGY_SHORTCUT_MEMBER_SHIFT);
     target->psynergy = request;
   }
   // Close the menu and give the screen back to the field.
@@ -558,10 +563,6 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   menu->memberIds[1] = menu->memberTable[selection];
   return result;
 }
-
-/// A Psynergy shortcut: its party member above bit 10, the Psynergy's id below.
-#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
-#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// memberId << 10 | the Psynergy's id. Returns 1.

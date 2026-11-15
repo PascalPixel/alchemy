@@ -402,13 +402,9 @@ loop:
   index >>= 1;
   {
     s32 x = gIsletCave_Doors[index].x;
-    /* FAKEMATCH(temporary): x read first and y read through a pointer to x from
-     * a separate byte offset. */
-    u32 offset = index * sizeof(struct MapGridCellAnimation) +
-                 offsetof(struct MapGridCellAnimation, x);
-    const u16 *position = (const u16 *)((const u8 *)gIsletCave_Doors + offset);
+    s32 y = gIsletCave_Doors[index].y;
 
-    MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, position[1]);
+    MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, y);
   }
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);

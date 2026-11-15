@@ -2253,7 +2253,7 @@ struct SpriteView {
 };
 
 struct SceneState {
-  struct PuzzleCell cells[CHANNEL_CELLS];
+  struct PuzzleCell cells[CHANNEL_ROWS][CHANNEL_COLUMNS];
   s32 count;
   s16 firstId;
   s16 endId;
@@ -2328,7 +2328,7 @@ void GabombaStatue_ClearGrid(void) {
 
   for (row = 0; row < CHANNEL_ROWS; row++)
     for (col = 0; col < CHANNEL_COLUMNS; col++) {
-      struct PuzzleCell *cell = &state->cells[row * CHANNEL_COLUMNS + col];
+      struct PuzzleCell *cell = state->cells[0] + (row * CHANNEL_COLUMNS + col);
       s32 occupied = cell->occupied;
 
       if (Event_GetFlag(FLAG_GABOMBA_RESPONDED) && cell->occupied == 2) {
@@ -2339,11 +2339,10 @@ void GabombaStatue_ClearGrid(void) {
         MapGrid_CopyCells(0, 11, 1, 1, state->originX + col,
                           state->originZ + row);
       else if (occupied == 1)
-        MapGrid_CopyCells(1, state->cells[row * CHANNEL_COLUMNS + col].kind, 1,
-                          1, state->originX + col, state->originZ + row);
+        MapGrid_CopyCells(1, state->cells[row][col].kind, 1, 1,
+                          state->originX + col, state->originZ + row);
       else
-        MapGrid_CopyCells(occupied,
-                          state->cells[row * CHANNEL_COLUMNS + col].kind, 1, 1,
+        MapGrid_CopyCells(occupied, state->cells[row][col].kind, 1, 1,
                           state->originX + col, state->originZ + row);
     }
 }
@@ -2370,7 +2369,7 @@ s32 GabombaStatue_LayChannel(s32 value) {
   state->count = value - 1;
   /* FAKEMATCH(dead): the form kept. */
   {
-    s32 mark = state->cells[0].occupied;
+    s32 mark = state->cells[0][0].occupied;
     if (mark & 0x100) {
       if (value == 1)
         goto draw_next;
@@ -2392,20 +2391,20 @@ retry:
   state->count += 1;
   gRandomSeed = state->count;
   Iwram_ClearWordsEntry(state, sizeof(state->cells));
-  state->cells[3 * CHANNEL_COLUMNS + 5].kind = 10;
-  state->cells[7 * CHANNEL_COLUMNS + 1].kind = 10;
-  state->cells[7 * CHANNEL_COLUMNS + 9].kind = 10;
-  state->cells[7 * CHANNEL_COLUMNS + 0].blocked = 1;
-  state->cells[7 * CHANNEL_COLUMNS + 2].blocked = 1;
-  state->cells[7 * CHANNEL_COLUMNS + 8].blocked = 1;
-  state->cells[7 * CHANNEL_COLUMNS + 10].blocked = 1;
+  state->cells[3][5].kind = 10;
+  state->cells[7][1].kind = 10;
+  state->cells[7][9].kind = 10;
+  state->cells[7][0].blocked = 1;
+  state->cells[7][2].blocked = 1;
+  state->cells[7][8].blocked = 1;
+  state->cells[7][10].blocked = 1;
   row = 0;
 draw_row:
   col = 0;
 draw_col:
   /* FAKEMATCH(temporary): the form kept. */
   {
-    s32 drawn = state->cells[row * CHANNEL_COLUMNS + col].kind;
+    s32 drawn = state->cells[row][col].kind;
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
     Map_CopyCellsRect(0, drawn, 1, 1, drawX + col, drawZ);
@@ -2442,8 +2441,8 @@ draw_next:
 count_row:
   col = 0;
 count_col:
-  piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
-  shape = state->cells[row * CHANNEL_COLUMNS + col].state;
+  piece = state->cells[row][col].kind;
+  shape = state->cells[row][col].state;
   if (shape == 5)
     straight++;
   if (shape == 10)
@@ -2468,12 +2467,12 @@ start_try:
   col = Random_Below(CHANNEL_COLUMNS);
   row = (Random_Below(3)) + 5;
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+    piece = state->cells[row][col].kind;
     if ((u32)(piece - 1) <= 1) {
-      shape = state->cells[row * CHANNEL_COLUMNS + col].state;
+      shape = state->cells[row][col].state;
       if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
-        state->cells[row * CHANNEL_COLUMNS + col].kind = 10;
-        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
+        state->cells[row][col].kind = 10;
+        state->cells[row][col].occupied = 1;
         left = 6;
         goto start_done;
       }
@@ -2490,9 +2489,9 @@ corner_try:
   col = Random_Below(CHANNEL_COLUMNS);
   row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+    piece = state->cells[row][col].kind;
     if (piece == 3 || piece == 8 || piece == 9) {
-      cell = &state->cells[row * CHANNEL_COLUMNS + col];
+      cell = &state->cells[row][col];
       shape = cell->state;
       if (shape != 6 && shape != 9) {
         switch (piece) {
@@ -2506,7 +2505,7 @@ corner_try:
           cell->kind = ((Random_Below(2)) << 1) + 5;
           break;
         }
-        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
+        state->cells[row][col].occupied = 1;
         left--;
         goto corner_done;
       }
@@ -2523,9 +2522,9 @@ straight_try:
   col = Random_Below(CHANNEL_COLUMNS);
   row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+    piece = state->cells[row][col].kind;
     if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
-      state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
+      state->cells[row][col].occupied = 1;
       left--;
       goto straight_done;
     }
@@ -2542,9 +2541,9 @@ straight_done:
     col = Random_Below(CHANNEL_COLUMNS);
     row = Random_Below(8);
     if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-      piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+      piece = state->cells[row][col].kind;
       if ((u32)(piece - 1) <= 1) {
-        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
+        state->cells[row][col].occupied = 1;
         goto plain_done;
       }
     }
@@ -2559,8 +2558,8 @@ straight_done:
 turn_row:
   col = 0;
 turn_col:
-  piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
-  shape = state->cells[row * CHANNEL_COLUMNS + col].occupied;
+  piece = state->cells[row][col].kind;
+  shape = state->cells[row][col].occupied;
   if (shape != 0) {
     switch (Random_Below(8)) {
     case 0:
@@ -2748,17 +2747,9 @@ s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction) {
 }
 
 void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state) {
-  s32 i;
 
-  {
-    s32 column = x;
-
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
-    asm("" : "+l"(column) : "l"(gSceneState.cells));
-    i = z * CHANNEL_COLUMNS + column;
-  }
-  gSceneState.cells[i].kind = kind;
-  gSceneState.cells[i].state = state;
+  gSceneState.cells[z][x].kind = kind;
+  gSceneState.cells[z][x].state = state;
 }
 
 /// Shows or hides the statues: gives each occupied cell's actor, numbered from
@@ -2776,7 +2767,8 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
     column = 0;
     do {
       {
-        struct PuzzleCell *cell = &state->cells[row * CHANNEL_COLUMNS + column];
+        struct PuzzleCell *cell =
+            state->cells[0] + (row * CHANNEL_COLUMNS + column);
 
         if (cell->occupied != 0) {
           struct Actor *object = Actor_Get(id);
@@ -2809,18 +2801,10 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
 #undef FIELD_AT
 
 u8 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
-  s32 i;
 
-  {
-    s32 column = x;
-
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
-    asm("" : "+l"(column) : "l"(gSceneState.cells));
-    i = z * CHANNEL_COLUMNS + column;
-  }
-  gSceneState.cells[i].kind =
-      gGabombaStatue_TurnedPieces[gSceneState.cells[i].kind * 2 + direction];
-  return gSceneState.cells[i].kind;
+  gSceneState.cells[z][x].kind =
+      gGabombaStatue_TurnedPieces[gSceneState.cells[z][x].kind * 2 + direction];
+  return gSceneState.cells[z][x].kind;
 }
 
 void GabombaStatue_RaiseTiles(s32 value, s32 row) {
@@ -2851,9 +2835,9 @@ void GabombaStatue_PoundTile(s32 mode) {
   x = FIELD_CELL(object->x.fixed) - state->originX;
   z = FIELD_CELL(object->z.fixed) - state->originZ;
   {
-    s32 kind = state->cells[z * CHANNEL_COLUMNS + x].kind;
+    s32 kind = state->cells[z][x].kind;
 
-    cell = &state->cells[z * CHANNEL_COLUMNS + x];
+    cell = &state->cells[z][x];
     cell->occupied = mode;
     MapGrid_CopyCells(1, kind, 1, 1, state->originX + x, state->originZ + z);
   }
@@ -2863,7 +2847,7 @@ void GabombaStatue_PoundTile(s32 mode) {
   row = 0;
   for (row = 0; row < CHANNEL_ROWS; row++) {
     for (col = 0; col < CHANNEL_COLUMNS; col++) {
-      if (state->cells[row * CHANNEL_COLUMNS + col].occupied == 2) {
+      if (state->cells[row][col].occupied == 2) {
         found = 1;
         break;
       }
@@ -2996,7 +2980,7 @@ void GabombaStatue_DrawFloatingTiles(void) {
       s32 depth = FIELD_PIXEL(y + z) + 58;
       s32 cellX = FIELD_CELL(px) - state->originX;
       s32 cellZ = FIELD_CELL(pz) - state->originZ;
-      s32 kind = state->cells[cellZ * CHANNEL_COLUMNS + cellX].kind;
+      s32 kind = state->cells[cellZ][cellX].kind;
       u32 *p;
       x = (FIELD_PIXEL(x) - 8) & 0x1ff;
       sy = (FIELD_PIXEL(sy) - 8) & 255;
@@ -3054,8 +3038,8 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   s32 angle = heading << 14;
   s32 cell = row * CHANNEL_COLUMNS + col;
   struct SceneState *board = &gSceneState;
-  s32 piece = board->cells[cell].kind;
-  s32 goal = board->cells[cell].occupied;
+  s32 piece = board->cells[row][col].kind;
+  s32 goal = board->cells[row][col].occupied;
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
@@ -3335,8 +3319,8 @@ void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out) {
 
   for (z = 0; z <= 7; z++) {
     for (x = 0; x <= 10; x++) {
-      if (gSceneState.cells[z * CHANNEL_COLUMNS + x].kind == 10 &&
-          !(x == 5 && z == 3) && !(z == 7 && (x == 1 || x == 9))) {
+      if (gSceneState.cells[z][x].kind == 10 && !(x == 5 && z == 3) &&
+          !(z == 7 && (x == 1 || x == 9))) {
         *x_out = x;
         *z_out = z;
         return;

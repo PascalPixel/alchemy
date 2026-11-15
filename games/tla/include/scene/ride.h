@@ -12,13 +12,26 @@
 struct Actor;
 
 /// One of the ride's four entries.
+/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
+/// low four bits, and which flame it sends, or none.
+enum FlameThrowerFlags {
+  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
+  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
+  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
+  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
+  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
+  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
+};
+
 struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
+  s16 active;
+  s16 timer; ///< frames to the next puff, 8 after each
+  /// enum FlameThrowerFlags in the high nibble (the Ride_Spawn routine each
+  /// picks), the reach in the low.
+  s16 flags;
+  s16 offScreen; ///< puffs off screen and keeps the flames' sprites
+  struct Actor *actor;
+  s32 reach; ///< 16.16, the low nibble of flags << 16
 };
 
 /// An actor the ride checks against as it moves: a ride stops beside it

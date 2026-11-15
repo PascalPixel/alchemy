@@ -86,17 +86,6 @@
 #define FLAG_HIDDEN_CIRCLE_SHEET_SHOWN FLAG_SCENE_TEMP_32
 #define FLAG_DRAGON_FACE_AWAKE FLAG_SCENE_TEMP_34
 
-/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
-/// low four bits, and which flame it sends, or none.
-enum FlameThrowerFlags {
-  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
-  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
-  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
-  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
-  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
-  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
-};
-
 /// The first hall (Fugue's room): two ice cones, the dead end Grind cracks
 /// (unseen, sprite 489) and Fugue.
 enum MarsLighthouseEntranceFugueActorId {
@@ -1596,11 +1585,11 @@ void FlameThrowers_Puff(void);
 #include "shared/beam_start.h"
 
 UNUSED s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
 }
 
 UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
 }
 
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1619,16 +1608,16 @@ void Ride_SetEntryState(s32 index, s32 value) {
   struct FlameHitWork *work = RIDE_WORK;
   struct RideEntry *entry = &work->entries[index];
 
-  entry->d = (value & 15) << 16;
-  entry->b = value & 0xf0;
+  entry->reach = (value & 15) << 16;
+  entry->flags = value & 0xf0;
 }
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].c = value;
+  RIDE_WORK->entries[index].offScreen = value;
 }
 
 UNUSED s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
 }
 
 UNUSED void Ride_SetSlotActor(u32 index, s32 value) {

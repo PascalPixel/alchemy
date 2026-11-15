@@ -99,15 +99,6 @@
 /// runs MarsLighthouseRoomF_KnockBack.
 enum { STEP_TRIGGER_FLAME_HIT = 88 };
 
-enum FlameThrowerFlags {
-  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
-  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
-  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
-  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
-  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
-  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
-};
-
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the dragon statue that becomes a torch once its flame is lit, the
 /// statue that shoots at the center wall and the wall itself. Its pipe room:
@@ -1798,11 +1789,11 @@ UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 UNUSED s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
 }
 
 UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
 }
 
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1819,11 +1810,11 @@ void Ride_SetEntry__ride(s32 index, s32 value) __asm__("Ride_SetEntry");
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].c = value;
+  RIDE_WORK->entries[index].offScreen = value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
 }
 
 #include "shared/ride_set_slot.h"

@@ -4,6 +4,6 @@ void Ride_SetEntry(s32 index, s32 value) {
       (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[index];
 
-  entry->d = (value & 15) << 16;
-  entry->b = value & 0xf0;
+  entry->reach = (value & 15) << 16;
+  entry->flags = value & 0xf0;
 }

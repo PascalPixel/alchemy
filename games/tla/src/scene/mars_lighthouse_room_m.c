@@ -71,17 +71,6 @@
 /// Begone!"
 #define FLAG_TOLD_TO_BEGONE 0xa2f
 
-/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
-/// low four bits, and which flame it sends, or none.
-enum FlameThrowerFlags {
-  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
-  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
-  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
-  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
-  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
-  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
-};
-
 /// The beacon ledge (M6) is reached from each tower by its own entrance.
 enum {
   ENTRANCE_FROM_VENUS_TOWER = 1,
@@ -1489,11 +1478,11 @@ void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 #include "shared/beam_start.h"
 
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
 }
 
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
 }
 
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1503,11 +1492,11 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].c = value;
+  RIDE_WORK->entries[index].offScreen = value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
 }
 
 #include "shared/ride_set_slot.h"

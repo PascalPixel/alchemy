@@ -137,7 +137,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet + BIND_DJINNI_PICTURE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
-  shift = 64 - anchor.x;
+  shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
@@ -284,7 +284,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet + BIND_FLARE_PICTURES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
-  shift = 64 - anchor.x;
+  shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 

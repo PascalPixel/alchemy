@@ -5,9 +5,9 @@
 #include "battle_effect_internal.h"
 
 // Particle motion and projection. A particle moves a frame by its velocity,
-// gravity on its vertical speed, and a damping out of 64; the projection
-// helpers return a point 16 pixels above where a unit stands, where effects
-// anchor on it.
+// gravity on its vertical speed, and a damping out of DAMPING_SCALE; the
+// projection helpers return a point 16 pixels above where a unit stands, where
+// effects anchor on it.
 
 /// Moves a particle one frame in three dimensions.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -16,8 +16,9 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
   step->y += step->velocityY;
   step->z += step->velocityZ;
   step->velocityY += gravity;
-  SET_VELOCITY(step, step->velocityX * damping / 64,
-               step->velocityY * damping / 64, step->velocityZ * damping / 64);
+  SET_VELOCITY(step, step->velocityX * damping / DAMPING_SCALE,
+               step->velocityY * damping / DAMPING_SCALE,
+               step->velocityZ * damping / DAMPING_SCALE);
 }
 
 /// Moves a particle one frame on the screen.
@@ -26,8 +27,8 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
   step->x += step->velocityX;
   step->y += step->velocityY;
   step->velocityY += gravity;
-  step->velocityX = step->velocityX * damping / 64;
-  step->velocityY = step->velocityY * damping / 64;
+  step->velocityX = step->velocityX * damping / DAMPING_SCALE;
+  step->velocityY = step->velocityY * damping / DAMPING_SCALE;
 }
 
 /// Projects a point in the current transform onto the screen, 16 pixels

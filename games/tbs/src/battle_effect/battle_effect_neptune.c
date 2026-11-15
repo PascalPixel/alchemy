@@ -175,9 +175,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       scale = unitScale;
       if (frame <= 83) {
         if (frame > 48) {
-          neptuneVelocityX = neptuneVelocityX * 60 / 64;
+          neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
         }
-        neptuneVelocityZ = neptuneVelocityZ * 60 / 64;
+        neptuneVelocityZ = neptuneVelocityZ * 60 / DAMPING_SCALE;
         if (neptuneZ > px(132)) {
           neptuneVelocityZ -= px(1) / 8;
         } else {
@@ -189,7 +189,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (frame <= 107) {
           neptuneVelocityX += px(1) / 8;
         }
-        neptuneVelocityX = neptuneVelocityX * 60 / 64;
+        neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
         neptuneX += neptuneVelocityX;
         if (frame <= 117) {
           if (neptuneZ > px(138)) {
@@ -197,7 +197,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           } else {
             neptuneVelocityZ += px(1) / 8;
           }
-          neptuneVelocityZ = neptuneVelocityZ * 56 / 64;
+          neptuneVelocityZ = neptuneVelocityZ * 56 / DAMPING_SCALE;
           neptuneZ += neptuneVelocityZ;
         }
       }

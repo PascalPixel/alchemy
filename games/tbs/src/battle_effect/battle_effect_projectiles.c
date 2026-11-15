@@ -162,8 +162,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
           spark->velocityX += pullX;
           spark->velocityY += pullY;
           spark->velocityZ += pullZ;
-          SET_VELOCITY(spark, spark->velocityX * 62 / 64,
-                       spark->velocityY * 62 / 64, spark->velocityZ * 62 / 64);
+          SET_VELOCITY(spark, spark->velocityX * 62 / DAMPING_SCALE,
+                       spark->velocityY * 62 / DAMPING_SCALE,
+                       spark->velocityZ * 62 / DAMPING_SCALE);
           if ((pullX > -2048 && pullX < 2048) &&
               (pullZ > -2048 && pullZ < 2048))
             spark->variant = -1;

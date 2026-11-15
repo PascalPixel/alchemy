@@ -188,7 +188,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_SWORD_SLASH_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Projection_ScaledUnit(work->args->targets[0], &screenPosition);
-  REG_BG2X = (64 - screenPosition.x) << 8;
+  REG_BG2X = (CANVAS_SIZE / 2 - screenPosition.x) << 8;
 
   // Each sword waits near the top of the canvas until its turn, then falls,
   // drifting towards the middle.
@@ -375,7 +375,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
     Projection_Unit(work->args->user, &ground);
-    REG_BG2X = (64 - ground.x) << 8;
+    REG_BG2X = (CANVAS_SIZE / 2 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
     if (frame == 16)
@@ -866,7 +866,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != ELEMENT_BURST_FRAMES; frame++) {
     Projection_ScaledUnit(args->user, &ground);
-    REG_BG2X = (64 - ground.x) << 8;
+    REG_BG2X = (CANVAS_SIZE / 2 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
     if (frame == 26) {

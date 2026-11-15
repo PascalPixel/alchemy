@@ -124,7 +124,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   if (mode == HEALING_MODE_PLY) {
     Projection_ScaledUnit(work->args->targets[0], &base);
-    canvasShiftX = 64 - base.x;
+    canvasShiftX = CANVAS_SIZE / 2 - base.x;
     REG_BG2X = canvasShiftX << 8;
     REG_BG2PA = Q_8_8(1);
     doubleWidth = 0;

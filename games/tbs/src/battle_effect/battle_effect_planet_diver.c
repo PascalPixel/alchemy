@@ -171,8 +171,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         y = chip->y + chip->velocityY;
         chip->life--;
         chip->y = y;
-        chip->velocityX = chip->velocityX * 56 / 64;
-        chip->velocityY = chip->velocityY * 56 / 64 + px(1) / 8;
+        chip->velocityX = chip->velocityX * 56 / DAMPING_SCALE;
+        chip->velocityY = chip->velocityY * 56 / DAMPING_SCALE + px(1) / 8;
         if (chip->y > px(112)) {
           chip->velocityY = -chip->velocityY / 2;
         } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {

@@ -78,7 +78,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   REG_BG2PA = Q_8_8(1);
   if (work->args->targetCount == 1) {
     Projection_ScaledUnit(work->args->targets[0], &one);
-    offsetX = 64 - one.x;
+    offsetX = CANVAS_SIZE / 2 - one.x;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
       offsetX = -NARROW_CANVAS_PARTY_X;

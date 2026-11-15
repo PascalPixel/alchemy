@@ -91,8 +91,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
-        velocity.x = velocity.x * 58 / 64;
-        velocity.y = velocity.y * 56 / 64;
+        velocity.x = velocity.x * 58 / DAMPING_SCALE;
+        velocity.y = velocity.y * 56 / DAMPING_SCALE;
         if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
@@ -181,8 +181,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           EFFECT_FALL_MOTE(drop->velocityY, gNereid_Gravity[k & 3], frame);
-          drop->velocityX = drop->velocityX * 62 / 64;
-          drop->velocityY = drop->velocityY * 62 / 64;
+          drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
+          drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
           if (drop->velocityY > 0 && Q_16_16_TO_INT(drop->y) > 104)
             drop->variant = -1;

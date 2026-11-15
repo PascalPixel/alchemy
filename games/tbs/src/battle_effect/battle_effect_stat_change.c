@@ -177,7 +177,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
   if (work->args->targetCount == 1) {
     Projection_ScaledUnit(work->args->targets[0], &base);
-    canvasShiftX = -base.x * 4 / 5 + 64;
+    canvasShiftX = -base.x * 4 / 5 + CANVAS_SIZE / 2;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
       canvasShiftX = -64;

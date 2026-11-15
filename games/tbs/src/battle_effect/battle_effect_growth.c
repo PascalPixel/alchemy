@@ -282,7 +282,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   middle = first.x;
   middle += (last.x - middle) / 2;
   first.x = middle;
-  REG_BG2X = (64 - first.x) << 8;
+  REG_BG2X = (CANVAS_SIZE / 2 - first.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);

@@ -110,7 +110,8 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
         vz = ember->velocityZ += (target->z.fixed - ember->z) >> 9;
         if (frame < launchFrame + 85) {
-          SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
+          SET_VELOCITY(ember, vx * 60 / DAMPING_SCALE, vy * 60 / DAMPING_SCALE,
+                       vz * 60 / DAMPING_SCALE);
         }
 
         // Below the ground it hits.

@@ -84,11 +84,11 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   Projection_Unit(work->args->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
-    x = 64 - screenPosition.x;
+    x = CANVAS_SIZE / 2 - screenPosition.x;
     REG_BG2X = x << 8;
   } else {
     REG_BG2PA = Q_8_8(0.8);
-    x = (-screenPosition.x * 4) / 5 + 64;
+    x = (-screenPosition.x * 4) / 5 + CANVAS_SIZE / 2;
     REG_BG2X = x << 8;
   }
 

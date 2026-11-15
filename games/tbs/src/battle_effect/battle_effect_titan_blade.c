@@ -236,8 +236,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->y += dust->velocityY;
           EFFECT_FALL_MOTE(dust->velocityY, gTitanBlade_DustGravity[i & 3],
                            frame);
-          dust->velocityX = dust->velocityX * 62 / 64;
-          dust->velocityY = dust->velocityY * 62 / 64;
+          dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+          dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
           if (dust->velocityY > 0 && Q_16_16_TO_INT(dust->y) > 108) {
             dust->variant = -1;

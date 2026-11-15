@@ -307,7 +307,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom -= Q16_ONE / 4;
     }
     if (frame > 32) {
-      zoom = zoom * 60 / 64;
+      zoom = zoom * 60 / DAMPING_SCALE;
     }
     if (frame == JUDGMENT_BEAM_FRAME) {
       zoom = -px(8);

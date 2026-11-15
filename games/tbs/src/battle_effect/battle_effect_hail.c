@@ -296,9 +296,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           portal->velocityY += (px(20) - portal->y) >> 8;
           portal->velocityZ += (target->z.fixed - portal->z) >> 8;
           if (frame < i * 2 + 85) {
-            SET_VELOCITY(portal, portal->velocityX * 60 / 64,
-                         portal->velocityY * 60 / 64,
-                         portal->velocityZ * 60 / 64);
+            SET_VELOCITY(portal, portal->velocityX * 60 / DAMPING_SCALE,
+                         portal->velocityY * 60 / DAMPING_SCALE,
+                         portal->velocityZ * 60 / DAMPING_SCALE);
           }
           if (portal->y < px(20)) {
             work->shakeFrames = 8;

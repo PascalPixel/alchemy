@@ -199,7 +199,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                Q_16_16_TO_INT(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
-          fire->velocityY = fire->velocityY * 48 / 64;
+          fire->velocityY = fire->velocityY * 48 / DAMPING_SCALE;
         } else {
           fire->variant--;
         }

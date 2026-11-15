@@ -418,7 +418,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
       REG_BG2PA = Q_8_8(1);
-      REG_BG2X = (64 - targetPos.x) << 8;
+      REG_BG2X = (CANVAS_SIZE / 2 - targetPos.x) << 8;
       work->transferMode = CANVAS_COPY_AND_CLEAR;
       work->transferValue = 0;
       Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);

@@ -30,26 +30,26 @@ LuckyDice_Sprites:
 	.set LUCKY_DICE_IT, 1
 	.endif
 	.ifdef LUCKY_DICE_JA
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1_ja.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling_ja.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites_ja.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_DE
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1_de.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling_de.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites_de.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_ES
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1_es.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling_es.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites_es.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_FR
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1_fr.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling_fr.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites_fr.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_IT
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1_it.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling_it.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites_it.parts.lz"
 	.else
-	.incbin "games/tla/src/graphics/lucky_dice/sprites_1.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_tumbling.gbapal"
 	.incbin "games/tla/src/graphics/lucky_dice/sprites.parts.lz"
 	.endif
 	.endif

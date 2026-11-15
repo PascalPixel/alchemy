@@ -86,13 +86,13 @@ gItemIcons:
 	.4byte Icon_ItemIronShield
 	.4byte Icon_ItemKnightsShield
 	.4byte Icon_ItemMirroredShield
-	.4byte Icon_Item084
+	.4byte Icon_ItemUnusedGoldenGauntlet
 	.4byte Icon_ItemPaddedGloves
 	.4byte Icon_ItemLeatherGloves
 	.4byte Icon_ItemGauntlets
 	.4byte Icon_ItemVambrace
 	.4byte Icon_ItemWarGloves
-	.4byte Icon_Item090
+	.4byte Icon_ItemUnusedPinkBracer
 	.4byte Icon_ItemLeatherArmlet
 	.4byte Icon_ItemArmlet
 	.4byte Icon_ItemHeavyArmlet
@@ -267,7 +267,7 @@ gItemIcons:
 	.4byte Icon_ItemAeolianCassock
 	.4byte Icon_ItemIrisRobe
 	.4byte Icon_ItemLunaShield
-	.4byte Icon_Item265
+	.4byte Icon_ItemUnusedGreenGauntlet
 	.4byte Icon_ItemFlameShield
 	.4byte Icon_ItemTerraShield
 	.4byte Icon_ItemCosmosShield
@@ -278,7 +278,7 @@ gItemIcons:
 	.4byte Icon_ItemBigBangGloves
 	.4byte Icon_ItemCraftedGloves
 	.4byte Icon_ItemRiotGloves
-	.4byte Icon_Item276
+	.4byte Icon_ItemUnusedPinkBracelet
 	.4byte Icon_ItemClearBracelet
 	.4byte Icon_ItemMythrilArmlet
 	.4byte Icon_ItemBoneArmlet
@@ -343,16 +343,16 @@ gItemIcons:
 	.4byte Icon_ItemTomegathericon
 	.4byte Icon_ItemLashPebble
 	.4byte Icon_ItemPoundCube
-	.4byte Icon_Item341
+	.4byte Icon_ItemUnusedRedGem
 	.4byte Icon_ItemHoverJade
 	.4byte Icon_ItemCycloneChip
-	.4byte Icon_Item344
+	.4byte Icon_ItemUnusedRedBow
 	.4byte Icon_ItemTremorBit
 	.4byte Icon_ItemBurstBrooch
 	.4byte Icon_ItemGrindstone
-	.4byte Icon_Item348
+	.4byte Icon_ItemUnusedPebble
 	.4byte Icon_ItemScoopGem
-	.4byte Icon_Item350
+	.4byte Icon_ItemUnusedRock
 	.4byte Icon_ItemTeleportLapis
 	.4byte Icon_ItemDancingIdol
 	.4byte Icon_ItemPrettyStone
@@ -544,8 +544,8 @@ Icon_ItemKnightsShield:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_knights_shield.icon4"
 Icon_ItemMirroredShield:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_mirrored_shield.icon4"
-Icon_Item084:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_084.icon4"
+Icon_ItemUnusedGoldenGauntlet:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_golden_gauntlet.icon4"
 Icon_ItemPaddedGloves:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_padded_gloves.icon4"
 Icon_ItemLeatherGloves:
@@ -556,8 +556,8 @@ Icon_ItemVambrace:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_vambrace.icon4"
 Icon_ItemWarGloves:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_war_gloves.icon4"
-Icon_Item090:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_090.icon4"
+Icon_ItemUnusedPinkBracer:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_pink_bracer.icon4"
 Icon_ItemLeatherArmlet:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_leather_armlet.icon4"
 Icon_ItemArmlet:
@@ -906,8 +906,8 @@ Icon_ItemIrisRobe:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_iris_robe.icon4"
 Icon_ItemLunaShield:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_luna_shield.icon4"
-Icon_Item265:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_265.icon4"
+Icon_ItemUnusedGreenGauntlet:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_green_gauntlet.icon4"
 Icon_ItemFlameShield:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_flame_shield.icon4"
 Icon_ItemTerraShield:
@@ -928,8 +928,8 @@ Icon_ItemCraftedGloves:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_crafted_gloves.icon4"
 Icon_ItemRiotGloves:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_riot_gloves.icon4"
-Icon_Item276:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_276.icon4"
+Icon_ItemUnusedPinkBracelet:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_pink_bracelet.icon4"
 Icon_ItemClearBracelet:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_clear_bracelet.icon4"
 Icon_ItemMythrilArmlet:
@@ -1058,26 +1058,26 @@ Icon_ItemLashPebble:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_lash_pebble.icon4"
 Icon_ItemPoundCube:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_pound_cube.icon4"
-Icon_Item341:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_341.icon4"
+Icon_ItemUnusedRedGem:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_red_gem.icon4"
 Icon_ItemHoverJade:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_hover_jade.icon4"
 Icon_ItemCycloneChip:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_cyclone_chip.icon4"
-Icon_Item344:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_344.icon4"
+Icon_ItemUnusedRedBow:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_red_bow.icon4"
 Icon_ItemTremorBit:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_tremor_bit.icon4"
 Icon_ItemBurstBrooch:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_burst_brooch.icon4"
 Icon_ItemGrindstone:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_grindstone.icon4"
-Icon_Item348:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_348.icon4"
+Icon_ItemUnusedPebble:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_pebble.icon4"
 Icon_ItemScoopGem:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_scoop_gem.icon4"
-Icon_Item350:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_350.icon4"
+Icon_ItemUnusedRock:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_unused_rock.icon4"
 Icon_ItemTeleportLapis:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_teleport_lapis.icon4"
 Icon_ItemDancingIdol:
@@ -1160,10 +1160,10 @@ gPsynergyIcons:
 	.4byte Icon_PsynergyVolcano
 	.4byte Icon_PsynergyEruption
 	.4byte Icon_PsynergyPyroclasm
-	.4byte Icon_Psynergy040
+	.4byte Icon_PsynergyUnusedSparkBurst
 	.4byte Icon_PsynergyMadBlast
 	.4byte Icon_PsynergyFieryBlast
-	.4byte Icon_Psynergy043
+	.4byte Icon_PsynergyUnusedFlameBurst
 	.4byte Icon_PsynergyNova
 	.4byte Icon_PsynergySupernova
 	.4byte Icon_PsynergyBolt
@@ -1186,7 +1186,7 @@ gPsynergyIcons:
 	.4byte Icon_PsynergyPotentCure
 	.4byte Icon_PsynergyPly
 	.4byte Icon_PsynergyPlyWell
-	.4byte Icon_Psynergy066
+	.4byte Icon_PsynergyUnusedPortrait
 	.4byte Icon_PsynergyWish
 	.4byte Icon_PsynergyWishWell
 	.4byte Icon_PsynergyPureWish
@@ -1463,14 +1463,14 @@ Icon_PsynergyEruption:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_eruption.icon4"
 Icon_PsynergyPyroclasm:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_pyroclasm.icon4"
-Icon_Psynergy040:
-	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_040.icon4"
+Icon_PsynergyUnusedSparkBurst:
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_unused_spark_burst.icon4"
 Icon_PsynergyMadBlast:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_mad_blast.icon4"
 Icon_PsynergyFieryBlast:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_fiery_blast.icon4"
-Icon_Psynergy043:
-	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_043.icon4"
+Icon_PsynergyUnusedFlameBurst:
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_unused_flame_burst.icon4"
 Icon_PsynergyNova:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_nova.icon4"
 Icon_PsynergySupernova:
@@ -1515,8 +1515,8 @@ Icon_PsynergyPly:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_ply.icon4"
 Icon_PsynergyPlyWell:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_ply_well.icon4"
-Icon_Psynergy066:
-	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_066.icon4"
+Icon_PsynergyUnusedPortrait:
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_unused_portrait.icon4"
 Icon_PsynergyWish:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_wish.icon4"
 Icon_PsynergyWishWell:

@@ -4,11 +4,9 @@
 // Part of menu.c.
 
 #include "menu_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
-
-extern char ResourceId_ItemMenuTilesA;
-extern char ResourceId_ItemMenuTilesB;
 
 /// Loads each menu icon resource whose cache slot was acquired: the Djinn
 /// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the

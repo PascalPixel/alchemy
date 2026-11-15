@@ -4,6 +4,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "field/field_event.h"
@@ -189,7 +190,6 @@ void SummonTablet_UpdateMotes(void) {
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
 extern const u8 gMovementType_SquashScript[];
-extern char ResourceId_Runes, ResourceId_Pebbles;
 
 void Camera_WorldToScreen(s32 *position);
 

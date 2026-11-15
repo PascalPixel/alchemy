@@ -5,6 +5,7 @@
 // Part of battle.c.
 
 #include "battle_internal.h"
+#include "resource_ids.h"
 #include "battle/battle_effect_work.h"
 #include "fixed_math.h"
 #include "battle/presentation.h"
@@ -807,11 +808,6 @@ s32 ElementGlow_UploadStarField(void) {
   }
   return (s32)source;
 }
-
-extern char ResourceId_YellowPaletteB;
-extern char ResourceId_BlueRingSheet;
-extern char ResourceId_RedPaletteC;
-extern char ResourceId_VioletPaletteD;
 
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 // The five-argument blitter builder's far call, never called.

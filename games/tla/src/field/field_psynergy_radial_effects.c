@@ -5,6 +5,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
 #include "sounds.h"
@@ -702,8 +703,6 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   }
   FieldPsynergy_Lash();
 }
-
-extern char ResourceId_StarSparkleFade;
 
 /// Lash: a hand forms over the spot and comes down on it. With no target it
 /// bursts into sparkles; cast on a rope's end it whips out and ties the rope
@@ -1627,8 +1626,6 @@ void BattleEffect_CallEffect29(void) { FieldPsynergy_Unnamed29(); }
 
 // One moving point: a spark on the canvas (x and y only, counting delay) or
 // a sprite's place in the world.
-
-extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 
 void FieldPsynergy_Unnamed29(void) {
   struct BowWork *work =

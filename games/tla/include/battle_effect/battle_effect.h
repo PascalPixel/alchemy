@@ -5,6 +5,7 @@
 /// What the battle_effect object defines for the code outside it.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "field/particle.h"
 #include "battle/battle_effect.h"
 #include "battle/battle_unit.h"
@@ -193,7 +194,6 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
-extern char ResourceId_Data0DA;
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
@@ -227,9 +227,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *effect);
 void BattleEffect_RunTrident(struct BattleEffectParams *effect);
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *effect);
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *effect);
-extern char ResourceId_ParticleSpritesA; // The Broken Seal's ParticleSpritesA
-extern char ResourceId_PetalSheet;
-extern char ResourceId_Data0C1;
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunImpair(struct BattleEffectParams *args);
@@ -246,14 +243,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // ..RunImpactBurst
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);
-extern char ResourceId_SheepCardSheet; ///< directory row 0xe3
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *midpoint);
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
-extern char ResourceId_StarCrossSheet;
-extern char ResourceId_CrossedDaggersSheet;
 void BattleEffect_RunCloudSwirl(struct BattleEffectParams *effect);
 void BattleCamera_ApplyPhasedDelta(void);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
@@ -379,22 +373,15 @@ struct DualColumn {
   s32 start; // the frame it starts to grow
 };
 
-extern char ResourceId_EffectPalette01;
-extern char ResourceId_Data0C2;
 void BattleEffect_StepPaletteToResource(s32);
-extern char ResourceId_Data0C9;
-extern char ResourceId_VioletPaletteC;
-extern char ResourceId_Data0D7;
 void BattleEffect_WipeCanvas(s32, s32);
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
 void BattleEffect_BuildWindowEdgeTable(void);
-extern char ResourceId_Data0CB;
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *effect, s32 mode);
 extern struct Scale gBoreas_UnitScale;
 void BattleEffect_RunStatBoost(struct BattleEffectParams *effect, u32 mode);
 extern struct RockWallHeights gRockWall_Heights;
 void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
-extern char ResourceId_LeafWarriorTiles;
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
 /// One animation entry of a sprite group.

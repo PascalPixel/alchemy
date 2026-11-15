@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
@@ -164,8 +165,6 @@ void Window_CloseAll(void) {
     index++;
   }
 }
-
-extern char ResourceId_WindowBorderFlash;
 
 /// Loads frame `offset` of the flash border picture
 /// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's

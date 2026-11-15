@@ -101,19 +101,10 @@ struct TitleScreenWork {
   struct TitleSprite sprites[8];
 };
 
-extern char ResourceId_Data018;
 void TitlePaletteFade_SetCurrent(s32 index, s32 transform);
 extern u8 Data_02026800[];
-extern char ResourceId_Data01B;
-extern char ResourceId_Data01C;
-extern char ResourceId_Data01D;
-extern char ResourceId_Data01E;
-extern char ResourceId_Data01F;
 extern u8 Data_02019600[];
 extern u8 Data_02017080[];
-extern char ResourceId_IntroLighthousePicture;
-extern char ResourceId_IntroGullSprites;
-extern char ResourceId_TitleScreenPicture;
 extern const u8 gTitle_PromptBlendLevels[];
 extern u16 gTitleIntro_ChannelCurve[];
 extern u16 gTitleIntro_ChannelCurveLight[];

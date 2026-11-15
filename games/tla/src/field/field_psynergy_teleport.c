@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -20,8 +21,6 @@ struct TeleportWhirlWork {
   struct WhirlSpark sparks[WHIRL_COUNT];
   struct EffectSprite sprites[WHIRL_COUNT];
 };
-
-extern char ResourceId_ColouredOrbs;
 
 /// A whirl of coloured orbs (ResourceId_ColouredOrbs) round the leader, with
 /// sound 200. The scenes with Teleport circles call it (Mars Lighthouse, the

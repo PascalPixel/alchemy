@@ -6,6 +6,7 @@
 /// files that use it, written once.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "battle/battle.h"
 
 struct ObjectAnimationState;
@@ -112,7 +113,5 @@ extern const s8 gScreenTransition_EdgeOffsets[];
 extern struct TransitionShape gScreenTransition_Shapes[];
 
 extern const u8 gScreenTransition_DitherTable[];
-
-extern char ResourceId_Headings;
 
 #endif

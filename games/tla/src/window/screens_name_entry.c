@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 #include "sounds.h"
 #include "system/system_bank.h"
 #include "window/screens.h"
@@ -254,7 +255,6 @@ void NameEntry_DrawName(s32 output, u8 *input) {
 #define IS_KANA_MARK(c)                                                        \
   ((u8)((c) - TEXT_MARK_VOICED) <= TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
 
-extern char ResourceId_UiIconTiles, ResourceId_UiFixedBlockATiles;
 #if LANGUAGE == LANGUAGE_JAPANESE
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 

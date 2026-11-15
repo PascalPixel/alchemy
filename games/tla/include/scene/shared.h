@@ -6,6 +6,7 @@
 /// use it, written once, until each declaration has its owner's header.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "battle/battle_unit.h"
 #include "field/ground_mask.h"
 #include "field/particle.h"
@@ -236,14 +237,6 @@ struct Object {
 };
 
 void Import_DebugMadPlantLeap(s32, s32, s32);
-
-extern char ResourceId_FallingRock;
-
-extern char ResourceId_DustPuffA;
-
-extern char ResourceId_ColouredOrbs;
-
-extern char ResourceId_StarSparkleFade;
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 

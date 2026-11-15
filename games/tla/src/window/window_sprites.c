@@ -3,13 +3,12 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
 extern const u8 Glyph_DrawCode[];
 extern u8 Glyph_DrawCodeSize[];
-extern char ResourceId_WindowTiles;
-extern char ResourceId_SmallFont;
 
 s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 

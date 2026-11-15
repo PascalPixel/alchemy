@@ -5,6 +5,7 @@
 // Part of menu.c.
 
 #include "menu_internal.h"
+#include "resource_ids.h"
 #include "sounds.h"
 
 /// @file
@@ -520,9 +521,6 @@ void Icon_PrepareActor(struct WindowSprite *object) {
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
-
-extern char ResourceId_ShopUpArrowTiles;
-extern char ResourceId_ShopDownArrowTiles;
 
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right

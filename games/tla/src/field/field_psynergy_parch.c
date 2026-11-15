@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -38,8 +39,6 @@ struct ParchWork {
   struct EffectSprite sprites[64];
   struct ParchPuff particles[64];
 };
-
-extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 

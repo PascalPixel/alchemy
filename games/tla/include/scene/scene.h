@@ -5,6 +5,7 @@
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "field/field_coordinate.h"
 #include "field/sprite.h"
 #include "graphics/render_input.h"
@@ -997,12 +998,6 @@ struct HeapView {
 
 void MapGrid_CenterOnFollowedPoint(void);
 
-extern char ResourceId_WhirlwindMap;
-extern char ResourceId_WhirlwindTiles;
-
-extern char ResourceId_LightningMap;
-extern char ResourceId_LightningTiles;
-
 extern u8 gField_CachedTilesA[];
 
 extern u8 gField_CachedTilesD[];
@@ -1012,12 +1007,6 @@ extern const u8 gField_Tiles679[];
 s32 Speaker_GetVoice(s32 object);
 
 extern const u16 Field_Palette685[];
-
-extern char ResourceId_FieldEffectExplosion;
-
-extern char ResourceId_GlowDisc;
-
-extern char ResourceId_LogoOnBlack;
 
 void FieldPsynergy_StartCast(void);
 
@@ -1038,15 +1027,9 @@ void Func_02001e80(s32 value);
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern char ResourceId_FieldEffectIceShard;
-
-extern char ResourceId_CreditsFarCalls;
-
 s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 extern const u8 gWorldMapPackedTilesC[];
-
-extern char ResourceId_TitleFarCalls;
 
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;

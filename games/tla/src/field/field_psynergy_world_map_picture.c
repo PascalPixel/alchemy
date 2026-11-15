@@ -4,6 +4,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "flags.h"
 
 #include "text/msg_ids.h"
@@ -460,8 +461,6 @@ void WorldPicture_UpdateMarkers(void) {
 #undef NAME_BOX_HEIGHT
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
-
-extern char ResourceId_Data023, ResourceId_Data024;
 
 /// Draws the world map picture on BG1, scrolled to the cursor in gWorldMapWork
 /// (resource 36, or 35 at the origin when the halfword at 0x640 is set): the

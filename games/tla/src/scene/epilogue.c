@@ -5,6 +5,7 @@
 /// waits for a button, or three minutes, and returns to the title.
 
 #include "flags.h"
+#include "resource_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -48,7 +49,6 @@ extern s32 gEpilogueNamePanelEntry; ///< the panel's VRAM cache entry
 extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
 
 extern const u16 gEpilogueNamePanelPalette[];
-extern char ResourceId_GreenPanel;
 
 s32 EndingPicture_Show();
 #include "text/msg_ids.h"
@@ -241,10 +241,6 @@ void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
 s32 SceneState_SetScrollTarget();
 s32 EndingPicture_WaitForScroll();
 s32 WindowSystem_InitField();
-extern char ResourceId_EndingCliffDayPicture,
-    ResourceId_EndingCliffSunsetPicture, ResourceId_EndingVillagersPictureA,
-    ResourceId_EndingEmbracePicture, ResourceId_EndingReunionPicture,
-    ResourceId_EndingSunsetPlainPicture, ResourceId_EndingTheEndPicture;
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TILES_FLAG_OFFSET 0x118c

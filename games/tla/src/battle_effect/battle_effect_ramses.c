@@ -11,8 +11,6 @@
 #define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles
 #define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
 #define RAMSES_SPARKS 512         ///< sparks of the strike
-#define SPRITE_RAMSES 648 ///< the statue in seven parts, its fist, wrist
-#define SPRITE_BATTLE_ROCKS 653
 
 /// The sparks of the strike, in the map cell buffer.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)

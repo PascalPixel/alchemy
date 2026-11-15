@@ -3,6 +3,7 @@
 /// Ball the diggers of Loho need for their cannon, in three rooms that share
 /// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRock3).
 #include "../field/actor_set_sprite_priority.c"
+#include "resource_ids.h"
 
 #include "../field/actor_prepare.c"
 
@@ -2297,8 +2298,6 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
 
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
-
-extern char ResourceId_FallingRock;
 
 struct Rock {
   u8 unk00[24];

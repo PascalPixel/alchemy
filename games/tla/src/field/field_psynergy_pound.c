@@ -4,6 +4,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -141,8 +142,6 @@ void BattleEffect_SinkAndShrinkObject(void) {
 
 /// Pound cast on a target: runs FieldPsynergy_Pound.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
-
-extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
 void Func_080dba5c(void);
 void Camera_WorldToScreen(s32 *position);

@@ -6,6 +6,7 @@
 /// once, beside field.h until the files that declare these otherwise agree.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "system/bg_scroll.h"
 #include "field/particle.h"
 #include "field/sprite.h"
@@ -922,7 +923,6 @@ void ObjectEvent_Remove(u32 objectId);
 void Camera_ResetViewDefaults(void);
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
-extern char ResourceId_BattleEffectFarCalls;
 
 void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
@@ -935,10 +935,6 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, s32 mode);
 
-extern char ResourceId_SlotsMachinePicture;
-extern char ResourceId_SlotsIcons;
-extern char ResourceId_SlotsJackpotBanner;
-
 extern u8 gData_02028000[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
@@ -946,7 +942,6 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 void PaletteFade_LoadPaletteFar(void *palette);
 
 void TilesetAnim_StartAll(const u16 *script);
-extern char ResourceId_DefaultMapCells;
 
 void WorldMap_UpdateCurrentTileBlock(void);
 

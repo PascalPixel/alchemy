@@ -5,6 +5,7 @@
 /// GRAPHICS
 
 #include "types.h"
+#include "resource_ids.h"
 #include "edition.h"
 #include "system/projection.h"
 
@@ -96,8 +97,6 @@ extern const u8 Resource_Decode01Code[];
 extern u8 Resource_Decode01CodeSize[];
 extern const u8 Resource_Decode2Code[];
 extern const u8 Resource_DecodeByteLzCode[];
-extern char ResourceId_UiFixedBlockATiles;
-extern char ResourceId_UiIconTiles;
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);

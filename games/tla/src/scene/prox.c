@@ -10,6 +10,7 @@
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
 #include "../field/actor_set_sprite_priority.c"
+#include "resource_ids.h"
 #include "field/sprite.h"
 #include "field/actor_script.h"
 
@@ -2226,8 +2227,6 @@ struct RockWork {
 /// thrown up and out along it.
 #include "shared/rocks_spawn.h"
 #undef FIELD_AT
-
-extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it

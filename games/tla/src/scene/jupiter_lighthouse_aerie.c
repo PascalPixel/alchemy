@@ -6,6 +6,7 @@
 /// of the lid (JupiterLighthouse_EnergizeAngels); with both, the lid is off and
 /// the well is open (FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED).
 #include "flags.h"
+#include "resource_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -89,8 +90,6 @@ void MapGrid_SetAttributeBAt();
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-extern char ResourceId_GoldenTrident;
 
 void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                        u32 attributes, s32 tile);

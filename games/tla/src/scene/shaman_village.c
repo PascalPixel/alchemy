@@ -4,6 +4,7 @@
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
 #include "../field/actor_set_sprite_priority.c"
+#include "resource_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
@@ -115,7 +116,6 @@ extern s16 gShamanVillage_LetteringGoScript[];
 extern s16 gShamanVillage_LetteringThrobScript[];
 extern u32 gShamanVillage_LetteringThrobFadeScript[];
 extern u8 gShamanVillage_LetteringPalettes[];
-extern char ResourceId_LetteringBanner;
 
 void ShamanVillage_CastWhirlwindOnSand(void);
 extern u32 gShamanVillage_KradenWatchesShebaScript[];

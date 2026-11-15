@@ -4,6 +4,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -178,9 +179,6 @@ void Scoop_Update(void) {
 
 /// Scoop cast on a target: runs FieldPsynergy_Scoop.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
-
-extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
-    ResourceId_Data1E9;
 
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);

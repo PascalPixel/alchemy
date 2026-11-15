@@ -5,6 +5,8 @@
 /// What games/tla/src/field/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "sprite_ids.h"
+#include "resource_ids.h"
 #include "field/effect_sprite.h"
 #include "field/field_particle.h"
 #include "field/world_map_marker.h"
@@ -172,8 +174,6 @@ void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
 
 void ParticleBurst_Update(void);
 
-extern char ResourceId_Leaves;
-
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 void FieldPsynergy_Blaze(void);
@@ -190,8 +190,6 @@ void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
 
 void FieldPsynergy_EndSand(void);
-
-extern char ResourceId_SparkleFade;
 
 s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
@@ -309,8 +307,6 @@ void Weather_UpdateLightning(void);
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
-/// The sprite of the Mad Plants hidden in bushes (MadPlant_LeapAtLeader).
-#define SPRITE_MAD_PLANT 249
 /// The encounter table row of the hidden Mad Plants' battles, one column
 /// each, in FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106

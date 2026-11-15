@@ -3,8 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
-
-extern char ResourceId_WindowTiles;
+#include "resource_ids.h"
 
 /// Draws window tile pattern over the tile of tilemap entry *entry, with its
 /// colours mapped through remap (0 leaves a pixel as it was).
@@ -95,7 +94,6 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 #define TEXT_IS_NARROW_TILE(code) ((code) == WINDOW_TILE_HP_LABEL_END)
 #endif
 
-extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
 
 /// Draws a string of 16-bit character codes with the window font into tiles of

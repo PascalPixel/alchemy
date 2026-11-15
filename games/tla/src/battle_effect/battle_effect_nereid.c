@@ -13,7 +13,6 @@
 #define NEREID_FRAMES 124
 
 #define NEREID_OBJECTS 12 ///< the sprites that draw Nereid on her turtle
-#define SPRITE_NEREID 649
 /// Wrapping columns of water.
 #define NEREID_COLUMNS 3
 #define NEREID_DROPS 1024          ///< drops of spray in the map cell buffer

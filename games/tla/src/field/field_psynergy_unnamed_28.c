@@ -5,6 +5,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -129,8 +130,6 @@ void FieldPsynergy_UpdateUnnamed28(void) {
 #undef NEXT_PHASE
 #undef WHIRL_COUNT
 #undef SPARK_COUNT
-
-extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
 

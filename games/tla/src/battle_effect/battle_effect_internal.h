@@ -6,6 +6,8 @@
 /// battle_effect.c includes it before the parts, and each part includes it too.
 
 #include "types.h"
+#include "sprite_ids.h"
+#include "resource_ids.h"
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
 #include "system/system.h"
@@ -176,18 +178,10 @@ extern u8 Data_02012800[];
 
 extern const struct Scale gEclipse_Scales;
 
-extern char ResourceId_EffectPalette03;
-
 extern const struct Scale gCruelRuin_UnitScale;
 
 /// One handler for each battle effect, by effect less one; 0 where none.
 extern void (*const gBattleEffect_Handlers[])(struct BattleEffectParams *args);
-
-extern char ResourceId_Data0D0; ///< directory row 0xd0
-
-extern char ResourceId_FeatherSheet; ///< directory row 0xd1
-
-extern char ResourceId_CrescentRowSheet;
 
 extern const struct Scale gZagan_UnitScale;
 
@@ -1358,84 +1352,11 @@ extern const u16 gIris_ConeMesh[];
 /// The cone's 64 vertices, stored at the buffer's constant address.
 extern u8 gMapGridCellBuffer[];
 
-/// cruel_ruin.c
-extern char ResourceId_Data0B4;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C9;
-extern char ResourceId_Data0CA;
-extern char ResourceId_Data104;
-extern char ResourceId_ParticleSpritesA; // the spark sprites
-extern char ResourceId_CornerRuneASheet;
-extern char ResourceId_ForestCanopyTiles;
-extern char ResourceId_SunbeamCloudsBackdrop;
-extern char ResourceId_VioletSkyBackdrop;
-
-/// canvas.c
-/// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
-extern char ResourceId_EarthHorizonBackdrop;
-/// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
-extern char ResourceId_AerialViewBackdrop;
-extern char ResourceId_GoldenDragonTiles;
-extern char ResourceId_GoldenDragonHeadTiles;
-extern char ResourceId_BlueFlameSheet;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_Data0C1;
-
-// projectiles.c
-extern char ResourceId_BlastSheet;
-extern char ResourceId_MercuryDjinnSmallSheet;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_VenusDjinnSmallSheet;
-/// Directory rows, named by their assets.
-extern char ResourceId_CometSheetA;
-extern char ResourceId_CometSheetB;
-extern char ResourceId_CometSheetC;
-extern char ResourceId_IceBlockSheet;
-extern char ResourceId_WindStreakSheet;
-extern char ResourceId_Data0FF;
-extern char ResourceId_LimePalette;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_ShurikenSheet;
-extern char ResourceId_ProjectileVolleyImage;
-extern char ResourceId_YellowSparkSheet;
-extern char ResourceId_FireballSheet;
-extern char ResourceId_CrystalSheet;
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_IceChipSheet;
-
-// djinn_attacks.c
-extern char ResourceId_FlameballSheet;
-extern char ResourceId_GlowOrbSheet;
-extern char ResourceId_EmberStreakSheet;
-
-/// hail.c
-extern char ResourceId_PortalSheet;
-
 /// thor.c
-extern char ResourceId_Data135;
-extern char ResourceId_DuskCloudsBackdrop;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_LightFanSheet;
-extern char ResourceId_LightningPillarSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_ParticleSpritesC;
-extern char ResourceId_VioletLightningSheetB;
-extern char ResourceId_VioletMoteSheet;
 extern const s16 gThor_Points[6][2]; ///< the three lines' end points
-
-// spire.c
-extern char ResourceId_BoulderSheet;
 
 // flurry.c
 void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode);
-extern char ResourceId_YellowOrbSheet;
-extern char ResourceId_BlueArcSheetA;
-extern char ResourceId_BlueArcSheetB;
-extern char ResourceId_WaveSheet;
 /// BattleEffect_RunFlurry's modes, by the abilities that play them: the rows
 /// of gFlurry_Styles. Gust and Flying Attack take one, two or three strikes as
 /// a double or triple blow raises their variant.
@@ -1474,241 +1395,68 @@ enum FlurryExtra {
   FLURRY_EXTRA_RIPPLE  ///< BG2 swings on a sine wave and smoke rises
 };
 
-// gaia.c
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_OrangePaletteA;
 extern struct Scale gGaia_UnitScale;
 
 /// spider_web.c
 /// A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gUlysses_ParticleScale;
-extern char ResourceId_Data0B1;
-extern char ResourceId_Data0B3;
-extern char ResourceId_RuneCircleSheet;
-extern char ResourceId_Data0C8;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_RuneSheet;
 extern u8 Data_02010200[];
-extern char ResourceId_MagentaSwirlSheet;
-extern char ResourceId_MagentaTailSheet;
-extern char ResourceId_SpiderWebSheet;
 
-// azul.c
-extern char ResourceId_WispSheet;
 // The 64 sparks, past the map cells' first 16 KB.
 extern u8 gData_02014000[];
 
-// positions.c
-extern char ResourceId_BeamImage;
-extern char ResourceId_StarCrescentSheet;
-extern char ResourceId_GreyCrescentSheet;
-
-// casting_impact.c
-extern char ResourceId_EffectPalette01;
-extern char ResourceId_ImpFaceSheet;
-extern char ResourceId_Data0DA;
-extern char ResourceId_Data0DD;
-extern char ResourceId_BoulderPicture;
-extern char ResourceId_Data0F0;
-extern char ResourceId_Data0F1;
-extern char ResourceId_CloudPuffSheet;
-extern char ResourceId_FlameSheetA;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_RedPaletteB;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_FireStreakSheet;
-extern char ResourceId_CyanPalette;
-extern char ResourceId_TanPalette;
-extern char ResourceId_EffectPalette05;
-extern char ResourceId_SkullSheet;
-extern char ResourceId_CounterRevealSheet;
-extern char ResourceId_RedCrescentSheetA;
-extern char ResourceId_BlueBeastSheet;
-extern char ResourceId_RedCrescentSheetB;
-extern char ResourceId_PinkBurstSheet;
-extern char ResourceId_DustPuffSheet;
-extern char ResourceId_RockSpireSheet;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_TwelveModeImage;
-
-// particle_streams.c
-extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_FlareSheet;
-extern char ResourceId_FlareImage;
-extern char ResourceId_FlameSheetB;
-
-// ramses.c
-extern char ResourceId_DesertBackdrop;
-
-/// annihilation.c
-extern char ResourceId_FireBurstSheet;
-
-/// ragnarok.c
-extern char ResourceId_FlameBladeSheet;
-extern char ResourceId_SwordSheet;
-extern char ResourceId_BeachBackdrop;
-extern char ResourceId_ForestBackdrop;
-extern char ResourceId_WingedKnightATiles;
-extern char ResourceId_WingedKnightBTiles;
-extern char ResourceId_WingedKnightCTiles;
-extern char ResourceId_BlueCrescentSheet;
-extern char ResourceId_ExplosionSheet;
-extern char ResourceId_OverlayImageA;
-
-/// kirin.c
-extern char ResourceId_FireBlobSheet;
-
 /// neptune.c
-extern char ResourceId_SeaSerpentTiles;
 extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
 
-/// thrash.c
-extern char ResourceId_ArcFragmentsSheet;
-extern char ResourceId_RevealMaskA;
-extern char ResourceId_RevealMaskB;
-extern char ResourceId_RevealMaskC;
-extern char ResourceId_RevealMaskD;
-extern char ResourceId_RevealMaskE;
-extern char ResourceId_RevealMaskF;
-
 /// undead_sword.c
-extern char ResourceId_LimeColumnSheet;
-extern char ResourceId_CrackedTextureSheet;
-extern char ResourceId_Data0D3;
 extern u8 Data_02010108[];
 extern u8 Data_02010318[];
-extern char ResourceId_CrystalBitmapSheet;
 extern u8 Data_02014e20[]; ///< gMapGridCellBuffer + 20000, the berg
-
-/// crystal.c
-extern char ResourceId_Data0FB;
 
 // geode.c
 
 /// nirvana.c
-extern char ResourceId_Data0CF;
 extern u8 Data_02012000[];
 extern u8 Data_02012540[]; ///< the mesh's end, after 112 faces
 
-/// heavy_divide.c
-extern char ResourceId_GreatSwordSheet;
-extern char ResourceId_AxeSheet;
-extern char ResourceId_Data0CE;
-extern char ResourceId_Data0D8;
-
-// thunder_mine.c
-extern char ResourceId_VioletPaletteC;
-extern char ResourceId_WhirlBeamSheet;
-extern char ResourceId_SparkleDots;
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
-/// light_surge.c
-extern char ResourceId_Data0C4;
-extern char ResourceId_EffectPalette02;
-
-/// whorl.c
-extern char ResourceId_Data0D2;
-
-// djinni_charge.c
-extern char ResourceId_PetalSheet;
-
-// rime.c
-extern char ResourceId_StarCrossSheet;
-
-/// gasp.c
-extern char ResourceId_LightBurstSheet;
-extern char ResourceId_CornerGlowSheet;
-extern char ResourceId_Data0D7;
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_VenusDjinnSheet;
-
-/// charon.c
-extern char ResourceId_CrimsonBeastTiles;
-extern char ResourceId_RedSlashTiles;
-extern char ResourceId_RedCrescentTiles;
-extern char ResourceId_WhiteArrowsTiles;
-extern char ResourceId_WhiteWispsTiles;
-extern char ResourceId_Data0B5;
-extern char ResourceId_CharmRingSheet;
-extern char ResourceId_EffectPalette00;
-extern char ResourceId_BoltSheet;
-extern char ResourceId_CurseSealSheet;
-extern char ResourceId_Data0C3;
-
 /// rising_dragon.c
-extern char ResourceId_ClawSlashSheet;
 extern u8 Data_02011000[];
-extern char ResourceId_Data0DC;
 
 /// raging_heat.c
-extern char ResourceId_CornerRuneBSheet;
-extern char ResourceId_SmallFlameSheet;
 /// The life of each spark in the map cell buffer: gMapGridCellBuffer's
 /// Particles from their variant field on.
 extern s32 Data_02010018[];
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
-extern char ResourceId_GreenHairedMaidenTiles;
-extern char ResourceId_PinkPetalsTiles;
 extern u8 Data_02010020[];
 extern u8 Data_020100a0[];
 extern u8 Data_020102a0[];
 extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
-extern char ResourceId_CrossedDaggersSheet;
-extern char ResourceId_PinkStarSheet;
-
-/// fire_puppet.c
-extern char ResourceId_Data0F2;
-extern char ResourceId_Data0F3;
 
 // ocean_fist.c
 
-/// rushing_strike.c
-extern char ResourceId_RedHazeBackdrop;
-
-/// glowing_lunge.c
-extern char ResourceId_Data181;
-extern char ResourceId_FirePillarSheetB;
-
-// daedalus.c
-extern char ResourceId_BronzeAutomatonTiles;
-extern char ResourceId_MissileTiles;
-extern char ResourceId_Data0BA;
-extern char ResourceId_Data0BB;
 extern struct Scale gDaedalus_WaveScale;
 extern struct Scale gDaedalus_ShipScale;
 extern struct Scale gDaedalus_ParticleScale;
 
 /// vengeance.c
-extern char ResourceId_Data0B0;
-extern char ResourceId_Data0F5;
 extern u8 Data_020112e8[]; ///< the reaper's raised pose
 extern u8 Data_0201276b[]; ///< the blade's texture
 extern u8 Data_0201476b[]; ///< the handle's texture
 extern u8 Data_0201576b[]; ///< the flash's texture
-extern char ResourceId_CrossTextureSheet;
-extern char ResourceId_Data0FD;
 /// 256 bubbles past the map cells. Each is an Particle with its picture in z
 /// and its life in variant (-1 once it has left the top of the canvas).
 extern struct Particle gData_02015000[];
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
 extern const struct Scale gCoatlicue_UnitScale;
-extern char ResourceId_BellMaidenTiles;
-extern char ResourceId_Data0FC;
 
 /// catastrophe.c
-extern char ResourceId_ChainedDemonTiles;
-extern char ResourceId_Data0EE;
-extern char ResourceId_Data0EF;
-extern char ResourceId_Data0F8;
-extern char ResourceId_Data0F9;
-extern char ResourceId_GoldenScalesTiles;
-extern char ResourceId_PurpleArmourTiles;
-extern char ResourceId_WhiteSpikesTiles;
 extern u8 Data_02016000[];
 extern struct Particle Data_02016d00[];
 extern const struct Scale gCatastrophe_UnitScale;
@@ -1720,56 +1468,13 @@ extern u8 Data_02010fa0[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
-/// Resource ids, named after their places in the resource directory.
-extern char ResourceId_Data0F7;
-extern char ResourceId_MossCaveBackdrop;
-
-/// helm_splitter.c
-extern char ResourceId_FireSwirlSheet;
-extern char ResourceId_DualStreamPath;
-
-/// legend.c
-extern char ResourceId_BladeSheet;
-extern char ResourceId_Data0E9;
-extern char ResourceId_VineCardSheet;
-extern char ResourceId_DragonCardSheet;
-extern char ResourceId_SunCardSheet;
-extern char ResourceId_BoltCardSheet;
-
-// cards.c
-extern char ResourceId_SheepCardSheet;
-extern char ResourceId_ButterflyCardSheet;
-extern char ResourceId_SwordCardSheet;
-extern char ResourceId_DaggerSheet;
-extern char ResourceId_PaletteRampImage;
-extern char ResourceId_SkeletonCardSheet;
-
-/// triple_chomp.c
-
-/// breaths.c
-extern char ResourceId_DustCloudSheet;
 
 /// trident.c
-extern char ResourceId_Data0FA;
 extern u8 Data_02011400[];
 extern u8 Data_02012964[]; ///< 128 sparks
 
-/// meteor_blow.c
-extern char ResourceId_GlowOrbSetSheet;
-
-// megiddo.c
-extern char ResourceId_Data103;
-
-/// odyssey.c
-extern char ResourceId_Data102;
-extern char ResourceId_Data101;
-extern char ResourceId_CloudSwirlSheet;
-
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];
-extern char ResourceId_SunsetBackdrop;
-extern char ResourceId_StarfieldFlareBackdrop;
-extern char ResourceId_RobedGoddessTiles;
 extern u8 Data_02010578[];
 extern const struct Scale gIris_UnitScale;
 extern const u32 BattleEffect_PatchTemplateCode[];

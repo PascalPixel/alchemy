@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -35,8 +36,6 @@ struct PendingEvent__f0e92b4 {
   u8 unk00[8];
   void (*callback)(s32, s32, s32);
 };
-
-extern char ResourceId_WaterSplash;
 
 /// Grind ("Pulverize large objects."): the screen shakes harder and harder
 /// while spray rises round the target, or round the spot 32 pixels before the

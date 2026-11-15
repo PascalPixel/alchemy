@@ -5,6 +5,7 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
+#include "resource_ids.h"
 
 struct Actor;
 
@@ -112,7 +113,6 @@ void Import_ActorStartIdle();
 
 void GabombaStatue_CountDownShowingClock(void);
 void GabombaStatue_CountDown(void);
-extern char ResourceId_ClockDigits;
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 void GabombaStatue_FadeByDepth(void);

@@ -4,6 +4,7 @@
 // Part of shop.c.
 
 #include "shop_internal.h"
+#include "resource_ids.h"
 #include "item_ids.h"
 #include "sounds.h"
 #include "gamepak/far_call/window.h"
@@ -11,12 +12,6 @@
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "scene/shared.h"
-
-extern char ResourceId_ShopGemTiles;
-extern char ResourceId_MenuArrowTiles;
-extern char ResourceId_MenuSmallDownArrowTiles;
-extern char ResourceId_ShopUpArrowTiles;
-extern char ResourceId_ShopDownArrowTiles;
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero, or of any type at a general store.

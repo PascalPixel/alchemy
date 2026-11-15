@@ -8,6 +8,7 @@
 /// own still resolves. It places no bytes.
 
 #include "types.h"
+#include "sprite_ids.h"
 #include "ability_ids.h"
 #include "game/owner_state.h"
 #include "system/input.h"
@@ -105,21 +106,6 @@
 /// BattleWork.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.
 #define BATTLE_OBJECT_NONE 0xff
-
-/// The party's battle sprites, and Isaac's and Garet's while they hold a
-/// Machete, drawn as part of it (BattleObject_Make).
-#define SPRITE_BATTLE_ISAAC 490
-#define SPRITE_BATTLE_GARET 495
-#define SPRITE_BATTLE_IVAN 500
-#define SPRITE_BATTLE_MIA 504
-#define SPRITE_BATTLE_FELIX 508
-#define SPRITE_BATTLE_JENNA 513
-#define SPRITE_BATTLE_SHEBA 517
-#define SPRITE_BATTLE_PIERS 521
-#define SPRITE_ISAAC_MACHETE 635
-#define SPRITE_GARET_MACHETE 637
-/// The shadow sprite under a unit (BattleObject.shadow).
-#define SPRITE_BATTLE_SHADOW 686
 
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)

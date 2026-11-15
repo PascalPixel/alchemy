@@ -5,6 +5,7 @@
 /// What the resource_slot object defines for the code outside it.
 
 #include "types.h"
+#include "resource_ids.h"
 
 struct Actor;
 struct SpriteAnimation;
@@ -32,7 +33,6 @@ struct ResourceObjectWork {
 };
 
 s32 Party_GetPpRatioFar(void);
-extern char ResourceId_Map000;
 extern const u8 Transform_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *object);

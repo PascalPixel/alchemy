@@ -5,6 +5,7 @@
 /// (ChampaCliffCaves_FightAvimander) and Briggs surrenders, and Obaba forges
 /// the three prongs into the Trident (ChampaCliffCaves_ObabaForgesTrident).
 #include "field/event_inline.h"
+#include "resource_ids.h"
 #include "types.h"
 #include "system/io_reg.h"
 #include "item_ids.h"
@@ -112,7 +113,6 @@ struct FlashSprite;
 
 void FieldEffect_StartBlankOverlay(s32 a);
 void Field_StartColorTransition(s32 a, s32 b);
-extern char ResourceId_FireColumn;
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \

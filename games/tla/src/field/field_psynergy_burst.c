@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -309,7 +310,6 @@ void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 #undef BURST_NEXT_PHASE
 
 extern const u8 gBurst_GlowTiles[];
-extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);

@@ -3,6 +3,7 @@
 /// order it has in the ROM.
 
 #include "battle/battle.h"
+#include "resource_ids.h"
 #include "sounds.h"
 #include "debug/debug.h"
 #include "field/field.h"
@@ -372,16 +373,6 @@ extern u8 gMapGridCellBuffer[];
 extern char MsgLuckyDiceCoins, MsgLuckyDiceWinnings, MsgDiceGameThrow,
     MsgDiceGameHigher, MsgDiceGameLower, MsgDiceGameHigherAgain,
     MsgDiceGameLowerAgain, MsgDiceGameChoose, MsgDiceGameDoubleUp;
-extern char ResourceId_BattleEffectFarCalls, ResourceId_SlotsDomePicture,
-    ResourceId_Data087, ResourceId_SlotsSmallDoubleUpBanner,
-    ResourceId_SlotsFinalGameBanner, ResourceId_SlotsOrangeDigits,
-    ResourceId_SlotsTimesSign, ResourceId_SlotsPinkDigits,
-    ResourceId_SlotsHigherBanner, ResourceId_SlotsLowerBanner,
-    ResourceId_SlotsYouLoseBanner, ResourceId_SlotsYouWinBanner,
-    ResourceId_SlotsOnePairBanner, ResourceId_SlotsTwoPairBanner,
-    ResourceId_SlotsTripleBanner, ResourceId_SlotsPerfectBanner,
-    ResourceId_SlotsGreenDigits, ResourceId_SlotsDoubleUpBanner,
-    ResourceId_SlotsCashOutBanner;
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 

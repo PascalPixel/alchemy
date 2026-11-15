@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "system/input.h"
@@ -17,9 +18,6 @@ struct ObjectMetadata {
 };
 
 extern const s32 Data_080f0f90[];
-extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
-    ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
-    ResourceId_DustPuffA;
 
 void Field_StartColorTransition(s32 frames, s32 color);
 /* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct

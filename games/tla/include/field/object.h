@@ -6,6 +6,7 @@
 /// written once.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "field/scene_tables.h"
 
 struct Actor;
@@ -74,40 +75,6 @@ void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 s32 PaletteFade_ClampComponent(s32 value);
 s32 PaletteFade_ClampShiftedComponent(s32 value);
 void PaletteFade_SetBackdrop(u32 value);
-
-extern char ResourceId_DefaultMapAnimation;
-extern char ResourceId_WorldMapTilesA1;
-extern char ResourceId_WorldMapTilesA2;
-extern char ResourceId_WorldMapTilesA3;
-extern char ResourceId_WorldMapTilesA4;
-extern char ResourceId_WorldMapTilesA5;
-extern char ResourceId_WorldMapTilesA6;
-extern char ResourceId_WorldMapPaletteC;
-extern char ResourceId_Data1AD;
-extern char ResourceId_Data1AE;
-extern char ResourceId_WorldMapTilesC1;
-extern char ResourceId_WorldMapTilesC2;
-extern char ResourceId_WorldMapTilesC3;
-extern char ResourceId_WorldMapTilesC4;
-extern char ResourceId_WorldMapTilesC5;
-extern char ResourceId_WorldMapTilesC6;
-extern char ResourceId_Data1A4;
-extern char ResourceId_Data1A5;
-extern char ResourceId_WorldMapTilesB1;
-extern char ResourceId_WorldMapTilesB2;
-extern char ResourceId_WorldMapTilesB3;
-extern char ResourceId_WorldMapTilesB4;
-extern char ResourceId_WorldMapTilesB5;
-extern char ResourceId_WorldMapTilesB6;
-extern char ResourceId_WorldMapPaletteD;
-extern char ResourceId_Data1B6;
-extern char ResourceId_Data1B7;
-extern char ResourceId_WorldMapTilesD1;
-extern char ResourceId_WorldMapTilesD2;
-extern char ResourceId_WorldMapTilesD3;
-extern char ResourceId_WorldMapTilesD4;
-extern char ResourceId_WorldMapTilesD5;
-extern char ResourceId_WorldMapTilesD6;
 
 s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 

@@ -9,6 +9,7 @@
 /// bytes.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "window/message_argument.h"
 #include "field/world_map.h"
 #include "system/ram_buffer.h"
@@ -179,22 +180,6 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 extern const s16 gParty_PairResolveRules[];
 
 extern s32 gScene_BattleBackgroundRules[];
-
-extern char ResourceId_DragonHallABackdrop;
-
-extern char ResourceId_DragonHallBBackdrop;
-
-extern char ResourceId_GrasslandBBackdrop;
-
-extern char ResourceId_RockyBeachBackdrop;
-
-extern char ResourceId_DenseForestBackdrop;
-
-extern char ResourceId_ShipDeckBackdrop;
-
-extern char ResourceId_SnowfieldBBackdrop;
-
-extern char ResourceId_BlizzardBackdrop;
 
 /// The battle music table: each song as 0x8000 | song, followed by the
 /// encounters that use it as (zone << 4) + slot, ended by 0.

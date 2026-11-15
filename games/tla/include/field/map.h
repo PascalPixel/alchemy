@@ -5,6 +5,7 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "field/map_grid.h"
 
 struct Actor;
@@ -120,7 +121,6 @@ extern u8 Render_DrawMapCodeSize[];
 
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
-extern char ResourceId_Data012;
 extern struct BattleCells gSpriteObjects;
 
 void BlendScript_Start(u16 *script);

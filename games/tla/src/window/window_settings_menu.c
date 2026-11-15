@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "window/settings_menu.h"
@@ -68,8 +69,6 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
   GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777));
 }
-
-extern char ResourceId_ShopCursorPictures;
 
 /// The settings menu's per-frame task: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen

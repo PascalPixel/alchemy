@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 #include "field/field_work.h"
 #include "flags.h"
 #include "sounds.h"
@@ -1326,8 +1327,6 @@ void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
-
-extern char ResourceId_CommandIcons;
 
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
 /// 256 colours (32 * 32 bytes, record 15), its scale stepping from 40 to 240 by

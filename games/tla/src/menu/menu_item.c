@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "menu_internal.h"
+#include "resource_ids.h"
 #include "sounds.h"
 
 // Defined below or in later parts of the menu object.
@@ -2729,10 +2730,6 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 }
 
 #undef EQUIP_QUESTION
-
-/// Item menu workspace (known fields only).
-extern char ResourceId_MenuArrowTiles;
-extern char ResourceId_MenuSmallDownArrowTiles;
 
 /// Loads the two page arrows into free tile slots.
 void Resource_LoadPairedBlocks(void) {

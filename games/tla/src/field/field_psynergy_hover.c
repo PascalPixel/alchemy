@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
@@ -149,8 +150,6 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef OBJ_PALETTE_14
 #undef GLOW_FULL
 #undef GLOW_SPENT_CUE
-
-extern char ResourceId_RingOrb;
 
 /// Hover: a glowing ring grows under the leader, who rises and floats (movement
 /// mode 10) while HoverGlow_Update holds the glow up. Where it cannot hover

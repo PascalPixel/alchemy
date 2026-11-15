@@ -6,7 +6,6 @@
 #include "sounds.h"
 
 #define KIRIN_BLOB_BYTES (48 * 32)
-#define SPRITE_KIRIN 644 ///< Kirin, in nine parts
 
 /// The hit bursts, 32 for each target, in the map cell buffer.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)

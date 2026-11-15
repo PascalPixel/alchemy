@@ -8,6 +8,7 @@
 /// no bytes.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "system/scene.h"
 #include "field/sprite.h"
 #include "field/perspective.h"
@@ -251,8 +252,6 @@ struct ResourceSlotNumber {
   u16 resource;
   s16 number;
 };
-
-extern char ResourceId_Data199;
 
 extern u8 Transform_UpdateVerticesCodeSize[];
 

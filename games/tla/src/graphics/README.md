@@ -53,6 +53,7 @@ facing any way.
 A party member's sprite is named for the character whose number it
 shares; another takes the name The Broken Seal gives the same picture.
 One with neither keeps its row's number, as `spr_009.png` does.
+`include/sprite_ids.h` gives each named row its `SPRITE_` id.
 
 Every figure the field or a battle can draw has a row in the sprite table,
 `sprite/sprites.tsv`: its size, a scale it is drawn at, its sheet and its

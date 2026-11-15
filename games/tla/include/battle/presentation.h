@@ -7,6 +7,7 @@
 /// written once.
 
 #include "types.h"
+#include "resource_ids.h"
 #include "battle/battle_action.h"
 #include "battle/battle_side.h"
 
@@ -341,8 +342,6 @@ extern const u8 gBattleTransition_CurtainVariants[];
 extern u8 gBattleTransition_CurtainTiles[];
 
 void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
-
-extern char ResourceId_SerpentStarsBackdrop;
 
 extern const struct BattleGroupOrder gBattleParty_TurnEndSideOrder;
 

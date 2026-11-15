@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "resource_ids.h"
 
 /// Returns how many item icons the icon table holds; Icon_BuildItemIconTiles
 /// draws icon 0 for a number past them.
@@ -263,8 +264,6 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
-
-extern char ResourceId_Icons;
 
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 

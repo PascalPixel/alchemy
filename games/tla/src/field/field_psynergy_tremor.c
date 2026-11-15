@@ -3,6 +3,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "resource_ids.h"
 #include "sounds.h"
 
 // Field Psynergy kind 19 on a chosen object (FieldPsynergy_Dispatch's
@@ -48,10 +49,6 @@ struct TremorSprite {
   u8 unk1a[0xe];
   void *pictures;
 };
-
-// The two 8x8 tiles of the shaken sprites (Resource_Data1EE): the row
-// needs a name in directory.s before this adopts.
-extern char ResourceId_ShakeTiles;
 
 void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 

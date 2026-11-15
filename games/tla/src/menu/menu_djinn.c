@@ -3,6 +3,7 @@
 // Part of menu.c.
 
 #include "menu_internal.h"
+#include "resource_ids.h"
 #include "flags.h"
 #include "sounds.h"
 
@@ -422,8 +423,6 @@ void DjinnMenu_AdjustPalettes(s32 d) {
     n++;
   } while (n <= 2);
 }
-
-extern char ResourceId_ShopGemTiles;
 
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicSpriteColors(void);

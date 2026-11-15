@@ -61,19 +61,65 @@
 #define FLAG_CRACKED_PILLAR_E_BURST FLAG_SCENE_TEMP_04
 
 /// The slide's cracked pillars, lettered as the events that break them.
+/// The slide: its two pushed pillars, the statue whose flame burns on it, the
+/// pair of statues a magma rock rolls between, and its cracked pillars,
+/// lettered as the events that break them.
 enum MagmaRockSlideActorId {
-  ACTOR_CRACKED_PILLAR_E = ACTOR_FIRST_PLACED + 3,
-  ACTOR_CRACKED_PILLAR_A = ACTOR_FIRST_PLACED + 7,
+  ACTOR_SLIDE_PILLAR_A = ACTOR_FIRST_PLACED,
+  ACTOR_SLIDE_STATUE,
+  ACTOR_SLIDE_PILLAR_B,
+  ACTOR_CRACKED_PILLAR_E,
+  ACTOR_SLIDE_PAIR_EAST_STATUE = ACTOR_FIRST_PLACED + 5,
+  ACTOR_SLIDE_PAIR_WEST_STATUE,
+  ACTOR_CRACKED_PILLAR_A,
   ACTOR_CRACKED_PILLAR_B,
   ACTOR_CRACKED_PILLAR_C,
-  ACTOR_CRACKED_PILLAR_D
+  ACTOR_CRACKED_PILLAR_D,
+  ACTOR_SLIDE_STATUE_FLAME = ACTOR_FIRST_PLACED + 12, ///< sprite 379
+  ACTOR_SLIDE_MAGMA_ROCK ///< sprite 403, rolling between the pair
 };
 
 /// The Salamander Tail room's lower level: the cracked pillars the first two
 /// events break there.
 enum MagmaRockSalamanderTailLowerActorId {
   ACTOR_LOWER_CRACKED_PILLAR_B = ACTOR_FIRST_PLACED + 2,
-  ACTOR_LOWER_CRACKED_PILLAR_A = ACTOR_FIRST_PLACED + 6
+  ACTOR_LOWER_TIGHTROPE_WEST_POST,
+  ACTOR_LOWER_TIGHTROPE_EAST_POST,
+  ACTOR_LOWER_CRACKED_PILLAR_A = ACTOR_FIRST_PLACED + 6,
+  ACTOR_LOWER_PILLAR
+};
+
+/// Its middle level: three pairs of statues raised to three heights, a magma
+/// rock rolling between each pair, two statues' flames and a pushed pillar.
+enum MagmaRockSalamanderTailMiddleActorId {
+  ACTOR_STATUE_PAIR_A_EAST = ACTOR_FIRST_PLACED,
+  ACTOR_STATUE_PAIR_A_WEST,
+  ACTOR_STATUE_PAIR_B_EAST,
+  ACTOR_STATUE_PAIR_B_WEST,
+  ACTOR_STATUE_PAIR_C_EAST,
+  ACTOR_STATUE_PAIR_C_WEST,
+  ACTOR_MIDDLE_FLAME_A = ACTOR_FIRST_PLACED + 7,
+  ACTOR_MIDDLE_PILLAR,
+  ACTOR_MIDDLE_FLAME_B = ACTOR_FIRST_PLACED + 10,
+  ACTOR_MAGMA_ROCK_A,
+  ACTOR_MAGMA_ROCK_B,
+  ACTOR_MAGMA_ROCK_C
+};
+
+/// Its upper level: a pushed pillar, two statues' flames and the rope's posts.
+enum MagmaRockSalamanderTailUpperActorId {
+  ACTOR_UPPER_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_UPPER_FLAME_A = ACTOR_FIRST_PLACED + 2,
+  ACTOR_UPPER_FLAME_B = ACTOR_FIRST_PLACED + 4,
+  ACTOR_UPPER_ROPE_POST_A,
+  ACTOR_UPPER_ROPE_POST_B
+};
+
+/// Its top: two pushed pillars and a statue's flame.
+enum MagmaRockSalamanderTailTopActorId {
+  ACTOR_TOP_PILLAR_A = ACTOR_FIRST_PLACED,
+  ACTOR_TOP_PILLAR_B,
+  ACTOR_TOP_FLAME = ACTOR_FIRST_PLACED + 5
 };
 #include "field/sprite.h"
 #include "field/object.h"
@@ -1648,15 +1694,16 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
     priorityBit = 32;
     Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
-    Actor_GetById(8)->priorityFlags |= priorityBit;
-    Actor_GetById(10)->priorityFlags |= priorityBit;
+    Actor_GetById(ACTOR_SLIDE_PILLAR_A)->priorityFlags |= priorityBit;
+    Actor_GetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
     MagmaRockInside_RaiseActorCells(gMagmaRock_Room1Statues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-      MagmaRock_PlaceVolley(21, 13, 0);
+      MagmaRock_PlaceVolley(ACTOR_SLIDE_MAGMA_ROCK,
+                            ACTOR_SLIDE_PAIR_EAST_STATUE, 0);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_A_PUSHED))
-      Actor_SetPosition(8, 264, 360);
+      Actor_SetPosition(ACTOR_SLIDE_PILLAR_A, 264, 360);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_B_PUSHED))
-      Actor_SetPosition(10, 248, 408);
+      Actor_SetPosition(ACTOR_SLIDE_PILLAR_B, 248, 408);
     other = (s32)gMagmaRock_Room1Pillars;
     destinationX = 78;
     Actor_PlaceBlocks(other);
@@ -1664,14 +1711,14 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(98, 27, 4, 3, destinationX, 24);
     Blocks_MarkCells(other);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-      actor = Actor_GetById(20);
+      actor = Actor_GetById(ACTOR_SLIDE_STATUE_FLAME);
       actor->x.fixed += px(1);
       actor->motionFlags = zero;
       actor->collisionFlags = zero;
       actor->groundHeight = actor->y.fixed += px(24);
       Actor_SetSpriteFlags(actor, 0);
     }
-    MagmaRock_RebuildFlameParts(20);
+    MagmaRock_RebuildFlameParts(ACTOR_SLIDE_STATUE_FLAME);
     switch (work->entrance) {
     case 3:
     case 4:
@@ -1689,9 +1736,10 @@ s32 Scene_Initialize(void) {
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
       MagmaRockInside_RaiseActorCells(gMagmaRock_Room2LowerStatues);
       Tightrope_Initialize();
-      MagmaRock_PlaceTightrope(0, 11, 12);
+      MagmaRock_PlaceTightrope(0, ACTOR_LOWER_TIGHTROPE_WEST_POST,
+                               ACTOR_LOWER_TIGHTROPE_EAST_POST);
       if (Event_GetFlag(FLAG_LOWER_PILLAR_PUSHED))
-        Actor_SetPosition(15, 440, 536);
+        Actor_SetPosition(ACTOR_LOWER_PILLAR, 440, 536);
       Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
       id = *entrance;
       if (id == 1) {
@@ -1712,31 +1760,34 @@ s32 Scene_Initialize(void) {
         s32 id;
 
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-          Actor_GetById(8)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlags = zero;
           rise = 0x500000;
-          Actor_GetById(8)->y.fixed += rise;
-          Actor_GetById(9)->motionFlags = zero;
-          Actor_GetById(9)->y.fixed += rise;
-          MagmaRock_PlaceVolley(19, 8, 0);
-          Actor_GetById(10)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->y.fixed += rise;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->y.fixed += rise;
+          MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_A, ACTOR_STATUE_PAIR_A_EAST,
+                                0);
+          Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlags = zero;
           rise = 0xa00000;
-          Actor_GetById(10)->y.fixed += rise;
-          Actor_GetById(11)->motionFlags = zero;
-          Actor_GetById(11)->y.fixed += rise;
-          MagmaRock_PlaceVolley(20, 10, 1);
-          Actor_GetById(12)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->y.fixed += rise;
+          Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->y.fixed += rise;
+          MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_B, ACTOR_STATUE_PAIR_B_EAST,
+                                1);
+          Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlags = zero;
           rise = 0xf00000;
-          Actor_GetById(12)->y.fixed += rise;
-          Actor_GetById(13)->motionFlags = zero;
-          Actor_GetById(13)->y.fixed += rise;
-          MagmaRock_PlaceVolley(21, 12, 0);
+          Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->y.fixed += rise;
+          Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->y.fixed += rise;
+          MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_C, ACTOR_STATUE_PAIR_C_EAST,
+                                0);
         }
         if (Event_GetFlag(FLAG_MIDDLE_PILLAR_PUSHED))
-          Actor_SetPosition(16, 888, 568);
+          Actor_SetPosition(ACTOR_MIDDLE_PILLAR, 888, 568);
         Actor_PlaceBlocks(gMagmaRock_Room2MiddlePillars);
         MagmaRockInside_RaiseActorCells(gMagmaRock_Room2MiddleStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-          actor = Actor_GetById(15);
+          actor = Actor_GetById(ACTOR_MIDDLE_FLAME_A);
           other = 0x10000;
           actor->x.fixed += other;
           actor->motionFlags = zero;
@@ -1744,15 +1795,15 @@ s32 Scene_Initialize(void) {
           rise = 0x180000;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
-          actor = Actor_GetById(18);
+          actor = Actor_GetById(ACTOR_MIDDLE_FLAME_B);
           actor->x.fixed += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
-        MagmaRock_RebuildFlameParts(15);
-        MagmaRock_RebuildFlameParts(18);
+        MagmaRock_RebuildFlameParts(ACTOR_MIDDLE_FLAME_A);
+        MagmaRock_RebuildFlameParts(ACTOR_MIDDLE_FLAME_B);
         id = *entrance;
         if (id == 5) {
           Leader_Lift(0x1200000);
@@ -1771,15 +1822,16 @@ s32 Scene_Initialize(void) {
         }
       } else if (*entrance <= 12) {
         if (Event_GetFlag(FLAG_UPPER_PILLAR_PUSHED))
-          Actor_SetPosition(8, 264, 584);
+          Actor_SetPosition(ACTOR_UPPER_PILLAR, 264, 584);
         rise = (s32)gMagmaRock_Room2UpperPillars;
         Actor_PlaceBlocks(rise);
         Blocks_MarkCells(rise);
         Rope_Initialize();
-        Call4((void (*)())MagmaRock_PlaceRope, 0, 0x250, 14, 13);
+        Call4((void (*)())MagmaRock_PlaceRope, 0, 0x250,
+              ACTOR_UPPER_ROPE_POST_B, ACTOR_UPPER_ROPE_POST_A);
         MagmaRockInside_RaiseActorCells(gMagmaRock_Room2UpperStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-          actor = Actor_GetById(10);
+          actor = Actor_GetById(ACTOR_UPPER_FLAME_A);
           other = 0x10000;
           actor->x.fixed += other;
           actor->motionFlags = zero;
@@ -1787,15 +1839,15 @@ s32 Scene_Initialize(void) {
           rise = 0x180000;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
-          actor = Actor_GetById(12);
+          actor = Actor_GetById(ACTOR_UPPER_FLAME_B);
           actor->x.fixed += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
-        MagmaRock_RebuildFlameParts(10);
-        MagmaRock_RebuildFlameParts(12);
+        MagmaRock_RebuildFlameParts(ACTOR_UPPER_FLAME_A);
+        MagmaRock_RebuildFlameParts(ACTOR_UPPER_FLAME_B);
         if (*entrance == 9 || *entrance == 10) {
           offset = px(48);
           goto move;
@@ -1803,18 +1855,18 @@ s32 Scene_Initialize(void) {
       } else {
         MagmaRockInside_RaiseActorCells(gMagmaRock_Room2TopStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-          actor = Actor_GetById(13);
+          actor = Actor_GetById(ACTOR_TOP_FLAME);
           actor->x.fixed += px(1);
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->groundHeight = actor->y.fixed += px(24);
           Actor_SetSpriteFlags(actor, 0);
         }
-        MagmaRock_RebuildFlameParts(13);
+        MagmaRock_RebuildFlameParts(ACTOR_TOP_FLAME);
         if (Event_GetFlag(FLAG_TOP_PILLAR_A_PUSHED))
-          Actor_SetPosition(8, 648, 600);
+          Actor_SetPosition(ACTOR_TOP_PILLAR_A, 648, 600);
         if (Event_GetFlag(FLAG_TOP_PILLAR_B_PUSHED))
-          Actor_SetPosition(9, 568, 616);
+          Actor_SetPosition(ACTOR_TOP_PILLAR_B, 568, 616);
         MagmaRock_SettleBlocks(gMagmaRock_Room2TopPillars);
         if (Event_GetFlag(FLAG_SCENE_TEMP_50))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);

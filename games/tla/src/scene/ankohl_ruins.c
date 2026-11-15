@@ -110,7 +110,6 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "version.h"
 #include "system/ram_buffer.h"

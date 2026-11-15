@@ -136,7 +136,6 @@ extern u32 gFieldEffect_LongScript[];
 extern s32 gSeaOfTime_ShipRests[];
 
 s32 Actor_HasArrived(struct Actor *actor);
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 extern u16 gSeaOfTime_RippleLines[160];
 
 s32 SeaOfTime_HideSprite(struct Actor *object) {

@@ -42,7 +42,6 @@
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
-#include "field/field_bank.h"
 #include "scene/shared.h"
 #include "scene_ids.h"
 #include "field/field_event.h"
@@ -243,8 +242,6 @@ L_02008282:
   MapCell_Swap(2, v9, v10, v6);
   MapGrid_SetCellHeight((v9 << 20), (v10 << 20), *v11, v7);
 }
-
-void Actor_SelectAnimation();
 
 /// Each row: an ice cone's actor, its first animation and the flag set once
 /// Pound has flattened it.
@@ -1602,7 +1599,6 @@ UNUSED void Ride_SetSlotActor(u32 index, s32 value) {
 
 #include "shared/actor_blink.h"
 
-void Actor_SelectAnimation(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
@@ -1991,7 +1987,6 @@ extern s16 gSlideOnIce_SteerAngles[];
 
 #include "shared/leader_stop_if_pending.h"
 
-void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gSlideOnIce_AnglesByKey[];
 
@@ -2000,7 +1995,6 @@ extern s16 gSlideOnIce_AnglesByKey[];
 extern volatile s16 gSlideOnIce_Stopped;
 void Actor_SteerByPad(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #include "shared/slide_on_ice_from_edge.c"
 

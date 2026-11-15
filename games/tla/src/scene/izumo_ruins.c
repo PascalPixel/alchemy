@@ -64,7 +64,6 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
 void IzumoRuins_ShowPillarState(struct Actor *object);
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Event_End(void);
 void Actor_DisableById(s32 id);
 void FlagBlock_ApplyFlags(const void *data);
@@ -124,8 +123,6 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 #include "shared/crumbling_pillars.h"
 
 #include "../field/field_effect_advance_motion_priority.c"
-
-void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 
 #include "shared/rubble.h"
 

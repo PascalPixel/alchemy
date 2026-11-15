@@ -163,7 +163,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Event_Start(void);
 void Event_End(void);
 void FlagBlock_ApplyFlags(const void *script);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);

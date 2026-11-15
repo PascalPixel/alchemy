@@ -35,8 +35,6 @@ struct BurstWork {
 
 extern const u16 Data_080f0fa0[];
 
-void Camera_WorldToScreen(s32 *position);
-
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
 /// Task of the Burst: cycles its particles' colours and draws them.
@@ -304,7 +302,6 @@ void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 
 extern const u8 gBurst_GlowTiles[];
 
-void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 
 /// Burst: a glow disc swells in front of the caster as sparks fly into it, then

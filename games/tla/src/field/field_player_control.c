@@ -9,7 +9,7 @@
 #include "sounds.h"
 #include "field/flag_call.h"
 #include "system/frame.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
 #include "macros.h"

@@ -3,7 +3,7 @@
 
 #include "field/actor_script.h"
 #include "types.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 
 //--------------------------------------------------------------------------
 // Effect tables after the particle pictures.

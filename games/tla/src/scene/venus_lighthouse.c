@@ -22,7 +22,6 @@
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "system/scene.h"
 #include "field/scene_tables.h"

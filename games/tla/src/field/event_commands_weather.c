@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "sounds.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/ground_mask.h"
 
 /// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept

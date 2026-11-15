@@ -43,7 +43,6 @@
 
 // The parts, in ROM order.
 #include "field/screen_transition.h"
-#include "field/field_bank.h"
 #include "field/object.h"
 #include "field/event.h"
 #include "gamepak/far_call/window.h"

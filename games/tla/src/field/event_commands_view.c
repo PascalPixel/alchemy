@@ -4,7 +4,7 @@
 
 #include "event_commands_internal.h"
 #include "sounds.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/emote.h"
 #include "sprite_ids.h"
 

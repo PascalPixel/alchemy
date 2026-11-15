@@ -384,8 +384,9 @@ struct SpriteAnimation *AnimationObject_AllocateEmpty(void) {
 
 struct SpriteAnimation;
 
-/// An effect sprite as Gaia searches them: its attributes and OAM word.
-struct EffectSprite {
+/// A struct Sprite as Gaia searches and fills it: its OAM attributes and its
+/// shadow's written as words.
+struct SpriteWords {
   s32 unk00;
   s32 attributes;
   union {
@@ -420,9 +421,9 @@ struct EffectSprite {
 /// Lost Age's own.
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags) {
-  struct EffectSprite *found = NULL;
+  struct SpriteWords *found = NULL;
   s32 vramEntry = VramCache_FindFreeEntry();
-  struct EffectSprite *sprite = Ram_HeapSlots->sprites;
+  struct SpriteWords *sprite = Ram_HeapSlots->sprites;
   s32 i = 0;
   struct ObjectSystemWork *objects;
   s32 size;

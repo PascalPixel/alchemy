@@ -6,8 +6,6 @@
 
 #include "macros.h"
 
-void Camera_WorldToScreen(s32 *position);
-
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
 /// position and advances the particle.

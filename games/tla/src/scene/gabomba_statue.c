@@ -66,7 +66,6 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 #include "system/task.h"
 #include "shared/tables.h"
 #include "system/heap_release.h"
-#include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "graphics/resource.h"
 #include "system/affine.h"

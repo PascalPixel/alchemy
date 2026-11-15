@@ -268,7 +268,6 @@ enum YampiDesertBlowMaceChestActorId {
 #include "system/heap_release.h"
 #include "window/item_icon.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
 #include "graphics/resource.h"
@@ -774,8 +773,6 @@ void YampiDesert_WatchScorpionStop(void) {
 // Medal.
 
 #include "text/msg_ids.h"
-
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

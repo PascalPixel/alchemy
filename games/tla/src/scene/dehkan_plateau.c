@@ -31,7 +31,6 @@
 #include "field/field_effect.h"
 #include "field/field_psynergy_work.h"
 #include "shared/tundaria_tower.h"
-#include "field/field_bank.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "battle/battle.h"

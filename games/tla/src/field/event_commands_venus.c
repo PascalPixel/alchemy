@@ -5,7 +5,7 @@
 #include "event_commands_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 
 struct FieldEffectWork;
 
@@ -148,7 +148,7 @@ struct FieldEffectWork;
 /// sets its state to 2: its next splash is its last.
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
-  struct EffectVector position;
+  struct Vector3 position;
   s8 *statePointer;
   s32 state;
 
@@ -160,7 +160,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     position.x = source->x.fixed;
     position.y = source->y.fixed + Random16() * 5 + px(15);
     {
-      struct EffectVector *p = &position;
+      struct Vector3 *p = &position;
 
       position.z = source->z.fixed;
       Camera_WorldToScreen(p);

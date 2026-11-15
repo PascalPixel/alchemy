@@ -130,7 +130,6 @@ struct DustPuffWork {
 };
 
 s32 Actor_FallOverWithAnimationById();
-void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

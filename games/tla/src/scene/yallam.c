@@ -145,7 +145,6 @@ void Event_WaitTransitionFrames(void);
 s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
                       s32 force);
 void Yallam_UpdateSongGame(void);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 /// Stops an actor and turns it to the target when it is within range (or
 /// forced) and already faces near it; returns whether it did.

@@ -29,14 +29,12 @@
 #include "fixed_math.h"
 #include "field/event_commands.h"
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
 s32 MapGrid_CheckCollision(struct Actor *object,
                            struct GabombaCatacombsVec *position);
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Scene_TalkToActor(s32 a);
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 

@@ -30,7 +30,6 @@
 #include "system/input.h"
 #include "window/item_icon.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
 #include "scene/shared.h"

@@ -29,7 +29,6 @@
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
 #include "scene/shared.h"

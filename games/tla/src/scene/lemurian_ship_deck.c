@@ -726,7 +726,6 @@ void LemurianShipDeck_ResetCrewSearch(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_12);
 }
 
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
 
 /// A task: a sparkle rises from around the Black Crystal toward the ship's

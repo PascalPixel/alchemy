@@ -181,7 +181,6 @@ void Scoop_Update(void) {
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
 
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
 /// Scoop ("Dig in soft ground."): a giant hand rises before the caster and

@@ -775,7 +775,6 @@ visited:
   Event_End();
 }
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Emits one floating music note at a point.

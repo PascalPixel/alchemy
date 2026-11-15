@@ -86,7 +86,6 @@ void Actor_ArriveInRing(s32 actor);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Field_RequestBattleFromEncounterTable(s32, s32);
 void Event_PickUpItem(s32, s32, s32);
-void Camera_WorldToScreen(struct Vector3 *v);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void NameEntry_EditMemberName(s32);
 void Shop_Run(s32, s32);

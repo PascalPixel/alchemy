@@ -78,7 +78,6 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldEvent_Wait(s32 frames);
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
@@ -197,7 +196,6 @@ extern s32 gAirsRockInside_StampedZ;
 #include "field/field_event.h"
 #include "field/map_grid.h"
 #include "flags.h"
-#include "field/field_bank.h"
 #include "scene/shared.h"
 #include "field/field_sprite.h"
 #include "graphics/vram_tab.h"

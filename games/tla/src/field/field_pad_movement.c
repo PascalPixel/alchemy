@@ -7,7 +7,7 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "field/flag_call.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "macros.h"
 #include "field/resource_slot.h"

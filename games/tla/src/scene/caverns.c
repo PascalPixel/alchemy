@@ -40,7 +40,6 @@ extern struct Trigger gCaverns_AngaraTriggers[];
 void Caverns_PlaceAngaraBlocks(const s16 *data);
 void Caverns_PrepareOsenia(void);
 void Caverns_PrepareAtteka(void);
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 s32 MapGrid_CheckCollision(struct Actor *object, s16 *position);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);

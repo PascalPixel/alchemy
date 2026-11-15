@@ -13,7 +13,7 @@
 #include "macros.h"
 
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "field/field_psynergy.h"
 #include "field/event.h"
@@ -167,9 +167,9 @@ void FieldPsynergy_Whirlwind(void) {
   struct Actor *caster = scene->mainActor;
   struct Actor *target = scene->child;
   struct OrbTargetSprite *sprite = target->sprite;
-  struct EffectVector position;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 position;
+  struct Vector3 from;
+  struct Vector3 to;
   struct Actor *orb;
   struct OrbitEffect *mote;
   s32 kind = ORB_PLAIN;
@@ -307,7 +307,7 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
 /// Psynergy's position on screen, and is freed on arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct FieldEffectWork *scene;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s8 *st;
   s16 angle;
   s32 state;
@@ -363,9 +363,9 @@ void FieldPsynergy_Halt(void) {
   struct Actor *user = scene->mainActor;
   struct Actor *obj;
   struct FieldParticle *slot;
-  struct EffectVector pos;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 pos;
+  struct Vector3 from;
+  struct Vector3 to;
   s32 step;
   s32 i;
 

@@ -25,7 +25,6 @@
 #include "system/sprite_metadata.h"
 #include "field/actor.h"
 #include "field/actor_view.h"
-#include "field/field_bank.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"

@@ -35,7 +35,6 @@ extern s32 gMagmaRockInside_LastStepCell;
 void MagmaRockInside_BurstStatue(s32 a, s32 b);
 void MagmaRockInside_TrackStepCell(void);
 void MagmaRockInside_SetActorCellShape(s32 a, s32 b, s32 owner);
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_DisableById(s32 id);
 
@@ -48,7 +47,6 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_coordinate.h"
-#include "field/field_bank.h"
 #include "field/object.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
@@ -362,7 +360,6 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
     *state = 0;
 }
 
-void Actor_SelectAnimation();
 void Actor_StartScript();
 s32 GameFlag_Get();
 

@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "system/system.h"

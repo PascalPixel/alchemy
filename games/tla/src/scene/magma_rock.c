@@ -16,7 +16,6 @@
 #include "scene/scene.h"
 #include "system/main_routine_work.h"
 #include "field/field_coordinate.h"
-#include "field/field_bank.h"
 #include "system/scene.h"
 #include "field/map_grid.h"
 #include "field/field.h"

@@ -25,7 +25,7 @@
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "field/lucky_wheels_title.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/field_sequence.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"

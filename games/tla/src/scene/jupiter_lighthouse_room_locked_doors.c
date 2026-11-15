@@ -34,7 +34,6 @@
 #include "macros.h"
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/call.h"
@@ -712,8 +711,6 @@ extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

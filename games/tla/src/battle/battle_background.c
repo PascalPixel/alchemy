@@ -838,9 +838,6 @@ s32 ElementGlow_UploadStarField(void) {
 }
 
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
-// The five-argument blitter builder's far call, never called.
-s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
-                                 s32 flags, s32 mode);
 
 /// Returns the x of the point at angle and radius from the origin.
 static __inline__ s32 PolarX(s32 angle, s32 radius) {

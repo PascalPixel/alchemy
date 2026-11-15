@@ -269,7 +269,6 @@ void AnemosInnerSanctum_TeleportIn(void) {
 #include "../field/field_effect_move.c"
 
 #undef BG_PLTT_SET_RGB
-void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern s32 gAnemosInnerSanctum_DurationScripts[];
 

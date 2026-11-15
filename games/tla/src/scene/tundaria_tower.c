@@ -70,7 +70,6 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "field/event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/field_effect.h"
@@ -179,8 +178,6 @@ void TundariaTower_SetColumnCell(struct Actor *object) {
   MapCell_SetAttributes(2, x, z, attr2);
   MapGrid_SetCellHeight(x << 20, z << 20, object->layer, height);
 }
-
-void Actor_SelectAnimation();
 
 void TundariaTower_SetUpIceColumns(u16 *table) {
   u16 *row;
@@ -1015,8 +1012,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
-
 #include "shared/actor_steer_by_pad.h"
 
 #include "shared/leader_stop_if_pending.h"
@@ -1027,7 +1022,6 @@ extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SteerByPad(struct Actor *object);
 void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
@@ -1036,8 +1030,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
-
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
@@ -1439,7 +1431,6 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
 #include "../field/field_effect_advance_motion_priority.c"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
-void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 

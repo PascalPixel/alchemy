@@ -30,7 +30,6 @@
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/call.h"

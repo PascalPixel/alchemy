@@ -19,6 +19,7 @@
 #include "system/frame.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
+#include "field/effect_sprite.h"
 #include "window/window.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
@@ -34,10 +35,6 @@
 #include "system/ram_buffer.h"
 #include "system/io_write.h"
 
-struct EpilogueSprite;
-
-void EffectSprite_Draw(struct EpilogueSprite *sprite);
-
 s32 EndingPicture_LowerTopStrip();
 
 extern s32 gEpilogueMessage; ///< the next line to show
@@ -45,7 +42,7 @@ extern s32 gEpilogueMessage; ///< the next line to show
 extern s8 gEpilogueNameShown;
 extern s16 gEpilogueNameX; ///< the name's left edge, in pixels
 extern s16 gEpilogueNameY; ///< the name's line, in pixels
-extern struct EpilogueSprite gEpilogueNamePanel;
+extern struct EffectSprite gEpilogueNamePanel;
 extern s32 gEpilogueNamePanelEntry; ///< the panel's VRAM cache entry
 extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
 
@@ -69,8 +66,8 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Each frame while a name is shown, keeps the green panel under it.
 void Epilogue_PlaceNamePanel(void) {
   if (gEpilogueNameShown != 0) {
-    gEpilogueNamePanel.unk0c = gEpilogueNameX << 16;
-    gEpilogueNamePanel.unk10 = gEpilogueNameY << 16;
+    gEpilogueNamePanel.x = gEpilogueNameX << 16;
+    gEpilogueNamePanel.y = gEpilogueNameY << 16;
     EffectSprite_Draw(&gEpilogueNamePanel);
   }
 }
@@ -92,10 +89,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-void EffectSprite_Init(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
-                       s32 tile);
-
-static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
+static __inline__ void Set(struct EffectSprite *sprite, s32 a, s32 b, u32 c,
                            s32 tile) {
   /* FAKEMATCH(wrapper): forwarded inline. */
   EffectSprite_Init(sprite, a, b, c, tile);
@@ -106,7 +100,7 @@ static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
 void Epilogue_LoadNamePanel(void) {
   /* FAKEMATCH(wrapper): the size through Value1. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
-  struct EpilogueSprite *sprite;
+  struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
   s8 zero;
@@ -125,10 +119,10 @@ void Epilogue_LoadNamePanel(void) {
   value = Vram_Load(value, 0x800, buffer);
   *tileSlot = value;
   Set(sprite, 0, 0, 0xc0000000, value);
-  sprite->unk1e = 240;
-  sprite->unk09_2 = 0;
-  sprite->unk05_5 = 0;
-  sprite->unk09_4 = 14;
+  sprite->depth = 240;
+  sprite->oam.priority = 0;
+  sprite->oam.fullColor = 0;
+  sprite->oam.palette = 14;
   Heap_Release(buffer);
   zero = 0;
   gEpilogueNameShown = zero;

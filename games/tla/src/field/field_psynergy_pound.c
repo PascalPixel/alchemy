@@ -116,8 +116,6 @@ void FieldPsynergy_UpdatePound(void) {
   work->timer++;
 }
 
-void Camera_WorldToScreen(s32 *position);
-
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels
 /// and shrinks it by 1/64 each frame, marking done at frame 8.
 void BattleEffect_SinkAndShrinkObject(void) {
@@ -139,7 +137,6 @@ void BattleEffect_SinkAndShrinkObject(void) {
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
 
 void Func_080dba5c(void);
-void Camera_WorldToScreen(s32 *position);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
 /// Pound ("Drive objects into the ground."): a giant fist forms over the spot

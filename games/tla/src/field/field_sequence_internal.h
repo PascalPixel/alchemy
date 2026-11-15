@@ -65,7 +65,6 @@
 #include "graphics/vram_tab.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/window.h"
-#include "field/field_bank.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "gamepak/far_call/field.h"
@@ -77,7 +76,6 @@
 struct Actor *Actor_GetById(u32 objectId);
 
 #include "field/encounter_zone.h"
-#include "field/field_bank.h"
 #include "field/scene_tables.h"
 #include "game/inventory.h"
 #include "graphics/uiwindow.h"
@@ -123,7 +121,7 @@ struct TerrainRule {
 };
 
 union PolarOffsetPosition {
-  struct EffectVector vector;
+  struct Vector3 vector;
   s32 coordinates[3];
 };
 

@@ -34,7 +34,6 @@
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 #include "graphics/palette_snapshots.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "system/vector3.h"
 #include "shared/tables.h"
@@ -169,7 +168,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "system/frame.h"
 #include "system/vector3.h"
 
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Islets_StopWaterShimmer(void);
 

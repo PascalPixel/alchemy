@@ -7,7 +7,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/resource_slot.h"
 #include "macros.h"
 #include "field/hanging_vine.h"

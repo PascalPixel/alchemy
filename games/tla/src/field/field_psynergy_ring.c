@@ -131,8 +131,6 @@ void FieldPsynergy_UpdateRing(void) {
 #undef WHIRL_COUNT
 #undef SPARK_COUNT
 
-void Camera_WorldToScreen(s32 *position);
-
 /// The Ring: a ring of light is drawn round the caster among rising
 /// sparkles, and motes gather to circle it; FieldPsynergy_UpdateRing keeps
 /// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndRing).

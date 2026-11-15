@@ -56,7 +56,6 @@ enum LemuriaSpringActorId {
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "window/window.h"
@@ -103,7 +102,6 @@ extern struct SpringTossMotion gLemuriaSpring_Toss;
 extern struct SpringObstacle gLemuriaSpring_Obstacles[];
 extern s32 gLemuriaSpring_TossDone;
 extern s32 gLemuriaSpring_TossResult;
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s32 gLemuriaSpring_TossFrame;
 extern s32 gLemuriaSpring_TossChoice;
 

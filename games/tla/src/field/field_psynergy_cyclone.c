@@ -27,17 +27,6 @@
 #include "field/actor_view.h"
 #include "system/frame.h"
 
-/* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); field/event_commands.h has void Camera_WorldToScreen(struct
- * EffectVector *position); tried as the definition's void
- * Camera_WorldToScreen(struct EffectVector *position), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_sand.c:136: conflicting types for
- * `Camera_WorldToScreen'. */
-void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
-    "Camera_WorldToScreen");
-#define Camera_WorldToScreen Camera_WorldToScreen__psynergy
-
 /// The 96-particle burst's task (heap slot 0x5c work, started by
 /// ParticleBurst_Start). Each particle whose delay counter is between 0 and 63
 /// shows the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along

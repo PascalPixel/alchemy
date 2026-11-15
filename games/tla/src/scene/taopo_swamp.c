@@ -123,7 +123,6 @@ extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void TaopoSwamp_ShowMessage(s32 message);
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Vents_GetCounter(void);
 #ifdef MODERN
@@ -1917,7 +1916,7 @@ void Vent_Puff(s32 *position, s32 base) {
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for TaopoSwamp_DarkenRoom above.
 #undef REG_BLDALPHA
-#include "system/io_reg.h"
+#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
 /// Places a room's vents from its tables and starts their cycle.
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
@@ -2011,9 +2010,6 @@ void Vent_SetGust(s32 index, s32 value) {
 }
 
 #include "shared/vents_set_id.h"
-
-#undef REG_BLDALPHA
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 #undef VENT_WORK
 #undef DIFF
 #undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT

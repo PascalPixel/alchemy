@@ -4,7 +4,7 @@
 
 #include "event_commands_internal.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 
 /// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's

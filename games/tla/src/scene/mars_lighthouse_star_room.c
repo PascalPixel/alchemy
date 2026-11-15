@@ -40,7 +40,6 @@
 #include "field/field_sprite.h"
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "system/io_reg.h"
 #include "battle/battle_unit.h"
 #include "field/call.h"
@@ -164,7 +163,6 @@ void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Trig_Cos(s32 angle);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
@@ -1213,7 +1211,6 @@ extern u8 gInventorySnapshot[];
 
 extern u32 gScriptedPart_Script[];
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 #include "shared/actor_reset_scripted.h"
@@ -2006,7 +2003,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef Position
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

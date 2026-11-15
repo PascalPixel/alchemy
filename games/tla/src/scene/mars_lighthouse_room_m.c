@@ -46,7 +46,6 @@
 #include "system/dma.h"
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/dehkan_plateau.h"
 #include "battle/battle_unit.h"
 #include "system/vector3.h"
@@ -254,7 +253,6 @@ struct MarsLighthouseRoomMRideWork {
 
 extern u8 gInventorySnapshot[];
 
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Flame_UpdateForward(struct Actor *object);
@@ -1123,7 +1121,6 @@ void Leader_KnockBack(void);
 s32 Fireball_CarryLeader(void);
 void Actor_LaunchAhead(struct Actor *self);
 
-void Actor_SelectAnimation(struct Actor *object, s32 value);
 void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Teleport_StartShimmer(void);

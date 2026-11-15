@@ -6,7 +6,7 @@
 #include "field_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/map.h"
 #include "field/map_grid.h"
 #include "field/object.h"

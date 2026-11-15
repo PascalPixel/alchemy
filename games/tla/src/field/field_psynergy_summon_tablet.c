@@ -191,8 +191,6 @@ extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
 extern const u8 gMovementType_SquashScript[];
 
-void Camera_WorldToScreen(s32 *position);
-
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
 /// and the leader, with their sounds, before Summon_ShowLearnedMessage.

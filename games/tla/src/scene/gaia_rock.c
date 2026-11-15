@@ -60,14 +60,10 @@ extern struct ActorPlacement gGaiaRock_SusaActorPlacements[];
 extern struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[];
 extern s16 gGaiaRock_DancingIdolActorPlacements[];
 
-void Scene_TalkToActor(s32 a);
-
 extern struct Trigger gGaiaRock_SusaTriggers[];
 extern struct Trigger gGaiaRock_StatueSpotsTriggers[];
 extern struct Trigger gGaiaRock_Triggers[];
 extern u32 gGaiaRock_LeafScript[];
-
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 
 extern s32 gGaiaRock_WindScript[];
 

@@ -14,7 +14,6 @@
 #include "field/sprite.h"
 #include "system/task.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "system/system.h"
 #include "field/object.h"
 #include "battle/battle.h"
@@ -116,17 +115,17 @@ static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
 
 /// Runs Douse cast on a target, through FieldPsynergy_Douse.
 void FieldPsynergy_Douse(void) {
-  struct EffectVector pos;
-  struct EffectVector start;
-  struct EffectVector end;
+  struct Vector3 pos;
+  struct Vector3 start;
+  struct Vector3 end;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *anchor = work->child;
   struct Actor *target = work->mainActor;
   s32 count;
   struct Actor *orb;
   s32 raised;
-  struct EffectVector *from;
-  struct EffectVector *to;
+  struct Vector3 *from;
+  struct Vector3 *to;
   s32 i;
   s32 steps = 11;
   s32 y;
@@ -142,7 +141,7 @@ void FieldPsynergy_Douse(void) {
   if (work->child == 0) {
     work->x = target->x.fixed;
     work->z = target->z.fixed;
-    Vector_AddPolarOffset(px(16), work->angle, (struct EffectVector *)&work->x);
+    Vector_AddPolarOffset(px(16), work->angle, (struct Vector3 *)&work->x);
   }
   from = &start;
   SET_POSITION(from, target->x.fixed, target->y.fixed + px(16),
@@ -163,8 +162,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     {
-      struct EffectVector *a = &start;
-      struct EffectVector *b = &end;
+      struct Vector3 *a = &start;
+      struct Vector3 *b = &end;
       s32 e, t;
 
       e = b->x;
@@ -249,8 +248,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     {
-      struct EffectVector *a = &end;
-      struct EffectVector *b = &start;
+      struct Vector3 *a = &end;
+      struct Vector3 *b = &start;
       s32 e, t;
 
       e = b->x;

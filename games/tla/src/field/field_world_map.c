@@ -5,7 +5,7 @@
 
 #include "field_internal.h"
 #include "fixed_math.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/resource_slot.h"
 #include "system/system.h"
 #include "resource_ids.h"

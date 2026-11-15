@@ -15,7 +15,7 @@
 #include "system/ram_buffer.h"
 #include "battle/battle.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "fixed_math.h"
 

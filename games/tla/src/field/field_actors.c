@@ -6,7 +6,6 @@
 #include "field_internal.h"
 #include "field/flag_call.h"
 #include "flags.h"
-#include "field/field_bank.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
 #include "system/system.h"

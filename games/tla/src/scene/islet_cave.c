@@ -554,45 +554,27 @@ void IsletCave_SettleSeventhLog(void) {
   return;
 }
 
-/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
- * field_event.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:545: dereferencing pointer to incomplete
- * type. */
-struct FieldActor__islet_cave {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x1c];
-  s32 speed;
-  s32 acceleration;
-};
-
-void Actor_SelectAnimation(struct FieldActor__islet_cave *actor, s32 mode);
-
 void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
-  struct FieldActor__islet_cave *leader;
-  struct FieldActor__islet_cave *actor;
+  struct Actor *leader;
+  struct Actor *actor;
   s32 x;
   s32 z;
 
-  leader = ((struct FieldActor__islet_cave *)Actor_GetById(
-      gMainRoutineWork.leaderActorId));
-  actor = ((struct FieldActor__islet_cave *)Actor_GetById(actorId));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = ((leader->x + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((leader->z + (dz << 16)) & 0xfff00000) + 0x80000;
-  leader->speed = 0x10000;
+  x = ((leader->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
+  z = ((leader->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
+  leader->speedLimit = 0x10000;
   leader->acceleration = px(1) / 2;
-  Actor_SetMoveTarget(leader, x, leader->y, z);
+  Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, 27);
-  x = ((actor->x + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((actor->z + (dz << 16)) & 0xfff00000) + 0x80000;
-  actor->speed = 0x10000;
+  x = ((actor->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
+  z = ((actor->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
+  actor->speedLimit = 0x10000;
   actor->acceleration = px(1) / 2;
-  Actor_SetMoveTarget(actor, x, actor->y, z);
+  Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(actor, 4);
   } else {

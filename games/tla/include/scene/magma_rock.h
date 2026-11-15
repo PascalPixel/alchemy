@@ -74,8 +74,6 @@ extern s16 gMagmaRock_Room3Statues[];
 
 void MagmaRock_FlashStatue(struct Actor *object);
 
-void Actor_SelectAnimation(struct Actor *object, s32 a);
-
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
 void MagmaRock_StartFallingRocks(void);
 void MagmaRock_EndFallingRocks(void);

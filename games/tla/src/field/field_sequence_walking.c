@@ -7,7 +7,7 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/field_sequence.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/game.h"

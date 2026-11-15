@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "system/io_reg.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/curve.h"
 #include "field/script_operands.h"
 #include "field/actor_script.h"

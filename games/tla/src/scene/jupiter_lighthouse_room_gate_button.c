@@ -41,7 +41,6 @@
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "window/item_icon.h"
-#include "field/field_bank.h"
 #include "field/actor_script.h"
 #include "field/cell_target.h"
 #include "system/iwram_call.h"

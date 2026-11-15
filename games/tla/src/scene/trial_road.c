@@ -451,8 +451,6 @@ void MagmaRockInside_SetLeaderCellShape(s32 offset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
 void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
 
-u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
-
 void TrialRoad_DriftRubble(union FieldObject *object);
 
 void Actor_StartIdle(struct Actor *object);
@@ -1264,7 +1262,6 @@ void TrialRoad_RevealVine(void) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

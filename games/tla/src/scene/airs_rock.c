@@ -16,7 +16,6 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "field/map_grid.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/actor_script.h"

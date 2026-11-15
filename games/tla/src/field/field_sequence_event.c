@@ -10,7 +10,7 @@
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)

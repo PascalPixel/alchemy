@@ -99,7 +99,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width,
                                         s32 height, s32 destX, s32 destY);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Field_RequestDjinnBattle(s32 actor, s32 value);
-void Actor_GetCellIndex(void);
 void Actor_LiftTargetBlock(const void *script);
 void Actor_PlaceMovedBlock(void);
 void Sound_Play(s32 cue);
@@ -901,7 +900,7 @@ void ShrineOfTheSeaGod_LayerCrossroadsProps(void) {
 void ShrineOfTheSeaGod_TrackUpperLevel(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Actor_GetCellIndex();
+  Actor_GetCellIndex(leader);
   if (leader->y.fixed < px(16))
     gMainRoutineWork.onUpperLevel = 0;
   else

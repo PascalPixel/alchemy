@@ -115,7 +115,6 @@ struct FieldSpriteFlags {
 };
 
 s32 Trig_Cos(s32 angle);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
@@ -273,7 +272,6 @@ void AquaRockInside_ReadTabletFacingWest(void);
 void AquaRockInside_ReadTabletFacingEast(void);
 void AquaRockInside_FlowWithStream(void);
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void FieldEffect_StartBlankOverlay();
 void Tightrope_Place();
 

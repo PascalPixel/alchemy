@@ -44,7 +44,6 @@ extern s32 gChampa_Doors[];
 s32 Event_PickUpItem();
 extern struct Trigger gChampa_Triggers[];
 extern struct Trigger gChampa_TriggersOnceBriggsSailed[];
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s16 gChampa_NoDoorEdit[];
 extern s16 gChampa_DoorEdit[];
 s32 Tightrope_Place();

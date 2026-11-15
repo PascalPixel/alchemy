@@ -53,7 +53,6 @@ struct AquaRockWork {
   struct Bubble bubbles[64];
 };
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_Release(struct Actor *object);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

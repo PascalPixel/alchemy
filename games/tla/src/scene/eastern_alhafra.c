@@ -43,7 +43,6 @@
 #include "window/item_icon.h"
 #include "graphics/resource.h"
 #include "system/vector3.h"
-#include "field/field_bank.h"
 #include "field/field_event.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"

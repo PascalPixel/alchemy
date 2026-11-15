@@ -123,7 +123,6 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 #include "field/field_event.h"
 #include "field/flag_call.h"
 #include "field/ground_mask.h"
-#include "field/field_bank.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "scene/event_layer.h"

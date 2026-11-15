@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
@@ -15,7 +15,7 @@
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
 void Djinn_RunJupiterJoinEffect(s32 id) {
-  struct EffectVector position;
+  struct Vector3 position;
   struct MotionObject *object;
   struct FieldEffectWork *scene;
   struct FieldParticle *slot;

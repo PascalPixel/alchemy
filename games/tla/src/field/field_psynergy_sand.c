@@ -126,8 +126,6 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
 #undef PICTURE_FORMAT_TYPE01
 #undef PICTURE_FORMAT_COMPRESSED
 
-void Camera_WorldToScreen(s32 *position);
-
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
 /// each column's pixels below a wave line move down by phase (1.3 pixels a
 /// step), those above it stay.
@@ -225,8 +223,6 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
 }
-
-void Camera_WorldToScreen(s32 *position);
 
 /// Advances one particle by a frame. For its first 32 frames its sprite
 /// steps through eight pictures of eight tiles from tiles, four frames each,

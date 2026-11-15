@@ -21,7 +21,6 @@
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "field/object.h"
 #include "text/msg_ids.h"
 #include "system/system.h"
@@ -49,7 +48,7 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 
 /// Converts a world position (16.16 pixels) to the screen: x and z receive the
 /// screen's x and y and y becomes 0.
-void Camera_WorldToScreen(struct EffectVector *position) {
+void Camera_WorldToScreen(struct Vector3 *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
   if (((struct FieldWork *)slots->fieldWork)->mode == 3) {

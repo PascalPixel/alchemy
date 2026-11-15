@@ -66,7 +66,6 @@ void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
 void Sound_Play(s32 cue);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetAnimationById(u32 actorId, s32 animation);

@@ -37,7 +37,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/mars_lighthouse_star_room.h"
 #include "scene/shared.h"
@@ -181,7 +180,6 @@ void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 s32 Trig_Cos(s32 angle);
 

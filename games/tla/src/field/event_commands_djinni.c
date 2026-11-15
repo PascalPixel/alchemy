@@ -8,7 +8,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "system/system.h"
 #include "field/scene_call.h"

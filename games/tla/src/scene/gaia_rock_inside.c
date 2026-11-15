@@ -31,7 +31,6 @@
 #include "field/object.h"
 #include "scene/scene.h"
 #include "flags.h"
-#include "field/field_bank.h"
 #include "scene/shared.h"
 #include "field/field_effect.h"
 #include "field/call.h"
@@ -2142,7 +2141,6 @@ void GaiaRockInside_SetPlatformPose();
 void GaiaRockInside_RingOfDust(void);
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
 void GaiaRockInside_StartWallTriggers(void);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);

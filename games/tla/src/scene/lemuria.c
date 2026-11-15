@@ -71,7 +71,6 @@ enum LemuriaActorId {
 #include "field/map_grid.h"
 #include "field/field_sequence_event.h"
 #include "field/actor_view.h"
-#include "field/field_bank.h"
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"
@@ -131,7 +130,6 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 s32 Lemuria_NoticeLeader(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;

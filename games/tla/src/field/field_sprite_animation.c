@@ -3,7 +3,7 @@
 // Part of field.c.
 
 #include "field_internal.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/resource_slot.h"
 #include "scene/shared.h"
 #include "system/system.h"

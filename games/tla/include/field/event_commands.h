@@ -5,6 +5,7 @@
 /// What games/tla/src/field/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "system/vector3.h"
 #include "sprite_ids.h"
 #include "resource_ids.h"
 #include "field/effect_sprite.h"
@@ -14,7 +15,7 @@
 struct Actor;
 struct SpriteAnimation;
 struct Effect04Vector;
-struct EffectVector;
+struct Vector3;
 
 struct ItemHead {
   u8 unused[3]; ///< no code names it
@@ -202,7 +203,7 @@ void FieldPsynergy_Lash(void);
 
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object);
 
-void Camera_WorldToScreen(struct EffectVector *position);
+void Camera_WorldToScreen(struct Vector3 *position);
 
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);

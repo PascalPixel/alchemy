@@ -28,7 +28,6 @@
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/call.h"

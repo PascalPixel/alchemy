@@ -22,7 +22,6 @@
 #include "field/field.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "field/actor_script.h"

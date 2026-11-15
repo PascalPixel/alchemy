@@ -22,7 +22,6 @@
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
@@ -637,7 +636,6 @@ void LightSprites_SetPriority(s32 a0) { gLightSpritePriority = a0; }
 #undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

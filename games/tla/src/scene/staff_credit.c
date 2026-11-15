@@ -28,7 +28,6 @@
 #include "system/bg_scroll.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
-#include "field/field_bank.h"
 #include "scene/gabomba_statue.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"

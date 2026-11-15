@@ -135,7 +135,6 @@ void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 void Settlements_ClimbDownLadder(void);
 void Settlements_DriftSmoke(struct Actor *object);
-void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_Release(struct Actor *object);
 extern s32 gSettlements_WaterfallLine;
 extern u16 gSettlements_WaterfallScrollAbove;
@@ -178,7 +177,6 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "system/field_effect.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
-#include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
@@ -1110,7 +1108,6 @@ extern s16 gSlideOnIce_SteerAngles[];
 #include "shared/leader_stop_if_pending.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 #include "shared/leader_slide_on_ice.h"
@@ -1121,7 +1118,6 @@ extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SteerByPad(struct Actor *object);
 void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 

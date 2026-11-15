@@ -32,7 +32,6 @@
 #include "field/field_coordinate.h"
 #include "system/task.h"
 #include "window/item_icon.h"
-#include "field/field_bank.h"
 #include "field/cell_target.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"

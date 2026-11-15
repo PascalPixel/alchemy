@@ -36,7 +36,6 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "field/object.h"
 #include "scene/scene.h"

@@ -71,7 +71,6 @@ struct HoverWork {
 };
 
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
 
 /// Hover's frame callback: keeps the glow's strength full while the player
 /// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it

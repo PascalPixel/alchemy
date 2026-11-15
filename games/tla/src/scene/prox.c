@@ -179,7 +179,6 @@ enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 #include "system/frame.h"
 #include "system/heap_release.h"
 #include "window/item_icon.h"
-#include "field/field_bank.h"
 #include "scene/magma_rock.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
@@ -201,7 +200,6 @@ enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 #define FLAG_STORM_RAGING FLAG_SCENE_TEMP_01
 #define FLAG_DIG_SPOT_SCOOPED FLAG_AREA_TEMP_00
 
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -407,8 +405,6 @@ void Prox_PuffFromRoofs(void);
 #include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 /// Runs a child at its target while it is near and ahead, and says whether it
 /// is chasing.
@@ -2371,7 +2367,6 @@ void Prox_SayFarewell(void) {
   }
 }
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s16 gSlideOnIce_SteerAngles[];
 
 #include "shared/actor_steer_by_pad.h"
@@ -2386,7 +2381,6 @@ struct Position {
   s32 z;
 };
 
-void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 extern s16 gSlideOnIce_AnglesByKey[];
 

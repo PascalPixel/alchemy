@@ -145,7 +145,6 @@ struct AlhafranCaveSwitch {
 };
 
 void Actor_ApplyRandomChildValues(void);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,

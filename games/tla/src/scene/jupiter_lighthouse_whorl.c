@@ -23,7 +23,6 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "field/field_bank.h"
 #include "types.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"

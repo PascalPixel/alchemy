@@ -14,7 +14,6 @@
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "scene_ids.h"
 #include "field/field.h"
@@ -111,8 +110,6 @@ struct Actor;
 extern u16 gYampiDesertCave_LogSprites[];
 
 void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
-
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void YampiDesertCave_ArriveByTeleport(void);
 

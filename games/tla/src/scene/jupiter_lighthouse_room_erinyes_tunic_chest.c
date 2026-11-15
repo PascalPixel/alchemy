@@ -30,7 +30,6 @@
 #include "field/call.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
-#include "field/field_bank.h"
 #include "scene/scene.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"

@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "system/system.h"
 #include "battle/object_effect_scripts.h"
@@ -21,7 +21,7 @@
 /// frames, and the sparks vanish.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *objectPointer;
-  struct EffectVector position;
+  struct Vector3 position;
   s32 value;
   s32 remaining;
   struct DjinniObject *djinni;

@@ -34,7 +34,6 @@
 #include "field_psynergy_summon_tablet.c"
 #include "field_psynergy_collision_tags.c"
 
-#undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
 #undef Resource_GetMetadataRecordFarFar
 

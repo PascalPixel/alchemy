@@ -5,7 +5,7 @@
 #include "event_commands_internal.h"
 #include "fixed_math.h"
 #include "field/event_commands.h"
-#include "field/field_bank.h"
+#include "field/field.h"
 #include "field/object.h"
 #include "field/ground_mask.h"
 

@@ -683,12 +683,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             SET_POSITION(p, gCatastrophe_StrikeX[n] << 3,
                          gCatastrophe_StrikeY[n] << 3, a << 8);
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm. */
-          __asm__("" : "=r"(idx) : "0"(idx));
-          p->velocityY = gCatastrophe_StrikeSpeedsY[idx + off];
-          p->velocityZ = gCatastrophe_StrikeTurns[idx + off];
-          p->velocityX = gCatastrophe_StrikePictures[idx + off];
-          p->variant = idx + 1;
+          p->velocityY = gCatastrophe_StrikeSpeedsY[p->variant + off];
+          p->velocityZ = gCatastrophe_StrikeTurns[p->variant + off];
+          p->velocityX = gCatastrophe_StrikePictures[p->variant + off];
+          p->variant++;
           if (p->velocityX == -1) {
             continue;
           }

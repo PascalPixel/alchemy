@@ -964,7 +964,8 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
-  Event_OpenMessage(0x601a, 0);
+  Event_OpenMessage(
+      SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Event_ShowMessageAndWait(
@@ -2660,7 +2661,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   // "Oh! The magic, the power of the witch doctor fills my body!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessage(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Task_Remove(Kibombo_FlickerCeremonyFires);
@@ -2934,11 +2935,11 @@ void Kibombo_GabombaRespondsToGift(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, 0x3000);
-  Event_ShowMessage(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   FieldActor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessage(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
-  Event_ShowMessageAndWait(0x4011, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 320);
   Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
@@ -2997,19 +2998,19 @@ void Kibombo_CeremonyEnds(void) {
   Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_Jump(ACTOR_AKAFUBU_AT_HOME, 4, 10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_AKAFUBUS_FATHER, FACING_EAST);
   Actor_ShowEmoteById(ACTOR_AKAFUBU_AT_HOME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_ShowEmoteById(ACTOR_AKAFUBUS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_WEST);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_SOUTH_SOUTHWEST);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirection(ACTOR_AKAFUBUS_FATHER, FACING_NORTH_NORTHEAST, 0);

@@ -761,7 +761,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   JupiterLighthouse_PlaySound(34);
-  FieldEvent_ShowMessageThenWait(4124, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0));
   JupiterLighthouse_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
@@ -770,7 +770,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_Wait_(10);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
-  FieldEvent_ShowMessageThenWait(4124, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait_(10);
@@ -779,13 +779,13 @@ void JupiterLighthouse_BeaconIsLit(void) {
   ((void *)Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   FieldEvent_Wait_(5);
-  Event_OpenMessage(0x101c, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
-    FieldEvent_ShowMessageThenWait(4124, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    FieldEvent_ShowMessageThenWait(4124, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
   }
   JupiterLighthouse_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -828,7 +828,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
   JupiterLighthouse_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
-  FieldEvent_ShowMessageThenWait(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AGATIO, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait_(10);
   Actor_SetAttachedEffect(ACTOR_PIERS,
@@ -854,7 +854,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   JupiterLighthouse_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
                               30);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
-  FieldEvent_ShowMessageThenWait(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AGATIO, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
   Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHEAST, 0);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
@@ -862,14 +862,14 @@ void JupiterLighthouse_BeaconIsLit(void) {
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30));
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHWEST, 0);
   Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
-  FieldEvent_ShowMessageThenWait(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AGATIO, 0, 0);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 2);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait_(5);
   Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
-  FieldEvent_ShowMessageThenWait(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AGATIO, 0, 0);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(

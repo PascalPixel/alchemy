@@ -2302,7 +2302,8 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_SetAnimationById(ACTOR_SUSA, 8);
-        Event_ShowMessageAndWait(0x600a, 0);
+        Event_ShowMessageAndWait(
+            SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
         susa->speedLimit = px(3) / 2;
         Actor_SetDestinationById(ACTOR_SUSA, 488, 328);
         Event_Wait(5);
@@ -2426,7 +2427,8 @@ s32 Scene_Initialize(void) {
         Event_Wait(20);
         Actor_SetMovementTypeById(ACTOR_SUSA, movement);
         Event_Wait(20);
-        Event_ShowMessageAndWait(0x600a, 0);
+        Event_ShowMessageAndWait(
+            SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
         FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
         FieldCamera_WaitForArrival();
         Actor_SetSpritePriority(ACTOR_SUSA, 3);

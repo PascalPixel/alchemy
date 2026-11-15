@@ -581,15 +581,12 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *pos, s32 dir, s32 palette,
   s32 i;
 
   if (object != NULL) {
-    struct Half zero;
-
     object->x.fixed = *pos++;
     object->y.fixed = *pos++;
     object->z.fixed = *pos;
     object->facing = dir;
-    zero.v = 0;
-    object->motionFlags = zero.v;
-    ((u8 *)object->sprite)[26] = zero.v;
+    object->motionFlags = 0;
+    ((u8 *)object->sprite)[26] = 0;
     Actor_SetAnimationSpeed(object, value);
   }
   sprite = object->sprite;

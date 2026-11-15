@@ -151,7 +151,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWITCH_MECHANISM);
 
     // Drop the formation's objects to 64 pixels up.
-    speed += 0x4000;
+    speed += px(1) / 4;
     height += speed;
     if (height > px(64))
       height = px(64);

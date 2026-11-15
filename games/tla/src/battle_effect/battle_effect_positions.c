@@ -384,9 +384,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
-      mote->velocityX = Random16() & 0xffff;
-      mote->velocityY = Random16() & 0xffff;
-      mote->velocityZ = Random16() & 0xffff;
+      mote->velocityX = Random16() & TRIG_ANGLE_MASK;
+      mote->velocityY = Random16() & TRIG_ANGLE_MASK;
+      mote->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     Actor_SetAnimationSpeedFar(object, 0);
     velocityX = object->velocityX;
@@ -403,7 +403,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     shake = 64 - pos.x;
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
     Sound_PlayFar(SE_POWER_UP);

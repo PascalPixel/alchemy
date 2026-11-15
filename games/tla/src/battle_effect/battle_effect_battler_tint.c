@@ -32,11 +32,11 @@ void BattleEffect_SetupBlendedDisplay(void) {
   FillWords___f14cca8(buffer, 0x4000, 0);
   FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   wait(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 

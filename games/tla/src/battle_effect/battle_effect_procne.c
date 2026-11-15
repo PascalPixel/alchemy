@@ -385,7 +385,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               index = 0;
               do {
                 speed = (Random16() & 127) + 16;
-                angle = Random16() & 0xffff;
+                angle = Random16() & TRIG_ANGLE_MASK;
                 spark = &PARTICLES[slot * 128 + index];
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
                 spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
@@ -522,7 +522,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       enemy->z = home[index].y;
       enemy->angle = baseAngle[index];
     }
-    gProjection.centerX = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
     BattleEffect_SetupBlendedDisplay();
 
     index = 0;
@@ -574,7 +574,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   // with their palette, the streaks, the dots, and in mode 1 the lightning
   // palette.
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -588,7 +588,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, lightning, 128);
+    copy((void *)BG_PLTT, lightning, SHEET_PALETTE_BYTES);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {

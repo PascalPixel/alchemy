@@ -105,9 +105,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   }
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work->sheet, 1,
                              1);
@@ -132,8 +132,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     y = px(gDeathPlunge_PieceStartY[i]);
     piece->x = x;
     piece->y = y;
-    vx = (x - 0x200000) >> 2;
-    vy = (y - 0x3c0000) >> 2;
+    vx = (x - px(32)) >> 2;
+    vy = (y - px(60)) >> 2;
     piece->velocityX = vx;
     piece->velocityY = vy;
   }
@@ -146,7 +146,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
-  IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, IO_WRITE_16);
   Iwram_FillWords((void *)(BG_PLTT + 6 * 16), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
@@ -365,7 +365,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -400,9 +404,9 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   work->vblanksSinceTransfer = 1;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  REG_BLDALPHA = BLEND_ALPHA(12, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
@@ -424,12 +428,12 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   for (i = 0; i != 128; i++) {
     gSparkles[i].y = px(128);
-    gSparkles[i].x = Random16() & 0xffff;
+    gSparkles[i].x = Random16() & TRIG_ANGLE_MASK;
     gSparkles[i].z = (Random16() & 0x1ff) + 0x400;
     gSparkles[i].variant = -i;
   }
@@ -437,7 +441,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // A mote's x is its angle and y its distance from the user; its variant
   // counts down its life.
   for (i = 0; i != 64; i++) {
-    work->particles[i].x = Random16() & 0xffff;
+    work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
   }
@@ -451,7 +455,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     EffectPosition_ProjectScaledBattler(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, BLEND_WEIGHT_MAX);
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP,
@@ -631,14 +635,25 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   view->secondMode = 1;
   wait(1);
   REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x1741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
+                      IO_WRITE_16);
   gBgScroll[1].y = 32;
   wait(1);
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
   wait(1);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   wait(1);
@@ -646,7 +661,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   REG_BG2PA = Q_8_8(1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
 
   i = 0;
   for (k = 0; k != 16; k++) {
@@ -658,7 +673,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
     }
   }
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   wait(1);
 
   switch (kind) {
@@ -679,11 +694,12 @@ void BattleEffect_StartElementStreaks(s32 kind) {
     id = (s32)&ResourceId_DustPuffSheet;
     break;
   }
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(id), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(id),
+                       SHEET_PALETTE_BYTES);
 
   // Fade the background over 24 frames, and draw and halve the streaks
   // every frame.
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Task_Add(BattleEffect_DimBackgroundStep, TASK_PASS_VBLANK);
   work->halvePending = 0;
@@ -698,7 +714,7 @@ void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_DrawStreaks);
   Task_Remove(BattleEffect_TransferHalvedCanvas);
   Task_Remove(BattleEffect_DimBackgroundStep);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
@@ -748,7 +764,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   draw[0] = Ram_HeapSlots->ramCode;
@@ -780,8 +796,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   }
   actor[18] = 0xab85;
   actor[3] = 0;
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0x3f3f3f3f);
-  gProjection.centerY = 240;
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   BattleBackground_LoadFar(1, (s32)&ResourceId_SunbeamCloudsBackdrop, 0);
   transition[4] = 1;
@@ -810,7 +827,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   }
   Graphics_LoadGreyRamp();
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   fr = 0;
   fg = 0;
   fb = 0;
@@ -1425,7 +1442,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               }
             }
             Transform_Reset();
-            x = -0x180000;
+            x = -px(24);
             if (t >= 0) {
               x = px(t) - px(24);
             }
@@ -1453,10 +1470,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       req = gCruelRuin_UnitScale;
       place[3] = 0;
       place[1] = px(255);
-      scrollX += 0x180000;
+      scrollX += px(24);
       if (scrollX > 0x1fffff) {
         phase = (phase + 7) % 8;
-        scrollX += -0x200000;
+        scrollX += -px(32);
       }
       gBgScroll[1].x += 0xfff8;
       for (j = 0; j != 2; j++) {
@@ -1545,7 +1562,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     } while (0);
   }
   wait(1);
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   for (i = 0; i != 18; i++) {
     Sprite_DestroyFar(work->sprites[i]);
@@ -1561,7 +1578,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
     u8 *c;

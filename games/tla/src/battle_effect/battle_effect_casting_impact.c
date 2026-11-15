@@ -239,7 +239,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   else
     BattleEffect_StartCanvasLayer(0);
 
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tiles, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames, 1,
                              0);
@@ -541,16 +541,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     s32 k;
     struct Particle *p;
 
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     object = BattleObject_GetFar(action->user)->object;
     for (i = 0; i != 64; i++) {
       work->particle[i].x = (Random16() & 63) + 32;
       work->particle[i].y = 0;
       work->particle[i].z = 0;
-      work->particle[i].velocityX = Random16() & 0xffff;
-      work->particle[i].velocityY = Random16() & 0xffff;
-      work->particle[i].velocityZ = Random16() & 0xffff;
+      work->particle[i].velocityX = Random16() & TRIG_ANGLE_MASK;
+      work->particle[i].velocityY = Random16() & TRIG_ANGLE_MASK;
+      work->particle[i].velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     Actor_SetAnimationSpeedFar(object, 0);
     /* FAKEMATCH(temporary): vec holds origin and then base while each is
@@ -659,8 +659,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BG2PA = Q_8_8(1);
       REG_BG2X = (64 - target[0]) << 8;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-      Iwram_ClearWords(BG_VRAM, 0x3c00);
-      Iwram_ClearWords(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(screen, CANVAS_VIEW_BYTES);
       REG_BLDCNT = 0;
     }
     if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
@@ -674,8 +674,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         kind == CASTING_IMPACT_IMPACT_UNUSED_GATHERING ||
         kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
         kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
-      Iwram_ClearWords(BG_VRAM, 0x3c00);
-      Iwram_ClearWords(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(screen, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -697,8 +697,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     object->acceleration = savedAcceleration;
     object->verticalMotionStrength = savedVerticalStrength;
     if (kind == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
-      Iwram_ClearWords(BG_VRAM, 0x3c00);
-      Iwram_ClearWords(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(screen, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -707,8 +707,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       BattleEffect_RunSparkGroups(action, SPARK_GROUPS_RISING);
       return;
     }
-    Iwram_ClearWords(screen, 0x3c00);
-    Iwram_ClearWords(BG_VRAM, 0x3c00);
+    Iwram_ClearWords(screen, CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
     if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
       for (i = 1; i != 64; i++) {
         v = 31 - (Q_16_16_TO_INT(Trig_Cos(i << 8) << 5));
@@ -805,7 +805,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS)
         height = 0;
       else
-        height = 0x140000;
+        height = px(20);
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
         SET_POSITION(p, targetObject->x, height, targetObject->z);
@@ -1087,7 +1087,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                   if (kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
                     gravity = 0;
                   else
-                    gravity = -0x800;
+                    gravity = -px(1) / 32;
                   BattleEffectKernels_IntegrateVector3(r, 62, gravity);
                 }
                 r->variant -= 2;
@@ -1261,7 +1261,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 m;
             s32 x;
             m = i & 3;
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
             x = (Q_16_16_TO_INT(Trig_Sin(angle) << 3)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (Q_16_16_TO_INT(Trig_Cos(angle) * amp)) + off -
@@ -1288,7 +1288,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 m;
             s32 x;
             m = i & 3;
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
             x = (Q_16_16_TO_INT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
@@ -1383,7 +1383,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
         s32 m;
         if (frame > 15)
-          REG_BLDALPHA = (32 - frame) | 0x1000;
+          REG_BLDALPHA = BLEND_ALPHA(32 - frame, BLEND_WEIGHT_MAX);
         if (frame > 5) {
           s32 x;
           s32 o1;
@@ -1439,7 +1439,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                             gCastingImpact_PictureX[action->side * 7 + 1],
                             y + gCastingImpact_PictureY[1], 99, 69);
           if (frame >= 4 && frame < 6)
-            Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWords(screen, CANVAS_BYTES,
+                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           if (frame >= 6 && frame < 8)
             drawFuncs.draw[0](screen, work->frames + 0x3081,
                               gCastingImpact_PictureX[action->side * 7 + 2],
@@ -1605,7 +1606,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (t >= 0 && t < 16)
           REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
         if (frame >= 4 && frame < 8)
-          Iwram_FillWords(screen, 0x4000, 0x01010101);
+          Iwram_FillWords(screen, CANVAS_BYTES, CANVAS_FILL_WORD(1));
         if (frame > 3) {
           if (action->side == EFFECT_SIDE_ENEMIES)
             drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
@@ -1664,7 +1665,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame > 4)
           drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
         if (frame == 5)
-          Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(screen, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if (frame >= 0 && (m = frame / 3) < 7) {
           if (action->side == EFFECT_SIDE_ENEMIES)
             drawFuncs.draw[0](screen,
@@ -1719,9 +1721,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BLDALPHA = BLEND_ALPHA(16, 8);
         t = frame - 24;
         if (t >= 0 && t < 16)
-          REG_BLDALPHA = (16 - t) | 0x1000;
+          REG_BLDALPHA = BLEND_ALPHA(16 - t, BLEND_WEIGHT_MAX);
         if (frame >= 4 && frame < 6)
-          Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(screen, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if (frame < 4) {
           if (action->side == EFFECT_SIDE_PARTY)
             drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
@@ -1779,9 +1782,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
             SET_POSITION(p, (Random16() & 127) + 32, 0, 0);
-            p->velocityX = Random16() & 0xffff;
-            p->velocityY = Random16() & 0xffff;
-            p->velocityZ = Random16() & 0xffff;
+            p->velocityX = Random16() & TRIG_ANGLE_MASK;
+            p->velocityY = Random16() & TRIG_ANGLE_MASK;
+            p->velocityZ = Random16() & TRIG_ANGLE_MASK;
           }
           SPARKS[63].y = 159;
         }
@@ -1824,10 +1827,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           p->x = px(target[0] / 2);
           p->y = px(target[1] + 48);
           if (action->side == EFFECT_SIDE_ENEMIES)
-            p->velocityX = -0x30000;
+            p->velocityX = -px(3);
           else
-            p->velocityX = 0x30000;
-          p->velocityY = 0x80000;
+            p->velocityX = px(3);
+          p->velocityY = px(8);
           p->x += -p->velocityX * 12;
           p->y += -p->velocityY * 12;
         }
@@ -1870,7 +1873,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 x;
         s32 y;
         if (frame > 31)
-          REG_BLDALPHA = (48 - frame) | 0x1000;
+          REG_BLDALPHA = BLEND_ALPHA(48 - frame, BLEND_WEIGHT_MAX);
         if (frame < 14) {
           struct Particle *p;
           if (action->side == EFFECT_SIDE_ENEMIES) {
@@ -2003,7 +2006,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 m;
             s32 x;
             m = i & 3;
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
             x = (Q_16_16_TO_INT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
@@ -2451,7 +2454,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       } else if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN) {
         s32 m;
         if (frame > 47)
-          REG_BLDALPHA = (64 - frame) | 0x1000;
+          REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
           m = i % 3;
@@ -2468,7 +2471,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         for (i = 0; i != 3; i++) {
           if (frame == i * 3 + 3) {
             Sound_PlayFar(SE_POWER_UP);
-            Iwram_FillWords(screen, 0x4000, 0x2f2f2f2f);
+            Iwram_FillWords(screen, CANVAS_BYTES, CANVAS_FILL_WORD(47));
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_SCORPIONFISH) {
@@ -2653,8 +2656,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
         kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
         kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-      Iwram_ClearWords(BG_VRAM, 0x3c00);
-      Iwram_ClearWords(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(screen, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -43,7 +43,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -315,7 +315,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   scale = 0;

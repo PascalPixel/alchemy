@@ -35,7 +35,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
@@ -70,7 +70,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       s32 lift;
 
       radius = Random16() & 0xff;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
       shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
@@ -183,7 +183,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     palette = (s32)&ResourceId_BlastSheet;
   else
     palette = (s32)&ResourceId_VioletPaletteC;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
+                       SHEET_PALETTE_BYTES);
 
   // The motes leave the middle of each target's body.
   for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)

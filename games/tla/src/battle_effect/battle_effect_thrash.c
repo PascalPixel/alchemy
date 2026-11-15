@@ -92,7 +92,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (variant 5's four half pictures all there).
@@ -227,8 +227,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunWeaken(args);
   } else {

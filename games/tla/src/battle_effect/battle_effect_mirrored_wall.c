@@ -374,7 +374,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                  BGCNT_SCREEN_BASE(7);
   } else {
     BattleEffect_StartCanvasLayer(1);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
                              1);
@@ -398,7 +398,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // The shots leave the caster at the mode's height, each aimed at its
   // target with a little spread in depth.
@@ -406,11 +406,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
   if (mode == LOBBED_SHELLS_MUD)
-    height = 0x280000;
+    height = px(40);
   else if (mode == LOBBED_SHELLS_RISING_VENOM)
-    height = 0x140000;
+    height = px(20);
   else
-    height = 0x40000;
+    height = px(4);
   for (k = 0; k != args->targetCount; k++) {
     struct MotionObject *target =
         BattleObject_GetFar(args->targets[k % args->targetCount])->object;
@@ -553,8 +553,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
       BattleEffect_RunImpair(args);

@@ -176,7 +176,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
   // Crucible Fire is Impact joined at frame 53, with a fade.
   if (mode == STAT_BOOST_CRUCIBLE_FIRE) {
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     mode = STAT_BOOST_IMPACT;
     start = 53;
   }
@@ -552,7 +552,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     palette = (s32)&ResourceId_GlowOrbSheet;
   else
     palette = (s32)&ResourceId_PinkBurstSheet;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
                              work->sheet + RAMP_IMAGE, 0, 0);
 
@@ -584,7 +585,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     s32 radius = 192;
     s32 angle;
 
-    angle = Random16() & 0xffff;
+    angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
       shard->y = px((i & 31) / 4 * 6 - 10);

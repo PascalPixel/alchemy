@@ -40,7 +40,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -340,7 +340,7 @@ void Iris_ChangeBackdrop(void) {
   s32 i;
 
   REG_BG1HOFS = 0;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
 
   // The targets fall in from just above the ground, halfway closer in depth.
   for (i = 0; i != work->args->targetCount; i++) {
@@ -959,7 +959,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
@@ -968,7 +968,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedZoom = camera[27];
@@ -1005,7 +1005,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame <= 175) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         EFFECT_PRESENT_CANVAS(work);
         if (frame <= 386) {
@@ -1057,7 +1057,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if (frame == 0) {
       scene->x = px(60);
       scene->y = px(128);
-      scene->radius = 0xc0000;
+      scene->radius = px(12);
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
 
@@ -1106,7 +1106,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       if (frame <= 71) {
         scene->y -= px(1);
-        scene->radius -= 0x1000;
+        scene->radius -= px(1) / 16;
         if (!(frame & 15)) {
           {
             u16 *fade = FADE_PLTT;
@@ -1123,7 +1123,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       } else {
-        scene->radius += 0x2000;
+        scene->radius += px(1) / 8;
         if (!(frame & 7)) {
           {
             u16 *fade = FADE_PLTT;
@@ -1355,7 +1355,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     // The drops: their frames, the sparks' cells and the spray.
     if (frame == 230) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       for (i = 1; i != 8; i++) {
         s32 next;
@@ -1469,12 +1469,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         for (j = 0; j != 8; j++)
           work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
       }
-      REG_BLDALPHA = BLEND_ALPHA(8, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(8);
     }
     if ((u32)(frame - 414) <= 7) {
       /* FAKEMATCH(temporary): the blend level copied into alpha. */
       s32 alpha = frame - 406;
-      REG_BLDALPHA = alpha | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(alpha, BLEND_WEIGHT_MAX);
     }
     if (frame > 385)
       gProjection.centerY = 2556 - frame * 6;
@@ -1523,7 +1523,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       if (frame == 422) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
     }
     if ((u32)(frame - 423) <= 19) {
@@ -1771,7 +1771,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             work->particles[n].y = px(127);
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =
-                -0x8000 - ((Random16() & 31) * 7 << 11);
+                -px(1) / 2 - ((Random16() & 31) * 7 << 11);
             work->particles[n].variant = (Random16() & 3) + 1;
           }
         }
@@ -1803,7 +1803,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
-      s32 x = 0x40000;
+      s32 x = px(4);
       s16 shade = 741 - frame;
 
       if (shade < 0 || shade > 63)
@@ -1824,7 +1824,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
-      s32 x = 0x60000;
+      s32 x = px(6);
       s16 shade = 764 - frame;
 
       if (shade < 0 || shade > 63)

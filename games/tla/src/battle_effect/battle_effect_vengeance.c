@@ -115,8 +115,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  backgroundX = 0x560000;
-  speed = 0x100000;
+  backgroundX = px(86);
+  speed = px(16);
   frames = VENGEANCE_FRAMES;
 
   for (frame = 0; frame != frames; frame++) {
@@ -130,12 +130,12 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       }
     }
     if (frame >= frames - 16) {
-      REG_BLDALPHA = (frames - frame - 1) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frames - frame - 1, BLEND_WEIGHT_MAX);
     }
     if (frame == 0) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        backgroundX = 0x560000;
-        speed = 0x100000;
+        backgroundX = px(86);
+        speed = px(16);
       } else {
         backgroundX = 0xffaa0000;
         speed = 0xfff00000;
@@ -155,7 +155,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
           strikes = 1;
         }
         blade->z = strikes;
-        blade->velocityY = (Random16() & 0xffff) - 0x8000;
+        blade->velocityY = (Random16() & TRIG_ANGLE_MASK) - 0x8000;
         blade->velocityZ = 0;
         blade->variant = 0;
       }
@@ -383,10 +383,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       }
       work->particles[0].velocityZ = 0;
       work->particles[0].variant = 0;
-      reaperY = 0x180000;
+      reaperY = px(24);
       if (args->side == EFFECT_SIDE_ENEMIES) {
         reaperX = px(position->x + 176);
-        speed = 0xf0000;
+        speed = px(15);
       } else {
         reaperX = px(position->x - 304);
         speed = 0xfff10000;
@@ -394,9 +394,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     }
     if (frame > 61) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        reaperX += 0x20000;
+        reaperX += px(2);
       } else {
-        reaperX -= 0x20000;
+        reaperX -= px(2);
       }
       reaperY -= 0x4aaaa;
     }
@@ -614,7 +614,7 @@ struct Texture__f1811d4 {
 
 /// Copies a palette over the background's 256 colours.
 static inline void CopyPalette(const void *palette) {
-  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 }
 
 /// A geyser between the targets. A textured column, its texture scrolling
@@ -647,12 +647,12 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   if (mode == GEYSER_PURGATORY)
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   else
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   {
     s32 spawned;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
     spawned = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                                0);
@@ -863,8 +863,8 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint screen;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->fadeFrames = 24;
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
@@ -876,7 +876,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   else
     frames = 72;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -902,7 +902,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       }
       for (i = 0; i != STAR_TOTAL; i++) {
         struct Particle *star = &((struct Particle *)Ram_MapCellBuffer)[i];
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = 255; // the mask starts in speed's own register
 
         speed &= Random16();
@@ -916,7 +916,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       }
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
-                           128);
+                           SHEET_PALETTE_BYTES);
     }
 
     // Two palette steps a frame from frame 8.
@@ -1034,7 +1034,7 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;
   BattleEffect_RunBubbleColumn(arg);
@@ -1069,7 +1069,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   // The blue beam's palette colours the bubble cels.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work->sheet, 0, 0);
 
   for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
@@ -1321,12 +1321,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cellBuffer, 0, 0);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-  gProjection.centerY = 240;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (frame = 0; frame != 602; frame++) {
     spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {
@@ -2026,8 +2030,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0x3f3f3f3f);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   for (i = 0; i != 12; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
@@ -2038,11 +2043,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   wait(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;

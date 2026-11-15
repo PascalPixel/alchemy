@@ -69,7 +69,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   // faster than sideways.
   for (i = 0, spark = work->particles; i != SPARK_COUNT; i++) {
     speed = (Random16() & 0x1ff) + 128;
-    angle = Random16() & 0xffff;
+    angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = px(64);
     spark->y = px(112);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
@@ -180,7 +180,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
@@ -397,7 +397,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   if (mode == WATER_SHEET_DREAMTIDE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else {
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -430,7 +430,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       /* FAKEMATCH(temporary): the copy routine's address in a local. */
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-      copy((void *)BG_PLTT, palette, 128);
+      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
     }
   }
 
@@ -543,10 +543,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == WATER_SHEET_DREAMTIDE) {
       if ((u32)(frame - 33) <= 14) {
-        REG_BLDALPHA = (48 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(48 - frame, BLEND_WEIGHT_MAX);
       }
     } else if ((u32)(frame - 65) <= 14) {
-      REG_BLDALPHA = (80 - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(80 - frame, BLEND_WEIGHT_MAX);
     }
 
     vertices = Heap_AllocEwram(0x400);
@@ -638,7 +638,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     Render_DrawModelList(model);
 
     if (frame == 0) {
-      s32 bubbleZ = -0x3c0000;
+      s32 bubbleZ = -px(60);
 
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         bubble->variant = Random16() % 6;
@@ -647,7 +647,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         bubble->velocityX = 0;
         bubble->velocityY = 0;
         bubble->velocityZ = 0;
-        bubbleZ += 0x60000;
+        bubbleZ += px(6);
       }
     }
     if (mode == WATER_SHEET_WATERY_GRAVE) {
@@ -787,7 +787,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
   Task_Add(transfer, TASK_PASS_FRAME);
@@ -973,8 +973,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
     }
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
     Heap_Release(model);
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
@@ -1028,7 +1028,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EffectPosition_ProjectBattler(args->targets[0], &pos);
   centerX = pos.x / 2;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

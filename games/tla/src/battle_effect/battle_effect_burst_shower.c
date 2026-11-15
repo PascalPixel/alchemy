@@ -298,7 +298,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                  BGCNT_SCREEN_BASE(7);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (args->prelude == 1) {
@@ -361,7 +361,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     if (mode == BURST_SHOWER_MODE_DJINNFEST)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+                      SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -373,7 +373,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
     // A violet ramp from color 1, blended 16:4.
     for (i = 1; i != 64; i++) {
@@ -389,12 +389,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_CHAR) {
     // Six smoke pictures, each with more holes punched at random.
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
@@ -405,7 +405,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     }
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
              mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
     // The beam, each 24-pixel row drawn twice side by side.
@@ -422,11 +422,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_LimePalette),
-                      128);
+                      SHEET_PALETTE_BYTES);
     else
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                      128);
+                      SHEET_PALETTE_BYTES);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -829,7 +829,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
               // Default: set for real below.
               widths = NULL;
               heights = NULL;
-              angle = Random16() & 0xffff;
+              angle = Random16() & TRIG_ANGLE_MASK;
               x = Q_16_16_TO_INT(Trig_Sin(angle) << 4);
               x += targets[i][0] / 2;
               widths = gBattleEffect_GlintPictureWidths;
@@ -962,8 +962,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         mode == BURST_SHOWER_MODE_DESERT_GASP ||
         mode == BURST_SHOWER_MODE_HEAT_KISS) {
       // Hand over to the canvas effect: clear both canvases first.
-      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-      Iwram_ClearWords(canvas, 0x3c00);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       args->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       if (mode == BURST_SHOWER_MODE_DESERT_GASP)

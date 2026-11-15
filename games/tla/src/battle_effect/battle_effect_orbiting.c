@@ -124,7 +124,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   rectangleA = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -136,7 +136,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     s32 magnitude;
 
     step = &work->particles[i];
-    angle = Random16() & 0xffff;
+    angle = Random16() & TRIG_ANGLE_MASK;
     magnitude = Random16() & 0xff;
     SET_POSITION(step, 0, 0, 0);
     if (i % 6 == 5) {

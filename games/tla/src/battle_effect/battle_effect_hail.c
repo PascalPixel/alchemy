@@ -59,7 +59,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   for (frame = 0; frame != 64; frame++) {
     // The last sixteen frames fade the layer out.
     if (frame > 47)
-      REG_BLDALPHA = (64 - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
                                  work->sheet + 0x400, 1, 1);
@@ -184,7 +184,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniEntrance(
       args, DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
       screen, otherPoint);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -368,15 +368,15 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 
     gBgScroll[1].x = offsetX;
     gBgScroll[1].y = offsetY + 32;
-    gProjection.centerX = 120 - offsetX;
-    gProjection.centerY = 120 - offsetY;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
     (*remainingFrames)--;
     return;
   }
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
 /// While shakeFrames lasts, moves BG1 and the projection centre up or down
@@ -390,11 +390,11 @@ void Camera_ApplyVerticalShake(s32 range) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 
     gBgScroll[1].y = shake + 32;
-    gProjection.centerY = 120 - shake;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - shake;
     (*timer)--;
   } else {
     gBgScroll[1].y = *(s32 *)(fx + 0x77a4);
-    gProjection.centerY = 120;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   }
 }
 

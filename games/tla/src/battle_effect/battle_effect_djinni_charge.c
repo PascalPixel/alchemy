@@ -62,7 +62,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                           BLITTER_ADDITIVE);
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(args->targets[0])->object;
     savedYaw = (s16)camera->yaw;
@@ -86,7 +86,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
         s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-        copy((void *)BG_PLTT, source, 128);
+        copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
       }
       frames = 102;
     } else {
@@ -373,7 +373,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           Render_ProjectVertices(cells, projected, 64);
           Render_DrawModelList(model);
         }
-        gProjection.centerX = 120;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
         Heap_Release(model);
       }
       BattleCamera_Shake(8, 8);

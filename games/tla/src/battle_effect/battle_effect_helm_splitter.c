@@ -21,7 +21,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
   // Set up the canvas and load the swirl and the spark sheets.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);
   }
@@ -125,7 +125,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       for (i = 0; i != args->variant * 16 + 16; i++) {
         s32 force = (Random16() & 255) + 256;
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
         if (args->variant == EFFECT_VARIANT_BASIC)

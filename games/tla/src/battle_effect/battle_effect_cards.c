@@ -259,7 +259,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       if (frame == 48) {
         EFFECT_SHOW_DAMAGE(SE_WHOOSH);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
       if (frame >= 48 && frame <= 79) {
         s32 time = frame - 48;
@@ -339,7 +339,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 16);
         for (i = 0; i != 64; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 force = 127; // The AND lands in the register holding 127.
 
           force &= Random16();
@@ -352,7 +352,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step->variant = Random16() & 255;
         }
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
 
       // The shards tumble through three cells and darken.

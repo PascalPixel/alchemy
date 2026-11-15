@@ -149,7 +149,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   shift = 0;
   BattleEffect_StartCanvasLayer(0);
   if (mode == HEALING_MODE_REVERSE_STAR)
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
 
   // The prelude: the Djinni appears; origin receives where.
   if (args->prelude == 1) {
@@ -211,7 +211,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   } else {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // The Djinni: 40x40 at full width, a 20x40 picture when narrow.
   if (narrow == 0) {
@@ -234,7 +234,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
   }
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINNI_SHEET);
   BattleEffect_FetchRectangleBlitters(args->side,
                                       draw = blit); // [0] MAX, [1] ADDITIVE
@@ -308,7 +308,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // A ring 32-95 pixels across, 50 pixels down, rising.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
-      s32 heading = Random16() & 0xffff;
+      s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
 
       SET_POSITION(spark, Trig_Sin(heading) * radius, -px(50),

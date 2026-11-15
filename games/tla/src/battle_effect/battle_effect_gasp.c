@@ -18,7 +18,7 @@ struct StripQuad;
     void *palette = Resource_GetTableEntry((s32)&(resource));                  \
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
                                                                                \
-    copy((void *)BG_PLTT, palette, 128);                                       \
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
   }
 /// Sets the transform for one of modes 11 and 14's spinning particles: at its
 /// position, half as wide (the canvas holds every other column), turned by z.
@@ -59,7 +59,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (mode == GASP_MODE_GASP) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_JUPITER,
@@ -123,7 +123,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   } else if (mode == GASP_MODE_CLARION_CRY) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 64;
   } else if (mode == GASP_MODE_CAGE) {
@@ -135,7 +135,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_PSY_BOOST) {
@@ -143,7 +143,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_SHINE) {
@@ -215,7 +215,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                      screen, other);
       frames = 76;
     } else {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
       frames = 70;
     }
@@ -625,7 +625,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           for (i = 0; i != 16; i++) {
             struct Particle *p = &work->particles[i];
 
-            p->x = Random16() & 0xffff;
+            p->x = Random16() & TRIG_ANGLE_MASK;
             p->y = (Random16() & 255) + 128;
             if (Random16() & 1)
               p->y = -p->y;
@@ -1306,8 +1306,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(verts);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
     BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}

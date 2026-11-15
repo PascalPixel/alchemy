@@ -212,7 +212,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   lineScroll->unk10 = 1;
   gBgScroll[1].x = 0;
   emptyList.value = 255;
@@ -226,7 +226,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -295,7 +295,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Resource_LoadAndDecompress((s32)&ResourceId_CharmRingSheet,
                              work->buffer + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-  Iwram_CopyWords(PLTT, source, 128);
+  Iwram_CopyWords(PLTT, source, SHEET_PALETTE_BYTES);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2X = 0x800;
   posX = 0;
@@ -347,7 +347,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame == 0) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
@@ -428,10 +428,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame == 131) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
       Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame >= 132 && frame < 147) {
-      Iwram_FillWords(canvas, 0x3c00, (0x3f - (frame - 132) * 4) * 0x01010101);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      (0x3f - (frame - 132) * 4) * 0x01010101);
     }
     if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
       u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
@@ -620,7 +622,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           Iwram_FillWords(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
-        Iwram_CopyWords(PLTT, source, 128);
+        Iwram_CopyWords(PLTT, source, SHEET_PALETTE_BYTES);
         Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                                    work->buffer + 0x2400, 0, 0);
         Iwram_CopyWords(glyphs, work->buffer + 0x2400, 0x302);
@@ -676,18 +678,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         objectPlace[3] = 0;
         objectPlace[1] = 0xff0000;
         if (frame < 160) {
-          posX += 0x2000;
-          posZ -= 0x4000;
+          posX += px(1) / 8;
+          posZ -= px(1) / 4;
         } else if (frame < 332) {
-          posX += 0x2000;
-          posZ += 0x1000;
+          posX += px(1) / 8;
+          posZ += px(1) / 16;
         } else {
-          posX += 0x2000;
+          posX += px(1) / 8;
         }
         objectScale[1] = Q16_ONE * 5 / 4;
         objectScale[0] = Q16_ONE * 5 / 4;
         objectScale[0] = objectScale[1] = posZ / 48 + Q16_ONE / 4;
-        objectPlace[0] = posX + 0x400000;
+        objectPlace[0] = posX + px(64);
         objectPlace[2] = px(144);
         Render_ApplyProjectedPlacementFar(work->objects[12], objectPlace,
                                           objectScale, 0);
@@ -702,7 +704,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (frame == 200) {
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-        Iwram_CopyWords(PLTT, source, 128);
+        Iwram_CopyWords(PLTT, source, SHEET_PALETTE_BYTES);
       }
       if (frame >= 200 && frame < 302) {
         void *texture = Heap_AllocEwram(32);
@@ -839,14 +841,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (frame > 301) {
         if (frame == 302) {
-          Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           Iwram_FillWords(PLTT + 0x1c0, 64, 0x7fff7fff);
           Iwram_CopyWords(
               PLTT + 0x60,
               Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop),
               0x100);
           source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-          Iwram_CopyWords(PLTT, source, 128);
+          Iwram_CopyWords(PLTT, source, SHEET_PALETTE_BYTES);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
                                      work->buffer + 0x1000, 0, 0);
           Graphics_LoadGreyRamp();
@@ -1146,10 +1149,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
     }
     if (frame == 54) {
-      Iwram_FillWords(canvas, 0x3c00, 0x20202020);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, CANVAS_FILL_WORD(32));
     }
     if (frame == 55) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame < 132) {
       s32 scale112;
@@ -1275,8 +1279,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   /* FAKEMATCH(dead): an empty once-only loop before the BG fill. */
   do {
   } while (0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
-  gProjection.centerY = 120;
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   camera = SYSTEM_WORK->camera;
   shake = 0;
   savedYaw = camera->yaw;
@@ -1328,7 +1332,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       work->buffer[0x3000 + i] = 63;
     }
   }
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   for (i = 0; i != 16; i++) {
     work->drops[i].timer = -i;
   }
@@ -1406,7 +1410,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(SE_CLATTER);
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1620,7 +1625,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           if (drop->timer == 0) {
             drop->x = px(Random16() % 24 + shake - i * 2);
             drop->y = (160 << 15) + i * (192 << 10);
-            drop->vx = -(Random16() & 0xffff) - 0x4000;
+            drop->vx = -(Random16() & TRIG_ANGLE_MASK) - 0x4000;
             drop->vy = -0x10000;
           }
           if (drop->timer >= 0) {

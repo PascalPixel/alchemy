@@ -85,14 +85,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
   Palette_BrightenSavedBattleBg(-31, -31, -31);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   {
     u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
@@ -204,7 +204,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                              0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                  128);
+                  SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
   zero = 0;
@@ -247,9 +247,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     } else if ((u32)(d = frame - 370) <= 19) {
       camZ = Trig_Sin(d * 1638) * 9 + 0x2b0000;
     } else if ((u32)(frame - 390) <= 95) {
-      camZ += -0x8000;
+      camZ += -px(1) / 2;
     } else if ((u32)(frame - 486) <= 19) {
-      camZ += -0x10000;
+      camZ += -px(1);
     } else if ((u32)(frame - 506) <= 47) {
       s32 v = (frame * 57 << 7) + -0x378eb0;
 
@@ -276,7 +276,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 420) <= 51) {
       drift = (420 - frame) << 12;
-      sway += -0x4000;
+      sway += -px(1) / 4;
     } else if ((u32)(frame - 472) <= 13) {
       drift = drift - ((frame - 472) << 12) + 120000;
       sway += 75536;
@@ -284,9 +284,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       drift += 0x2000;
       sway -= Trig_Sin((frame << 7) + -0xf300);
     } else if ((u32)(frame - 554) <= 29) {
-      sway += -0x10000;
+      sway += -px(1);
     } else if ((u32)(frame - 584) <= 9) {
-      sway += -0x80000;
+      sway += -px(8);
     }
     if (frame == 0) {
       cueTimer = -1;
@@ -732,8 +732,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       texture.pixels = work->sheet + p->z;
       Transform_Reset();
-      Transform_ApplyTranslation((span - drift) / 2 + px(4), camZ + 0xcc0000,
-                                 0);
+      Transform_ApplyTranslation((span - drift) / 2 + px(4), camZ + px(204), 0);
       Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
       Transform_ApplyRoll(p->y);
       Transform_ApplyAxisScale(Q16_ONE * 4, 85536, Q16_ONE / 2);
@@ -764,7 +763,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != n; i++) {
         struct Particle *p4 = &work->particles[i];
 
-        SET_POSITION(p4, px(Random16() % spread - spread / 2), camZ + 0xc80000,
+        SET_POSITION(p4, px(Random16() % spread - spread / 2), camZ + px(200),
                      ((base + i) % 3 << 12) + 0x2000);
         texture.pixels = work->sheet + p4->z;
         Transform_Reset();
@@ -789,7 +788,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
     }
     if ((u32)(frame - 602) <= 6) {
-      camZ += 0x100000;
+      camZ += px(16);
     }
     {
       s32 d = frame - 552;
@@ -867,7 +866,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               Transform_ApplyTranslation(0, v, 0);
             }
             Transform_ApplyTranslation(
-                ((b + (s32)((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
+                ((b + (s32)((u32)b >> 31)) >> 1) + 0x50000, camZ + px(220), 0);
             Transform_ApplyAxisScale(Q16_ONE, 32000, Q16_ONE);
             Transform_ApplyRoll(frame << 11);
             Transform_ApplyUniformScale(s);
@@ -936,14 +935,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
   Palette_LoadBasicSpriteColors();
   BattleEffect_SetupBlendedDisplay();
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   work->fadeFrames = 0;
   work->fadeStep = 0;
   // Act two: the land seen from the sky, where the orb falls and bursts.
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
@@ -986,7 +985,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       do {
         if (frame == 0) {
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0);
-          rise = -0x400000;
+          rise = -px(64);
           Palette_BrightenSavedBattleBg(0, -16, -16);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
           Iwram_CopyWords(
@@ -994,7 +993,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
         }
         if (rise <= 0xfffff) {
-          rise += 0x10000;
+          rise += px(1);
         }
         {
           s32 d = frame - 96;
@@ -1325,7 +1324,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         gBgScroll[1].x = savedScroll;
-        gProjection.centerX = 120;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
         work->scrollStepX = 0;
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
@@ -1333,7 +1332,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->scrollStepX = -16;
         gProjection.centerX = -968;
-        gProjection.centerY = 120;
+        gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
         gBgScroll[1].x = savedScroll + 1088;
         Graphics_LoadGreyRamp();
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));

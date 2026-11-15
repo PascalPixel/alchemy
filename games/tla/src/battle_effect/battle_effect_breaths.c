@@ -50,12 +50,12 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet);
     s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copyWords((void *)BG_PLTT, palette, 128);
+    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   } else {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copyWords((void *)BG_PLTT, palette, 128);
+    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, JAW_TEXTURE, 0, 0);
@@ -87,7 +87,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   }
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -510,7 +510,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

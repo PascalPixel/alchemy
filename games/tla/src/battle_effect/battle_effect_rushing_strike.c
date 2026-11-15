@@ -37,7 +37,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet, 1,
                              1);
@@ -66,7 +66,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
   work->transferValue = 50;
@@ -286,7 +286,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   victim = BattleObject_GetFar(args->targets[0])->object;
   camera = Ram_HeapSlots->cameraWork;
@@ -344,7 +344,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(1, ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
     }
     if (frame == 165) {
-      gProjection.centerY = 120;
+      gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -400,7 +400,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
-      gProjection.centerY = 240;
+      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       if (args->side == EFFECT_SIDE_ENEMIES) {
         yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
@@ -604,10 +604,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     {
       struct Particle *spark;
-      s32 gravity = -0x1000;
+      s32 gravity = -px(1) / 16;
 
       if (frame > 59) {
-        gravity = 0x4000;
+        gravity = px(1) / 4;
       }
       for (i = 0, spark = SPARKS; i != 256; i++, spark++) {
         s32 size;

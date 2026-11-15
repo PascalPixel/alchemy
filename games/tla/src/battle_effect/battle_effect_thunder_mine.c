@@ -44,7 +44,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
   }
@@ -58,7 +58,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   if (mode == BOLT_TRAIL_EARTH_FORCE) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
-                    128);
+                    SHEET_PALETTE_BYTES);
   }
 
   // The bolts' four pictures, 24 by 120, each in a 32-wide cell.
@@ -148,7 +148,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
         spark->variant = (Random16() & 7) + 16;
       }
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       work->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -320,7 +321,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   pictures = PICTURES;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -354,7 +355,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
 
@@ -415,7 +416,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               angle = Random16();
               radius = (Random16() & 31) + 16;
               cell->x = Trig_Sin(angle) * radius + half + 0x100000;
-              cell->y = Trig_Cos(angle) * radius + position.y - 0x80000;
+              cell->y = Trig_Cos(angle) * radius + position.y - px(8);
               cell->velocityX = 0;
               cell->velocityY = 0;
               cell->variant = Random16() & 15;
@@ -543,7 +544,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
         }
         if (frame == start + 9) {
           work->shakeFrames = 8;
-          Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                               CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           Sound_PlayFar(SE_CLATTER);
         }
         if (frame >= start) {
@@ -711,7 +713,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   }
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                  128);
+                  SHEET_PALETTE_BYTES);
 
   // The beam's body: a 32-line gradient.
   row = work->sheet + 0x1a20;
@@ -723,7 +725,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       *row++ = shade;
     }
   }
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   flip = 4;
   if (args->side != EFFECT_SIDE_ENEMIES) {
     flip = 0;
@@ -753,7 +755,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     if (frame > 79) {
       s32 fade = frame * 2 - 160;
 
-      REG_BLDALPHA = (16 - fade) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
     }
     BattleCamera_SetViewFar(0, 0, 0, 100);
     Transform_Reset();

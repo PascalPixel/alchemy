@@ -46,7 +46,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   BattleEffect_StartTiledCanvas(0x2000);
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
@@ -95,7 +95,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       visible = 0;
     }
     if (frame == 25) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       visible = 1;
     }
     if (frame == 48) {
@@ -108,7 +108,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       visible = 0;
     }
     if (frame == 49) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       visible = 1;
     }
 
@@ -119,12 +119,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame <= 23) {
       if (frame > 15) {
         amp = (frame * 2) - 32;
-        REG_BLDALPHA = (31 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(31 - frame, BLEND_WEIGHT_MAX);
       }
     } else if (frame <= 47) {
       if (frame > 31) {
         amp = (frame * 2) - 64;
-        REG_BLDALPHA = (47 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(47 - frame, BLEND_WEIGHT_MAX);
       }
     }
     if (amp < 0)

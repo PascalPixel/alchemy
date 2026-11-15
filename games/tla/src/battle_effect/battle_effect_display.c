@@ -11,7 +11,7 @@
 /// queues DISPCNT for VBlank and waits one frame.
 void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);

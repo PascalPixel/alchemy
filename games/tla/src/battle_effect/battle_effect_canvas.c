@@ -78,7 +78,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       BattleActor_SpawnObjectsForListFar(list, 0);
       VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
-      gProjection.centerY = 240;
+      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleBackground_LoadFar(1, (s32)&ResourceId_EarthHorizonBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
@@ -111,8 +111,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     REG_BG2X = scroll << 8;
     EFFECT_PRESENT_CANVAS(work);
   }
-  Iwram_FillWords(canvas, 0x3c00, 0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
+  Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(16);
   REG_BG2X = 0;
@@ -124,7 +124,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->ramCode;
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                  SHEET_PALETTE_BYTES);
   {
     const u8 *texturePixels = (const u8 *)FLASHES;
 
@@ -133,10 +134,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B));
          frame++) {
       if (frame == 0) {
-        baseX = -0x300000;
-        baseY = 0xd40000;
-        velX = 0x40000;
-        velY = -0xa0000;
+        baseX = -px(48);
+        baseY = px(212);
+        velX = px(4);
+        velY = -px(10);
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
@@ -165,7 +166,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       for (i = 0; i != 17; i++) {
         if (frame == gEclipse_FillFrames[i]) {
-          Iwram_FillWords(canvas, 0x3c00, gEclipse_FillLevels[i]);
+          Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, gEclipse_FillLevels[i]);
         }
       }
       req = gEclipse_Scales;
@@ -184,15 +185,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       } else {
         if (velY < 0) {
-          velY += 0x4000;
+          velY += px(1) / 4;
         }
         if (velX > 0) {
-          velX += -0x2000;
+          velX += -px(1) / 8;
         }
         if (frame > 31) {
           baseY += Trig_Sin((frame - 32) << 9) << 2 >> 4;
           if (frame <= 159) {
-            baseX += 0x4000;
+            baseX += px(1) / 4;
           }
         }
       }
@@ -210,7 +211,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       }
       if (frame == 136) {
-        work->fadeFrames = 24;
+        work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
         work->fadeStep = 0;
       }
       cx = baseX / 2 - (work->particles[16].variant << 13) + 0x1c0000;
@@ -228,8 +229,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           if (frame == 172) {
             work->particles[16].variant = 64;
             BattleEffect_DrawShadedCircles(work->sheet, 128, 0x10000);
-            velX = 0x30000;
-            velY = -0x30000;
+            velX = px(3);
+            velY = -px(3);
           }
           if (frame > 203 && work->particles[16].variant > 1) {
             work->particles[16].variant -= 4;
@@ -240,8 +241,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                 work->sheet, work->particles[16].variant * 2, 0x10000);
           }
         } else if (frame > 135) {
-          velX += -0x800;
-          velY += 0x800;
+          velX += -px(1) / 32;
+          velY += px(1) / 32;
           if (++work->particles[16].variant <= 32) {
             BattleEffect_DrawShadedCircles(
                 work->sheet, work->particles[16].variant * 2, 0x10000);
@@ -265,7 +266,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
         if (frame == 48) {
           for (i = 0; i != 16; i++) {
-            work->particles[i].x = Random16() & 0xffff;
+            work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
             work->particles[i].y = (Random16() & 255) + 128;
             if (Random16() & 1) {
               work->particles[i].y = -work->particles[i].y;
@@ -413,13 +414,13 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   do {
   } while (0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -427,7 +428,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
 
@@ -519,7 +520,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(31, 31, 31);
   gBgScroll[1].x = 0;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x400, 0,
@@ -716,15 +717,17 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
   }
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0x3f3f3f3f);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   BattleBackground_LoadFar(1, battle->background, 24);
   wait(1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();
-  Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   for (frame = 0; frame != 32; frame++) {
     EFFECT_PRESENT_CANVAS(work);
@@ -783,7 +786,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -792,7 +795,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
 
   frames = 100;
@@ -863,7 +866,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           }
         }
         work->shakeFrames = 8;
-        Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       flashes = FLASHES;
       if (frame >= 48 && frame <= 55) {
@@ -929,7 +933,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
         for (i = 0; i != 16; i++) {
           struct Particle *ring = &work->particles[i];
 
-          ring->x = Random16() & 0xffff;
+          ring->x = Random16() & TRIG_ANGLE_MASK;
           ring->y = (Random16() & 255) + 128;
           if (Random16() & 1)
             ring->y = -ring->y;
@@ -1024,8 +1028,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
     Task_Remove(Palette_StepFadeTransfer);
   } else {
     BattleEffect_EndCanvasLayer();
@@ -1305,7 +1309,7 @@ void BattleEffect_CountDownBattlerTints(void) {
 /// the battle, inside window 0.
 void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
   REG_BG2PA = Q_8_8(0.5);
@@ -1388,7 +1392,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   }
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   work->shakeFrames = 0;
   work->transferPending = 0;
   work->savedBg1X = gBgScroll[1].x;
@@ -1420,7 +1424,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   wait(1);
   BattleBackground_SetModeFar(1, battle->background, 128);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1463,7 +1467,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   }
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   work->shakeFrames = 0;
   work->transferPending = 0;
   wait(1);
@@ -1530,11 +1534,11 @@ void BattleEffect_EndCanvasLayer(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   REG_BG2CNT = BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1) |
                BGCNT_PRIORITY(3);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1620,9 +1624,9 @@ void BattleEffect_SetupCanvasTileMap(void) {
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   wait(1);
 }
 

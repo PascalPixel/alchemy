@@ -36,7 +36,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -50,7 +50,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   // Every spark starts at rest.
@@ -219,7 +219,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
   } else {
     BattleEffect_StartCanvasLayer(0);
@@ -229,7 +229,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   }
 
   // The flash sheet, the particle sprites and the kind's palette.
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -240,14 +240,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   } else if (kind == SPARK_GROUPS_RISING) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   sparks = gMapGridCellBuffer;
@@ -261,7 +261,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       point = &work->particles[i * FLASH_POINTS + j];
       radius = j * 2;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + 25;
@@ -275,7 +275,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       spark = sparks + i * SPARK_COUNT + j;
       speed = (Random16() & 0x3ff) + 32;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       if (args->side == EFFECT_SIDE_PARTY)
         spark->x = px(originX - GROUP_X(i) + 28);
       else
@@ -360,9 +360,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         s32 gravity;
 
         if (kind == SPARK_GROUPS_RISING)
-          gravity = -0x1000;
+          gravity = -px(1) / 16;
         else
-          gravity = 0x1000;
+          gravity = px(1) / 16;
         for (j = 0; j != SPARK_COUNT; j++) {
           struct Particle *spark = sparks + i * SPARK_COUNT + j;
           if (spark->variant > 0) {

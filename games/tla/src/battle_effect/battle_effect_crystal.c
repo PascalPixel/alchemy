@@ -54,8 +54,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                              work->sheet + 0x65c0, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
-                       128);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+                       SHEET_PALETTE_BYTES);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -70,7 +70,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
     camera = Ram_HeapSlots->cameraWork;
     target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -86,13 +86,13 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                        target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
                        px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
-          shard->velocityY = (Random16() & 0xffff) + 0x40000;
+          shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + 0x40000;
           shard->velocityZ = (Random16() & 7) + 4;
           shard->variant = -1;
         }
       }
       if (frame > 95) {
-        REG_BLDALPHA = (0xce - frame * 2) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(0xce - frame * 2, BLEND_WEIGHT_MAX);
       }
       Transform_Reset();
       Transform_SetLookAt(camera, (u8 *)camera + 12);
@@ -182,8 +182,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         Heap_Release(model);
         Heap_Release(vertices);
       }
-      gProjection.centerX = 120;
-      gProjection.centerY = 120;
+      gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+      gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       EFFECT_END_FRAME(work);
     }
   }

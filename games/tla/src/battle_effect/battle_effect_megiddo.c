@@ -76,7 +76,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   scratchSheet = gData_02014000;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -130,7 +130,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       frame = 143;
     }
     if (frame == 0) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
@@ -141,13 +142,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (!args->side) {
-        x = 0xa00000;
+        x = px(160);
       } else {
-        x = 0x500000;
+        x = px(80);
       }
-      z = -0x600000;
+      z = -px(96);
       {
         volatile u16 *ime;
         struct IoWriteQueue *q;
@@ -210,7 +211,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       s32 d;
 
       if (y > 104) {
-        y -= 0x10000;
+        y -= px(1);
       }
       if (frame <= 63) {
         d = -16;
@@ -245,24 +246,24 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       gBgScroll[1].y = y;
     }
     if ((u32)(frame - 42) <= 37) {
-      z += 0x20000;
+      z += px(2);
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!args->side) {
-        x -= 0x20000;
+        x -= px(2);
       } else {
-        x += 0x20000;
+        x += px(2);
       }
-      z += 0x40000;
+      z += px(4);
     }
     if (frame == 143) {
       s32 *target;
 
       Palette_BrightenBattleBg(-12, -2, -2);
       camera[27] = savedYaw;
-      x = 0x780000;
-      z = 0x300000;
+      x = px(120);
+      z = px(48);
       targetList[0] = args->targets[0];
       targetList[1] = 255;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
@@ -306,13 +307,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         IME_RESTORE(ime, saved);
       }
       Actor_SetAnimationSpeedFar(caster, 128);
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame == 171) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -439,7 +442,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
 
     if (frame == 8) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       p = work->particles;
       for (i = 0; i != 64; i++, p++) {
         p->x = Random16() & 127;

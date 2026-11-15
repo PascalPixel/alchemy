@@ -176,7 +176,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -192,7 +192,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     glint->variant = -(Random16() & 15);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
@@ -214,9 +214,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     else
       wave -= 0x200000;
     if (frame <= 16)
-      REG_BLDALPHA = frame | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frame, BLEND_WEIGHT_MAX);
     if (frame > 63)
-      REG_BLDALPHA = (0x4f - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, BLEND_WEIGHT_MAX);
 
     for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.

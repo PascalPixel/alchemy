@@ -115,7 +115,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             s32 speed;
 
             dot = &DOTS[i * DOTS_PER_FLAME + j];
-            direction = Random16() & 0xffff;
+            direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = px(flame->x);
             dot->y = px(flame->y);
@@ -208,7 +208,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -258,7 +258,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             s32 speed;
 
             dot = &DOTS[i * DOTS_PER_BALL + j];
-            direction = Random16() & 0xffff;
+            direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = px(ball->x);
             dot->y = px(ball->y);
@@ -310,7 +310,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   if (copy_pal != 0) {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, res, 128);
+    copy((void *)BG_PLTT, res, SHEET_PALETTE_BYTES);
   }
   if (skip_pal != 0)
     res += 128;
@@ -345,7 +345,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   canvas = slots->battleCanvas;
   sheet = slots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -498,8 +498,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       spark->y = px((Random16() & 7) + 96);
       spark->velocityX = ((Random16() & 127) - 64) << 11;
       spark->velocityY = ((Random16() & 127) - 64) << 10;
-      spark->z = Random16() & 0xffff;
-      spark->velocityZ = Random16() & 0xffff;
+      spark->z = Random16() & TRIG_ANGLE_MASK;
+      spark->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     puff++;
     member++;

@@ -98,9 +98,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Graphics_LoadGreyRamp();
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
@@ -116,7 +116,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   projected = work->sheet + 0x5740;
   meshA = work->sheet + 0x5f40;
   triangles = work->sheet + 0x6340;
@@ -187,8 +187,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 speed;
 
     if (frame == 0) {
-      x = 0x1100000;
-      z = 0x580000;
+      x = px(272);
+      z = px(88);
       size = 0x400;
       pitch = 0xd00;
       yaw = 0x2500;
@@ -200,16 +200,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     fade = frame - 96;
     if ((u32)fade <= 16) {
-      REG_BLDALPHA = (16 - fade) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
     }
     if (frame == 115) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-      IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-      IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_16);
     }
     if (frame > 128) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
@@ -359,7 +359,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     place[0] = x;
     place[2] = z;
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
-    speed = 0x800;
+    speed = px(1) / 32;
     {
       s32 a = 0x6000;
 
@@ -382,7 +382,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame > 127) {
       speed = (frame << 13) - 0x100000;
       if (speed > 0x1ffff) {
-        speed = 0x20000;
+        speed = px(2);
       }
       z += speed;
       size += 512;
@@ -408,7 +408,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -428,7 +428,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   {
     s32 *q = (s32 *)Data_02010018;
 

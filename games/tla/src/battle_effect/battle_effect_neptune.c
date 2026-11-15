@@ -84,7 +84,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           tiles + i * 0x400, 0x400);
     }
   }
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
@@ -94,14 +94,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                              work->sheet + 0x4e20, 0, 0);
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   // The serpent starts low on the right, rising to the left.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   openStep = 1;
   serpentX = 140 << 17;
   serpentY = px(200);
-  serpentVX = -0x40000;
-  serpentVY = -0x80000;
+  serpentVX = -px(4);
+  serpentVY = -px(8);
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -129,7 +129,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   }
   for (i = 0; i != 712; i++) {
     s32 r = Random16() & 255;
-    s32 a = Random16() & 0xffff;
+    s32 a = Random16() & TRIG_ANGLE_MASK;
 
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x800000;
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
@@ -176,22 +176,22 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (frame > 48)
           serpentVX = serpentVX * 60 / 64;
         serpentVY = serpentVY * 60 / 64;
-        if (serpentY > 0x840000)
-          serpentVY -= 0x2000;
+        if (serpentY > px(132))
+          serpentVY -= px(1) / 8;
         else
-          serpentVY += 0x2000;
+          serpentVY += px(1) / 8;
         serpentX += serpentVX;
         serpentY += serpentVY;
       } else if (frame <= 170) {
         if (frame <= 107)
-          serpentVX += 0x2000;
+          serpentVX += px(1) / 8;
         serpentVX = serpentVX * 60 / 64;
         serpentX += serpentVX;
         if (frame <= 117) {
-          if (serpentY > 0x8a0000)
-            serpentVY -= 0x2000;
+          if (serpentY > px(138))
+            serpentVY -= px(1) / 8;
           else
-            serpentVY += 0x2000;
+            serpentVY += px(1) / 8;
           serpentVY = serpentVY * 56 / 64;
           serpentY += serpentVY;
         }
@@ -211,7 +211,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0; i != 1024; i++) {
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
-          s32 a = Random16() & 0xffff;
+          s32 a = Random16() & TRIG_ANGLE_MASK;
 
           PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x400000;
           PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
@@ -223,7 +223,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     if (frame == 152) {
       Irq_SetHandler(2, 96, BattleEffect_SetBg2AffineScaleHalf);
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 
@@ -426,7 +426,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                              1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   frame = 0;
   do {

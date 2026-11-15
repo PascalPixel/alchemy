@@ -274,7 +274,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
@@ -283,12 +283,12 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, source, 128);
+    copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   lift = 0;
   {
     s32 *life = Data_02010018;
@@ -425,7 +425,7 @@ void RagingHeat_FillGradientCanvas(void) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   REG_BG2PA = 0x4e;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (y = 0; y != 128; y++) {
     for (x = 0; x != 128; x++) {

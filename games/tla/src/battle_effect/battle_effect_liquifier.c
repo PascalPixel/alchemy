@@ -40,7 +40,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
@@ -51,7 +51,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
   EffectPosition_ProjectBattler(args->targets[0], &to);
@@ -419,7 +419,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   discs = (s16 *)work->sheet;
@@ -445,11 +445,11 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   if (mode == 3)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                    128);
+                    SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x800, 1, 0);
 
@@ -575,7 +575,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
         // Sixteen flames, faster one by one.
         for (i = 0; i != 16; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 speed;
 
           newFlame = &work->particles[i];
@@ -590,7 +590,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         // 47 sparks, at half speed in mode 1.
         for (i = 0; i != 47; i++) {
           s32 speed = (Random16() & 255) + 128;
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
 
           newSpark = &work->particles[16 + i];
 
@@ -649,8 +649,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0) {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunImpair(args);
   } else if (mode == 3) {
@@ -665,13 +665,21 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                            DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        IO_WRITE_16);
     REG_BLDCNT = 0;
     wait(1);
     BattleBackground_SetModeFar(2, battle->background, 0);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                            DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        IO_WRITE_16);
     wait(1);
   }
 }

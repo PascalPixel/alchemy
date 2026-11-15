@@ -50,7 +50,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(4, 664, 1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -96,10 +96,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                       128);
+                       SHEET_PALETTE_BYTES);
   for (i = 0, p = work->particles; i != 32; i++, p++) {
     s32 radius = i * 2;
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     p->x = Trig_Sin(angle) * radius;
     p->y = -(Trig_Cos(angle) * radius);
@@ -111,7 +111,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   for (frame = 0; frame != 104; frame++) {
     if (frame == 0) {
       Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
-                           128);
+                           SHEET_PALETTE_BYTES);
     }
     if (frame > 76) {
       BattleEffect_StepPaletteToResource(palette);
@@ -471,7 +471,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -488,7 +488,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -589,7 +589,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
             // Masked in place, the mask assigned first.
             speed &= Random16();
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
 
             speed += 32;
             spark->x = px(pos.x);

@@ -82,7 +82,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   // The shafts, the sky and Atalanta's path.
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   picture = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, picture, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, picture, SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -90,7 +90,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = ALTERNATE_BLITTER_SLOT;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
@@ -116,9 +116,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     for (j = 0; j != 24; j++) {
       TRAILS[i * 24 + j].x = (Random16() & 15) + 48;
       Transform_Reset();
-      Transform_ApplyRoll(Random16() & 0xffff);
-      Transform_ApplyPitch(Random16() & 0xffff);
-      Transform_ApplyYaw(Random16() & 0xffff);
+      Transform_ApplyRoll(Random16() & TRIG_ANGLE_MASK);
+      Transform_ApplyPitch(Random16() & TRIG_ANGLE_MASK);
+      Transform_ApplyYaw(Random16() & TRIG_ANGLE_MASK);
       Transform_Store(MATRICES + (i * 24 + j) * 48);
     }
   }
@@ -156,7 +156,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     point[1] = 0;
     point[2] = 0;
     if (frame == 48) {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 

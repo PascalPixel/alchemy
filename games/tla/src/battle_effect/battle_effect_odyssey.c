@@ -76,7 +76,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
@@ -98,13 +98,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &to);
 
     if (frame == 0) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       EFFECT_FREE_PARTICLES(i, work->particles, 64);
     }
 
@@ -144,7 +145,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       gBgScroll[1].x += 8;
 
     if (frame == 8) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       step = work->particles;
       for (i = 0; i != 64; i++) {
         step->x = Random16() % 216 - 96;
@@ -168,7 +170,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 90) {
       struct Particle *shard;
 
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -478,7 +481,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   transition = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(3);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -493,7 +496,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
   Swirl_CopyPalette(palette);
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
@@ -546,20 +549,20 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     // (about half size), about the screen's centre (120, 72).
     sine = Trig_Sin(frame << 6) / 532;
     cosine = Trig_Cos(frame << 6) / 532;
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_16);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                         (Iwram_MulQ16(-120 << 24, cosine) +
                          Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
                             8,
-                        0x30000);
+                        IO_WRITE_32);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
                         (Iwram_MulQ16(-120 << 24, -sine) +
                          Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
                             8,
-                        0x30000);
+                        IO_WRITE_32);
     wait(1);
   }
 
@@ -780,8 +783,8 @@ void Iris_RestoreBattle(void) {
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->active = 0;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
   BattleBackground_LoadFar(1, battle->background, 24);

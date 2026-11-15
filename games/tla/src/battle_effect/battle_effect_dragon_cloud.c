@@ -35,7 +35,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   y = 0;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The pillar sheet, and nine copies of its cell, each darker than the last,
   // for the trail.

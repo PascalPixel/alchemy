@@ -53,7 +53,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   // Open the canvas, pose the user and place the columns.
   user = BattleObject_GetFar(args->user)->object;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, 2);
   Actor_SetAnimationSpeedFar(user, 48);
@@ -77,7 +77,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     do {
       struct Particle *flash = &work->particles[col * FLASHES_PER_COLUMN + i];
       s32 radius = i * 2;
-      s32 angle = Random16() & 0xffff;
+      s32 angle = Random16() & TRIG_ANGLE_MASK;
 
       flash->x = Trig_Sin(angle) * radius;
       flash->y = -(Trig_Cos(angle) * radius);
@@ -92,7 +92,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 angle;
 
       speed = (Random16() & 0x1ff) + 32;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       spark->x = px(gRagnarok_StrikeColumns[col + args->side * 3] + baseX);
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -298,7 +298,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // Open the canvas on BG1 over the target and build the blitters.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EffectPosition_ProjectBattler(args->targets[0], &target);
   centerX = target.x / 2;
 

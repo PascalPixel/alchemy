@@ -126,7 +126,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
@@ -201,7 +201,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
           /* FAKEMATCH(temporary): w and h set inside statement expressions at
            * their first reads. */
-          angle = Random16() & 0xffff;
+          angle = Random16() & TRIG_ANGLE_MASK;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (({
@@ -570,7 +570,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   // The swarm: 64 sparks thrown out level from the Djinn.
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 heading = Random16() & 0xffff;
+    s32 heading = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 0xff) + 128;
 
     SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);

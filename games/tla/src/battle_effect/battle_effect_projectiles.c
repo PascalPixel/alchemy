@@ -41,11 +41,11 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING) {
     frameCount = 40;
   } else if (anchor == DJINNI_ANCHOR_OVER_TARGET_SHORT) {
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frameCount = 54;
   } else {
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     if (element > ELEMENT_JUPITER) {
       element -= DJINNI_ENTRANCE_LONG;
@@ -71,7 +71,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   switch (element) {
   case ELEMENT_VENUS:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
@@ -90,7 +90,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   /* FAKEMATCH(barrier): an empty asm between the picture's table entry and its
    * + 128 copies the entry before the sheet is read. */
   asm("");
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
@@ -115,7 +115,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   // 64 sparks start on the ground around the caster, flying outward.
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &work->particles[i];
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
 
     SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
@@ -191,7 +191,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame > 75)
-      REG_BLDALPHA = (168 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, BLEND_WEIGHT_MAX);
     if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING && frame > 23)
       Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
@@ -285,7 +285,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = screen[0] << 15;
@@ -314,9 +314,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
 #define Actor_SetAnimationSpeedFar                                             \
@@ -540,7 +540,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         args,
         DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
         &screen, &world);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // A 128x128 blitter, mirrored for the other side.
   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
@@ -584,7 +584,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-      copy((void *)BG_PLTT, palette, 128);
+      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
                                work->sheet + 0x2000, 1, 0);
@@ -592,7 +592,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-      copy((void *)BG_PLTT, palette, 128);
+      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
@@ -606,7 +606,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     } else if (mode == PROJECTILE_VOLLEY_POISON_STING) {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry((s32)&ResourceId_LimePalette),
-                           128);
+                           SHEET_PALETTE_BYTES);
       Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                  work->sheet + 0x22, 1, 0);
     } else {
@@ -624,7 +624,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry((s32)&ResourceId_CometSheetA),
-                         128);
+                         SHEET_PALETTE_BYTES);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1199,7 +1199,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           if ((u32)p->variant <= 7) {
             s32 glint = frame & 3;
 
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
             s32 radius = (Random16() & 31) + 4;
             s32 glintX = Q_16_16_UPPER_HALF(p->x) +
                          ((Trig_Sin(angle) * radius) >> 17) -

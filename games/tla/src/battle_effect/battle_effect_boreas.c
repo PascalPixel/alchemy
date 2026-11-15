@@ -72,7 +72,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   drawAlt = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
@@ -330,7 +330,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   for (i = 0; i != 9; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_SetupBlendedDisplay();
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {

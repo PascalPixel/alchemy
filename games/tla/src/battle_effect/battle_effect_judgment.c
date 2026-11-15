@@ -62,7 +62,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     work->sprites[i] = obj;
     Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -77,7 +77,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, pal, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
@@ -89,9 +89,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       for (i = 0; i != 64; i++, p++) {
         p->x = (Random16() & 15) + 72;
-        p->velocityX = Random16() & 0xffff;
-        p->velocityY = Random16() & 0xffff;
-        p->velocityY = Random16() & 0xffff;
+        p->velocityX = Random16() & TRIG_ANGLE_MASK;
+        p->velocityY = Random16() & TRIG_ANGLE_MASK;
+        p->velocityY = Random16() & TRIG_ANGLE_MASK;
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
@@ -114,7 +114,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 72) {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 
@@ -219,7 +219,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         }
         for (i = 0; i != 6; i++) {
           s32 k = i & 3;
-          s32 a = Random16() & 0xffff;
+          s32 a = Random16() & TRIG_ANGLE_MASK;
           s32 x = (Q_16_16_TO_INT(size * Trig_Sin(a))) -
                   (gJudgment_ShardWidths[k] >> 1);
           s32 y = (Q_16_16_TO_INT(size * Trig_Cos(a))) -
@@ -401,8 +401,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = 150;
-        IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-        IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + 0x4000, 1, 0);
       } else if ((u32)(frame - 155) <= 58) {
@@ -419,8 +419,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == 64) {
-      IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-      IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
       FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + 0x4000, 1, 0);
@@ -461,7 +461,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           p->x = px((Random16() & 63) + 32);
           p->y = px((Random16() & 31) + 96);
           p->velocityY = ((Random16() & 15) + 16) << 15;
-          p->z = 0x8000 - (p->x >> 7);
+          p->z = px(1) / 2 - (p->x >> 7);
           p->variant = 1;
         }
       }
@@ -471,7 +471,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       FILL__actor_move_random(work->sheet, 0x3840, 0);
       FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       {
         struct Particle *p = work->particles;
 

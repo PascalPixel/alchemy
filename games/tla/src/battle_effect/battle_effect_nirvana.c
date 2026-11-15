@@ -27,7 +27,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
   orb = work->particles;
@@ -309,7 +309,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   target = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &position);
@@ -542,9 +542,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side,
                       DJINNI_ANCHOR_OVER_TARGET_SHORT),
       screenA, screenB);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-  Iwram_ClearWordsEntry(canvas, 0x3c00);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+  Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -557,7 +557,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
                              work->sheet + 0x4000, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   // A block of its own: camera, savedYaw and target take their stack slots
   // after the blitter pair's address.
   {
@@ -685,7 +685,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         screen.x = 176;
       }
       gProjection.centerX = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, px(3));
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (64 - screen.x) << 8, IO_WRITE_32);
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -693,7 +693,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           for (i = 0; i != 32; i++) {
             struct Particle *p = &work->particles[i];
             s32 speed = (Random16() & 1023) + 1024;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             SET_POSITION(p, target->x, 0, target->z);
             p->velocityX = (Trig_Sin(angle) * speed) >> 9;
@@ -797,13 +797,14 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             s32 angle = (i & 7) << 13;
             s32 ring;
 
-            SET_POSITION(
-                p, target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2),
-                ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000,
-                target->z + ((Trig_Cos(angle) * ring) << 2));
-            p->velocityX = ((Random16() & 0xffff) << 1) + 0x10000;
-            p->velocityY = ((Random16() & 0xffff) - 12768) * 3;
-            p->velocityZ = ((Random16() & 0xffff) - 0x8000) << 1;
+            SET_POSITION(p,
+                         target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2),
+                         ((Random16() & TRIG_ANGLE_MASK) << 2) -
+                             ((ring * 5) << 17) + 0x400000,
+                         target->z + ((Trig_Cos(angle) * ring) << 2));
+            p->velocityX = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
+            p->velocityY = ((Random16() & TRIG_ANGLE_MASK) - 12768) * 3;
+            p->velocityZ = ((Random16() & TRIG_ANGLE_MASK) - 0x8000) << 1;
             if (p->x < 0) {
               p->velocityX = -p->velocityX;
             }

@@ -105,7 +105,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 27) {
       u8 *e;
 
-      gProjection.centerY = 240;
+      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
@@ -175,7 +175,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   posX = 128;
@@ -202,7 +202,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
        frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
@@ -278,8 +278,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       posX = Trig_Sin(a) * 24 + 0x980000;
       posY = Trig_Cos(a) * 20 + 0x2c0000;
     } else if (frame <= 221) {
-      posX += -0x12000;
-      posY += 0x8000;
+      posX += -px(9) / 8;
+      posY += px(1) / 2;
     } else if (frame <= 251) {
       s32 m = frame % 6;
       s32 m4;
@@ -321,8 +321,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
     } else {
       gBgScroll[1].y = 32;
-      posX += 0x80000;
-      posY += -0x60000;
+      posX += px(8);
+      posY += -px(6);
     }
     if (frame > 111) {
       for (i = 0; i != 12; i++) {
@@ -448,7 +448,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame == start) {
           w->x[i] = px(Random16() & 7) + px(92);
           w->y[i] = px(Random16() & 7) + px(104);
-          w->vx[i] = (Random16() & 0xffff) * 12 + -0xc0000;
+          w->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
           if (w->x[i] >= -px(16) && w->y[i] <= px(168)) {
@@ -464,7 +464,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == 112) {
-          u32 a = Random16() & 0xffff;
+          u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
           w->x[i] = px(Random16() & 7) + px(168);
@@ -472,7 +472,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
-          u32 a = Random16() & 0xffff;
+          u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
           w->x[i] = px(Random16() & 7) + px(92);
@@ -714,7 +714,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   REG_BLDCNT = 0;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(0.5);
   {
     /* FAKEMATCH(pin): e kept in r6. */
@@ -890,7 +890,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
                              1, 1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Centre the canvas's x 64 on the target.
   BattleObject_GetFar(args->targets[0]);
@@ -978,8 +978,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     }
     Heap_Release(quad);
     Heap_Release(vertices);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
@@ -1051,14 +1051,14 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
   battle = Ram_HeapSlots->battleWork;

@@ -48,7 +48,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));

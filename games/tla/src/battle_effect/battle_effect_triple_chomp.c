@@ -42,7 +42,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
 
   // Set up the canvas, then let the caster lunge.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);
   wait(8);
@@ -56,7 +56,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
 
   for (frame = 0; frame != 50; frame++) {
     if (frame == 0) {

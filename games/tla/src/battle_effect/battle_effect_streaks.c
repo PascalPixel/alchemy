@@ -117,7 +117,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     resource = (s32)&ResourceId_CyanPalette;
     break;
   }
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
+                       SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
@@ -150,7 +151,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > total - 16)
-        REG_BLDALPHA = (total - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
 
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
@@ -310,7 +311,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     resource = (s32)&ResourceId_EarthWallSheet;
   else
     resource = (s32)&ResourceId_GreenPalette;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
@@ -425,8 +427,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_RELEASE_BLITTERS();
   if (mode == MOTE_FOUNTAIN_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunImpair(args);
   } else {

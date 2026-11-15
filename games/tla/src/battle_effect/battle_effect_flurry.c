@@ -154,7 +154,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
         args,
@@ -203,7 +203,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
   }
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
+                       SHEET_PALETTE_BYTES);
 
   // The user closes in; Claw Attack lunges further and waits.
   if (mode == FLURRY_CLAW_ATTACK) {
@@ -366,7 +367,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           frame <= 31) {
         EffectPosition_ProjectScaledBattler(args->targets[0], &spot);
         for (i = 0; i != 3; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 cel = frame & 3;
           s32 radius = (Random16() & 31) + 4;
           s32 x = spot.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -

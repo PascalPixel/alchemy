@@ -102,7 +102,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   work->particles[63].x = target[2];
@@ -539,7 +539,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             Transform_Pop();
           }
         }
-        gProjection.centerX = 120;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
       }
       Heap_Release(model);
       if (mode == WATER_COLUMN_LETHE_ALBION ||

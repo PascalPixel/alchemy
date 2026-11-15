@@ -125,7 +125,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, BLEND_WEIGHT_MAX);
       }
       // Column i grows 8 pixels a frame from frame i * 4 + 8 to its full
       // length (a pillar no taller than its height table allows); odd
@@ -413,7 +413,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   canvas = (void *)heap[24];
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
@@ -442,7 +442,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = (total - frame - 1) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(total - frame - 1, BLEND_WEIGHT_MAX);
     }
 
     // Thorn i starts at frame i * 8 + 8. A large one grows 16 pixels a

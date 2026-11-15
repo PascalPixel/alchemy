@@ -91,7 +91,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -112,7 +112,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   }
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                  SHEET_PALETTE_BYTES);
 
   for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
     size = 2;
@@ -305,12 +306,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              work->sheet + STORM_MOTE_CELLS, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
-    s32 formationX = 0x500000;
-    s32 formationY = 0x400000;
+    s32 formationX = px(80);
+    s32 formationY = px(64);
     s32 formationSpeedX = 0;
     s32 formationSpeedY = 0;
     s32 pillarX;
@@ -409,7 +410,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                   s32 speed = 0x3ff;
                   s32 angle;
                   speed &= Random16();
-                  angle = Random16() & 0xffff;
+                  angle = Random16() & TRIG_ANGLE_MASK;
                   spark->x = px(16);
                   spark->y = px(80);
                   speed += 32;
@@ -436,7 +437,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 radius = 7;
           s32 angle;
           radius &= Random16();
-          angle = Random16() & 0xffff;
+          angle = Random16() & TRIG_ANGLE_MASK;
           mirrorX = (Q_16_16_TO_INT(Trig_Sin(angle) * (radius + 8))) + 72;
           moteY = 32 - (Q_16_16_TO_INT(Trig_Cos(angle) * (radius + 8)));
         }
@@ -448,7 +449,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             s32 speed = 63;
             s32 angle;
             speed &= Random16();
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = px(mirrorX);
             spark->y = px(moteY);
             speed += 64;
@@ -489,8 +490,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The formation is pushed back from frame 32.
       if (frame > 15) {
         if (frame == 32) {
-          formationSpeedX = 0x40000;
-          formationSpeedY = -0x4000;
+          formationSpeedX = px(4);
+          formationSpeedY = -px(1) / 4;
         }
         if (frame > 31) {
           formationX += formationSpeedX;
@@ -512,7 +513,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 never = 0;
           s32 neverToo = 0;
           cell = i & 3;
-          angle = Random16() & 0xffff;
+          angle = Random16() & TRIG_ANGLE_MASK;
           x = (Q_16_16_TO_INT(Trig_Sin(angle) * 8)) + formationScreenX -
               (gBattleEffect_GlintPictureWidths[cell] >> 1);
           y = (Q_16_16_TO_INT(Trig_Cos(angle) * 40)) -

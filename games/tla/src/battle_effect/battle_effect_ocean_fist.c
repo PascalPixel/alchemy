@@ -38,7 +38,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, spraySheet, 1,
                              0);
@@ -47,7 +47,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
@@ -147,7 +147,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         for (i = 0, fountain = drops; i != 256; i++, fountain++) {
           if (fountain->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             fountain->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
             fountain->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;

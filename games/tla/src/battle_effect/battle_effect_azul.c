@@ -135,7 +135,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       EFFECT_PRESENT_CANVAS(work);
       frame = 186;
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->sprites[i])->shape = 0x4000;
       }
@@ -162,7 +162,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       base.y = -px(120);
       vel.x = 0;
       vel.y = px(12);
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
           verts[n * 4 + i].x =
@@ -431,7 +431,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           p->velocityZ = -p->velocityZ;
         }
       }
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+                          IO_WRITE_16);
     }
     if (frame == 10 || frame == 186) {
       for (i = 0; i != args->targetCount; i++) {
@@ -688,7 +692,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame == 186) {
       BattleBackground_LoadFar(1, battle->background, 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
       for (i = 0; i != args->targetCount; i++) {
         EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
       }

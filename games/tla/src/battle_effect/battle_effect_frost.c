@@ -44,7 +44,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   for (i = 0; i != 64; i++) {
     struct Particle *seed = &work->particles[i];
 
-    seed->x = Random16() & 0xffff;
+    seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
     seed->y = px((Random16() & 31) - 64);
   }

@@ -83,16 +83,16 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Dma_Set(palette, (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + PILLAR_SHEET);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       cells);
@@ -160,7 +160,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           ember = &embers[k];
           if (ember->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             ember->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             ember->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -177,7 +177,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           ember = &embers[k];
           if (ember->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             ember->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             ember->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -397,7 +397,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   for (i = 0; i != 64; i++) {
     s32 speed = (Random16() & 255) + 256;
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     work->particles[i].x = x;
     work->particles[i].y = y;
@@ -415,7 +415,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   for (i = 0; i != 64; i++) {
     s32 speed = (Random16() & 255) + 32;
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
     struct Particle *cells = (struct Particle *)Ram_MapCellBuffer;
 
     cells[i].x = x;
@@ -502,7 +502,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }
 
@@ -757,7 +757,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                    128);
+                    SHEET_PALETTE_BYTES);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
@@ -790,7 +790,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
 
   // BG2 scrolls a pixel every other frame, down and toward the user's side.
@@ -831,7 +831,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     } while (limit <= 191);
   }
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
@@ -1046,7 +1046,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

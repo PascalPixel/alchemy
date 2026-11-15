@@ -80,7 +80,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -619,7 +619,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
         position.x = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
-        position.y = 0x380000 - (Trig_Cos(frame << 9) << 3);
+        position.y = px(56) - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
           velocity.x -= (frame - 397) << 14;
           position.x += velocity.x;
@@ -747,11 +747,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition[4] = 0;
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   BattleEffect_SpawnObjects(11, 0x293, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
     Iwram_ClearWords(buffer, 0x6c00);
@@ -772,7 +772,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
   for (frame = 0; frame != 92; frame++) {

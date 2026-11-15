@@ -170,7 +170,7 @@ void Palette_MirrorBgColors(void) {
   for (i = 1; i != 64; i++)
     flipped[i] = saved[64 - i];
   flipped[0] = saved[0];
-  Iwram_CopyWords((void *)BG_PLTT, flipped, 128);
+  Iwram_CopyWords((void *)BG_PLTT, flipped, SHEET_PALETTE_BYTES);
   REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
@@ -274,7 +274,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     wait(1);
   }
   BattleEffect_StartCanvasLayer(0);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x1141, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_ON,
+                      IO_WRITE_16);
   wait(1);
   {
     u32 *map = (u32 *)BG_SCREEN_BLOCK(31);
@@ -300,7 +303,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(8, 0x28f, 3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -327,7 +330,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   ship.x = px(200);
   ship.z = px(84);
   transition[4] = 1;
-  Iwram_ClearWords(canvas, 0x3c00);
+  Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   wait(1);
@@ -352,7 +355,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         loaded = 1;
       }
       gBgScroll[1].x = 0xff90;
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       REG_DISPCNT = EFFECT_DISPCNT;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -409,7 +412,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 level = -1;
 
       if (z <= 0x107ff) {
-        z = 0x10800;
+        z = px(33) / 32;
       }
       q16 = 0x1000000 / z;
       *(volatile u16 *)&work->bg2pa;
@@ -478,18 +481,18 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_BG2PA = 0xcc;
       REG_BG2PD = Q_8_8(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
-                           128);
+                           SHEET_PALETTE_BYTES);
     }
     if (frame == 133) {
       const s8 *src;
       struct Particle *p;
       struct Particle *q;
 
-      Iwram_FillWords(canvas, 0x3c00, 0);
-      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                     DISPCNT_WIN1_ON;
@@ -588,7 +591,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 s = (Trig_Sin((t - 44) << 10) * 48) / 64;
           s32 vx;
           s32 x = step->x;
-          s32 mx = x - 0x400000;
+          s32 mx = x - px(64);
           s32 my = step->y - px(64);
           s32 u = t - 59;
 
@@ -636,7 +639,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
             q = (struct Particle *)(first * (s32)sizeof(*q) + (s32)sparks);
           }
           for (; j != 16; j++, q++) {
-            s32 a = Random16() & 0xffff;
+            s32 a = Random16() & TRIG_ANGLE_MASK;
             s32 sp = (Random16() & 15) + 8;
 
             q->variant = (Random16() & 7) + 8;
@@ -808,7 +811,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0);
   wait(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
@@ -819,17 +822,21 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
   BattleBackground_LoadFar(2, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
   REG_BLDCNT = 0;
   wait(1);
   for (frame = 0; frame != 40; frame++) {
@@ -870,7 +877,11 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     wait(1);
   }
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON,
+                      IO_WRITE_16);
   if (dmaArmed == 1) {
     Task_Remove(Ulysses_MoveLastParticle);
   }
@@ -925,7 +936,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -1022,7 +1033,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(2);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
@@ -1077,8 +1088,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
   // Teardown: clear both canvases and hand over to the summon canvas.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-  Iwram_ClearWords(canvas, 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+  Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
   args->prelude = 0;
   Task_Remove(Palette_StepFadeTransfer);
   BattleEffect_RunImpair(args);

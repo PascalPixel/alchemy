@@ -196,8 +196,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
     EFFECT_END_FRAME(work);
   }

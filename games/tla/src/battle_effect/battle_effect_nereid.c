@@ -37,7 +37,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -111,7 +111,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -128,7 +128,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);

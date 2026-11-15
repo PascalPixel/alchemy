@@ -57,7 +57,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
@@ -66,7 +66,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
@@ -109,7 +109,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
         fall = &work->particles[32 + i];
         radius = (Random16() & 63) + 32;
-        angle = Random16() & 0xffff;
+        angle = Random16() & TRIG_ANGLE_MASK;
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;

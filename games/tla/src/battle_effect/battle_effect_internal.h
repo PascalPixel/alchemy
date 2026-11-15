@@ -204,6 +204,81 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
 #endif
 
+/// A blend weight's whole: the layer at full strength (REG_BLDALPHA).
+#define BLEND_WEIGHT_MAX 16
+/// The canvas added to the battle under it: both blend weights whole.
+#define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
+/// The canvas at `level` sixteenths over the whole battle under it.
+#define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+
+/// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
+/// BG_CHAR_BLOCK(1) (CANVAS_BYTES).
+#define CANVAS_SIZE 128
+/// The canvas's rows and columns of 8x8 tiles.
+#define CANVAS_TILES (CANVAS_SIZE / 8)
+/// The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row
+/// by row, each tile 64 bytes row by row.
+#define CANVAS_PIXEL_OFFSET(x, y)                                              \
+  ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+/// The brightest canvas level: the additive blitters and
+/// CANVAS_COPY_AND_BRIGHTEN stop at it.
+#define CANVAS_LEVEL_BRIGHTEST 63
+
+/// The battle view, under the top window and over the menus: screen lines 16
+/// to 135.
+#define BATTLE_VIEW_TOP 16
+#define BATTLE_VIEW_HEIGHT 120
+#define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+/// The canvas's first BATTLE_VIEW_HEIGHT lines, which the battle view shows:
+/// what most of this game's effects clear and fill, leaving the last 8.
+#define CANVAS_VIEW_BYTES (CANVAS_SIZE * BATTLE_VIEW_HEIGHT)
+
+/// How far right the narrow canvas is set to show over the party: against the
+/// screen's right edge.
+#define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
+
+/// The battle's projection centre on the screen, as projection.h has it in
+/// The Broken Seal.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+/// Where the summons centre the projection while their figures fly, lower
+/// than the battle's BATTLE_PROJECTION_CENTER_Y.
+#define SUMMON_PROJECTION_CENTER_Y 240
+
+/// The frames the battle background darkens behind an effect's canvas
+/// (work->fadeFrames, Palette_StepFadeTransfer).
+#define BACKGROUND_DARKEN_FRAMES 24
+
+/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// pictures.
+#define SHEET_PALETTE_COLORS 64
+#define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
+
+/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
+/// speed * damping / DAMPING_SCALE.
+#define DAMPING_SCALE 64
+/// The damping that keeps a particle's whole speed.
+#define PARTICLE_DAMPING_NONE DAMPING_SCALE
+
+/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
+/// _HEIGHT.
+#define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
+
+/// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
+#define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
+  (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+
+/// The battle background's picture as BG1 shows it from BG character block 2,
+/// one byte a pixel.
+#define BATTLE_BACKGROUND_WIDTH 256
+#define BATTLE_BACKGROUND_HEIGHT 120
+#define BATTLE_BACKGROUND_BYTES                                                \
+  (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
+
+/// Starts a frame's 3D projection from the battle camera.
+#define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
+  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
+
 // The canvas life cycle, shared by every canvas effect.
 
 /// The bytes an effect's work block is lent: more than struct
@@ -374,7 +449,7 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// colour added over what lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
-   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// Which way BattleEffect_WipeCanvas sweeps.

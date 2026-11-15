@@ -475,7 +475,7 @@ void Tightrope_Place(s32 a, s32 b, s32 c);
 
 extern u32 gTrialRoad_GaspHopScript[];
 
-extern u16 gTrialRoad_PaletteCycleColors[];
+u16 gTrialRoad_PaletteCycleColors[16] BSS_DATA;
 
 void PaletteCycle_StepAt(void);
 void TrialRoad_OpenSummitGate();

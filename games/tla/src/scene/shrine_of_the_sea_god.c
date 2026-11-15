@@ -967,7 +967,7 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 
-extern u32 gShrineOfTheSeaGod_PillarOffset[];
+u32 gShrineOfTheSeaGod_PillarOffset[3] BSS_DATA;
 
 /// The leader rocks a pillar back and forth, then it is carried along with him.
 void ShrineOfTheSeaGod_RockPillar(struct Actor *object, struct Actor *other) {

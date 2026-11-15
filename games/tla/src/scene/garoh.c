@@ -17,6 +17,7 @@
 
 #include "system/task.h"
 #include "types.h"
+#include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
@@ -99,7 +100,7 @@ extern s16 gGaroh_DoorFrames[];
 extern s16 gGaroh_WideDoorFrames[];
 extern s16 gGaroh_TallDoorFrames[];
 void Garoh_LashRope(void);
-extern u16 gGaroh_WaveLines[];
+u16 gGaroh_WaveLines[160] BSS_DATA ALIGNED(16);
 
 /// The village's people by night and by day (SceneId_Garoh), numbering the
 /// rows of gGaroh_VillageActorPlacements and gGaroh_VillageDayActorPlacements:

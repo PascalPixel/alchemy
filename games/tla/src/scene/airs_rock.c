@@ -23,6 +23,7 @@
 #include "field/actor_view.h"
 #include "scene/dehkan_plateau.h"
 #include "graphics/palette_buffers.h"
+#include "macros.h"
 
 /// Set once Move has left the second room's first pillar on its ledge, cell
 /// (16, 43).
@@ -606,6 +607,9 @@ void AirsRock_BlowGust(void) {
   FieldCamera_WaitForArrival();
   Event_End();
 }
+
+/// The fog's scroll, a halfword a line; three a line as it lifts.
+s16 gAirsRock_WaveLines[160 * 3] BSS_DATA ALIGNED(16);
 
 /// The scroll of the swirling sand, by HBlank lines.
 #define WAVE_SCROLL AirsRock_ScrollWave

@@ -26,6 +26,10 @@ SECTIONS \
         */imports.o(.text) \
         */games/tla/src/scene/name.o(.data) \
     } \
+    .bss : \
+    { \
+        */games/tla/src/scene/name.o(.bss COMMON) \
+    } \
 }
 #define SCENE_WITH_BSS(name) \
 SECTIONS \
@@ -125,7 +129,7 @@ SCENE(daila_interiors)
 #elif OVERLAY == 0x653
 SCENE_WITH_BSS(kandorean_temple)
 #elif OVERLAY == 0x654
-SCENE_WITH_BSS(shrine_of_the_sea_god)
+SCENE(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
 SCENE_WITH_BSS(dehkan_plateau)
 #elif OVERLAY == 0x656
@@ -147,7 +151,7 @@ SCENE(mikasalla)
 #elif OVERLAY == 0x65e
 SCENE(mikasalla_interiors)
 #elif OVERLAY == 0x65f
-SCENE_WITH_BSS(garoh)
+SCENE(garoh)
 #elif OVERLAY == 0x660
 SCENE(garoh_interiors)
 #elif OVERLAY == 0x661
@@ -166,7 +170,7 @@ SECTIONS
 #elif OVERLAY == 0x662
 SCENE_WITH_BSS(yampi_desert_cave)
 #elif OVERLAY == 0x663
-SCENE_WITH_BSS(airs_rock)
+SCENE(airs_rock)
 #elif OVERLAY == 0x664
 SCENE_WITH_BSS(airs_rock_inside)
 #elif OVERLAY == 0x665
@@ -176,7 +180,7 @@ SCENE_WITH_BSS(alhafra_interiors)
 #elif OVERLAY == 0x667
 SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
-SCENE_WITH_BSS(eastern_alhafra)
+SCENE(eastern_alhafra)
 #elif OVERLAY == 0x669
 SCENE(eastern_alhafra_ship)
 #elif OVERLAY == 0x66a
@@ -195,7 +199,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/gondowan_cliffs.o"(.bss)
+        "*/games/tla/src/scene/gondowan_cliffs.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x66c
@@ -234,7 +238,7 @@ SCENE_WITH_BSS(islets)
 #elif OVERLAY == 0x675
 SCENE_WITH_BSS(islet_cave)
 #elif OVERLAY == 0x676
-SCENE_WITH_BSS(yallam)
+SCENE(yallam)
 #elif OVERLAY == 0x677
 SCENE(yallam_interiors)
 #elif OVERLAY == 0x678
@@ -322,7 +326,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x686
-SCENE_WITH_BSS(ankohl_ruins)
+SCENE(ankohl_ruins)
 #elif OVERLAY == 0x687
 SCENE_WITH_BSS(sea_of_time)
 #elif OVERLAY == 0x688
@@ -386,7 +390,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/trial_road.o"(.bss)
+        "*/games/tla/src/scene/trial_road.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x698
@@ -671,7 +675,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6a8
-SCENE_WITH_BSS(prox)
+SCENE(prox)
 #elif OVERLAY == 0x6a9
 SCENE(caverns)
 #elif OVERLAY == 0x6aa
@@ -724,7 +728,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6b2
-SCENE_WITH_BSS(mercury_lighthouse)
+SCENE(mercury_lighthouse)
 #elif OVERLAY == 0x6b3
 SECTIONS
 {

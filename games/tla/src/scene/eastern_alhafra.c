@@ -47,6 +47,7 @@
 #include "fixed_math.h"
 #include "scene/falling_rocks.h"
 #include "graphics/palette_buffers.h"
+#include "macros.h"
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
@@ -212,7 +213,7 @@ s32 Tightrope_Place();
 s32 Tightrope_Release();
 s32 Leader_CanPushObjectAhead();
 s32 EasternAlhafra_PushObjectAhead();
-extern u16 gEasternAlhafra_WaveLines[2][160];
+u16 gEasternAlhafra_WaveLines[2][160] BSS_DATA ALIGNED(16);
 void Actor_FallOverWithAnimationById();
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);

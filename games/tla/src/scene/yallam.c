@@ -134,7 +134,7 @@ struct YallamStop {
   u16 c;
 };
 
-extern struct YallamSaved gYallam_SavedSongGame[5];
+struct YallamSaved gYallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
 extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);

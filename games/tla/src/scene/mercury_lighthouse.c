@@ -27,11 +27,12 @@
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "text/msg_ids.h"
+#include "macros.h"
 
 void MercuryLighthouse_HearVoices(void);
 
 extern s32 gMercuryLighthouse_MoteScript[];
-extern u32 gMercuryLighthouse_MoteFrames;
+u32 gMercuryLighthouse_MoteFrames BSS_DATA;
 
 void FieldPsynergy_StopMindReadWave(void);
 

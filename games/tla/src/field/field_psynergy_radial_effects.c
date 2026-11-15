@@ -1330,9 +1330,10 @@ void BattleEffect_EndArcEffect(void) {
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-/// Task of field Psynergy 29 (its name is question marks): the bow and the
-/// flaming arrow.
-void FieldPsynergy_UpdateUnnamed29(void) {
+/// Task of the Arrow, the field Psynergy of the unused ability "A??" (named
+/// here for the bow it draws and the arrow it looses): the bow and the flaming
+/// arrow.
+void FieldPsynergy_UpdateArrow(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleEffect;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
@@ -1605,12 +1606,12 @@ again:
 
 /// Effect 29 cast on a target: runs the effect. Nothing calls it; the
 /// targeted dispatch has no case for animation 29.
-void BattleEffect_CallEffect29(void) { FieldPsynergy_Unnamed29(); }
+void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
 
 // One moving point: a spark on the canvas (x and y only, counting delay) or
 // a sprite's place in the world.
 
-void FieldPsynergy_Unnamed29(void) {
+void FieldPsynergy_Arrow(void) {
   struct BowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -1713,10 +1714,10 @@ void FieldPsynergy_Unnamed29(void) {
   work->result = -1;
   work->phase = 0;
   work->timer = 0;
-  Task_Add(FieldPsynergy_UpdateUnnamed29, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateArrow, TASK_PASS_VBLANK);
   while (work->phase != FIELD_PSYNERGY_FINISHED)
     wait(1);
-  Task_Remove(FieldPsynergy_UpdateUnnamed29);
+  Task_Remove(FieldPsynergy_UpdateArrow);
   if (work->done != 0 && work->result != -1)
     event->unkd30 = work->result;
   VramCache_FreeEntry(arrowSlot);

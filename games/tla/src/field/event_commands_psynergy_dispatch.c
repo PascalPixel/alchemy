@@ -88,7 +88,7 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_LASH)
     FieldPsynergy_Lash();
   else if (animation == FIELD_PSYNERGY_UNNAMED_29)
-    FieldPsynergy_Unnamed29();
+    FieldPsynergy_Arrow();
   else if (animation == FIELD_PSYNERGY_CYCLONE)
     FieldPsynergy_Cyclone();
   else if (animation == FIELD_PSYNERGY_BLAZE)
@@ -112,7 +112,7 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_PARCH)
     FieldPsynergy_Parch();
   else if (animation == FIELD_PSYNERGY_UNNAMED_28)
-    FieldPsynergy_Unnamed28();
+    FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the nearest one that
     // has an event to run; with none, play the fallback transition.
@@ -204,7 +204,7 @@ void FieldPsynergy_Dispatch(void) {
   else if (animation == FIELD_PSYNERGY_POUND)
     FieldPsynergy_PoundOnTarget(targetId);
   else if (animation == FIELD_PSYNERGY_UNNAMED_28)
-    FieldPsynergy_Unnamed28();
+    FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first; a target that
     // is not the paused object stops walking while the wave runs.
@@ -267,7 +267,7 @@ void FieldPsynergy_RunExtraHandler(void) {
     FieldPsynergy_EndHover();
     break;
   case FIELD_PSYNERGY_UNNAMED_28:
-    FieldPsynergy_EndUnnamed28();
+    FieldPsynergy_EndRing();
     break;
   }
 }

@@ -1,7 +1,7 @@
 /// @file
-/// Field Psynergy kind 28, of the two abilities whose names are question marks:
-/// its task, its burst of sparkles, and moving the view (opening the whole map
-/// to it, swinging it and giving the bounds back).
+/// The Ring, the field Psynergy of the unused ability "Ma????" (named here for
+/// the ring of light it draws): its task, its burst of sparkles, and moving the
+/// view (opening the whole map to it, swinging it and giving the bounds back).
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -17,7 +17,7 @@
 #include "field/view_move.h"
 #include "version.h"
 
-/// The work of field Psynergy 28 (heap slot battleEffect): the sparkle
+/// The Ring's work (heap slot battleEffect): the sparkle
 /// picture, the 64 sparkles that rise round the caster as the ring is drawn,
 /// the motes that circle it after, and what the per-frame task shows.
 struct RingWork {
@@ -36,9 +36,8 @@ struct RingWork {
   u16 phase; ///< the colour cycle's step
 };
 
-/// Task of field Psynergy 28 (its name is question marks): its motes and
-/// colours each frame.
-void FieldPsynergy_UpdateUnnamed28(void) {
+/// Task of the Ring: its motes and colours each frame.
+void FieldPsynergy_UpdateRing(void) {
   struct RingWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -133,11 +132,11 @@ void FieldPsynergy_UpdateUnnamed28(void) {
 
 void Camera_WorldToScreen(s32 *position);
 
-/// Field Psynergy 28: a ring of light is drawn round the caster among rising
-/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateUnnamed28 keeps
-/// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndUnnamed28).
+/// The Ring: a ring of light is drawn round the caster among rising
+/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateRing keeps
+/// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndRing).
 /// Cast again while it lasts, it only starts the 600 frames again.
-void FieldPsynergy_Unnamed28(void) {
+void FieldPsynergy_Ring(void) {
   struct RingWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -234,7 +233,7 @@ void FieldPsynergy_Unnamed28(void) {
     event->ringTimerRunning = 1;
     event->ringFrames = 999;
     off = 0;
-    Task_Add(FieldPsynergy_UpdateUnnamed28, TASK_PASS_VBLANK);
+    Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -343,7 +342,7 @@ void FieldPsynergy_Unnamed28(void) {
   event->ringActive = 1;
   event->ringTimerRunning = 1;
   event->ringFrames = 600;
-  Task_Add(FieldPsynergy_UpdateUnnamed28, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
 }
 
 /// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
@@ -358,7 +357,7 @@ struct BurstMote {
   s32 timer;
 };
 
-/// The work of the sparkle burst field Psynergy 28 ends with (heap slot
+/// The work of the sparkle burst the Ring ends with (heap slot
 /// battleEffect): the sparkle picture, 64 sparkles and their motes.
 struct SparkleBurstWork {
   u8 unused[0x1000]; ///< no code names it
@@ -368,13 +367,13 @@ struct SparkleBurstWork {
   s16 resource;
 };
 
-/// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
+/// The burst of 64 sparkles that FieldPsynergy_UpdateRing's effect ends
 /// with: once the event work asks for it, it plays sound 167, fills the tiles
 /// at 0x06002000, reloads the window graphics, loads the sparkle picture
 /// (FieldEffect_SparkleFade) and scatters the sparkles around the current
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
-void FieldPsynergy_EndUnnamed28(void) {
+void FieldPsynergy_EndRing(void) {
   struct SparkleBurstWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -391,7 +390,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->ringActive = 0;
   event->ringTimerRunning = 0;
   event->ringFrames = 0;
-  Task_Remove(FieldPsynergy_UpdateUnnamed28);
+  Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
   /* FAKEMATCH(dead): a once-only block. */
   do {

@@ -207,7 +207,7 @@ void Camera_WorldToScreen(struct EffectVector *position);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);
 
-void FieldPsynergy_Unnamed29(void);
+void FieldPsynergy_Arrow(void);
 
 void FieldPsynergy_Halt(void);
 
@@ -276,7 +276,7 @@ void FieldPsynergy_Grind(void);
 
 void FieldPsynergy_Teleport(void);
 
-void FieldPsynergy_Unnamed28(void);
+void FieldPsynergy_Ring(void);
 
 s32 FieldPsynergy_FilterHaltTarget(s32 id);
 void FieldPsynergy_HaltActor(s32 id);
@@ -293,7 +293,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void);
 
 void FieldPsynergy_EndHover(void);
 
-void FieldPsynergy_EndUnnamed28(void);
+void FieldPsynergy_EndRing(void);
 
 void FieldPsynergy_StopMindReadWave(void);
 

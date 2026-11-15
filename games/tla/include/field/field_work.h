@@ -145,7 +145,7 @@ struct FieldWork {
   s16 revealFrames;      ///< the frames Reveal has left
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
-  /// Field Psynergy 28's ring is shown (FieldPsynergy_Unnamed28); A, Select,
+  /// Field Psynergy 28's ring is shown (FieldPsynergy_Ring); A, Select,
   /// Start or a shortcut ends it.
   s8 ringActive;
   s8 ringTimerRunning; ///< off while another field Psynergy is cast

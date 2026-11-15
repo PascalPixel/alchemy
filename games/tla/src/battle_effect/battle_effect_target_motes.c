@@ -267,24 +267,27 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
             distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0 && mote->variant <= 23) {
-              s32 cel = mote->variant / 4;
+              s32 picture = mote->variant / 4;
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
               screen.x >>= 1;
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
-                        screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
+                draw[1](canvas, work->sheet + picture * PICTURE_BYTES(GLOW_ORB),
+                        screen.x - GLOW_ORB_WIDTH / 2,
+                        screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
+                        GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
-                draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
-                        screen.y - 12, 12, 24);
+                draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
+                        12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21,
-                        HEART_WIDTH, HEART_HEIGHT);
+                draw[1](canvas, work->sheet, screen.x - HEART_WIDTH / 2,
+                        screen.y - HEART_HEIGHT / 2, HEART_WIDTH, HEART_HEIGHT);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
-                                   screen.x - 12, screen.y - 24, 24,
-                                   VORTEX_HEIGHT);
+                draw[(i & 3) != 0](
+                    canvas, work->sheet + picture * PICTURE_BYTES(VORTEX),
+                    screen.x - VORTEX_WIDTH / 2, screen.y - VORTEX_HEIGHT / 2,
+                    VORTEX_WIDTH, VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
               if (DECAYS(mode)) {

@@ -728,10 +728,12 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
           BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 8);
-          x = point.x - 16;
-          y = point.y - 16;
-          blitters[0](canvas, work->sheet + SERAC_CLOUD_PUFFS + (picture << 10),
-                      x, y, 32, 32);
+          x = point.x - CLOUD_PUFF_WIDTH / 2;
+          y = point.y - CLOUD_PUFF_HEIGHT / 2;
+          blitters[0](canvas,
+                      work->sheet + SERAC_CLOUD_PUFFS +
+                          picture * PICTURE_BYTES(CLOUD_PUFF),
+                      x, y, CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
         }
       }
       // The Djinni falls.

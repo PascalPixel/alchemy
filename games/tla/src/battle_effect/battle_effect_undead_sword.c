@@ -292,9 +292,11 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
 
         BattleEffectKernels_IntegrateVector2(step, 60, -px(1) / 8);
         draw[0](canvas,
-                work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES + picture * 0x800,
-                Q_16_16_UPPER_HALF(step->x) - 16,
-                Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
+                work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES +
+                    picture * PICTURE_BYTES(FLASH_BURST),
+                Q_16_16_UPPER_HALF(step->x) - FLASH_BURST_WIDTH / 2,
+                Q_16_16_UPPER_HALF(step->y) - FLASH_BURST_HEIGHT / 2,
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
 

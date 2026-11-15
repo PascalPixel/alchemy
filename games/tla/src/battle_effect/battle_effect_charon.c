@@ -15,13 +15,20 @@
 #define WAVE_SIZE (work->particles[63].variant)
 /// The crew's sprites, Charon's first.
 #define OBJECTS ((struct Sprite **)work->sprites)
+/// Charon's objects: the crimson beast (CrimsonBeastTiles) as a 4 x 3 grid of
+/// 32x32 sprites, the white wisp and the 64x64 picture the reveal is drawn
+/// into.
+#define CHARON_BEAST_SPRITES 12
+#define CHARON_BEAST_COLUMNS 4
+#define CHARON_WISP 12
+#define CHARON_REVEAL 13
+#define CHARON_OBJECTS 14
+/// The white arrows (WhiteArrowsTiles): sixteen pictures of an 8x8 arrow, and
+/// the 48 sprites that swarm with them.
+#define CHARON_ARROW_FRAMES 16
+#define CHARON_ARROWS 48
 
 /// A list of units to spawn, as Charon passes an empty one.
-struct SpawnList {
-  u16 value;
-  u8 unk02[26];
-};
-
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
 #define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 0x4000))
@@ -61,8 +68,8 @@ extern const struct Scale gCharon_FinaleScale;
 ///
 /// Abilities: Charon.
 void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
-  u16 tiles[16];
-  struct SpawnList emptyList;
+  u16 tiles[CHARON_ARROW_FRAMES];
+  s16 emptyList[UNIT_MAX];
   s32 swarmPlace[4];
   s32 pulsePlace[4];
   s32 objectPlace[4];
@@ -127,8 +134,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   backgroundView->active = 1;
   gBgScroll[1].x = 0;
-  emptyList.value = BATTLE_UNIT_LIST_END;
-  BattleActor_SpawnObjectsForListFar(&emptyList, 0);
+  emptyList[0] = BATTLE_UNIT_LIST_END;
+  BattleActor_SpawnObjectsForListFar(emptyList, 0);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -171,17 +178,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(15, 0), source, PALETTE_BANK_BYTES);
   source += PALETTE_BANK_BYTES;
   Decompress_TaggedLz(source, work->sheet);
-  for (i = 0; i != 16; i++) {
-    struct Sprite *object = EffectSprite_CreateWithTiles(16, 16, 0, 0xf000);
+  for (i = 0; i != CHARON_ARROW_FRAMES; i++) {
+    struct Sprite *object =
+        EffectSprite_CreateWithTiles(16, 16, 0, OBJ_PALETTE(15));
     SPRITES[i] = object;
     object->image.priority = 1;
-    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->sheet + i * 32,
-                    32);
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset,
+                    work->sheet + i * TILE_SIZE_4BPP, TILE_SIZE_4BPP);
     tiles[i] = SPRITES[i]->image.tile;
   }
-  for (i = 0; i != 32; i++) {
-    struct Sprite *object = EffectSprite_Acquire(8, 8, 0, 0xf000);
-    SPRITES[16 + i] = object;
+  for (i = 0; i != CHARON_ARROWS - CHARON_ARROW_FRAMES; i++) {
+    struct Sprite *object = EffectSprite_Acquire(8, 8, 0, OBJ_PALETTE(15));
+    SPRITES[CHARON_ARROW_FRAMES + i] = object;
     Iwram_CopyWords(object, sprites[0], 24);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, glyphs, 0, 0);
@@ -270,7 +278,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u32 *b;
         u32 *a;
 
-        for (i = 0, hidden = (240 << 16) + 160, mask.value = 0xf000,
+        for (i = 0, hidden = (240 << 16) + 160, mask.value = OBJ_PALETTE(15),
             timer = &CHARON_PARTICLES[0].variant,
             b = (u32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
              i != 64; i++) {
@@ -279,7 +287,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           *a = hidden;
           t = *timer;
           timer += 7;
-          *b = tiles[t / 16] | mask.value;
+          *b = tiles[t / CHARON_ARROW_FRAMES] | mask.value;
           b += 2;
           a += 2;
         }
@@ -299,7 +307,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           CHARON_PARTICLES[i].velocityY = (-(Random16() & 255) - 128) << 8;
         }
       }
-      for (i = 0; i != 48; i++) {
+      for (i = 0; i != CHARON_ARROWS; i++) {
         if (i == 10) {
           swarmScale.y = Q16_ONE;
           swarmScale.x = Q16_ONE;
@@ -310,7 +318,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         swarmPlace[2] = CHARON_PARTICLES[64 + i].y + px(32);
         Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, &swarmScale.x,
                                           0);
-        SPRITES[i]->image.tile = tiles[CHARON_PARTICLES[64 + i].variant / 16];
+        SPRITES[i]->image.tile =
+            tiles[CHARON_PARTICLES[64 + i].variant / CHARON_ARROW_FRAMES];
       }
       for (i = 0; i != 128; i++) {
         if (CHARON_PARTICLES[i].y > -px(16) &&
@@ -502,7 +511,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         source += 0x180;
         Decompress_TaggedLz(source,
                             work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
-        for (i = 0, objectSlots = gVramCacheEntries; i != 12; i++) {
+        for (i = 0, objectSlots = gVramCacheEntries; i != CHARON_BEAST_SPRITES;
+             i++) {
           struct Sprite *object = EffectSprite_CreateWithTiles(
               32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
@@ -510,8 +520,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           OBJECTS[i] = object;
           Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
                           work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES +
-                              i * 0x400,
-                          0x400);
+                              i * OBJ_32X32_8BPP_BYTES,
+                          OBJ_32X32_8BPP_BYTES);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteWispsTiles);
         Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(14, 0), source,
@@ -526,7 +536,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               64, 64, OBJ_SIZE_64X64, OBJ_PALETTE(14));
           struct VramCacheEntry *tileSlots;
 
-          OBJECTS[12] = object;
+          OBJECTS[CHARON_WISP] = object;
           object->image.priority = 3;
           tileSlots = gVramCacheEntries;
           {
@@ -539,7 +549,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           }
           object = EffectSprite_CreateWithTiles(
               64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
-          OBJECTS[13] = object;
+          OBJECTS[CHARON_REVEAL] = object;
           object->image.priority = 2;
           object->offsetY = 32;
           Iwram_FillWords(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
@@ -616,13 +626,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         objectScale[0] = objectScale[1] = posZ / 48 + Q16_ONE / 4;
         objectPlace[0] = posX + px(64);
         objectPlace[2] = px(144);
-        Render_ApplyProjectedPlacementFar(OBJECTS[12], objectPlace, objectScale,
-                                          0);
+        Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_WISP], objectPlace,
+                                          objectScale, 0);
         objectScale[1] = Q16_ONE;
         objectScale[0] = Q16_ONE;
-        for (i = 0; i != 12; i++) {
-          objectPlace[0] = ((i % 4) << 21) + posX;
-          objectPlace[2] = ((i / 4) << 21) + posZ;
+        for (i = 0; i != CHARON_BEAST_SPRITES; i++) {
+          objectPlace[0] = ((i % CHARON_BEAST_COLUMNS) << 21) + posX;
+          objectPlace[2] = ((i / CHARON_BEAST_COLUMNS) << 21) + posZ;
           Render_ApplyProjectedPlacementFar(OBJECTS[i], objectPlace,
                                             objectScale, 0);
         }
@@ -719,7 +729,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             s32 texel = *lowByte | (*highByte << 8);
 
             *(u16 *)(OBJ_VRAM +
-                     (row + gVramCacheEntries[OBJECTS[13]->slot].offset) +
+                     (row +
+                      gVramCacheEntries[OBJECTS[CHARON_REVEAL]->slot].offset) +
                      column) = texel;
             column = orderCopy[0x1001] * 2;
             pixel = row + column;
@@ -727,7 +738,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             highByte = high + pixel;
             texel = *lowByte | (*highByte << 8);
             *(u16 *)(OBJ_VRAM +
-                     (row + gVramCacheEntries[OBJECTS[13]->slot].offset) +
+                     (row +
+                      gVramCacheEntries[OBJECTS[CHARON_REVEAL]->slot].offset) +
                      column) = texel;
           }
         }
@@ -736,7 +748,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         revealPlace[1] = px(255);
         revealPlace[0] = px(92);
         revealPlace[2] = px(72);
-        Render_ApplyProjectedPlacementFar(OBJECTS[13], revealPlace,
+        Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], revealPlace,
                                           &revealScale.x, 0);
         {
           u16 *target =
@@ -879,7 +891,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         finalePlace[1] = px(255);
         finalePlace[0] = px(dx) + px(92);
         finalePlace[2] = px(dz) + px(72);
-        Render_ApplyProjectedPlacementFar(OBJECTS[13], finalePlace,
+        Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], finalePlace,
                                           &finaleScale.x, 0);
       }
       if (frame == 347) {
@@ -1192,11 +1204,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   if (frame < 132) {
     Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
   } else {
-    for (i = 0; i != 14; i++) {
+    for (i = 0; i != CHARON_OBJECTS; i++) {
       Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[i]);
     }
   }
-  for (i = 0; i != 48; i++) {
+  for (i = 0; i != CHARON_ARROWS; i++) {
     Sprite_DestroyFar((struct ResourceObjectWork *)SPRITES[i]);
   }
   EFFECT_RELEASE_BLITTERS();
@@ -1236,7 +1248,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
   }
   arg->targets[arg->targetCount] = 0xff;
-  BattleActor_SpawnObjectsForListFar((struct SpawnList *)arg->targets, 0);
+  BattleActor_SpawnObjectsForListFar(arg->targets, 0);
   BattleEffect_DrawShadedCircles(work->sheet, 56, Q16_ONE);
   BattleEffect_DrawShadedCircles(work->sheet + CHARON_ACT_PICTURES, 16,
                                  Q16_ONE);

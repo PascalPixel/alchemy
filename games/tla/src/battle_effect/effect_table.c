@@ -2210,10 +2210,10 @@ const s16 gCatastrophe_ShardRolls[] = {
     14797, -1097, -8198, 4962,  15494,  -5489, -9298,  3744,
     11252, -9996, 15443, -4373, -15930, 15898, -13623, 3906};
 
-/// Each feather's point, x and y.
-const u16 gHaures_FeatherPoints[][2] = {{0, 0},   {0, 32},  {32, 32}, {64, 32},
-                                        {96, 42}, {0, 64},  {32, 64}, {64, 64},
-                                        {96, 74}, {32, 96}, {64, 96}};
+/// Where each of Haures's eleven pieces is drawn, x and y, on a 32-pixel grid.
+const u16 gHaures_BodyPiecePoints[][2] = {
+    {0, 0},   {0, 32},  {32, 32}, {64, 32}, {96, 42}, {0, 64},
+    {32, 64}, {64, 64}, {96, 74}, {32, 96}, {64, 96}};
 
 /// Each particle's x, in pixels.
 const u8 gHaures_ParticleX[] = {120, 88, 144, 112, 0, 0};

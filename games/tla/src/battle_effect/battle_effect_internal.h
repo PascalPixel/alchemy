@@ -452,6 +452,9 @@ enum RedCrescentPicture {
 #define SMOKE_PUFF_HEIGHT 48
 #define FLASH_BURST_WIDTH 32
 #define FLASH_BURST_HEIGHT 64
+/// CloudPuffSheet (ResourceId_Data0CF): four 32x32 puffs of cloud.
+#define CLOUD_PUFF_WIDTH 32
+#define CLOUD_PUFF_HEIGHT 32
 #define SKULL_WIDTH 24
 #define SKULL_HEIGHT 24
 #define TORNADO_STRIP_WIDTH 40

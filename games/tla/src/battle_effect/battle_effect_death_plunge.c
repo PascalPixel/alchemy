@@ -134,8 +134,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           s32 ry = (Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46) * 2)) -
                    frame + 100;
 
-          draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry,
-                  32, 64);
+          draw[0](canvas,
+                  work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+                  rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
         }
       }
     } else if (frame > 55) {

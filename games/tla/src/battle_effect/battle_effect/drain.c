@@ -132,15 +132,22 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Drain, Psy Drain (kind 42).
-void BattleEffect_RunDrain(u8 *args) {
-  s32 value = *(s32 *)(args + 24);
+/// Motes of light burst from each target in turn and are pulled into the user,
+/// more of them for the stronger variant.
+///
+/// Abilities: Drain, Psy Drain.
+void BattleEffect_RunDrain(struct BattleEffectParams *args) {
+  s32 variant = args->variant;
 
-  BattleEffect_RunDrainMotes(args, (u32)(-value | value) >> 31);
+  // 1 for any variant past the basic one, as the sign of -variant | variant.
+  BattleEffect_RunDrainMotes(args, (u32)(-variant | variant) >> 31);
 }
 
-/// Abilities: True Collide (kind 451).
-void BattleEffect_RunTrueCollide(u8 *args) {
+/// Motes of light burst from each target in turn and are pulled into the user,
+/// in True Collide's own style.
+///
+/// Abilities: True Collide.
+void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
   BattleEffect_RunDrainMotes(args, 2);
 }
 

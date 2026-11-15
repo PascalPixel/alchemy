@@ -245,16 +245,16 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Spasm (kind 348).
-void BattleEffect_RunSpasm(s32 a0) { BattleEffect_RunMirroredWall(a0, 0); }
+DEFINE_EFFECT_KIND(BattleEffect_RunSpasm, BattleEffect_RunMirroredWall, 0)
 
 /// Abilities: Berserk (kind 353).
-void BattleEffect_RunBerserk(s32 a0) { BattleEffect_RunMirroredWall(a0, 1); }
+DEFINE_EFFECT_KIND(BattleEffect_RunBerserk, BattleEffect_RunMirroredWall, 1)
 
 /// Abilities: Recovery (kind 389).
-void BattleEffect_RunRecovery(s32 a0) { BattleEffect_RunMirroredWall(a0, 2); }
+DEFINE_EFFECT_KIND(BattleEffect_RunRecovery, BattleEffect_RunMirroredWall, 2)
 
 /// Abilities: Sack (kind 431).
-void BattleEffect_RunSack(s32 a0) { BattleEffect_RunMirroredWall(a0, 3); }
+DEFINE_EFFECT_KIND(BattleEffect_RunSack, BattleEffect_RunMirroredWall, 3)
 #undef LUNGE_FRAMES
 #undef LUNGE_STREAK_FRAMES
 #undef LUNGE_HIT_FRAME

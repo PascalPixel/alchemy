@@ -557,9 +557,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 }
 
 /// Abilities: Core (kind 236).
-void BattleEffect_RunCore(s32 a0) { BattleEffect_RunDjinniCharge(a0, 0); }
+DEFINE_EFFECT_KIND(BattleEffect_RunCore, BattleEffect_RunDjinniCharge, 0)
 
 /// Abilities: Cannon (kind 246).
-void BattleEffect_RunCannon(s32 a0) { BattleEffect_RunDjinniCharge(a0, 1); }
+DEFINE_EFFECT_KIND(BattleEffect_RunCannon, BattleEffect_RunDjinniCharge, 1)
 #undef BLITTER
 #undef MAP_CELLS

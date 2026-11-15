@@ -882,13 +882,13 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Poison Beat (kind 382).
-void BattleEffect_RunPoisonBeat(void *object) {
-  BattleEffect_RunSwirlSwipe(object, 0);
+void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunSwirlSwipe(args, 0);
 }
 
 /// Abilities: Spinning Beat (kind 383).
-void BattleEffect_RunSpinningBeat(void *object) {
-  BattleEffect_RunSwirlSwipe(object, 1);
+void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunSwirlSwipe(args, 1);
 }
 
 /// A swirl sweeps across the first target from the user's side.

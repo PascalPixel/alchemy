@@ -12,34 +12,34 @@
 #include "macros.h"
 
 /// Abilities: Sonic Wave (kind 300).
-void BattleEffect_RunSonicWave(void *object) {
-  BattleEffect_RunStreakVolley(object, 0);
+void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 0);
 }
 
 /// Abilities: Shriek, Harpy (kind 301).
-void BattleEffect_RunShriek(void *object) {
-  BattleEffect_RunStreakVolley(object, 1);
+void BattleEffect_RunShriek(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 1);
 }
 
 /// Abilities: Banshee Howl (kind 302).
-void BattleEffect_RunBansheeHowl(void *object) {
-  BattleEffect_RunStreakVolley(object, 2);
+void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 2);
 }
 
 /// Abilities: War Cry (kind 304).
-void BattleEffect_RunWarCry(void *object) {
-  BattleEffect_RunStreakVolley(object, 4);
+void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 4);
 }
 
 /// Abilities: Wicked Howl (kind 305).
-void BattleEffect_RunWickedHowl(void *object) {
-  BattleEffect_RunStreakVolley(object, 3);
+void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 3);
 }
 
 /// The streak volley in lime (mode 1). UNUSED: no effect table entry
 /// points here.
-void BattleEffect_RunLimeStreaks(void *object) {
-  BattleEffect_RunStreakVolley(object, 1);
+void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 1);
 }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -248,18 +248,18 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Sleep Star (kind 349).
-void BattleEffect_RunSleepStar(void *object) {
-  BattleEffect_RunMoteFountain(object, 1);
+void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, 1);
 }
 
 /// Abilities: Soothing Star (kind 344).
-void BattleEffect_RunSoothingStar(void *object) {
-  BattleEffect_RunMoteFountain(object, 0);
+void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, 0);
 }
 
 /// Abilities: Slaver (kind 395).
-void BattleEffect_RunSlaver(void *object) {
-  BattleEffect_RunMoteFountain(object, 2);
+void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, 2);
 }
 
 /// The motes live in the map cell buffer.

@@ -448,18 +448,18 @@ UNUSED void BattleEffect_RunUnusedStatReduction(void *action) {
 }
 
 /// Abilities: Dull, Blunt.
-void BattleEffect_RunDull(void *action) {
-  BattleEffect_RunStatReduction(action, STAT_REDUCTION_DULL);
+void BattleEffect_RunDull(struct BattleEffectParams *args) {
+  BattleEffect_RunStatReduction(args, STAT_REDUCTION_DULL);
 }
 
 /// Abilities: Impair, Debilitate.
-void BattleEffect_RunImpair(void *action) {
-  BattleEffect_RunStatReduction(action, STAT_REDUCTION_IMPAIR);
+void BattleEffect_RunImpair(struct BattleEffectParams *args) {
+  BattleEffect_RunStatReduction(args, STAT_REDUCTION_IMPAIR);
 }
 
 /// Abilities: Weaken, Enfeeble.
-void BattleEffect_RunWeaken(void *action) {
-  BattleEffect_RunStatReduction(action, STAT_REDUCTION_WEAKEN);
+void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
+  BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
 #define RAMP_IMAGE 0x2580 ///< the shard picture, then seven darker copies

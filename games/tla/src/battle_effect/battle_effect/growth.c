@@ -5,13 +5,13 @@
 #include "../battle_effect_internal.h"
 
 /// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
-void BattleEffect_RunGrowth(void *object) {
-  BattleEffect_RunGrowingColumns(object, 0);
+void BattleEffect_RunGrowth(struct BattleEffectParams *args) {
+  BattleEffect_RunGrowingColumns(args, 0);
 }
 
 /// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
-void BattleEffect_RunPunji(void *object) {
-  BattleEffect_RunGrowingColumns(object, 1);
+void BattleEffect_RunPunji(struct BattleEffectParams *args) {
+  BattleEffect_RunGrowingColumns(args, 1);
 }
 
 /// The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.

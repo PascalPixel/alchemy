@@ -1034,10 +1034,10 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Earth Force (kind 459).
-void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }
+DEFINE_EFFECT_KIND(BattleEffect_RunEarthForce, BattleEffect_RunBoltTrail, 1)
 
 /// Abilities: Thunder Mine (kind 86).
-void BattleEffect_RunThunderMine(s32 a0) { BattleEffect_RunBoltTrail(a0, 0); }
+DEFINE_EFFECT_KIND(BattleEffect_RunThunderMine, BattleEffect_RunBoltTrail, 0)
 #undef BLITTER
 #undef SLIM_COLUMN_OFFSET
 #undef SPARK_OFFSET

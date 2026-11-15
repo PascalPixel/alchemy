@@ -46,28 +46,28 @@ void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Quick Strike (kind 52).
-void BattleEffect_RunQuickStrike(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 1);
+void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 1);
 }
 
 /// Abilities: Vorpal Slash (kind 65).
-void BattleEffect_RunVorpalSlash(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 2);
+void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 2);
 }
 
 /// Abilities: Lunar Slash (kind 118).
-void BattleEffect_RunLunarSlash(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 3);
+void BattleEffect_RunLunarSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 3);
 }
 
 /// Abilities: Boost Hack (kind 109).
-void BattleEffect_RunBoostHack(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 4);
+void BattleEffect_RunBoostHack(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 4);
 }
 
 /// Abilities: Twin Shear (kind 425).
-void BattleEffect_RunTwinShear(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 5);
+void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 5);
 }
 
 #undef RESULTS_FRAME

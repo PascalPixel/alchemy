@@ -253,8 +253,8 @@ extern u8 gBattleEffect_SparkleSizes[];
 extern u16 gBattleEffect_SparklePictures[];
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *effect, s32 mode);
-void BattleEffect_RunImpair(void *action);
-void BattleEffect_RunDull(void *action);
+void BattleEffect_RunImpair(struct BattleEffectParams *args);
+void BattleEffect_RunDull(struct BattleEffectParams *args);
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA

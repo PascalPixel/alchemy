@@ -672,9 +672,9 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
 void BattleEffect_SetupBlendedDisplay(void);
 
 // stat_change.c
-void BattleEffect_RunImpair(void *action);
-void BattleEffect_RunDull(void *action);
-void BattleEffect_RunWeaken(void *action);
+void BattleEffect_RunImpair(struct BattleEffectParams *args);
+void BattleEffect_RunDull(struct BattleEffectParams *args);
+void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 
 // eruption.c
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);

@@ -468,31 +468,32 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 count;
   s32 offset;
   struct AnimationMetadata *metadata;
-  struct UiGridEntry *entry;
+  struct SpriteAnimation *entry;
   u8 *work;
 
   work = Ram_HeapSlots->sprites;
   count = 0;
-  offset = ((3 & slot) * 4) + 0x28;
+  offset = (3 & slot) * sizeof(struct SpriteAnimation *) +
+           offsetof(struct Sprite, entries);
   index = 0;
   do {
-    entry = *(struct UiGridEntry **)(work + offset);
-    if (entry->table0c != 0) {
-      metadata = Resource_GetMetadataRecordFar(entry->no);
+    entry = *(struct SpriteAnimation **)(work + offset);
+    if (entry->scripts != 0) {
+      metadata = Resource_GetMetadataRecordFar(entry->animationId);
       if (value < metadata->animationCount) {
-        entry->value04 = metadata->drawKind;
-        entry->value10 = entry->table0c[value];
-        entry->x = count * 0x10;
-        entry->value15 = 0x10;
-        entry->value14 = index;
-        entry->value17 = index;
-        entry->value16 = 0xFF;
+        entry->kind = metadata->drawKind;
+        entry->script = entry->scripts[value];
+        entry->timer = count * 16;
+        entry->step = SPRITE_ANIMATION_NORMAL_STEP;
+        entry->scriptOffset = index;
+        entry->pictureBase = index;
+        entry->picture = 0xff;
       }
-      work[23] = (u8)metadata->adjustY;
-      *(s16 *)(work + 18) = index;
+      ((struct Sprite *)work)->offsetY = metadata->adjustY;
+      ((struct Sprite *)work)->rotation = index;
     }
     count += 1;
-    work += 0x38;
+    work += sizeof(struct Sprite);
   } while (count <= 9);
 }
 

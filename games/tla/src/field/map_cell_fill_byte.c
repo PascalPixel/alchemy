@@ -1,5 +1,5 @@
 /// @file
-/// Filling a rectangle of a map layer's cells with one attribute byte.
+/// Filling a rectangle of a map layer's cells with one collision code.
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -9,8 +9,8 @@ extern struct MapCell gMapGridCellBuffer[];
 
 /// Sets the collision code of each cell in a layer rectangle to value.
 /// Layers 3 and above use the shared buffer.
-s32 Map_FillLayerRectByte2(u32 layer, u32 x, u32 y, u32 width, u32 height,
-                           s32 value) {
+s32 Map_FillLayerRectCollision(u32 layer, u32 x, u32 y, u32 width, u32 height,
+                               s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells;
 

@@ -66,19 +66,6 @@ struct ProbeObjects {
   struct ProbeShape *shape;
 };
 
-struct UiGridEntry {
-  s16 no;
-  u16 x;
-  u8 value04;
-  u8 unused[7]; ///< no code names it
-  s32 *table0c;
-  s32 value10;
-  u8 value14;
-  u8 value15;
-  u8 value16;
-  u8 value17;
-};
-
 struct BattleCells {
   u8 *actors;
   u8 *unk04;

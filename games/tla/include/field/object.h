@@ -132,7 +132,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
                   s32 mode);
 
 void Message_SetVoiceFromActor(s32 key);
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
+void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
 
 void FieldMotes_Update(void);
 

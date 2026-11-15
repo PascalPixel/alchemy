@@ -3986,7 +3986,7 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 31, FLAG_SCENE_TEMP_01, 0},
-    {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(GabombaStatue_FightSteel)},
+    {TRIGGER_TALK, 33, IF_FLAG_SET(FLAG_SCENE_TEMP_04), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };
 

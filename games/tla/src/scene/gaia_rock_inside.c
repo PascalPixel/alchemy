@@ -435,13 +435,6 @@ loop:
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 GaiaRockInside_SerpentHoldsStill(void) {
   s32 t0;
 
@@ -455,8 +448,7 @@ s32 GaiaRockInside_SerpentRears(void) {
   struct Actor *object;
 
   object = Actor_Get(ACTOR_CASK);
-  FIELD_AT(object->sprite, u16, 18) =
-      (FIELD_AT(object->sprite, u16, 18) + 0x300);
+  ((struct FieldSprite *)object->sprite)->rotation += 0x300;
   return 0;
 }
 
@@ -554,8 +546,6 @@ s32 GaiaRockInside_SerpentSettles(void) {
 
 #include "../field/field_effect_advance_motion_priority.c"
 
-#undef FIELD_AT
-
 #include "text/msg_ids.h"
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
@@ -610,13 +600,6 @@ s32 GaiaRockInside_SerpentTurnsToLeader(void) {
     Actor_StartScript(object, gGaiaRockInside_SerpentTurnLeftScript);
   return 0;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void GaiaRockInside_CountClash(struct Counted *object) {
   struct Counted *other = (struct Counted *)Actor_Get(9);
@@ -876,12 +859,12 @@ extern s32 gGaiaRockInside_SavedSusaAnimation;
 void GaiaRockInside_SaveSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
   struct Actor *object = Actor_Get(ACTOR_SUSA);
-  u8 *sprite = object->sprite;
-  u8 *animation = FIELD_AT(sprite, u8 *, 40);
+  struct FieldSprite *sprite = object->sprite;
+  u8 *record = sprite->record;
 
   Iwram_CopyWordsEntry(&gGaiaRockInside_SavedSusa, object, 128);
-  gGaiaRockInside_SavedSusaAnimation = animation[21];
-  gGaiaRockInside_SavedSusaFrame = sprite[24];
+  gGaiaRockInside_SavedSusaAnimation = record[21];
+  gGaiaRockInside_SavedSusaFrame = sprite->frame;
   {
     s32 x = object->x.fixed;
     s32 z;
@@ -927,9 +910,7 @@ void GaiaRockInside_RestoreSusa(void) {
   Actor_SetAnimation(ACTOR_SUSA, gGaiaRockInside_SavedSusaFrame);
   Actor_SetAnimationSpeed(object, gGaiaRockInside_SavedSusaAnimation);
 }
-#undef FIELD_AT
 
-#undef FIELD_AT
 #undef gGaiaRockInside_CobwebCells
 #include "text/msg_ids.h"
 
@@ -1033,13 +1014,6 @@ void GaiaRockInside_TalkToSusa(void) {
   Event_End();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void GaiaRockInside_ReadSusasMind(void) {
   struct Actor *object;
   s32 t2;
@@ -1067,14 +1041,12 @@ void GaiaRockInside_ReadSusasMind(void) {
 
 extern u32 gGaiaRockInside_SparkScript[];
 
-void GaiaRockInside_SpawnSpark(s32 a0) {
-  s32 t0;
+void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
+  struct Actor *t0 = FieldActor_Create(0x2a0, source->x, source->y, source->z);
 
-  t0 = (s32)FieldActor_Create(0x2a0, FIELD_AT(a0, s32, 8),
-                              FIELD_AT(a0, s32, 12), FIELD_AT(a0, s32, 16));
-  FIELD_AT(t0, s32, 28) = 0x6666;
-  FIELD_AT(t0, s32, 24) = 0x6666;
-  FIELD_AT((t0 + 0x55), u8, 0) = 0;
+  t0->scaleY = 0x6666;
+  t0->scaleX = 0x6666;
+  t0->motionFlags = 0;
   FieldActor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
   Actor_SelectAnimation(t0, 1);
@@ -1082,7 +1054,6 @@ void GaiaRockInside_SpawnSpark(s32 a0) {
   Actor_SetBlendMode(t0, 1);
   Actor_StartScript(t0, (s32)gGaiaRockInside_SparkScript);
 }
-#undef FIELD_AT
 
 /// Steps an orbiting object around its anchor: turns it by half its speed, puts
 /// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -1119,7 +1090,6 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 // Moves around in a circle.
 #include "shared/orbit_update.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 #include "shared/actor_aim_at_watched.h"
 
@@ -1130,7 +1100,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 #include "shared/actor_emit_bubbles.h"
-#undef BYTE_AT
 
 #include "text/msg_ids.h"
 
@@ -1541,26 +1510,13 @@ void GaiaRockInside_ChallengeSerpent(void) {
 
 #include "text/msg_ids.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Puts the leader on map layer 2, through its byte.
 void Leader_SetLayerByte(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  FIELD_AT((t0 + 0x22), u8, 0) = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
 void GaiaRockInside_EndSand(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 void GaiaRockInside_FindCloudBrand(void) {
@@ -1598,30 +1554,29 @@ void GaiaRockInside_CheckAltar(void) {
 void Actor_MoveToObject(s32 id, s32 target);
 
 void GaiaRockInside_PlaceDollOnFirstAltar(void) {
-  s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6,
-      v_r7, v_r8;
-  struct Actor *object;
+  struct Actor *westFace = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
+  struct Actor *eastFace = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
+  struct Actor *doll = Actor_Get(ACTOR_FIRST_ALTAR_DOLL);
+  struct Actor *leader;
+  struct MainRoutineWork *work;
+  s32 *leaderId;
+  s32 i;
 
-  t1 = ((s32)Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE));
-  v_r7 = t1;
-  t2 = ((s32)Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE));
-  v_r8 = t2;
-  object = Actor_Get(ACTOR_FIRST_ALTAR_DOLL);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(SE_193);
-  Actor_SetSpritePriorityDirect(object, 1);
-  v_r5 = (s32)&gMainRoutineWork;
-  v_r5 = (v_r5 + 0x214);
-  Actor_MoveToObject(ACTOR_FIRST_ALTAR_DOLL, FIELD_AT(v_r5, s32, 0));
+  Actor_SetSpritePriorityDirect(doll, 1);
+  work = &gMainRoutineWork;
+  leaderId = &work->leaderActorId;
+  Actor_MoveToObject(ACTOR_FIRST_ALTAR_DOLL, *leaderId);
   Actor_SetDestination(ACTOR_FIRST_ALTAR_DOLL, 496, 712);
-  object->velocityY = px(6);
+  doll->velocityY = px(6);
   FieldActor_WaitForMoveById(ACTOR_FIRST_ALTAR_DOLL);
   FieldEvent_Wait(45);
-  Actor_FaceActor(ACTOR_FIRST_ALTAR_WEST_FACE, FIELD_AT(v_r5, s32, 0), 0);
-  Actor_FaceActor(ACTOR_FIRST_ALTAR_EAST_FACE, FIELD_AT(v_r5, s32, 0), 0);
+  Actor_FaceActor(ACTOR_FIRST_ALTAR_WEST_FACE, *leaderId, 0);
+  Actor_FaceActor(ACTOR_FIRST_ALTAR_EAST_FACE, *leaderId, 0);
   Event_PlaySound(SE_576);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 5);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 5);
@@ -1633,69 +1588,46 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 3);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_191);
-  t26 = Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
-  v_r5 = 119;
-  if (t26 != 0)
-    goto L_0200a1d8;
-  v_r5 = 19;
-L_0200a10a:
-  t27 = Random16();
-  FIELD_AT(v_r7, s32, 40) = t27;
-  t28 = Random16();
-  FIELD_AT(v_r8, s32, 40) = t28;
-  v_r5 = (v_r5 + -1);
-  System_Wait(1);
-  if (v_r5 >= 0)
-    goto L_0200a10a;
-  Actor_SetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_WEST_FACE, 0.25, 0.05);
-  Actor_SetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_EAST_FACE, 0.25, 0.05);
-  Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_WEST_FACE, 24, 0);
-  Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_EAST_FACE, -24, 0);
-  v_r6 = v_r7;
-  v_r6 = (v_r6 + 86);
-  v_r5 = 0;
-  for (; v_r5 < 300 && FIELD_AT(v_r6, u8, 0) != 0; v_r5++) {
-    t34 = Random16();
-    FIELD_AT(v_r7, s32, 40) = t34;
-    t35 = Random16();
-    FIELD_AT(v_r8, s32, 40) = t35;
-    System_Wait(1);
+  if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
+    for (i = 19; i >= 0; i--) {
+      westFace->velocityY = Random16();
+      eastFace->velocityY = Random16();
+      System_Wait(1);
+    }
+    Actor_SetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_WEST_FACE, 0.25, 0.05);
+    Actor_SetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_EAST_FACE, 0.25, 0.05);
+    Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_WEST_FACE, 24, 0);
+    Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_EAST_FACE, -24, 0);
+    for (i = 0; i < 300 && westFace->arrivalAxis != 0; i++) {
+      westFace->velocityY = Random16();
+      eastFace->velocityY = Random16();
+      System_Wait(1);
+    }
+    for (i = 9; i >= 0; i--) {
+      westFace->velocityY = Random16();
+      eastFace->velocityY = Random16();
+      System_Wait(1);
+    }
+    i = 40;
+    MapGrid_CopyCells(119, 31, 1, 2, 89, i);
+    MapGrid_CopyCells(119, 31, 1, 2, 100, i);
+    Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
+  } else {
+    for (i = 119; i >= 0; i--) {
+      westFace->velocityY = Random16();
+      eastFace->velocityY = Random16();
+      System_Wait(1);
+    }
+    FieldEvent_Wait(30);
   }
-  v_r5 = 9;
-L_0200a18c:
-  t37 = Random16();
-  FIELD_AT(v_r7, s32, 40) = t37;
-  t38 = Random16();
-  FIELD_AT(v_r8, s32, 40) = t38;
-  v_r5 = (v_r5 + -1);
-  System_Wait(1);
-  if (v_r5 >= 0)
-    goto L_0200a18c;
-  v_r5 = 40;
-  MapGrid_CopyCells(119, 31, 1, 2, 89, v_r5);
-  MapGrid_CopyCells(119, 31, 1, 2, 100, v_r5);
-  Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
-  goto L_0200a1f8;
-L_0200a1d8:
-  t43 = Random16();
-  FIELD_AT(v_r7, s32, 40) = t43;
-  t44 = Random16();
-  FIELD_AT(v_r8, s32, 40) = t44;
-  v_r5 = (v_r5 + -1);
-  System_Wait(1);
-  if (v_r5 >= 0)
-    goto L_0200a1d8;
-  FieldEvent_Wait(30);
-L_0200a1f8:
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 4);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 4);
   FieldEvent_Wait(30);
-  t50 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  if (t50 != 0) {
-    Actor_SetDestination(ACTOR_FIRST_ALTAR_DOLL, FIELD_AT(t50, s16, 10),
-                         FIELD_AT(t50, s16, 18));
-  }
-  object->velocityY = px(6);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (leader != NULL)
+    Actor_SetDestination(ACTOR_FIRST_ALTAR_DOLL, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
+  doll->velocityY = px(6);
   FieldActor_WaitForMoveById(ACTOR_FIRST_ALTAR_DOLL);
   Actor_SetPosition(ACTOR_FIRST_ALTAR_DOLL, 0, 0);
   Event_End();
@@ -2043,39 +1975,20 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGaiaRockInside_SlainLairTriggers;
   return gGaiaRockInside_Triggers;
 }
-#undef FIELD_AT
-
-#undef FIELD_AT
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
- * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
- * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:1923: too few arguments to function
- * `Actor_GetById'. */
-extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 
 void GaiaRockInside_SetPlatformPose(s32 a0, s32 a1) {
-  s32 t2;
-  s32 t0;
+  u8 *t2;
+  struct Actor *t0 = Actor_GetById(a0);
 
-  t0 = Actor_GetById__s2ac8();
   Actor_FaceActorById(a0, a1, 0);
-  if (t0 != 0) {
-    t2 = Sprite_AddAnimation(FIELD_AT(t0, s32, 80), 0x185);
-    FIELD_AT(t2, u8, 5) = 0;
-    FIELD_AT(t2, u8, 6) = 0;
+  if (t0 != NULL) {
+    t2 = (u8 *)Sprite_AddAnimation(t0->sprite, 0x185);
+    t2[5] = 0;
+    t2[6] = 0;
     Actor_SelectAnimation(t0, 0);
     Actor_SelectAnimation(t0, 4);
   }
 }
-#undef FIELD_AT
 
 void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   struct Actor *object = Actor_Get(id);
@@ -2090,31 +2003,13 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   Actor_SetAnimation(id, mode);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
+  struct Actor *platform = Actor_GetById(id);
 
-/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
- * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
- * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:1966: too few arguments to function
- * `Actor_GetById'. */
-extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
-
-void GaiaRockInside_PlacePlatform(s32 a0, s32 a1, s32 a2) {
-  s32 t0;
-
-  t0 = Actor_GetById__s2b58();
-  FieldActor_SetMoveTargetFixed(
-      t0, (((a1 << 4) + FIELD_AT((t0 + 0x64), s16, 0)) << 16),
-      FIELD_AT(t0, s32, 12),
-      (((a2 << 4) + FIELD_AT((t0 + 0x66), s16, 0)) << 16));
+  FieldActor_SetMoveTargetFixed(platform, ((dx << 4) + platform->timer) << 16,
+                                platform->y.fixed,
+                                ((dz << 4) + platform->userValue) << 16);
 }
-#undef FIELD_AT
 
 /// The platforms' frame task: they all stop while the menu is open or
 /// Psynergy is cast; otherwise, at frame 60 of every 240 each leans out one way
@@ -2991,13 +2886,6 @@ end:
   return 0;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void GaiaRockInside_ClearMazeLayer(s32 a0) {
   GaiaRockInside_SetMazeLayer(1, a0);
 }
@@ -3070,29 +2958,25 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Set(FLAG_SCENE_TEMP_00);
       }
     } else if (gMainRoutineWork.entrance > 8) {
-      u8 *layer;
+      struct MapLayer *layer;
 
       *(s32 *)(gInventorySnapshot + 0x288) = 1;
-      layer = map + 376;
-      FIELD_AT(layer, u16, 40) = 127;
-      FIELD_AT(layer, s32, 24) = 0;
-      FIELD_AT(layer, s32, 28) = 0;
-      FIELD_AT(layer, s32, 32) = 0;
-      FIELD_AT(layer, s32, 36) = 0;
-      FIELD_AT(layer, s32, 16) = 0x10000;
-      FIELD_AT(layer, s32, 20) = 0x10000;
-      FIELD_AT(layer, u16, 42) = 0x3f80;
+      layer = (struct MapLayer *)(map + 376);
+      layer->maskX = 127;
+      layer->speedX = 0;
+      layer->speedY = 0;
+      layer->phaseX = 0;
+      layer->phaseY = 0;
+      layer->scaleX = Q16_ONE;
+      layer->scaleY = Q16_ONE;
+      layer->maskY = 0x3f80;
       // Once-only block: keeps the scale defaults before the position sums.
       do {
       } while (0);
-      ((struct MapLayer *)layer)->x =
-          Iwram_MulQ16(((struct MapWork *)map)->viewX,
-                       FIELD_AT(layer, s32, 16)) +
-          FIELD_AT(layer, s32, 8);
-      ((struct MapLayer *)layer)->y =
-          Iwram_MulQ16(((struct MapWork *)map)->viewZ,
-                       FIELD_AT(layer, s32, 20)) +
-          FIELD_AT(layer, s32, 12);
+      layer->x = Iwram_MulQ16(((struct MapWork *)map)->viewX, layer->scaleX) +
+                 layer->offsetX;
+      layer->y = Iwram_MulQ16(((struct MapWork *)map)->viewZ, layer->scaleY) +
+                 layer->offsetY;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       Iwram_CopyWords(Ram_MapCollision + 0x1e00, gGaiaRockInside_SavedCollision,
@@ -4237,8 +4121,6 @@ s32 gGaiaRockInside_DustScript[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef FIELD_AT
-#undef BYTE_AT
 #undef Test
 #undef C1
 #undef C2

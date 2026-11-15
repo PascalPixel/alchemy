@@ -288,15 +288,11 @@ const struct Trigger *Scene_GetTriggers(void) {
 #include "text/msg_ids.h"
 
 void Islets_TalkToPengus(void) {
-  s32 result0;
-  s32 result1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0xaa2);
-  if (result0 != 0) {
-    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-    if (result1 != 0) {
+  if (Event_GetFlag(0xaa2)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Actor_FaceActor(9, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
     } else {
@@ -317,15 +313,11 @@ void Islets_TalkToPengus(void) {
 }
 
 void Islets_MindReadPengus(void) {
-  s32 result0;
-  s32 result1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0xaa2);
-  if (result0 != 0) {
-    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-    if (result1 != 0) {
+  if (Event_GetFlag(0xaa2)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       FieldEvent_SetMessageId((s32)MsgThereIsNothing);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoHappy);
@@ -341,15 +333,11 @@ void Islets_MindReadPengus(void) {
 }
 
 void Islets_TalkToPengulina(void) {
-  s32 result0;
-  s32 result1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0xaa2);
-  if (result0 != 0) {
-    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-    if (result1 != 0) {
+  if (Event_GetFlag(0xaa2)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Actor_FaceActor(19, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
     } else {
@@ -366,15 +354,11 @@ void Islets_TalkToPengulina(void) {
 }
 
 void Islets_MindReadPengulina(void) {
-  s32 result0;
-  s32 result1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0xaa2);
-  if (result0 != 0) {
-    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-    if (result1 != 0) {
+  if (Event_GetFlag(0xaa2)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoGlad);
@@ -391,10 +375,8 @@ void Islets_MindReadPengulina(void) {
 #include "shared/leader_is_facing_north.h"
 
 void Islets_TalkToHealer(void) {
-  s32 result0;
 
-  result0 = Leader_IsFacingNorth();
-  if (result0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Sanctum_Run(21);
   } else {
     Event_Start();
@@ -408,12 +390,10 @@ void Islets_TalkToHealer(void) {
 }
 
 void Islets_TalkToTreasureHunters(void) {
-  s32 result0;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(FLAG_SCENE_TEMP_14);
-  if (result0 == 0) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_14)) {
     FieldEvent_SetMessageId((s32)MsgWeLikeThis);
     // "We like this island. A lot... That's why we're here... Because we..."
     Event_ShowMessage(8, 0);
@@ -451,12 +431,10 @@ void Islets_TalkToSailor(void) {
 }
 
 void Islets_TalkToBird(void) {
-  s32 result0;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0xaa4);
-  if (result0 != 0) {
+  if (Event_GetFlag(0xaa4)) {
     FieldActor_WatchAndSetScript(10, gMainRoutineWork.leaderActorId);
   }
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
@@ -791,37 +769,37 @@ void Islets_TradeWithDog(void) {
     Event_ShowMessage(11, 0);
     FieldActor_WatchAndSetScript(11, gMainRoutineWork.leaderActorId);
     if (item != 0) {
-      void (*hook2)(void);
+      void (*emitSmoke)(void);
       item->collisionFlags = 9;
       FieldActor_SetPositionAndResetMotion(item, px(104), 0, px(840));
-      hook2 = Actor_EmitSmoke;
+      emitSmoke = Actor_EmitSmoke;
       if (right) {
-        leader->update = hook2;
+        leader->update = emitSmoke;
         Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 840);
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-        leader->update = hook2;
+        leader->update = emitSmoke;
         STEP(gMainRoutineWork.leaderActorId, 288, 840);
         FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
         STEP(gMainRoutineWork.leaderActorId, 296, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
         System_Wait(1);
-        trader->update = hook2;
+        trader->update = emitSmoke;
         STEP(11, 292, 844);
       } else {
-        leader->update = hook2;
+        leader->update = emitSmoke;
         Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 840);
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
-        leader->update = hook2;
+        leader->update = emitSmoke;
         STEP(gMainRoutineWork.leaderActorId, 272, 840);
         FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
         STEP(gMainRoutineWork.leaderActorId, 264, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
         System_Wait(1);
-        trader->update = hook2;
+        trader->update = emitSmoke;
         STEP(11, 268, 844);
       }
     }
@@ -1370,19 +1348,15 @@ void Islets_JumpDownLedge(void) {
 }
 
 void Leader_SetLayer(void) {
-  struct Actor *object0;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  object0 = Actor_Get(gMainRoutineWork.leaderActorId);
-  object0->layer = 2;
-  return;
+  leader->layer = 2;
 }
 
 void Islets_StepOntoGround(void) {
-  struct Actor *object0;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  object0 = Actor_Get(gMainRoutineWork.leaderActorId);
-  object0->layer = 0;
-  return;
+  leader->layer = 0;
 }
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {

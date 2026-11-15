@@ -154,8 +154,8 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
 /// The leader steps onto a door's button: the door opens and 0x202 says the
 /// button holds it.
 void JupiterLighthouse_StepOnButton(void) {
-  if (!Event_GetFlag(0x202)) {
-    Event_SetFlag(0x202);
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_02)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
     JupiterLighthouse_OpenDoor(1);
   }
 }
@@ -164,8 +164,8 @@ void JupiterLighthouse_StepOnButton(void) {
 /// set) closes, unless the block now stands on the button
 /// (JupiterLighthouse_CheckBlockOnCell).
 void JupiterLighthouse_StepOffButton(void) {
-  if (Event_GetFlag(0x202) == 1) {
-    Event_ClearFlag(0x202);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_02) == 1) {
+    Event_ClearFlag(FLAG_SCENE_TEMP_02);
     JupiterLighthouse_CloseDoor();
   }
   JupiterLighthouse_CheckBlockOnCell();

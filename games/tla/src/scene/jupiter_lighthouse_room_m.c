@@ -2112,7 +2112,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideUpperWhirlwind)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
     {TRIGGER_STEP, 32, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
-    {TRIGGER_STEP, 33, IF_FLAG_SET(0x202), EVENT(JupiterLighthouse_CloseFloor)},
+    {TRIGGER_STEP, 33, IF_FLAG_SET(FLAG_SCENE_TEMP_02), EVENT(JupiterLighthouse_CloseFloor)},
     {TRIGGER_TALK, 0, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
     {TRIGGER_TALK, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
     {TRIGGER_TALK, 6, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},

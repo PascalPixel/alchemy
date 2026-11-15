@@ -66,9 +66,16 @@ enum {
   ACTOR_KARST = 28,
   ACTOR_ALEX = 29,
   ACTOR_KRADEN = 30,
+  /// The two columns of light that drop into the well when the Jupiter Star
+  /// is cast (JupiterLighthouse_CastTheJupiterStar).
+  ACTOR_BEAM_A = 31,
+  ACTOR_BEAM_B = 32,
   /// The beacon's light, rising once it is lit
   /// (gJupiterLighthouse_BeaconRisesScript).
-  ACTOR_BEACON_ORB = 36
+  ACTOR_BEACON_ORB = 36,
+  /// The Jupiter Star's shadow, an eighth of a sprite-489 point, following it
+  /// down to the well.
+  ACTOR_STAR_SHADOW = 37
 };
 
 s32 JupiterLighthouse_JumpAndHide(s32 a0) {
@@ -467,7 +474,7 @@ extern s32 gJupiterLighthouse_StarFallsScript[];
 
 void JupiterLighthouse_CastTheJupiterStar(void) {
   s32 answer, state;
-  struct Actor *actor4, *created, *actor37, *actor31, *actor32;
+  struct Actor *felix, *star, *shadow, *beamA, *beamB;
   struct FieldSprite *sprite;
   u8 *buffer;
   u8 *flags;
@@ -497,46 +504,46 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       PaletteFade_ApplyTarget(0x10003, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
-      PartyInventory_Remove(245);
-      actor4 = Actor_GetById(ACTOR_FELIX);
-      created = FieldActor_Create(0x1e9, actor4->x.fixed,
-                                  actor4->y.fixed + px(8), actor4->z.fixed);
-      if (created != 0) {
-        sprite = created->sprite;
+      PartyInventory_Remove(ITEM_245);
+      felix = Actor_GetById(ACTOR_FELIX);
+      star = FieldActor_Create(0x1e9, felix->x.fixed, felix->y.fixed + px(8),
+                               felix->z.fixed);
+      if (star != 0) {
+        sprite = star->sprite;
         sprite->unk1b[0] = 0;
         sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 0;
-        created->priorityFlags &= 254;
-        created->motionFlags = 0;
-        created->retainSpriteCache = 1;
-        created->speedLimit = 0x6666;
-        created->acceleration = 0xccc;
+        star->priorityFlags &= 254;
+        star->motionFlags = 0;
+        star->retainSpriteCache = 1;
+        star->speedLimit = 0x6666;
+        star->acceleration = 0xccc;
         buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
-      FieldActor_SetSpritePriority(37, 1);
-      actor37 = Actor_GetById(37);
-      actor37->x.fixed = actor4->x.fixed;
-      actor37->y.fixed = px(96);
-      actor37->z.fixed = actor4->z.fixed;
-      actor37->motionFlags = 3;
-      actor37->acceleration = 0xccc;
-      actor37->speedLimit = 0x6666;
-      actor37->scaleX = Q16_ONE / 8;
-      actor37->scaleY = Q16_ONE / 8;
+      FieldActor_SetSpritePriority(ACTOR_STAR_SHADOW, 1);
+      shadow = Actor_GetById(ACTOR_STAR_SHADOW);
+      shadow->x.fixed = felix->x.fixed;
+      shadow->y.fixed = px(96);
+      shadow->z.fixed = felix->z.fixed;
+      shadow->motionFlags = 3;
+      shadow->acceleration = 0xccc;
+      shadow->speedLimit = 0x6666;
+      shadow->scaleX = Q16_ONE / 8;
+      shadow->scaleY = Q16_ONE / 8;
       FieldEvent_SetMessageId((s32)MsgThereSeemsTo + 1);
       Event_PlaySound(MUS_036);
-      if (created != 0) {
-        flags = &created->motionFlags;
+      if (star != 0) {
+        flags = &star->motionFlags;
         *flags = 0;
-        created->gravity = 0x9999;
-        created->bounce = 0xcccc;
-        created->velocityY = px(8);
-        FieldActor_SetMoveTarget(created, 512, 128, 294);
-        FieldActor_SetMoveTarget(actor37, 512, -0.00002, 294);
+        star->gravity = 0x9999;
+        star->bounce = 0xcccc;
+        star->velocityY = px(8);
+        FieldActor_SetMoveTarget(star, 512, 128, 294);
+        FieldActor_SetMoveTargetFixed(shadow, px(512), -1, px(294));
         Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
         System_Wait(1);
         Actor_SetSpeed(ACTOR_PIERS, 0.8);
@@ -549,43 +556,43 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         System_Wait(1);
         Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-        FieldActor_WaitForMove(created);
+        FieldActor_WaitForMove(star);
         state = 4;
         *flags = state;
         FieldEvent_Wait(90);
         *flags = 0;
-        FieldActor_SetMoveTarget(created, 512, 128, 264);
-        FieldActor_SetMoveTarget(actor37, 512, -0.00002, 264);
+        FieldActor_SetMoveTarget(star, 512, 128, 264);
+        FieldActor_SetMoveTargetFixed(shadow, px(512), -1, px(264));
         *flags = state;
         FieldEvent_Wait(60);
         *flags = 0;
-        actor37->x.fixed = 0;
-        actor37->targetX = 0x80000000;
-        actor37->targetY = 0x80000000;
-        actor37->targetZ = 0x80000000;
+        shadow->x.fixed = 0;
+        shadow->targetX = 0x80000000;
+        shadow->targetY = 0x80000000;
+        shadow->targetZ = 0x80000000;
 
-        actor37->y.fixed = 0;
-        actor37->z.fixed = 0;
-        actor37->velocityX = 0;
-        actor37->velocityY = 0;
-        actor37->velocityZ = 0;
-        actor37->timer = 0;
-        FieldActor_WaitForMove(created);
+        shadow->y.fixed = 0;
+        shadow->z.fixed = 0;
+        shadow->velocityX = 0;
+        shadow->velocityY = 0;
+        shadow->velocityZ = 0;
+        shadow->timer = 0;
+        FieldActor_WaitForMove(star);
         *flags = state;
         FieldEvent_Wait(90);
         *flags = 0;
-        FieldActor_SetMoveTarget(created, 512, 92, 264);
-        FieldActor_WaitForMove(created);
-        created->x.fixed = 0;
-        created->targetX = 0x80000000;
-        created->targetY = 0x80000000;
-        created->targetZ = 0x80000000;
-        created->y.fixed = 0;
-        created->z.fixed = 0;
-        created->velocityX = 0;
-        created->velocityY = 0;
-        created->velocityZ = 0;
-        created->timer = 0;
+        FieldActor_SetMoveTarget(star, 512, 92, 264);
+        FieldActor_WaitForMove(star);
+        star->x.fixed = 0;
+        star->targetX = 0x80000000;
+        star->targetY = 0x80000000;
+        star->targetZ = 0x80000000;
+        star->y.fixed = 0;
+        star->z.fixed = 0;
+        star->velocityX = 0;
+        star->velocityY = 0;
+        star->velocityZ = 0;
+        star->timer = 0;
       }
       FieldEvent_Wait(40);
       PaletteFade_ApplyTarget(0x10000, 0);
@@ -614,37 +621,37 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_GetById(ACTOR_KRADEN)->priorityFlags |= 1;
       Actor_GetById(ACTOR_AGATIO)->priorityFlags |= 1;
       Actor_GetById(ACTOR_KARST)->priorityFlags |= 1;
-      Actor_GetById(31)->priorityFlags |= 1;
-      Actor_GetById(32)->priorityFlags |= 1;
+      Actor_GetById(ACTOR_BEAM_A)->priorityFlags |= 1;
+      Actor_GetById(ACTOR_BEAM_B)->priorityFlags |= 1;
       FieldCamera_MoveTo(512, 96, 264, 1);
       FieldCamera_WaitForArrival();
-      FieldActor_SetSpritePriority(31, 1);
-      FieldActor_SetSpritePriority(32, 1);
+      FieldActor_SetSpritePriority(ACTOR_BEAM_A, 1);
+      FieldActor_SetSpritePriority(ACTOR_BEAM_B, 1);
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
       FieldActor_SetSpritePriority(ACTOR_PIERS, 1);
       FieldEvent_Wait(20);
-      Actor_SetSpriteFlags(Actor_GetById(31), 0);
-      FieldActor_SetSpriteColor(Actor_GetById(31), 7);
-      actor31 = Actor_GetById(31);
-      actor31->scaleY = 0xffff0000;
-      actor31->scaleX = 0x1999;
-      actor31->motionFlags = 0;
-      actor31->x.fixed = px(512);
-      actor31->y.fixed = px(128);
-      actor31->z.fixed = px(264);
-      actor31->priorityFlags |= 2;
-      Actor_SetSpriteFlags(Actor_GetById(32), 0);
-      FieldActor_SetSpriteColor(Actor_GetById(32), 7);
-      actor32 = Actor_GetById(32);
-      actor32->scaleY = 0xffff0000;
-      actor32->scaleX = 0x1999;
-      actor32->motionFlags = 0;
-      actor32->x.fixed = px(512);
-      actor32->y.fixed = px(160);
-      actor32->z.fixed = px(264);
-      actor32->priorityFlags |= 2;
-      Actor_SetScript(31, gJupiterLighthouse_StarFallsScript);
-      Actor_SetScript(32, gJupiterLighthouse_StarFallsScript);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_A), 0);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_A), 7);
+      beamA = Actor_GetById(ACTOR_BEAM_A);
+      beamA->scaleY = 0xffff0000;
+      beamA->scaleX = 0x1999;
+      beamA->motionFlags = 0;
+      beamA->x.fixed = px(512);
+      beamA->y.fixed = px(128);
+      beamA->z.fixed = px(264);
+      beamA->priorityFlags |= 2;
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_B), 0);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_B), 7);
+      beamB = Actor_GetById(ACTOR_BEAM_B);
+      beamB->scaleY = 0xffff0000;
+      beamB->scaleX = 0x1999;
+      beamB->motionFlags = 0;
+      beamB->x.fixed = px(512);
+      beamB->y.fixed = px(160);
+      beamB->z.fixed = px(264);
+      beamB->priorityFlags |= 2;
+      Actor_SetScript(ACTOR_BEAM_A, gJupiterLighthouse_StarFallsScript);
+      Actor_SetScript(ACTOR_BEAM_B, gJupiterLighthouse_StarFallsScript);
       Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle,
                     TASK_PASS_VBLANK);
       Actor_SetPosition(9, 0, 0);

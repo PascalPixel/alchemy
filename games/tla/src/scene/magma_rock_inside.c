@@ -1913,45 +1913,34 @@ burst:
     goto burst;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  i = 0;
-  /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1. */
-  probe = second->conditionResult;
-  if (probe & 0x100) {
-    wait(1);
-    goto tail;
+  for (i = 0; i != 16; i++) {
+    spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
+                              second->z.fixed);
+    Event_PlaySound(SE_195);
+    spark->timer = (Random16() & 0x7fff) + 0x8000;
+    spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
+    noMotion = 0;
+    spark->motionFlags = noMotion;
+    spark->riseBaseY = px(122);
+    spark->watchedActor = second;
+    ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+    FieldActor_SetSpriteColor(spark, 10);
+    Scene_SetActorSpritePriority(spark, 1);
+    Actor_SelectAnimation(spark, 7);
+    Actor_SetSpriteFlags(spark, 0);
+    Actor_SetBlendMode(spark, 1);
+    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
+                                    &spark->x.fixed);
+    Actor_StartScript(spark, gMagmaRockInside_SparkScript);
+    if (i == 3) {
+      Actor_SetSpriteColorById(b, 256);
+      second->motionFlags = noMotion;
+      second->acceleration = 0x3333;
+      second->speedLimit = 0x3333;
+      Actor_SetScript(b, script);
+    }
+    wait(8);
   }
-spiral:
-  spark =
-      FieldActor_Create(672, second->x.fixed, second->y.fixed, second->z.fixed);
-  Event_PlaySound(SE_195);
-  spark->timer = (Random16() & 0x7fff) + 0x8000;
-  spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
-  noMotion = 0;
-  spark->motionFlags = noMotion;
-  spark->riseBaseY = px(122);
-  spark->watchedActor = second;
-  ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  FieldActor_SetSpriteColor(spark, 10);
-  Scene_SetActorSpritePriority(spark, 1);
-  Actor_SelectAnimation(spark, 7);
-  Actor_SetSpriteFlags(spark, 0);
-  Actor_SetBlendMode(spark, 1);
-  FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
-                                  &spark->x.fixed);
-  Actor_StartScript(spark, gMagmaRockInside_SparkScript);
-  if (i == 3) {
-    Actor_SetSpriteColorById(b, 256);
-    second->motionFlags = noMotion;
-    second->acceleration = 0x3333;
-    second->speedLimit = 0x3333;
-    Actor_SetScript(b, script);
-  }
-tail:
-  wait(8);
-  i++;
-  if (i != 16)
-    goto spiral;
   Event_PlaySound(SE_SHIMMER);
   wait(16);
   i = 2;

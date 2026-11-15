@@ -2048,17 +2048,12 @@ void MagmaRock_StepOnTrap(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == 0)
     return;
-  /* FAKEMATCH(dead): a test no u16 can pass enters the loop a second way. */
-  if (list[0] & 0x10000)
-    goto body;
-  goto test;
-body:
-  {
+  while (*list != 0xffff) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != target) {
       list += 2;
-      goto test;
+      continue;
     }
     {
       s32 flag = list[1];
@@ -2115,9 +2110,6 @@ body:
       return;
     }
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
 }
 
 #include "../field/field_effect_advance_motion_priority.c"

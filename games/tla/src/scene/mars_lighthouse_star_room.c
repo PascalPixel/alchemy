@@ -330,10 +330,8 @@ s32 Scene_Initialize(void) {
     if (entrance == ENTRANCE_FROM_CRACK) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
       struct FieldWork *work = Ram_HeapSlots->fieldWork;
-      /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
-       * its definition returns u8. */
-      s32 column = GameFlag_GetByte(0x340);
-      s32 row = GameFlag_GetByte(0x348);
+      s32 column = FieldGameFlag_GetByte(0x340);
+      s32 row = FieldGameFlag_GetByte(0x348);
       struct Actor *other;
       s32 x;
 

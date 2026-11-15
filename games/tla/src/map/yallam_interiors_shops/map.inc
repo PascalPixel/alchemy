@@ -34,9 +34,9 @@ Field_YallamInteriorsShops:
 	.balign 4, 0
 	.global Tileset_PaletteYallamInteriorsShopsA
 Tileset_PaletteYallamInteriorsShopsA:
-	.incbin "games/tla/src/graphics/tileset/palettes/yallam_interiors_2_a.gbapal.lz"
-	.byte 0xf6, 0x1c, 0xf7	@ PACKER: left in the buffer by Field_YallamInteriors2+0x199
+	.incbin "games/tla/src/graphics/tileset/palettes/yallam_interiors_shops_a.gbapal.lz"
+	.byte 0xf6, 0x1c, 0xf7	@ PACKER: left in the buffer by Field_YallamInteriorsShops+0x199
 	.global Tileset_PaletteYallamInteriorsShopsB
 Tileset_PaletteYallamInteriorsShopsB:
-	.incbin "games/tla/src/graphics/tileset/palettes/yallam_interiors_2_b.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/palettes/yallam_interiors_shops_b.gbapal.lz"
 	.byte 0x44	@ PACKER: left in the buffer by Tileset_PaletteYallamInteriorsShopsA+0x15b

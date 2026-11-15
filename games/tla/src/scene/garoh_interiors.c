@@ -405,21 +405,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
     } else {
-      {
-        s32 x;
-        s32 z;
-        s32 id;
-
-        turn = FACING_SOUTHEAST;
-        x = 153;
-        id = ACTOR_DISAPPOINTED_TRAVELER;
-        /* FAKEMATCH(barrier): the forced id keeps its load right after that
-         * half. */
-        asm volatile("" : "+l"(id));
-        x <<= 17;
-        z = px(335);
-        Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, turn);
-      }
+      turn = FACING_SOUTHEAST;
+      Actor_SetPositionAndFacing(ACTOR_DISAPPOINTED_TRAVELER, px(306), px(335),
+                                 turn);
       {
         s32 angle = FACING_SOUTHWEST;
         s32 z = px(336);

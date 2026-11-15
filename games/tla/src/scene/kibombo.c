@@ -1902,23 +1902,17 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
   }
 }
 
-static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
-  Kibombo_SpawnFlame(x, y, z);
-}
-
 void Kibombo_LightFlameRow(void) {
-  s32 x = px(440);
+  s32 x;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  Kibombo_Spawn(x, 0x280000, 0x1c20000);
-  Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
-  Kibombo_Spawn(x, 0x340000, 0x1aa0000);
-  Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
-  /* FAKEMATCH(dead): an empty once-only block before the last spawn. */
-  do {
-  } while (0);
-  Kibombo_SpawnFlame(x, 0x400000, 0x1920000);
+  x = px(440);
+  Kibombo_SpawnFlame(x, px(40), px(450));
+  Kibombo_SpawnFlame(x, px(46), px(438));
+  Kibombo_SpawnFlame(x, px(52), px(426));
+  Kibombo_SpawnFlame(x, px(58), px(414));
+  Kibombo_SpawnFlame(x, px(64), px(402));
 }
 
 #include "shared/actor_hide.h"

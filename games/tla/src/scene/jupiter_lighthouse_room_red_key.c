@@ -436,7 +436,7 @@ void JupiterLighthouse_AlexAppears(void) {
   s32 x;
   s32 y;
   u32 random;
-  u32 random2;
+  u32 randomY;
   u32 scaled;
 
   actor = ((struct SparkActor *)Actor_Get(ACTOR_ALEX));
@@ -459,9 +459,9 @@ void JupiterLighthouse_AlexAppears(void) {
       x = actor->x;
       x += (((scaled << 3) >> 16) << 16);
       x += -px(12);
-      random2 = Random16();
+      randomY = Random16();
       y = actor->y;
-      FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + px(32),
+      FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + px(32),
                         actor->z, 0, -px(4), 0, px(27), p);
     }
     if (i == 20)

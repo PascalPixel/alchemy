@@ -1396,17 +1396,17 @@ void Islets_StepOntoGround(void) {
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cells0 = map->layers[0].cells;
-  struct MapCell *cells2 = map->layers[2].cells;
-  s32 index = x / px(16) + (z / px(16)) * 128;
+  struct MapCell *lowerCells = map->layers[0].cells;
+  struct MapCell *upperCells = map->layers[2].cells;
+  s32 index = x / px(16) + (z / px(16)) * MAPGRID_SIZE;
 
   if (layers & 1) {
-    cells0 += index;
-    cells0->collisionCode = value;
+    lowerCells += index;
+    lowerCells->collisionCode = value;
   }
   if (layers & 2) {
-    cells2 += index;
-    cells2->collisionCode = value;
+    upperCells += index;
+    upperCells->collisionCode = value;
   }
 }
 

@@ -1708,16 +1708,19 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
   }
 }
 
-#define DEFINE_KIBOMBO_WOBBLE(name, n1, n2, n3, n4, call1, n5, n6, n7)         \
+#define DEFINE_KIBOMBO_WOBBLE(name, secondIndex, secondRange, secondBias,      \
+                              thirdIndex, flickerFourth, fourthIndex,          \
+                              fourthRange, fourthBias)                         \
   void name(void) {                                                            \
     struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
                                                                                \
     if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 && \
         (gFrameCount & 7) == 0) {                                              \
       Kibombo_FlickerColor(9, 0, (Random_Below(10)) - 5);                      \
-      Kibombo_FlickerColor(n1, 1, (Random_Below(n2)) - n3);                    \
-      Kibombo_FlickerColor(n4, 2, (Random_Below(4)) - 2);                      \
-      call1(n5, 3, (Random_Below(n6)) - n7);                                   \
+      Kibombo_FlickerColor(secondIndex, 1,                                     \
+                           (Random_Below(secondRange)) - secondBias);          \
+      Kibombo_FlickerColor(thirdIndex, 2, (Random_Below(4)) - 2);              \
+      flickerFourth(fourthIndex, 3, (Random_Below(fourthRange)) - fourthBias); \
     }                                                                          \
   }
 

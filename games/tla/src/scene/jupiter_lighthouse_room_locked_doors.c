@@ -452,17 +452,28 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 /// angel the archers have energized raised with its half of the lid, and all
 /// three lifted clear once both are. The aerie's beacon floor keeps the same
 /// routine.
+/// The aerie beacon's actors, which the unused copy below of its
+/// JupiterLighthouse_EnergizeAngels places (jupiter_lighthouse_aerie_beacon.c).
+enum {
+  ACTOR_LEFT_ANGEL = 9,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LID_A = 23,
+  ACTOR_LID_B
+};
+
 UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
-  struct Actor *left = Actor_Get(9);
-  struct Actor *right = Actor_Get(10);
-  struct Actor *rider = Actor_Get(23);
+  struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
+  struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
+  struct Actor *rider = Actor_Get(ACTOR_LID_A);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(23, 512, 248);
-  Actor_SetPosition(9, 472, 256);
-  Actor_SetPosition(10, 552, 256);
-  Actor_Get(24)->scaleX = 0;
+  Actor_SetPosition(ACTOR_LID_B, 512, 248);
+  Actor_SetPosition(ACTOR_LID_A, 512, 248);
+  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
+  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
+  Actor_Get(ACTOR_LID_B)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;
   left->motionFlags = 0;
@@ -474,16 +485,16 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_Get(9), 4);
-    Actor_SetSpriteColorMode(Actor_Get(11), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_Get(10), 4);
-    Actor_SetSpriteColorMode(Actor_Get(12), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
@@ -510,8 +521,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;

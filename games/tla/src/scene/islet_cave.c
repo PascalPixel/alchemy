@@ -251,8 +251,8 @@ void IsletCave_FightSerac(void) {
   return;
 }
 
-s32 IsletCave_ClearScriptedActorSpriteFlags(s32 arg0) {
-  Actor_SetSpriteFlags(arg0, 0);
+s32 IsletCave_ClearScriptedActorSpriteFlags(s32 actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -507,9 +507,9 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
 }
 
 /// A log the leader steps onto rocks under him.
-void IsletCave_SettleLog(s32 arg0) {
-  Actor_SetAnimationById(arg0, 1);
-  Actor_SetAnimationById(arg0, 2);
+void IsletCave_SettleLog(s32 logId) {
+  Actor_SetAnimationById(logId, 1);
+  Actor_SetAnimationById(logId, 2);
   return;
 }
 

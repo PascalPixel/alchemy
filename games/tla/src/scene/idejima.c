@@ -59,9 +59,16 @@
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
 #define FLAG_IDEJIMA_LEADER_WALKED_BACK 0x200
 
-/// The shore of the new continent, where Felix wakes; the second is taken after
-/// a load.
-enum IdejimaEntrance { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
+/// The entrances the triggers are chosen by: two out of the door on the hill,
+/// and two onto the shore, the second of which is taken after a load.
+enum IdejimaEntrance {
+  /// Out of the door at (184, 168), whose one trigger is the door.
+  ENTRANCE_FROM_DOOR = 1,
+  /// The shore of the new continent, where Felix wakes.
+  ENTRANCE_WAKE = 2,
+  ENTRANCE_FROM_DOOR_AGAIN = 3,
+  ENTRANCE_WAKE_AGAIN = 4
+};
 
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.
@@ -78,7 +85,7 @@ enum IdejimaActorId {
 extern struct SceneEntrance gIdejimaEntrances[];
 extern u32 gIdejimaExits[];
 extern struct Trigger gIdejimaEvents[];
-extern struct Trigger gIdejimaEventsEntrance1[];
+extern struct Trigger gIdejimaEventsFromDoor[];
 extern struct Trigger gIdejimaEventsWake[];
 extern struct ActorPlacement gIdejimaPlacements[];
 extern s32 gIdejima_StretchScript[];
@@ -133,9 +140,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
-  case 1:
-  case 3:
-    return gIdejimaEventsEntrance1;
+  case ENTRANCE_FROM_DOOR:
+  case ENTRANCE_FROM_DOOR_AGAIN:
+    return gIdejimaEventsFromDoor;
   case ENTRANCE_WAKE:
   case ENTRANCE_WAKE_AGAIN:
     return gIdejimaEventsWake;
@@ -1868,7 +1875,7 @@ struct Trigger gIdejimaEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIdejimaEventsEntrance1[] = {
+struct Trigger gIdejimaEventsFromDoor[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
      EVENT(Idejima_EnterDoor)},
     {TRIGGER_TABLE_END},

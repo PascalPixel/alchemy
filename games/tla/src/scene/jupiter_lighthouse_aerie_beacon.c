@@ -195,23 +195,24 @@ struct UnitItems {
   u16 items[15];
 };
 
-/// The object this update drives: an Actor with its own bytes over the callback
-/// word.
-struct Object6a5 {
-  u8 unk00[6];
-  u16 angle;
+/// The whirlwind as its update reads it: struct Actor's fields under a type of
+/// its own, so that its stores and the leader's are not taken to alias (as
+/// struct Actor, the facing's store moves).
+struct WhirlwindActor {
+  u8 unused[6]; ///< the script and its cursor, not read here
+  u16 facing;
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[0x1c];
-  s32 speed;
-  u8 unk34[0x1c];
+  u8 unusedAfterZ[0x1c];
+  s32 speedLimit;
+  u8 unusedAfterSpeed[0x1c];
   s8 *sprite;
-  u8 unk54[0x0e];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
+  u8 unusedAfterSprite[0x0e];
+  u8 riding;   ///< Actor.riseCounter: the leader rides it
+  u8 carrying; ///< Actor.riseEnabled: it carries the leader still
+  u16 timer;   ///< Actor.timer, frames it has turned
+  u8 unusedAfterTimer[6];
   void (*update)(void);
 };
 
@@ -2419,7 +2420,7 @@ void JupiterLighthouse_RideTheBeam(void) {
 
 extern u32 gJupiterLighthouse_WhirlwindFadesScript[];
 
-void Whirlwind_Update(struct Object6a5 *object) {
+void Whirlwind_Update(struct WhirlwindActor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Vector3 position;
@@ -2434,8 +2435,8 @@ void Whirlwind_Update(struct Object6a5 *object) {
     return;
   }
   Actor_SetAnimationSpeed(object, 16);
-  timer = object->unk64 + 1;
-  object->unk64 = timer;
+  timer = object->timer + 1;
+  object->timer = timer;
   if ((timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
   {
@@ -2451,7 +2452,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
     Camera_WorldToScreen(&position);
     if (position.x <= px(272)) {
       if (position.x >= -px(32)) {
-        if (object->unk62 == 0) {
+        if (object->riding == 0) {
           distance = leader->y.fixed - object->y;
           if (distance < 0)
             distance = object->y - leader->y.fixed;
@@ -2461,22 +2462,22 @@ void Whirlwind_Update(struct Object6a5 *object) {
             near = 1;
           if (near != 0 && Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
             leader->watchedActor = (struct Actor *)object;
-            leader->facing = object->angle;
+            leader->facing = object->facing;
             flags = &leader->priorityFlags;
             *flags &= ~1;
             work->raisedTrigger = 200;
             gMainRoutineWork.movementMode = 0;
-            object->unk62 = 1;
-            object->unk63 = 1;
+            object->riding = 1;
+            object->carrying = 1;
           }
         }
-        object->x += IwramMulQ16(Trig_Cos(object->angle), object->speed);
-        object->z += IwramMulQ16(Math_Sin(object->angle), object->speed);
+        object->x += IwramMulQ16(Trig_Cos(object->facing), object->speedLimit);
+        object->z += IwramMulQ16(Math_Sin(object->facing), object->speedLimit);
         return;
       }
     }
   }
-  object->unk63 = 0;
+  object->carrying = 0;
   object->update = 0;
   Actor_StartScript(object, gJupiterLighthouse_WhirlwindFadesScript);
   Event_PlaySound(SE_SPARKLING_PASSAGE);

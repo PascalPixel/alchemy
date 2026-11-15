@@ -194,6 +194,8 @@ enum KibomboStatueGroundsActorId {
   ACTOR_STATUE_JAW_A = 12,
   ACTOR_STATUE_JAW_B = 13,
   ACTOR_STATUE_TONGUE = 14,
+  ACTOR_GROUNDS_SHADE_A = 15, ///< black squares (spr_337)
+  ACTOR_GROUNDS_SHADE_B = 16,
   /// On the ceremony night: Akafubu, "Let us now present our jewel to the
   /// Great Gabomba!", and the eight warriors in a ring before him.
   ACTOR_AKAFUBU = 17,
@@ -210,6 +212,29 @@ enum KibomboStatueGroundsActorId {
   /// (Kibombo_CarryBlackCrystal); Piers's, Jenna's and Sheba's rows take
   /// their own numbers, so it follows Kraden.
   ACTOR_CRYSTAL_CARRIER = 27
+};
+
+/// The village by day and on the ceremony night: the frozen puddle, the two
+/// candlesticks by the statue path, the flame, and the rope's two posts. By day
+/// two warriors keep the gate and the signal fire smokes; at night a shade
+/// covers the doorway the leader walks behind, and six candlesticks burn.
+enum {
+  ACTOR_VILLAGE_PUDDLE = 8,
+  ACTOR_CANDLESTICK_A,
+  ACTOR_CANDLESTICK_B,
+  ACTOR_FLAME,
+  ACTOR_ROPE_POST_A,
+  ACTOR_ROPE_POST_B,
+  ACTOR_GATE_GUARD_A = 22,
+  ACTOR_GATE_GUARD_B,
+  ACTOR_SIGNAL_FIRE = 25,
+  ACTOR_DOORWAY_SHADE = 29,
+  ACTOR_LIT_CANDLESTICK_A,
+  ACTOR_LIT_CANDLESTICK_B,
+  ACTOR_LIT_CANDLESTICK_C,
+  ACTOR_LIT_CANDLESTICK_D,
+  ACTOR_LIT_CANDLESTICK_E,
+  ACTOR_LIT_CANDLESTICK_F
 };
 
 /// The houses, inn and shops (SceneId_KibomboHouses).
@@ -654,7 +679,7 @@ void Kibombo_MeetPiers(void) {
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   Actor_SetSpritePriority(ACTOR_JENNA, 2);
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
-  Actor_SetSpeed(26, 0.8);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(5, 0.8);
   Actor_SetSpeed(6, 0.8);
   Actor_SetMovementTypeById(ACTOR_KRADEN, gKibombo_KradenMeetsPiersScript);
@@ -667,7 +692,7 @@ void Kibombo_MeetPiers(void) {
   else
     Kibombo_PiersTakesPartyForEnemies();
   Kibombo_AkafubuOffersCrystal();
-  Actor_SetSpeed(26, 1.6);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(5, 1.6);
   Actor_SetSpeed(6, 1.6);
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyGathersScript);
@@ -702,11 +727,11 @@ void Kibombo_PiersHasForgottenParty(void) {
   // "Wait a second... I know you..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 20);
   // "You're the travelers who came seeking me when I was in jail."
@@ -749,11 +774,11 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   // "I must admit, you don't look much like Kibombo..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
   FieldEffect_SetAttached(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1736,12 +1761,12 @@ void Kibombo_SetRoofByLeaderHeight(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (leader->y.fixed > px(16)) {
-    Actor_SetPosition(29, 0, 0);
-    Actor_SetSpritePriority(30, 2);
+    Actor_SetPosition(ACTOR_DOORWAY_SHADE, 0, 0);
+    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 2);
   } else {
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(29), px(120), 0,
-                                         px(168));
-    Actor_SetSpritePriority(30, 3);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_DOORWAY_SHADE),
+                                         px(120), 0, px(168));
+    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
   }
 }
 
@@ -1900,22 +1925,22 @@ void Scene_RunUnlessFlag(void) {
   }
 }
 
-// Hides the grounds' two objects of sprite 337 before the room opens.
-// XXX: what sprite 337 shows here; staging the statue grounds would settle it.
+/// Hides the grounds' two shades (black squares, spr_337) before the room
+/// opens.
 void Kibombo_HideGroundsPair(void) {
   u32 i;
   s32 zero;
 
   for (i = 0; i <= 1; i++) {
-    s32 id = i + 15;
+    s32 id = i + ACTOR_GROUNDS_SHADE_A;
     struct Actor *object = Actor_GetById(id);
 
     Actor_Hide(id);
     zero = 0;
     object->motionFlags = zero;
   }
-  Actor_GetById(15)->y.fixed = px(32);
-  Actor_GetById(16)->y.fixed = zero;
+  Actor_GetById(ACTOR_GROUNDS_SHADE_A)->y.fixed = px(32);
+  Actor_GetById(ACTOR_GROUNDS_SHADE_B)->y.fixed = zero;
   Scene_RunUnlessFlag();
 }
 
@@ -3042,25 +3067,25 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: the frozen puddles, the rope and the roofs.
 void Kibombo_InitializeVillage(void) {
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
-  Actor_SetSpriteFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
   FieldEffect_StartBlankOverlay(0);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
-  Actor_SetSpritePriority(8, 3);
+  Actor_SetSpritePriority(ACTOR_VILLAGE_PUDDLE, 3);
   Rope_Initialize();
-  Rope_Place(0, 0x9e9, 12, 13);
-  Actor_GetById(22)->collisionFlags |= 0x80;
-  Actor_GetById(23)->collisionFlags |= 0x80;
+  Rope_Place(0, 0x9e9, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Actor_GetById(ACTOR_GATE_GUARD_A)->collisionFlags |= 0x80;
+  Actor_GetById(ACTOR_GATE_GUARD_B)->collisionFlags |= 0x80;
 }
 
 void Kibombo_InitializeVillageByDay(void) {
-  Actor_SetPosition(11, 88, 314);
-  Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  Actor_GetById(11)->scaleY = Q16_ONE / 2;
+  Actor_SetPosition(ACTOR_FLAME, 88, 314);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME), 0);
+  Actor_GetById(ACTOR_FLAME)->scaleY = Q16_ONE / 2;
   Kibombo_InitializeVillage();
   GameFlag_Clear(0x86b);
-  Actor_DisableById(25);
-  Actor_SetAnimationById(25, 2);
+  Actor_DisableById(ACTOR_SIGNAL_FIRE);
+  Actor_SetAnimationById(ACTOR_SIGNAL_FIRE, 2);
   Task_Add(Kibombo_PuffSmoke, TASK_PASS_VBLANK);
   Kibombo_LightFlameRow();
 }
@@ -3092,7 +3117,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 /// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
 /// Kibombo_FlickerVillageFires scheduled.
 void Kibombo_InitializeCeremony(void) {
-  struct Actor *actor = Actor_GetById(11);
+  struct Actor *actor = Actor_GetById(ACTOR_FLAME);
   struct Unit *unit;
   s32 done;
 
@@ -3103,8 +3128,8 @@ void Kibombo_InitializeCeremony(void) {
     actor->motionFlags = done;
     actor->y.fixed = px(42);
     actor->z.fixed += px(-42);
-    Actor_SetSpriteFlags(Actor_GetById(11), 0);
-    Actor_SetSpritePriority(11, 1);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME), 0);
+    Actor_SetSpritePriority(ACTOR_FLAME, 1);
     if (gMainRoutineWork.entrance == 19 &&
         GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
       unit = Unit_Get(ACTOR_PIERS);
@@ -3133,18 +3158,18 @@ void Kibombo_InitializeCeremony(void) {
   gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
   gKibombo_FireColors[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
   Kibombo_InitializeVillage();
-  Actor_SetSpriteFlags(Actor_GetById(30), 0);
-  Actor_SetSpriteFlags(Actor_GetById(31), 0);
-  Actor_SetSpriteFlags(Actor_GetById(32), 0);
-  Actor_SetSpriteFlags(Actor_GetById(33), 0);
-  Actor_SetSpriteFlags(Actor_GetById(34), 0);
-  Actor_SetSpriteFlags(Actor_GetById(35), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_C), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_D), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_E), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_F), 0);
   GameFlag_Set(FLAG_SCENE_TEMP_09);
-  actor = Actor_GetById(29);
+  actor = Actor_GetById(ACTOR_DOORWAY_SHADE);
   actor->motionFlags = 0;
   actor->y.fixed = 0;
-  Actor_Hide(29);
-  Actor_SetSpritePriority(30, 3);
+  Actor_Hide(ACTOR_DOORWAY_SHADE);
+  Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Actor_SetPosition(26, 0, 0);
     Actor_SetPosition(27, 0, 0);
@@ -3167,20 +3192,20 @@ void Kibombo_CreateBlackCrystal(void);
 /// The grounds before the statue: the Black Crystal, the markings dug, the vent
 /// and the block Moved for Piers.
 void Kibombo_InitializeStatueGrounds(void) {
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
-  Actor_SetSpriteFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
   if (!GameFlag_Get(FLAG_GABOMBA_RESPONDED))
     Kibombo_CreateBlackCrystal();
   Kibombo_HideGroundsPair();
   if (!GameFlag_Get(0x869))
     GameFlag_Set(FLAG_SCENE_TEMP_01);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
-  Actor_SetSpritePriority(8, 2);
-  Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  Actor_GetById(11)->motionFlags = 0;
+  Actor_SetSpritePriority(ACTOR_GROUNDS_PUDDLE, 2);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_GROUNDS_PILLAR), 0);
+  Actor_GetById(ACTOR_GROUNDS_PILLAR)->motionFlags = 0;
   if (GameFlag_Get(FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS)) {
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(11), 208 << 15, 0,
-                                         148 << 17);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_GROUNDS_PILLAR),
+                                         208 << 15, 0, 148 << 17);
     MapGrid_CopyCellAttributes(5, 18, 1, 1, 6, 18);
     wait(10);
   }

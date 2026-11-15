@@ -301,14 +301,14 @@ void Leader_PushObjectAhead(void) {
     Actor_SelectAnimationFar(owner, 8);
     wait(15);
     Sound_PlayFar(SE_PUSH);
-    target->speedLimit = 0x3333;
-    target->acceleration = 0x3333;
+    target->speedLimit = px(1) / 5;
+    target->acceleration = px(1) / 5;
     Actor_SetMoveTargetFar(target, position[0], position[1], position[2]);
     wait(2);
     acceleration = owner->acceleration;
-    owner->acceleration = 0x3333;
+    owner->acceleration = px(1) / 5;
     speed = owner->speedLimit;
-    owner->speedLimit = 0x3333;
+    owner->speedLimit = px(1) / 5;
     Actor_SetMoveTargetFar(owner, position[0], position[1], position[2]);
     Actor_WaitForMoveFar(target);
     wait(1);

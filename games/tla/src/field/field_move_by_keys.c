@@ -544,7 +544,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(SE_SAND_MOVE);
-        effect->gravity = 0xa3d;
+        effect->gravity = px(1) / 25;
         effect->velocityY = 0;
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;

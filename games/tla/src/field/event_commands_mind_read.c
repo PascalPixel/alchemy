@@ -333,8 +333,8 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = 4;
   target->update = (void (*)(void))Actor_ApplyRandomChildValues;
-  target->speedLimit = 0x6666;
-  target->acceleration = 0x3333;
+  target->speedLimit = px(2) / 5;
+  target->acceleration = px(1) / 5;
   target->steeringFlags = moved;
   // Through target rather than layer, which keeps moved's load after the
   target->layer = 2;
@@ -418,18 +418,18 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     Actor_SelectAnimationFar(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->paused = 0;
-    target->speedLimit = 0x3333;
-    target->acceleration = 0x3333;
+    target->speedLimit = px(1) / 5;
+    target->acceleration = px(1) / 5;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
-    pusher->speedLimit = 0x3333;
-    pusher->acceleration = 0x3333;
+    pusher->speedLimit = px(1) / 5;
+    pusher->acceleration = px(1) / 5;
     Vector_AddPolarOffset(px(16), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
     if (moved == 1) {
-      Actor_GetById(scene->firstActorId)->steeringFlags &= 0xfe;
-      user->speedLimit = 0x3333;
-      user->acceleration = 0x3333;
+      Actor_GetById(scene->firstActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      user->speedLimit = px(1) / 5;
+      user->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     Actor_WaitForMoveFar(target);
@@ -570,7 +570,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
       child->acceleration = px(1);
       child->speedLimit = speed;
       child->motionFlags = 2;
-      child->gravity = 0x51e;
+      child->gravity = px(1) / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + px(8);
@@ -634,7 +634,7 @@ void UpdateRisingParticleBurst(void *object) {
       child->acceleration = unit;
       child->speedLimit = speed + unit;
       child->motionFlags = 2;
-      child->gravity = 0xa3d;
+      child->gravity = px(1) / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
@@ -922,7 +922,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       obj->acceleration = px(3) / 2;
       obj->speedLimit = px(3) / 2;
       obj->motionFlags = 0;
-      Actor_SetSpriteColorModeFar(obj, 11);
+      Actor_SetSpriteColorModeFar(obj, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(obj, 7);
       Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
 
@@ -1202,12 +1202,12 @@ void FieldPsynergy_Force(void) {
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + px(16),
                  source->z.fixed);
     Camera_WorldToScreen(&pos);
-    FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
+    FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(slot->object, 9);
-    slot->scaleY = 0xb333;
-    slot->scaleX = 0xb333;
+    Animation_ApplyChildValuesToRecordFar(slot->object, SPRITE_COLOR_BLUE_TINT);
+    slot->scaleY = Q16_ONE * 7 / 10;
+    slot->scaleX = Q16_ONE * 7 / 10;
     wait(2);
     slot++;
   }
@@ -1228,7 +1228,7 @@ void FieldPsynergy_Force(void) {
   object->acceleration = px(4);
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
-  Actor_SetSpriteColorModeFar(object, 3);
+  Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_BGR);
   scale = object->scaleX;
   if (scale < Q16_ONE) {
     do {
@@ -1253,7 +1253,7 @@ void FieldPsynergy_Force(void) {
       copy->acceleration = px(4);
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, 5);
-      Actor_SetSpriteColorModeFar(copy, 2);
+      Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
     }
   }
@@ -1311,9 +1311,9 @@ s32 FieldEffect_UpdateFrostGlint(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
-    Actor_SetSpriteColorModeFar((struct Actor *)particle, 2);
+    Actor_SetSpriteColorModeFar((struct Actor *)particle, SPRITE_COLOR_RBG);
   } else if (phase == 2) {
-    Actor_SetSpriteColorModeFar((struct Actor *)particle, 0);
+    Actor_SetSpriteColorModeFar((struct Actor *)particle, SPRITE_COLOR_NORMAL);
   }
   return 0;
 }
@@ -1428,7 +1428,8 @@ void FieldPsynergy_Frost(void) {
       particle->facing = Random16();
       particle->timer = 60;
       particle->userValue = Random16();
-      Actor_SetSpriteColorModeFar((struct Actor *)particle, 9);
+      Actor_SetSpriteColorModeFar((struct Actor *)particle,
+                                  SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + px(2);
@@ -1451,9 +1452,9 @@ void FieldPsynergy_Frost(void) {
 
     cnt = 7;
     do {
-      Actor_SetSpriteColorModeFar((struct Actor *)target, 7);
+      Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_WHITE);
       wait(1);
-      Actor_SetSpriteColorModeFar((struct Actor *)target, 0);
+      Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_NORMAL);
       wait(4);
       cnt--;
     } while (cnt >= 0);

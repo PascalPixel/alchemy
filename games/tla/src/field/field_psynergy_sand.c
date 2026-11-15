@@ -217,8 +217,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   particle->velocityY = 0;
   particle->velocityZ = position[2];
   EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
-  sprite->scaleX = 0x3333;
-  sprite->scaleY = 0x3333;
+  sprite->scaleX = Q16_ONE / 5;
+  sprite->scaleY = Q16_ONE / 5;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
   sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
   sprite->oam.fullColor = 1;

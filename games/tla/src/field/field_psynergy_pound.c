@@ -253,7 +253,7 @@ void FieldPsynergy_Pound(void) {
   glow->oam.fullColor = 0;
   glow->oam.palette = 0;
   glow->depth = 0;
-  glow->scaleY = glow->scaleX = 0xcccc;
+  glow->scaleY = glow->scaleX = Q16_ONE * 4 / 5;
   pos[0] = scene->x;
   pos[1] = scene->y;
   pos[2] = scene->z;
@@ -284,7 +284,7 @@ void FieldPsynergy_Pound(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    sprite->scaleY = sprite->scaleX = 0xcccc;
+    sprite->scaleY = sprite->scaleX = Q16_ONE * 4 / 5;
   }
   wait(1);
   FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);

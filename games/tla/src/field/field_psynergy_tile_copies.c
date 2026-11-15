@@ -91,7 +91,7 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
   object->velocityY = px(5);
-  object->scaleY = object->scaleX = 0x6666;
+  object->scaleY = object->scaleX = Q16_ONE * 2 / 5;
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;

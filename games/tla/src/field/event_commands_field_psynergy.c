@@ -254,7 +254,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     object->speedLimit = Random16() + Q16_ONE;
     object->acceleration = Q16_ONE;
     object->motionFlags = 2;
-    object->gravity = 0xa3d;
+    object->gravity = px(1) / 25;
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;

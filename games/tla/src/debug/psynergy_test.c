@@ -606,8 +606,8 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
 
       Actor_SetSpriteFlags(object, 0);
       object->velocityY = px(6);
-      object->scaleX = 0x6666;
-      object->scaleY = 0x6666;
+      object->scaleX = Q16_ONE * 2 / 5;
+      object->scaleY = Q16_ONE * 2 / 5;
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
@@ -646,7 +646,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
     }
   } else if (((u8 *)object)[98] == 1) {
     if (work->heights[0] > 31 && work->heights[1] > 31) {
-      Actor_SetSpriteColorMode(object, 0);
+      Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;

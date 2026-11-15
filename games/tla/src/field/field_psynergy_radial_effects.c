@@ -549,7 +549,7 @@ void FieldPsynergy_Catch(void) {
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
-  Actor_SetSpriteColorModeFar(object, 1);
+  Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
   step = 0;
   do {
     s32 scale;
@@ -1205,9 +1205,9 @@ void BattleEffect_WaitForArcGroups(void) {
 /// frames and spawns the swelling arcs on it every 16.
 void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorModeFar(object, 7);
+    Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorModeFar(object, 0);
+    Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     BattleEffect_SpawnScaledArcObjects(object);
@@ -1229,7 +1229,7 @@ void FieldEffect_CycleActorAndSpawnArcs(struct Actor *object) {
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
-    Actor_SetSpriteColorModeFar(object, 0);
+    Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_NORMAL);
   } else if (mode == 1) {
     object->update = (void (*)(void))FieldEffect_FlickerActorAndSpawnArcs;
   } else {
@@ -1653,8 +1653,8 @@ void FieldPsynergy_Arrow(void) {
   // volatile keeps the depth store before the scale stores.
   *(volatile s16 *)&sprite->depth =
       BattleEffect_GetObjectDepth(scene->mainActor) + 1;
-  *(volatile s32 *)&sprite->scaleX = 0x6666;
-  *(volatile s32 *)&sprite->scaleY = 0x6666;
+  *(volatile s32 *)&sprite->scaleX = Q16_ONE * 2 / 5;
+  *(volatile s32 *)&sprite->scaleY = Q16_ONE * 2 / 5;
   sprite->angle = scene->angle8;
   pos[0] = scene->mainActor->x.fixed;
   pos[2] = scene->mainActor->z.fixed;

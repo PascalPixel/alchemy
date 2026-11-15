@@ -233,7 +233,7 @@ void FieldPsynergy_Douse(void) {
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->sprite)->mode = 2;
         Actor_SelectAnimationFar(mote, 8);
-        Actor_SetSpriteColorModeFar((struct Actor *)mote, 7);
+        Actor_SetSpriteColorModeFar((struct Actor *)mote, SPRITE_COLOR_WHITE);
       }
       wait(6);
     }
@@ -368,11 +368,11 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
   }
   anchors[0]->speedLimit = px(4);
-  anchors[0]->acceleration = 0x8000;
+  anchors[0]->acceleration = px(1) / 2;
   anchors[1]->speedLimit = px(4);
-  anchors[1]->acceleration = 0x8000;
-  target->speedLimit = 0x6666;
-  target->acceleration = 0x3333;
+  anchors[1]->acceleration = px(1) / 2;
+  target->speedLimit = px(2) / 5;
+  target->acceleration = px(1) / 5;
   target->steeringFlags = 0;
   target->layer = 2;
   for (;;) {
@@ -427,14 +427,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
       target->paused = i;
-      target->speedLimit = 0x3333;
-      target->acceleration = 0x3333;
+      target->speedLimit = px(1) / 5;
+      target->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
-      anchors[0]->speedLimit = 0x3333;
-      anchors[0]->acceleration = 0x3333;
+      anchors[0]->speedLimit = px(1) / 5;
+      anchors[0]->acceleration = px(1) / 5;
       second = anchors[1];
-      second->speedLimit = 0x3333;
-      second->acceleration = 0x3333;
+      second->speedLimit = px(1) / 5;
+      second->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(anchors[0], p->x + px(16), p->y, p->z);
       Actor_SetMoveTargetFar(second, p->x - px(16), p->y, p->z);
       Actor_WaitForMoveFar(target);
@@ -463,7 +463,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       if (object != NULL) {
         Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
         object->speedLimit = Random16() + px(2);
-        object->acceleration = 0x20000;
+        object->acceleration = px(2);
         object->motionFlags = 0;
         magnitude = Random16() * 24 + 0x80000;
         Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
@@ -482,7 +482,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->bounce = px(1) / 5;
   target->layer = 0;
   source->update = NULL;
-  Actor_SetSpriteColorModeFar(source, 0);
+  Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);
   if ((s8)work->childOption != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);

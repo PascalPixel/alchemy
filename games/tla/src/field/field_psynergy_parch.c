@@ -165,8 +165,8 @@ loaded:
     for (i = spawn; i != 0; i--) {
       s32 slot = next & 63;
       sprite = &work->sprites[slot];
-      sprite->scaleX = 0x3333;
-      sprite->scaleY = 0x3333;
+      sprite->scaleX = Q16_ONE / 5;
+      sprite->scaleY = Q16_ONE / 5;
       particle = &work->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + px(9), Random16(), &particle->x);

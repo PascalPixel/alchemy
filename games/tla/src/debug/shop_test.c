@@ -851,8 +851,8 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
 
       Actor_SetSpriteFlags(object, 0);
       object->velocityY = px(6);
-      object->scaleX = 0x6666;
-      object->scaleY = 0x6666;
+      object->scaleX = Q16_ONE * 2 / 5;
+      object->scaleY = Q16_ONE * 2 / 5;
       while (object->scaleX < Q16_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;

@@ -236,7 +236,7 @@ void FieldPsynergy_Scoop(void) {
   Actor_SelectAnimationFar(object, 0);
   alternate = &scene->lit;
   if (*alternate != 0)
-    Actor_SetSpriteColorModeFar(object, 6);
+    Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GREY);
   if (*alternate == 0)
     other = Actor_Spawn(354, scene->x, scene->y, scene->z);
   else
@@ -317,7 +317,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      sprite->scaleY = sprite->scaleX = 0x3333;
+      sprite->scaleY = sprite->scaleX = Q16_ONE / 5;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;

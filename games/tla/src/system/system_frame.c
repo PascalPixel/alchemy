@@ -202,17 +202,7 @@ void wait(s32 frames) {
         while (gInput.held)
           System_WaitForFrameInterrupt();
         gSleepActive = 1;
-        {
-          u32 high;
-
-          // The wake mask written as its high byte shifted up plus its low
-          // byte is built in a register; as the constant, it loads from the
-          // pool.
-          high = KEYCNT_SLEEP_WAKE >> 8;
-          /* FAKEMATCH(barrier): an empty asm on high. */
-          asm volatile("" : "+l"(high));
-          REG_KEYCNT = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
-        }
+        Io_Write16(KEYCNT_SLEEP_WAKE, &REG_KEYCNT);
         Bios_SoundBiasOff();
         Bios_Stop();
         Bios_SoundBiasOn();
@@ -258,8 +248,6 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay;
 
   held = gInput.held;
-  /* FAKEMATCH(barrier): an empty asm after held is read. */
-  asm("");
   delay = gInput.repeatTimer;
   if (delay <= 0) {
     keys = held;

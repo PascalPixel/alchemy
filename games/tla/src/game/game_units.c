@@ -517,11 +517,6 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 }
 
 extern s8 gSceneLocalState[];
-#ifndef MODERN
-// A current GCC refuses the volatile redeclaration and reads frame.h's.
-extern volatile u8 gIdleSleepEnabled;
-#endif
-
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
 /// flags and the owners by DMA, builds the characters, sets the defaults (the
 /// button layout, Felix and Jenna in the party, their first Psynergy, 200
@@ -594,7 +589,6 @@ void MainRoutineWork_InitializeDefaults(void) {
   gPlayTimeFrames = 0;
   gIdleSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
-  /* FAKEMATCH(volatile): the auto-sleep flag. */
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
@@ -818,7 +812,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   u8 name[16];
   s32 i;
   s32 k;
-  s32 slot;
+  s32 index;
   s32 count;
   s32 j;
 
@@ -830,12 +824,11 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
       s32 flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 
-      if (FlagBits_Test(flags, FLAG_DJINNI(i * DJINN_PER_ELEMENT + j)))
+      index = i * DJINN_PER_ELEMENT + j;
+      if (FlagBits_Test(flags, FLAG_DJINNI(index)))
         GameFlag_Set(flag);
       else
         GameFlag_Clear(flag);
-      /* FAKEMATCH(barrier): an empty asm reading j. */
-      asm("" : : "r"(j));
     }
   }
   for (i = 0; i < TRANSFERRED_FLAG_COUNT; i++) {
@@ -870,11 +863,11 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     memcpy(unit, name, sizeof(units->name));
     if (byPassword == 0)
       unit->enemyId = unit->id;
-    for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
-      s32 item = unit->inventory[slot];
+    for (index = INVENTORY_SLOTS - 1; index >= 0; index--) {
+      s32 item = unit->inventory[index];
 
       if (item != 0 && (Item_GetDirect(item)->flags & ITEM_NOT_TRANSFERRED)) {
-        while (Inventory_Remove(i, slot) == 1)
+        while (Inventory_Remove(i, index) == 1)
           ;
       }
     }
@@ -946,13 +939,10 @@ void Party_AddIsaacsParty(void) {
     s32 j;
 
     for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      djinni = i * DJINN_PER_ELEMENT + j;
       if (GameFlag_Get(FLAG_TRANSFERRED_DJINN_FIRST + k + j))
-        GameFlag_Set(FLAG_DJINNI(i * DJINN_PER_ELEMENT + j));
-      /* FAKEMATCH(barrier): an empty asm reading j. */
-      asm("" : : "r"(j));
+        GameFlag_Set(FLAG_DJINNI(djinni));
     }
-    /* FAKEMATCH(barrier): an empty asm on i. */
-    asm("" : "+r"(i));
   }
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
   Party_AddMember(ISAAC);
@@ -1021,6 +1011,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
   s32 remaining;
   s32 element;
   s32 djinn;
+  s32 flag;
   s32 i;
   s32 k;
 
@@ -1073,16 +1064,13 @@ void DataTransfer_GiveDefaultDjinn(void) {
   for (i = 0, k = 0; i < ELEMENT_COUNT;
        i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
     s32 j;
-    s32 flag;
 
     for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
-      /* FAKEMATCH(temporary): the flag number held in a local. */
+      djinn = i * DJINN_PER_ELEMENT + j;
       flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
-      // element carries the flag to read after the one to set.
-      element = FLAG_DJINNI(i * DJINN_PER_ELEMENT + j);
-      if (GameFlag_Get(element))
+      if (GameFlag_Get(FLAG_DJINNI(djinn)))
         GameFlag_Set(flag);
-      GameFlag_Clear(element);
+      GameFlag_Clear(FLAG_DJINNI(djinn));
     }
   }
   for (i = ISAAC; i <= MIA; i++)

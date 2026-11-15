@@ -30,7 +30,8 @@ struct InputState {
   volatile u32 previousDirection;
   u32 previousHeld;
   u32 pendingPressed;
-  s32 repeatTimer;
+  // volatile: the VBlank handler counts it down while the key repeat reads it.
+  volatile s32 repeatTimer;
 };
 
 STATIC_ASSERT(sizeof(struct InputState) == 0x24);

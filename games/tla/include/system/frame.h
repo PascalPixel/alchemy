@@ -27,7 +27,7 @@ extern u32 gCpuLoadPeak;
 /// Nonzero: wait() counts no idle time and ignores sleep requests.
 extern volatile u8 gSleepDisabled;
 /// Sleep after three idle minutes.
-extern u8 gIdleSleepEnabled;
+extern volatile u8 gIdleSleepEnabled;
 extern volatile u16 gIdleFrames;
 extern volatile u8 gSleepRequested;
 extern u8 gDebugMode;

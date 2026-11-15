@@ -362,16 +362,9 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
 /// and cannot be unequipped, 8 the slot is empty.
 s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
-  s32 entry = unit->inventory[slot];
-  s32 itemId;
-  struct ItemDefinition *item;
-  s32 result;
-
-  /* FAKEMATCH(temporary): the mask built in the local it masks into. */
-  itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= entry;
-  item = Item_GetDirect(itemId);
-  result = 0;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirect(itemId);
+  s32 result = 0;
 
   if (itemId == 0)
     return 8;
@@ -386,16 +379,9 @@ s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
 /// and cannot be taken off.
 s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
-  s32 raw = unit->inventory[slot];
-  s32 itemId;
-  struct ItemDefinition *item;
-  s32 result;
-
-  /* FAKEMATCH(temporary): the mask built in the local it masks into. */
-  itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= raw;
-  item = Item_GetDirect(itemId);
-  result = 0;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirect(itemId);
+  s32 result = 0;
 
   if (itemId == 0)
     return 8;
@@ -483,18 +469,14 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 /// new count; ordinary items have none.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 result;
-  s32 index = INVENTORY_ITEM_ID_MASK;
-  const u16 *table = gItem_ArtifactSlotTable;
   u16 counter;
 
-  /* FAKEMATCH(temporary): the index masked and doubled apart in the local that
-   * held the mask. */
-  index &= itemId;
-  index <<= 1;
+  itemId &= INVENTORY_ITEM_ID_MASK;
   // The table holds a rare item's counter number plus one, and 0 for an
   // ordinary item.
-  counter = *(const u16 *)((const u8 *)table + index);
+  counter = gItem_ArtifactSlotTable[itemId];
   result = 0;
+
   if (counter)
     result = RareItemStock_Adjust(counter - 1, delta);
   return result;

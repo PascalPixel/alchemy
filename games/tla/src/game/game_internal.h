@@ -84,19 +84,6 @@ struct LevelUpWork {
 };
 
 /// The running totals Unit_Calculate builds a unit's stats in.
-/// The class's stat multipliers as Unit_Calculate reads them, ClassDefinition
-/// with its first eight bytes left opaque.
-struct ClassScaleView {
-  u8 seriesAndRequired[8]; ///< ClassDefinition.series and required
-  u8 hp;
-  u8 pp;
-  u8 atk;
-  u8 def;
-  u8 agi;
-  u8 luck;
-};
-
-/// The running totals Unit_Calculate builds a unit's stats in.
 struct StatWork {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP

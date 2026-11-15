@@ -114,7 +114,7 @@ enum ClassSeries {
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {
-  s32 series;                        ///< the series Class_Determine picks from
+  long series;                       ///< the series Class_Determine picks from
   u8 required[4];                    ///< each element's level needed, in tens
   u8 hp;                             ///< tenths of the base stat
   u8 pp;                             ///< tenths of the base stat

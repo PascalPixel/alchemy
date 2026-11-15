@@ -178,7 +178,7 @@ struct ItemDefinition {
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
 
   u8 reserved10[4]; ///< 0 in every row
-  s32 element;      ///< a weapon's attack element; ELEMENT_NONE for none
+  long element;     ///< a weapon's attack element; ELEMENT_NONE for none
   struct EquipEffect
       effects[EQUIP_EFFECT_SLOTS]; ///< what it does while equipped
   u16 abilityId;                   ///< the ability used, or taught as Psynergy

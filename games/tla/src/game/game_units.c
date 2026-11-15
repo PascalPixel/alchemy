@@ -147,8 +147,6 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
-      /* FAKEMATCH(barrier): an empty asm after the Attack bonus. */
-      asm("");
       stats->def += stats->item->secondaryBonus;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
@@ -236,17 +234,15 @@ void Unit_Calculate(s32 unitId) {
 
     // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat)
     {
-      /* FAKEMATCH(signature): the class read through ClassScaleView, which has
-       * no word member, so the multipliers load ahead of the stores. */
-      struct ClassScaleView *scale =
-          (struct ClassScaleView *)Class_GetDefinition(unit->classId);
+      const struct ClassDefinition *classDefinition =
+          Class_GetDefinition(unit->classId);
 
-      stats->hp = stats->hp * scale->hp / STAT_SCALE_ONE;
-      stats->pp = stats->pp * scale->pp / STAT_SCALE_ONE;
-      stats->atk = stats->atk * scale->atk / STAT_SCALE_ONE;
-      stats->def = stats->def * scale->def / STAT_SCALE_ONE;
-      stats->agi = stats->agi * scale->agi / STAT_SCALE_ONE;
-      stats->luck = stats->luck * scale->luck / STAT_SCALE_ONE;
+      stats->hp = stats->hp * classDefinition->hp / STAT_SCALE_ONE;
+      stats->pp = stats->pp * classDefinition->pp / STAT_SCALE_ONE;
+      stats->atk = stats->atk * classDefinition->atk / STAT_SCALE_ONE;
+      stats->def = stats->def * classDefinition->def / STAT_SCALE_ONE;
+      stats->agi = stats->agi * classDefinition->agi / STAT_SCALE_ONE;
+      stats->luck = stats->luck * classDefinition->luck / STAT_SCALE_ONE;
     }
 
     // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to

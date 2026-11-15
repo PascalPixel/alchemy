@@ -202,31 +202,6 @@ static inline s32 Serial_AddErrorFlag(s32 status) {
   return status;
 }
 
-static __inline__ void Serial_ResetTransferState(void) {
-  struct SerialTransferState *state;
-  volatile u16 *ime;
-  u32 saved;
-  u32 zero;
-
-  state = &gSerialTransfer;
-  ime = &REG_IME;
-  IME_SAVE(ime, saved);
-  IME_DISABLE(ime);
-  zero = 0;
-  /* FAKEMATCH(dead): state set again. */
-  state = &gSerialTransfer;
-  do {
-  } while (0);
-  state->status = SERIAL_STATUS_RUNNING;
-  gSerialSendSource = zero;
-  gSerialSendSize = zero;
-  gSerialReceiveDestination = zero;
-  *(u8 *)&state->peerFlags = zero;
-  *(u8 *)&state->flags = zero;
-  gSerialReceivedSize = zero;
-  *ime = saved;
-}
-
 /// DMA3, the channel the game copies with, as its three registers.
 #define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
 

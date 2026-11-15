@@ -147,10 +147,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define BATTLE_BACKGROUND_SCROLL_Y 32
 
 /// Where the battle's projection (gProjection) centres on the screen, and
-/// where the summons centre it while their formations fly, twice as low.
+/// where Atalanta and Boreas centre it while their formations fly, lower.
 #define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
 #define BATTLE_PROJECTION_CENTER_Y 120
-#define SUMMON_PROJECTION_CENTER_Y (BATTLE_PROJECTION_CENTER_Y * 2)
+#define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
 /// (work->fadeFrames, Palette_StepFadeTransfer).

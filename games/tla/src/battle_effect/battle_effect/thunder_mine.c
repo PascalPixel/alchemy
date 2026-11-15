@@ -43,7 +43,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
-  if (mode == 0) {
+  if (mode == BOLT_TRAIL_THUNDER_MINE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
@@ -55,7 +55,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
-  if (mode == 1) {
+  if (mode == BOLT_TRAIL_EARTH_FORCE) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
                     128);
@@ -73,13 +73,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       }
     }
   }
-  if (mode == 0) {
+  if (mode == BOLT_TRAIL_THUNDER_MINE) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  if (mode == 0) {
+  if (mode == BOLT_TRAIL_THUNDER_MINE) {
     frames = 24;
     /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24. */
     asm("");
@@ -92,7 +92,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->user, &source);
       EffectPosition_ProjectBattler(args->targets[0], &target);
-      if (mode == 0) {
+      if (mode == BOLT_TRAIL_THUNDER_MINE) {
         ball->x = px(source.x);
         ball->y = px(source.y - 32);
         ball->velocityX = (px(target.x) - ball->x) / frames;
@@ -153,7 +153,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      if (mode == 0) {
+      if (mode == BOLT_TRAIL_THUNDER_MINE) {
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       } else {
         EFFECT_SHOW_DAMAGE(-1);
@@ -168,7 +168,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       ball->variant++;
       x = ball->x >> 17;
       y = ball->y >> 16;
-      if (mode == 0) {
+      if (mode == BOLT_TRAIL_THUNDER_MINE) {
         radius = frame * 2 + 16;
         largest = 48;
       } else {
@@ -179,7 +179,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         radius = largest;
       } else {
         BattleEffect_DrawShadedCircles(buffer, radius, 85536);
-        if (mode == 1) {
+        if (mode == BOLT_TRAIL_EARTH_FORCE) {
           for (i = 0; i != radius * radius / 2; i++) {
             if (buffer[i] != 0) {
               buffer[i] = 64 - buffer[i];
@@ -214,7 +214,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Thunder Mine's sparks bounce.
-    if (mode == 0 && frame >= frames) {
+    if (mode == BOLT_TRAIL_THUNDER_MINE && frame >= frames) {
       for (i = 0, dot = BOLT_SPARKS; i != 512; i++, dot++) {
         if (dot->variant >= 0) {
           s32 size = (dot->variant >> 3) + 2;
@@ -241,7 +241,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       texture.logWidth = 5;
       texture.logHeight = 7;
       // DEAD: both kinds are overwritten by the 6 below; the source keeps them.
-      if (mode == 0) {
+      if (mode == BOLT_TRAIL_THUNDER_MINE) {
         model->kind = 6;
       } else {
         model->kind = 9;
@@ -272,7 +272,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
                                       0);
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
-        if (mode == 0) {
+        if (mode == BOLT_TRAIL_THUNDER_MINE) {
           SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);

@@ -317,8 +317,6 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   Decompress_TaggedLz(res, dst);
 }
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 

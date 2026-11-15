@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 /// The Djinni's picture, 40 pixels wide, at the end of the work sheet.
 #define DJINNI_OFFSET 0x65c0
 /// Rime's crystal: a 48x48 picture mirrored from its left half into a
@@ -39,7 +37,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  if (mode == 0) {
+  if (mode == DJINNI_SIGN_RIME) {
     s32 row;
     s32 column;
 
@@ -104,7 +102,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     }
     if (frame == 38)
       EFFECT_SHOW_DAMAGE(-1);
-    if (mode == 0) {
+    if (mode == DJINNI_SIGN_RIME) {
       if (frame == 32)
         Sound_PlayFar(SE_POWER_UP);
     } else {
@@ -136,7 +134,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     model->texture = &texture;
     model->mesh = gBattleEffect_SquareMesh;
     model->vertices = vertices;
-    if (mode == 0) {
+    if (mode == DJINNI_SIGN_RIME) {
       // Rime's crystal fades in over the first eight frames and turns in
       // two mirrored copies that come together at frame 32, shrinking
       // from twice its size.
@@ -211,82 +209,82 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Gasp.
 void BattleEffect_RunGasp(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 0);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_GASP);
 }
 
 /// Abilities: Reflux.
 void BattleEffect_RunReflux(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 2);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_REFLUX);
 }
 
 /// Abilities: Djinn Counter.
 void BattleEffect_RunDjinnCounter(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 3);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_DJINN_COUNTER);
 }
 
 /// Abilities: Counter-rush.
 void BattleEffect_RunCounterRush(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 7);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_COUNTER_RUSH);
 }
 
 /// Abilities: Mold.
 void BattleEffect_RunMold(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 4);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_MOLD);
 }
 
 /// Abilities: Meld.
 void BattleEffect_RunMeld(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 4);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_MOLD);
 }
 
 /// Abilities: Shine.
 void BattleEffect_RunShine(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 5);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_SHINE);
 }
 
 /// Abilities: Lull.
 void BattleEffect_RunLull(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 6);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_LULL);
 }
 
 /// Abilities: Demon Eye.
 void BattleEffect_RunDemonEye(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 8);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_DEMON_EYE);
 }
 
 /// Abilities: Emu, Call Demon, Claw Slash, Mega Slash, Vital Moon.
 void BattleEffect_RunEmu(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 9);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_EMU);
 }
 
 /// Abilities: Call Dullahan, Formina Sage.
 void BattleEffect_RunCallDullahan(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 10);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_CALL_DULLAHAN);
 }
 
 /// Abilities: Beat Dance.
 void BattleEffect_RunBeatDance(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 11);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_BEAT_DANCE);
 }
 
 /// Abilities: Clarion Cry.
 void BattleEffect_RunClarionCry(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 14);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_CLARION_CRY);
 }
 
 /// Abilities: Element Swap.
 void BattleEffect_RunElementSwap(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 12);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_ELEMENT_SWAP);
 }
 
 /// Abilities: Psy Boost.
 void BattleEffect_RunPsyBoost(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 15);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_PSY_BOOST);
 }
 
 /// Abilities: Cage.
 void BattleEffect_RunCage(struct BattleEffectParams *args) {
-  BattleEffect_RunGaspFamily(args, 13);
+  BattleEffect_RunGaspFamily(args, GASP_MODE_CAGE);
 }
 #undef BLITTER
 #undef DJINNI_OFFSET

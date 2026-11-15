@@ -42,7 +42,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   caster = BattleObject_GetFar(args->user)->object;
-  if (mode == 0) {
+  if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
     frames = 80;
     Resource_LoadAndDecompress((s32)&ResourceId_GreatSwordSheet, work->sheet, 1,
                                1);
@@ -88,7 +88,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       if (frame == 8) {
         BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
       }
@@ -105,7 +105,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     model->texture = &texture;
     model->vertices = vertices;
     model->shade = zero;
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       s32 size;
       s32 angle;
 
@@ -235,7 +235,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         } while (i != gHeavyBlow_ChipCounts[mode]);
       }
     }
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       BattleCamera_Shake(4, 16);
     } else {
       BattleCamera_Shake(8, 8);
@@ -684,7 +684,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
 #undef BLITTER
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define FLAMES 32
 
 /// Radiant Fire: eight bursts of fire bloom one after another around the
@@ -1027,12 +1026,12 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
 
 /// Abilities: Earth Force.
 void BattleEffect_RunEarthForce(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, 1);
+  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_EARTH_FORCE);
 }
 
 /// Abilities: Thunder Mine.
 void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, 0);
+  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_THUNDER_MINE);
 }
 #undef BLITTER
 #undef SLIM_COLUMN_OFFSET

@@ -6,6 +6,13 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The star swarm's modes (BattleEffect_RunStarSwarm).
+enum StarSwarmMode { STAR_SWARM_DJINN_STUN, STAR_SWARM_MYSTIC_CALL };
+
+/// The geyser's modes (BattleEffect_RunGeyser), each named for the effect that
+/// plays it.
+enum GeyserMode { GEYSER_PURGATORY, GEYSER_DJINN_STORM, GEYSER_DJINN_BLAST };
+
 // Vengeance: the avenger's blades.
 
 struct StripQuad;
@@ -577,17 +584,17 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
  * member named `size'. */
 /// Abilities: Purgatory.
 void BattleEffect_RunPurgatory(struct BattleEffectParams *args) {
-  BattleEffect_RunGeyser(args, 0);
+  BattleEffect_RunGeyser(args, GEYSER_PURGATORY);
 }
 
 /// Abilities: Djinn Blast.
 void BattleEffect_RunDjinnBlast(struct BattleEffectParams *args) {
-  BattleEffect_RunGeyser(args, 2);
+  BattleEffect_RunGeyser(args, GEYSER_DJINN_BLAST);
 }
 
 /// Abilities: Djinn Storm.
 void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
-  BattleEffect_RunGeyser(args, 1);
+  BattleEffect_RunGeyser(args, GEYSER_DJINN_STORM);
 }
 
 #define GEYSER_FRAMES 54
@@ -634,7 +641,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   s32 brightness;
 
   BattleEffect_StartCanvasLayer(1);
-  if (mode == 0)
+  if (mode == GEYSER_PURGATORY)
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   else
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -646,7 +653,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
     spawned = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                                0);
-    if (mode == 0) {
+    if (mode == GEYSER_PURGATORY) {
       Resource_LoadAndDecompress((s32)&ResourceId_CrossTextureSheet,
                                  work->sheet, 1, 1);
       CopyPalette(Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB));
@@ -688,7 +695,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       // Modes 1 and 2 step the palette three times a frame from frame 8:
       // toward the Mercury Djinn's, from frame 20 the Mars Djinn's and from
       // frame 32 the Jupiter Djinn's.
-      if (mode == 1 || mode == 2) {
+      if (mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST) {
         for (i = 0; i != 3; i++) {
           if (frame >= 8) {
             if (frame < 20)
@@ -706,7 +713,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
       // How many drops burst this frame.
       count = 0;
-      if (mode == 2) {
+      if (mode == GEYSER_DJINN_BLAST) {
         if (frame == 0)
           count = 100;
         if (frame >= 1 && frame < 24)
@@ -714,7 +721,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       } else {
         if (frame == 0)
           count = 200;
-        if (mode == 1 || mode == 2) {
+        if (mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST) {
           if (frame >= 1 && frame < 24)
             count = 16;
         }
@@ -728,7 +735,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         drop->x = px(midpoint.x / 2);
         drop->y = px(108);
-        if (mode == 2)
+        if (mode == GEYSER_DJINN_BLAST)
           drop->velocityX = (Trig_Sin(angle) * speed) >> 8;
         else
           drop->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -775,7 +782,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(px(midpoint.x / 2 - 64), -px(16), 0);
         Transform_ApplyPitch(2000);
-        if (mode == 0) {
+        if (mode == GEYSER_PURGATORY) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
           if (frame < 16)
             scale = Trig_Sin(frame << 10);
@@ -784,7 +791,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
           else
             scale = Trig_Sin((frame << 10) - TRIG_TURN / 8);
           brightness = -32;
-        } else if (mode == 1) {
+        } else if (mode == GEYSER_DJINN_STORM) {
           // Wider every frame, fading from frame 32.
           scale = frame << 12;
           brightness = -32;
@@ -820,12 +827,12 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Djinn Stun.
 void BattleEffect_RunDjinnStun(struct BattleEffectParams *args) {
-  BattleEffect_RunStarSwarm(args, 0);
+  BattleEffect_RunStarSwarm(args, STAR_SWARM_DJINN_STUN);
 }
 
 /// Abilities: Mystic Call.
 void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
-  BattleEffect_RunStarSwarm(args, 1);
+  BattleEffect_RunStarSwarm(args, STAR_SWARM_MYSTIC_CALL);
 }
 
 #define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
@@ -861,7 +868,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  if (mode == 0)
+  if (mode == STAR_SWARM_DJINN_STUN)
     frames = args->targetCount * 8 + 38;
   else
     frames = 72;
@@ -881,7 +888,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
         work->particles[i].x = object->x;
         work->particles[i].y = 0;
         work->particles[i].z = object->z;
-        if (mode == 1) {
+        if (mode == STAR_SWARM_MYSTIC_CALL) {
           work->particles[i].velocityX = 0;
           work->particles[i].velocityY = px(1) / 2;
         } else {
@@ -931,17 +938,17 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       // Set in two steps: as one giv the loop pass would turn it into a walker.
       start *= 8;
       starCount = 16;
-      if (mode != 0)
+      if (mode != STAR_SWARM_DJINN_STUN)
         starCount = 48;
       if (frame == start) {
-        if (mode == 0)
+        if (mode == STAR_SWARM_DJINN_STUN)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, member, 16);
         else
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 16);
       }
-      if (frame == start + 55 && mode != 0)
+      if (frame == start + 55 && mode != STAR_SWARM_DJINN_STUN)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, member, 16);
 
@@ -961,10 +968,10 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
 
           Transform_Push();
           switch ((member + i) & 3) {
-          case 0:
+          case STAR_SWARM_DJINN_STUN:
             Transform_ApplyYaw(frame * (i + 8) * 32);
             break;
-          case 1:
+          case STAR_SWARM_MYSTIC_CALL:
             Transform_ApplyPitch(-frame * (i + 8) * 32);
             break;
           case 2:

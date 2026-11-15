@@ -51,7 +51,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   sprites = Ram_HeapSlots->battleSheet;
   unit = Unit_Get(args->targets[0]);
   BattleEffect_StartCanvasLayer(0);
-  if (mode <= 1) {
+  if (mode <= WATER_COLUMN_GALE) {
     frames = 38;
     BattleEffect_RunDjinniEntrance(
         args,
@@ -59,10 +59,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         screen, point);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-  } else if (mode == 2 || mode == 4) {
+  } else if (mode == WATER_COLUMN_LETHE_ALBION ||
+             mode == WATER_COLUMN_RAGING_FLOOD) {
     s32 *caster = BattleObject_GetFar(args->user)->object;
 
-    if (mode == 2) {
+    if (mode == WATER_COLUMN_LETHE_ALBION) {
       s32 row;
       s32 k;
       s32 size = 0x1000;
@@ -109,7 +110,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   work->particles[63].z = target[4];
   work->particles[63].velocityX = target[6];
   work->particles[63].velocityY = target[7];
-  if (mode == 2 || mode == 4) {
+  if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D2, work->sheet, 0, 0);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
@@ -117,15 +118,18 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet + 0x2000, 1, 1);
-  if (mode == 3) {
+  if (mode == WATER_COLUMN_POISON_FLOW) {
     Iwram_CopyWordsEntry(
         palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   }
-  if (mode == 4 || mode == 2) {
+  if (mode == WATER_COLUMN_RAGING_FLOOD || mode == WATER_COLUMN_LETHE_ALBION) {
     Iwram_CopyWordsEntry(
         palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
   }
-  columns = (mode == 2 || mode == 4) ? 8 : 4;
+  columns =
+      (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD)
+          ? 8
+          : 4;
   Render_BuildQuadStrip(mesh, columns, 32, 32);
 
   frame = 0;
@@ -143,7 +147,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         target[4] = work->particles[63].z;
         target[6] = work->particles[63].velocityX;
         target[7] = work->particles[63].velocityY;
-        if (mode == 0) {
+        if (mode == WATER_COLUMN_WHORL) {
           for (i = 0; i != 63; i++) {
             struct Particle *q = &work->particles[i];
 
@@ -158,7 +162,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             q->velocityZ = q->z;
             q->velocityY = q->y;
           }
-        } else if (mode == 1) {
+        } else if (mode == WATER_COLUMN_GALE) {
           {
             struct Particle *q = work->particles;
 
@@ -176,7 +180,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       }
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
-      if (mode <= 1) {
+      if (mode <= WATER_COLUMN_GALE) {
         s32 k = 4;
 
         pos[0] = point[0] + (Trig_Sin(frame << 11) << 4);
@@ -198,10 +202,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         }
       }
       if (frame > 7) {
-        if (mode <= 1 && frame <= 47) {
+        if (mode <= WATER_COLUMN_GALE && frame <= 47) {
           work->shakeFrames = 3;
         }
-        if (mode == 0) {
+        if (mode == WATER_COLUMN_WHORL) {
           if (frame == 32) {
             if (args->variant == EFFECT_VARIANT_STRONGER) {
               target[3] = 0x7c0000;
@@ -226,7 +230,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             target[6] += (0x4000 - work->particles[63].velocityX) / 16;
             target[7] += (0x4000 - work->particles[63].velocityY) / 16;
           }
-        } else if (mode == 1) {
+        } else if (mode == WATER_COLUMN_GALE) {
           target[18] = 0;
           if (frame > 55) {
             target[3] = 0x900000;
@@ -245,7 +249,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
         }
       }
-      if (frame > 0 && mode <= 1) {
+      if (frame > 0 && mode <= WATER_COLUMN_GALE) {
         {
           struct Particle *q = work->particles;
 
@@ -253,7 +257,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             if (frame >= i && frame < i + 30) {
               s32 n = (i & 3) + 1;
 
-              if (mode == 0) {
+              if (mode == WATER_COLUMN_WHORL) {
                 q->x += (pos[0] - q->velocityX) / 32;
                 q->y += (pos[1] - q->velocityY) / 32;
                 q->z += (pos[2] - q->velocityZ) / 32;
@@ -268,7 +272,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         }
       }
 
-      if (mode == 2 || mode == 4) {
+      if (mode == WATER_COLUMN_LETHE_ALBION ||
+          mode == WATER_COLUMN_RAGING_FLOOD) {
         for (j = 0; j != 33; j++) {
           s32 r = j;
 
@@ -286,7 +291,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             MAP_CELLS[j][i][2] = zero;
           }
         }
-      } else if (mode == 3) {
+      } else if (mode == WATER_COLUMN_POISON_FLOW) {
         for (j = 0; j != 33; j++) {
           s32 r = j * 4;
           s32 w = j * 2 + 4;
@@ -324,7 +329,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       }
 
       model = Render_AllocateModelList(1);
-      if (mode == 4) {
+      if (mode == WATER_COLUMN_RAGING_FLOOD) {
         if (frame <= 45) {
           shade = frame * 4 - 64;
         } else {
@@ -346,7 +351,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       if (shade < -64) {
         shade = -64;
       }
-      if (mode == 2 || mode == 4) {
+      if (mode == WATER_COLUMN_LETHE_ALBION ||
+          mode == WATER_COLUMN_RAGING_FLOOD) {
         texture.logWidth = 5;
       } else {
         texture.logWidth = 7;
@@ -358,7 +364,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       model->mesh = mesh;
       model->vertices = vertices;
       model->shade = shade;
-      if (mode == 2 || mode == 4) {
+      if (mode == WATER_COLUMN_LETHE_ALBION ||
+          mode == WATER_COLUMN_RAGING_FLOOD) {
         EffectPosition_ProjectBattler(args->targets[0], &apos);
         if (frame == 16) {
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
@@ -450,7 +457,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
           }
         }
-      } else if (mode == 3) {
+      } else if (mode == WATER_COLUMN_POISON_FLOW) {
         EffectPosition_ProjectScaledBattler(args->user, &spos);
         if (frame == 8) {
           Sound_PlayFar(SE_CLATTER);
@@ -503,7 +510,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           model->shade = shade;
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           gCameraSceneParameters[3] = 60;
-          if (mode == 0) {
+          if (mode == WATER_COLUMN_WHORL) {
             model->scrollU = (frame << 3) & 127;
           } else {
             model->scrollU = ~(frame << 3) & 127;
@@ -517,7 +524,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               Transform_ApplyYaw(TRIG_TURN / 2);
             }
             Transform_ApplyRoll((i << 10) + 3096);
-            if (mode != 1) {
+            if (mode != WATER_COLUMN_GALE) {
               Transform_ApplyPitch((frame + i * 4) << 11);
             } else {
               Transform_ApplyPitch((i << 13) - (frame << 11));
@@ -531,7 +538,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         gCameraSceneParameters[3] = 120;
       }
       Heap_Release(model);
-      if (mode == 2 || mode == 4) {
+      if (mode == WATER_COLUMN_LETHE_ALBION ||
+          mode == WATER_COLUMN_RAGING_FLOOD) {
         BattleCamera_Shake(8, 8);
       } else {
         BattleCamera_Shake(4, 4);
@@ -541,7 +549,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     } while (frame != frames);
   }
 
-  if (unit[0x129] && mode == 0 && args->variant == EFFECT_VARIANT_STRONGER) {
+  if (unit[0x129] && mode == WATER_COLUMN_WHORL &&
+      args->variant == EFFECT_VARIANT_STRONGER) {
     target[2] = work->particles[63].x;
     target[3] = work->particles[63].y;
     target[4] = work->particles[63].z;
@@ -555,12 +564,12 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
 /// Abilities: Core.
 void BattleEffect_RunCore(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinniCharge(args, 0);
+  BattleEffect_RunDjinniCharge(args, DJINNI_CHARGE_CORE);
 }
 
 /// Abilities: Cannon.
 void BattleEffect_RunCannon(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinniCharge(args, 1);
+  BattleEffect_RunDjinniCharge(args, DJINNI_CHARGE_CANNON);
 }
 #undef BLITTER
 #undef MAP_CELLS

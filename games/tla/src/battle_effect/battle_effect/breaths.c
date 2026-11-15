@@ -5,18 +5,11 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// The crescent slash's modes (BattleEffect_RunCrescentSlash).
+enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 
 /// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
 #define JAW_TEXTURE (Ram_MapCellBuffer + 0x4000)
-
-// The four breaths, as the wrappers pass them.
-enum {
-  BREATH_BEAM,          // Beam: a beam of fading rings.
-  BREATH_ROLLING_FLAME, // Rolling Flame: a ball rolls to the target.
-  BREATH_PIKE,          // Ghost Soldier and Pike Assault.
-  BREATH_BLAST,         // Blast Breath: a blast and a jet.
-};
 
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
@@ -462,12 +455,12 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Human Hunt.
 void BattleEffect_RunHumanHunt(struct BattleEffectParams *args) {
-  BattleEffect_RunCrescentSlash(args, 0);
+  BattleEffect_RunCrescentSlash(args, CRESCENT_SLASH_HUMAN_HUNT);
 }
 
 /// Abilities: Echo Cut.
 void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
-  BattleEffect_RunCrescentSlash(args, 1);
+  BattleEffect_RunCrescentSlash(args, CRESCENT_SLASH_ECHO_CUT);
 }
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
@@ -493,7 +486,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   // Set up the canvas and a clipped MAX blitter, mirrored to face the target
   // and flipped upside down for Echo Cut.
   BattleEffect_StartTiledCanvas(0);
-  if (mode == 0) {
+  if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
     if (args->side != EFFECT_SIDE_ENEMIES)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
@@ -511,7 +504,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
-  if (mode == 0) {
+  if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
@@ -535,7 +528,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {
-      if (mode == 1)
+      if (mode == CRESCENT_SLASH_ECHO_CUT)
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -547,19 +540,19 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     // From frame 8: the slash, one step every three frames.
     if (frame > 7) {
       s32 step = (frame - 8) / 3;
-      s32 y = mode != 0 ? 16 : 0;
+      s32 y = mode != CRESCENT_SLASH_HUMAN_HUNT ? 16 : 0;
       s32 x;
 
       if (args->side == EFFECT_SIDE_ENEMIES)
         x = position[0] / 2 - 48;
       else
         x = position[0] / 2 - 80;
-      if (mode == 0) {
+      if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
         switch (step) {
-        case 0:
+        case CRESCENT_SLASH_HUMAN_HUNT:
           draw[0](canvas, work->sheet, x, y, 120, 120);
           break;
-        case 1:
+        case CRESCENT_SLASH_ECHO_CUT:
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
         case 2:
@@ -574,10 +567,10 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         }
       } else {
         switch (step) {
-        case 1:
+        case CRESCENT_SLASH_ECHO_CUT:
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
-        case 0:
+        case CRESCENT_SLASH_HUMAN_HUNT:
           draw[0](canvas, work->sheet, x, y, 120, 120);
           break;
         case 2:

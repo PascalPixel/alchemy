@@ -53,17 +53,17 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x800, 1, 0);
   switch (mode) {
-  case 0:
+  case RUSHING_STRIKE_BONE_CHARGE:
     resource = (s32)&ResourceId_FirePillarSheetB;
     break;
-  case 1:
+  case RUSHING_STRIKE_BRUTE_FORCE:
     resource = (s32)&ResourceId_IceBlockSheet;
     break;
-  case 2:
+  case RUSHING_STRIKE_ONSLAUGHT:
     resource = (s32)&ResourceId_PinkBurstSheet;
     break;
-  case 3:
-  case 5:
+  case RUSHING_STRIKE_HEADBUTT:
+  case RUSHING_STRIKE_LIVING_ARMOR:
     resource = (s32)&ResourceId_BlastSheet;
     break;
   default:
@@ -150,7 +150,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     flashFrame = frame - LUNGE_HIT_FRAME;
     if (frame >= LUNGE_HIT_FRAME &&
         frame < LUNGE_HIT_FRAME + LUNGE_FLASH_FRAMES) {
-      if (mode == 4)
+      if (mode == RUSHING_STRIKE_STUN_MUSCLE)
         scale = (flashFrame << 12) + Q16_ONE / 16;
       else
         scale = flashFrame * 3048 + 3048;
@@ -179,7 +179,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
       EFFECT_STRIKE_TARGET(args, 0, LUNGE_HIT_FRAME, KNOCKBACK_HURL);
-      if (mode == 5)
+      if (mode == RUSHING_STRIKE_LIVING_ARMOR)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -213,7 +213,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Mode 5's flame bursts rise through six 32x64 cels in 24 frames.
-      if (mode == 5) {
+      if (mode == RUSHING_STRIKE_LIVING_ARMOR) {
 
         for (i = 0; i != BURST_COUNT; i++) {
           struct Particle *burst = &work->particles[i];

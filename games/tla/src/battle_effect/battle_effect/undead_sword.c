@@ -6,6 +6,12 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The water sheet's modes (BattleEffect_RunWaterSheet).
+enum WaterSheetMode { WATER_SHEET_DREAMTIDE, WATER_SHEET_WATERY_GRAVE };
+
+/// The wind funnel's modes (BattleEffect_RunWindFunnel).
+enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
+
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
 #define BLAST_SHEET_OFFSET 0x460
@@ -320,12 +326,12 @@ void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
 
 /// Abilities: Dreamtide.
 void BattleEffect_RunDreamtide(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterSheet(args, 0);
+  BattleEffect_RunWaterSheet(args, WATER_SHEET_DREAMTIDE);
 }
 
 /// Abilities: Watery Grave.
 void BattleEffect_RunWateryGrave(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterSheet(args, 1);
+  BattleEffect_RunWaterSheet(args, WATER_SHEET_WATERY_GRAVE);
 }
 
 struct StripQuad;
@@ -387,7 +393,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
   mesh = gData_02014000;
-  if (mode == 0) {
+  if (mode == WATER_SHEET_DREAMTIDE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -402,7 +408,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   Picture_MirrorIntoQuadrants(work->sheet, work->sheet + 0x400, 32, 32);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
                              0);
-  if (mode == 1) {
+  if (mode == WATER_SHEET_WATERY_GRAVE) {
     u8 *pixel;
 
     /* FAKEMATCH(temporary): pixel set inside the call that takes the sheet's
@@ -481,7 +487,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   WATER_MESH[WATER_QUADS * 2].vertexB = 0;
   WATER_MESH[WATER_QUADS * 2].vertexC = 0;
   frames = 48;
-  if (mode != 0) {
+  if (mode != WATER_SHEET_DREAMTIDE) {
     frames = 81;
   }
 
@@ -505,7 +511,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       camera->yaw = (s16)camera->yaw - 128;
     }
 
-    if (mode == 0) {
+    if (mode == WATER_SHEET_DREAMTIDE) {
       if (frame == 17) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
         BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0x80000, 100);
@@ -534,7 +540,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         work->shakeFrames = 8;
       }
     }
-    if (mode == 0) {
+    if (mode == WATER_SHEET_DREAMTIDE) {
       if ((u32)(frame - 33) <= 14) {
         REG_BLDALPHA = (48 - frame) | 0x1000;
       }
@@ -547,7 +553,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     shade = 0;
 
     // The waves rise, then ebb.
-    if (mode == 0) {
+    if (mode == WATER_SHEET_DREAMTIDE) {
       if (frame <= 31) {
         height = frame * 4;
         if (height > 64) {
@@ -604,7 +610,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     texture.logHeight = 6;
     texture.pixels = work->sheet + 0x400;
     Transform_Reset();
-    if (mode != 0) {
+    if (mode != WATER_SHEET_DREAMTIDE) {
       Transform_ApplyPitch(4000);
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -643,7 +649,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         bubbleZ += 0x60000;
       }
     }
-    if (mode == 1) {
+    if (mode == WATER_SHEET_WATERY_GRAVE) {
       for (i = 0; i != 20; i++) {
         struct Particle *step = &work->particles[i];
         s32 picture = step->variant;
@@ -718,12 +724,12 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Waft.
 void BattleEffect_RunWaft(struct BattleEffectParams *args) {
-  BattleEffect_RunWindFunnel(args, 0);
+  BattleEffect_RunWindFunnel(args, WIND_FUNNEL_WAFT);
 }
 
 /// Abilities: Aroma.
 void BattleEffect_RunAroma(struct BattleEffectParams *args) {
-  BattleEffect_RunWindFunnel(args, 1);
+  BattleEffect_RunWindFunnel(args, WIND_FUNNEL_AROMA);
 }
 
 #define WAFT_SEGMENTS 33
@@ -761,7 +767,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   // Read through funnel at the corner loop and the transform only.
   funnel = gMapGridCellBuffer;
   BattleEffect_StartCanvasLayer(0);
-  if (mode == 0) {
+  if (mode == WIND_FUNNEL_WAFT) {
     BattleEffect_RunDjinniEntrance(
         args,
         DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
@@ -787,7 +793,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   Task_Add(transfer, TASK_PASS_FRAME);
   yaw = 0; // Default: set again at frame 0 before it is read.
   frames = 36;
-  if (mode == 1 && args->targetCount > 4) {
+  if (mode == WIND_FUNNEL_AROMA && args->targetCount > 4) {
     frames = args->targetCount * 6 + 12;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
@@ -812,7 +818,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       // vertices is reused for the radius, 32, through casts; an s32 of its own
       // differs.
       /* FAKEMATCH(dead): both arms set the radius alike. */
-      if (mode == 0) {
+      if (mode == WIND_FUNNEL_WAFT) {
         x = 80;
         vertices = (u8 *)32;
       } else {
@@ -831,9 +837,9 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_179);
     }
     if (frame > 19) {
-      if (mode == 0) {
+      if (mode == WIND_FUNNEL_WAFT) {
         BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
-      } else if (mode == 1) {
+      } else if (mode == WIND_FUNNEL_AROMA) {
         BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
       }
     }
@@ -871,7 +877,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     } else {
       yaw += 2048;
     }
-    if (mode == 0) {
+    if (mode == WIND_FUNNEL_WAFT) {
       angle = frame << 12;
       height = 80 - ((Trig_Sin(frame * 820) * 80) >> 16);
     } else {
@@ -891,7 +897,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       corner += 4;
     }
 
-    if (mode == 0) {
+    if (mode == WIND_FUNNEL_WAFT) {
       if (frame == 28) {
         work->shakeFrames = 6;
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -940,7 +946,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     model->shade = shade;
     for (k = 0; k != gWindFunnel_Counts[mode]; k++) {
       Transform_Reset();
-      if (mode == 0) {
+      if (mode == WIND_FUNNEL_WAFT) {
         s32 scale;
 
         SceneTransform_ApplyPosition3(px(screen.x / 2 - 64), px(40), 0);

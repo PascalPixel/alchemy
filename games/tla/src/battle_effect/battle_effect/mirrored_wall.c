@@ -62,17 +62,17 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
 
 /// Abilities: Revive, Water of Life, Lich; Quartz.
 void BattleEffect_RunRevive(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinnBeams(args, 0);
+  BattleEffect_RunDjinnBeams(args, ELEMENT_VENUS);
 }
 
 /// Abilities: Dew.
 void BattleEffect_RunDew(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinnBeams(args, 1);
+  BattleEffect_RunDjinnBeams(args, ELEMENT_MERCURY);
 }
 
 /// Abilities: Spark.
 void BattleEffect_RunSpark(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinnBeams(args, 2);
+  BattleEffect_RunDjinnBeams(args, ELEMENT_MARS);
 }
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
@@ -119,10 +119,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
                              work->sheet + PIC_MOTE, 1, 1);
-  if (mode == 0)
+  if (mode == ELEMENT_VENUS)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + PIC_DJINN, 1, 1);
-  else if (mode == 1)
+  else if (mode == ELEMENT_MERCURY)
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + PIC_DJINN, 1, 1);
   else

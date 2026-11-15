@@ -386,6 +386,83 @@ enum TumblingQuadsMode {
   TUMBLING_QUADS_PHOENIX ///< rising from the first target
 };
 
+/// The gasp family's modes (BattleEffect_RunGaspFamily), each named for the
+/// effect that plays it.
+enum GaspMode {
+  GASP_MODE_GASP,
+  GASP_MODE_REFLUX = 2,
+  GASP_MODE_DJINN_COUNTER,
+  GASP_MODE_MOLD,
+  GASP_MODE_SHINE,
+  GASP_MODE_LULL,
+  GASP_MODE_COUNTER_RUSH,
+  GASP_MODE_DEMON_EYE,
+  GASP_MODE_EMU,
+  GASP_MODE_CALL_DULLAHAN,
+  GASP_MODE_BEAT_DANCE,
+  GASP_MODE_ELEMENT_SWAP,
+  GASP_MODE_CAGE,
+  GASP_MODE_CLARION_CRY,
+  GASP_MODE_PSY_BOOST
+};
+
+/// The water column's modes (BattleEffect_RunWaterColumn), each named for the
+/// effect that plays it.
+enum WaterColumnMode {
+  WATER_COLUMN_WHORL,
+  WATER_COLUMN_GALE,
+  WATER_COLUMN_LETHE_ALBION,
+  WATER_COLUMN_POISON_FLOW,
+  WATER_COLUMN_RAGING_FLOOD
+};
+
+/// The bolt trail's modes (BattleEffect_RunBoltTrail).
+enum BoltTrailMode { BOLT_TRAIL_THUNDER_MINE, BOLT_TRAIL_EARTH_FORCE };
+
+/// The Djinni charge's modes (BattleEffect_RunDjinniCharge).
+enum DjinniChargeMode { DJINNI_CHARGE_CORE, DJINNI_CHARGE_CANNON };
+
+/// The heavy blow's modes (BattleEffect_RunHeavyBlow).
+enum HeavyBlowMode { HEAVY_BLOW_HEAVY_DIVIDE, HEAVY_BLOW_STRONG_HIT };
+
+/// The Djinni sign's modes (BattleEffect_RunDjinniSign).
+enum DjinniSignMode { DJINNI_SIGN_RIME, DJINNI_SIGN_HAZE };
+
+/// The cards (BattleEffect_RunCards).
+enum CardKind {
+  CARD_SLEEP,  ///< Sleep Card: sheep jump from the card.
+  CARD_BAFFLE, ///< Baffle Card: butterflies, and the screen waves.
+  CARD_DEATH,  ///< Death Card: a skeleton reaps the target.
+  CARD_SWORD,  ///< Sword Card: a dagger strikes, and shards fly.
+};
+
+/// The element cards (BattleEffect_RunElementCards).
+enum ElementCardKind {
+  CARD_BRAMBLE, ///< Bramble Card: vines grow from the card.
+  CARD_FROST,   ///< Frost Card: the card throws crystal shards.
+  CARD_FLAME,   ///< Flame Card: the card throws smoke and flashes.
+  CARD_THUNDER, ///< Thunder Card: bolts strike from the card.
+};
+
+/// The breaths (BattleEffect_RunBreaths).
+enum BreathKind {
+  BREATH_BEAM,          ///< Beam: a beam of fading rings.
+  BREATH_ROLLING_FLAME, ///< Rolling Flame: a ball rolls to the target.
+  BREATH_PIKE,          ///< Ghost Soldier and Pike Assault.
+  BREATH_BLAST,         ///< Blast Breath: a blast and a jet.
+};
+
+/// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
+/// named for the effect that first plays it; Bone Charge plays Stun Muscle's.
+enum RushingStrikeMode {
+  RUSHING_STRIKE_BONE_CHARGE,
+  RUSHING_STRIKE_BRUTE_FORCE,
+  RUSHING_STRIKE_ONSLAUGHT,
+  RUSHING_STRIKE_HEADBUTT,
+  RUSHING_STRIKE_STUN_MUSCLE,
+  RUSHING_STRIKE_LIVING_ARMOR
+};
+
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {

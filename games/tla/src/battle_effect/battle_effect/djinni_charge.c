@@ -76,7 +76,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                work->sheet + 0x1000, 1, 1);
-    if (mode == 0) {
+    if (mode == DJINNI_CHARGE_CORE) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1,
                                  1);
       Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         work->particles[63].z = 0;
         work->particles[63].velocityX = target[2] - focus[0];
         // DEAD: both arms alike; the ROM keeps the test.
-        if (mode == 0) {
+        if (mode == DJINNI_CHARGE_CORE) {
           work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
         } else {
           work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
@@ -118,14 +118,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != 62; i++) {
           work->particles[i].variant = -1;
         }
-        if (mode == 1) {
+        if (mode == DJINNI_CHARGE_CANNON) {
           Sound_PlayFar(SE_CRASH);
         }
       }
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
 
-      if (mode == 0) {
+      if (mode == DJINNI_CHARGE_CORE) {
         if ((u32)frame <= 15) {
           s32 turn;
 
@@ -235,7 +235,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
       // The Djinni.
       EffectPosition_ProjectPoint(focus, &screen);
-      if (mode == 0) {
+      if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
           blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10,
                   screen.y - 20, 20, 40);
@@ -246,7 +246,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       } else if (frame <= 22) {
         blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20,
                 20, 40);
-        if (mode == 1 && frame > 1) {
+        if (mode == DJINNI_CHARGE_CANNON && frame > 1) {
           s32 picture = (frame / 4) & 3;
           s32 x;
 
@@ -264,7 +264,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
       // Debris, bouncing.
       count = 62;
-      if (mode != 0) {
+      if (mode != DJINNI_CHARGE_CORE) {
         count = 54;
       }
       for (i = 0; i != count; i++) {
@@ -285,7 +285,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         }
         work->particles[i].variant--;
       }
-      if (mode == 1) {
+      if (mode == DJINNI_CHARGE_CANNON) {
         for (i = 0; i != 8; i++) {
           s32 picture;
 
@@ -302,7 +302,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           p->variant--;
         }
       }
-      if (mode == 0) {
+      if (mode == DJINNI_CHARGE_CORE) {
         if (frame == 24) {
           BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
         }
@@ -311,7 +311,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Core's glowing orb.
-      if (mode == 0 && frame <= 89) {
+      if (mode == DJINNI_CHARGE_CORE && frame <= 89) {
         s32 scale;
 
         model = Render_AllocateModelList(1);
@@ -387,11 +387,11 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Rime.
 void BattleEffect_RunRime(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinniSign(args, 0);
+  BattleEffect_RunDjinniSign(args, DJINNI_SIGN_RIME);
 }
 
 /// Abilities: Haze.
 void BattleEffect_RunHaze(struct BattleEffectParams *args) {
-  BattleEffect_RunDjinniSign(args, 1);
+  BattleEffect_RunDjinniSign(args, DJINNI_SIGN_HAZE);
 }
 #undef BLITTER

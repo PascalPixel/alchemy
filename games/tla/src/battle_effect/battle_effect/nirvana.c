@@ -114,8 +114,6 @@ static inline s16 *Fixed_Halves(s32 *value) {
   return (s16 *)value;
 }
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 #define ROCKS 21
 
 /// Stone Justice: 21 boulders rise in a column beside the user and tumble
@@ -928,12 +926,12 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 
 /// Abilities: Heavy Divide.
 void BattleEffect_RunHeavyDivide(struct BattleEffectParams *args) {
-  BattleEffect_RunHeavyBlow(args, 0);
+  BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_HEAVY_DIVIDE);
 }
 
 /// Abilities: Strong Hit.
 void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
-  BattleEffect_RunHeavyBlow(args, 1);
+  BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_STRONG_HIT);
 }
 #undef BLITTER
 #undef ROCKS

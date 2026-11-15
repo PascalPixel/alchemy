@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 /// The sparks live in the map cell buffer's second 16 KB.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
@@ -172,24 +170,24 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
 
 /// Abilities: Beam, Cycle Beam, Searing Beam.
 void BattleEffect_RunBeam(struct BattleEffectParams *args) {
-  BattleEffect_RunBreaths(args, 0);
+  BattleEffect_RunBreaths(args, BREATH_BEAM);
 }
 
 /// Abilities: Rolling Flame.
 void BattleEffect_RunRollingFlame(struct BattleEffectParams *args) {
   args->variant = 2;
-  BattleEffect_RunBreaths(args, 1);
+  BattleEffect_RunBreaths(args, BREATH_ROLLING_FLAME);
 }
 
 /// Abilities: Ghost Soldier, Pike Assault.
 void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
   args->variant = 2;
-  BattleEffect_RunBreaths(args, 2);
+  BattleEffect_RunBreaths(args, BREATH_PIKE);
 }
 
 /// Abilities: Blast Breath.
 void BattleEffect_RunBlastBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunBreaths(args, 3);
+  BattleEffect_RunBreaths(args, BREATH_BLAST);
 }
 #undef BLITTER
 #undef SPARKS

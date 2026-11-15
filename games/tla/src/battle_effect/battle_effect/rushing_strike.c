@@ -641,32 +641,32 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
 
 /// Abilities: Bone Charge.
 void BattleEffect_RunBoneCharge(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 4);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
 /// Abilities: Brute Force, Troll.
 void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 1);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
 }
 
 /// Abilities: Onslaught.
 void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 2);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
 }
 
 /// Abilities: Headbutt.
 void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 3);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }
 
 /// Abilities: Stun Muscle.
 void BattleEffect_RunStunMuscle(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 4);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
 /// Abilities: Living Armor, Minotaur, Power Crush.
 void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, 5);
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_LIVING_ARMOR);
 }
 #undef STAR_MINE_FRAMES
 #undef STARS

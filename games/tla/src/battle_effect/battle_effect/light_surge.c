@@ -315,27 +315,27 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
 /// Abilities: Whorl.
 void BattleEffect_RunWhorl(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, 0);
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_WHORL);
 }
 
 /// Abilities: Gale.
 void BattleEffect_RunGale(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, 1);
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_GALE);
 }
 
 /// Abilities: Lethe Albion.
 void BattleEffect_RunLetheAlbion(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, 2);
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_LETHE_ALBION);
 }
 
 /// Abilities: Poison Flow.
 void BattleEffect_RunPoisonFlow(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, 3);
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_POISON_FLOW);
 }
 
 /// Abilities: Raging Flood.
 void BattleEffect_RunRagingFlood(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, 4);
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_RAGING_FLOOD);
 }
 #undef BLITTER
 #undef LIGHT_SURGE_FRAMES

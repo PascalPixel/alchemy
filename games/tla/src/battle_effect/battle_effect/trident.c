@@ -6,6 +6,12 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The leaping strike's modes (BattleEffect_RunLeapingStrike).
+enum LeapingStrikeMode {
+  LEAPING_STRIKE_PLANET_DIVER,
+  LEAPING_STRIKE_PLANETARY
+};
+
 struct StripQuad;
 
 extern const struct Scale gTrident_UnitScale;
@@ -424,12 +430,12 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
 
 /// Abilities: Planet Diver.
 void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
-  BattleEffect_RunLeapingStrike(args, 0);
+  BattleEffect_RunLeapingStrike(args, LEAPING_STRIKE_PLANET_DIVER);
 }
 
 /// Abilities: Planetary.
 void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
-  BattleEffect_RunLeapingStrike(args, 1);
+  BattleEffect_RunLeapingStrike(args, LEAPING_STRIKE_PLANETARY);
 }
 
 #define LEAP_FRAMES 88
@@ -469,7 +475,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  if (mode == 0) {
+  if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                                work->sheet + 0x3000, 1, 0);
   } else {
@@ -491,7 +497,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (mode == 0)
+  if (mode == LEAPING_STRIKE_PLANET_DIVER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -539,7 +545,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         caster->velocityX = -px(8);
       else
         caster->velocityX = px(8);
-      if (mode == 1)
+      if (mode == LEAPING_STRIKE_PLANETARY)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
       work->shakeFrames = 4;
@@ -552,7 +558,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       s32 slide = 16;
 
       caster->verticalMotionStrength = 0;
-      if (mode == 0)
+      if (mode == LEAPING_STRIKE_PLANET_DIVER)
         caster->z = target->z;
       else
         caster->z = 0;
@@ -594,7 +600,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             spark++;
           }
           work->shakeFrames = 4;
-          if (mode == 0) {
+          if (mode == LEAPING_STRIKE_PLANET_DIVER) {
             EFFECT_SHOW_DAMAGE(SE_CRASH);
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -611,7 +617,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         }
       }
 
-      if (mode == 0) {
+      if (mode == LEAPING_STRIKE_PLANET_DIVER) {
         // The fireball over the caster while it is in the air.
         if (caster->y > 0)
           draw[0](canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52, 40, 64);
@@ -738,7 +744,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (mode == 1 && frame == 50) {
+    if (mode == LEAPING_STRIKE_PLANETARY && frame == 50) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++)
         BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x100000,

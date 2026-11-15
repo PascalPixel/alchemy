@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 /// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
@@ -268,31 +266,23 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
 /// Abilities: Bramble Card.
 void BattleEffect_RunBrambleCard(struct BattleEffectParams *args) {
-  BattleEffect_RunElementCards(args, 0);
+  BattleEffect_RunElementCards(args, CARD_BRAMBLE);
 }
 
 /// Abilities: Frost Card.
 void BattleEffect_RunFrostCard(struct BattleEffectParams *args) {
-  BattleEffect_RunElementCards(args, 1);
+  BattleEffect_RunElementCards(args, CARD_FROST);
 }
 
 /// Abilities: Flame Card.
 void BattleEffect_RunFlameCard(struct BattleEffectParams *args) {
-  BattleEffect_RunElementCards(args, 2);
+  BattleEffect_RunElementCards(args, CARD_FLAME);
 }
 
 /// Abilities: Thunder Card.
 void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
-  BattleEffect_RunElementCards(args, 3);
+  BattleEffect_RunElementCards(args, CARD_THUNDER);
 }
-
-// The four cards, as the wrappers pass them.
-enum {
-  CARD_BRAMBLE, // Bramble Card: vines grow from the card.
-  CARD_FROST,   // Frost Card: the card throws crystal shards.
-  CARD_FLAME,   // Flame Card: the card throws smoke and flashes.
-  CARD_THUNDER, // Thunder Card: bolts strike from the card.
-};
 
 /// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 /// the user, spinning and growing, for 48 frames, then shows its picture.
@@ -692,22 +682,22 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Sleep Card.
 void BattleEffect_RunSleepCard(struct BattleEffectParams *args) {
-  BattleEffect_RunCards(args, 0);
+  BattleEffect_RunCards(args, CARD_SLEEP);
 }
 
 /// Abilities: Baffle Card.
 void BattleEffect_RunBaffleCard(struct BattleEffectParams *args) {
-  BattleEffect_RunCards(args, 1);
+  BattleEffect_RunCards(args, CARD_BAFFLE);
 }
 
 /// Abilities: Death Card.
 void BattleEffect_RunDeathCard(struct BattleEffectParams *args) {
-  BattleEffect_RunCards(args, 2);
+  BattleEffect_RunCards(args, CARD_DEATH);
 }
 
 /// Abilities: Sword Card.
 void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
-  BattleEffect_RunCards(args, 3);
+  BattleEffect_RunCards(args, CARD_SWORD);
 }
 #undef BLITTER
 #undef SPARKS

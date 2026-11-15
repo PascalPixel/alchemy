@@ -5,18 +5,8 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 #define CARD (gMapGridCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
-
-// The four cards, as the wrappers pass them.
-enum {
-  CARD_SLEEP,  // Sleep Card: sheep jump from the card.
-  CARD_BAFFLE, // Baffle Card: butterflies, and the screen waves.
-  CARD_DEATH,  // Death Card: a skeleton reaps the target.
-  CARD_SWORD,  // Sword Card: a dagger strikes, and shards fly.
-};
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle for 48 frames, spinning upright and

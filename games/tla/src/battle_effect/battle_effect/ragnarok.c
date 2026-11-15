@@ -5,6 +5,12 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The falling sword's modes (BattleEffect_RunFallingSword).
+enum FallingSwordMode {
+  FALLING_SWORD_TITAN_BLADE,
+  FALLING_SWORD_ACHERONS_GRIEF
+};
+
 #undef RESULTS_FRAME
 
 /// The sheet holds the blade (64 x 128) and then the flash pictures.
@@ -246,12 +252,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
 /// Abilities: Titan Blade.
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
-  BattleEffect_RunFallingSword(args, 0);
+  BattleEffect_RunFallingSword(args, FALLING_SWORD_TITAN_BLADE);
 }
 
 /// Abilities: Acheron's Grief.
 void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
-  BattleEffect_RunFallingSword(args, 1);
+  BattleEffect_RunFallingSword(args, FALLING_SWORD_ACHERONS_GRIEF);
 }
 
 #undef FLASH_SHEET
@@ -316,7 +322,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
   // to red.
-  if (mode == 1) {
+  if (mode == FALLING_SWORD_ACHERONS_GRIEF) {
     u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
@@ -370,10 +376,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   frame = 0;
   do {
-    if (mode == 0) {
+    if (mode == FALLING_SWORD_TITAN_BLADE) {
       if (frame >= 41 && frame <= 63)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
-    } else if (mode == 1) {
+    } else if (mode == FALLING_SWORD_ACHERONS_GRIEF) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
@@ -394,7 +400,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (frame == 32)
       Sound_PlayFar(SE_SCATTER);
     if (frame == 60) {
-      if (mode == 1)
+      if (mode == FALLING_SWORD_ACHERONS_GRIEF)
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_CRASH);

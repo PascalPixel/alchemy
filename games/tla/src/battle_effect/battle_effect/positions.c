@@ -75,8 +75,6 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-
 #define SPARK_COUNT 64
 
 /// A plain attack: a slash or streak sweeps from the user over its first

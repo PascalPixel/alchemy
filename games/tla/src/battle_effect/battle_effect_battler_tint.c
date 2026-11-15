@@ -36,7 +36,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 

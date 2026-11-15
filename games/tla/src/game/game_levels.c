@@ -43,7 +43,7 @@ s32 Party_FindOwnerWithAction(s32 action) {
 /// (Party_CheckShortcut).
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
-  struct OwnerActionSlot *entry;
+  struct PsynergyEntry *entry;
   s32 index = 0;
   s32 actionMask = PSYNERGY_ABILITY_MASK;
 
@@ -407,7 +407,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;
-  s32 currentLevel = ((struct Unit *)Unit_Get(unitId))->level;
+  s32 currentLevel = Unit_Get(unitId)->level;
 
   while (currentLevel < targetLevel) {
     Unit_LevelUp(unitId, &gains);

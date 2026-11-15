@@ -82,8 +82,8 @@ gLastFrameVBlanks:
 	.global gScreenFadeToWhite
 gScreenFadeToWhite:
 	.space 0x00000004
-	.global gCameraSceneParameters
-gCameraSceneParameters:
+	.global gProjection
+gProjection:
 	.space 0x0000000c
 	.global Data_030011ec
 Data_030011ec:

@@ -38,8 +38,8 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST.
 /// Both lists are 32 slots, ended early by a 0 action. Returns the entries
 /// written, and the gained and lost counts through `gained` and `lost`.
-s32 BattleDjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
-                                     const struct OwnerActionSlot *newGrid,
+s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
+                                     const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;

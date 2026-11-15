@@ -233,7 +233,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (d > 16) {
           d = 16;
         }
-        gCameraSceneParameters[4] -= d;
+        gProjection.centerY -= d;
       }
       y += d;
       if (y < -16) {
@@ -266,7 +266,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       targetList[0] = args->targets[0];
       targetList[1] = 255;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
-      gCameraSceneParameters[4] = 556;
+      gProjection.centerY = 556;
       target = BattleObject_GetFar(args->targets[0])->object;
       target[2] = zero;
       target[4] = zero;
@@ -281,7 +281,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       if (d < 0) {
         d = 0;
       }
-      gCameraSceneParameters[4] -= d;
+      gProjection.centerY -= d;
     }
     if (frame == 84) {
       {

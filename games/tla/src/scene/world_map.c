@@ -378,7 +378,7 @@ void WorldMap_SetUpShip(void) {
   if (pp < count) {
   loop:
     // One member's PP.
-    pp += ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->pp;
+    pp += Unit_Get(gMainRoutineWork.party[i])->pp;
     i++;
     if (i < count)
       goto loop;

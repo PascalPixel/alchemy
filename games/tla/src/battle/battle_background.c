@@ -275,8 +275,8 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   renderBounds[1] = 0;
   renderBounds[2] = scene->distance;
   Iwram_TransformVector(renderBounds, scene->eye);
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
@@ -330,8 +330,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
     renderBounds[2] = span;
     Iwram_TransformVectorEntry(renderBounds, camera);
   }
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);

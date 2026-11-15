@@ -1768,7 +1768,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   for (i = 0; i < count; i++) {
     // slot holds the owner's id until the item loop reuses it.
     slot = *owner++;
-    items = (u16 *)(Unit_Get(slot) + 216);
+    items = Unit_Get(slot)->inventory;
     for (slot = 0; slot < 15; slot++) {
       s32 item = items[slot];
       if (item == 0)

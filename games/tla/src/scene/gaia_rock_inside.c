@@ -3575,7 +3575,7 @@ void GaiaRockInside_ClearMazeLayer(s32 a0) {
   GaiaRockInside_SetMazeLayer(1, a0);
 }
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void BlendScript_Start(u16 *script);
 /* VIEW(s2cb4): routine GaiaRockInside_SwayPlatformUp as void
  * GaiaRockInside_SwayPlatformUp(void);

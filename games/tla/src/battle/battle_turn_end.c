@@ -248,7 +248,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
 s32 BattleUnit_CountDownReflect(s32 id) {
-  u8 *value = (u8 *)&((struct Unit *)Unit_Get(id))->reflect;
+  u8 *value = (u8 *)&Unit_Get(id)->reflect;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
@@ -290,8 +290,7 @@ s32 DjinnRecovery_CountDown(void) {
   if (index < initialCount) {
     timedEntry = list->entries;
     do {
-      if (timedEntry->turns > 0 &&
-          ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+      if (timedEntry->turns > 0 && Unit_Get(timedEntry->unitId)->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -353,7 +352,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 && BattleUnit_IsListed(timedEntry->unitId) &&
-          ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+          Unit_Get(timedEntry->unitId)->hp != 0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -478,7 +477,7 @@ void Battle_ProcessTurnEnd(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+            Unit_Get(timedEntry->unitId)->hp != 0) {
           timedEntry->turns--;
         }
         recoveryIndex++;

@@ -72,7 +72,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   drawAlt = (DrawRectangle)Ram_HeapSlots->ramCode2;
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);

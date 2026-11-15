@@ -294,7 +294,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Sprite *obj;
 
       VramCache_FreeEntry(bank[21]);
-      gCameraSceneParameters[4] = 240;
+      gProjection.centerY = 240;
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
@@ -1167,7 +1167,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         bg = gBgScroll;
         v = gDaedalus_ShakeOffsets[*shake];
         bg[1].y = v + 32;
-        gCameraSceneParameters[4] = 120 - v;
+        gProjection.centerY = 120 - v;
         if (*shake > 0)
           *shake -= 1;
       }

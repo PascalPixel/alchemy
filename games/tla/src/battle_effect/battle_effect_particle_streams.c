@@ -23,7 +23,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
+  enemy = Unit_Get(id)->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     s32 percent = (Random16() & 63) + 130;
 
@@ -790,7 +790,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
 
   // BG2 scrolls a pixel every other frame, down and toward the user's side.

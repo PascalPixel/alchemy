@@ -1461,7 +1461,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
-      s16 *stats = &((struct Unit *)Unit_Get(gClear_ImportedUnits[i]))->baseHp;
+      s16 *stats = &Unit_Get(gClear_ImportedUnits[i])->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))

@@ -705,7 +705,7 @@ void MarsLighthouseStarRoom_HoldWarmHand(void) {
 
 void PartyInventory_Remove(s32 item);
 s32 Inventory_AddItem(s32 owner, s32 item);
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void Inventory_Equip(s32 owner, s32 slot);
 void Actor_Release(struct Actor *object);
 void FieldCamera_WaitForArrival(void);
@@ -744,7 +744,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     i = 0;
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
-      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) ==
+      if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) ==
           ITEM_MYTHRIL_BAG_MARS_STAR) {
         Inventory_Equip(4, i);
         break;
@@ -1678,19 +1678,12 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(ride_handle): routine Unit_Get as struct Unit *Unit_Get(s32 owner);
- * scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not tried:
- * Unit_Get's declaration holds a FAKEMATCH tag. */
-struct Unit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
-#define Unit_Get Unit_Get__ride_handle
-
 #include "shared/party_take_fall_damage.h"
 
 #include "../field/field_effect_advance_spin.c"
 
 #include "shared/actor_blink.h"
 
-#undef Unit_Get
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
@@ -2098,7 +2091,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_CHECK_COLLISION
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
-#undef Unit_Get
 #undef Position
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s32 gFieldEffect_DurationScripts[];

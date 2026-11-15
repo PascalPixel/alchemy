@@ -19,7 +19,7 @@ struct OwnerInventoryState {
 /// A view of struct Unit's Psynergy list (Unit.psynergy).
 struct OwnerActionState {
   u8 unk000[0x58];
-  struct OwnerActionSlot actionSlots[32];
+  struct PsynergyEntry actionSlots[32];
 };
 
 /// The Djinn held and set, each a word an element (Unit.djinnHeld and
@@ -135,7 +135,7 @@ STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.active) == 0x11c);
 STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list) == 8);
 STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list.count) == 0x128);
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void Unit_UpdateClass(s32 owner);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);

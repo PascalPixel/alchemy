@@ -655,14 +655,14 @@ done:
       }
     }
     pp = 500;
-    ((struct Unit *)Unit_Get(4))->pp = pp;
-    ((struct Unit *)Unit_Get(5))->pp = pp;
-    ((struct Unit *)Unit_Get(6))->pp = pp;
-    ((struct Unit *)Unit_Get(7))->pp = pp;
-    ((struct Unit *)Unit_Get(4))->ppMax = pp;
-    ((struct Unit *)Unit_Get(5))->ppMax = pp;
-    ((struct Unit *)Unit_Get(6))->ppMax = pp;
-    ((struct Unit *)Unit_Get(7))->ppMax = pp;
+    Unit_Get(4)->pp = pp;
+    Unit_Get(5)->pp = pp;
+    Unit_Get(6)->pp = pp;
+    Unit_Get(7)->pp = pp;
+    Unit_Get(4)->ppMax = pp;
+    Unit_Get(5)->ppMax = pp;
+    Unit_Get(6)->ppMax = pp;
+    Unit_Get(7)->ppMax = pp;
   }
   return result;
 }

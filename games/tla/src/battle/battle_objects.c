@@ -424,7 +424,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -452,7 +452,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel == 4)
+        if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;

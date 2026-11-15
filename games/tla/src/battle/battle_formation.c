@@ -26,7 +26,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     candidateOrUnitIndex = unitCount;
     do {
-      u8 level = ((struct Unit *)Unit_Get(*unitCursor))->level;
+      u8 level = Unit_Get(*unitCursor)->level;
 
       candidateOrUnitIndex--;
       unitCursor++;

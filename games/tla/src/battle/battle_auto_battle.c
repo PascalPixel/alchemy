@@ -276,13 +276,13 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     u32 count = BattleUnit_ListLiving(2, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + 0x80;
-      if (((struct Unit *)Unit_Get(unit))->hp > 0)
+      if (Unit_Get(unit)->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
     u32 count = BattleUnit_ListLiving(1, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (((struct Unit *)Unit_Get(index))->hp > 0)
+      if (Unit_Get(index)->hp > 0)
         visibleUnits[livingCount++] = index;
     }
   }
@@ -501,7 +501,7 @@ void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct SpriteAnimation *entry;
 
-  if (((struct Unit *)Unit_Get(unitId))->hp <= 0) {
+  if (Unit_Get(unitId)->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
     Sprite_StartAnimationFar(animation, 5);
     entry = animation->entry;
@@ -521,7 +521,7 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s32 livingCount;
 
   targetId = action->target;
-  if (((struct Unit *)Unit_Get(targetId))->hp != 0) {
+  if (Unit_Get(targetId)->hp != 0) {
     return targetId;
   }
 

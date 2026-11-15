@@ -667,9 +667,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 
       vertices = Heap_AllocEwram(0x400);
       model = Render_AllocateModelList(1);
-      savedScrollX = gCameraSceneParameters[3];
-      savedScrollY = gCameraSceneParameters[4];
-      gCameraSceneParameters[4] = savedScrollY - 16;
+      savedScrollX = gProjection.centerX;
+      savedScrollY = gProjection.centerY;
+      gProjection.centerY = savedScrollY - 16;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       world[0] = target->x;
@@ -682,7 +682,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       if (screen.x > 176) {
         screen.x = 176;
       }
-      gCameraSceneParameters[3] = 184 - screen.x;
+      gProjection.centerX = 184 - screen.x;
       IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, px(3));
 
       // Dust where the Djinni lands.
@@ -916,8 +916,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       }
       Heap_Release(model);
       Heap_Release(vertices);
-      gCameraSceneParameters[3] = savedScrollX;
-      gCameraSceneParameters[4] = savedScrollY;
+      gProjection.centerX = savedScrollX;
+      gProjection.centerY = savedScrollY;
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }

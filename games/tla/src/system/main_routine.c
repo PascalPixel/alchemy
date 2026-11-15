@@ -27,7 +27,7 @@
 
 extern struct SceneEntries gOverlayArea;
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 s32 FieldSequence_Run(s32 entrance);
 
 // The scene overlay's exit table: a header word holding a scene id, then that

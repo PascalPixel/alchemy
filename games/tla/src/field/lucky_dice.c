@@ -71,8 +71,8 @@ void Camera_ResetViewDefaults(void) {
   state->yaw = 0;
   state->followPosition = 0;
   // The projection's centre.
-  gCameraSceneParameters[3] = 0;
-  gCameraSceneParameters[4] = 0;
+  gProjection.centerX = 0;
+  gProjection.centerY = 0;
   state->followEye = 0;
 
   Transform_Reset();

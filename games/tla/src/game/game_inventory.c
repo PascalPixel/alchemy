@@ -59,7 +59,7 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
 /// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
-  u32 entry = ((struct Unit *)Unit_Get(unitId))->inventory[slot];
+  u32 entry = Unit_Get(unitId)->inventory[slot];
 
   if ((entry & INVENTORY_ITEM_ID_MASK) == 0)
     return 0;
@@ -348,7 +348,7 @@ s32 Inventory_Remove(s32 unitId, s32 slot) {
 /// Removes one item as Inventory_Remove does, and puts a rare item back into
 /// circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 unitId, s32 slot) {
-  s32 item = ((struct Unit *)Unit_Get(unitId))->inventory[slot];
+  s32 item = Unit_Get(unitId)->inventory[slot];
   s32 removalResult = Inventory_Remove(unitId, slot);
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {

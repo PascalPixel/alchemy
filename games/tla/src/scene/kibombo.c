@@ -2918,7 +2918,7 @@ void Kibombo_InitializeRoom1(void) {
 #include "system/main_routine_work.h"
 #include "field/field.h"
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 
 static __inline__ s32 Gauge(s32 value, s32 max) {
   s32 gauge = (value << 14) / max;

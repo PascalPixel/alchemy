@@ -387,9 +387,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
-        BattleSprite_GetAttackHop(
-            ((struct Unit *)Unit_Get(plan->actorId2))->enemyId)
-            << 16);
+        BattleSprite_GetAttackHop(Unit_Get(plan->actorId2)->enemyId) << 16);
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObject *)object)->object, 16);
   }
@@ -800,7 +798,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
   // Ally formation.
   work = Ram_HeapSlots->battleWork;
-  ((struct Unit *)Unit_Get(id))->side = BATTLE_UNIT_ABSENT;
+  Unit_Get(id)->side = BATTLE_UNIT_ABSENT;
   for (i = 0;; i++) {
     unit = work->partyUnits[i];
     if (unit == id) {

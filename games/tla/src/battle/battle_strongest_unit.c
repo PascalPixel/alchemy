@@ -20,13 +20,13 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
   if (party != 0) {
     for (i = 0; work->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (work->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(work->partyUnits[i]))->hp != 0)
+          Unit_Get(work->partyUnits[i])->hp != 0)
         targets[count++] = i | 0x100;
     }
   } else {
     for (i = 0; work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (work->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(work->enemyIds[i]))->hp != 0)
+          Unit_Get(work->enemyIds[i])->hp != 0)
         targets[count++] = i | 0x180;
     }
   }
@@ -41,27 +41,27 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;
-  s32 bestAttack = ((struct Unit *)Unit_Get(unitId))->atk;
+  s32 bestAttack = Unit_Get(unitId)->atk;
   s32 i;
   s32 id;
 
   if (unitId <= ALLY_MAX) {
     for (i = 0; (id = work->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
-      if (id != BATTLE_UNIT_REMOVED && ((struct Unit *)Unit_Get(id))->hp != 0) {
+      if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
-            (id != unitId && ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
+            (id != unitId && Unit_Get(id)->atk > bestAttack)) {
           best = id;
-          bestAttack = ((struct Unit *)Unit_Get(best))->atk;
+          bestAttack = Unit_Get(best)->atk;
         }
       }
     }
   } else {
     for (i = 0; (id = work->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
-      if (id != BATTLE_UNIT_REMOVED && ((struct Unit *)Unit_Get(id))->hp != 0) {
+      if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
-            (id != unitId && ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
+            (id != unitId && Unit_Get(id)->atk > bestAttack)) {
           best = id;
-          bestAttack = ((struct Unit *)Unit_Get(best))->atk;
+          bestAttack = Unit_Get(best)->atk;
         }
       }
     }

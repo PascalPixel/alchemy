@@ -84,7 +84,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           tiles + i * 0x400, 0x400);
     }
   }
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);

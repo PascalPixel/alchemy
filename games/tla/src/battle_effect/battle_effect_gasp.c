@@ -493,7 +493,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
     // The model layer.
     Transform_Reset();
-    gCameraSceneParameters[4] = 104;
+    gProjection.centerY = 104;
     verts = Heap_AllocEwram(0x400);
     model = Render_AllocateModelList(1);
     model->texture = &texture;
@@ -1308,8 +1308,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(verts);
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
     BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}

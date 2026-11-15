@@ -426,18 +426,18 @@ void Projection_SetFieldOfView(s32 fieldOfView, s32 nearDepth, s32 farDepth) {
   sine = Trig_Sin(halfAngle);
   // The cosine, as the sine a quarter turn on: 80 * cos / sin.
   focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + TRIG_TURN / 4) * 80);
-  gCameraSceneParameters[1] = nearDepth;
-  gCameraSceneParameters[0] = focal;
-  gCameraSceneParameters[2] = farDepth;
+  gProjection.near = nearDepth;
+  gProjection.focal = focal;
+  gProjection.far = farDepth;
 }
 
 /// Sets the projection's focal length and depth range directly.
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
-  u32 *projection = gCameraSceneParameters;
+  struct Projection *projection = &gProjection;
 
-  projection[0] = focal;
-  projection[1] = nearDepth;
-  projection[2] = farDepth;
+  projection->focal = focal;
+  projection->near = nearDepth;
+  projection->far = farDepth;
 }
 
 /// Transforms `vector` by gTransform into `result`.
@@ -458,7 +458,7 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 
   Render_TransformVector(point, &view.x);
   depth = -view.z;
-  projection = (struct Projection *)gCameraSceneParameters;
+  projection = &gProjection;
   if (depth >= projection->near && depth <= projection->far) {
     screen->z = depth >> 16;
     if (projection->focal != 0) {

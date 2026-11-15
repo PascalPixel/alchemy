@@ -100,7 +100,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   Graphics_LoadGreyRamp();
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   wait(1);
   IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);

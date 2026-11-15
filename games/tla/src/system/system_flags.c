@@ -10,18 +10,18 @@
 
 /// Returns the unit of unitId: ISAAC to PIERS the characters, the six from
 /// FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
-void *Unit_Get(s32 owner) {
+struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
 
-  if ((u32)owner <= PIERS) {
+  if (unitId <= PIERS) {
     states = gCharacterUnits;
-    unit = &states[owner];
+    unit = &states[unitId];
     return unit;
   }
-  if ((u32)owner - FIRST_ENEMY_UNIT < 6 &&
+  if (unitId - FIRST_ENEMY_UNIT < 6 &&
       (states = Ram_HeapSlots->enemyUnits) != NULL) {
-    unit = &states[owner - FIRST_ENEMY_UNIT];
+    unit = &states[unitId - FIRST_ENEMY_UNIT];
     return unit;
   }
   return NULL;

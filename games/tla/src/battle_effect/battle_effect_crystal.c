@@ -151,7 +151,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
       // The crystal, spinning and growing from frame 16.
       Transform_Reset();
-      gCameraSceneParameters[4] = 104;
+      gProjection.centerY = 104;
       {
         void *vertices = Heap_AllocEwram(32);
         struct RenderModel *model = Render_AllocateModelList(1);
@@ -181,8 +181,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         Heap_Release(model);
         Heap_Release(vertices);
       }
-      gCameraSceneParameters[3] = 120;
-      gCameraSceneParameters[4] = 120;
+      gProjection.centerX = 120;
+      gProjection.centerY = 120;
       EFFECT_END_FRAME(work);
     }
   }

@@ -209,7 +209,7 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
   Event_End();
 }
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void NaribweInteriors_ReadShiningItem(void);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).

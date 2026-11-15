@@ -125,7 +125,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     }
 
     Transform_Reset();
-    gCameraSceneParameters[4] = 104;
+    gProjection.centerY = 104;
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 6;
@@ -196,8 +196,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
 
     EFFECT_END_FRAME(work);
   }

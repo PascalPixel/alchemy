@@ -305,8 +305,8 @@ void BattlePlayback_Run(void) {
         s32 colorMode = 6;
 
         if (events->timer == 0 && events->flags != 0) {
-          s32 kind = BattleSprite_GetDefeatSound(
-              ((struct Unit *)Unit_Get(events->actorId))->enemyId);
+          s32 kind =
+              BattleSprite_GetDefeatSound(Unit_Get(events->actorId)->enemyId);
 
           if (kind >= 0) {
             kind--;
@@ -319,8 +319,8 @@ void BattlePlayback_Run(void) {
         if (events->timer > 0x400 + 30 - 1)
           events->timer = 0;
         if (events->timer == 0) {
-          s32 kind = BattleSprite_GetDefeatSound(
-              ((struct Unit *)Unit_Get(events->actorId))->enemyId);
+          s32 kind =
+              BattleSprite_GetDefeatSound(Unit_Get(events->actorId)->enemyId);
 
           if (kind >= 0)
             Sound_PlayFar(146 + kind);

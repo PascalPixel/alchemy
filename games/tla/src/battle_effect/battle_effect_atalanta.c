@@ -90,7 +90,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = ALTERNATE_BLITTER_SLOT;
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;

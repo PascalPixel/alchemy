@@ -1573,12 +1573,6 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(s2118): routine Unit_Get as struct Unit *Unit_Get(s32 owner);
- * item_icon.h has void *Unit_Get(s32 owner); not tried: Unit_Get's declaration
- * holds a FAKEMATCH tag. */
-struct Unit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
-#define Unit_Get Unit_Get__s2118
-
 #include "shared/party_take_fall_damage.h"
 
 #include "../field/field_effect_advance_spin.c"
@@ -1609,7 +1603,6 @@ void MarsLighthouseRoomM_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-#undef Unit_Get
 /* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
  * called with no declaration in scope as its bytes need; the definition has
  * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's

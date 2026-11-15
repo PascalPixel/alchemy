@@ -344,7 +344,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 }
 
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving
-/// BG1 and gCameraSceneParameters[3] and [4] by a random offset; once the
+/// BG1 and gProjection.centerX and [4] by a random offset; once the
 /// shake runs out, BG1 returns to its saved position and both parameters to
 /// 120. It takes two random numbers each shaking frame, x first.
 ///
@@ -368,15 +368,15 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 
     gBgScroll[1].x = offsetX;
     gBgScroll[1].y = offsetY + 32;
-    gCameraSceneParameters[3] = 120 - offsetX;
-    gCameraSceneParameters[4] = 120 - offsetY;
+    gProjection.centerX = 120 - offsetX;
+    gProjection.centerY = 120 - offsetY;
     (*remainingFrames)--;
     return;
   }
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
 }
 
 /// While shakeFrames lasts, moves BG1 and the projection centre up or down
@@ -390,11 +390,11 @@ void Camera_ApplyVerticalShake(s32 range) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 
     gBgScroll[1].y = shake + 32;
-    gCameraSceneParameters[4] = 120 - shake;
+    gProjection.centerY = 120 - shake;
     (*timer)--;
   } else {
     gBgScroll[1].y = *(s32 *)(fx + 0x77a4);
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerY = 120;
   }
 }
 

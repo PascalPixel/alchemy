@@ -1970,14 +1970,6 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(ride): routine Unit_Get as this part declared it; the joined file has
- * another; tried as the definition's void *Unit_Get(s32 owner), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/shared/party_take_fall_damage.h:12: request for member
- * `hp' in something not a structure or union. */
-struct Unit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
-#define Unit_Get Unit_Get__ride
-
 #include "shared/party_take_fall_damage.h"
 
 #include "../field/field_effect_advance_spin.c"
@@ -2559,7 +2551,6 @@ s32 Actor_Park(struct Actor *object) {
 #undef SceneWork
 #undef Camera_SetBounds
 #undef Ride_SetEntry
-#undef Unit_Get
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);

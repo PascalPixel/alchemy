@@ -1142,7 +1142,7 @@ UNUSED void Actor_SetUpdate(struct Actor *actor, void (*update)(void)) {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 
 /// Script command 0x23 (control mode 10): the leader hovering (the Hover
 /// Psynergy), moved by the direction pad over what lies below.
@@ -1287,7 +1287,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
     s32 action;
 
     action = 9;
-    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp == 0)
+    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(actor, action);
   } else {

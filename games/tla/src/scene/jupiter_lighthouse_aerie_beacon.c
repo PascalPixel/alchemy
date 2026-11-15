@@ -649,7 +649,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
   }
 }
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void Inventory_Equip(s32 id, s32 slot);
 static __inline__ s32 JupiterLighthouse_GetCamera(void) {
   return ((s32)FieldCamera_GetActor());

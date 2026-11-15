@@ -78,7 +78,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       BattleActor_SpawnObjectsForListFar(list, 0);
       VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
-      gCameraSceneParameters[4] = 240;
+      gProjection.centerY = 240;
       BattleBackground_LoadFar(1, (s32)&ResourceId_EarthHorizonBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
@@ -417,7 +417,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -516,7 +516,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(31, 31, 31);
   gBgScroll[1].x = 0;
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x400, 0,
@@ -715,7 +715,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0x3f3f3f3f);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   BattleBackground_LoadFar(1, battle->background, 24);
   wait(1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
@@ -1019,8 +1019,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
     Task_Remove(Palette_StepFadeTransfer);
   } else {
     BattleEffect_EndCanvasLayer();
@@ -1525,8 +1525,8 @@ void BattleEffect_EndCanvasLayer(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
   REG_BG2CNT = BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1) |
                BGCNT_PRIORITY(3);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);

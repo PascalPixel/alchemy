@@ -91,7 +91,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);

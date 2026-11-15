@@ -257,7 +257,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->plan.unitId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
       battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
-          ((struct Unit *)Unit_Get(battle->plan.unitId))->enemyId);
+          Unit_Get(battle->plan.unitId)->enemyId);
       if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.unitId, MESSAGE_ARGUMENT_ACTOR);
         if (battle->plan.unitId == battle->plan.targetIds[0])
@@ -351,8 +351,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
-          (((struct Unit *)Unit_Get(*inputTarget))->hp != 0 ||
-           (plan->battleEffect & 0x10000))) {
+          (Unit_Get(*inputTarget)->hp != 0 || (plan->battleEffect & 0x10000))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }

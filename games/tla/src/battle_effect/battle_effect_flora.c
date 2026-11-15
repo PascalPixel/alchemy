@@ -105,7 +105,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 27) {
       u8 *e;
 
-      gCameraSceneParameters[4] = 240;
+      gProjection.centerY = 240;
       BattleEffect_SelectLivingTargets(work->args);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
@@ -823,7 +823,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
+  enemy = Unit_Get(id)->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = px(2);
     object->speedLimit = px(8);
@@ -918,7 +918,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       }
     }
     Transform_Reset();
-    gCameraSceneParameters[4] = 104;
+    gProjection.centerY = 104;
 
     // The eight strikes.
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
@@ -978,8 +978,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     }
     Heap_Release(quad);
     Heap_Release(vertices);
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
 
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);

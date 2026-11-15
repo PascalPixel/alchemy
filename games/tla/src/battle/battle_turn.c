@@ -42,7 +42,7 @@ void BattleCamera_SetCommandView(s32 pos) {
   result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
   Projection_Set(0, result, px(1938));
 
-  gCameraSceneParameters[4] = pos + 120;
+  gProjection.centerY = pos + 120;
   secondary->active = one;
   BattleCamera_SetRange(px(120), px(118 - pos), 0, 8 << 8, Q16_ONE * 2);
   secondary->flag = one;
@@ -90,15 +90,13 @@ s32 BattleFlee_CheckSuccess(void) {
     chance = 5000 + (escapeState->fleeFailures * 2000);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal +=
-          ((struct Unit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
+      levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
     chance += __divsi3(levelTotal * 500, livingCount);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal +=
-          ((struct Unit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
+      levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
     chance -= __divsi3(levelTotal * 500, livingCount);
     if ((chance > 0) &&

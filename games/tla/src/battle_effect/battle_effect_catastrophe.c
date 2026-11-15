@@ -85,7 +85,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
   Palette_BrightenSavedBattleBg(-31, -31, -31);
@@ -936,7 +936,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
   Palette_LoadBasicSpriteColors();
   BattleEffect_SetupBlendedDisplay();
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   work->fadeFrames = 0;
   work->fadeStep = 0;
   // Act two: the land seen from the sky, where the orb falls and bursts.
@@ -1324,15 +1324,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         gBgScroll[1].x = savedScroll;
-        gCameraSceneParameters[3] = 120;
+        gProjection.centerX = 120;
         work->scrollStepX = 0;
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       if (frame == 0) {
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->scrollStepX = -16;
-        gCameraSceneParameters[3] = -968;
-        gCameraSceneParameters[4] = 120;
+        gProjection.centerX = -968;
+        gProjection.centerY = 120;
         gBgScroll[1].x = savedScroll + 1088;
         Graphics_LoadGreyRamp();
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
@@ -1575,7 +1575,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           }
         }
       }
-      gCameraSceneParameters[3] -= work->scrollStepX;
+      gProjection.centerX -= work->scrollStepX;
       gBgScroll[1].x += work->scrollStepX;
       for (i = 0; i != 16; i++) {
         if (frame == i + 62) {

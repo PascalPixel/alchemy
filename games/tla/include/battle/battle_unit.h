@@ -16,11 +16,11 @@ enum {
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
 /// and marks for an action its class or an equipped item gave.
-struct OwnerActionSlot {
+struct PsynergyEntry {
   /// bits: 15 from the class | 14 from an equipped item | 13..0 action id.
   /// Entries with neither mark were taught for good; 0 is empty.
   u16 encodedAction;
-  u16 unk02; ///< Not named by any TBS code.
+  u16 unused; ///< no code names it
 };
 
 /// A unit's elemental power and resistance in one element.
@@ -304,7 +304,7 @@ struct Unit {
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
-  struct OwnerActionSlot psynergy[32];
+  struct PsynergyEntry psynergy[32];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
@@ -383,7 +383,7 @@ STATIC_ASSERT(offsetof(struct BattleAct, effect) == 0x03);
 STATIC_ASSERT(offsetof(struct BattleAct, power) == 0x0a);
 STATIC_ASSERT(offsetof(struct BattleAct, type0c) == 0x0c);
 
-STATIC_ASSERT(sizeof(struct OwnerActionSlot) == 4);
+STATIC_ASSERT(sizeof(struct PsynergyEntry) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);
 STATIC_ASSERT(sizeof(struct Unit) == BATTLE_UNIT_SIZE);
 STATIC_ASSERT(offsetof(struct Unit, baseHp) == 0x10);

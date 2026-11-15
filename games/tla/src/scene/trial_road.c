@@ -1912,7 +1912,7 @@ extern s16 gTrialRoad_StageMapCells[][2];
 extern s8 gTrialRoad_DemoSceneryStages[];
 extern s8 gTrialRoad_SceneryStages[];
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 void TrialRoad_StartRival(s32 a);
 
 /// Places `layer` `column` cells into the map: its offset (column << 20), its

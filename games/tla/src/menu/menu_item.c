@@ -687,8 +687,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 11:
-      ((struct Unit *)Unit_Get(menu->sideMember[0]))
-          ->inventory[menu->selectedSlots[0]] &= 0xfdff;
+      (Unit_Get(menu->sideMember[0]))->inventory[menu->selectedSlots[0]] &=
+          0xfdff;
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
       Unit_CalculateFar(menu->sideMember[0]);
       menu->sideIcons[0]->motion = ICON_HIDDEN;

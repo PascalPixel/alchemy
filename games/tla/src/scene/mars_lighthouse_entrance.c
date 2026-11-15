@@ -1639,21 +1639,12 @@ UNUSED void Ride_SetSlotActor(u32 index, s32 value) {
     work->slots[index].id = value;
 }
 
-/* VIEW(s2270): routine Unit_Get as struct Unit *Unit_Get(s32 owner);
- * item_icon.h has void *Unit_Get(s32 owner); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/shared/party_take_fall_damage.h:12: request
- * for member `hp' in something not a structure or union. */
-struct Unit *Unit_Get__s2270(s32 owner) __asm__("Unit_Get");
-#define Unit_Get Unit_Get__s2270
-
 #include "shared/party_take_fall_damage.h"
 
 #include "../field/field_effect_advance_spin.c"
 
 #include "shared/actor_blink.h"
 
-#undef Unit_Get
 void Party_TakeFallDamage();
 void Actor_SelectAnimation(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
@@ -2103,7 +2094,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef WORK
 #undef ABS
 #undef Actor_HoldDuringEvent
-#undef Unit_Get
 #undef Actor_Blink
 #undef Position
 extern s32 gFieldEffect_DurationScripts[];

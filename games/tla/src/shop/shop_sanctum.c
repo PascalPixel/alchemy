@@ -16,7 +16,7 @@
 /// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
 /// level to remove a curse.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
-  u8 level = ((struct Unit *)Unit_Get(unitId))->level;
+  u8 level = Unit_Get(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {

@@ -339,7 +339,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         texture.logHeight = 5;
         texture.pixels = work->sheet;
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        gCameraSceneParameters[3] = 60;
+        gProjection.centerX = 60;
         SceneTransform_ApplyPosition(focus);
         SceneTransform_ApplyPosition3(0, px(16), 0);
         if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -372,7 +372,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           Render_ProjectVertices(cells, projected, 64);
           Render_DrawModelList(model);
         }
-        gCameraSceneParameters[3] = 120;
+        gProjection.centerX = 120;
         Heap_Release(model);
       }
       BattleCamera_Shake(8, 8);

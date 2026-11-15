@@ -42,7 +42,7 @@ u32 Party_GetAverageLevel(void) {
   if (partySize == 0)
     return 0;
   for (i = 0; i < partySize; i++)
-    totalLevels += ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->level;
+    totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
   totalLevels /= partySize;
   return totalLevels;
 }
@@ -728,7 +728,7 @@ void Party_RestorePpOfLitElements(void) {
 /// Writes the element and index of unit's last Djinni and returns 0, or
 /// returns -1 when it has none.
 s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
-  u32 *sets = ((struct Unit *)Unit_Get(unit))->djinnHeld;
+  u32 *sets = Unit_Get(unit)->djinnHeld;
   s32 element = -1;
   s32 index = -1;
   s32 i;

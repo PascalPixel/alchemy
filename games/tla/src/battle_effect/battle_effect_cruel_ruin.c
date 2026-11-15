@@ -780,7 +780,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   actor[18] = 0xab85;
   actor[3] = 0;
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0x3f3f3f3f);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   BattleBackground_LoadFar(1, (s32)&ResourceId_SunbeamCloudsBackdrop, 0);
   transition[4] = 1;
@@ -1538,7 +1538,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     } while (0);
   }
   wait(1);
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   for (i = 0; i != 18; i++) {
     Sprite_DestroyFar(work->sprites[i]);

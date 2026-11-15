@@ -780,8 +780,8 @@ void Iris_RestoreBattle(void) {
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->active = 0;
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
   BattleBackground_LoadFar(1, battle->background, 24);

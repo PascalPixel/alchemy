@@ -1319,7 +1319,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cellBuffer, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -2035,7 +2035,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   wait(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),

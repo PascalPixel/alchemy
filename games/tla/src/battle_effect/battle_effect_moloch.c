@@ -340,7 +340,7 @@ void Iris_ChangeBackdrop(void) {
   s32 i;
 
   REG_BG1HOFS = 0;
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
 
   // The targets fall in from just above the ground, halfway closer in depth.
   for (i = 0; i != work->args->targetCount; i++) {
@@ -1476,7 +1476,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       REG_BLDALPHA = alpha | 0x1000;
     }
     if (frame > 385)
-      gCameraSceneParameters[4] = 2556 - frame * 6;
+      gProjection.centerY = 2556 - frame * 6;
     if (frame <= 422) {
       if (frame > 370) {
         s32 h = (frame - 370) << 3;

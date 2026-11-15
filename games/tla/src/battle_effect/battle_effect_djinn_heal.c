@@ -155,7 +155,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // The quads: each a render job of one textured face, placed by its own
     // translation, scale, pitch and roll.
     Transform_Reset();
-    gCameraSceneParameters[4] = 104;
+    gProjection.centerY = 104;
     // DEAD: frame never passes 63 here; the source keeps the test.
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
@@ -211,8 +211,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       Heap_Release(job);
       Heap_Release(vertices);
     }
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
     EFFECT_END_FRAME(work);
   }
 
@@ -272,7 +272,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   // The screen slides over to the field.
   for (scroll = -80, frame = 0; frame != 28; frame++) {
     if (frame == 27) {
-      gCameraSceneParameters[4] = 240;
+      gProjection.centerY = 240;
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       transition[4] = 1;
@@ -360,8 +360,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       work->scrollStepX = -8;
-      gCameraSceneParameters[3] = -968;
-      gCameraSceneParameters[4] = 120;
+      gProjection.centerX = -968;
+      gProjection.centerY = 120;
       gBgScroll[1].x = savedScroll + 1128;
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
                                  1);
@@ -370,7 +370,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
-    gCameraSceneParameters[3] -= work->scrollStepX;
+    gProjection.centerX -= work->scrollStepX;
     gBgScroll[1].x += work->scrollStepX;
 
     // The backdrop darkens toward the battle's palette.
@@ -590,13 +590,13 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         s32 offsetY = randomY - 8;
 
         gBgScroll[1].y = randomY + 24;
-        gCameraSceneParameters[3] = 120 - offsetX;
-        gCameraSceneParameters[4] = 120 - offsetY;
+        gProjection.centerX = 120 - offsetX;
+        gProjection.centerY = 120 - offsetY;
         work->shakeFrames--;
       } else {
         gBgScroll[1].y = work->savedBg1Y;
-        gCameraSceneParameters[3] = 120;
-        gCameraSceneParameters[4] = 120;
+        gProjection.centerX = 120;
+        gProjection.centerY = 120;
       }
     }
   next:

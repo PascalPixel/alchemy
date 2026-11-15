@@ -102,7 +102,7 @@ WorldMap_BuildScanlineTableInArm:
 	orr	r0, r0, r3, lsr #16
 	str	r0, [r7, #4]
 	b	.L_08021448
-	.4byte gCameraSceneParameters
+	.4byte gProjection
 	.4byte Data_030011f0
 	.4byte IwramRatioMulQ14
 .L_08021430:

@@ -349,8 +349,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
     return TARGET_PICK_NONE;
 
   if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(((struct Unit *)Unit_Get(userId))->enemyId)
-              ->targetStrategy != TARGET_STRATEGY_RANDOM &&
+      Enemy_GetDefinitionFar(Unit_Get(userId)->enemyId)->targetStrategy !=
+          TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
     // Sort the targets by HP, the most first.
@@ -362,8 +362,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
            innerIndex++) {
         thisUnit = Unit_Get(unitIds[innerIndex]);
         nextUnit = Unit_Get(unitIds[innerIndex + 1]);
-        if (Enemy_GetDefinitionFar(((struct Unit *)Unit_Get(userId))->enemyId)
-                ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
+        if (Enemy_GetDefinitionFar(Unit_Get(userId)->enemyId)->targetStrategy ==
+            TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {
@@ -1151,9 +1151,9 @@ power_end:
 
           attack = actor->atk;
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
-            attack = ((struct Unit *)Unit_Get(plan->unitId))->atk;
+            attack = Unit_Get(plan->unitId)->atk;
             if (abilityId == ABILITY_MELD)
-              attack += ((struct Unit *)Unit_Get(plan->actorId2))->atk / 4;
+              attack += Unit_Get(plan->actorId2)->atk / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);

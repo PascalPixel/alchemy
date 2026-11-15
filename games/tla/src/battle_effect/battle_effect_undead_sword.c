@@ -942,7 +942,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     model->mesh = Data_02010318;
     model->scrollU = 0;
     model->scrollV = 0;
-    gCameraSceneParameters[4] = 104;
+    gProjection.centerY = 104;
     model->vertices = vertices;
     model->shade = shade;
     for (k = 0; k != gWindFunnel_Counts[mode]; k++) {
@@ -974,8 +974,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
     }
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
+    gProjection.centerX = 120;
+    gProjection.centerY = 120;
     Heap_Release(model);
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);

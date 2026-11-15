@@ -509,7 +509,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (shade > -64) {
           model->shade = shade;
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-          gCameraSceneParameters[3] = 60;
+          gProjection.centerX = 60;
           if (mode == WATER_COLUMN_WHORL) {
             model->scrollU = (frame << 3) & 127;
           } else {
@@ -535,7 +535,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             Transform_Pop();
           }
         }
-        gCameraSceneParameters[3] = 120;
+        gProjection.centerX = 120;
       }
       Heap_Release(model);
       if (mode == WATER_COLUMN_LETHE_ALBION ||

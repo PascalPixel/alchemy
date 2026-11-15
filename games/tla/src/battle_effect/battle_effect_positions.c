@@ -546,7 +546,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
+  enemy = Unit_Get(id)->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = acceleration;
     object->speedLimit = speedLimit;

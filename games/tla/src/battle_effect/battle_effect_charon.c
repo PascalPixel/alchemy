@@ -212,7 +212,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   lineScroll->unk10 = 1;
   gBgScroll[1].x = 0;
   emptyList.value = 255;
@@ -1275,7 +1275,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   do {
   } while (0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   camera = SYSTEM_WORK->camera;
   shake = 0;
   savedYaw = camera->yaw;

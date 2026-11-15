@@ -275,7 +275,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           object->y = px((Random16() & 15) + 8);
         }
 
-        gCameraSceneParameters[3] = 72;
+        gProjection.centerX = 72;
 
         index = 0;
         do {
@@ -521,7 +521,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       enemy->z = home[index].y;
       enemy->angle = baseAngle[index];
     }
-    gCameraSceneParameters[3] = 120;
+    gProjection.centerX = 120;
     BattleEffect_SetupBlendedDisplay();
 
     index = 0;

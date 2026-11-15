@@ -80,7 +80,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -746,7 +746,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition[4] = 0;
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerY = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

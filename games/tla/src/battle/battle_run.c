@@ -539,7 +539,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    ((struct Unit *)Unit_Get(owner))->side = 2;
+    Unit_Get(owner)->side = 2;
   }
 
   if (owners != 0)
@@ -567,7 +567,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    ((struct Unit *)Unit_Get(owner))->side = 2;
+    Unit_Get(owner)->side = 2;
   }
 
   if (owners != 0)
@@ -593,7 +593,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (((struct Unit *)Unit_Get(id))->side != 0) {
+      if (Unit_Get(id)->side != 0) {
         *output = id;
         listed++;
         output++;
@@ -636,7 +636,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct Unit *)Unit_Get(unitId))->hp;
+        hp = Unit_Get(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -703,7 +703,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct Unit *)Unit_Get(unitId))->hp;
+        hp = Unit_Get(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -781,7 +781,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
   if (groups & 1) {
     for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
+          Unit_Get(order->partyUnits[i])->hp != 0) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
         count++;
@@ -791,7 +791,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
   if (groups & 2) {
     for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
+          Unit_Get(order->enemyIds[i])->hp != 0) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];
         count++;

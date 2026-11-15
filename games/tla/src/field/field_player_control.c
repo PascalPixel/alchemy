@@ -262,7 +262,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp == 0)
+    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -655,7 +655,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp == 0)
+    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {

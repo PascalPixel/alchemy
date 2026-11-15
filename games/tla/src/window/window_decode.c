@@ -616,8 +616,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes =
-                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->name;
+            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -631,8 +630,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(messageReader) - 1;
-            nameBytes = ((struct Unit *)Unit_Get(MessageArgument_Lookup(
-                             MESSAGE_ARGUMENT_ACTOR, clear)))
+            nameBytes = (Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR,
+                                                         clear)))
                             ->name;
             nameOutput = name;
             j = 0;
@@ -647,7 +646,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = ((struct Unit *)Unit_Get(argument))->name;
+            nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
             j = 0;
             do {
@@ -1059,8 +1058,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes =
-                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->name;
+            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1100,7 +1098,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = ((struct Unit *)Unit_Get(argument))->name;
+            nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
             j = 0;
             do {

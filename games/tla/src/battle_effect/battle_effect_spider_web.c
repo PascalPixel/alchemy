@@ -819,8 +819,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 120;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
   Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
   BattleBackground_LoadFar(2, battle->background, -1);

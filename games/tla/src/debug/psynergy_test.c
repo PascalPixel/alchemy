@@ -213,9 +213,9 @@ void PsynergyTest_IgnoreTalk(void) {}
 /// Raises Felix, Jenna and Sheba ten levels. Examining cell 11.
 void PsynergyTest_RaisePartyLevels(void) {
   Message_ShowCentered((s32)MsgYouWentUp, 1);
-  Unit_LevelUpTo(FELIX, ((struct Unit *)Unit_Get(FELIX))->level + 10);
-  Unit_LevelUpTo(JENNA, ((struct Unit *)Unit_Get(JENNA))->level + 10);
-  Unit_LevelUpTo(SHEBA, ((struct Unit *)Unit_Get(SHEBA))->level + 10);
+  Unit_LevelUpTo(FELIX, Unit_Get(FELIX)->level + 10);
+  Unit_LevelUpTo(JENNA, Unit_Get(JENNA)->level + 10);
+  Unit_LevelUpTo(SHEBA, Unit_Get(SHEBA)->level + 10);
 }
 
 /// Gives 777,777 coins and ten each of Game Tickets and Lucky Medals.

@@ -17,4 +17,7 @@ struct Projection {
   s32 centerY;
 };
 
+/// The projection the battle and the field draw with (IWRAM).
+extern struct Projection gProjection;
+
 #endif

@@ -116,17 +116,17 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   vector[2] = position[2];
   Iwram_TransformVector(vector, result);
   height = result[1] - Iwram_MulQ16(result[2], pitchSlope);
-  nearZ = -gCameraSceneParameters[0];
+  nearZ = -gProjection.focal;
   for (i = 0; i < 160; i++) {
     s32 distance;
 
-    z = Iwram_RatioMulQ14(nearZ, (gCameraSceneParameters[4] - i) * Q16_ONE);
+    z = Iwram_RatioMulQ14(nearZ, (gProjection.centerY - i) * Q16_ONE);
     distance = z - pitchSlope;
     if (distance == 0)
       distance = 1;
     ratio = Iwram_RatioMulQ14(distance, height);
     if (ratio < 0) {
-      row->scale = Iwram_RatioMulQ14(gCameraSceneParameters[0],
+      row->scale = Iwram_RatioMulQ14(gProjection.focal,
                                      Iwram_MulQ16(-ratio, Q16_ONE / 2));
       z = Iwram_MulQ16(ratio, z);
       dx = (result[2] - ratio) >> 4;

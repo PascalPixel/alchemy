@@ -159,7 +159,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
 
   slot = BattleObject_Get(id);
   object = slot->object;
-  enemyId = ((struct Unit *)Unit_Get(id))->enemyId;
+  enemyId = Unit_Get(id)->enemyId;
   if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON &&
       enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8) {
     object->acceleration = gBattleKnockback_Acceleration[variant];
@@ -337,11 +337,10 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
 /// Returns the height above a unit where its battle effects play: its class's
 /// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value = px((u8)BattleSprite_GetEffectHeight(
-      ((struct Unit *)Unit_Get(unitId))->enemyId));
+  s32 value = px((u8)BattleSprite_GetEffectHeight(Unit_Get(unitId)->enemyId));
 
   if (value == 0) {
-    if (BattleSprite_IsSmall(((struct Unit *)Unit_Get(unitId))->enemyId) != 0)
+    if (BattleSprite_IsSmall(Unit_Get(unitId)->enemyId) != 0)
       value = px(24);
     else
       value = px(48);

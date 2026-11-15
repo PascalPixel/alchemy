@@ -498,9 +498,8 @@ void Menu_OpenBackdropScreen(void) {
 /// Writes every action of after (up to 32), with PREVIEW_GAINED on those
 /// before lacks, then each action of before that after lacks, with
 /// PREVIEW_LOST. Returns the number written, up to 64.
-s32 PsynergyList_Diff(struct OwnerActionSlot *before,
-                      struct OwnerActionSlot *after, u16 *actionsOut,
-                      s32 *gainedCountOut, s32 *lostCountOut) {
+s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
+                      u16 *actionsOut, s32 *gainedCountOut, s32 *lostCountOut) {
   s32 actionIndex;
   s32 otherIndex;
   s32 actionCount;

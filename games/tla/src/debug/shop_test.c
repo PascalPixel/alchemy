@@ -613,7 +613,7 @@ void ShopTest_AdjustPartyLevels(s32 levels) {
   for (i = 0; i < count;) {
     u16 owner = owners[i++];
 
-    Unit_LevelUpTo(owner, ((struct Unit *)Unit_Get(owner))->level + levels);
+    Unit_LevelUpTo(owner, Unit_Get(owner)->level + levels);
     Unit_Calculate(owner);
   }
 }

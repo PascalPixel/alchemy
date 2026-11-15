@@ -98,8 +98,8 @@ void WorldMap_InitializePerspective(void) {
   perspective->zoomTransitionFrames = 0;
   *(s32 *)(camera + 24) = 0;
   *(s32 *)(camera + 28) = 0;
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 96;
+  gProjection.centerX = 120;
+  gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   cameraPosition[0] = 0;
   cameraPosition[1] = 0;
@@ -522,8 +522,8 @@ void WorldMap_UpdateView(void) {
     gBgScroll[1].y = shakeOffsetY / Q16_ONE;
     return;
   }
-  gCameraSceneParameters[3] = 120;
-  gCameraSceneParameters[4] = 96;
+  gProjection.centerX = 120;
+  gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
   Transform_Reset();
   SceneTransform_ApplyPosition(cameraPosition);

@@ -344,7 +344,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(1, ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
     }
     if (frame == 165) {
-      gCameraSceneParameters[4] = 120;
+      gProjection.centerY = 120;
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -400,7 +400,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
-      gCameraSceneParameters[4] = 240;
+      gProjection.centerY = 240;
       if (args->side == EFFECT_SIDE_ENEMIES) {
         yaw = TRIG_TURN / 4;
         camera->yaw = yaw;

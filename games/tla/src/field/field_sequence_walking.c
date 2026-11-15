@@ -213,7 +213,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->hp;
+    previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +

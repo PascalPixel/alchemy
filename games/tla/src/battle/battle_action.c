@@ -156,8 +156,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               targetId = battle->enemyIds[place];
               if (targetId == BATTLE_UNIT_REMOVED)
                 continue;
-              if (!includeDowned &&
-                  ((struct Unit *)Unit_Get(targetId))->hp == 0)
+              if (!includeDowned && Unit_Get(targetId)->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -169,8 +168,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               targetId = battle->partyUnits[place];
               if (targetId == BATTLE_UNIT_REMOVED)
                 continue;
-              if (!includeDowned &&
-                  ((struct Unit *)Unit_Get(targetId))->hp == 0)
+              if (!includeDowned && Unit_Get(targetId)->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;

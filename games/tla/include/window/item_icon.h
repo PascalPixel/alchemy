@@ -29,7 +29,7 @@ struct IconSprite {
 s32 VramCache_FreeEntry(u32 entry);
 s32 VramCache_FindFreeEntry(void);
 void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 
 void ItemIconGrid_Draw(void);
 void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y);

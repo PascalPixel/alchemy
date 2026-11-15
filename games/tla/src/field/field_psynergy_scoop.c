@@ -480,7 +480,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   event->talk = id | 0x1000;
 }
 
-void *Unit_Get(s32 owner);
+struct Unit *Unit_Get(u32 unitId);
 extern const u16 gData_080f0fc0[];
 
 /// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item

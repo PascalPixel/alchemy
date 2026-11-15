@@ -62,7 +62,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     work->sprites[i] = obj;
     Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
-  gCameraSceneParameters[4] = 240;
+  gProjection.centerY = 240;
   wait(1);
   transition[4] = 1;
   gBgScroll[1].x = 0;

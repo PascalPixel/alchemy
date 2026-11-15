@@ -80,7 +80,7 @@ struct Actor *Leader_FindActorAhead(void);
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
   u8 *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target;
 
   if (effect != NULL && *(s16 *)(event + 358) != 0)

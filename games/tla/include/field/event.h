@@ -351,7 +351,7 @@ static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
 /// GameFlag_Clear, from an event.
 static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
-/// Plays a sound effect or music from an event: the SE command of script.h.
+/// Plays a sound effect or music from an event: the SE command of objcmd.h.
 static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 
 /// Signed division written as a call; the `/` compiles to __divsi3.

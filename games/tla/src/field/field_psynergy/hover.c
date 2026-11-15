@@ -68,14 +68,6 @@ struct HoverGlowWork {
   s16 fading;
 };
 
-struct GlowEvent {
-  u8 unk000[0x166];
-  u16 cue;
-  u8 unk168[0xbdc];
-  s16 glow;
-  s16 glowHeld;
-};
-
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 
@@ -157,23 +149,13 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef GLOW_FULL
 #undef GLOW_SPENT_CUE
 
-struct GlowScene {
-  u8 unk00[0x10];
-  struct Actor *mainObject;
-  u8 unk14[4];
-  s16 unk18;
-  s16 unk1a;
-  u8 unk1c[2];
-  s16 kind;
-};
-
 extern char ResourceId_RingOrb;
 
 void FieldPsynergy_Hover(void) {
   struct HoverGlowWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
-  struct GlowScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *player = scene->mainObject;
+  struct Actor *player = scene->mainActor;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
   struct Actor *other;
@@ -185,8 +167,9 @@ void FieldPsynergy_Hover(void) {
   s32 i;
   s32 n;
 
-  pending = Scene_FindPsynergyTrigger(0x50000005, scene->kind,
-                                      Scene_SelectPsynergyTarget(scene->kind));
+  pending = Scene_FindPsynergyTrigger(
+      0x50000005, scene->fieldPsynergy,
+      Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);
@@ -216,7 +199,7 @@ void FieldPsynergy_Hover(void) {
     for (n = 0; n < 80; n++) {
       other = event->actors[n];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainObject) {
+          (other->collisionFlags & 1) && other != scene->mainActor) {
         position[0] = other->x.fixed;
         position[1] = other->groundHeight;
         position[2] = other->z.fixed;
@@ -239,7 +222,8 @@ void FieldPsynergy_Hover(void) {
     }
     wait(10);
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, scene->unk18, scene->unk1a);
+      Field_RunPsynergyEvent(pending, scene->firstActorId,
+                             scene->secondActorId);
     for (i = 31; i != 0; i--) {
       work->scale = i << 11;
       wait(1);

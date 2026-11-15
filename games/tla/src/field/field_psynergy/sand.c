@@ -165,25 +165,25 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
   EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
+  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
+  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->scaleY = Q16_ONE * 3 / 4;
   } else {
-    sprite->scaleX = scene->mainObject->scaleX;
-    sprite->scaleY = scene->mainObject->scaleY;
+    sprite->scaleX = scene->mainActor->scaleX;
+    sprite->scaleY = scene->mainActor->scaleY;
   }
-  position[0] = scene->mainObject->x.fixed;
-  position[1] = scene->mainObject->y.fixed;
-  position[2] = scene->mainObject->z.fixed;
+  position[0] = scene->mainActor->x.fixed;
+  position[1] = scene->mainActor->y.fixed;
+  position[2] = scene->mainActor->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
@@ -198,14 +198,14 @@ void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 void Sand_SpawnGrain(struct EffectSprite *sprite,
                      struct EffectParticle *particle, s32 unused, s32 tiles,
                      s32 high) {
-  struct Actor *mainObject =
-      ((struct FxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
+  struct Actor *mainActor =
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   s32 position[3];
   s32 y;
 
-  position[0] = mainObject->x.fixed;
-  position[1] = y = mainObject->y.fixed;
-  position[2] = mainObject->z.fixed;
+  position[0] = mainActor->x.fixed;
+  position[1] = y = mainActor->y.fixed;
+  position[2] = mainActor->z.fixed;
   if (high) {
     position[1] = y + 0x20000;
     Vector_AddPolarOffset(px(2), Random16(), position);
@@ -225,8 +225,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   EffectSprite_Init(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(mainObject);
-  sprite->depth = BattleEffect_GetObjectDepth(mainObject) + 2;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
+  sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
 }
@@ -274,10 +274,10 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
-  struct Actor *owner = effect->mainObject;
+  struct Actor *owner = effect->mainActor;
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
@@ -369,8 +369,8 @@ void FieldPsynergy_EndSand(void) {
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 1);
-      FieldCamera_FollowActor(effect->firstObjectId, 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 1);
+      FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_539);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineWork.movementMode = 1;
@@ -382,9 +382,9 @@ void FieldPsynergy_EndSand(void) {
       if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, effect->fieldKind,
-                Scene_SelectPsynergyTarget(effect->fieldKind)),
-            effect->firstObjectId, -1);
+                0x40000005, effect->fieldPsynergy,
+                Scene_SelectPsynergyTarget(effect->fieldPsynergy)),
+            effect->firstActorId, -1);
     }
     i = 0;
     particle = work + 0x1200;
@@ -408,7 +408,7 @@ void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }
 
 void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
-  struct BattleFxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
@@ -424,7 +424,7 @@ void FieldPsynergy_Sand(void) {
   s32 delay;
   s32 i;
 
-  owner = effect->mainObject;
+  owner = effect->mainActor;
   savedY = owner->y.fixed;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
@@ -452,7 +452,7 @@ void FieldPsynergy_Sand(void) {
     particle += 28;
   }
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-  BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                      owner->z.fixed);
   *motionFlags = 0;
@@ -495,8 +495,8 @@ void FieldPsynergy_Sand(void) {
       ((u8 *)owner->sprite)[5] &= 63;
       ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
       Actor_SelectAnimationFar(owner, 1);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 0);
-      FieldCamera_FollowActor(effect->firstObjectId, 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
+      FieldCamera_FollowActor(effect->firstActorId, 1);
       owner->y.fixed = savedY;
       *motionFlags = savedFlags;
     }

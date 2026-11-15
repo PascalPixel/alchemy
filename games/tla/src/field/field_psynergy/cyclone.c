@@ -103,9 +103,9 @@ struct CarryWork {
 /// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
 /// and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainObject;
+  struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -137,9 +137,9 @@ void Cyclone_CarryLeader(void) {
 /// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
 /// pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainObject;
+  struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -202,8 +202,8 @@ struct WhirlWork {
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *owner = effect->mainObject;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
   s32 spread = 0x40000;
   s32 step = 0xe000;
@@ -221,7 +221,7 @@ void FieldPsynergy_Cyclone(void) {
 
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
-  BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
   palette = (u16 *)(OBJ_PLTT + 14 * 16);
@@ -237,9 +237,9 @@ void FieldPsynergy_Cyclone(void) {
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  pos[0] = effect->mainObject->x.fixed;
-  pos[1] = effect->mainObject->y.fixed;
-  pos[2] = effect->mainObject->z.fixed;
+  pos[0] = effect->mainActor->x.fixed;
+  pos[1] = effect->mainActor->y.fixed;
+  pos[2] = effect->mainActor->z.fixed;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -309,7 +309,7 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
-    Actor_SetSpritePriority(effect->firstObjectId, 1);
+    Actor_SetSpritePriority(effect->firstActorId, 1);
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
@@ -535,16 +535,6 @@ struct SprayWork {
   s8 mode;
 };
 
-struct SprayScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *otherObject;
-};
-
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
@@ -558,7 +548,7 @@ struct SprayScene {
 /// at most 0x400 a frame.
 void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleEffect;
-  struct SprayScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
@@ -574,10 +564,10 @@ void Blaze_UpdateSpray(void) {
     for (i = 0; i <= 15; i++, particle++) {
       if (particle->timer == -1) {
         sprite = &work->drops[i];
-        if (scene->otherObject != NULL)
-          sprite->depth = BattleEffect_GetObjectDepth(scene->otherObject);
+        if (scene->child != NULL)
+          sprite->depth = BattleEffect_GetObjectDepth(scene->child);
         else
-          sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
+          sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;
@@ -618,8 +608,8 @@ void Blaze_UpdateSpray(void) {
     for (j = 0; j < 80; j++) {
       struct Actor *other = event->actors[j];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainObject &&
-          other != scene->otherObject &&
+          (other->collisionFlags & 1) && other != scene->mainActor &&
+          other != scene->child &&
           FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x.fixed,
                                      other->radius - 2) >= 0) {
         work->hit = 1;
@@ -633,7 +623,7 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;
-      if (MapGrid_CheckCollisionFar(scene->mainObject, pos) > 0)
+      if (MapGrid_CheckCollisionFar(scene->mainActor, pos) > 0)
         particle->timer = -1;
     }
     if (particle->timer == -1 && (i & 1)) {
@@ -669,7 +659,7 @@ void Blaze_UpdateSpray(void) {
     }
   }
 
-  target = scene->angle - TRIG_TURN / 4;
+  target = scene->angle8 - TRIG_TURN / 4;
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {
@@ -682,11 +672,6 @@ void Blaze_UpdateSpray(void) {
     work->angle = work->angle + turn;
   }
 }
-
-struct ControlEvent {
-  u8 unk000[362];
-  u16 cue;
-};
 
 void Teleport_PlaySparks(void);
 

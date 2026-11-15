@@ -55,7 +55,7 @@ void Actor_ShowItemIconById(s32 id, s32 item);
 
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
-  struct SceneItemWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 type;
   s32 id;
@@ -110,7 +110,7 @@ void Field_PlaceTreasureSpots(void) {
             s32 z;
 
             *motionFlags = 2;
-            object->groundHeight += 0xfff00000;
+            object->groundHeight -= px(16);
             object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
             x = object->x.fixed >> 20;
@@ -132,9 +132,9 @@ void Field_PlaceTreasureSpots(void) {
         object->userValue = object->z.fixed / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
-        work->objects[i] = object;
+        work->actors[FIELD_TREASURE_ACTOR + i] = object;
         if (type == 131)
-          Actor_ShowItemIconById(i + 64, item);
+          Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
         if (type == 133)
           object->collisionFlags = 0;
       }

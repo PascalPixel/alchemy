@@ -272,12 +272,6 @@ struct Child {
   u8 value1a;
 };
 
-struct WorldEventWork {
-  u8 unk000[0xd39];
-  s8 unkd39;
-  u8 terrainKind;
-};
-
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
 /// axis and blocked count.
 struct WaitingActor {

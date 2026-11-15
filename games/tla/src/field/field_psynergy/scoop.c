@@ -208,9 +208,9 @@ void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
   struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x193c);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *caster = scene->mainObject;
+  struct Actor *caster = scene->mainActor;
   struct Actor *other = NULL;
   struct Actor *object;
   struct Actor *target;
@@ -232,7 +232,7 @@ void FieldPsynergy_Scoop(void) {
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
     SET_POSITION(scene, (caster->x.fixed & 0xfff00000) + 0x80000,
                  caster->y.fixed, (caster->z.fixed & 0xfff00000) + 0x80000);
-    Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(353, 0, 0, 0);
@@ -250,7 +250,7 @@ void FieldPsynergy_Scoop(void) {
   }
   object->facing = caster->facing;
   Actor_SelectAnimationFar(object, 0);
-  alternate = &scene->alternate;
+  alternate = &scene->lit;
   if (*alternate != 0)
     Actor_SetSpriteColorModeFar(object, 6);
   if (*alternate == 0)
@@ -283,7 +283,7 @@ void FieldPsynergy_Scoop(void) {
     target = event->actors[i];
     if (target != NULL && target->script != NULL &&
         (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
-        target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
+        target != scene->mainActor && ((u8 *)target->sprite)[27] != 0 &&
         FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                    target->radius - 2) >= 0) {
       failed = 1;
@@ -292,7 +292,8 @@ void FieldPsynergy_Scoop(void) {
   }
   if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) == 255)
     failed = 4;
-  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
+  if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x) ==
+      -1)
     failed = 2;
   if (MapGrid_CanScoop(scene->x, scene->z, caster->layer) == 0)
     failed = 3;
@@ -397,8 +398,8 @@ void FieldPsynergy_Scoop(void) {
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
     EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
-    sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
-    sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
+    sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
+    sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     pos[0] = object->x.fixed;
@@ -432,9 +433,9 @@ void FieldPsynergy_Scoop(void) {
       frame++;
     }
   } else {
-    pending =
-        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                  Scene_SelectPsynergyTarget(scene->fieldKind));
+    pending = Scene_FindPsynergyTrigger(
+        0x50000005, scene->fieldPsynergy,
+        Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     frame = 0;
     while (work->phase != 999) {
       stage = 0;
@@ -485,7 +486,7 @@ void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
 #define BattleEffect_DropObjectAtAnchor                                        \
   BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct ModeEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
   struct Actor *object;
 
@@ -503,13 +504,8 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   object->gravity = 0x170a;
   wait(50);
-  event->cue = id | 0x1000;
+  event->talk = id | 0x1000;
 }
-
-struct DropEvent {
-  u8 unk000[0xd34];
-  u16 item;
-};
 
 void *Unit_Get(s32 owner);
 extern const u16 gData_080f0fc0[];
@@ -548,6 +544,6 @@ void Scoop_DigUpItem(void) {
   }
   SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
-  ((struct DropEvent *)event)->item = item;
+  event->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }

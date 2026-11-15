@@ -207,16 +207,16 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
-  struct MoveScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *mainObject = scene->mainObject;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *mainActor = scene->mainActor;
   s32 start[3];
   s32 i = 0;
 
-  if (scene->mode != 0xc000)
+  if (scene->angle != 0xc000)
     Actor_SetSpritePriorityDirectFar(object, 0);
-  start[0] = mainObject->x.fixed;
-  start[1] = mainObject->y.fixed + 0x100000;
-  start[2] = mainObject->z.fixed;
+  start[0] = mainActor->x.fixed;
+  start[1] = mainActor->y.fixed + 0x100000;
+  start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
                        start[1] + (y - start[1]) * i / 10,
@@ -232,15 +232,15 @@ struct MapCell;
 /// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
 /// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
-  struct Actor *mainObject =
-      ((struct MoveScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
+  struct Actor *mainActor =
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   s32 start[3];
   s32 i;
 
   i = 0;
-  start[0] = mainObject->x.fixed;
-  start[1] = mainObject->y.fixed + PIXELS(16);
-  start[2] = mainObject->z.fixed;
+  start[0] = mainActor->x.fixed;
+  start[1] = mainActor->y.fixed + PIXELS(16);
+  start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, x + (start[0] - x) * i / 10,
                        y + (start[1] - y) * i / 10,
@@ -318,7 +318,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct SpawnScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
   u8 *part;
   s32 mask;
@@ -329,7 +329,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(object);
       return NULL;
     }
-    object->groundHeight = scene->mainObject->groundHeight;
+    object->groundHeight = scene->mainActor->groundHeight;
     object->motionFlags = 4;
     object->priorityFlags = 4;
     mask = ~0xc;
@@ -399,16 +399,16 @@ void Field_StartPaletteTransition(s32 frames) {
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
 void FieldPsynergy_FadeToCastColor(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   s32 tint;
   s32 animation;
   s32 raw;
 
   tint = gFrameCount & 7;
-  raw = *(u16 *)&scene->fieldKind;
+  raw = *(u16 *)&scene->fieldPsynergy;
   /* FAKEMATCH(barrier): raw passed through an empty asm. */
   asm("" : "+r"(raw));
-  animation = scene->fieldKind;
+  animation = scene->fieldPsynergy;
   if (animation == 18)
     tint = 0;
   if (animation == 26)

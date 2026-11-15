@@ -303,25 +303,14 @@ void Djinn_ResolvePending(s32 shown) {
   gMainRoutineWork.pendingDjinni = 0;
 }
 
-/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes;
- * field_psynergy_work.h has another definition; tried with the definition the
- * rest of the object has, FieldEffect_UpdateAllSlots moves: 1 of 15
- * instructions, FieldEffect_InitializeSlots moves: 2 of 23 instructions,
- * FieldEffect_ReleaseSlots moves: 2 of 27 instructions, 1 more in tla-ja. */
-struct BattleFxScene__motes {
-  u8 unk00[0x50];
-  struct FieldParticle slots[24];
-  u8 unk710[0xe4];
-};
-
 void FieldEffect_UpdateAllSlots(void) {
-  struct BattleFxScene__motes *scene;
+  struct FieldEffectWork *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
   remainingSlots = 0x17;
-  slot = scene->slots;
+  slot = scene->particles;
   do {
     remainingSlots -= 1;
     FieldParticle_Update(slot);
@@ -332,20 +321,19 @@ void FieldEffect_UpdateAllSlots(void) {
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT,
-                        sizeof(struct BattleFxScene__motes));
-  Dma_Fill32(0, work, sizeof(struct BattleFxScene__motes));
+  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
+  Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
   Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
 void FieldEffect_ReleaseSlots(void) {
-  struct BattleFxScene__motes *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldParticle *slot;
   s32 i;
 
   Task_Remove((u32)FieldEffect_UpdateAllSlots);
   for (i = 0; i < 24; i++) {
-    slot = &scene->slots[i];
+    slot = &scene->particles[i];
     if (slot->active != 0)
       FieldEffect_ClearOwnedSlot(slot);
   }

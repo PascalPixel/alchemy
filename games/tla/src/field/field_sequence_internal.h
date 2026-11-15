@@ -223,13 +223,6 @@ struct NearbyRule {
   s16 width;  // of the facing, in 1/65536 turns
 };
 
-struct SceneItemWork {
-  u8 unk000[0x114];
-  struct Actor *objects[16];
-  u8 unk154[0x18a - 0x154];
-  s8 mode;
-};
-
 struct ContainerRow {
   s16 type;
   s16 noHint;

@@ -228,9 +228,9 @@ those few routines into the console's fast memory and runs them there.
   `Ram_HeapSlots->fieldWork` or `gFieldWork`.
 - [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
   adds, its parts in [`field_psynergy/`](field_psynergy). The parts share
-  one effect scene, `FxScene` in
-  [`field_psynergy_internal.h`](field_psynergy_internal.h): the caster, the
-  target and where the Psynergy takes place. Each part is one Psynergy
+  the field Psynergy's work, `FieldEffectWork` in
+  [`field_psynergy_work.h`](../../include/field/field_psynergy_work.h): the
+  caster, the target and where the Psynergy takes place. Each part is one Psynergy
   or one family of its helpers, named for it.
 - `field_effect/` is the field's small effects: particles, sparkles and
   the like.

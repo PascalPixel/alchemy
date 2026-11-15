@@ -156,7 +156,7 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
     Actor_ReleaseFar(obj);
 }
 
-struct BattleFxScene;
+struct FieldEffectWork;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)

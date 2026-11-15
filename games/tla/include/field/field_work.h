@@ -93,7 +93,9 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
-  u16 heldKeys; ///< the keys held when a rope or tightrope was raised
+  /// The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
+  /// them, and they are kept when a rope or tightrope was raised.
+  u16 heldKeys;
   u8 unk188[2];
   s8 mode; ///< an enum ActorSystemMode
   s8 unk18b;
@@ -160,7 +162,9 @@ struct FieldWork {
   s8 targetX;
   s8 targetY;
   s8 targetZ;
-  s16 unkd34;
+  /// The item Scoop dug up (or its coins, 0x8000 | count), given when the
+  /// leader examines it (actor 79).
+  s16 scoopedItem;
   s8 sceneAttributeLow;
   s8 sceneAttributeHigh;
   s8 unkd38;

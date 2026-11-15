@@ -31,12 +31,6 @@ struct ParticleEmitter {
   u8 active;
 };
 
-struct EmitterWork {
-  u8 unk000[0x14];
-  struct Actor *actors[(0xca4 - 0x14) / 4];
-  s8 revealActive;
-};
-
 struct EffectVisual {
   u8 unk00[5];
   u8 flags05;

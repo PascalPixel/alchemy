@@ -72,7 +72,7 @@ void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void FieldPsynergy_TremorOnTarget(void) {
   struct ShakeWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->child;
   struct TremorSprite *targetSprite = target->sprite;
@@ -109,7 +109,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     sprite->depth = 240;
     particle->timer = -1;
   }
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
     FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
@@ -224,7 +224,7 @@ release:
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
@@ -234,7 +234,7 @@ void FieldPsynergy_Tremor(void) {
   s32 frames;
 
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);

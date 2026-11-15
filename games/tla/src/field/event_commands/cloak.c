@@ -60,7 +60,7 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CloakCaster *caster =
-      ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   struct CloakSprite *sprite = caster->sprite;
   struct AnimationEntry *entry = sprite->entries[0];
   u32 n;
@@ -98,8 +98,7 @@ void FieldPsynergy_StartCloak(void) {
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
-    Actor_StartScriptFar((struct Actor *)object,
-                         (u32)gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
     object->update = 0;
   }
 }
@@ -113,8 +112,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   r = Random16();
   object->x.fixed += r - Random16();
   if (object->y.fixed <= object->groundHeight) {
-    Actor_StartScriptFar((struct Actor *)object,
-                         (u32)gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
   }
 }
 
@@ -128,9 +126,9 @@ void FieldPsynergy_Douse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;
-  struct Effect05State *work = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *anchor = work->anchor;
-  struct Actor *target = work->target;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *anchor = work->child;
+  struct Actor *target = work->mainActor;
   s32 count;
   struct Actor *orb;
   s32 raised;
@@ -148,7 +146,7 @@ void FieldPsynergy_Douse(void) {
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
-  if (work->anchor == 0) {
+  if (work->child == 0) {
     work->x = target->x.fixed;
     work->z = target->z.fixed;
     Vector_AddPolarOffset(px(16), work->angle, (struct EffectVector *)&work->x);
@@ -161,7 +159,7 @@ void FieldPsynergy_Douse(void) {
   y = work->y;
   to->y = y + px(32);
   to->z = work->z;
-  if ((s8)work->variant != 0)
+  if ((s8)work->childOption != 0)
     to->y = y + px(80);
   if (Actor_GetSpriteIdFar(anchor) == 380) {
     to->y += px(32);
@@ -196,9 +194,9 @@ void FieldPsynergy_Douse(void) {
   }
   wait(10);
 
-  if ((s8)work->alternate == 0) {
+  if ((s8)work->lit == 0) {
     count = 10;
-    if ((s8)work->highArc == 0)
+    if ((s8)work->enabled == 0)
       count = 24;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
@@ -209,7 +207,7 @@ void FieldPsynergy_Douse(void) {
       }
       mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
       if (mote != 0) {
-        struct Actor *ground = work->anchor;
+        struct Actor *ground = work->child;
 
         if (ground != 0) {
           mote->groundHeight = ground->y.fixed;
@@ -228,12 +226,12 @@ void FieldPsynergy_Douse(void) {
         ev = Scene_FindPsynergyTrigger(0x50000005, 5,
                                        Scene_SelectPsynergyTarget(5));
         if (ev != 0)
-          Field_RunPsynergyEvent(ev, work->firstObjectId, work->secondObjectId);
+          Field_RunPsynergyEvent(ev, work->firstActorId, work->secondActorId);
       }
     }
     wait(10);
   } else {
-    if ((s8)work->highArc != 0)
+    if ((s8)work->enabled != 0)
       count = 10;
     else
       count = 30;
@@ -293,7 +291,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct Actor *obj;
   u32 dist;
 
-  src = ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->child;
+  src = ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
   SET_POSITION(&pos, src->x.fixed, src->y.fixed - Random16() * 16 + px(24),
                src->z.fixed);
 
@@ -305,41 +303,21 @@ void FieldEffect_SpawnFallingParticles(void) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;
     Actor_SelectAnimationFar(obj, 0);
-    ((struct ParticleTimer *)obj)->timer = 12;
+    obj->wait = 12;
     Actor_StartScriptFar((struct Actor *)obj,
                          gBattleEffect_SharedParticleScript);
   }
 }
 
-/* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8;
- * module/tla.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/cloak.c:343: structure has no member named
- * `source'. */
-struct EffectWork__f0decb8 {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct FxObject *source;
-  struct FxObject *target;
-  u8 unk18[0x1c];
-  u8 falls;
-  u8 unk35[3];
-  void *callback;
-  const u8 *script;
-  u8 palette;
-};
+void FieldEffect_SpawnRadialParticleRing(struct Actor *object);
 
-void FieldEffect_SpawnRadialParticleRing(struct FxObject *object);
-
-static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
+static __inline__ s32 Actor_ProbeRaised(struct Actor *object,
                                         struct FxPosition *position) {
   s32 hit;
 
-  object->ground += px(16);
+  object->groundHeight += px(16);
   hit = MapGrid_CheckCollisionFar(object, position);
-  object->ground -= px(16);
+  object->groundHeight -= px(16);
   return hit;
 }
 
@@ -347,28 +325,27 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
-  struct EffectWork__f0decb8 *work;
-  struct FxObject *source;
-  struct FxObject *target;
-  struct FxObject *shards[20];
+  struct FieldEffectWork *work;
+  struct Actor *source;
+  struct Actor *target;
+  struct Actor *shards[20];
   struct FxPosition position;
-  struct FxObject *anchors[2];
-  struct FxObject *object;
-  struct FxObject *right;
+  struct Actor *anchors[2];
+  struct Actor *object;
+  struct Actor *right;
   s32 i;
   s32 angle;
   s32 magnitude;
   struct FxPosition *p;
 
   work = Ram_HeapSlots->fieldEffectWork;
-  source = work->source;
-  target = work->target;
+  source = work->mainActor;
+  target = work->child;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  source->linked = target;
-  Actor_StartScriptFar((struct Actor *)source,
-                       (u32)gFieldEffect_SourceHoldScript);
+  source->watchedActor = target;
+  Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
    * first part. */
   p = &position;
@@ -382,43 +359,44 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     return;
   }
   wait(15);
-  SET_POSITION(p, target->x, target->y + 0x100000, target->z);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + 0x100000, target->z.fixed);
   Actor_SetMoveTargetFar(object, p->x + 0x100000, p->y, p->z);
   Actor_SetMoveTargetFar(right, p->x - 0x100000, p->y, p->z);
   Actor_WaitForMoveFar(object);
   Actor_WaitForMoveFar(right);
-  object->x = p->x + 0x100000;
+  object->x.fixed = p->x + 0x100000;
   object->velocityX = 0;
-  right->x = p->x - 0x100000;
+  right->x.fixed = p->x - 0x100000;
   right->velocityX = 0;
-  target->callback = Actor_ApplyRandomChildValues;
+  target->update = Actor_ApplyRandomChildValues;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_PSYNERGY_START);
-  target->flag = 4;
-  Actor_SetSpriteFlagsFar((struct Actor *)target, 0);
+  target->motionFlags = 4;
+  Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
-    while (target->y - target->ground <= 0x180000) {
-      object->y += px(3) / 8;
-      right->y += px(3) / 8;
-      target->y += px(3) / 8;
+    while (target->y.fixed - target->groundHeight <= 0x180000) {
+      object->y.fixed += px(3) / 8;
+      right->y.fixed += px(3) / 8;
+      target->y.fixed += px(3) / 8;
       wait(1);
     }
   }
-  anchors[0]->speed = px(4);
-  anchors[0]->lift = 0x8000;
-  anchors[1]->speed = px(4);
-  anchors[1]->lift = 0x8000;
-  target->speed = 0x6666;
-  target->lift = 0x3333;
-  target->unk5a = 0;
-  target->mode = 2;
+  anchors[0]->speedLimit = px(4);
+  anchors[0]->acceleration = 0x8000;
+  anchors[1]->speedLimit = px(4);
+  anchors[1]->acceleration = 0x8000;
+  target->speedLimit = 0x6666;
+  target->acceleration = 0x3333;
+  target->steeringFlags = 0;
+  target->layer = 2;
   for (;;) {
     wait(1);
     if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
     angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
     if (angle == 0xffff) {
-      SET_POSITION(&position, target->x, target->y + 0x100000, target->z);
+      SET_POSITION(&position, target->x.fixed, target->y.fixed + 0x100000,
+                   target->z.fixed);
       Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                              position.z);
       Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
@@ -427,7 +405,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[1], 1);
       continue;
     }
-    SET_POSITION(&position, target->x, target->y + 0x100000, target->z);
+    SET_POSITION(&position, target->x.fixed, target->y.fixed + 0x100000,
+                 target->z.fixed);
     Vector_AddPolarOffset(px(2), angle, &position);
     Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                            position.z);
@@ -435,7 +414,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
                            position.z);
     Actor_WaitForMoveFar(anchors[0]);
     Actor_WaitForMoveFar(anchors[1]);
-    SET_POSITION(&position, target->x, target->ground, target->z);
+    SET_POSITION(&position, target->x.fixed, target->groundHeight,
+                 target->z.fixed);
     Vector_AddPolarOffset(px(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
@@ -450,7 +430,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       continue;
     }
     {
-      struct FxObject *second;
+      struct Actor *second;
       s32 x;
       s32 z;
 
@@ -460,20 +440,20 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[0], 4);
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
-      target->unk5b = i;
-      target->speed = 0x3333;
-      target->lift = 0x3333;
+      target->paused = i;
+      target->speedLimit = 0x3333;
+      target->acceleration = 0x3333;
       Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
-      anchors[0]->speed = 0x3333;
-      anchors[0]->lift = 0x3333;
+      anchors[0]->speedLimit = 0x3333;
+      anchors[0]->acceleration = 0x3333;
       second = anchors[1];
-      second->speed = 0x3333;
-      second->lift = 0x3333;
+      second->speedLimit = 0x3333;
+      second->acceleration = 0x3333;
       Actor_SetMoveTargetFar(anchors[0], p->x + 0x100000, p->y, p->z);
       Actor_SetMoveTargetFar(second, p->x - 0x100000, p->y, p->z);
       Actor_WaitForMoveFar(target);
-      target->x = x;
-      target->z = z;
+      target->x.fixed = x;
+      target->z.fixed = z;
       target->velocityX = i;
       target->velocityZ = i;
       wait(10);
@@ -487,19 +467,18 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(p, target->x, target->y + 0x100000, target->z);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + 0x100000, target->z.fixed);
   {
-    struct FxObject **walk = shards;
+    struct Actor **walk = shards;
 
     for (i = 0; i < 20; i++) {
       object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        Actor_StartScriptFar((struct Actor *)object,
-                             (u32)gFieldEffect_FragmentScript);
-        object->speed = Random16() + 0x20000;
-        object->lift = 0x20000;
-        object->flag = 0;
+        Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
+        object->speedLimit = Random16() + 0x20000;
+        object->acceleration = 0x20000;
+        object->motionFlags = 0;
         magnitude = Random16() * 24 + 0x80000;
         Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
                                                   Random16());
@@ -509,16 +488,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(anchors[0]);
   Actor_ReleaseFar(anchors[1]);
-  Actor_SetSpriteColorModeFar((struct Actor *)target, work->palette);
-  Actor_StartScriptFar((struct Actor *)target, (u32)(work->script));
-  target->callback = work->callback;
-  target->flag = 3;
+  Actor_SetSpriteColorModeFar(target, work->savedPalette);
+  Actor_StartScriptFar(target, (u32)(work->savedScript));
+  target->update = work->savedCallback;
+  target->motionFlags = 3;
   target->velocityY = px(10);
-  target->gravity = 0x3333;
-  target->mode = 0;
-  source->callback = NULL;
-  Actor_SetSpriteColorModeFar((struct Actor *)source, 0);
-  if ((s8)work->falls != 0) {
+  target->bounce = px(1) / 5;
+  target->layer = 0;
+  source->update = NULL;
+  Actor_SetSpriteColorModeFar(source, 0);
+  if ((s8)work->childOption != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);
     wait(1);

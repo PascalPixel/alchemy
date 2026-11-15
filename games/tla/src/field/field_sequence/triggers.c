@@ -232,7 +232,7 @@ s32 Scene_TalkToActor(s32 id) {
       type = 131;
       noHint = result;
       flag = result;
-      contents = event->unkd34;
+      contents = event->scoopedItem;
       index = 79;
       found = 1;
     }
@@ -539,17 +539,14 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
   return handled;
 }
 
-/// The field's push and button handler for keys, idle while
-/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more
-/// than 12 frames: key 0x20 on a 0x80 push makes the leader jump
-/// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
-/// Field_TryJumpForward; key 0x40 runs Field_ClimbDown or Field_ClimbUp by the
-/// push kind and clears the push state when it returns 0; key 2 with
-/// Leader_CanPushObjectAhead runs the nearby talk target's kind 8 event and
-/// then the kind 9 event for keys (messages under 0x10000, otherwise a routine
-/// called with keys and the target). Always returns 0.
-s32 Field_RunPushCell(s32 keys) {
-  struct EventWorkView *work = Ram_HeapSlots->fieldWork;
+/// Runs the push cell the leader pushes against (attributes, its cell's
+/// attribute bits) once it has pushed for more than 12 frames, idle while
+/// gMainRoutineWork.pendingThird is set: a ledge (bit 5) with KEY_DOWN held
+/// jumps down it, a jump (bit 7) jumps forward, a climb (bit 6) climbs down or
+/// up by the key held, and a push (bit 1) pushes the actor ahead, running the
+/// scene's kind 8 trigger for it and kind 9 for the cell. Always returns 0.
+s32 Field_RunPushCell(s32 attributes) {
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.leaderActorId;
   struct SceneEventEntry *event;
   s32 target;
@@ -557,30 +554,32 @@ s32 Field_RunPushCell(s32 keys) {
 
   if (gMainRoutineWork.pendingThird != 0)
     return 0;
-  if ((keys & 0x20) && work->blockedSteps > 12 && (work->pushKind & 0x80)) {
+  if ((attributes & 0x20) && work->blockedSteps > 12 &&
+      (work->heldKeys & KEY_DOWN)) {
     Actor_JumpDownLedge(owner, 6, 0);
     work->blockedSteps = 0;
   }
-  if ((keys & 0x80) && work->blockedSteps > 12 && !Field_TryJumpForward())
+  if ((attributes & 0x80) && work->blockedSteps > 12 && !Field_TryJumpForward())
     work->blockedSteps = 0;
-  if ((keys & 0x40) && work->blockedSteps > 12) {
-    s32 kind = work->pushKind & 0xf0;
+  if ((attributes & 0x40) && work->blockedSteps > 12) {
+    s32 kind = work->heldKeys & (KEY_RIGHT | KEY_LEFT | KEY_UP | KEY_DOWN);
     s32 done = -1;
 
-    if (kind == 0x80)
+    if (kind == KEY_DOWN)
       done = Field_ClimbDown();
-    else if (kind == 0x40)
+    else if (kind == KEY_UP)
       done = Field_ClimbUp();
     if (done == 0) {
       work->blockedSteps = 0;
-      work->unk15a = 0;
-      work->unk15e = 0;
-      work->unk15c = 0;
-      work->unk164 = 0;
-      work->unk166 = 0;
+      work->fieldMenu = 0;
+      work->pauseMenu = 0;
+      work->aButton = 0;
+      work->encounter = 0;
+      work->psynergy = 0;
     }
   }
-  if ((keys & 2) && work->blockedSteps > 12 && Leader_CanPushObjectAhead()) {
+  if ((attributes & 2) && work->blockedSteps > 12 &&
+      Leader_CanPushObjectAhead()) {
     target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
     if (target != -1) {
       event = Scene_FindTrigger(8, target);
@@ -588,15 +587,15 @@ s32 Field_RunPushCell(s32 keys) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
         else
-          ((void (*)(s32, s32))result)(keys, target);
+          ((void (*)(s32, s32))result)(attributes, target);
       }
       Leader_PushObjectAhead();
-      event = Scene_FindTrigger(9, keys);
+      event = Scene_FindTrigger(9, attributes);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
         else
-          ((void (*)(s32, s32))result)(keys, target);
+          ((void (*)(s32, s32))result)(attributes, target);
       }
       work->blockedSteps = 0;
     }

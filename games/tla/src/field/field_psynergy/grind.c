@@ -48,8 +48,8 @@ extern char ResourceId_WaterSplash;
 
 void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *caster = scene->mainObject;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *caster = scene->mainActor;
   struct Actor *child = scene->child;
   struct SplashAnimation *animation = child->sprite;
   struct EffectSprite *sprite;
@@ -81,8 +81,9 @@ void FieldPsynergy_GrindOnTarget(void) {
   spraying = 0;
   next = 0;
   mode = 0;
-  selector = Scene_SelectPsynergyTarget(scene->fieldKind);
-  pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind, selector);
+  selector = Scene_SelectPsynergyTarget(scene->fieldPsynergy);
+  pending =
+      Scene_FindPsynergyTrigger(0x50000005, scene->fieldPsynergy, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -93,7 +94,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     scene->x = caster->x.fixed;
     scene->z = caster->z.fixed + 0x80000;
     scene->y = caster->y.fixed;
-    Vector_AddPolarOffset(px(32), scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(32), scene->angle, &scene->x);
   }
   isWaterObject = 0;
   if (Actor_GetSpriteIdFar(child) == 424) {
@@ -262,7 +263,7 @@ end:
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
 void FieldPsynergy_Grind(void) {
-  struct FxScene *scene;
+  struct FieldEffectWork *scene;
   s32 phase;
   s32 amplitude;
   s32 state;
@@ -271,7 +272,7 @@ void FieldPsynergy_Grind(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 

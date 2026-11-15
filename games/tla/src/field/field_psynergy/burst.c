@@ -44,7 +44,7 @@ void Camera_WorldToScreen(s32 *position);
 /// Task of the Burst: cycles its particles' colours and draws them.
 void FieldPsynergy_UpdateBurst(void) {
   struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleEffect;
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
   struct GlowParticle *particle;
   struct EffectSprite *sprite;
@@ -296,7 +296,7 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 4:
       if (work->timer == 5)
-        BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+        BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
       if (work->timer == 20) {
         work->phase = 999;
         work->timer = -1;
@@ -320,7 +320,7 @@ s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GlowWork));
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct GlowParticle *particle;
@@ -349,12 +349,12 @@ void FieldPsynergy_Burst(void) {
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
   canvas->priority =
-      FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
-  canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
+      FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
+  canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
   canvas->scaleY = 0;
-  if (scene->facing == TRIG_TURN * 3 / 4)
+  if (scene->angle == TRIG_TURN * 3 / 4)
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
@@ -410,7 +410,7 @@ void FieldPsynergy_Burst(void) {
   work->nextBurst = 0;
   work->newBursts = 0;
   Task_Add(FieldPsynergy_UpdateBurst, 0x480);
-  kind = scene->fieldKind;
+  kind = scene->fieldPsynergy;
   pending = Scene_FindPsynergyTrigger(0x50000005, kind,
                                       Scene_SelectPsynergyTarget(kind));
   frame = 0;

@@ -154,11 +154,6 @@ struct AnchorWork {
   struct Actor *anchor;
 };
 
-struct ModeEvent {
-  u8 unk000[352];
-  u16 cue;
-};
-
 void Camera_WorldToScreen(s32 *position);
 
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels
@@ -211,10 +206,10 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
 void FieldPsynergy_Pound(void) {
   struct PoundWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x18b4);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FxEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
-  struct Actor *caster = scene->mainObject;
+  struct Actor *caster = scene->mainActor;
   struct Actor *object;
   struct Actor *shine;
   struct CanvasSpriteWork *canvas;
@@ -240,7 +235,7 @@ void FieldPsynergy_Pound(void) {
   lift = 0x200000;
   if (child == NULL) {
     SET_POSITION(scene, caster->x.fixed, caster->y.fixed, caster->z.fixed);
-    Vector_AddPolarOffset(lift, scene->facing, &scene->x);
+    Vector_AddPolarOffset(lift, scene->angle, &scene->x);
   } else if (child->motionFlags & 4) {
     /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
     if (child->groundHeight == 300)
@@ -250,11 +245,12 @@ void FieldPsynergy_Pound(void) {
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
-    spot = ~Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x);
+    spot =
+        ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
     inReach = (u32)(-spot | spot) >> 31;
     if (inReach == 1) {
       for (j = 0; j < 80; j++) {
-        object = event->objects[j];
+        object = event->actors[j];
         if (object != NULL && object->script != NULL &&
             (object->collisionFlags & 1) &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x.fixed,
@@ -292,7 +288,7 @@ void FieldPsynergy_Pound(void) {
 
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
+  canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
   canvas->depth = 1;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
@@ -374,9 +370,9 @@ void FieldPsynergy_Pound(void) {
     Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
   } else {
-    pending =
-        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                  Scene_SelectPsynergyTarget(scene->fieldKind));
+    pending = Scene_FindPsynergyTrigger(
+        0x50000005, scene->fieldPsynergy,
+        Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     Task_Add(FieldPsynergy_UpdatePound, 0x480);
     frame = 0;
     while (work->state != 999) {

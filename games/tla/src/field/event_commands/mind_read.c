@@ -300,7 +300,7 @@ void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
 void FieldPsynergy_SteerPushedTarget(void) {
   struct Vec3 position;
   struct Vec3 beyond;
-  struct BattleFxScene *scene;
+  struct FieldEffectWork *scene;
   struct Actor *user;
   struct Actor *target;
   struct Actor *pusher;
@@ -321,7 +321,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   const u8 *modes;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  user = scene->mainObject;
+  user = scene->mainActor;
   target = scene->child;
   angle = (u16)scene->angle + TRIG_TURN / 2;
   moved = 0;
@@ -341,9 +341,9 @@ void FieldPsynergy_SteerPushedTarget(void) {
     return;
   }
 
-  event =
-      Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                Scene_SelectPsynergyTarget(scene->fieldKind));
+  event = Scene_FindPsynergyTrigger(
+      0x50000005, scene->fieldPsynergy,
+      Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   pusher->watchedActor = target;
   SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
                target->z.fixed);
@@ -448,7 +448,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     Vector_AddPolarOffset(px(16), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
     if (moved == 1) {
-      Actor_GetById(scene->firstObjectId)->steeringFlags &= 0xfe;
+      Actor_GetById(scene->firstActorId)->steeringFlags &= 0xfe;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
@@ -464,8 +464,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   }
 
   *layer = savedLayer;
-  // The palette byte sits at 0x40 here, not the struct's savedPalette at 0x44.
-  Actor_SetSpriteColorModeFar(target, scene->unk40[0]);
+  Actor_SetSpriteColorModeFar(target, scene->savedPalette);
   Actor_StartScriptFar(target, scene->savedScript);
   target->update = (void (*)(void))scene->savedCallback;
   if (pushed) {
@@ -473,13 +472,13 @@ void FieldPsynergy_SteerPushedTarget(void) {
     Actor_SelectAnimationFar(pusher, 4);
     Actor_SetPositionAndResetMotionFar(pusher, pusher->x.fixed, pusher->y.fixed,
                                        pusher->z.fixed);
-    Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
+    Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
   }
   BattleEffect_StopMainActor();
   if (moved == 1) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
      * actionFlags. */
-    userFlags = &Actor_GetById(scene->firstObjectId)->steeringFlags;
+    userFlags = &Actor_GetById(scene->firstActorId)->steeringFlags;
     *userFlags |= 1;
   }
   FieldPsynergy_FadeFromCastColor();
@@ -542,11 +541,11 @@ next_state:
 void FieldPsynergy_Move(void) {
   // Unused: gives the stack frame its 12 bytes.
   s32 work[3];
-  struct BattleFxScene *scene;
+  struct FieldEffectWork *scene;
   void *object;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  object = scene->mainObject;
+  object = scene->mainActor;
 
   FieldPsynergy_FadeToCastColor();
   object = FieldEffect_SpawnMoveHand(object);
@@ -728,7 +727,7 @@ extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
 // plain, run the Reveal event that matches, then show the markers nearby
 // and watch how far the leader walks.
 void FieldPsynergy_Reveal(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event;
   struct ScreenTransitionState *transition;
   struct Actor *caster;
@@ -739,7 +738,7 @@ void FieldPsynergy_Reveal(void) {
   event = Ram_HeapSlots->fieldWork;
   ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
   transition = Ram_HeapSlots->screenTransition;
-  caster = scene->mainObject;
+  caster = scene->mainActor;
   transition->centreX = caster->x.fixed;
   transition->centreY = caster->z.fixed - caster->y.fixed;
   PaletteFade_SetSource(0x10000, 0);
@@ -752,8 +751,7 @@ void FieldPsynergy_Reveal(void) {
       REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
       Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
-    Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                           scene->secondObjectId);
+    Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   /* FAKEMATCH(dead): leave the centre (in pixels) and the time in the event
    * work. */
   do {
@@ -776,7 +774,7 @@ void FieldPsynergy_Reveal(void) {
 }
 
 void FieldPsynergy_EndReveal(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   void *pending;
@@ -797,8 +795,8 @@ void FieldPsynergy_EndReveal(void) {
         0x40000005, FIELD_PSYNERGY_REVEAL,
         Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                             scene->secondObjectId);
+      Field_RunPsynergyEvent(pending, scene->firstActorId,
+                             scene->secondActorId);
     if (scene->childOption == 0) {
       transition->nextMode = 0;
       transition->duration = 1;
@@ -818,7 +816,7 @@ void FieldPsynergy_EndReveal(void) {
 /// to the underfoot priority. A target of kind 372 instead throws five pieces
 /// round the scene's position; one of kind 394 only plays the cue (sound 126).
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = scene->child;
   s32 kind = 0;
 
@@ -862,7 +860,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       wait((((u32)Random16() * 2) >> 16) + 2);
       n--;
     } while (n >= 0);
-    HangingVine_Hang(scene->secondObjectId, 1);
+    HangingVine_Hang(scene->secondActorId, 1);
   } else {
     wait(10);
     Sound_PlayFar(SE_RECOVERY);
@@ -905,14 +903,14 @@ void FieldPsynergy_Growth(void) {
 }
 
 void FieldEffect_SpawnBurstParticleField(void) {
-  struct BattleFxScene *work;
+  struct FieldEffectWork *work;
   struct Actor *user;
   s32 pos[3];
   s32 n;
   s32 *p;
 
   work = Ram_HeapSlots->fieldEffectWork;
-  user = work->mainObject;
+  user = work->mainActor;
   FieldPsynergy_FadeToCastColor();
 
   p = pos;
@@ -979,7 +977,7 @@ void Actor_ApplyRandomChildValues(void);
 /// lift the target 32 pixels with them.
 void FieldPsynergy_LiftOnTarget(void) {
   struct BattleEffectScene *scene;
-  void *mainObject;
+  void *mainActor;
   void *child;
   void *anchors[2];
   s32 position[3];
@@ -989,13 +987,13 @@ void FieldPsynergy_LiftOnTarget(void) {
 
   scene = Ram_HeapSlots->fieldEffectWork;
   child = scene->child;
-  mainObject = scene->mainObject;
+  mainActor = scene->mainActor;
   if (child == 0)
     return;
 
   FieldPsynergy_FadeToCastColor();
-  *(void **)((u8 *)mainObject + 0x68) = child;
-  Actor_StartScriptFar(mainObject, gFieldEffect_SourceHoldScript);
+  *(void **)((u8 *)mainActor + 0x68) = child;
+  Actor_StartScriptFar(mainActor, gFieldEffect_SourceHoldScript);
 
   x = scene->x;
   position[0] = x;
@@ -1036,7 +1034,7 @@ void FieldPsynergy_LiftOnTarget(void) {
 }
 
 void FieldPsynergy_Lift(void) {
-  struct BattleFxScene *work;
+  struct FieldEffectWork *work;
   struct Actor *obj;
   struct Actor *pair[2];
   struct ScatterPosition pos;
@@ -1191,7 +1189,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   obj = Actor_Spawn(671, pos.x, pos.y - px(32), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
-    ((struct ParticleTimer *)obj)->timer = 20;
+    obj->wait = 20;
     Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript);
   }
 
@@ -1229,7 +1227,7 @@ void FieldPsynergy_ForceOnTarget(struct BattleEffectParams *effect) {
 void FieldPsynergy_Force(void) {
   struct Actor *copies[4];
   struct Effect04Vector pos;
-  struct Effect04Scene *scene;
+  struct FieldEffectWork *scene;
   struct Actor *target;
   struct Actor *source;
   struct Actor *object;
@@ -1245,10 +1243,10 @@ void FieldPsynergy_Force(void) {
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_PSYNERGY_START);
-  slot = scene->slots;
+  slot = scene->particles;
 
   for (i = 0; i <= 11; i++) {
-    source = scene->mainObject;
+    source = scene->mainActor;
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + 0x100000,
                  source->z.fixed);
     Camera_WorldToScreen(&pos);
@@ -1262,7 +1260,7 @@ void FieldPsynergy_Force(void) {
     slot++;
   }
 
-  source = scene->mainObject;
+  source = scene->mainActor;
   SET_POSITION(&pos, source->x.fixed, source->y.fixed + 0x100000,
                source->z.fixed);
   Vector_AddPolarOffset(px(8), scene->angle, &pos);
@@ -1310,7 +1308,7 @@ void FieldPsynergy_Force(void) {
   marker = resource->vramBlock;
 
   if (scene->enabled != 0) {
-    source = scene->mainObject;
+    source = scene->mainActor;
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + 0x100000,
                  source->z.fixed);
     Vector_AddPolarOffset(px(56), scene->angle, &pos);
@@ -1347,7 +1345,7 @@ void FieldPsynergy_Force(void) {
   event =
       Scene_FindPsynergyTrigger(0x50000005, 4, Scene_SelectPsynergyTarget(4));
   if (event != NULL)
-    Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
+    Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);
@@ -1428,7 +1426,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
 
 /// Runs Frost cast on a target.
 void FieldPsynergy_FrostOnTarget(void) {
-  struct BattleFxScene *state = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *state = Ram_HeapSlots->fieldEffectWork;
   struct OrbitingParticleChild *child = state->child;
 
   if (child != 0) {
@@ -1446,7 +1444,7 @@ void FieldPsynergy_FrostOnTarget(void) {
 void FieldPsynergy_Frost(void) {
   struct OrbitingParticleVector pos;
   struct OrbitingParticleVector *p;
-  struct BattleFxScene *scene;
+  struct FieldEffectWork *scene;
   struct Actor *target;
   struct Actor *particle;
   struct PendingEvent *ev;
@@ -1517,7 +1515,7 @@ void FieldPsynergy_Frost(void) {
     ev =
         Scene_FindPsynergyTrigger(0x50000005, 6, Scene_SelectPsynergyTarget(6));
     if (ev != NULL)
-      Field_RunPsynergyEvent(ev, scene->firstObjectId, scene->secondObjectId);
+      Field_RunPsynergyEvent(ev, scene->firstActorId, scene->secondActorId);
     wait(20);
   }
 
@@ -1538,7 +1536,7 @@ void FieldEffect_SwayParticle(struct SwayObject *object) {
 /// The particle circles 10 pixels above the scene's position, its radius in
 /// pixels the frames it has left; at 0 it runs the shared particle script.
 void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *object) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct OrbitVector pos;
   s16 life;
   s32 count;
@@ -1567,7 +1565,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *object) {
 }
 
 void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
-  struct BattleFxScene *scene;
+  struct FieldEffectWork *scene;
   s16 *phase;
   struct SparkObject *spark;
   s32 pos[3];
@@ -1613,8 +1611,8 @@ void FieldPsynergy_PlyOnTarget(void) {
 /// Eight particles spiral in on the main object, one a frame; then a centre
 /// object flashes for 60 frames, emits sparks and flies off.
 void FieldPsynergy_Ply(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *target = scene->mainObject;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *target = scene->mainActor;
   struct Actor *object;
   struct ResourceEntry *last;
   u8 marker;
@@ -1729,7 +1727,7 @@ void FieldEffect_CheckCloakTile(void) {
 /// (FieldPsynergy_RunExtraHandler).
 void FieldPsynergy_EndCloak(void) {
   struct CloakCaster *caster =
-      ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   struct CloakSprite *sprite = caster->sprite;
   struct AnimationEntry *entry = sprite->entries[0];
   u32 i;

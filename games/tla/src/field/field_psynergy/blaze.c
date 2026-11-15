@@ -11,15 +11,6 @@
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 
-struct FxEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
-  u8 unk154[0xd30 - 0x154];
-  u8 unkd30;
-  u8 unkd31[7];
-  s8 unkd38;
-};
-
 struct ObjectMetadata {
   u8 unk00[8];
   s8 height;
@@ -48,7 +39,7 @@ struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
 void FieldPsynergy_Blaze(void) {
   struct SprayWork *work;
   struct FieldWork *event;
-  struct FxScene *scene;
+  struct FieldEffectWork *scene;
   struct Actor *caster;
   struct Actor *object;
   struct EffectSprite *sprite;
@@ -76,7 +67,7 @@ void FieldPsynergy_Blaze(void) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SprayWork));
   scene = Ram_HeapSlots->fieldEffectWork;
   event = Ram_HeapSlots->fieldWork;
-  caster = scene->mainObject;
+  caster = scene->mainActor;
   look = 0;
   object = scene->child;
   if (Actor_GetSpriteIdFar(object) == 418) {
@@ -100,8 +91,8 @@ void FieldPsynergy_Blaze(void) {
       id = OBJECT_DEFINITION(cursor.object)[0];
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
-        distance = Field_MeasurePsynergyReach(scene->fieldKind,
-                                              scene->firstObjectId, i);
+        distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
+                                              scene->firstActorId, i);
         if (distance != -1 && best > distance) {
           height = Resource_GetMetadataRecordFarFar(
                        OBJECT_DEFINITION(cursor.object)[0])
@@ -111,7 +102,7 @@ void FieldPsynergy_Blaze(void) {
           work->origin[0] = cursor.object->x.fixed;
           work->origin[1] = cursor.object->y.fixed + height;
           work->origin[2] = cursor.object->z.fixed;
-          scene->secondObjectId = i;
+          scene->secondActorId = i;
           scene->child = cursor.object;
           best = distance;
         }
@@ -169,9 +160,9 @@ void FieldPsynergy_Blaze(void) {
   }
 
   Sound_PlayFar(SE_RUSH);
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
-  work->angle = scene->angle;
-  work->targetAngle = scene->angle;
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+  work->angle = scene->angle8;
+  work->targetAngle = scene->angle8;
   switch (look) {
   case 0:
     resourceId = (s32)&ResourceId_RedFlameBurst;
@@ -228,11 +219,11 @@ void FieldPsynergy_Blaze(void) {
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
-      pending = Scene_FindPsynergyTrigger(0x60000005, scene->fieldKind,
+      pending = Scene_FindPsynergyTrigger(0x60000005, scene->fieldPsynergy,
                                           (s16)(work->hitObject | 0x100));
       if (pending != NULL)
-        Field_RunPsynergyEvent(pending, scene->firstObjectId, work->hitObject);
-      if (Scene_FindPsynergyTrigger(0x20000005, scene->fieldKind,
+        Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
+      if (Scene_FindPsynergyTrigger(0x20000005, scene->fieldPsynergy,
                                     (s16)(work->hitObject | 0x100)) != NULL) {
         event->unkd30 = work->hitObject;
         break;

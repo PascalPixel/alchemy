@@ -43,7 +43,7 @@ void BattleEffect_FadeToSavedPalettes(s32 frames);
 void FieldPsynergy_Parch(void) {
   struct PuffWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
   struct HeapSlots *slots;
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
@@ -79,7 +79,7 @@ void FieldPsynergy_Parch(void) {
   s32 i;
   u8 *dst;
 
-  caster = scene->mainObject;
+  caster = scene->mainActor;
   found = -1;
   fade = -1;
   pending = NULL;
@@ -87,7 +87,7 @@ void FieldPsynergy_Parch(void) {
   pos[0] = caster->x.fixed;
   pos[1] = caster->y.fixed;
   pos[2] = caster->z.fixed;
-  Vector_AddPolarOffset(px(32), scene->facing, pos);
+  Vector_AddPolarOffset(px(32), scene->angle, pos);
 
   i = 0;
   kind = 290;
@@ -105,13 +105,13 @@ void FieldPsynergy_Parch(void) {
       goto loaded;
     }
   }
-  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, pos) == -1) {
+  if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, pos) == -1) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldKind,
+        0x50000005, scene->fieldPsynergy,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
     result = 2;
     if (pending == NULL)
@@ -239,7 +239,7 @@ loaded:
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =
-        FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
+        FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
     sprite->depth = 1;
     sprite->x = x;
     sprite->y = y;
@@ -351,8 +351,7 @@ loaded:
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)
-    Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                           scene->secondObjectId);
+    Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   VramCache_FreeEntry(entry);
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);

@@ -20,7 +20,7 @@
 #include "fixed_math.h"
 
 void FieldPsynergy_Carry(void) {
-  struct BattleFxScene *work;
+  struct FieldEffectWork *work;
   struct Actor *obj;
   struct Actor *pair[2];
   struct ScatterPosition pos;

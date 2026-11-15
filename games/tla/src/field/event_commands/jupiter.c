@@ -19,7 +19,7 @@
 void Djinn_RunJupiterJoinEffect(s32 id) {
   struct EffectVector position;
   struct MotionObject *object;
-  struct BattleFxScene__motes *scene;
+  struct FieldEffectWork *scene;
   struct FieldParticle *slot;
   s32 scale;
   s32 count;
@@ -50,7 +50,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
   Sound_PlayFar(SE_SCATTER);
-  slot = scene->slots;
+  slot = scene->particles;
   count = 23;
   do {
     FieldParticle_Initialize(slot, 672, position.x, position.z);
@@ -121,7 +121,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
     Actor_ReleaseFar(obj);
 }
 
-struct BattleFxScene__motes;
+struct FieldEffectWork;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)

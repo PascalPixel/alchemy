@@ -398,22 +398,11 @@ struct DepthScene {
   u8 unk02[2];
   s32 x;
   u8 unk08[8];
-  struct Actor *mainObject;
+  struct Actor *mainActor;
   u8 unk14[0x7b4];
   struct DepthSprite sprite;
   s16 vramSlot;
   s16 active;
-};
-
-struct MoveScene {
-  u16 mode;
-  u8 unk02[14];
-  struct Actor *mainObject;
-};
-
-struct SpawnScene {
-  u8 unk00[0x10];
-  struct Actor *mainObject;
 };
 
 /// One rising particle: its sprite, world position, drift and frames left.

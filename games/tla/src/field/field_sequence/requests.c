@@ -116,8 +116,8 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
   FieldMessage_ShowFar(message, 1);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
-  if (Party_FindOwnerWithActionFar(136) != -1)
-    ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
+  if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
+    gFieldWork->fieldMenu = 1;
 }
 
 /* VIEW(event_commands): tag struct EventWork1cc as struct

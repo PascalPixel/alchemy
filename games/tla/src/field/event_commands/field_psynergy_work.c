@@ -66,25 +66,15 @@ void Camera_WorldToScreen(struct EffectVector *position) {
   }
 }
 
-/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene;
- * field_psynergy_work.h has another definition; tried with the definition the
- * rest of the object has, BattleEffect_UpdateAllEffectSlots moves: 1 of 15
- * instructions in tla-ja. */
-struct BattleFxScene__scene {
-  u8 unk00[0x50];
-  struct FieldParticle slots[24];
-  u8 unk710[0xe4];
-};
-
 /// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
-  struct BattleFxScene__scene *scene;
+  struct FieldEffectWork *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
   remainingSlots = 0x17;
-  slot = scene->slots;
+  slot = scene->particles;
   do {
     remainingSlots -= 1;
     FieldParticle_Update(slot);
@@ -92,34 +82,10 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-struct EffectWork {
-  u8 unk000[0x1c];
-  u16 action;
-  s16 animation;
-  s8 enabled;
-  u8 mode;
-  s8 visible;
-  s8 active;
-  u8 unk024[0x1d];
-  u8 lit;
-  u16 freeBlocks;
-  s32 savedShakeX;
-  s32 savedShakeY;
-  s32 savedShakeDecay;
-  u8 unk050[0x6c2];
-  s8 messageMode;
-  u8 unk713;
-  u8 unk714[0xb0];
-  s16 unk7c4;
-  s16 unk7c6;
-  u8 unk7c8[0x2a];
-  s16 unk7f2;
-};
-
 void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct EffectWork *work;
+  struct FieldEffectWork *work;
   s32 running;
 
   if (event->psynergyActing == 0) {
@@ -132,7 +98,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work = Ram_HeapSlots->fieldEffectWork;
   }
   work->action = abilityId;
-  work->animation = Ability_Get(abilityId)->fieldEffect;
+  work->fieldPsynergy = Ability_Get(abilityId)->fieldEffect;
   running = event->psynergyActing;
   if (running != 0)
     return;
@@ -142,31 +108,31 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->enabled = 1;
   work->active = 1;
   work->messageMode = 1;
-  work->unk713 = 0;
-  work->unk7c4 = running;
-  work->unk7c6 = -1;
-  work->unk7f2 = running;
+  work->messageShown = 0;
+  work->stage = running;
+  work->frame = -1;
+  work->spriteActive = running;
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
   if (gMainRoutineWork.mapId == SCENE_GABOMBA_CATACOMBS_5)
     work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_1)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_2)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_7)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_JUPITER_LIGHTHOUSE_AERIE)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerieBeacon)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_LOHO_1)
-    *((u8 *)work + 0x41) = 1;
+    work->lit = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
-  if (work->animation != 8)
+  if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 0;
-  if (work->animation != 28)
+  if (work->fieldPsynergy != 28)
     event->unkcad = 0;
   event->targetX = 0;
   event->targetY = 0;
@@ -180,13 +146,13 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
-  struct PairScene *scene;
+  struct FieldEffectWork *scene;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  scene->firstObjectId = userId;
+  scene->firstActorId = userId;
   user = ObjectTable_Get((s16)userId);
-  scene->secondObjectId = targetId;
-  scene->mainObject = user;
+  scene->secondActorId = targetId;
+  scene->mainActor = user;
   target = ObjectTable_Get((s16)targetId);
   scene->angle = (user->facing + TRIG_TURN / 8) &
                  TRIG_TURN * 3 / 4; // Round to four directions.
@@ -197,8 +163,8 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 
     terrain = user->priorityFlags;
 
-    scene->savedTerrain = terrain;
-    scene->savedPriority = (u32)(((u8 *)user->sprite)[9] << 28) >> 30;
+    scene->savedPriorityFlags = terrain;
+    scene->savedSpritePriority = (u32)(((u8 *)user->sprite)[9] << 28) >> 30;
   }
   if (target != NULL) {
     // Save target motion and colors for later restoration.
@@ -218,10 +184,10 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 }
 
 void EventObject_Initialize(void) {
-  struct FinishWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *object = work->object;
-  s32 quantity = work->quantity;
+  struct Actor *object = work->mainActor;
+  s32 ability = work->action;
   s32 zero;
   s8 sound;
 
@@ -236,7 +202,7 @@ void EventObject_Initialize(void) {
     object->targetZ = object->z.fixed;
     object->velocityZ = 0;
   } while (0);
-  sound = work->sound;
+  sound = work->visible;
   /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
    * read. */
   asm("" : "=r"(zero) : "0"(0));
@@ -244,16 +210,16 @@ void EventObject_Initialize(void) {
     Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
-  if (work->showQuantity != 0) {
+  if (work->active != 0) {
     work->messageShown = 1;
     Actor_SetOthersPaused(object, 1, 0);
-    MessageArgument_PushFar(quantity, MESSAGE_ARGUMENT_ABILITY);
-    FieldMessage_ShowFar((s32)&MsgBlank2, work->messageRow);
+    MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
+    FieldMessage_ShowFar((s32)&MsgBlank2, work->messageMode);
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = zero;
   }
   if (GameFlag_Get(320)) {
-    if (work->sound != 0)
+    if (work->visible != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
     Actor_SelectAnimationFar(object, 21);
   } else {
@@ -263,29 +229,29 @@ void EventObject_Initialize(void) {
 }
 
 void BattleEffect_StopMainActor(void) {
-  struct EffectSceneWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(work->mainActor, 0);
   wait(1);
 }
 
 void BattleEffect_CleanupSceneObjects(void) {
-  struct CleanupWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s8 *block = Ram_HeapSlots->paletteFade;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *owner = work->owner;
+  struct Actor *owner = work->mainActor;
   s32 i;
   s16 first;
 
   for (i = 0; i < 24; i++) {
-    struct FieldParticle *slot = &work->slots[i];
+    struct FieldParticle *slot = &work->particles[i];
     if (slot->active)
       FieldEffect_ClearOwnedSlot(slot);
   }
   first = 17;
-  if (work->animation >= first &&
-      (work->animation <= 27 || work->animation == 30))
+  if (work->fieldPsynergy >= first &&
+      (work->fieldPsynergy <= 27 || work->fieldPsynergy == 30))
     FieldPsynergy_MarkWorldMapTilesUsed();
   if (event->psynergyActing != 0)
     return;
@@ -308,12 +274,12 @@ void BattleEffect_CleanupSceneObjects(void) {
   map->shakeY = work->savedShakeY;
   map->shakeDecay = work->savedShakeDecay;
   if (owner != NULL) {
-    owner->priorityFlags = work->ownerByte;
-    ((struct FieldSprite *)owner->sprite)->priority = work->layer;
+    owner->priorityFlags = work->savedPriorityFlags;
+    ((struct FieldSprite *)owner->sprite)->priority = work->savedSpritePriority;
   }
-  if (work->animation != 8)
+  if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 1;
-  if (work->animation != 28)
+  if (work->fieldPsynergy != 28)
     event->unkcad = 1;
   Event_NoOp();
   HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);

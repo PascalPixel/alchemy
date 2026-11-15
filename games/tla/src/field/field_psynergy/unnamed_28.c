@@ -166,9 +166,9 @@ void Camera_WorldToScreen(s32 *position);
 
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x298c);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *caster = scene->mainObject;
+  struct Actor *caster = scene->mainActor;
   struct CanvasSpriteWork *canvas;
   s32 entry;
   s32 tile;
@@ -198,9 +198,9 @@ void FieldPsynergy_Unnamed28(void) {
     canvas = Ram_HeapSlots->canvasSprite;
     canvas->mode = angle;
     pos = position;
-    pos[0] = scene->mainObject->x.fixed;
-    pos[1] = scene->mainObject->y.fixed + 0x100000;
-    pos[2] = scene->mainObject->z.fixed;
+    pos[0] = scene->mainActor->x.fixed;
+    pos[1] = scene->mainActor->y.fixed + 0x100000;
+    pos[2] = scene->mainActor->z.fixed;
     Camera_WorldToScreen(pos);
     {
       s32 x = *((s16 *)pos + 1);
@@ -353,9 +353,9 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->oam.palette = 15;
         sprite->angle = heading + TRIG_TURN / 4;
         place = position;
-        place[0] = scene->mainObject->x.fixed;
-        place[1] = scene->mainObject->y.fixed + 0x100000;
-        place[2] = scene->mainObject->z.fixed;
+        place[0] = scene->mainActor->x.fixed;
+        place[1] = scene->mainActor->y.fixed + 0x100000;
+        place[2] = scene->mainActor->z.fixed;
         Camera_WorldToScreen(place);
         Vector_AddPolarOffset(px(64), heading, place);
         mote->x = place[0];
@@ -652,7 +652,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
 // was held, it only stops the screen shake.
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
@@ -667,7 +667,7 @@ void ViewMove_End(void) {
     map->maxX = work->savedMaxX;
     map->minZ = work->savedMinZ;
     map->maxZ = work->savedMaxZ;
-    FieldCamera_FollowActor(scene->firstObjectId, 1);
+    FieldCamera_FollowActor(scene->firstActorId, 1);
   }
 }
 
@@ -687,7 +687,7 @@ union FxSprite {
 /// which Field_MeasurePsynergyReach measures a distance from the first object,
 /// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleEffect;
   struct Actor **objects;
@@ -698,10 +698,10 @@ void ViewMove_SaveNearbySprites(void) {
   objects = work->actors;
   for (i = 0; i < 80; i++) {
     obj = *objects++;
-    if (obj == NULL || obj->script == NULL || obj == scene->mainObject)
+    if (obj == NULL || obj->script == NULL || obj == scene->mainActor)
       continue;
-    if (Field_MeasurePsynergyReach((s16)(scene->fieldKind | 0x100),
-                                   scene->firstObjectId, i) == -1)
+    if (Field_MeasurePsynergyReach((s16)(scene->fieldPsynergy | 0x100),
+                                   scene->firstActorId, i) == -1)
       continue;
     group->objects[group->count] = obj;
     group->values[group->count] = ((union FxSprite *)obj->sprite)->halves[9];

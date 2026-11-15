@@ -335,5 +335,5 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 /// Field Psynergy kind 30.
 void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
-  ((struct ControlEvent *)Ram_HeapSlots->fieldWork)->cue = 0xfc89;
+  gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }

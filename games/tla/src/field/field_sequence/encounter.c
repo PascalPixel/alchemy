@@ -11,23 +11,6 @@
 #include "module/tla.h"
 #include "resource_ids.h"
 
-struct EventWorkView {
-  u8 unk000[0x15a];
-  s16 unk15a;
-  s16 unk15c;
-  s16 unk15e;
-  u8 unk160[4];
-  s16 unk164;
-  s16 unk166;
-  u8 unk168[0x1c];
-  s16 blockedSteps;
-  u16 pushKind;
-  u8 unk188[4];
-  u8 settings[8];
-  s32 unk194;
-  s32 unk198;
-};
-
 /// Marks the world map place the party has just entered as visited: sets game
 /// flag 0x180 + flag of the first place whose scene is `id` and whose entrance
 /// is `variant` (or any, for -1). The main routine calls it at every scene

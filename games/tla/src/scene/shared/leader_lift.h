@@ -10,7 +10,7 @@ void Leader_Lift(s32 height) {
     object->speedLimit = px(1);
     object->velocityY = 0;
     gMainRoutineWork.movementMode = 2;
-    object->steeringFlags = 1;
+    object->steeringFlags = ACTOR_FACES_MOTION;
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     MapGrid_CenterOnFollowedPoint();
     System_Wait(1);

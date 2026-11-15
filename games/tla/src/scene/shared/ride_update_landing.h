@@ -28,7 +28,7 @@ void Flame_UpdateLanding(struct Actor *object) {
       else
         direction->x = 0xffff;
     }
-    object->priorityFlags = 2;
+    object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     object->z.fixed -= object->bounce;
     object->gravity += object->bounce >> 2;
     object->riseBaseY = 0;
@@ -44,7 +44,7 @@ void Flame_UpdateLanding(struct Actor *object) {
     if (other->y.fixed == other->groundHeight &&
         Actor_IsBeside(object, other)) {
       if (work->slots[i].blocked == 0) {
-        object->priorityFlags = 2;
+        object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         object->z.fixed -= object->riseBaseY;
         object->gravity += object->riseBaseY >> 2;
         object->riseBaseY = 0;

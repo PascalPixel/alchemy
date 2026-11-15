@@ -36,7 +36,7 @@ void Flame_UpdateForward(struct Actor *object) {
         }
       }
     }
-    object->priorityFlags = 2;
+    object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     {
       s32 speed = object->riseBaseY;
 
@@ -55,7 +55,7 @@ void Flame_UpdateForward(struct Actor *object) {
       if (work->slots[i].blocked == 0) {
         s32 speed;
 
-        object->priorityFlags = 2;
+        object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         speed = object->riseBaseY;
         object->riseBaseY = 0;
         object->z.fixed -= speed;

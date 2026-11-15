@@ -15,7 +15,7 @@ void GroundParticles_Draw(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    if (GameFlag_Get(0x166))
+    if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gGroundParticleFrames[5 * particle->timer];
     x = (particle->posX - cameraX) / 0x10000 + *frame++;

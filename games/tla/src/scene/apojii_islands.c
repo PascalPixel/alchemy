@@ -12,6 +12,9 @@
 #include "scene/dust.h"
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
+/// Set while the father who wished on the rock sees it answer Douse, so that
+/// the scene finishes his words if it is left before he has spoken.
+#define FLAG_FATHER_SEES_THE_STONE 0x95e
 #include "types.h"
 #include "system/io_write.h"
 #include "system/system.h"
@@ -20,19 +23,74 @@
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
 
-/// The village by the Aqua Stone (gApojiiIslands_Room1Placements).
+/// The village by the Aqua Stone (gApojiiIslands_VillagePlacements).
 enum ApojiiIslandsVillageActorId {
+  /// "This is Apojii, the easternmost island in the Eastern Sea!"
+  ACTOR_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED,
+  /// "Whatever you do, don't sail out to the eastern edge of the sea..."
+  ACTOR_WOMAN_WARNING_OF_THE_EDGE,
+  /// "The huge waterfall at the edge of the world is known as Gaia Falls."
+  ACTOR_MAN_ON_GAIA_FALLS,
+  /// "On Aqua Island, you can see the guardian moai."
+  ACTOR_WOMAN_ON_THE_MOAI,
+  /// "Have you any idea what it's like living on the edge of the world?"
+  ACTOR_OLD_MAN_AT_THE_EDGE_OF_THE_WORLD,
+  /// "I don't know what brings you to Apojii, but you'd better not be
+  /// planning anything stupid."
+  ACTOR_SUSPICIOUS_OLD_WOMAN,
+  /// "When they come of age, all the men of Apojii go to Aqua Island. Will I,
+  /// too?"
+  ACTOR_BOY_COMING_OF_AGE,
+  /// "Do you think if you fall off of Gaia Falls that you keep on falling
+  /// forever and ever?"
+  ACTOR_GIRL_ON_GAIA_FALLS,
   /// The father who wished on the rock: "What... What just happened? That
   /// rock couldn't have heard my wishes..."
-  ACTOR_FATHER = ACTOR_FIRST_PLACED + 8,
+  ACTOR_FATHER,
   /// The blue tear-shaped Aqua Stone Douse wakes.
   ACTOR_AQUA_STONE
 };
 
-/// The houses (gApojiiIslands_Room3Placements).
+/// The houses (gApojiiIslands_ShopsPlacements).
 enum ApojiiIslandsHousesActorId {
+  /// "There's this guy in town who spends his time at the spring, staring at
+  /// the Aqua Stone."
+  ACTOR_WOMAN_ON_THE_STARING_MAN = ACTOR_FIRST_PLACED,
   /// His son (ApojiiIslands_TalkToSon).
-  ACTOR_SON = ACTOR_FIRST_PLACED + 1
+  ACTOR_SON,
+  /// "I absolutely refuse to let my son swim in the ocean until he is an
+  /// adult."
+  ACTOR_STRICT_FATHER,
+  /// "The currents around Apojii are just too strong to let children swim on
+  /// their own."
+  ACTOR_CAUTIOUS_MOTHER,
+  /// "I'm not allowed to go into the ocean."
+  ACTOR_BOY_KEPT_FROM_THE_OCEAN,
+  /// "Hey, mister! Did you know that all the kids are calling you their
+  /// hero?"
+  ACTOR_GIRL_CALLING_FELIX_A_HERO,
+  /// "That old Aqua Stone is supposed to be the key to getting onto Aqua
+  /// Island."
+  ACTOR_OLD_MAN_ON_THE_AQUA_STONE,
+  /// "He's too old to try now, but my husband used to dream of scaling Aqua
+  /// Rock."
+  ACTOR_OLD_WOMAN_ON_HER_HUSBANDS_DREAM,
+  ACTOR_MERCHANT,
+  ACTOR_INNKEEPER,
+  /// Who asks after the warriors (ApojiiIslands_AskAboutWarriors).
+  ACTOR_INN_WORKER,
+  /// "The temperature of the ocean has been rising."
+  ACTOR_OLD_MAN_ON_THE_WARMING_SEA
+};
+
+/// Haze's islet (gApojiiIslands_HazePlacements).
+enum ApojiiIslandsHazeActorId {
+  /// The tightrope's posts.
+  ///@{
+  ACTOR_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED,
+  ACTOR_TIGHTROPE_POST_B,
+  ///@}
+  ACTOR_HAZE
 };
 
 #include "system/iwram_call.h"
@@ -45,7 +103,6 @@ enum ApojiiIslandsHousesActorId {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-s32 VramCache_FindFreeEntry(void);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
@@ -126,6 +183,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 #include "field/ground_mask.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "scene/event_layer.h"
 #include "system/system.h"
 #include "system/task.h"
@@ -154,20 +212,20 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 #include "../field/field_effect_spawn.c"
 
 extern struct ActorPlacement gApojiiIslands_Placements[];
-extern struct ActorPlacement gApojiiIslands_Room1Placements[];
-extern struct ActorPlacement gApojiiIslands_Room3Placements[];
+extern struct ActorPlacement gApojiiIslands_VillagePlacements[];
+extern struct ActorPlacement gApojiiIslands_ShopsPlacements[];
 extern struct ActorPlacement gApojiiIslands_HazePlacements[];
 extern s32 gApojiiIslands_StoneCycleFrame[];
 
 extern struct Trigger gApojiiIslands_Triggers[];
-extern struct Trigger gApojiiIslands_Room1Triggers[];
-extern struct Trigger gApojiiIslands_Room3Triggers[];
+extern struct Trigger gApojiiIslands_VillageTriggers[];
+extern struct Trigger gApojiiIslands_ShopsTriggers[];
 extern struct Trigger gApojiiIslands_HazeTriggers[];
 void ApojiiIslands_SinkIntoSand(void);
 void ApojiiIslands_RiseFromSand(void);
 void ApojiiIslands_ResumeSeaColors(void);
-void ApojiiIslands_ClearRoom3Bushes(void);
-void ApojiiIslands_ClearRoom3SmallBush(void);
+void ApojiiIslands_ClearShopsBushes(void);
+void ApojiiIslands_ClearShopsSmallBush(void);
 void ApojiiIslands_EnterDoor(void);
 void ApojiiIslands_JumpDownLedge(void);
 void ApojiiIslands_JumpForward(void);
@@ -195,9 +253,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_APOJII_ISLANDS)
-    return gApojiiIslands_Room1Placements;
+    return gApojiiIslands_VillagePlacements;
   if (scene == SCENE_APOJII_ISLANDS_SHOPS)
-    return gApojiiIslands_Room3Placements;
+    return gApojiiIslands_ShopsPlacements;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_HazePlacements;
   return gApojiiIslands_Placements;
@@ -378,8 +436,11 @@ flash:
   if (i >= 0)
     goto flash;
   ObjectTable_Snapshot();
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0xf00, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
+                          BLDCNT_TGT2_BG3,
+                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(0, 16), 0x20000);
   wait(1);
   Task_Remove(ApojiiIslands_CycleSeaColors);
   Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_VBLANK);
@@ -387,13 +448,14 @@ flash:
   ApojiiIslands_AddCellMarkers(33, 0, 0);
   i = 1;
 blend:
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000 | i, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
+                      0x20000);
   wait(4);
   i++;
   if (i <= 6)
     goto blend;
   GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
-  GameFlag_Set(0x95e);
+  GameFlag_Set(FLAG_FATHER_SEES_THE_STONE);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(360, CAMERA_KEEP, 328, 1);
   Actor_ShowEmoteById(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -411,7 +473,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Actor_Get(ACTOR_AQUA_STONE)->update =
       (void (*)(void))ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, 16, 0);
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_FATHER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_FaceDirection(ACTOR_FATHER, FACING_EAST, 0);
@@ -433,7 +495,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   // "Well, OK then... Maybe we should try putting some more of our wishes..."
   Event_ShowMessage(ACTOR_FATHER, 0);
   Event_End();
-  Event_ClearFlag(0x95e);
+  Event_ClearFlag(FLAG_FATHER_SEES_THE_STONE);
 }
 
 void ApojiiIslands_ClearFirstBush(void) {
@@ -469,11 +531,11 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearSecondBush, 68, 38,
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
-void ApojiiIslands_ClearRoom3Bushes(void) {
+void ApojiiIslands_ClearShopsBushes(void) {
   FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
-DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearRoom3SmallBush, 67,
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearShopsSmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
 /// Stepping onto a door: the leader walks through it and the scene leaves by
@@ -538,9 +600,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_APOJII_ISLANDS)
-    return gApojiiIslands_Room1Triggers;
+    return gApojiiIslands_VillageTriggers;
   if (scene == SCENE_APOJII_ISLANDS_SHOPS)
-    return gApojiiIslands_Room3Triggers;
+    return gApojiiIslands_ShopsTriggers;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_HazeTriggers;
   return gApojiiIslands_Triggers;
@@ -611,8 +673,8 @@ void Scroll_HBlank(void) {
   } else {
     value = gApojiiIslands_LowerScrollX;
     Io_Write16(value, &REG_BG1HOFS);
-    REG_BLDALPHA = 0x100c;
-    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = BLEND_ALPHA(12, 16);
+    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
 }
 
@@ -634,7 +696,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
   struct MainRoutineWork *party;
 
-  ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
+  Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
   effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;
@@ -643,7 +705,7 @@ s32 Scene_Initialize(void) {
     ApojiiIslands_InitializeHaze();
   } else if (scene == SCENE_APOJII_ISLANDS) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
-    if (Event_GetFlag(0x95e))
+    if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
     *effect = 0x100;
@@ -766,7 +828,7 @@ void Leader_SpinAway(s32 entrance) {
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   leader->motionFlags = 0;
-  leader->priorityFlags |= 0x20;
+  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_SelectAnimation(leader, 18);
   Event_PlaySound(SE_SPIN_AWAY);
@@ -803,8 +865,8 @@ void ApojiiIslands_DrawCellMarkers(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  // DEAD: viewY is subtracted from both height and z and cancels in dy; the
-  // source keeps its load and a store to the stack that nothing reads.
+  // DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
+  // keeps its load and its store to the stack.
   s32 viewY = map->origin[1];
   struct CellMarkers *table = &gApojiiIslands_CellMarkers;
   struct VramCacheEntry *entry = &gVramCacheEntries[table->block];
@@ -937,9 +999,9 @@ extern s16 gGroundParticleFrames[];
 /// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
-  struct DustWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));
-  struct DustParticle *p = work->particles;
+  struct GroundParticleWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
+  struct GroundParticle *p = work->particles;
   u8 *buf;
   u32 i;
   u32 size;
@@ -948,13 +1010,15 @@ void ApojiiIslands_StartSparkles(void) {
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              sizeof(struct GroundParticleWork) / 4,
+          REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz(gField_Tiles679, buf);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
+  work->entry = VramCache_FindFreeEntry();
+  work->tileBase = Vram_Load(work->entry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  work->field808 = size;
+  work->leader = (s32 *)size;
   i = 0;
 loop:
   size = (u32)p;
@@ -975,13 +1039,12 @@ loop:
 }
 
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
-  u8 *work = Ram_HeapSlots->weather;
+  struct GroundParticleWork *work = Ram_HeapSlots->weather;
   struct Actor *object = Actor_Get(id);
-  s32 *slot = (s32 *)(work + 0x808);
 
-  *slot = 0;
+  work->leader = NULL;
   if (id != 0 && object != 0)
-    *slot = (s32)&object->x.fixed;
+    work->leader = &object->x.fixed;
 }
 
 #include "text/msg_ids.h"
@@ -1124,32 +1187,32 @@ struct ActorPlacement gApojiiIslands_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gApojiiIslands_Room1Placements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+struct ActorPlacement gApojiiIslands_VillagePlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 504, 0, 200, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 216, 0, 376, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 344, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 216, 0, 376, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 344, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gApojiiIslands_Room3Placements[] = {
+struct ActorPlacement gApojiiIslands_ShopsPlacements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 104, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 104, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(128, CONDITION_ALWAYS, (s32)gApojiiIslands_PaceScript, 280, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 344, 0, 120, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 344, 0, 120, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 592, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 128, 0, 620, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -1173,7 +1236,7 @@ s32 gApojiiIslands_StoneCycleFrame[] = {
     -1,
 };
 
-struct Trigger gApojiiIslands_Room1Triggers[] = {
+struct Trigger gApojiiIslands_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1185,25 +1248,25 @@ struct Trigger gApojiiIslands_Room1Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgThisIsApojii)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgWhateverYouDo)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTheHugeWaterfall)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgOnAquaIsland)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaveYouAny)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhat)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgWhenTheyCome)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgDoYouThink)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgIfThereS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLookingOverGaia)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheCurrentsNear)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAllOfThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgWellAtLeast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgApojiiHasSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAquaIslandIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIWonderWhere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAquaRockMust)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 17, FLAG_APOJII_AQUA_STONE_DOUSED, EVENT(ApojiiIslands_DouseAquaStone)},
+    {TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgThisIsApojii)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARNING_OF_THE_EDGE, CONDITION_ALWAYS, MSGNO(MsgWhateverYouDo)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_GAIA_FALLS, CONDITION_ALWAYS, MSGNO(MsgTheHugeWaterfall)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_MOAI, CONDITION_ALWAYS, MSGNO(MsgOnAquaIsland)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_AT_THE_EDGE_OF_THE_WORLD, CONDITION_ALWAYS, MSGNO(MsgHaveYouAny)},
+    {TRIGGER_TALK, ACTOR_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhat)},
+    {TRIGGER_TALK, ACTOR_BOY_COMING_OF_AGE, CONDITION_ALWAYS, MSGNO(MsgWhenTheyCome)},
+    {TRIGGER_TALK, ACTOR_GIRL_ON_GAIA_FALLS, CONDITION_ALWAYS, MSGNO(MsgDoYouThink)},
+    {TRIGGER_TALK, ACTOR_FATHER, CONDITION_ALWAYS, MSGNO(MsgIfThereS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgLookingOverGaia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARNING_OF_THE_EDGE, CONDITION_ALWAYS, MSGNO(MsgTheCurrentsNear)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_GAIA_FALLS, CONDITION_ALWAYS, MSGNO(MsgAllOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_MOAI, CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_AT_THE_EDGE_OF_THE_WORLD, CONDITION_ALWAYS, MSGNO(MsgWellAtLeast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgApojiiHasSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_COMING_OF_AGE, CONDITION_ALWAYS, MSGNO(MsgAquaIslandIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_GAIA_FALLS, CONDITION_ALWAYS, MSGNO(MsgIWonderWhere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER, CONDITION_ALWAYS, MSGNO(MsgAquaRockMust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_AQUA_STONE, FLAG_APOJII_AQUA_STONE_DOUSED, EVENT(ApojiiIslands_DouseAquaStone)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_RiseFromSand)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_PauseSeaColors)},
@@ -1214,37 +1277,37 @@ struct Trigger gApojiiIslands_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gApojiiIslands_Room3Triggers[] = {
+struct Trigger gApojiiIslands_ShopsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgThereSThis)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToSon)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIAbsolutelyRefuse)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTheCurrentsAround)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgIMNotAllowed)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHeyMisterDid)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgThatOldAqua)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHeSToo)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToMerchant)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToInnkeeper)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(ApojiiIslands_AskAboutWarriors)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIJustWish)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT(ApojiiIslands_MindReadSon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgISinkLike)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgPoorBoyHis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgItSStupid)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgWowHeSwam)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgYouUnlockThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHeAlwaysWanted)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgNoOneShips)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIMSure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgThoseGuysOn)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheTemperatureOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLongAgoPoseidon)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_STARING_MAN, CONDITION_ALWAYS, MSGNO(MsgThereSThis)},
+    {TRIGGER_TALK, ACTOR_SON, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToSon)},
+    {TRIGGER_TALK, ACTOR_STRICT_FATHER, CONDITION_ALWAYS, MSGNO(MsgIAbsolutelyRefuse)},
+    {TRIGGER_TALK, ACTOR_CAUTIOUS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTheCurrentsAround)},
+    {TRIGGER_TALK, ACTOR_BOY_KEPT_FROM_THE_OCEAN, CONDITION_ALWAYS, MSGNO(MsgIMNotAllowed)},
+    {TRIGGER_TALK, ACTOR_GIRL_CALLING_FELIX_A_HERO, CONDITION_ALWAYS, MSGNO(MsgHeyMisterDid)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_AQUA_STONE, CONDITION_ALWAYS, MSGNO(MsgThatOldAqua)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_HUSBANDS_DREAM, CONDITION_ALWAYS, MSGNO(MsgHeSToo)},
+    {TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToMerchant)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, EVENT(ApojiiIslands_AskAboutWarriors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_STARING_MAN, CONDITION_ALWAYS, MSGNO(MsgIJustWish)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SON, CONDITION_ALWAYS, EVENT(ApojiiIslands_MindReadSon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRICT_FATHER, CONDITION_ALWAYS, MSGNO(MsgISinkLike)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CAUTIOUS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgPoorBoyHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_KEPT_FROM_THE_OCEAN, CONDITION_ALWAYS, MSGNO(MsgItSStupid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_CALLING_FELIX_A_HERO, CONDITION_ALWAYS, MSGNO(MsgWowHeSwam)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_AQUA_STONE, CONDITION_ALWAYS, MSGNO(MsgYouUnlockThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_HUSBANDS_DREAM, CONDITION_ALWAYS, MSGNO(MsgHeAlwaysWanted)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgNoOneShips)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgIMSure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgThoseGuysOn)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_WARMING_SEA, CONDITION_ALWAYS, MSGNO(MsgTheTemperatureOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_WARMING_SEA, CONDITION_ALWAYS, MSGNO(MsgLongAgoPoseidon)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1255,10 +1318,10 @@ struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 40, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_00, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearRoom3Bushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearRoom3SmallBush)},
+    {TRIGGER_TALK, ACTOR_HAZE, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPE_POST_A, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsSmallBush)},
     {TRIGGER_TABLE_END},
 };
 #undef COPY_PICTURE

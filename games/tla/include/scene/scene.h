@@ -24,7 +24,7 @@ struct Vector3;
 
 typedef s32 (*HandlerFn)(void);
 
-/// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
+/// The actor word at 84 seen as bit fields, for one store (AirsRock_BlowGust).
 struct MotionView {
   u8 pad[84];
   u32 kind : 8;
@@ -165,42 +165,6 @@ struct MapBits {
   u8 mode : 2;
 };
 
-/// The byte at 0x5a of an actor, as the field its bit 0 is set through.
-struct ActorSolid {
-  u8 unk00[0x5a];
-  u8 solid : 8;
-};
-
-struct ThrowAnimations {
-  s32 animations[3];
-};
-
-struct FlashSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[2];
-  u16 unk1e;
-};
-
-struct FlashWork {
-  u8 tiles[0x400];
-  struct FlashSprite sprite;
-};
-
 /// The bytes of an actor this handler uses. unk63 is the last of the four
 /// scene-owned bytes the Broken Seal's actors keep at this place.
 struct TalkActor {
@@ -210,7 +174,7 @@ struct TalkActor {
   u8 unk63; ///< Func_020006d0 reads it
 };
 
-/* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
+/// One id of a list ended by 0xffff, as Pillars_Raise reads it.
 struct ListedActor {
   u16 id;
 };
@@ -233,22 +197,6 @@ struct SpawnObject {
 struct HeapSlotWords {
   u32 slots[8];
   u32 mapWork;
-};
-
-struct EpilogueSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 unk09_2 : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[2];
-  s32 unk0c;
-  s32 unk10;
-  u8 unk14[10];
-  u16 unk1e;
 };
 
 struct EpilogueWindow {
@@ -565,7 +513,7 @@ struct Sprite020012e4 {
   u16 unk12;
 };
 
-/// One object the beam reaches, as Func_020022e4 records it.
+/// One object the beam reaches, as FlameThrowers_Start records it.
 struct MarsLighthouseBeamTarget {
   u16 active;
   u16 index;
@@ -650,16 +598,6 @@ struct LinkedEffectWork {
   u16 vramBlock;
 };
 
-struct LinkedSpriteView {
-  u8 unk00[6];
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u8 unk08[9];
-  u8 retainCacheEntry : 1;
-  u8 unk11 : 7;
-};
-
 struct Charge {
   u8 pad[17];
   u8 low : 2;
@@ -715,36 +653,6 @@ struct SceneEffectParams {
 
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
-struct GlowState {
-  s32 x; ///< 16.16 pixels
-  s32 y; ///< 16.16 pixels
-  s32 z; ///< 16.16 pixels
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 frame;
-};
-
-struct GlowSprite {
-  u8 unk00[4];
-  u16 attr0 : 13;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct GlowAnimation {
-  u32 unk00[4];
-  u32 unk10 : 16;
-  u32 angle : 16;
-};
-
 struct SparkState {
   s32 x;
   s32 y;
@@ -782,22 +690,6 @@ struct RescueMap {
 struct LinkedDetail {
   u8 unk00[22];
   u8 field16;
-};
-
-/// The layout Func_02001904 reads: state and timer sit where
-/// struct Actor has its callback and action.
-struct YallamActor {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[78];
-  u8 state;
-  u8 kind;
-  s16 timer;
-  s16 count;
-  u8 unk68[4];
-  void (*update)(struct YallamActor *actor);
 };
 
 struct YampiDesertVisual {
@@ -846,11 +738,6 @@ extern u8 gField_CachedTilesB[];
 
 extern u8 gField_CachedTilesC[];
 
-// The scene's setup: places its actors, then plays what the entrance it was
-// reached by calls for.
-
-void Func_02001e80(s32 value);
-
 // The cell stampers keep their last cell and the block they copy.
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -861,18 +748,6 @@ extern const u8 gWorldMapPackedTilesC[];
 
 struct Vector3;
 struct Window;
-
-struct ClearWork {
-  u8 unk00[20];
-  u16 mode;
-};
-
-struct PasswordWork {
-  void *glyphs[50];
-  void *cells[50];
-  u8 shown[50];
-  u8 unk1c2[26];
-};
 
 struct FieldPartBytes {
   u8 unk00[5];

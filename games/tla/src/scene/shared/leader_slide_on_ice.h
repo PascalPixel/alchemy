@@ -7,7 +7,6 @@ void Leader_SlideOnIce(void) {
   s32 startX;
   s32 startZ;
   u8 *layer;
-  s32 radius;
   struct Actor *actor;
   struct Vector3 *position;
   struct Vector3 *next;
@@ -78,21 +77,24 @@ body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed > px(8)) {
     goto stop;
   }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->actors;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
+  {
+    s32 radius = actor->radius - 2;
+
+    other = Ram_HeapSlots->actors;
+    flags = &other->collisionFlags;
+    for (i = 0; i < 64; i++, flags += 128, other++) {
+      if (other->script != NULL && (*flags & 1) && other != actor) {
+        /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and
+         * reading next and actor. */
+        asm(""
+            :
+            : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+              "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
+            : SFP_CLOBBER, "r4");
+        if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
+                                      other->radius - 2) >= 0) {
+          goto stop;
+        }
       }
     }
   }
@@ -106,15 +108,7 @@ body:
     goto blocked;
   }
 test:
-  {
-    struct Vector3 *step;
-
-    step = &probe;
-    FieldVector_AddPolarOffset(16, heading, step);
-    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
-     * address. */
-    step = NULL;
-  }
+  FieldVector_AddPolarOffset(16, heading, &probe);
   next = &probe;
   nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
   if (nextBehavior != 255) {
@@ -132,7 +126,7 @@ blocked:
   System_Wait(10);
 done:
   actor->update = NULL;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

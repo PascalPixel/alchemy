@@ -3,7 +3,7 @@ void Actor_WaitToLand(s32 id) {
   s32 n = 60;
   struct Actor *object = Actor_Get(id);
 
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   while (n != 0) {
     System_Wait(1);
     if (object->velocityY == 0)

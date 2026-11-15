@@ -5,7 +5,7 @@ void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
   i = 1;
 next:
   {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
+    struct Actor *object = FieldActor_Create(SPRITE_TURNING_ROCK, x, y, z);
 
     if (object != NULL) {
       s32 angle;

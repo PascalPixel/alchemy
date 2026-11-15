@@ -17,7 +17,7 @@ s16 value;
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = Import_ActorCreate(0x1e8, x, y, z);
+  object = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
     Sound_Play(SE_LIGHT_APPEAR);

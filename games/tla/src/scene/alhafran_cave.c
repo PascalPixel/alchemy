@@ -23,6 +23,7 @@
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "scene/event_layer.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -32,9 +33,14 @@
 #include "system/task.h"
 #include "field/map_grid.h"
 #include "field/call.h"
+#include "field/effect_sprite.h"
+#include "system/io_reg.h"
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/object.h"
+#include "scene/dehkan_plateau.h"
+#include "scene/gabomba_statue.h"
 
 void Pillars_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
@@ -46,7 +52,6 @@ void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 extern s32 gAlhafranCave_ClearedWord;
 
 /// Set while the way down to the jail is open, as the leader stands on the
@@ -91,9 +96,9 @@ enum AlhafraJailActorId {
   ACTOR_JAIL_FIRST_PILLAR_PIECE,
   ACTOR_JAIL_SECOND_PILLAR_PIECE,
   ACTOR_JAIL_LEANING_PILLAR,
-  /// XXX: what it shows (sprite 683, by the cells); a render of the jail with
-  /// Briggs's crew inside would settle it.
-  ACTOR_JAIL_CELL_SPRITE,
+  /// The jailer.s key on the floor outside the cell, which Eoleo lifts with
+  /// Move.
+  ACTOR_JAIL_KEY,
   /// Briggs and his crew in their cell, once Briggs is caught.
   /// "I hate prison. The food is terrible..."
   ACTOR_CREWMAN_WHO_HATES_PRISON,
@@ -112,48 +117,24 @@ enum AlhafraJailActorId {
   ACTOR_JAILER
 };
 
+/// The jail.s ways in that its set-up tests: down the steps from the town, and
+/// up through the hole the crate hides, from the tunnel behind the cell.
+enum AlhafraJailEntrance { ENTRANCE_FROM_TOWN = 8, ENTRANCE_UNDER_CRATE = 9 };
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-struct AlhafranCaveMapCell {
-  u8 unk0[2];
-  u8 state;
-  u8 unk3;
-};
-
-struct AlhafranCaveMapLayer {
-  struct AlhafranCaveMapCell *cells;
-  u8 unk04[0x34];
-};
-
-struct AlhafranCaveMapWork {
-  u8 unk000[0x17];
-  u8 low17 : 2;
-  u8 mode17 : 2;
-  u8 high17 : 4;
-  u8 unk018[0x120];
-  struct AlhafranCaveMapLayer layers[1];
-};
-
-struct AlhafranCaveSwitch {
-  u16 id;
-  s16 kind;
-  s16 flag;
-};
-
 void Actor_ApplyRandomChildValues(void);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
-void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
-                                            s32 z);
+void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
+                                            s32 y, s32 z);
 
 void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
-void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
-void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 extern s16 gAlhafranCave_Puddles[];
 extern s16 gAlhafranCave_Pillars[];
@@ -161,7 +142,7 @@ extern struct ActorPlacement gAlhafranCave_CaveActorPlacements[];
 extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
-extern u8 gAlhafranCave_CrateSprite[];
+extern struct EffectSprite gAlhafranCave_CrateSprite;
 
 /// Sets the behavior of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
@@ -257,7 +238,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AlhafranCave_TrackLeadersLevel(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y < 0x80000)
+  if (y < px(8))
     gMainRoutineWork.onUpperLevel = 0;
   else
     gMainRoutineWork.onUpperLevel = 1;
@@ -268,7 +249,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *object = Actor_Get(ACTOR_CRATE);
 
   BattleEffect_DrawSpriteAtWorldPosition(
-      gAlhafranCave_CrateSprite, object->x.fixed, object->y.fixed + px(28),
+      &gAlhafranCave_CrateSprite, object->x.fixed, object->y.fixed + px(28),
       object->z.fixed);
   return 0;
 }
@@ -289,7 +270,8 @@ s32 Scene_Initialize(void) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     AlhafranCave_SetUpCave();
   } else if (scene == SCENE_ALHAFRA_JAIL) {
-    if (gMainRoutineWork.entrance == 8 || gMainRoutineWork.entrance == 9)
+    if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
+        gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE)
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     else
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -304,12 +286,13 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 /// Sets up the cave: its pillars, the pushed pillars, the puddle, and the way
 /// to the jail if it is open.
 void AlhafranCave_SetUpCave(void) {
-  struct AlhafranCaveMapWork *map =
-      (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWorkGroundEffects *map =
+      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
   struct Actor *object;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-  map->mode17 = 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  map->wading = MAP_WADING_UPPER_LEVEL;
   Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
     AlhafranCave_OpenWayToJail();
@@ -331,16 +314,19 @@ void AlhafranCave_SetUpCave(void) {
   object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
   object->motionFlags = 0;
   object->y.fixed = px(16);
-  FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, 0x1000);
+  FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, TRIG_TURN / 16);
   Actor_SetAnimation(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
   Actor_SetAnimation(ACTOR_CAVE_SECOND_PILLAR_PIECE, 3);
   Actor_SetAnimation(ACTOR_CAVE_LEANING_PILLAR, 2);
   FieldActor_SetSpritePriority(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
   FieldActor_SetSpritePriority(ACTOR_CAVE_SECOND_PILLAR_PIECE, 2);
   FieldActor_SetSpritePriority(ACTOR_CAVE_LEANING_PILLAR, 3);
-  Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE)->priorityFlags |= 2;
-  Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE)->priorityFlags |= 2;
-  Actor_Get(ACTOR_CAVE_LEANING_PILLAR)->priorityFlags |= 2;
+  Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_CAVE_LEANING_PILLAR)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_LEANING_PILLAR), 6);
@@ -369,23 +355,27 @@ void AlhafranCave_SetUpCave(void) {
 }
 
 void FieldEffect_StartBlankOverlay(s32 value);
-void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
+void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 pivotX,
+                                 s32 pivotY, u32 attributes);
 
 /// Sets up the jail and the cave: who is held and who visits, by how far the
 /// story has gone (Briggs caught, his family's visit, the mast cleared), and
-/// the hungry boy's father stepping in as the party comes in by entrance 9.
+/// the crate pushed aside as the party climbs up through the hole under it.
 void AlhafranCave_SetUpJail(void) {
-  const void *data;
+  struct EffectSprite *crate;
   struct FieldWork *work;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-  Actor_Get(ACTOR_CRATE)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
-  data = gAlhafranCave_CrateSprite;
+  crate = &gAlhafranCave_CrateSprite;
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94, (s32)data, 8, 15, 0x40000000);
+  Call4((void (*)())EffectSprite_InitFromSlot94, (s32)crate, 8, 15,
+        OBJ_SIZE_16X16);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_VBLANK);
-  if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
+      gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE) {
     work = Ram_HeapSlots->fieldWork;
 
     work->unkd4c = 3;
@@ -393,24 +383,29 @@ void AlhafranCave_SetUpJail(void) {
   Rope_Initialize();
   Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_POLE,
              ACTOR_JAIL_ROPE_OTHER_POLE);
-  Actor_Get(ACTOR_JAIL_ROPE_POLE)->priorityFlags |= 32;
-  Actor_Get(ACTOR_JAIL_ROPE_OTHER_POLE)->priorityFlags |= 32;
+  Actor_Get(ACTOR_JAIL_ROPE_POLE)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_JAIL_ROPE_OTHER_POLE)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Pillars_Place(gAlhafranCave_Pillars);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JAIL_STAKE), 0);
-  FieldActor_SetSpriteRotationById(ACTOR_JAIL_LEANING_PILLAR, 0x1000);
+  FieldActor_SetSpriteRotationById(ACTOR_JAIL_LEANING_PILLAR, TRIG_TURN / 16);
   Actor_SetAnimation(ACTOR_JAIL_FIRST_PILLAR_PIECE, 0);
   Actor_SetAnimation(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
   Actor_SetAnimation(ACTOR_JAIL_LEANING_PILLAR, 2);
   FieldActor_SetSpritePriority(ACTOR_JAIL_FIRST_PILLAR_PIECE, 1);
   FieldActor_SetSpritePriority(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
-  Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE)->priorityFlags |= 2;
-  Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE)->priorityFlags |= 2;
-  Actor_Get(ACTOR_JAIL_LEANING_PILLAR)->priorityFlags |= 2;
+  Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_JAIL_LEANING_PILLAR)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_LEANING_PILLAR), 6);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(ACTOR_JAIL_CELL_SPRITE, 0, 0);
+    Actor_SetPosition(ACTOR_JAIL_KEY, 0, 0);
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
     Actor_SetPosition(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 0);
     Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 0, 0);
@@ -445,7 +440,7 @@ void AlhafranCave_SetUpJail(void) {
     Actor_SetPosition(ACTOR_JAILER, 0, 0);
     Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   }
-  if (gMainRoutineWork.entrance == 9 &&
+  if (gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -476,7 +471,7 @@ void AlhafranCave_ShakeUnderEoleosPower(void);
 /// shows Psynergy of his own.
 void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *eoleo;
-  struct Actor *jailCell;
+  struct Actor *key;
   struct Actor *effect;
   s32 position[3];
 
@@ -561,22 +556,22 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   eoleo = Actor_Get(ACTOR_EOLEO);
-  jailCell = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
-  Event_StartColorTransition(8, 0x1210);
+  key = Actor_Get(ACTOR_JAIL_KEY);
+  Event_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(eoleo);
-  position[0] = jailCell->x.fixed;
-  effect->watchedActor = jailCell;
-  position[1] = jailCell->y.fixed + px(16);
-  position[2] = jailCell->z.fixed;
-  FieldVector_AddPolarOffset(16, 0xc000, position);
+  position[0] = key->x.fixed;
+  effect->watchedActor = key;
+  position[1] = key->y.fixed + px(16);
+  position[2] = key->z.fixed;
+  FieldVector_AddPolarOffset(16, FACING_NORTH, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
-  jailCell->update = AlhafranCave_ShakeUnderEoleosPower;
+  key->update = AlhafranCave_ShakeUnderEoleosPower;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
@@ -615,8 +610,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  jailCell->update = 0;
-  Actor_SetSpriteColorMode(jailCell, 0);
+  key->update = 0;
+  Actor_SetSpriteColorMode(key, 0);
   UpdateRisingParticleBurst(effect);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
   BattleEffect_WaitForArcGroups();
@@ -656,7 +651,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Field_StartColorTransition(8, 0x1210);
+  Field_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);
@@ -767,7 +762,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(ACTOR_JAILER, 21);
+  FieldActor_WatchAndSetScript(ACTOR_JAILER, ACTOR_EOLEO);
   Actor_WalkBy(ACTOR_CHAUCHA, 0, -16);
   Actor_WalkByAndWait(ACTOR_EOLEO, 0, -16);
   Actor_WalkBy(ACTOR_CHAUCHA, 52, 0);
@@ -777,7 +772,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetAttachedEffect(ACTOR_CHAUCHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 21);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_EOLEO);
   FieldActor_SetSpritePriority(ACTOR_CHAUCHA, 2);
   FieldActor_SetSpritePriority(ACTOR_EOLEO, 2);
   Actor_SetScript(ACTOR_CHAUCHA, gAlhafranCave_VisitorsLeaveScript);
@@ -884,30 +879,30 @@ struct ActorPlacement gAlhafranCave_CaveActorPlacements[] = {
     ACTOR_PLACEMENT(371, CONDITION_ALWAYS, 7, 296, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(371, CONDITION_ALWAYS, 7, 344, 0, 392, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, 7, 324, 0, 416, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAlhafranCave_JailActorPlacements[] = {
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(371, CONDITION_ALWAYS, 7, 184, 0, 284, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(371, CONDITION_ALWAYS, 7, 232, 0, 284, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, 7, 196, 0, 304, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(683, CONDITION_ALWAYS, 7, 720, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 232, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 232, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 296, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 744, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 360, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 232, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 232, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 296, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 744, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 360, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

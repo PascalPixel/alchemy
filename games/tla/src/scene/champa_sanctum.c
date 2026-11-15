@@ -44,8 +44,8 @@ s32 Scene_Initialize(void) {
 
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Actor_SetSpritePriority(ACTOR_HEALER, 2);
-  Actor_GetById(ACTOR_HEALER)->collisionFlags |= 4;
-  Actor_GetById(ACTOR_HEALER)->collisionFlags |= 16;
+  Actor_GetById(ACTOR_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
+  Actor_GetById(ACTOR_HEALER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   return 0;
 }
 
@@ -65,8 +65,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 147,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 720, 0, 147, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 

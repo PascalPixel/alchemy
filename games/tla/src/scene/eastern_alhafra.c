@@ -46,13 +46,18 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/falling_rocks.h"
+#include "graphics/palette_buffers.h"
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
 #define FLAG_SECOND_CRATE_SUNK 0x8a1 ///< ACTOR_SECOND_CRATE
 #define FLAG_CONE_POUNDED 0x8a2
 #define FLAG_ROPE_LASHED 0x8a3
-#define FLAG_LAST_ROCK_SUNK 0x8a4  ///< ACTOR_LAST_ROCK
+#define FLAG_LAST_ROCK_SUNK 0x8a4 ///< ACTOR_LAST_ROCK
+
+/// Where the party is brought back to the docks once Briggs has taken the
+/// ship (EasternAlhafra_BriggsStealsShip), the workers knocked down.
+enum { ENTRANCE_AFTER_SHIP_STOLEN = 99 };
 #define FLAG_FIRST_ROCK_SUNK 0x8a5 ///< ACTOR_FIRST_ROCK
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
@@ -138,22 +143,20 @@ struct Actor;
 struct RockSprite;
 struct Vector3;
 
-struct PushSlide {
-  s32 value[6];
+/// A push: where the pushed actor ends up, which footprint it has and which
+/// actor it is.
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y;
+  s32 z;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
 };
 
 struct EasternAlhafraSparkWork {
   u8 unk0000[0x1604];
   s16 resource;
-};
-
-struct PushState {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 kind;
-  s32 number;
-  s32 unk14;
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
@@ -349,7 +352,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     if (id != ACTOR_FIRST_CRATE)
       Event_PlaySound(SE_FALL);
     object->gravity = px(9) / 100;
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
     for (i = 0; i < 60 && object->y.fixed > 0; i++)
@@ -358,11 +361,11 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     System_Wait(1);
     Event_PlaySound(SE_LOG_FALL);
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(object, 4);
     i = 0;
   create:
-    spark = (FieldActor_Create(276, object->x.fixed, object->y.fixed,
+    spark = (FieldActor_Create(SPRITE_SPLASH, object->x.fixed, object->y.fixed,
                                object->z.fixed));
     sparks[i] = spark;
     spark->scaleX = Q16_ONE * 13 / 20;
@@ -423,17 +426,12 @@ void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
 }
 
 void EasternAlhafra_OverhearWorkers(void);
-/* VIEW(s0514): routine PushTarget_Push as void PushTarget_Push(struct
- * PushSlide); eastern_alhafra has void PushTarget_Push(struct DoorPlan); tried
- * as the definition's void PushTarget_Push(struct PushTarget target), which the
- * object already declares, EasternAlhafra_RollLog moves: 1 of 198 instructions
- * in tla-ja. */
-extern void PushTarget_Push__log(struct PushSlide) __asm__("PushTarget_Push");
+void PushTarget_Push(struct PushTarget target);
 
 void EasternAlhafra_RollLog(void) {
   struct Actor *log;
   struct Actor *lastRock;
-  struct PushSlide unk;
+  struct PushTarget slide;
   s32 facing;
   s32 i;
 
@@ -443,15 +441,15 @@ void EasternAlhafra_RollLog(void) {
       (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
     MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2, 255);
-  if (PushTarget_FindSlide(&unk) != 0) {
-    if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == 0xc000) {
-      PushTarget_Push__log(unk);
+  if (PushTarget_FindSlide(&slide) != 0) {
+    if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == FACING_NORTH) {
+      PushTarget_Push(slide);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-      PushTarget_Push__log(unk);
+      PushTarget_Push(slide);
       MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed + px(8), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 2, 0);
@@ -462,7 +460,7 @@ void EasternAlhafra_RollLog(void) {
       Actor_SetDestinationOffset(ACTOR_LOG, 0, 16);
       FieldEvent_Wait(20);
       log->gravity = px(1) / 20;
-      log->motionFlags = 3;
+      log->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       i = 0;
       if (log->y.fixed > 0) {
         do {
@@ -577,7 +575,7 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
@@ -685,7 +683,8 @@ s32 Scene_Initialize(void) {
   ((struct FieldWork *)EVENT_WORK)->transition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   EasternAlhafra_StartWave();
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
     if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0 &&
         Event_GetFlag(FLAG_ALHAFRA_SHIP_GONE) == 0) {
@@ -700,11 +699,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_JIYA, 176, 408);
       Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
       Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
-      FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, 0x4000);
+      FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, TRIG_TURN / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_ALHAFRAS_MAYOR), 0);
-      FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+      FieldActor_SetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_JIYA), 0);
-      FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
+      FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, TRIG_TURN / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_WORKER), 0);
       Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 13);
       Actor_SetAnimation(ACTOR_JIYA, 13);
@@ -721,7 +720,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_LOG, 0, 0);
     }
   }
-  if (gMainRoutineWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SHIP_STOLEN) {
     gMainRoutineWork.returnEntrance = 1;
     gMainRoutineWork.entrance = 1;
     Actor_SetPosition(ACTOR_FELIX, 136, 552);
@@ -729,11 +728,12 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 184, 616);
     Actor_SetPosition(ACTOR_MAN_KNOCKED_DOWN, 136, 600);
     Actor_SetPosition(ACTOR_FIRST_WORKER, 160, 584);
-    FieldActor_SetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN,
+                                     TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_YOUNG_MAN_KNOCKED_DOWN), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, 0xc000);
+    FieldActor_SetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, TRIG_TURN * 3 / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MAN_KNOCKED_DOWN), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WORKER), 0);
     FieldActor_SetSpritePriority(ACTOR_JIYA, 2);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAS_MAYOR, 2);
@@ -741,9 +741,9 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 160, 392);
     Actor_SetPosition(ACTOR_JIYA, 176, 408);
     Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
-    FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+    FieldActor_SetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_JIYA), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
     Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
@@ -759,8 +759,9 @@ s32 Scene_Initialize(void) {
     PushTarget_FillFootprint(ACTOR_LOG);
   Rope_Initialize();
   Rope_Place(0, FLAG_ROPE_LASHED, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
-  Actor_Get(ACTOR_ROPE_POST)->priorityFlags |= 32;
-  Actor_Get(ACTOR_SECOND_ROPE_POST)->priorityFlags |= 32;
+  Actor_Get(ACTOR_ROPE_POST)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_SECOND_ROPE_POST)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_START), 0);
@@ -772,7 +773,7 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(ACTOR_FIRST_CONE_ROPE_START);
     /* FAKEMATCH(dead): the solid bit set in a once-only block. */
     do {
-      object->collisionFlags |= 8;
+      object->collisionFlags |= ACTOR_NOT_TARGETED;
     } while (0);
     object = Actor_Get(ACTOR_FIRST_CONE_ROPE_END);
     object->motionFlags = flag;
@@ -780,7 +781,7 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(1, ACTOR_FIRST_CONE_ROPE_START, ACTOR_FIRST_CONE_ROPE_END);
     Tightrope_Settle(1);
     object = Actor_Get(ACTOR_SECOND_CONE_ROPE_START);
-    object->collisionFlags |= 8;
+    object->collisionFlags |= ACTOR_NOT_TARGETED;
     object = Actor_Get(ACTOR_SECOND_CONE_ROPE_END);
     object->motionFlags = flag;
     object->y.fixed = px(16);
@@ -810,8 +811,8 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     object = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 336, 536);
     Actor_SetAnimation(ACTOR_LOG, 4);
-    object->priorityFlags |= 2;
-    object->motionFlags = 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    object->motionFlags = ACTOR_FALLS;
     object->velocityY = 0;
     object->y.fixed = -px(4);
     object->groundHeight = -px(4);
@@ -830,7 +831,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     Actor_SetPosition(ACTOR_FIRST_CRATE, 504, 520);
     Actor_SetAnimation(ACTOR_FIRST_CRATE, 2);
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
@@ -839,7 +840,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     Actor_SetPosition(ACTOR_SECOND_CRATE, 408, 536);
     Actor_SetAnimation(ACTOR_SECOND_CRATE, 2);
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
@@ -1008,12 +1009,10 @@ void EasternAlhafra_OverhearWorkers(void) {
 void EasternAlhafra_AskToHelpWithMast(void) {
   struct Actor *leader;
 
-  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) == 0) {
-    goto L_020097dc;
-  }
-  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
-    goto L_020097dc;
-  }
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) == 0)
+    goto done;
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0)
+    goto done;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
@@ -1091,7 +1090,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
-L_020097dc:
+done:
   return;
 }
 
@@ -1224,7 +1223,7 @@ s32 timer;
   struct Actor *object;
   struct Sprite *sprite;
 
-  object = FieldActor_Create(0x1e8, x, y, z);
+  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
   if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
@@ -1751,7 +1750,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(ACTOR_KRADEN, 744, 1016);
   Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 744, 1016);
   Event_PlaySound(MUS_BRIGGS_STEALS_SHIP);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(30);
@@ -1957,7 +1956,7 @@ scroll:
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Event_SetDestination(SCENE_EASTERN_ALHAFRA, 99);
+  Event_SetDestination(SCENE_EASTERN_ALHAFRA, ENTRANCE_AFTER_SHIP_STOLEN);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
@@ -1974,7 +1973,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
                                          center->y.fixed, center->z.fixed);
   }
   FieldEvent_Wait(30);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(15);
@@ -2006,49 +2005,49 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                        0x1e);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 8);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 2.4);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, -16);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 0, 8);
   Event_PlaySound(SE_IMPACT);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 2.4);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_SECOND_WORKER)->facing = FACING_WEST;
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_SECOND_WORKER)->facing = FACING_NORTH_NORTHWEST;
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_SECOND_WORKER)->facing = FACING_NORTH_NORTHEAST;
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_SECOND_WORKER)->facing = 0;
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_SECOND_WORKER)->facing = FACING_SOUTH_SOUTHEAST;
   FieldEvent_Wait(20);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
   // "Get up!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
@@ -2061,42 +2060,42 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, -8);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 2.4);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 16);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_PlaySound(SE_IMPACT);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 2.4);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_JIYA)->facing = 0;
-  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHEAST;
-  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
-  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_JIYA)->facing = FACING_WEST;
-  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_JIYA)->facing = FACING_SOUTH_SOUTHWEST;
   FieldEvent_Wait(20);
   // "They're gone, and you let them escape!"
@@ -2454,15 +2453,15 @@ FieldActor_CheckMovementCollision(struct Actor *actor,
 /// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
 /// least one free step it records the end position in the push state and
 /// returns 1, else 0. The actor stays on layer 2 while it is measured.
-s32 PushTarget_FindSlide(struct PushState *push) {
+s32 PushTarget_FindSlide(struct PushTarget *push) {
   struct Actor *actor;
   struct FieldPosition cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;
 
-  actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
+  actor = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
   if (actor != 0) {
-    kind = push->kind;
+    kind = push->footprint;
     width =
         (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
     height =
@@ -2470,7 +2469,7 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     offset = gPushLeaderSteps[direction];
     dx = offset & FIELD_PIXEL_MASK;
     dz = px(offset);
-    push->unk14 = 0;
+    push->callback = 0;
     steps = 0;
     layer = &actor->layer;
     *layer = 2;
@@ -2512,15 +2511,6 @@ s32 PushTarget_FindSlide(struct PushState *push) {
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
-
-struct PushTarget {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y;
-  s32 z;
-  s32 footprint; ///< index into the footprint table
-  s32 id;
-  void (*callback)(void);
-};
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -2631,7 +2621,7 @@ next:
   object = Actor_Get(id);
   mode = spec[1];
   flag = spec[2];
-  object->collisionFlags &= 0xfe;
+  object->collisionFlags &= ~ACTOR_SOLID;
   Actor_SetSpriteFlags(object, 0);
   Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
   limit = 0xff;
@@ -2680,7 +2670,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {10, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 264, 0, 424, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 440, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 136, 0, 568, FACING_NORTH, 0, 32, 0, 608, 704, 0},
+    {ENTRANCE_AFTER_SHIP_STOLEN, CONDITION_ALWAYS, 136, 0, 568, FACING_NORTH, 0, 32, 0, 608, 704, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2698,22 +2688,22 @@ struct ActorPlacement gEasternAlhafra_Placements[] = {
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(258, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2724,26 +2714,26 @@ struct ActorPlacement gEasternAlhafra_PlacementsAfterBriggsCaught[] = {
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(258, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(24, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -2760,32 +2750,32 @@ s32 gEasternAlhafra_CabinDoor[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterCabin)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWeSentMy)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIfWeCould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgPeopleCallUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIThoughtIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgThatLousyRat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgWhenIThink)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgWhyDoThese)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs2)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
+    {TRIGGER_TALK, ACTOR_SAILOR_GIVING_UP, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_GIVING_UP | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
+    {TRIGGER_TALK, ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
+    {TRIGGER_TALK, ACTOR_SAILOR_WAITING_FOR_HIS_PAL, CONDITION_ALWAYS, MSGNO(MsgWeSentMy)},
+    {TRIGGER_TALK, ACTOR_SAILOR_LONGING_FOR_CHAMPA, CONDITION_ALWAYS, MSGNO(MsgIfWeCould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_GIVING_UP, CONDITION_ALWAYS, MSGNO(MsgPeopleCallUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgIThoughtIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_WAITING_FOR_HIS_PAL, CONDITION_ALWAYS, MSGNO(MsgThatLousyRat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_LONGING_FOR_CHAMPA, CONDITION_ALWAYS, MSGNO(MsgWhenIThink)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
+    {TRIGGER_TALK, ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgWhyDoThese)},
+    {TRIGGER_TALK, ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs2)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_ROPE_LASHED, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, FLAG_CONE_POUNDED, EVENT(EasternAlhafra_PoundCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingLastRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingLastRock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_ROPE_LASHED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CONE, FLAG_CONE_POUNDED, EVENT(EasternAlhafra_PoundCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingLastRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingLastRock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_StartPushingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_FinishPushingBlock)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},

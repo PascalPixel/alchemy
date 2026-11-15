@@ -6,7 +6,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) {
   cell += Actor_GetCellIndex(object);
   if (GameFlag_Get(flag)) {
     cell->collisionCode = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     switch (kind) {
     case 0:
       Actor_SelectAnimation(object, 2);

@@ -24,7 +24,7 @@ void Leader_RiseFromWater(void) {
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWait(*owner, 0, offset);
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = (void (*)(void))flag;
     Event_NoOp();
     Event_WaitTransitionFrames();

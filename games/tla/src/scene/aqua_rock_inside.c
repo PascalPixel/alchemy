@@ -24,13 +24,15 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "scene/dehkan_plateau.h"
+#include "window/item_icon.h"
+#include "graphics/palette_buffers.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void Event_FinishScreenTransition(void);
-s32 VramCache_FindFreeEntry(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "field/map_grid.h"
 
@@ -114,19 +116,12 @@ struct FieldSpriteFlags {
   u8 flag0 : 1;
 };
 
-s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
-void Event_End(void);
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void FieldCamera_WaitForArrival(void);
 void Field_TryJumpForward(void);
-void Party_AddPp(s32 a, s32 b);
-void Scene_QueueMusic(s32 a);
 void AquaRockInside_SpawnSplash(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
-void Event_NoOp(void);
 
 void AquaRockInside_LowerSpring(void);
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value);
@@ -174,6 +169,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "field/map.h"
 #include "types.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "sound/sound.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -234,8 +230,6 @@ struct WaterWork {
   u16 levels[4];
 };
 
-void AquaRockInside_SetPillarHeight(u32 index, s32 height);
-
 void AquaRockInside_WaitToLand(struct Actor *object);
 
 void Leader_RiseFromWater(void);
@@ -254,17 +248,17 @@ void AquaRockInside_SpringDries(void);
 void AquaRockInside_UseAquariusStone(void);
 void AquaRockInside_CheckColumn(void);
 
-void AquaRockInside_DouseSecondMoai(void);
+void AquaRockInside_DouseAquariusStoneWaterStone(void);
 
 void AquaRockInside_SetPillarCellHigh(void);
 
-void AquaRockInside_DouseThirdMoai(void);
+void AquaRockInside_DouseRustySwordChestWaterStone(void);
 
-void AquaRockInside_DouseThirdWaterStone(void);
+void AquaRockInside_DouseCrystalPowderChestWaterStone(void);
 
 void AquaRockInside_StartPushingRock(void);
 void AquaRockInside_CheckPsynergyStone(void);
-void AquaRockInside_DouseFourthMoai(void);
+void AquaRockInside_DouseTearStoneWaterStone(void);
 void AquaRockInside_ParchLastPool(void);
 void AquaRockInside_WalkToParchTablet(void);
 void AquaRockInside_ReadTabletFacingWest(void);
@@ -276,16 +270,36 @@ void Tightrope_Place();
 
 #include "text/msg_ids.h"
 
+/// Aqua Rock's lasting flags. The Water of Life room's vents, covered by its
+/// west and east pillars (AquaRockInside_PlacePillarOverVent).
+#define FLAG_AQUA_ROCK_WEST_VENT_COVERED 0x95a
+#define FLAG_AQUA_ROCK_EAST_VENT_COVERED 0x95b
+/// The pillar Moved off the ledge in Steam's room, fallen before the Moai.
+#define FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI 0x95c
+/// The Aquarius Stone set in the column, which drains the spring.
+#define FLAG_AQUA_ROCK_AQUARIUS_STONE_SET 0x95d
+/// Douse on the Water Stones: the streams they turn, as each room's
+/// AquaRockInside_AdvanceStreams leaves them.
+#define FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED 0xa64
+#define FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED 0xa65
+#define FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED 0xa66
+#define FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED 0xa67
+/// The pool of the Rusty Sword's room, dried by Parch.
+#define FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_POOL_PARCHED 0xa6a
+/// Set once Piers has read the tablet and learned Parch.
+#define FLAG_PIERS_LEARNED_PARCH 0x9ae
+
 extern u8 Data_0202c001[];
 
 /// The actors of the inner rooms the set-up places, numbering each room's
 /// placement table, named by the Psynergy their triggers answer: a Moai
-/// (sprite 383) or a Water Stone that Douse wakes, a stone pillar
-/// (SPRITE_STONE_PILLAR) Moved over a vent, and the water pillars (sprite
-/// 312) AquaRockInside_AddPillar raises.
+/// (sprite 380, a stone head) that Douse fills, so that the water rises, or a
+/// Water Stone (sprite 383, a tear-shaped rock) that Douse sets spouting, which
+/// turns the streams; a stone pillar (SPRITE_STONE_PILLAR) Moved over a vent,
+/// and the water pillars (sprite 312) AquaRockInside_AddPillar raises.
 enum AquaRockInsideWaterOfLifeChestActorId {
-  ACTOR_WATER_OF_LIFE_CHEST_MOAI = ACTOR_FIRST_PLACED,
-  ACTOR_WATER_OF_LIFE_CHEST_WATER_STONE,
+  ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI = ACTOR_FIRST_PLACED,
+  ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI,
   ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR,
   ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR,
   /// The pillar the water lifts (AquaRockInside_SetPillarHeight).
@@ -302,7 +316,7 @@ enum AquaRockInsideSteamActorId {
 };
 
 enum AquaRockInsideAquariusStoneActorId {
-  ACTOR_AQUARIUS_STONE_MOAI = ACTOR_FIRST_PLACED,
+  ACTOR_AQUARIUS_STONE_WATER_STONE = ACTOR_FIRST_PLACED,
   /// Two hidden actors where the stone appears; the second shows it
   /// (AquaRockInside_ShowAquariusStone).
   ACTOR_AQUARIUS_STONE_BASE,
@@ -310,19 +324,47 @@ enum AquaRockInsideAquariusStoneActorId {
 };
 
 enum AquaRockInsideRustySwordChestActorId {
-  ACTOR_RUSTY_SWORD_CHEST_MOAI = ACTOR_FIRST_PLACED,
-  ACTOR_RUSTY_SWORD_CHEST_WATER_STONE,
+  ACTOR_RUSTY_SWORD_CHEST_WATER_STONE = ACTOR_FIRST_PLACED,
+  ACTOR_RUSTY_SWORD_CHEST_MOAI,
   /// The two Moai of the upper ledge.
   ACTOR_RUSTY_SWORD_CHEST_MOAI_A,
   ACTOR_RUSTY_SWORD_CHEST_MOAI_B,
   ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A,
   ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B,
-  ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C
+  ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C,
+  /// The room's chest, the first actor its map's chests make.
+  ACTOR_RUSTY_SWORD_CHEST = 64
+};
+
+enum AquaRockInsideCrystalPowderChestActorId {
+  ACTOR_CRYSTAL_POWDER_CHEST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_CRYSTAL_POWDER_CHEST_WATER_STONE
+};
+
+enum AquaRockInsideVialChestActorId {
+  /// The pillar Moved to the falls (AquaRockInside_MovePillarByFalls).
+  ACTOR_VIAL_CHEST_FALLS_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_VIAL_CHEST_MOAI,
+  /// The two pillars pushed into the rapids (AquaRockInside_StepIntoRapids).
+  ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A,
+  ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B,
+  /// A hidden actor that splashes under the falls
+  /// (AquaRockInside_SplashBeneath).
+  ACTOR_VIAL_CHEST_SPLASH,
+  /// The three puddles Frost freezes (AquaRockInside_FreezeRoomPuddle).
+  ACTOR_VIAL_CHEST_PUDDLE_A,
+  ACTOR_VIAL_CHEST_PUDDLE_B,
+  ACTOR_VIAL_CHEST_PUDDLE_C
+};
+
+enum AquaRockInsideTightropeActorId {
+  ACTOR_TIGHTROPE_WEST_POST = ACTOR_FIRST_PLACED,
+  ACTOR_TIGHTROPE_EAST_POST
 };
 
 enum AquaRockInsideTearStoneActorId {
-  ACTOR_TEAR_STONE_MOAI = ACTOR_FIRST_PLACED,
-  ACTOR_TEAR_STONE_WATER_STONE,
+  ACTOR_TEAR_STONE_WATER_STONE = ACTOR_FIRST_PLACED,
+  ACTOR_TEAR_STONE_MOAI,
   /// The nine water pillars of the puzzle, lettered A to I.
   ACTOR_TEAR_STONE_WATER_PILLAR_A,
   ACTOR_TEAR_STONE_WATER_PILLAR_B,
@@ -386,13 +428,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAquaRockInside_Placements;
 }
 
-/// When object 10 reaches row 12, or object 11 column 51, stops its motion,
-/// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
-/// row 12.
+/// A pillar Moved onto its vent in the Water of Life's room: the west pillar at
+/// row 12, the east one at column 51. It stops there a pixel up and covers the
+/// vent for good; the west one also redraws the two cells it blocks.
 void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 10) {
+  if (id == ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR) {
     s32 row = FIELD_CELL(object->z.fixed);
 
     if (row == 12) {
@@ -402,11 +444,11 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 
         object->y.fixed += step;
       }
-      Event_SetFlag(0x95a);
+      Event_SetFlag(FLAG_AQUA_ROCK_WEST_VENT_COVERED);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, row);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, row);
     }
-  } else if (id == 11) {
+  } else if (id == ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR) {
     if (FIELD_CELL(object->x.fixed) == 51) {
       object->motionFlags = 0;
       {
@@ -414,14 +456,14 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 
         object->y.fixed += step;
       }
-      Event_SetFlag(0x95b);
+      Event_SetFlag(FLAG_AQUA_ROCK_EAST_VENT_COVERED);
     }
   }
 }
 
 void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 
-void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
+void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
   s32 column;
@@ -433,19 +475,17 @@ void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
   layer->offsetY -= px(32);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
-  column = FIELD_CELL(Actor_Get(12)->x.fixed) - 42;
+  column =
+      FIELD_CELL(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR)->x.fixed) -
+      42;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
+  // AquaRockInside_SetPillarHeight, defined below, is called with no prototype
+  // in scope.
   for (i = 0; i <= 31; i++) {
     AquaRockInside_SetPillarsHeight(i << 16);
-    {
-      /* FAKEMATCH(pin): the zero pinned to r1, set before the column is copied
-       * to r0. */
-      register s32 height asm("r1") = 0;
-
-      AquaRockInside_SetPillarHeight(column, height);
-    }
+    AquaRockInside_SetPillarHeight(column, 0);
     layer->offsetY += px(1);
     System_Wait(4);
   }
@@ -455,16 +495,14 @@ void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
   Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
 
-void AquaRockInside_DouseFirstWaterStone(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *layer;
+void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
 
-  layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(id), 0);
   AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
-  layer[3] -= 0x200000;
+  layer->offsetY -= px(32);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
@@ -472,7 +510,7 @@ void AquaRockInside_DouseFirstWaterStone(s32 unused, s32 id) {
   Event_PlaySound(SE_556);
   for (i = 0; i <= 31; i++) {
     AquaRockInside_SetPillarsHeight(i << 16);
-    layer[3] += 0x10000;
+    layer->offsetY += px(1);
     System_Wait(4);
   }
   Event_End();
@@ -488,7 +526,7 @@ void AquaRockInside_FreezePuddle(void) {
 
 #if TLA_PATCH_1
 void AquaRockInside_WaitToLand(struct Actor *object) {
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   do {
     System_Wait(1);
   } while (object->velocityY != 0);
@@ -502,20 +540,20 @@ void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 x;
 
-  if (id == 9) {
+  if (id == ACTOR_STEAM_ROOM_PILLAR) {
     x = FIELD_CELL(object->x.fixed);
     if (x == 39) {
 #if !TLA_PATCH_1
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(15);
       object->motionFlags = 0;
-      Event_SetFlag(0x95c);
+      Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       AquaRockInside_WaitToLand(object);
-      Event_SetFlag(0x95c);
+      Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
       Event_End();
 #endif
@@ -524,8 +562,8 @@ void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
 }
 
 void AquaRockInside_ParchSpring(void) {
-  Actor_SetAnimation(8, 4);
-  FieldActor_SetSpriteColor(Actor_Get(8), 6);
+  Actor_SetAnimation(ACTOR_STEAM_ROOM_MOAI, 4);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_STEAM_ROOM_MOAI), 6);
   MapGrid_CopyCells(123, 15, 5, 3, 110, 15);
   gFieldWork->raisedTrigger = 88;
 }
@@ -564,6 +602,8 @@ void AquaRockInside_ShowAquariusStone(void) {
   struct FieldSpriteFlags *sprite;
 
   FieldActor_ShowItemIconById(ACTOR_AQUARIUS_STONE, ITEM_AQUARIUS_STONE);
+  // XXX: actor 20 is none of this room's three; a probe of the room after the
+  // stone is set would show which sprite this lifts 24 pixels.
   object = Actor_Get(20);
   sprite = object->sprite;
   sprite->flag0 = 1;
@@ -626,7 +666,7 @@ cell:
   Sound_WaitForBgmRestore();
   Event_End();
   Scene_PlayMusic();
-  Event_SetFlag(0x95d);
+  Event_SetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET);
   Event_SetFlag(FLAG_ITEM_USED_UP);
 }
 
@@ -660,7 +700,7 @@ void AquaRockInside_CheckColumn(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  seen = Event_GetFlag(0x95d);
+  seen = Event_GetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET);
   message = MsgCheckedTheColumn;
   if (!seen) {
     Message_ShowCentered(message, 1);
@@ -675,7 +715,7 @@ void AquaRockInside_CheckColumn(void) {
   Event_End();
 }
 
-void AquaRockInside_DouseSecondMoai(void) {
+void AquaRockInside_DouseAquariusStoneWaterStone(void) {
   s32 i;
 
   AquaRockInside_StartSplashes();
@@ -685,14 +725,14 @@ void AquaRockInside_DouseSecondMoai(void) {
     AquaRockInside_AdvanceStreams(33, 55);
     System_Wait(15);
   }
-  Event_SetFlag(0xa66);
+  Event_SetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED);
 }
 
 void AquaRockInside_ParchPool(void) {
   MapGrid_CopyCellsLayered(106, 14, 14, 13, 81, 14);
   MapGrid_CopyCellsLayered(44, 78, 14, 12, 17, 78);
   MapGrid_CopyCellAttributes(81, 14, 14, 13, 17, 14);
-  Event_SetFlag(0xa6a);
+  Event_SetFlag(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_POOL_PARCHED);
 }
 
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
@@ -710,57 +750,57 @@ s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
 }
 
 void AquaRockInside_SetPillarCellLow(void) {
-  struct Actor *object = Actor_Get(12);
+  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 43, 1, 1, FIELD_CELL(object->x.fixed),
                              FIELD_CELL(object->z.fixed));
 }
 
 void AquaRockInside_SetPillarCellMiddle(void) {
-  struct Actor *object = Actor_Get(12);
+  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 42, 1, 1, FIELD_CELL(object->x.fixed),
                              FIELD_CELL(object->z.fixed));
 }
 
 void AquaRockInside_SetPillarCellHigh(void) {
-  struct Actor *object = Actor_Get(12);
+  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 41, 1, 1, FIELD_CELL(object->x.fixed),
                              FIELD_CELL(object->z.fixed));
 }
 
-void AquaRockInside_DouseThirdMoai(void) {
+void AquaRockInside_DouseRustySwordChestWaterStone(void) {
   s32 i;
   s32 result;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_49)) {
-    AquaRockInside_BlockCellUnder(12, 38);
+    AquaRockInside_BlockCellUnder(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, 38);
     AquaRockInside_StartSplashes();
     AquaRockInside_AddSplash(12, 2, 45, 1);
     for (i = 3; i >= 0; i--)
       result = AquaRockInside_AdvanceStreams(33, 55);
     Event_SetFlag(FLAG_SCENE_TEMP_48);
     if (result == 1)
-      Event_SetFlag(0xa64);
+      Event_SetFlag(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED);
   }
 }
 
-void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
+void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
 
-  FieldActor_SetSpriteColor(Actor_Get(9), 5);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RUSTY_SWORD_CHEST_MOAI), 5);
   AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
-  layer[3] -= 0x200000;
+  layer->offsetY -= px(32);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_557);
   for (i = 31; i >= 0; i--) {
-    layer[3] += 0x10000;
+    layer->offsetY += px(1);
     System_Wait(4);
   }
   Event_End();
@@ -780,7 +820,8 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   s32 result;
 
   if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
-    s32 column = FIELD_CELL(Actor_Get(8)->x.fixed);
+    s32 column =
+        FIELD_CELL(Actor_Get(ACTOR_CRYSTAL_POWDER_CHEST_PILLAR)->x.fixed);
 
     if (trigger == 77 && column == 17)
       clear = 0;
@@ -788,9 +829,11 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
       clear = 0;
   }
   if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
-    if (trigger == 77 && FIELD_CELL(Actor_Get(10)->x.fixed) == 9)
+    if (trigger == 77 &&
+        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A)->x.fixed) == 9)
       clear = 0;
-    if (trigger == 78 && FIELD_CELL(Actor_Get(11)->x.fixed) == 13)
+    if (trigger == 78 &&
+        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B)->x.fixed) == 13)
       clear = 0;
   }
   if (clear == 0)
@@ -833,7 +876,7 @@ test:
     goto step;
 }
 
-void AquaRockInside_DouseThirdWaterStone(void) {
+void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
   s32 i;
 
   AquaRockInside_StartSplashes();
@@ -842,7 +885,7 @@ void AquaRockInside_DouseThirdWaterStone(void) {
     AquaRockInside_AdvanceStreams(33, 55);
     System_Wait(15);
   }
-  Event_SetFlag(0xa67);
+  Event_SetFlag(FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED);
 }
 
 void AquaRockInside_RideFalls(s32 value) {
@@ -857,7 +900,7 @@ void AquaRockInside_RideFalls(s32 value) {
   flags = &object->motionFlags;
   speed = 0;
   *flags = 0;
-  object->priorityFlags |= 0x20;
+  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SelectAnimation(object, 18);
   Event_PlaySound(SE_SPLASH_SMALL);
   System_Wait(13);
@@ -870,7 +913,7 @@ void AquaRockInside_RideFalls(s32 value) {
     speed += px(1) / 4;
     object->y.fixed += speed;
     if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(15));
+      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -881,20 +924,20 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (FIELD_CELL(object->x.fixed) == 49) {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
+    struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
     s32 i;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_PlaySound(SE_557);
-    Actor_SetAnimation(9, 2);
+    Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
     MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
-      layer[3] -= 0x10000;
+      layer->offsetY -= px(1);
       System_Wait(4);
     }
-    i = 13;
+    i = ACTOR_VIAL_CHEST_PUDDLE_A;
   place:
     object = Actor_GetById(i);
     object->x.fixed = object->timer << 16;
@@ -904,12 +947,13 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     object->y.fixed = -px(32);
     FieldActor_SetSpritePriority(i, 3);
     i++;
-    if (i <= 15)
+    if (i <= ACTOR_VIAL_CHEST_PUDDLE_C)
       goto place;
     BlendScript_Suspend();
     i = 12;
   blend:
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000 | i, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
+                        0x20000);
     System_Wait(4);
     i--;
     if (i >= 0)
@@ -923,12 +967,12 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
 }
 
 void AquaRockInside_FreezeRoomPuddle(s32 unused, s32 id) {
-  if ((u32)(id - 13) <= 2) {
+  if ((u32)(id - ACTOR_VIAL_CHEST_PUDDLE_A) <= 2) {
     struct Actor *object = Actor_Get(id);
 
     MapGrid_CopyCellAttributes(47, 45, 1, 1, FIELD_CELL(object->x.fixed),
                                FIELD_CELL(object->z.fixed));
-    Event_SetFlag(id + 0x244);
+    Event_SetFlag(FLAG_SCENE_TEMP_51 - ACTOR_VIAL_CHEST_PUDDLE_A + id);
     object->priorityFlags = 0;
   }
 }
@@ -937,11 +981,11 @@ void AquaRockInside_StartPushingRock(void) {
   MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34);
 }
 
-/// When object 10 or 11 arrives, stops both and redraws row 33 at each one's
-/// column.
+/// When either pillar pushed into the Vial's rapids arrives, stops both and
+/// redraws row 33 at each one's column, so the rapids flow around them.
 void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
-  if ((u32)(id - 10) <= 1) {
-    struct Actor *object = Actor_Get(10);
+  if ((u32)(id - ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A) <= 1) {
+    struct Actor *object = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
 
     object->motionFlags = 0;
     {
@@ -949,7 +993,7 @@ void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
 
       MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(object->x.fixed), 34);
     }
-    object = Actor_Get(11);
+    object = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B);
     object->motionFlags = 0;
     {
       s32 row = 33;
@@ -989,42 +1033,43 @@ void AquaRockInside_MovePuzzlePillar(s32 unused, s32 id) {
   MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(object->x.fixed), 39);
 }
 
-void AquaRockInside_DouseFourthMoai(void) {
+void AquaRockInside_DouseTearStoneWaterStone(void) {
   s32 i;
   s32 result;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_4B)) {
-    /* FAKEMATCH(signature): these two calls go through a void function type. */
-    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(12, 38);
-    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(13, 39);
-    AquaRockInside_BlockCellUnder(15, 37);
+    /* FAKEMATCH(signature): the form kept; as two plain calls, 4 of 41
+     * instructions differ in tla-en. */
+    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(
+        ACTOR_TEAR_STONE_WATER_PILLAR_C, 38);
+    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(
+        ACTOR_TEAR_STONE_WATER_PILLAR_D, 39);
+    AquaRockInside_BlockCellUnder(ACTOR_TEAR_STONE_WATER_PILLAR_F, 37);
     AquaRockInside_StartSplashes();
     AquaRockInside_AddSplash(38, 2, 19, 1);
     for (i = 8; i >= 0; i--)
       result = AquaRockInside_AdvanceStreams(33, 55);
     Event_SetFlag(FLAG_SCENE_TEMP_4A);
     if (result == 1)
-      Event_SetFlag(0xa65);
+      Event_SetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED);
   }
 }
 
-void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *layer;
+void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
 
-  layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(id), 5);
   AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
-  layer[3] -= 0x200000;
+  layer->offsetY -= px(32);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
   for (i = 31; i >= 0; i--) {
-    layer[3] += 0x10000;
+    layer->offsetY += px(1);
     System_Wait(4);
   }
   Event_End();
@@ -1032,12 +1077,12 @@ void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
 }
 
 void AquaRockInside_WaterSinks(void) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  layer[3] -= 0x200000;
+  layer->offsetY -= px(32);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_SetShake(1, 1, 1);
   i = 14;
@@ -1056,7 +1101,7 @@ shake:
     goto shake;
   System_Wait(10);
   for (i = 127; i >= 0; i--) {
-    layer[3] += 0x4000;
+    layer->offsetY += px(1) / 4;
     System_Wait(1);
   }
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1123,20 +1168,8 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 
 #include "shared/actor_step_to_watched.h"
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-
 #include "shared/actor_emit_bubbles.h"
 
-union ActorView {
-  struct Actor actor;
-  struct {
-    u8 unk00[0x62];
-    u8 unk62;
-    u8 unk63;
-  } bytes;
-};
 extern u32 gAquaRockInside_TabletRiseScript[];
 extern u32 gAquaRockInside_TabletGlowScript[];
 extern s32 gAquaRockInside_RisingSparkScript[];
@@ -1166,8 +1199,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
                                   FIELD_PIXEL(first->z.fixed) << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = px(1) / 5;
@@ -1176,11 +1209,11 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(firstId, 256);
-  REG_BLDALPHA = 0x1008;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
-    object = ((void *)Import_ActorCreate(672, first->x.fixed, first->y.fixed,
-                                         first->z.fixed));
+    object = ((void *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
+                                         first->y.fixed, first->z.fixed));
     Sound_Play(SE_GLITTER);
     object->x.fixed += ((Random16() & 31) - 16) << 16;
     object->y.fixed += ((Random16() & 15) - 8) << 16;
@@ -1193,16 +1226,16 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SetBlendMode(object, 1);
     Actor_StartScript(object, gAquaRockInside_TabletGlowScript);
-    REG_BLDALPHA = 0x1004;
+    REG_BLDALPHA = BLEND_ALPHA(4, 16);
     wait(2);
-    REG_BLDALPHA = 0x100a;
+    REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     wait(2);
-    REG_BLDALPHA = 0x100a;
+    REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
   }
-  REG_BLDALPHA = 0x1008;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
   for (i = 0; i != 16; i++) {
     spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
@@ -1214,7 +1247,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
     spark->motionFlags = noMotion;
     spark->riseBaseY = 0x7a0000;
     spark->watchedActor = second;
-    ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+    spark->riseCounter = ((16 - i) << 3) + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -1240,14 +1273,14 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
                           second->y.fixed + i * px(1) - px(8), second->z.fixed);
     riser->timer = Random16();
     riser->userValue = 0x800;
-    ((union ActorView *)riser)->bytes.unk62 = i;
-    ((union ActorView *)riser)->bytes.unk63 = 1;
+    riser->riseCounter = i;
+    riser->riseEnabled = 1;
     riser->bounce = riser->x.fixed;
     riser->riseBaseY = 0;
     riser->gravity = riser->z.fixed;
     riser->watchedActor = second;
     riser->motionFlags = (u16)0;
-    riser->priorityFlags = 1;
+    riser->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpriteColor(riser, 2);
     Actor_SelectAnimation(riser, 7);
     Actor_SetSpriteFlags(riser, 0);
@@ -1256,14 +1289,14 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(SE_574);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(secondId, gAquaRockInside_PiersSettleScript);
@@ -1284,9 +1317,9 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldEvent_ResolvePendingActions(0);
   // "Felix checked the tablet. It looks like there are strange characters..."
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
-  if (Event_GetFlag(0x9ae)) {
+  if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
     Event_End();
-    goto L_02009c56;
+    return;
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   gFieldWork->message = (gFieldWork->message + 1);
@@ -1318,7 +1351,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   AquaRockInside_PiersLearnsParch(14, 7);
   Party_LearnAbility(PIERS, ABILITY_PARCH);
-  Event_SetFlag(0x9ae);
+  Event_SetFlag(FLAG_PIERS_LEARNED_PARCH);
   Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1353,11 +1386,10 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_End();
-L_02009c56:
 }
 
 void AquaRockInside_WalkToParchTablet(void) {
-  if (Event_GetFlag(0x9ae)) {
+  if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
@@ -1374,7 +1406,7 @@ void AquaRockInside_WalkToParchTablet(void) {
 
 #define DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
-    if (Event_GetFlag(0x9ae)) {                                                \
+    if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {                             \
       Event_Start();                                                           \
       FieldEvent_ResolvePendingActions(0);                                     \
       Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
@@ -1522,9 +1554,6 @@ extern u16 gAquaRockInside_FirstOutletLevels[];
 extern u16 gAquaRockInside_SecondOutletSpots[];
 extern u32 gAquaRockInside_SecondOutletLevels[];
 
-s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
-                                void (*handler)(void));
-
 /// Aqua Rock's entry setup: in each room it shows the statues already filled by
 /// their flags (or dims those still empty), opens what the story has opened and
 /// arms the room's water and cell handlers by entrance.
@@ -1536,18 +1565,18 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      AquaRockInside_SetMoaiFace(8);
-      Actor_SetAnimation(ACTOR_WATER_OF_LIFE_CHEST_MOAI, 3);
-    } else {
-      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_MOAI),
-                                6);
-    }
-    if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
-      AquaRockInside_SetMoaiFace(9);
-      Actor_SetAnimation(ACTOR_WATER_OF_LIFE_CHEST_WATER_STONE, 3);
+      AquaRockInside_SetMoaiFace(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI);
+      Actor_SetAnimation(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI, 3);
     } else {
       FieldActor_SetSpriteColor(
-          Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_WATER_STONE), 6);
+          Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI), 6);
+    }
+    if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
+      AquaRockInside_SetMoaiFace(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI);
+      Actor_SetAnimation(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI, 3);
+    } else {
+      FieldActor_SetSpriteColor(
+          Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI), 6);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_40)) {
@@ -1555,12 +1584,12 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_STEAM_ROOM_MOAI), 6);
     } else {
-      AquaRockInside_SetMoaiFace(8);
+      AquaRockInside_SetMoaiFace(ACTOR_STEAM_ROOM_MOAI);
       Actor_SetAnimation(ACTOR_STEAM_ROOM_MOAI, 3);
     }
     object = Actor_GetById(ACTOR_STEAM_ROOM_PILLAR);
     object->motionFlags = 0;
-    if (GameFlag_Get(0x95c)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI)) {
       Actor_SetPosition(ACTOR_STEAM_ROOM_PILLAR, 632, 152);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, 39, 9);
       object->y.fixed = 0;
@@ -1570,25 +1599,25 @@ s32 Scene_Initialize(void) {
     if (entrance == 7)
       Leader_RiseFromWater();
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST) {
-    AquaRockInside_SetMoaiFace(10);
+    AquaRockInside_SetMoaiFace(ACTOR_RUSTY_SWORD_CHEST_MOAI_A);
     Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI_A, 3);
-    AquaRockInside_SetMoaiFace(11);
+    AquaRockInside_SetMoaiFace(ACTOR_RUSTY_SWORD_CHEST_MOAI_B);
     Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI_B, 3);
     if ((u32)(entrance - 6) <= 1) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_49)) {
-        FieldActor_SetSpriteColor(
-            Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_STONE), 5);
-        AquaRockInside_SetMoaiFace(9);
-        Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_WATER_STONE, 3);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_MOAI),
+                                  5);
+        AquaRockInside_SetMoaiFace(ACTOR_RUSTY_SWORD_CHEST_MOAI);
+        Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI, 3);
         AquaRockInside_SetPillarCellLow();
       } else {
-        FieldActor_SetSpriteColor(
-            Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_STONE), 6);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_MOAI),
+                                  6);
       }
     }
     Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->riseCounter = 1;
     Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->riseCounter = 1;
-    object = Actor_GetById(64);
+    object = Actor_GetById(ACTOR_RUSTY_SWORD_CHEST);
     if (object != 0) {
       object->motionFlags = 0;
       object->groundHeight = -px(32);
@@ -1596,6 +1625,8 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     if ((u32)(entrance - 5) <= 1) {
+      // AquaRockInside_SetUpOutlets, defined below, is called with no prototype
+      // in scope.
       AquaRockInside_SetUpOutlets(gAquaRockInside_FirstOutletSpots,
                                   gAquaRockInside_FirstOutletLevels,
                                   AquaRockInside_UpdateVents);
@@ -1607,26 +1638,26 @@ s32 Scene_Initialize(void) {
                                   gAquaRockInside_SecondOutletLevels,
                                   AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_AMBIENT_WATER);
-      AquaRockInside_FinishPushingRock(0, 10);
+      AquaRockInside_FinishPushingRock(0, ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
-      AquaRockInside_SetMoaiFace(9);
-      Actor_SetAnimation(9, 3);
+      AquaRockInside_SetMoaiFace(ACTOR_VIAL_CHEST_MOAI);
+      Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 3);
     }
-    object = Actor_GetById(12);
+    object = Actor_GetById(ACTOR_VIAL_CHEST_SPLASH);
     Actor_SetSpriteFlags(object, 0);
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     object->update = (void (*)(void))AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       AquaRockInside_FallThroughWater();
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_4B)) {
-      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_WATER_STONE), 5);
-      AquaRockInside_SetMoaiFace(9);
-      Actor_SetAnimation(ACTOR_TEAR_STONE_WATER_STONE, 3);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_MOAI), 5);
+      AquaRockInside_SetMoaiFace(ACTOR_TEAR_STONE_MOAI);
+      Actor_SetAnimation(ACTOR_TEAR_STONE_MOAI, 3);
     } else {
-      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_WATER_STONE), 6);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_MOAI), 6);
     }
     Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->riseCounter = 1;
     Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->riseCounter = 1;
@@ -1640,13 +1671,14 @@ s32 Scene_Initialize(void) {
 
 #include "text/msg_ids.h"
 
-#define BG1_SET_PRIORITY_1()                                                   \
+/// Sets BG1CNT's priority bits, through the volatile copy the routine keeps.
+#define SET_BG1CNT_PRIORITY(priority)                                          \
   {                                                                            \
     u16 value;                                                                 \
                                                                                \
     value = (control = REG_BG1CNT & 0xfffc);                                   \
     do {                                                                       \
-      REG_BG1CNT = value | 1;                                                  \
+      REG_BG1CNT = value | (priority);                                         \
     } while (0);                                                               \
   }
 
@@ -1655,8 +1687,8 @@ void Tightrope_Initialize();
 /// Aqua Rock's map preparation: for each room and entrance it sets the water
 /// level, places the statues and boulders the flags have moved, opens or
 /// closes the cells around them, and in the rooms whose water drains it shows
-/// the drained state once its flag is set. Room 6 clears its actors' x and z
-/// where the other rooms clear terrainHeight and y.
+/// the drained state once its flag is set. The Vial's room puts its puddles out
+/// of sight (x and z cleared) until its pillar has fallen by the falls.
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1667,9 +1699,9 @@ s32 Scene_PrepareMap(void) {
       i17;
   struct Actor *actor;
   s32 a, b;
-  u8 *map;
+  struct MapWork *map;
 
-  ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
+  Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
   AquaRockInside_StartPillars();
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
@@ -1713,13 +1745,13 @@ s32 Scene_PrepareMap(void) {
         AquaRockInside_AddSpouts(33, 4, 0);
       }
     }
-    if (GameFlag_Get(0x95a)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_WEST_VENT_COVERED)) {
       Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR, 184, 200);
       i4 = 12;
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, i4);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, i4);
     }
-    if (GameFlag_Get(0x95b)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_EAST_VENT_COVERED)) {
       Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR, 824, 216);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM) {
@@ -1736,14 +1768,14 @@ s32 Scene_PrepareMap(void) {
     Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_AQUARIUS_STONE), 0);
     AquaRockInside_AddSpouts(33, 8, -2);
     AquaRockInside_AddSpouts(40, 8, 8);
-    if (GameFlag_Get(0xa66)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED)) {
       AquaRockInside_StartSplashes();
       AquaRockInside_AddSplash(16, 4, 16, 2);
       AquaRockInside_AddSplash(22, 4, 16, 0);
       for (i5 = 0; i5 < 6; i5++)
         AquaRockInside_AdvanceStreams(33, 55);
     }
-    if (GameFlag_Get(0x95d)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET)) {
       MapGrid_CopyCellsLayered(75, 96, 7, 13, 80, 27);
       i6 = 16;
       b = 31;
@@ -1761,7 +1793,8 @@ s32 Scene_PrepareMap(void) {
     goto no_statues;
   statues:
     {
-      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+          ACTOR_PRIORITY_IGNORES_RISES;
       Value3((s32 (*)())AquaRockInside_AddPillar,
              ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, 5, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar,
@@ -1769,46 +1802,51 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())AquaRockInside_AddPillar,
              ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C, 4, 4);
       AquaRockInside_AddSpouts(40, 4, 4);
-      if (!GameFlag_Get(FLAG_SCENE_TEMP_49) && !Event_GetFlag(0xa64)) {
-        map = (u8 *)Ram_HeapSlots->mapGrid;
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_49) &&
+          !Event_GetFlag(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED)) {
+        map = Ram_HeapSlots->mapGrid;
         i7 = 39;
         MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
         MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, i7);
         AquaRockInside_SetPillarCellMiddle();
-        map[262] = 1;
-        BG1_SET_PRIORITY_1();
-      } else if (Event_GetFlag(0xa64) || GameFlag_Get(FLAG_SCENE_TEMP_48)) {
-        if (Event_GetFlag(0xa64)) {
+        map->enabled[2] = 1;
+        SET_BG1CNT_PRIORITY(1);
+      } else if (Event_GetFlag(
+                     FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED) ||
+                 GameFlag_Get(FLAG_SCENE_TEMP_48)) {
+        if (Event_GetFlag(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED)) {
           Actor_SetPosition(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, 280, 712);
         }
-        AquaRockInside_BlockCellUnder(12, 38);
+        AquaRockInside_BlockCellUnder(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A,
+                                      38);
         AquaRockInside_StartSplashes();
         AquaRockInside_AddSplash(12, 2, 45, 1);
         for (i8 = 0; i8 < 8; i8++)
           AquaRockInside_AdvanceStreams(33, 55);
         Event_SetFlag(FLAG_SCENE_TEMP_49);
       }
-      i9 = 12;
+      i9 = ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A;
       do {
         actor = Actor_GetById(i9);
         actor->motionFlags = 0;
         actor->groundHeight = 0;
         actor->y.fixed = 0;
         i9++;
-      } while (i9 <= 14);
+      } while (i9 <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C);
       goto statues_cleared;
     }
   no_statues:
     AquaRockInside_AddSpouts(33, 0, -4);
   statues_cleared:
-    if (GameFlag_Get(0xa6a)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_POOL_PARCHED)) {
       AquaRockInside_ParchPool();
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     AquaRockInside_AddSpouts(33, 0, -2);
     AquaRockInside_AddSpouts(40, 0, 0);
     FieldEffect_StartBlankOverlay(0);
-    if (((u32)(entrance - 1) <= 3 || entrance == 7) && GameFlag_Get(0xa67)) {
+    if (((u32)(entrance - 1) <= 3 || entrance == 7) &&
+        GameFlag_Get(FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED)) {
       AquaRockInside_StartSplashes();
       AquaRockInside_AddSplash(44, 0, 34, 2);
       for (i10 = 0; i10 <= 4; i10++)
@@ -1822,23 +1860,25 @@ s32 Scene_PrepareMap(void) {
       AquaRockInside_AddSpouts(33, 0, -2);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
-      i11 = 13;
+      i11 = ACTOR_VIAL_CHEST_PUDDLE_A;
       do {
         actor = Actor_GetById(i11);
         actor->motionFlags = 0;
         actor->x.fixed = 0;
         actor->z.fixed = 0;
         i11++;
-      } while (i11 <= 15);
+      } while (i11 <= ACTOR_VIAL_CHEST_PUDDLE_C);
       goto done;
     } else {
       MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
       i12 = 41;
       MapGrid_CopyCellAttributes(105, 41, 12, 13, i12, i12);
       MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, i12);
-      for (i13 = 13; i13 <= 15; i13++) {
+      for (i13 = ACTOR_VIAL_CHEST_PUDDLE_A; i13 <= ACTOR_VIAL_CHEST_PUDDLE_C;
+           i13++) {
         actor = Actor_GetById(i13);
-        if (GameFlag_Get(i13 + 580)) {
+        if (GameFlag_Get(FLAG_SCENE_TEMP_51 - ACTOR_VIAL_CHEST_PUDDLE_A +
+                         i13)) {
           MapGrid_CopyCellAttributes(47, 45, 1, 1, FIELD_CELL(actor->x.fixed),
                                      FIELD_CELL(actor->z.fixed));
         }
@@ -1850,10 +1890,11 @@ s32 Scene_PrepareMap(void) {
     FieldEffect_StartBlankOverlay(0);
     AquaRockInside_AddSpouts(33, 0, -2);
     Tightrope_Initialize();
-    Tightrope_Place(0, 8, 9);
+    Tightrope_Place(0, ACTOR_TIGHTROPE_WEST_POST, ACTOR_TIGHTROPE_EAST_POST);
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
     if ((u32)(entrance - 3) <= 1) {
-      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+          ACTOR_PRIORITY_IGNORES_RISES;
       Value3((s32 (*)())AquaRockInside_AddPillar,
              ACTOR_TEAR_STONE_WATER_PILLAR_A, 6, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar,
@@ -1873,23 +1914,27 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())AquaRockInside_AddPillar,
              ACTOR_TEAR_STONE_WATER_PILLAR_I, 6, 4);
       AquaRockInside_AddSpouts(40, 4, 4);
-      if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) && !Event_GetFlag(0xa65)) {
-        map = (u8 *)Ram_HeapSlots->mapGrid;
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) &&
+          !Event_GetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED)) {
+        map = Ram_HeapSlots->mapGrid;
         i14 = 13;
         MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, i14);
         MapGrid_CopyCellsLayered(35, 105, 23, 24, 35, 73);
         MapGrid_CopyCellAttributes(100, 13, 19, 19, 36, i14);
-        map[262] = 1;
-        BG1_SET_PRIORITY_1();
-      } else if (Event_GetFlag(0xa65) || GameFlag_Get(FLAG_SCENE_TEMP_4A)) {
-        if (Event_GetFlag(0xa65)) {
+        map->enabled[2] = 1;
+        SET_BG1CNT_PRIORITY(1);
+      } else if (Event_GetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED) ||
+                 GameFlag_Get(FLAG_SCENE_TEMP_4A)) {
+        if (Event_GetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED)) {
           Actor_SetPosition(ACTOR_TEAR_STONE_WATER_PILLAR_C, 808, 296);
           Actor_SetPosition(ACTOR_TEAR_STONE_WATER_PILLAR_D, 680, 360);
           Actor_SetPosition(ACTOR_TEAR_STONE_WATER_PILLAR_F, 744, 424);
         }
-        Call2((void (*)())AquaRockInside_BlockCellUnder, 12, 38);
-        Call2((void (*)())AquaRockInside_BlockCellUnder, 13, 39);
-        AquaRockInside_BlockCellUnder(15, 37);
+        Call2((void (*)())AquaRockInside_BlockCellUnder,
+              ACTOR_TEAR_STONE_WATER_PILLAR_C, 38);
+        Call2((void (*)())AquaRockInside_BlockCellUnder,
+              ACTOR_TEAR_STONE_WATER_PILLAR_D, 39);
+        AquaRockInside_BlockCellUnder(ACTOR_TEAR_STONE_WATER_PILLAR_F, 37);
         AquaRockInside_StartSplashes();
         AquaRockInside_AddSplash(38, 2, 19, 1);
         for (i15 = 0; i15 < 8; i15++)
@@ -1897,14 +1942,14 @@ s32 Scene_PrepareMap(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_4B);
       }
     }
-    i16 = 10;
+    i16 = ACTOR_TEAR_STONE_WATER_PILLAR_A;
   clear_pillars:
     actor = Actor_GetById(i16);
     actor->motionFlags = 0;
     actor->groundHeight = 0;
     actor->y.fixed = 0;
     i16++;
-    if (i16 <= 20)
+    if (i16 <= ACTOR_TEAR_STONE_PILLAR_B)
       goto clear_pillars;
     actor = Actor_GetById(ACTOR_TEAR_STONE_PILLAR_A);
     MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(actor->x.fixed), 39);
@@ -2019,7 +2064,7 @@ void Leader_SpinAway(s32 entrance) {
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   leader->motionFlags = 0;
-  leader->priorityFlags |= 0x20;
+  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_SelectAnimation(leader, 18);
   Event_PlaySound(SE_SPIN_AWAY);
@@ -2032,7 +2077,7 @@ void Leader_SpinAway(s32 entrance) {
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(15));
+      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -2429,7 +2474,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   }
   return reached;
 }
-#undef BG1_SET_PRIORITY_1
+#undef SET_BG1CNT_PRIORITY
 
 #define VENT_TOUCHING Vent_IsTouching
 #define VENT_BOUNCE Vent_Bounce
@@ -2457,19 +2502,6 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vents_update.h"
 
-/* VIEW(s3844): routine AquaRockInside_SetUpOutlets as void
- * AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels, void
- * (*handler)(void)); games/tla/src/scene/aqua_rock_inside/s1620 has s32
- * AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b, void (*handler)(void));
- * tried as the definition's void AquaRockInside_SetUpOutlets(const u16 *spots,
- * const u16 *levels, void(*handler) (void)), which the object already declares,
- * it does not compile in tla-ja (aqua_rock_inside.c):
- * games/tla/src/scene/aqua_rock_inside.c:2382: conflicting types for
- * `AquaRockInside_SetUpOutlets'. */
-void AquaRockInside_SetUpOutlets__vents(
-    const u16 *spots, const u16 *levels,
-    void (*handler)(void)) __asm__("AquaRockInside_SetUpOutlets");
-#define AquaRockInside_SetUpOutlets AquaRockInside_SetUpOutlets__vents
 void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
                                  void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
@@ -2673,7 +2705,6 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef AquaRockInside_SetUpOutlets
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef EFFECT_SPAWN
@@ -2683,7 +2714,7 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
-#undef BG1_SET_PRIORITY_1
+#undef SET_BG1CNT_PRIORITY
 
 void AquaRockInside_FightSteam(void);
 void AquaRockInside_FreezePuddle(void);
@@ -2802,16 +2833,16 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Placements[] = {
 LATE_DATA struct ActorPlacement gAquaRockInside_WaterOfLifeChestPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 679, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAquaRockInside_SteamPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 247, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_STEAM), MOVEMENT_TYPE_STAND, 776, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -2828,27 +2859,27 @@ LATE_DATA struct ActorPlacement gAquaRockInside_RustySwordChestPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 647, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 87, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 103, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAquaRockInside_CrystalPowderChestPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAquaRockInside_VialChestPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 631, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2865,29 +2896,29 @@ LATE_DATA struct ActorPlacement gAquaRockInside_TightropePlacements[] = {
 LATE_DATA struct ActorPlacement gAquaRockInside_TearStonePlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 231, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAquaRockInside_ParchTabletPlacements[] = {
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {323, CONDITION_ALWAYS, 1, 0x64, 0, 0, FACING_SOUTH, 2, 2},
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2910,13 +2941,13 @@ LATE_DATA struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x95a, EVENT(AquaRockInside_PlacePillarOverVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x95b, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR, FLAG_AQUA_ROCK_WEST_VENT_COVERED, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR, FLAG_AQUA_ROCK_EAST_VENT_COVERED, EVENT(AquaRockInside_PlacePillarOverVent)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PlacePillarOverVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, FLAG_SCENE_TEMP_30, EVENT(AquaRockInside_DouseFirstMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_31, EVENT(AquaRockInside_DouseFirstWaterStone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SCENE_TEMP_50, EVENT(AquaRockInside_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI, FLAG_SCENE_TEMP_30, EVENT(AquaRockInside_DouseWaterOfLifeChestEastMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI, FLAG_SCENE_TEMP_31, EVENT(AquaRockInside_DouseWaterOfLifeChestWestMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WATER_OF_LIFE_CHEST_PUDDLE, FLAG_SCENE_TEMP_50, EVENT(AquaRockInside_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2933,8 +2964,8 @@ LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
     {0x51, 8, CONDITION_ALWAYS, 8},
     {0x51, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(AquaRockInside_MovePillarBeforeMoai)},
+    {TRIGGER_TALK, ACTOR_STEAM, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI, EVENT(AquaRockInside_MovePillarBeforeMoai)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePillarBeforeMoai)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, FLAG_SCENE_TEMP_40, EVENT(AquaRockInside_ParchSpring)},
     {TRIGGER_RAISED, 88, FLAG_SCENE_TEMP_40, EVENT(AquaRockInside_SpringDries)},
@@ -2950,9 +2981,9 @@ LATE_DATA struct Trigger gAquaRockInside_AquariusStoneTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {STEP_TRIGGER_FACING(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
-    {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), 9, 0x95d, EVENT(AquaRockInside_UseAquariusStone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(AquaRockInside_DouseSecondMoai)},
+    {TRIGGER_TALK, ACTOR_AQUARIUS_STONE_BASE, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
+    {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), ACTOR_AQUARIUS_STONE_BASE, FLAG_AQUA_ROCK_AQUARIUS_STONE_SET, EVENT(AquaRockInside_UseAquariusStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_AQUARIUS_STONE_WATER_STONE, FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED, EVENT(AquaRockInside_DouseAquariusStoneWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2967,13 +2998,13 @@ LATE_DATA struct Trigger gAquaRockInside_RustySwordChestTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {STEP_TRIGGER_WALKING, 55, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0xa6a, EVENT(AquaRockInside_ParchPool)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa64, EVENT(AquaRockInside_DouseThirdMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_49, EVENT(AquaRockInside_DouseSecondWaterStone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_POOL_PARCHED, EVENT(AquaRockInside_ParchPool)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RUSTY_SWORD_CHEST_WATER_STONE, FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED, EVENT(AquaRockInside_DouseRustySwordChestWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RUSTY_SWORD_CHEST_MOAI, FLAG_SCENE_TEMP_49, EVENT(AquaRockInside_DouseRustySwordChestMoai)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2992,8 +3023,8 @@ LATE_DATA struct Trigger gAquaRockInside_CrystalPowderChestTriggers[] = {
     {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
     {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 70, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0xa67, EVENT(AquaRockInside_DouseThirdWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRYSTAL_POWDER_CHEST_PILLAR, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_CRYSTAL_POWDER_CHEST_WATER_STONE, FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED, EVENT(AquaRockInside_DouseCrystalPowderChestWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3013,15 +3044,15 @@ LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
     {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
     {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_SCENE_TEMP_38, EVENT(AquaRockInside_MovePillarByFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SCENE_TEMP_51, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, FLAG_SCENE_TEMP_52, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, FLAG_SCENE_TEMP_53, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_FALLS_PILLAR, FLAG_SCENE_TEMP_38, EVENT(AquaRockInside_MovePillarByFalls)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_A, FLAG_SCENE_TEMP_51, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_B, FLAG_SCENE_TEMP_52, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_C, FLAG_SCENE_TEMP_53, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
     {TRIGGER_TABLE_END},
 };
@@ -3051,12 +3082,12 @@ LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
     {0x51, 3, CONDITION_ALWAYS, 3},
     {0x51, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa65, EVENT(AquaRockInside_DouseFourthMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_4B, EVENT(AquaRockInside_DouseFourthWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_C, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_D, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_F, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_TEAR_STONE_WATER_STONE, FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED, EVENT(AquaRockInside_DouseTearStoneWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_TEAR_STONE_MOAI, FLAG_SCENE_TEMP_4B, EVENT(AquaRockInside_DouseTearStoneMoai)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3066,7 +3097,7 @@ LATE_DATA struct Trigger gAquaRockInside_ParchTabletTriggers[] = {
     {EXAMINE_TRIGGER_FACING(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadTabletFacingWest)},
     {EXAMINE_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadTabletFacingEast)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(0x349), EVENT(AquaRockInside_ParchLastPool)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(FLAG_AREA_TEMP_49), EVENT(AquaRockInside_ParchLastPool)},
     {TRIGGER_TABLE_END},
 };
 

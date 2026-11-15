@@ -5,6 +5,8 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/event_commands.h"
+#include "field/field_sequence.h"
 
 #include "../field/actor_prepare.c"
 #include "flags.h"
@@ -14,6 +16,7 @@
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
+#include "graphics/palette_buffers.h"
 
 struct AnemosInnerSanctumEntranceParty {
   u8 unk000[0x24b];
@@ -25,11 +28,7 @@ struct AnemosInnerSanctumEntranceParty {
 void AnemosInnerSanctumEntrance_PlaceStatues(void);
 void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-s32 Field_FindNearbyTalkTarget(s32 id);
 void Field_TryJumpForward(void);
-s32 Leader_CanPushObjectAhead(void);
-void Leader_PushObjectAhead(void);
 #include "field/field.h"
 #include "types.h"
 #include "field/actor.h"
@@ -58,19 +57,24 @@ void Leader_PushObjectAhead(void);
 #include "macros.h"
 #include "shared/tables.h"
 
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-
 #include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 
-/// The entrance room (gAnemosInnerSanctumEntrance_Room1Placements).
+/// The entrance room (gAnemosInnerSanctumEntrance_HallPlacements).
 enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
   /// The six stone beasts set in place before the way opens.
-  ACTOR_FIRST_STATUE,
-  ACTOR_BLUE_ORB = ACTOR_FIRST_STATUE + 6,
+  ///@{
+  ACTOR_STATUE_A,
+  ACTOR_STATUE_B,
+  ACTOR_STATUE_C,
+  ACTOR_STATUE_D,
+  ACTOR_STATUE_E,
+  ACTOR_STATUE_F,
+  ///@}
+  ACTOR_BLUE_ORB,
   /// The room's fourteen torches.
   ACTOR_FIRST_TORCH
 };
@@ -88,7 +92,6 @@ extern s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[];
 extern s32 gAnemosInnerSanctumEntrance_ShadowScript[];
 extern s8 gAnemosInnerSanctumEntrance_StatueOrder[];
 void AnemosInnerSanctumEntrance_StartLightSprites(void);
-void LightSprites_Add(s32 id, s32 value);
 void AnemosInnerSanctumEntrance_SetLightLevel(u16 value);
 void AnemosInnerSanctumEntrance_OpenTheWay(void);
 
@@ -116,11 +119,11 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
-extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
+extern struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_Room1Placements;
+    return gAnemosInnerSanctumEntrance_HallPlacements;
   return gAnemosInnerSanctumEntrance_Placements;
 }
 
@@ -131,8 +134,8 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_SHADOW, 2);
   Event_Wait(20);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
@@ -292,14 +295,14 @@ lower:
   }
   if (++i <= 14)
     goto lower;
-  Actor_WaitForMove(Actor_GetById(ACTOR_FIRST_STATUE));
+  Actor_WaitForMove(Actor_GetById(ACTOR_STATUE_A));
   wait(40);
   i = 9;
 land:
   {
     object = Actor_GetById(i);
     object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(8);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->update = 0;
   }
   if (++i <= 14)
@@ -314,23 +317,15 @@ land:
 void AnemosInnerSanctumEntrance_DoNothing(void) {}
 
 extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
-extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
+extern struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_Room1Triggers;
+    return gAnemosInnerSanctumEntrance_HallTriggers;
   return gAnemosInnerSanctumEntrance_Triggers;
 }
 
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
-
-static __inline__ void SetObjectValue(s32 id, s32 value) {
-  /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
-   * (movs r1. */
-  register s32 v asm("r1") = value;
-
-  LightSprites_Add(id, v);
-}
 
 /// Sets the event route to 0x204. In the first room, gives the six statues
 /// their values and priority bits, and under flag 0x200 runs
@@ -341,19 +336,20 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
-    SetObjectValue(ACTOR_FIRST_STATUE, 0);
-    SetObjectValue(ACTOR_FIRST_STATUE + 1, 1);
-    SetObjectValue(ACTOR_FIRST_STATUE + 2, 2);
-    SetObjectValue(ACTOR_FIRST_STATUE + 3, 3);
-    SetObjectValue(ACTOR_FIRST_STATUE + 4, 128);
-    SetObjectValue(ACTOR_FIRST_STATUE + 5, 129);
+    // LightSprites_Add, defined below, is called with no prototype in scope.
+    LightSprites_Add(ACTOR_STATUE_A, 0);
+    LightSprites_Add(ACTOR_STATUE_B, 1);
+    LightSprites_Add(ACTOR_STATUE_C, 2);
+    LightSprites_Add(ACTOR_STATUE_D, 3);
+    LightSprites_Add(ACTOR_STATUE_E, 128);
+    LightSprites_Add(ACTOR_STATUE_F, 129);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-    Actor_GetById(ACTOR_FIRST_STATUE)->priorityFlags |= 0xc0;
-    Actor_GetById(ACTOR_FIRST_STATUE + 1)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 2)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 3)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 4)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_FIRST_STATUE + 5)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_A)->priorityFlags |= 0xc0;
+    Actor_GetById(ACTOR_STATUE_B)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_C)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_D)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_E)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_STATUE_F)->priorityFlags |= 0x80;
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       AnemosInnerSanctumEntrance_SetLightPicture(1);
       AnemosInnerSanctumEntrance_PlaceStatues();
@@ -602,74 +598,73 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
-    {
-        ACTOR_PLACEMENT(180, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0, 104,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 472,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 424,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 456,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
-                        TALK_FACING_KEEP, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0,
-                        168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0,
-                        216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0,
-                        168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0,
-                        216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 696, 0,
-                        240, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 744, 0,
-                        240, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        288, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        232, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        768, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        712, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        768, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_DULLAHAN, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0, 104,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 472,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 424,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 456,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0, 168,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0, 216,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0, 168,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0, 216,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 696, 0, 240,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 744, 0, 240,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 232,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 288,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 232,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 288,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 712,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 768,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 712,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 768,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -679,19 +674,20 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
     {STEP_TRIGGER_WALKING, 77, CONDITION_ALWAYS,
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_A, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_B, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_C, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_D, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_E, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_F, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 77,
-     IF_FLAG_SET(0x200), EVENT(AnemosInnerSanctumEntrance_OpenTheWay)},
+     IF_FLAG_SET(FLAG_SCENE_TEMP_00),
+     EVENT(AnemosInnerSanctumEntrance_OpenTheWay)},
     {TRIGGER_TABLE_END},
 };

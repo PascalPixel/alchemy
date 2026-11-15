@@ -4,7 +4,7 @@ void Actor_RaiseFromCell(s32 id) {
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + 0x200000;

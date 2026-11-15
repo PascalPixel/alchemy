@@ -13,7 +13,7 @@ void Pillars_Place(const u16 *list) {
     s16 kind = entry[1];
     s16 flag = entry[2];
 
-    object->collisionFlags &= ~1;
+    object->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;

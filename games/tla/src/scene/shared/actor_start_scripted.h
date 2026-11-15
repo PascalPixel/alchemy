@@ -2,7 +2,7 @@
 void Actor_StartScripted(struct Actor *object, s32 priority) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->priorityFlags = 2;
+  object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   ((struct FieldSprite *)object->sprite)->priority = priority;
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, 2);

@@ -2,7 +2,8 @@
 /// down into it while the screen fades.
 void CrackedTile_Fall(struct CellTargetHead *table,
                       struct CellTargetEntry *entry) {
-  /* FAKEMATCH(signature): the table typed as its head. */
+  /* FAKEMATCH(signature): the form kept; as struct CellTarget *table, 4 of 131
+   * instructions differ in tla-en. */
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = (FIELD_CELL(leader->x.fixed)) | (s16)(table->x & 64);
   s32 z = (FIELD_CELL(leader->z.fixed)) | (s16)(table->z & 64);

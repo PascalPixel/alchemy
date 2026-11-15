@@ -149,7 +149,7 @@ void WorldMap_UpdatePlacedActors(void) {
             goto next;
           Actor_StartScript(object, gWorldMap_PlacedActorScript);
           object->motionFlags = 0;
-          object->collisionFlags = 1;
+          object->collisionFlags = ACTOR_SOLID;
           object->facing = placement->angle;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
@@ -168,7 +168,7 @@ void WorldMap_UpdatePlacedActors(void) {
           dz = object->z.fixed - leader->z.fixed;
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z.fixed - object->z.fixed) < reach) {
-            if (GameFlag_Get(0x104) == 0) {
+            if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
               if (gMainRoutineWork.movementMode == 9)
                 work->psynergy = 0x208b;
               else
@@ -197,7 +197,10 @@ void WorldMap_UpdatePlacedActors(void) {
 /// next frames.
 void WorldMap_QueueBlend(void) {
   if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f8e, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                        BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                            BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+                        0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, 0x20000);
   }
 }
@@ -241,8 +244,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
 
   // DEAD: a scale multiplied and dropped; the ROM keeps the call.
   Math_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
-  spark =
-      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -256,8 +259,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
       sprite->priority = 1;
     }
   }
-  spark =
-      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -285,7 +288,8 @@ void WorldMap_SpawnParticle(struct Actor *object) {
              object->z.fixed);
   angle = Random16();
   FieldVector_AddPolarOffsetFixed(angle * 20, Random16(), position);
-  particle = (FieldActor_Create(674, position[0], position[1], position[2]));
+  particle =
+      (FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->groundHeight = object->groundHeight;
     sprite = particle->sprite;

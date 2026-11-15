@@ -1,3 +1,10 @@
+/// What MapGrid_CheckCollision says of a step to a position, 2 for a wall:
+/// The Broken Seal's system_call.h layer.
+static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
+                                                    s32 *position) {
+  return MapGrid_CheckCollision(actor, position);
+}
+
 /// Finds how far the object ahead slides before something blocks it; 1 when it
 /// moves.
 s32 PushTarget_FindSlide(struct PushTarget *target) {
@@ -37,8 +44,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
       for (row = 0; row < height; row++) {
         position[0] = target->x + (gPushFootprints[footprint][0] << 16);
         for (col = 0; col < width; col++) {
-          /* FAKEMATCH(wrapper): the call through Func_02002338_. */
-          if (PushTarget_CheckCollision(object, position) == 2)
+          if (FieldActor_CheckMovementCollision(object, position) == 2)
             goto blocked;
           position[0] += 0x100000;
         }

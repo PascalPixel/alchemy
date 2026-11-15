@@ -7,17 +7,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-struct AirsRockMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct AirsRockMapWork {
-  u8 unk000[0x108];
-  struct AirsRockMapLayer layers[3];
-};
-
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
 extern s16 gAirsRock_StormBrandChestRegions[];

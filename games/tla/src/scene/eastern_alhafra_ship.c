@@ -42,6 +42,10 @@
 /// remarks on it only then.
 #define FLAG_EOLEO_LIFTED 0x8ae
 
+/// Where the party comes back on deck after the battle with Briggs's crew,
+/// as The Broken Seal's Altin Peak names its own.
+enum { ENTRANCE_AFTER_BATTLE = 99 };
+
 /// The people and things aboard, numbering the rows of
 /// gEasternAlhafraShip_ActorPlacements whose sprites are not the party's.
 enum EasternAlhafraShipActorId {
@@ -111,26 +115,18 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
-  s32 leader;
-  s32 jump;
-
   GameFlag_Set(FLAG_BREAD_SHAKEN_DOWN);
-  /* FAKEMATCH(temporary): the leader's id read through its address kept as a
-   * number, so that it stays in a register. */
-  leader = (s32)&gMainRoutineWork;
-  leader += offsetof(struct MainRoutineWork, leaderActorId);
-  jump = px(6);
-  Actor_GetById(*(s32 *)leader)->velocityY = jump;
-  Actor_SetSpeed(*(s32 *)leader, 2);
-  Actor_WalkTo(*(s32 *)leader, 136, 488);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->velocityY = px(6);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 136, 488);
   Event_Wait(10);
   Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
   Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
-  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = jump;
+  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = px(6);
   Sound_Play(SE_POUND);
-  Actor_WaitForMoveById(*(s32 *)leader);
-  Actor_SetAnimationById(*(s32 *)leader, 1);
-  Actor_FaceDirectionById(*(s32 *)leader, FACING_NORTH, 0);
+  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 1);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_LARGE_BREAD);
   Sound_Play(SE_DOOR_CLOSE);
@@ -191,7 +187,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if (gMainRoutineWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
     GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.returnEntrance = 3;
@@ -216,7 +212,7 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_CRATE_MOVED))
     Actor_SetPosition(ACTOR_CRATE, 392, 648);
-  Actor_GetById(ACTOR_CRATE)->priorityFlags |= 32;
+  Actor_GetById(ACTOR_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_ShowItemIconById(ACTOR_LARGE_BREAD, ITEM_LARGE_BREAD);
   if (!GameFlag_Get(FLAG_BREAD_SHAKEN_DOWN)) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -247,7 +243,7 @@ s32 timer;
   struct Actor *object;
   struct Sprite *sprite;
 
-  object = Import_ActorCreate(0x1e8, x, y, z);
+  object = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
   if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
@@ -296,9 +292,9 @@ void EasternAlhafraShip_MayorArrives(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   map = Ram_HeapSlots->mapGrid;
   map->minX = 0;
-  map->maxX = 0x4000000;
+  map->maxX = px(1024);
   map->minZ = 0;
-  map->maxZ = 0x4000000;
+  map->maxZ = px(1024);
   // "The mayor of Madra? Here?"
   Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 456, 408);
@@ -501,7 +497,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
   // "Isn't that right, Felix?"
-  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 25, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     Event_Wait(20);
@@ -527,7 +523,8 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_WalkBy(ACTOR_BRIGGS, 0, -16);
   Actor_WalkByById(ACTOR_BRIGGS_MATE, 0, -16);
   Event_Wait(10);
-  Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP, 99);
+  Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP,
+                                  ENTRANCE_AFTER_BATTLE);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(10, 1);
@@ -543,20 +540,20 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
   Actor_SetPosition(ACTOR_BRIGGS, 436, 416);
-  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS, 0x4000);
+  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS, TRIG_TURN / 4);
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS), 0);
   Actor_SetPosition(ACTOR_BRIGGS_MATE, 456, 432);
-  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, 0x8000);
+  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, TRIG_TURN / 2);
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS_MATE), 0);
   Actor_GetById(ACTOR_BRIGGS_MATE)->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_FIRST_PIRATE, 456, 460);
-  FieldActor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, 0x8000);
+  FieldActor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, TRIG_TURN / 2);
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_FIRST_PIRATE), 0);
   Actor_SetPosition(ACTOR_SECOND_PIRATE, 420, 424);
-  Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, 0xc000);
+  Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, TRIG_TURN * 3 / 4);
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_SECOND_PIRATE), 0);
   Actor_SetPosition(ACTOR_THIRD_PIRATE, 388, 440);
-  Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, 0x4000);
+  Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, TRIG_TURN / 4);
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_THIRD_PIRATE), 0);
   Actor_SetPosition(ACTOR_KRADEN, 456, 376);
   Actor_SetPosition(ACTOR_JENNA, 472, 392);
@@ -604,8 +601,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   // "We lost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
-  Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
-  Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH - 1, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH + 1, 0);
   Event_Wait(50);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -684,8 +681,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 4);
   Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 15);
-  Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
-  Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH - 1, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH + 1, 0);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -858,8 +855,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByAndWaitById(ACTOR_MADRAS_ELDER, 0, 16);
   Actor_SetAnimationById(ACTOR_ALHAFRAS_MAYOR, 1);
   Event_Wait(10);
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_ELDER, 13, 1, 13, 4, 16, 17,
-                                    11, 22, 6, 0);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_ELDER, 13, 1, 13, 4,
+                                    ACTOR_ALHAFRAS_MAYOR, 17, 11, 22, 6, 0);
   Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(20);
@@ -891,7 +888,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, 0x3fff, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH - 1, 0);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -899,7 +896,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirectionById(ACTOR_KRADEN, 0x3fff, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH - 1, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
@@ -923,13 +920,14 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_MAYOR, 12, 1, 25, 4, 16, 9, 11,
-                                    14, 6, 0);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_MAYOR, 12, 1, 25, 4,
+                                    ACTOR_ALHAFRAS_MAYOR, 9, 11, 14, 6, 0);
   Actor_StartRepeatedMotion(ACTOR_MADRAS_MAYOR, 3);
   Actor_SetAttachedEffect(ACTOR_MADRAS_MAYOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 3);
-  FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_ALHAFRAS_MAYOR,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
@@ -1157,10 +1155,10 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_MADRAS_MAYOR, 456, 312);
   Event_Wait(1);
-  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
   Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
@@ -1351,7 +1349,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionById(ACTOR_SHEBA, 0x4001, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH + 1, 0);
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
@@ -1391,7 +1389,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  Event_OpenMessage(25, 0);
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
@@ -1413,7 +1411,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   }
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-  Actor_EmitNotes(17);
+  Actor_EmitNotes(ACTOR_MADRAS_MAYOR);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
@@ -1444,7 +1442,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(30);
   Actor_ShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_StartRepeatedMotion(ACTOR_CHAUCHA, 3);
-  FieldEffect_SetAttached(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_CHAUCHA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
@@ -1621,26 +1620,26 @@ u32 gSceneExits[] = {
   };
 
 struct ActorPlacement gEasternAlhafraShip_ActorPlacements[] = {
-    ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 396, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 88, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(466, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 128, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 396, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 88, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOWER_VASE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 128, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 149, 0, 475, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 149, 0, 475, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 149, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(24, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(19, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAN_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -1653,24 +1652,25 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
      EVENT(EasternAlhafraShip_MayorArrives)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_EoleoLifts)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_EOLEO, CONDITION_ALWAYS,
+     EVENT(EasternAlhafraShip_EoleoLifts)},
+    {TRIGGER_TALK, ACTOR_CHAUCHA, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EOLEO, CONDITION_ALWAYS,
      MSGNO(MsgIMGonna)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHAUCHA, CONDITION_ALWAYS,
      MSGNO(MsgIfEoleoGets)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_LARGE_BREAD, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_TakeTheBread)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     CONDITION_ALWAYS, EVENT(EasternAlhafraShip_StartMovingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_CRATE, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_StartMovingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_FinishMovingCrate)},
     {TRIGGER_PUSH, 30, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_StartMovingCrate)},
     {TRIGGER_PUSHED, 30, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_FinishMovingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, FLAG_BREAD_SHAKEN_DOWN,
-     EVENT(EasternAlhafraShip_ShakeDownTheBread)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_STACKED_CRATES,
+     FLAG_BREAD_SHAKEN_DOWN, EVENT(EasternAlhafraShip_ShakeDownTheBread)},
     {TRIGGER_TABLE_END},
 };
 

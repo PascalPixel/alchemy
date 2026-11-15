@@ -16,6 +16,9 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/actor_script.h"
+#include "field/map.h"
+#include "field/objdisp.h"
+#include "scene/dehkan_plateau.h"
 
 /// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's
 /// water dried by Parch.
@@ -26,7 +29,6 @@
 #define FLAG_ANGARA_BLOCKS_STACKED FLAG_SCENE_TEMP_12
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
 
-extern u8 gMapGridCellBuffer[];
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];
@@ -41,8 +43,6 @@ void Caverns_PlaceAngaraBlocks(const s16 *data);
 void Caverns_PrepareOsenia(void);
 void Caverns_PrepareAtteka(void);
 s32 MapGrid_CheckCollision(struct Actor *object, s16 *position);
-void Rope_Initialize(void);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Caverns_InitializeIndra(void);
 void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
@@ -93,8 +93,6 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 
 struct Actor;
 
-struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
-
 extern u32 gFieldEffect_ShortScript[];
 
 extern u32 gFieldEffect_MediumScript[];
@@ -122,37 +120,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCaverns_Placements;
 }
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
+#include "../field/map_cell_get.c"
 
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = (struct MapCell *)gMapGridCellBuffer;
-  cell += x + (y << 7);
-  return (cell->collisionCode << 8) | cell->attributeB;
-}
-
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = (struct MapCell *)gMapGridCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 #include "../field/actor_wait_until_idle.c"
 
@@ -321,11 +291,6 @@ void Caverns_LayerLeaderByStack(struct Actor *object) {
   }
 }
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-void Actor_Release(struct Actor *object);
-
 /// After the block has moved: a block left over a drop falls with a thump and a
 /// ring of dust, and one landing on the other block stacks on it; then its new
 /// cell rises under it.
@@ -357,13 +322,13 @@ void Caverns_FinishMovingAngaraBlock(void) {
   if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) !=
       object->y.fixed) {
     object->layer = 2;
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->bounce = 0;
     wait(1);
     kind = MapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
     if (kind != 0) {
-      object->priorityFlags |= 2;
-      REG_BLDALPHA = 0x1000;
+      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      REG_BLDALPHA = BLEND_ALPHA(0, 16);
       blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
       sum = kind + 2;
@@ -478,7 +443,7 @@ void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
 
-  Actor_GetById(ACTOR_FELIX)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Rope_Initialize();
   Rope_Place(0, 0x200, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
   object = Actor_GetById(ACTOR_PILLAR);
@@ -571,7 +536,7 @@ void Caverns_WalkIntoPassage(void) {
     Actor_SetPosition(8, 224, 224);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
@@ -658,10 +623,12 @@ enum CavernsAngaraActorId {
 
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
-  Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |= 0x20;
-  Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |= 0x20;
-  Actor_GetById(ACTOR_WEST_OF_TABLET)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_EAST_OF_TABLET)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_GetById(ACTOR_WEST_OF_TABLET)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_EAST_OF_TABLET)->collisionFlags |= ACTOR_NOT_TARGETED;
 }
 
 /// Walking into Angara Cavern's door opens it and leaves by exit 8.
@@ -761,15 +728,15 @@ struct ActorPlacement gCaverns_Placements[] = {
 struct ActorPlacement gCaverns_IndraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gCaverns_AngaraPlacements[] = {
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -788,8 +755,8 @@ struct Trigger gCaverns_OseniaTriggers[] = {
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_00, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Caverns_MoveIndraPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(Caverns_MoveIndraPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -811,13 +778,13 @@ struct Trigger gCaverns_AngaraTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_PUSH, 0, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
     {TRIGGER_PUSHED, 0, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 8, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 9, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_StartMovingAngaraBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SECOND_BLOCK, FLAG_ANGARA_BLOCKS_STACKED, EVENT(Caverns_FinishMovingAngaraBlock)},
     {TRIGGER_TABLE_END},
 };

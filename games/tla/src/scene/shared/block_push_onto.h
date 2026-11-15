@@ -25,14 +25,14 @@ void MagmaRockInside_PushBlockOnto(void) {
   step <<= 16;
   dst.z = next->z.fixed + step;
   blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   next->transitionMode = 2;
@@ -60,14 +60,9 @@ void MagmaRockInside_PushBlockOnto(void) {
   FieldActor_WaitForMove(next);
   Event_NoOp();
   next->x.fixed = dst.x;
-  {
-    /* FAKEMATCH(temporary): z read ahead of velocityX's store. */
-    s32 z = dst.z;
-
-    next->velocityX = 0;
-    next->z.fixed = z;
-    next->velocityZ = 0;
-  }
+  next->z.fixed = dst.z;
+  next->velocityX = 0;
+  next->velocityZ = 0;
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;

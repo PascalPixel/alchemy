@@ -19,19 +19,40 @@
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "scene/sparkle.h"
+#include "graphics/palette_buffers.h"
 
 /// The party set out on the winged ship (as Atteka Inlet names it).
 /// Force has freed Shine from the ground it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
 
+/// Set as the party leaves the dice hall for one of its games, so that the
+/// hall greets it on its way back by the game's entrance.
+#define FLAG_LEFT_FOR_A_GAME 0x9e5
+
+/// The dice hall's ways back from its games.
+enum ContigoDiceHallEntrance {
+  ENTRANCE_FROM_SUPER_LUCKY_DICE = 18,
+  ENTRANCE_FROM_LUCKY_DICE,
+  ENTRANCE_FROM_LUCKY_WHEELS
+};
+
 /// The village's people and Djinn (gContigo_VillagePlacements).
 enum ContigoVillageActorId {
   /// "The Anemos blood in our veins often brings about strange..."
   ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
+  /// "Everyone's been going on about how amazing it was to watch the ship
+  /// fly..."; once the beacon is lit, "The beacon within Jupiter Lighthouse
+  /// will soon be lit."
+  ACTOR_WOMAN_FORESEEING_THE_BEACON,
+  /// "It must be so exciting to travel around the world in a flying ship."
+  ACTOR_MAN_ON_THE_FLYING_SHIP,
   /// "The people of Anemos possessed power over the wind."
-  ACTOR_WOMAN_ON_THE_ANEMOS = ACTOR_FIRST_PLACED + 3,
+  ACTOR_WOMAN_ON_THE_ANEMOS,
+  /// "If a ship can rise up from the sea, why can't a city rise up from the
+  /// ground?"
+  ACTOR_OLD_MAN_ON_THE_RISEN_CITY,
   /// "The Anemos geoglyphs show a boat with wings..."
-  ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS = ACTOR_FIRST_PLACED + 5,
+  ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS,
   /// The boy who points the way (Contigo_TalkToWanderer).
   ACTOR_WANDERER,
   /// The girl who talks of the ship (Contigo_TalkAboutTheShip).
@@ -44,21 +65,41 @@ enum ContigoVillageActorId {
 /// The shops and inn before the reunion
 /// (gContigo_ShopsPlacementsBeforeReunion).
 enum ContigoShopsActorId {
+  /// "I guess the lighthouse was lit because Ivan and Hamma finally returned
+  /// to Contigo."
+  ACTOR_MAN_ON_IVANS_RETURN = ACTOR_FIRST_PLACED,
+  /// "Ivan doesn't remember his mother..."
+  ACTOR_WOMAN_ON_IVANS_MOTHER,
+  /// "From the look on Ivan's..."; his thought: "Someday I'm gonna fight
+  /// Ivan..."
+  ACTOR_BOY_WHO_WOULD_FIGHT_IVAN,
   /// "Long ago, the people of Hesperia attacked Atteka."
-  ACTOR_OLD_MAN_ON_HESPERIA = ACTOR_FIRST_PLACED + 3,
-  ACTOR_ITEM_MERCHANT = ACTOR_FIRST_PLACED + 5,
+  ACTOR_OLD_MAN_ON_HESPERIA,
+  /// "Winter just ended, but it keeps getting colder. What's going on?"
+  ACTOR_OLD_WOMAN_FEELING_THE_COLD,
+  ACTOR_ITEM_MERCHANT,
   /// "Soon, the siblings with the power of the Anemos will return."
   ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
   /// "The power of the Anemos is all but gone in Contigo."
   ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
   /// The baby whose furrowed brow brings the wind (Contigo_BabyThinks).
-  ACTOR_BABY = ACTOR_FIRST_PLACED + 9,
+  /// The baby's brother: "Mom and Dad have been walking around in a daze
+  /// since the ship took off."
+  ACTOR_BABYS_BROTHER,
+  ACTOR_BABY,
   ACTOR_WEAPON_MERCHANT,
   ACTOR_ARMOR_MERCHANT,
   ACTOR_INNKEEPER,
+  /// "The inn has become so..."
+  ACTOR_INN_WORKER,
+  /// "Gosh, we were so busy..."; once the beacon is lit, "Gotta make all the
+  /// beds..."
+  ACTOR_WOMAN_MAKING_THE_BEDS,
+  /// "Now's my chance to experiment..."
+  ACTOR_COOK,
   /// The workers on the wings, resting at the inn: "I worked myself half to
   /// death yesterday."
-  ACTOR_WORN_OUT_WORKER = ACTOR_FIRST_PLACED + 16,
+  ACTOR_WORN_OUT_WORKER,
   /// "The prophecies of the Anemos tell that someday soon..."
   ACTOR_WORKER_ON_THE_PROPHECIES,
   /// "I'm afraid I'm too old to help in the construction..."
@@ -81,10 +122,28 @@ enum ContigoLuckyDiceActorId {
   ///@}
   /// Who runs Lucky Dice, and who points to its sign.
   ///@{
-  ACTOR_LUCKY_DICE_HOST = ACTOR_FIRST_PLACED + 6,
+  /// The players: "This kid's got unlucky written all over his face" (his
+  /// thought); "If you lose the hi-lo game, you don't win anything...";
+  /// "I almost always get at least one pair..."
+  ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS,
+  ACTOR_OLD_MAN_ON_THE_HI_LO_GAME,
+  ACTOR_WOMAN_WHO_LOSES_AT_HI_LO,
+  /// The sign of Super Lucky Dice's rules.
+  ACTOR_SUPER_LUCKY_DICE_SIGN,
+  ACTOR_LUCKY_DICE_HOST,
   ACTOR_LUCKY_DICE_GUIDE,
   ///@}
-  ACTOR_LUCKY_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED + 10
+  /// Lucky Dice's two signs of its rules.
+  ///@{
+  ACTOR_LUCKY_DICE_SIGN,
+  ACTOR_SECOND_LUCKY_DICE_SIGN,
+  ///@}
+  ACTOR_LUCKY_WHEELS_ATTENDANT,
+  /// Lucky Wheels' signs: its rules, and its prizes.
+  ///@{
+  ACTOR_LUCKY_WHEELS_SIGN,
+  ACTOR_LUCKY_WHEELS_PRIZE_SIGN
+  ///@}
 };
 
 /// The geoglyph, where the Wings of Anemos are built
@@ -96,16 +155,40 @@ enum ContigoGeoglyphActorId {
   ACTOR_WOMAN_ON_THE_WINGS,
   /// The four workers building the wings: "Which part goes where? Does this
   /// metal feather..."
-  ACTOR_FIRST_WING_WORKER,
+  ///@{
+  ACTOR_WING_WORKER_A,
+  ACTOR_WING_WORKER_B,
+  ACTOR_WING_WORKER_C,
+  ACTOR_WING_WORKER_D,
+  ///@}
   /// The four scholars in long robes studying the geoglyph.
-  ACTOR_FIRST_SCHOLAR = ACTOR_FIRST_WING_WORKER + 4,
+  ///@{
+  ACTOR_SCHOLAR_A,
+  ACTOR_SCHOLAR_B,
+  ACTOR_SCHOLAR_C,
+  ACTOR_SCHOLAR_D,
+  ///@}
   /// The sign with a translation of the geoglyph's characters.
-  ACTOR_SIGN = ACTOR_FIRST_SCHOLAR + 4,
+  ACTOR_SIGN,
   /// The wings' parts lying about: three frames, five metal feathers and
   /// seven loose pieces.
-  ACTOR_FIRST_WING_FRAME,
-  ACTOR_FIRST_METAL_FEATHER = ACTOR_FIRST_WING_FRAME + 3,
-  ACTOR_FIRST_LOOSE_PART = ACTOR_FIRST_METAL_FEATHER + 5
+  ///@{
+  ACTOR_WING_FRAME_A,
+  ACTOR_WING_FRAME_B,
+  ACTOR_WING_FRAME_C,
+  ACTOR_METAL_FEATHER_A,
+  ACTOR_METAL_FEATHER_B,
+  ACTOR_METAL_FEATHER_C,
+  ACTOR_METAL_FEATHER_D,
+  ACTOR_METAL_FEATHER_E,
+  ACTOR_LOOSE_PART_A,
+  ACTOR_LOOSE_PART_B,
+  ACTOR_LOOSE_PART_C,
+  ACTOR_LOOSE_PART_D,
+  ACTOR_LOOSE_PART_E,
+  ACTOR_LOOSE_PART_F,
+  ACTOR_LOOSE_PART_G
+  ///@}
 };
 #include "field/event_inline.h"
 #include "field/actor_script.h"
@@ -275,7 +358,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Contigo_TeleportIn();
 }
@@ -316,15 +399,13 @@ s32 List_CountEntries(u16 *list) {
 
 #include "shared/palette_cycle_fade.h"
 
-void Teleport_PlayWhirl(void);
-
 void Contigo_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -332,7 +413,7 @@ void Contigo_TeleportIn(void) {
   Teleport_PlayWhirl();
   wait(40);
   Contigo_StopPaletteCycle();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -362,7 +443,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -387,7 +469,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -628,8 +710,6 @@ struct OrbitEffect {
   s16 pause;
 };
 
-s32 Trig_Cos(s32 angle);
-
 void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
@@ -697,13 +777,14 @@ void Contigo_BabyThinks(void) {
     // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
   Actor_SetAnimationById(ACTOR_BABY, 3);
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x204084, 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
                                    2);
-  effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
+  effect =
+      ((struct ContigoGlow *)Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z));
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
@@ -738,7 +819,7 @@ void Contigo_BabyThinks(void) {
                                    0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
     Event_SetMessageId((s32)MsgContigoGooGooGaaGaaWaaa);
@@ -1212,8 +1293,8 @@ void Contigo_PlaceWingPart(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
-  object->collisionFlags = 8;
-  object->priorityFlags |= 2;
+  object->collisionFlags = ACTOR_NOT_TARGETED;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
   object->y.fixed = px(64);
 }
@@ -1221,39 +1302,39 @@ void Contigo_PlaceWingPart(s32 id) {
 /// Lays out the wings' parts by the geoglyph: each frame and feather shows
 /// its own piece and lies flat, and the loose parts block the way.
 void Contigo_SetUpWingParts(void) {
-  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME, 0);
-  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME + 1, 1);
-  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME + 2, 2);
-  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER, 0);
-  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 1, 1);
-  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 2, 2);
-  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 3, 3);
-  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 4, 4);
-  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME);
-  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME + 1);
-  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME + 2);
-  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER);
-  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 1);
-  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 2);
-  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 3);
-  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 4);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 1), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 2), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 3), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 4), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 5), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 6), 0);
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 1)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 2)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 3)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 4)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 5)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 6)->collisionFlags |= 8;
-  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART, 0);
-  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART + 5, 0);
-  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART + 6, 0);
+  Actor_SetAnimationById(ACTOR_WING_FRAME_A, 0);
+  Actor_SetAnimationById(ACTOR_WING_FRAME_B, 1);
+  Actor_SetAnimationById(ACTOR_WING_FRAME_C, 2);
+  Actor_SetAnimationById(ACTOR_METAL_FEATHER_A, 0);
+  Actor_SetAnimationById(ACTOR_METAL_FEATHER_B, 1);
+  Actor_SetAnimationById(ACTOR_METAL_FEATHER_C, 2);
+  Actor_SetAnimationById(ACTOR_METAL_FEATHER_D, 3);
+  Actor_SetAnimationById(ACTOR_METAL_FEATHER_E, 4);
+  Contigo_PlaceWingPart(ACTOR_WING_FRAME_A);
+  Contigo_PlaceWingPart(ACTOR_WING_FRAME_B);
+  Contigo_PlaceWingPart(ACTOR_WING_FRAME_C);
+  Contigo_PlaceWingPart(ACTOR_METAL_FEATHER_A);
+  Contigo_PlaceWingPart(ACTOR_METAL_FEATHER_B);
+  Contigo_PlaceWingPart(ACTOR_METAL_FEATHER_C);
+  Contigo_PlaceWingPart(ACTOR_METAL_FEATHER_D);
+  Contigo_PlaceWingPart(ACTOR_METAL_FEATHER_E);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_C), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_D), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_E), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_F), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LOOSE_PART_G), 0);
+  Actor_GetById(ACTOR_LOOSE_PART_A)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_B)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_C)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_D)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_E)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_F)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_LOOSE_PART_G)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_SetAnimationById(ACTOR_LOOSE_PART_A, 0);
+  Actor_SetAnimationById(ACTOR_LOOSE_PART_F, 0);
+  Actor_SetAnimationById(ACTOR_LOOSE_PART_G, 0);
 }
 
 extern void MessageArgument_Push(s32 value, s32 digits);
@@ -1319,10 +1400,11 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
   // "Step right up and enjoy yourself."
   Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-  GameFlag_Set(0x9e5);
+  GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
   wait(1);
-  Event_LeaveFor(508, 0);
-  Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 20);
+  Event_LeaveFor(SEQUENCE_SLOTS, 0);
+  Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                  ENTRANCE_FROM_LUCKY_WHEELS);
 }
 
 struct ContigoTopicState {
@@ -1378,10 +1460,11 @@ void Contigo_SendToLuckyDice(void) {
     // "OK! Then take the dice."
     Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_Set(0x9e5);
+    GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
-    Event_LeaveFor(509, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 19);
+    Event_LeaveFor(SEQUENCE_DICE, 0);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                    ENTRANCE_FROM_LUCKY_DICE);
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
@@ -1416,10 +1499,11 @@ void Contigo_SendToSuperLuckyDice(void) {
     // "OK, then let 'em roll!"
     Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_Set(0x9e5);
+    GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
     Event_LeaveFor(SEQUENCE_SUPER_DICE, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 18);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                    ENTRANCE_FROM_SUPER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
@@ -2273,8 +2357,6 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-void MapGrid_CenterOnFollowedPoint(void);
-
 /// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
 /// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
 /// placed while flag 0xa21 is set and FLAG_SET_OUT_WITH_WINGS clear), places or
@@ -2333,34 +2415,34 @@ void Contigo_InitializeGeoglyph(void) {
   Contigo_ShrinkActor(18);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
-    Actor_SetPosition(ACTOR_FIRST_WING_FRAME, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_WING_FRAME + 1, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_WING_FRAME + 2, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 1, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 2, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 3, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 4, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 1, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 2, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 3, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 4, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 5, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 6, 0, 0);
+    Actor_SetPosition(ACTOR_WING_FRAME_A, 0, 0);
+    Actor_SetPosition(ACTOR_WING_FRAME_B, 0, 0);
+    Actor_SetPosition(ACTOR_WING_FRAME_C, 0, 0);
+    Actor_SetPosition(ACTOR_METAL_FEATHER_A, 0, 0);
+    Actor_SetPosition(ACTOR_METAL_FEATHER_B, 0, 0);
+    Actor_SetPosition(ACTOR_METAL_FEATHER_C, 0, 0);
+    Actor_SetPosition(ACTOR_METAL_FEATHER_D, 0, 0);
+    Actor_SetPosition(ACTOR_METAL_FEATHER_E, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_A, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_B, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_C, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_D, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_E, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_F, 0, 0);
+    Actor_SetPosition(ACTOR_LOOSE_PART_G, 0, 0);
     Actor_SetPosition(ACTOR_VISITOR_FROM_AFAR, 0, 0);
     Actor_SetPosition(ACTOR_WOMAN_ON_THE_WINGS, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 1, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 2, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 3, 0, 0);
+    Actor_SetPosition(ACTOR_WING_WORKER_B, 0, 0);
+    Actor_SetPosition(ACTOR_WING_WORKER_C, 0, 0);
+    Actor_SetPosition(ACTOR_WING_WORKER_D, 0, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
-      Actor_SetPosition(ACTOR_FIRST_WING_WORKER, 0, 0);
-      Actor_SetPosition(ACTOR_FIRST_SCHOLAR, 0, 0);
-      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 1, 0, 0);
-      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 2, 0, 0);
-      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 3, 0, 0);
+      Actor_SetPosition(ACTOR_WING_WORKER_A, 0, 0);
+      Actor_SetPosition(ACTOR_SCHOLAR_A, 0, 0);
+      Actor_SetPosition(ACTOR_SCHOLAR_B, 0, 0);
+      Actor_SetPosition(ACTOR_SCHOLAR_C, 0, 0);
+      Actor_SetPosition(ACTOR_SCHOLAR_D, 0, 0);
     } else {
-      Actor_GetById(ACTOR_FIRST_WING_WORKER)->facing = FACING_NORTH_NORTHEAST;
+      Actor_GetById(ACTOR_WING_WORKER_A)->facing = FACING_NORTH_NORTHEAST;
       wait(1);
     }
   } else {
@@ -2438,10 +2520,10 @@ void Contigo_InitializeLuckyDice(void) {
       ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
   Actor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
-  if (!Event_GetFlag(0x9e5))
+  if (!Event_GetFlag(FLAG_LEFT_FOR_A_GAME))
     return;
-  GameFlag_Clear(0x9e5);
-  if (gMainRoutineWork.entrance == 18) {
+  GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2465,7 +2547,7 @@ void Contigo_InitializeLuckyDice(void) {
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
-  } else if (gMainRoutineWork.entrance == 19) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_DICE) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2489,7 +2571,7 @@ void Contigo_InitializeLuckyDice(void) {
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
-  } else if (gMainRoutineWork.entrance == 20) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
     list = ((struct ContigoPrizes *)&gMainRoutineWork)->list;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2913,31 +2995,31 @@ struct ActorPlacement gContigo_Placements[] = {
 };
 
 struct ActorPlacement gContigo_VillagePlacements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 340, 0, 936, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 340, 0, 936, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 942, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 808, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SALT), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_SHINE), MOVEMENT_TYPE_STAND, 56, 0, 706, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gContigo_GeoglyphPlacements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 343, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 343, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 720, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 752, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 784, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2958,26 +3040,26 @@ struct ActorPlacement gContigo_GeoglyphPlacements[] = {
 
 struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 94, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 184, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 733, 0, 91, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 733, 0, 91, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 108, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 708, 0, 154, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 708, 0, 154, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(161, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 756, 0, 108, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 352, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 352, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 584, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 186, 0, 636, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 352, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 352, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 584, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 186, 0, 636, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 616, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 592, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COOK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 592, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 94, 0, 574, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 586, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 664, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 310, 0, 614, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 688, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 688, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3000,27 +3082,27 @@ s16 gContigo_ShopsPlacementsReunion[] = {
 };
 
 struct ActorPlacement gContigo_ShopsPlacements[] = {
-    ACTOR_PLACEMENT(59, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 158, 0, 352, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(2, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 158, 0, 352, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gContigo_LuckyDicePlacements[] = {
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 872, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 872, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 300, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 340, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(228, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 508, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 548, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 872, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 300, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 340, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 508, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 548, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3057,46 +3139,46 @@ struct Trigger gContigo_VillageTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthHedgeRow)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
-    {TRIGGER_TALK, 17, IF_FLAG_SET(FLAG_SHINE_FREED), EVENT(Contigo_FreedDjinniJoinsParty)},
-    {TRIGGER_TALK, 8, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
-    {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAreYouLookingForIsaac)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
-    {TRIGGER_TALK, 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheBeaconWithinJupiterLighthouse)},
-    {TRIGGER_TALK, 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEveryonesLeftTownForThe)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoEveryonesBeenGoingOnAbout)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoSurelySomeoneWillComeSoon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePropheciesAreAllComing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoSomePeopleWereTalkingAbout)},
-    {TRIGGER_TALK, 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIGuessThePeopleOf)},
-    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIsThatYourBoatIt)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoItMustBeSoExciting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePowerOfTheWind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsJustLikeTheLegends)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoICouldntFlyInThe)},
-    {TRIGGER_TALK, 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePeopleOfAnemosPossessed)},
-    {TRIGGER_TALK, 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoJupiterLighthouseHasBeenLit)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWasTellingUsThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThereWereTwoSiblingsBorn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoesItMeanWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoIHeardThatTheWorld)},
-    {TRIGGER_TALK, 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoWhenThePowerOfAnemos)},
-    {TRIGGER_TALK, 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheLegendsTellUsThat)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIfAShipCanRise)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIThinkJupiterLighthouseWill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAncientCityOfThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoTheCityOfTheAnemos)},
-    {TRIGGER_TALK, 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAnemosGeoglyphsShowA)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoISawTheShipFly)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsHardToBelieveBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoTheShipLookedLikeIt)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SHINE, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
+    {TRIGGER_TALK, ACTOR_SHINE, IF_FLAG_SET(FLAG_SHINE_FREED), EVENT(Contigo_FreedDjinniJoinsParty)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAreYouLookingForIsaac)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
+    {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheBeaconWithinJupiterLighthouse)},
+    {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEveryonesLeftTownForThe)},
+    {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, CONDITION_ALWAYS, MSGNO(MsgContigoEveryonesBeenGoingOnAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoSurelySomeoneWillComeSoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePropheciesAreAllComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FORESEEING_THE_BEACON, CONDITION_ALWAYS, MSGNO(MsgContigoSomePeopleWereTalkingAbout)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_FLYING_SHIP, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIGuessThePeopleOf)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_FLYING_SHIP, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIsThatYourBoatIt)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_FLYING_SHIP, CONDITION_ALWAYS, MSGNO(MsgContigoItMustBeSoExciting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_FLYING_SHIP, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePowerOfTheWind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_FLYING_SHIP, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsJustLikeTheLegends)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_FLYING_SHIP, CONDITION_ALWAYS, MSGNO(MsgContigoICouldntFlyInThe)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePeopleOfAnemosPossessed)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoJupiterLighthouseHasBeenLit)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWasTellingUsThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThereWereTwoSiblingsBorn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoesItMeanWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS, CONDITION_ALWAYS, MSGNO(MsgContigoIHeardThatTheWorld)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RISEN_CITY, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoWhenThePowerOfAnemos)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RISEN_CITY, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheLegendsTellUsThat)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RISEN_CITY, CONDITION_ALWAYS, MSGNO(MsgContigoIfAShipCanRise)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RISEN_CITY, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIThinkJupiterLighthouseWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RISEN_CITY, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAncientCityOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RISEN_CITY, CONDITION_ALWAYS, MSGNO(MsgContigoTheCityOfTheAnemos)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAnemosGeoglyphsShowA)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, CONDITION_ALWAYS, MSGNO(MsgContigoISawTheShipFly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsHardToBelieveBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, CONDITION_ALWAYS, MSGNO(MsgContigoTheShipLookedLikeIt)},
+    {TRIGGER_TALK, ACTOR_WANDERER, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WANDERER, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
+    {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Contigo_SaltJoinsParty)},
     {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsSign)},
@@ -3111,38 +3193,38 @@ struct Trigger gContigo_GeoglyphTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterLuckyWheels)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSuperLuckyDice)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIveBeenReallyBusyLately)},
-    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheWingsWillBeFinished)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoICantBelieveThatA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoWeDoIf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThatFlyingShipLookedSo)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoWhichPartGoesWhereDoes)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoThereAreTooManyParts)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoYouveGottaWatchOutCause)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIStartGettingIrritated)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoJustAFewMoreTouches)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoHowLongHaveWeBeen)},
-    {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, EVENT(Contigo_AskAboutGeoglyph)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantEvenImagineHow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
-    {TRIGGER_TALK, 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThatSignHasATranslation)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontKnowIfAnyone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
-    {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWantToGetA)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
-    {TRIGGER_TALK, 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheMerchantHammetTookThe)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
+    {TRIGGER_TALK, ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_WINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_WINGS, CONDITION_ALWAYS, MSGNO(MsgContigoIveBeenReallyBusyLately)},
+    {TRIGGER_TALK, ACTOR_WING_WORKER_A, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheWingsWillBeFinished)},
+    {TRIGGER_TALK, ACTOR_WING_WORKER_A, CONDITION_ALWAYS, MSGNO(MsgContigoICantBelieveThatA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_A, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoWeDoIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_A, CONDITION_ALWAYS, MSGNO(MsgContigoThatFlyingShipLookedSo)},
+    {TRIGGER_TALK, ACTOR_WING_WORKER_B, CONDITION_ALWAYS, MSGNO(MsgContigoWhichPartGoesWhereDoes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_B, CONDITION_ALWAYS, MSGNO(MsgContigoThereAreTooManyParts)},
+    {TRIGGER_TALK, ACTOR_WING_WORKER_C, CONDITION_ALWAYS, MSGNO(MsgContigoYouveGottaWatchOutCause)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_C, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIStartGettingIrritated)},
+    {TRIGGER_TALK, ACTOR_WING_WORKER_D, CONDITION_ALWAYS, MSGNO(MsgContigoJustAFewMoreTouches)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_D, CONDITION_ALWAYS, MSGNO(MsgContigoHowLongHaveWeBeen)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_A, FLAG_SET_OUT_WITH_WINGS, EVENT(Contigo_AskAboutGeoglyph)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_A, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_A, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantEvenImagineHow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_A, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_B, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThatSignHasATranslation)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_B, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_B, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontKnowIfAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_B, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_C, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWantToGetA)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_C, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_C, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_C, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_D, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheMerchantHammetTookThe)},
+    {TRIGGER_TALK, ACTOR_SCHOLAR_D, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_D, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_D, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
     {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
+    {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealSteps)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Contigo_HideSteps)},
     {TRIGGER_TABLE_END},
@@ -3156,84 +3238,84 @@ struct Trigger gContigo_ShopsTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
-    {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWillStayWithUs)},
-    {TRIGGER_TALK, 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoImSureTheYoungerBrother)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoIvanDoesntRememberHisMother)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIvansMotherLeftHimIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIWonderHowIvanFeels)},
-    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoMyFatherDoesntApproveOf)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoFromTheLookOnIvans)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWishICouldHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoSomedayImGonnaFightIvan)},
-    {TRIGGER_TALK, 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoLongAgoThePeopleOf)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoBrrrBrrrItsBeenReally)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoForALongTimeNow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoJupiterLighthouseHasBeenCalled)},
-    {TRIGGER_TALK, 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoALongTimeAgoThe)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoWinterJustEndedButIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEverybodyThinksThePeopleOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoHammaSaysThatIfIvan)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOhHowIWantTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatTheWingsAreDone)},
-    {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIJustKnowIvanBecame)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoIvanHasThePowerOf)},
-    {TRIGGER_TALK, 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePowerOfTheAnemos)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoItsUpToThePeople)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoATerribleMisfortuneFellOn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatIThinkAbout)},
-    {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontHaveAnyPowers)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoMomAndDadHaveBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWheneverMySisterFurrowsHer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoItsTimeToFixThose)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_BabyThinks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoBawabaItsHotIWant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoGooItsGettingColderGagoo)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOfCourseTheyreHereTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoIdSureLikeToSee)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoNothingElseAroundHereIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigoWellIfThereArentGoing)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_TalkToInnkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoItsGoodToHaveThis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOnceAllOurCustomersLeave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigoItsGoingToBeA)},
-    {TRIGGER_TALK, 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoAllTheWorkOnThe)},
-    {TRIGGER_TALK, 21, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoFirstTheLighthouseIsLit)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnHasBecomeSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoOnceTheWingsAreFinished)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantBelieveItAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnIsBoundTo)},
-    {TRIGGER_TALK, 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoGottaMakeAllTheBeds)},
-    {TRIGGER_TALK, 22, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheBossSaidItWas)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgContigoGoshWeWereSoBusy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIveGotSoMuchTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAllTheseYearsIThought)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgContigoWhatAreWeGoingTo)},
-    {TRIGGER_TALK, 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfIDontMakeDinner)},
-    {TRIGGER_TALK, 23, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyveFinishedPuttingTheWings)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgContigoNowsMyChanceToExperiment)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIMustBeTheGreatest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItWasKindOfImpressive)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgContigoSeeingThatShipTakeFlight)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgContigoDidYouJustArriveIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgContigoIWorkedMyselfHalfTo)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgContigoThePropheciesOfTheAnemos)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsOfAnemosAre)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgContigoImAfraidImTooOld)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigoIThrewMyBackOut)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIsThatMiracleOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigoIWantToSeeThe)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Contigo_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfISeeTheWings)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoPerhapsIfISeeA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigoItWasAShockTo)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_IVANS_RETURN, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWillStayWithUs)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_IVANS_MOTHER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoImSureTheYoungerBrother)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_IVANS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgContigoIvanDoesntRememberHisMother)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_IVANS_MOTHER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIvansMotherLeftHimIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_IVANS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgContigoIWonderHowIvanFeels)},
+    {TRIGGER_TALK, ACTOR_BOY_WHO_WOULD_FIGHT_IVAN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoMyFatherDoesntApproveOf)},
+    {TRIGGER_TALK, ACTOR_BOY_WHO_WOULD_FIGHT_IVAN, CONDITION_ALWAYS, MSGNO(MsgContigoFromTheLookOnIvans)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WHO_WOULD_FIGHT_IVAN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWishICouldHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WHO_WOULD_FIGHT_IVAN, CONDITION_ALWAYS, MSGNO(MsgContigoSomedayImGonnaFightIvan)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_HESPERIA, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoLongAgoThePeopleOf)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_HESPERIA, CONDITION_ALWAYS, MSGNO(MsgContigoBrrrBrrrItsBeenReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HESPERIA, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoForALongTimeNow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HESPERIA, CONDITION_ALWAYS, MSGNO(MsgContigoJupiterLighthouseHasBeenCalled)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_FEELING_THE_COLD, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoALongTimeAgoThe)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_FEELING_THE_COLD, CONDITION_ALWAYS, MSGNO(MsgContigoWinterJustEndedButIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_FEELING_THE_COLD, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEverybodyThinksThePeopleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_FEELING_THE_COLD, CONDITION_ALWAYS, MSGNO(MsgContigoHammaSaysThatIfIvan)},
+    {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOhHowIWantTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatTheWingsAreDone)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIJustKnowIvanBecame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoIvanHasThePowerOf)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePowerOfTheAnemos)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS_POWER, CONDITION_ALWAYS, MSGNO(MsgContigoItsUpToThePeople)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoATerribleMisfortuneFellOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS_POWER, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatIThinkAbout)},
+    {TRIGGER_TALK, ACTOR_BABYS_BROTHER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontHaveAnyPowers)},
+    {TRIGGER_TALK, ACTOR_BABYS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgContigoMomAndDadHaveBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABYS_BROTHER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWheneverMySisterFurrowsHer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABYS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgContigoItsTimeToFixThose)},
+    {TRIGGER_TALK, ACTOR_BABY, CONDITION_ALWAYS, EVENT(Contigo_BabyThinks)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABY, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoBawabaItsHotIWant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABY, CONDITION_ALWAYS, MSGNO(MsgContigoGooItsGettingColderGagoo)},
+    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOfCourseTheyreHereTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgContigoIdSureLikeToSee)},
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToArmorMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoNothingElseAroundHereIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgContigoWellIfThereArentGoing)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(Contigo_TalkToInnkeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoItsGoodToHaveThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOnceAllOurCustomersLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgContigoItsGoingToBeA)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoAllTheWorkOnThe)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoFirstTheLighthouseIsLit)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnHasBecomeSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoOnceTheWingsAreFinished)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantBelieveItAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnIsBoundTo)},
+    {TRIGGER_TALK, ACTOR_WOMAN_MAKING_THE_BEDS, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoGottaMakeAllTheBeds)},
+    {TRIGGER_TALK, ACTOR_WOMAN_MAKING_THE_BEDS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheBossSaidItWas)},
+    {TRIGGER_TALK, ACTOR_WOMAN_MAKING_THE_BEDS, CONDITION_ALWAYS, MSGNO(MsgContigoGoshWeWereSoBusy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_MAKING_THE_BEDS, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIveGotSoMuchTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_MAKING_THE_BEDS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAllTheseYearsIThought)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_MAKING_THE_BEDS, CONDITION_ALWAYS, MSGNO(MsgContigoWhatAreWeGoingTo)},
+    {TRIGGER_TALK, ACTOR_COOK, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfIDontMakeDinner)},
+    {TRIGGER_TALK, ACTOR_COOK, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyveFinishedPuttingTheWings)},
+    {TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgContigoNowsMyChanceToExperiment)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIMustBeTheGreatest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItWasKindOfImpressive)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgContigoSeeingThatShipTakeFlight)},
+    {TRIGGER_TALK, ACTOR_WORN_OUT_WORKER, CONDITION_ALWAYS, MSGNO(MsgContigoDidYouJustArriveIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORN_OUT_WORKER, CONDITION_ALWAYS, MSGNO(MsgContigoIWorkedMyselfHalfTo)},
+    {TRIGGER_TALK, ACTOR_WORKER_ON_THE_PROPHECIES, CONDITION_ALWAYS, MSGNO(MsgContigoThePropheciesOfTheAnemos)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER_ON_THE_PROPHECIES, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsOfAnemosAre)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_TOO_OLD_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgContigoImAfraidImTooOld)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_TOO_OLD_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgContigoIThrewMyBackOut)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIsThatMiracleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE, CONDITION_ALWAYS, MSGNO(MsgContigoIWantToSeeThe)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Contigo_TalkToHealer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfISeeTheWings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoPerhapsIfISeeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgContigoItWasAShockTo)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
@@ -3242,8 +3324,8 @@ struct Trigger gContigo_ShopsTriggers[] = {
 
 struct Trigger gContigo_ShopsReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
+    {TRIGGER_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
     {TRIGGER_STEP, 20, 0x9d1, EVENT(Contigo_ReturnToNewHome)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
@@ -3255,27 +3337,27 @@ struct Trigger gContigo_LuckyDiceTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThisKidsGotUnluckyWritten)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouLoseTheHi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoItsToughToKnowWhen)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIAlmostAlwaysGetAt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoICanWinICan)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoHmmIWonderIfThese)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_HOST, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_HOST, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
+    {TRIGGER_TALK, ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, CONDITION_ALWAYS, MSGNO(MsgContigoThisKidsGotUnluckyWritten)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_HI_LO_GAME, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouLoseTheHi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_HI_LO_GAME, CONDITION_ALWAYS, MSGNO(MsgContigoItsToughToKnowWhen)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WHO_LOSES_AT_HI_LO, CONDITION_ALWAYS, MSGNO(MsgContigoIAlmostAlwaysGetAt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WHO_LOSES_AT_HI_LO, CONDITION_ALWAYS, MSGNO(MsgContigoICanWinICan)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_HOST, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_HOST, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
+    {TRIGGER_TALK, ACTOR_SECOND_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
+    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoHmmIWonderIfThese)},
+    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
+    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
 #undef MSG_COINS_WON

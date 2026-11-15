@@ -108,7 +108,7 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
 
   Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   if (!Event_GetFlag(0xfe2)) {
-    Actor_SetPosition(64, 280, 440);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 280, 440);
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 27) {
       Event_Start();

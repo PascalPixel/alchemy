@@ -11,6 +11,14 @@
 
 #include "system/task.h"
 #include "flags.h"
+/// Set while the charges stick: the music rules play silence in Kibombo and the
+/// Gabomba Statue (sounds.h).
+#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
+/// Set as the scene leaves the ceremony below for the statue's inside; the
+/// arrows room clears it.
+#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
+/// Set once the party has met Piers at Kibombo (Kibombo_MeetPiers).
+#define FLAG_KIBOMBO_PIERS_MET 0x8f3
 #include "item_ids.h"
 #include "field/sprite.h"
 #include "types.h"
@@ -698,7 +706,7 @@ void Kibombo_MeetPiers(void) {
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyGathersScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_PartyGathersScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gKibombo_PartyGathersScript);
-  GameFlag_Set(0x8f3);
+  GameFlag_Set(FLAG_KIBOMBO_PIERS_MET);
   Event_End();
 }
 
@@ -2631,7 +2639,7 @@ void Kibombo_GabombaNotPleased(void) {
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
-  GameFlag_Clear(0x8f7);
+  GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
   Sound_Play(MUS_KIBOMBO);
   Event_Wait(80);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -2669,7 +2677,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   gFieldWork->transition = effect;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2791,7 +2799,7 @@ void Kibombo_GabombaStillNotPleased(void) {
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   // "We must continue! Drums! More drums!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2818,7 +2826,7 @@ void Kibombo_GabombaSeesOrb(void) {
   Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 12);
   Event_Wait(120);
   Kibombo_CrowdCheers();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2844,7 +2852,7 @@ void Kibombo_GabombaResponds(void) {
   Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -4131,7 +4139,7 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3,
      IF_FLAG_SET(FLAG_KIBOMBO_VENT_UNCOVERED), EVENT(Kibombo_EnterVent)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
-    {TRIGGER_STEP, 5, 0x8f3, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 5, FLAG_KIBOMBO_PIERS_MET, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 5, FLAG_KIBOMBO_PIERS_STAYED_BEHIND,
      EVENT(Kibombo_PiersRefusesToLeave)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
@@ -4151,7 +4159,7 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
      FLAG_THIRD_MARKING_DUG, EVENT(Kibombo_ScoopThirdMarking)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14,
      FLAG_FOURTH_MARKING_DUG, EVENT(Kibombo_ScoopFourthMarking)},
-    {TRIGGER_STEP, 20, 0x8f3, EVENT(Kibombo_MeetPiers)},
+    {TRIGGER_STEP, 20, FLAG_KIBOMBO_PIERS_MET, EVENT(Kibombo_MeetPiers)},
     {TRIGGER_STEP, 22, FLAG_KIBOMBO_PIERS_WITH_PARTY,
      EVENT(Kibombo_PiersThanksParty)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},

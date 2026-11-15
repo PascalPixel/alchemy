@@ -2874,7 +2874,7 @@ s32 Scene_PrepareMap(void) {
       GaiaRockInside_DrawMazeRoom();
       stage = (s32 *)(gInventorySnapshot + 0x288);
       if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
-        Actor_SetPosition(64, 104, 88);
+        Actor_SetPosition(FIELD_TREASURE_ACTOR, 104, 88);
       if (*stage == 9)
         Actor_SetPosition(65, 104, 72);
       if (GameFlag_Get(*stage + 0xa50)) {

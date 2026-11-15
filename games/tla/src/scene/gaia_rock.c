@@ -16,6 +16,11 @@
 #include "system/system.h"
 #include "types.h"
 #include "flags.h"
+/// Set once Susa has said he only needs rest ("I'm not dying... I'm just so
+/// tired...").
+#define FLAG_SUSA_RESTED 0xa61
+/// Set once Susa has rejoiced with the party (GaiaRock_SusaRejoices).
+#define FLAG_SUSA_REJOICED 0x9ab
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
@@ -216,26 +221,26 @@ void GaiaRock_CycloneClearsWall(void) {
 }
 
 void GaiaRock_RevealIdol(void) {
-  struct Actor *object = Actor_Get(64);
+  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
   s32 done;
 
   if (object == NULL)
     return;
   done = Event_GetFlag(0xf74);
   if (done == 0) {
-    Actor_SetPosition(64, 657, 246);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 657, 246);
     object->motionFlags = done;
     object->y.fixed = px(80);
   }
 }
 
 void GaiaRock_HideIdol(void) {
-  if (Actor_Get(64) != NULL)
-    Actor_SetPosition(64, 0, 0);
+  if (Actor_Get(FIELD_TREASURE_ACTOR) != NULL)
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
 }
 
 void GaiaRock_CheckAltar(void) {
-  struct Actor *object = Actor_Get(64);
+  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x.fixed != 0) {
@@ -258,13 +263,13 @@ void GaiaRock_SusaRejoices(void) {
     FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(ACTOR_SUSA, 0);
-    Event_SetFlag(0x9ab);
+    Event_SetFlag(FLAG_SUSA_REJOICED);
     Event_End();
   }
 }
 
 void GaiaRock_TalkToSusa(void) {
-  if (Event_GetFlag(0x9ab)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
     Event_AskYesNo(ACTOR_SUSA, 0);
   } else {
@@ -275,7 +280,7 @@ void GaiaRock_TalkToSusa(void) {
 }
 
 void GaiaRock_MindReadSusa(void) {
-  if (Event_GetFlag(0x9ab)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     // "Kushinada's safe... She's safe! Nothing else matters."
     Event_ShowMessage(ACTOR_SUSA, 0);
@@ -493,24 +498,24 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(0x9ab)) {
-      Actor_SetPosition(20, 798, 800);
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(FLAG_SUSA_REJOICED)) {
+      Actor_SetPosition(ACTOR_SUSA, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
-      Actor_SetAnimationById(20, 5);
-      if (!Event_GetFlag(0xa61)) {
+      Actor_SetAnimationById(ACTOR_SUSA, 5);
+      if (!Event_GetFlag(FLAG_SUSA_RESTED)) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        FieldActor_StartRepeatedMotion(20, 3);
-        FieldCamera_MoveToActorById(20, 1);
+        FieldActor_StartRepeatedMotion(ACTOR_SUSA, 3);
+        FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
         FieldEvent_Wait(30);
         FieldEvent_SetMessageId((s32)MsgIMNot);
         // "I'm not dying... I'm just so tired... I'm going to lie down for
         // a..."
-        Event_ShowMessage(20, 0);
-        FieldActor_StartRepeatedMotion(20, 2);
+        Event_ShowMessage(ACTOR_SUSA, 0);
+        FieldActor_StartRepeatedMotion(ACTOR_SUSA, 2);
         FieldEvent_Wait(30);
-        Event_SetFlag(0xa61);
+        Event_SetFlag(FLAG_SUSA_RESTED);
         Event_End();
       }
     }
@@ -535,9 +540,9 @@ s32 Scene_Initialize(void) {
       GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
-    actor = Actor_GetById(64);
+    actor = Actor_GetById(FIELD_TREASURE_ACTOR);
     if (actor != 0) {
-      Actor_SetPosition(64, 0, 0);
+      Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
     }
     work = Ram_HeapSlots->fieldWork;
     actor = work->actors[16];
@@ -775,7 +780,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 42, 0x9ab, EVENT(GaiaRock_SusaRejoices)},
+    {TRIGGER_STEP, 42, FLAG_SUSA_REJOICED, EVENT(GaiaRock_SusaRejoices)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},

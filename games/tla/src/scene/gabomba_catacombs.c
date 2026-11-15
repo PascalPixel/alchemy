@@ -5,6 +5,9 @@
 /// (GabombaCatacombs_FightMud).
 
 #include "flags.h"
+/// Set as the Great Gabomba bestows its power
+/// (GabombaCatacombs_GabombaBestowsPower).
+#define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 #include "djinn_ids.h"
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
@@ -139,7 +142,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
 
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
-    Actor_SetPosition(64, 392, 344);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (FIELD_CELL(leader->x.fixed) == 24 &&
         FIELD_CELL(leader->z.fixed) == 21) {
       LEADER_HOP();
@@ -366,7 +369,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 /// place, you have proven your power."
 void GabombaCatacombs_GabombaBestowsPower(void) {
   struct Actor *follower = Actor_GetById(ACTOR_KRADEN);
-  struct Actor *statue = Actor_GetById(64);
+  struct Actor *statue = Actor_GetById(FIELD_TREASURE_ACTOR);
   u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   struct Actor *glow, *leader;
   s32 speed;
@@ -385,7 +388,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
-  Actor_SetPosition(64, 168, 152);
+  Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
   statue->motionFlags = 6;
   statue->groundHeight += px(16);
   Sound_Play(SE_SHIMMER);
@@ -465,7 +468,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  GameFlag_Set(0x9ce);
+  GameFlag_Set(FLAG_GABOMBA_BESTOWED_POWER);
   Scene_PlayMusic();
   PaletteFade_ApplyTarget(speed, 0);
   PaletteFade_StartInterpolation(60);
@@ -475,7 +478,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
 }
 
 void GabombaCatacombs_TalkToStatue(void) {
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(FIELD_TREASURE_ACTOR);
 
   if (object != NULL && object->x.fixed != 0)
     Scene_TalkToActor(4160);
@@ -574,10 +577,10 @@ s32 Scene_Initialize(void) {
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
-      GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
+      GameFlag_Get(FLAG_GABOMBA_BESTOWED_POWER) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    statue = Actor_GetById(64);
-    Actor_SetPosition(64, 168, 152);
+    statue = Actor_GetById(FIELD_TREASURE_ACTOR);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
     statue->motionFlags = 6;
     statue->groundHeight += px(16);
   }
@@ -741,7 +744,8 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
 
 struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 40, 0x9ce, EVENT(GabombaCatacombs_GabombaBestowsPower)},
+    {TRIGGER_STEP, 40, FLAG_GABOMBA_BESTOWED_POWER,
+     EVENT(GabombaCatacombs_GabombaBestowsPower)},
     {TRIGGER_TALK, 8, 0xf93, EVENT(GabombaCatacombs_TalkToStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTomegathericonBushes)},

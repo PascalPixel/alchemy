@@ -595,7 +595,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
-  Actor_SetMovementType(Actor_Get(64), 9);
+  Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR), 9);
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;

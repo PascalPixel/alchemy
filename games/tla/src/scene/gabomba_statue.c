@@ -13,6 +13,12 @@
 #include "../field/field_effect_move.c"
 
 #include "flags.h"
+/// Set while the charges stick: the music rules play silence in Kibombo and the
+/// Gabomba Statue (sounds.h).
+#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
+/// Set as the scene leaves the ceremony below for the statue's inside; the
+/// arrows room clears it.
+#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
 #include "djinn_ids.h"
 
 /// Story flags: both cone pillars Pounded and the cogs turned back, each cone
@@ -1749,7 +1755,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Event_PlaySound(MUS_KIBOMBO);
   GabombaStatue_RunCharges(ACTOR_CHARGE_A, 0);
   FieldEvent_Wait(80);
-  Event_SetFlag(0x8f7);
+  Event_SetFlag(FLAG_GABOMBA_MUSIC_SILENCED);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
@@ -2187,7 +2193,7 @@ void GabombaStatue_InitializeArrows(void) {
     GabombaStatue_SawEnergyFlow();
     return;
   }
-  if (Event_GetFlag(0x8fc)) {
+  if (Event_GetFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY)) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_CHARGE_A, 0, 0);
     Actor_SetPosition(ACTOR_CHARGE_B, 0, 0);
@@ -2220,14 +2226,14 @@ void GabombaStatue_InitializeArrows(void) {
     else if (gMainRoutineWork.entrance == 3)
       GabombaStatue_SeeHowItWorks();
   }
-  if (Event_GetFlag(0x8fc)) {
+  if (Event_GetFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    Event_ClearFlag(0x8fc);
+    Event_ClearFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY);
     if (Event_GetFlag(0x9eb) && !Event_GetFlag(FLAG_GABOMBA_CHANNEL_FIXED))
       GabombaStatue_FixTheChannel();
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);

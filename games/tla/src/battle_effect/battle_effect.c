@@ -57,8 +57,6 @@
 // The effects of abilities and summons from the opening every Djinn effect
 // shares to Meteor Blow.
 
-#define SpriteAttributes SpriteAttributes__ability_effects
-
 #include "battle_effect_projectiles.c"
 #include "battle_effect_djinn_attacks.c"
 #include "battle_effect_hail.c"
@@ -113,8 +111,6 @@
 #include "battle_effect_breaths.c"
 #include "battle_effect_trident.c"
 #include "battle_effect_meteor_blow.c"
-
-#undef SpriteAttributes
 
 #include "battle_effect_liquifier.c"
 

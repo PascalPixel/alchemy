@@ -14,7 +14,13 @@
 /// The idol's room (SceneId_GabombaStatueChamberIdol): the statue's face, and
 /// Kraden ("It vanished into that hole!") and Akafubu ("Who... Who are
 /// you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
-enum { ACTOR_STATUE = 8, ACTOR_KRADEN = 11, ACTOR_AKAFUBU = 12 };
+enum {
+  ACTOR_STATUE = 8,
+  ACTOR_DRUM_A, ///< the two pink drums that turn as the lap opens
+  ACTOR_DRUM_B,
+  ACTOR_KRADEN,
+  ACTOR_AKAFUBU
+};
 
 /// The final chamber, where the Great Gabomba names the witch doctor: Kraden,
 /// Akafubu ("I have followed Oeia's instructions and entered the final
@@ -741,8 +747,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   PaletteFade_SetTarget(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  Actor_SetAnimationById(9, 2);
-  Actor_SetAnimationById(10, 2);
+  Actor_SetAnimationById(ACTOR_DRUM_A, 2);
+  Actor_SetAnimationById(ACTOR_DRUM_B, 2);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 13);
   Actor_WatchAndSetScript(ACTOR_JENNA, 13);
   Actor_WatchAndSetScript(ACTOR_SHEBA, 13);
@@ -753,8 +759,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   FieldCamera_MoveTo(392, CAMERA_KEEP, 246, 1);
   Actor_SetSpeed(13, 0.8);
   Actor_MoveToAndWait(13, 392, 246);
-  Actor_SetAnimationById(9, 1);
-  Actor_SetAnimationById(10, 1);
+  Actor_SetAnimationById(ACTOR_DRUM_A, 1);
+  Actor_SetAnimationById(ACTOR_DRUM_B, 1);
   statue->velocityY = px(3);
   statue->gravity = px(1) / 2;
   Actor_SetSpeed(13, 1.6);
@@ -1039,8 +1045,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void GabombaStatueChamber_InitializeIdol(void) {
   Actor_DisableById(ACTOR_STATUE);
-  Actor_DisableById(9);
-  Actor_DisableById(10);
+  Actor_DisableById(ACTOR_DRUM_A);
+  Actor_DisableById(ACTOR_DRUM_B);
   wait(1);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     GabombaStatueChamber_OpenThePassage();

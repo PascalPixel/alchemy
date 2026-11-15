@@ -77,12 +77,12 @@ struct SceneEntrance {
   s16 y;            ///< pixels
   s16 z;            ///< pixels
   u16 facing;       ///< 1/65536 turns (enum Facing)
-  s16 unused1;      ///< 0 in every table; not read
-  s16 cameraLeft;   ///< pixels
-  s16 cameraTop;    ///< pixels
-  s16 cameraRight;  ///< pixels
-  s16 cameraBottom; ///< pixels
-  s16 unused2;      ///< 0 in every table; not read
+  s16 unusedAfterFacing; ///< 0 in every table; not read
+  s16 cameraLeft;        ///< pixels
+  s16 cameraTop;         ///< pixels
+  s16 cameraRight;       ///< pixels
+  s16 cameraBottom;      ///< pixels
+  s16 unusedAfterCamera; ///< 0 in every table; not read
 };
 
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);

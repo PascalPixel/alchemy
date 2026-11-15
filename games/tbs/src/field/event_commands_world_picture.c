@@ -45,9 +45,9 @@ struct WorldPictureWork {
   u16 cursorVramBlock;            ///< owns the cursor picture's tiles
   struct FieldCoordinate cursorX; ///< screen column, 16.16 pixels
   struct FieldCoordinate cursorY; ///< screen row, 16.16 pixels
-  u8 padding0c[6];                ///< not read by this screen
+  u8 unreadAfterCursor[6];        ///< not read by this screen
   s16 namedMarker;           ///< actor whose name is drawn; -1 clears the name
-  u8 padding14[4];           ///< not read by this screen
+  u8 unreadAfterName[4];     ///< not read by this screen
   s32 cursorSpeed;           ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
   /// The visible areas' markers packed from the start, then the frame round

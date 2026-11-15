@@ -28,7 +28,8 @@ void Weather_UpdateRain(void) {
     x = (particle->positionX - cameraX) / Q16_ONE + *frame++;
     y = (particle->positionZ - particle->positionY - cameraZ) / Q16_ONE +
         *frame++;
-    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
+    if ((x >= -16 && x <= DISPLAY_WIDTH - 1) && y >= -32 &&
+        y <= DISPLAY_HEIGHT - 1) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
@@ -180,7 +181,7 @@ void FieldMotes_Update(void) {
       x = FIELD_PIXEL(mote->positionX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
       y = FIELD_PIXEL(mote->positionZ - mote->positionY - cameraZ) - age;
-      if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+      if ((u32)(x + 16) <= 255 && y >= -32 && y <= DISPLAY_HEIGHT - 1) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;
           mote->delay += 3;
@@ -309,7 +310,7 @@ void FieldEffect_UpdateSparkles(void) {
       sy = (sparkle->positionZ - sparkle->positionY - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
       frame++;
-      if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
+      if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= DISPLAY_HEIGHT - 1) {
         sparkle->tile = work->tileBase + *frame;
         sparkle->x = sx;
         sparkle->shape = 0;

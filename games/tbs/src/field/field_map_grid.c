@@ -10,10 +10,6 @@
 #define MAPGRID_ATTRIBUTE_MASK 0xfffff000       ///< the cell's attributes
 /// The map's 128 by 128 cell words.
 #define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
-/// Where a layout's tileset animation and blend scripts are decoded, in the
-/// space after the shapes.
-#define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 0x1000)
-#define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 0x1e00)
 /// A layer's visible area in cells: the screen's 15 by 10, and the row and
 /// column partly scrolled in.
 #define MAPGRID_VISIBLE_WIDTH 16
@@ -899,5 +895,3 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 #undef MAPGRID_SCREEN_CELLS
 #undef MAPGRID_SCREEN_ROW_BYTES
 #undef MAPGRID_RESOURCE
-#undef MAPGRID_ANIMATION_SCRIPT
-#undef MAPGRID_BLEND_SCRIPT

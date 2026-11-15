@@ -739,7 +739,8 @@ fade:
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
+      ~ACTOR_PRIORITY_IGNORES_RISES;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   Actor_GetById(ACTOR_SAND_MOUND)->priorityFlags |= 1;
   REG_DISPCNT |= DISPCNT_BG2_ON;
@@ -1407,7 +1408,7 @@ void ShamanVillage_DropPillar(void) {
   if (FIELD_CELL(object->x.fixed) == 32 && FIELD_CELL(object->z.fixed) == 11) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     do {
       wait(1);
     } while (object->velocityY != 0);
@@ -2753,7 +2754,7 @@ void ShamanVillage_SetUpAromaRoom(void) {
   else
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
   object = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
-  object->collisionFlags = 8;
+  object->collisionFlags = ACTOR_NOT_TARGETED;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
   Actor_SetSpriteFlags(
@@ -2785,7 +2786,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->priorityFlags &= ~1;
     FieldActor_SetSpriteColor(object, 7);
     ((struct FieldSprite *)object->sprite)->priority = 1;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = Q16_ONE / 2;
     object->scaleY = Q16_ONE / 2;
@@ -2855,7 +2856,8 @@ void ShamanVillage_SetUpInn(void) {
   u32 i;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags = 8;
+  ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags =
+      ACTOR_NOT_TARGETED;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     s32 angle = FACING_SOUTH_SOUTHEAST;
 

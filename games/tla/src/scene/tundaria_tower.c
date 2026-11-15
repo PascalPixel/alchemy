@@ -199,7 +199,7 @@ loop:
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, (u16)animation + GameFlag_Get((u16)flag));
   object->motionFlags = 0;
-  object->collisionFlags &= 0xfe;
+  object->collisionFlags &= ~ACTOR_SOLID;
   object->timer = flag;
   TundariaTower_SetColumnCell(object);
   row += 3;
@@ -410,7 +410,7 @@ void TundariaTower_FreeCenterProng(void) {
   GameFlag_Set(FLAG_CRYSTAL_BROKEN);
   MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
   object->gravity = px(1) / 2;
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   OverlayObject_WaitUntilIdle(object);
   Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
   Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
@@ -595,7 +595,7 @@ void TundariaTower_SetDownPillar(void) {
   if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
       object->y.fixed) {
     object->layer = 2;
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     OverlayObject_WaitUntilIdle(object);
     Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(object);
@@ -831,7 +831,7 @@ void TundariaTower_LandFromSlide(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   options.palette = 7;
   options.update = (void *)FieldEffect_AdvanceMotion;
@@ -1054,7 +1054,7 @@ loop:
   x = row[1];
   z = row[2];
 
-  object->collisionFlags &= 0xfe;
+  object->collisionFlags &= ~ACTOR_SOLID;
   Actor_SetSpriteFlags(object, 0);
   Actor_SetCellOpen(id, (u16)x, (u16)z, BYTE_AT(object, 34));
   row += 3;
@@ -1211,7 +1211,7 @@ next:
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        leader->motionFlags = 3;
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
         Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
         wait(2);

@@ -860,7 +860,7 @@ void TrialRoad_FreezePuddle(s32 a, s32 id) {
   TrialRoad_SetPillarTopLift(id, 16);
   Event_ClearFlag(id + FLAG_PUDDLE_MELTED_BASE);
   if (object != NULL)
-    object->priorityFlags &= ~2;
+    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
 void TrialRoad_BlowBushOffPillar(s32 a, s32 id) {
@@ -874,7 +874,7 @@ void TrialRoad_LowerPillar(s32 id) {
   if (object != NULL) {
     TrialRoad_SetPillarTopLift(id, -16);
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(object, 6);
   }
 }
@@ -885,7 +885,7 @@ void TrialRoad_RaisePillar(s32 id) {
   if (object != NULL) {
     TrialRoad_SetPillarTopLift(id, 16);
     object->collisionFlags = 1;
-    object->priorityFlags &= ~2;
+    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(object, 5);
   }
 }
@@ -1759,7 +1759,7 @@ void TrialRoad_GaspFlees(void) {
   Event_PlaySound(SE_DJINNI_FLEES);
   partner->speedLimit = px(2);
   partner->acceleration = px(2);
-  partner->motionFlags = 2;
+  partner->motionFlags = ACTOR_FALLS;
   partner->groundHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = px(10);
@@ -2397,7 +2397,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_SelectAnimation(object, 2);
   FieldActor_WaitForMove(object);
   Actor_SelectAnimation(object, 1);
-  object->motionFlags = 2;
+  object->motionFlags = ACTOR_FALLS;
   object->groundHeight = px(128);
   object->velocityY = px(4);
   object->speedLimit = px(3);
@@ -3050,11 +3050,11 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->low = low;
     fountain->unk10 = 1;
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     fountain->speed = 0;
     fountain->bob = 0;
     fountain->unk14 = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   spout = ((struct Actor *)Import_ActorCreate(
       0x8000, object->x.fixed, object->y.fixed, object->z.fixed));

@@ -1314,9 +1314,9 @@ extern u32 gWorldMap_LohoWorkerLeaveScriptC[];
 void WorldMap_DeliverLohoCannon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = 2;
-  Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = 2;
-  Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = 2;
+  Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = ACTOR_FALLS;
   {
     s32 facing = FACING_NORTHEAST;
 
@@ -1438,7 +1438,7 @@ void WorldMap_MeetEcho(void) {
     FieldEffect_ScheduleRatioTransition(Q16_ONE * 6 / 5, 6);
     Event_WaitForZoomTransition();
     WorldMap_Freeze();
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->gravity = px(1) / 4;
     djinni->speedLimit = px(1);
     djinni->acceleration = px(1);
@@ -1499,7 +1499,7 @@ void WorldMap_MeetEcho(void) {
     }
     Actor_SetAnimationById(owner, 1);
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
     i = 7;
@@ -1781,7 +1781,7 @@ void WorldMap_SpawnIdejimaWake(void) {
   }
   spr->nextFrame = 0;
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
-  obj->priorityFlags |= 2;
+  obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
   Import_ActorSelectAnimation(obj, 2);

@@ -185,7 +185,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  leader->priorityFlags |= 0x20;
+  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 5);
   FieldActor_SetSpritePriority(ACTOR_WEST_BIRD, 1);
   Actor_SetAnimation(ACTOR_EAST_BIRD, 5);
@@ -1317,7 +1317,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     break;
   case 3:
     if (work->timer == 0) {
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       object->velocityY = px(24);
       work->follow = 0;
       Sound_Play(SE_HEAVY_IMPACT);

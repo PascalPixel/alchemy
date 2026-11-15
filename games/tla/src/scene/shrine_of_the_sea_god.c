@@ -709,7 +709,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_SECOND_LOG);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_THIRD_LOG);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->y.fixed = 0;
   leader->groundHeight = 0;
   Event_End();
@@ -801,7 +801,7 @@ loop:
 /// Sets up a puddle Frost can freeze, disabled until it does.
 void ShrineOfTheSeaGod_SetUpPuddle(s32 actor) {
   Actor_DisableById(actor);
-  Actor_GetById(actor)->priorityFlags |= 0x20;
+  Actor_GetById(actor)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 }
 
 /// Frost on the first puddle turns it to an ice pillar.
@@ -852,7 +852,7 @@ void ShrineOfTheSeaGod_MovePillar(void) {
 
 /// Lets a pillar fall to the ground with a thump.
 void ShrineOfTheSeaGod_DropPillar(struct Actor *object) {
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   do {
     wait(1);
   } while (object->velocityY != 0);
@@ -888,10 +888,10 @@ void ShrineOfTheSeaGod_LayerCrossroadsProps(void) {
 
     if (leader->y.fixed > px(16)) {
       Actor_SetSpritePriority(id, 2);
-      object->priorityFlags |= 2;
+      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     } else {
       Actor_SetSpritePriority(id, 1);
-      object->priorityFlags &= ~2;
+      object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
     }
   }
 }
@@ -944,12 +944,14 @@ void ShrineOfTheSeaGod_KeepFlameOnTorch(void) {
 // XXX: what priority flag 0x20 does to the leader, which the slide room sets on
 // arrival; a render of the slide room with and without it would settle it.
 UNUSED void ShrineOfTheSeaGod_ClearLeaderPriorityBit(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~0x20;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
+      ~ACTOR_PRIORITY_IGNORES_RISES;
 }
 
 /// Sets the leader's priority bit 0x20.
 UNUSED void ShrineOfTheSeaGod_SetLeaderPriorityBit(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
 }
 
 void ShrineOfTheSeaGod_SetActorsHidden(s32 show, s32 first, u32 count);
@@ -980,9 +982,9 @@ void ShrineOfTheSeaGod_SetActorsHidden(s32 show, s32 first, u32 count) {
     struct Actor *actor = Actor_GetById(first + i);
 
     if (show)
-      actor->priorityFlags &= ~0x10;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
     else
-      actor->priorityFlags |= 0x10;
+      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
 }
 
@@ -1086,9 +1088,9 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   MapGrid_CopyCellAttributes(0, 50, 3, 1, 24, 70);
   GameFlag_Set(FLAG_CROSSROADS_PILLAR_TOPPLED);
   wait(1);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
-  stone->priorityFlags |= 2;
+  stone->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldTask_AddFrame(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader,
                      TASK_PASS_VBLANK);
   do
@@ -1168,16 +1170,18 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
   Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
   wait(1);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_FIRST_TOPPLING_PILLAR, 3);
-  pillar->priorityFlags |= 2;
+  pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstPillarWithLeader,
                      TASK_PASS_VBLANK);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 0);
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_PILLAR, 1);
-  Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags &= ~2;
+  Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_FOURTH_PILLAR, 1);
-  Actor_GetById(ACTOR_PILLAR_ROOM_FOURTH_PILLAR)->priorityFlags &= ~2;
+  Actor_GetById(ACTOR_PILLAR_ROOM_FOURTH_PILLAR)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   leader->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.6, 0.1);
@@ -1191,10 +1195,12 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 321, 536);
   Sound_Play(SE_RATTLE);
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_PILLAR, 2);
-  Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags |= 2;
+  Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_FOURTH_PILLAR, 2);
-  Actor_GetById(ACTOR_PILLAR_ROOM_FOURTH_PILLAR)->priorityFlags |= 2;
-  leader->motionFlags = 3;
+  Actor_GetById(ACTOR_PILLAR_ROOM_FOURTH_PILLAR)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Task_Remove(ShrineOfTheSeaGod_KeepFirstPillarWithLeader);
   wait(1);
   Event_End();
@@ -1220,9 +1226,9 @@ void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
   Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
   Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
   wait(1);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_SECOND_TOPPLING_PILLAR, 3);
-  pillar->priorityFlags |= 2;
+  pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondPillarWithLeader,
                      TASK_PASS_VBLANK);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 2);
@@ -1386,7 +1392,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   do {
     Actor_WaitForMoveById(ACTOR_TAVI);
   } while (0);
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   object->groundHeight = 0x200000;
   object->scaleX = 0x10000;
   sprite->rotation = 0;
@@ -1562,7 +1568,7 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
   ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(328), px(624), FACING_NORTH);
   wait(1);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 14);
-  object->priorityFlags &= ~2;
+  object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_BREATH, 3);
   Actor_SetSpeed(14, 1.6);
   Actor_WalkToAndWait(ACTOR_BREATH, 328, 568);
@@ -1574,7 +1580,7 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
   ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(280), px(328), angle);
   Actor_SetSpritePriority(ACTOR_BREATH, 2);
   Actor_GetById(ACTOR_BREATH)->priorityFlags |= 1;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   wait(1);
   GameFlag_Set(FLAG_DJINNI_RAN_PAST);
   GameFlag_Set(FLAG_DJINNI_BY_LEDGE);
@@ -1891,7 +1897,7 @@ s32 Scene_Initialize(void) {
 struct Actor *ShrineOfTheSeaGod_SetUpUnderfoot(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->y.fixed = px(12);
   Actor_DisableById(id);
   return object;
@@ -1932,7 +1938,7 @@ void ShrineOfTheSeaGod_PlaceFootprints(void) {
     Actor_DisableById(id);
     Actor_SetAnimationById(id, 0);
     Actor_SetSpritePriority(id, 3);
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteColor(Actor_GetById(id), 12);
     sprite = object->sprite;
     object->x.fixed = spot->x;
@@ -2026,7 +2032,7 @@ void ShrineOfTheSeaGod_InitializeCrossroads(void) {
     ShrineOfTheSeaGod_ObjSetPos(block, px(408), -(px(13)), px(336));
     ((struct FieldSprite *)block->sprite)->rotation = 0x1000;
     Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
-    block->priorityFlags |= 2;
+    block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 50, 3, 1, 24, 70);
   }
   if (GameFlag_Get(FLAG_CROSSROADS_PILLAR_MOVED))
@@ -2061,10 +2067,10 @@ void ShrineOfTheSeaGod_InitializeBreath(void) {
 
   if ((u16)(gMainRoutineWork.entrance - 2) <= 1) {
     Actor_SetSpritePriority(ACTOR_LEDGE_ROOM_PILLAR, 3);
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
     Actor_SetSpritePriority(ACTOR_LEDGE_ROOM_PILLAR, 1);
-    object->priorityFlags &= ~2;
+    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   }
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_FIRST_PUDDLE);
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_SECOND_PUDDLE);
@@ -2102,7 +2108,8 @@ void ShrineOfTheSeaGod_InitializeBreath(void) {
 void ShrineOfTheSeaGod_InitializePillarHole(void) {
   s32 open;
 
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_ROOM_PILLAR), 0);
   open = GameFlag_Get(FLAG_PILLAR_IN_HOLE);
   if (open) {
@@ -2158,13 +2165,13 @@ void ShrineOfTheSeaGod_InitializePillars(void) {
   Actor_GetById(ACTOR_FIRST_PILLAR_LOG)->motionFlags = 0;
   firstLog = Actor_GetById(ACTOR_FIRST_PILLAR_OTHER_LOG);
   Actor_DisableById(ACTOR_FIRST_PILLAR_OTHER_LOG);
-  firstLog->priorityFlags |= 2;
+  firstLog->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   firstLog->motionFlags = 0;
   Actor_DisableById(ACTOR_SECOND_PILLAR_LOG);
   Actor_GetById(ACTOR_SECOND_PILLAR_LOG)->motionFlags = 0;
   secondLog = Actor_GetById(ACTOR_SECOND_PILLAR_OTHER_LOG);
   Actor_DisableById(ACTOR_SECOND_PILLAR_OTHER_LOG);
-  secondLog->priorityFlags |= 2;
+  secondLog->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   secondLog->motionFlags = 0;
 }
 
@@ -2230,7 +2237,7 @@ void ShrineOfTheSeaGod_SetUpFlatProp(s32 id) {
 
   Actor_SetSpritePriority(id, 3);
   Actor_DisableById(id);
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
   object->scaleX = 0xcccc;
   object->scaleY = 0xe666;

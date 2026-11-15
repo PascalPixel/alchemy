@@ -105,7 +105,7 @@ void ShamanVillageCave_DropPillarIntoGap(s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 frames = 60;
 
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   while (frames != 0) {
     System_Wait(1);
     if (object->velocityY == 0)

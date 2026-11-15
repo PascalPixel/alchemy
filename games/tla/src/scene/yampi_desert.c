@@ -992,7 +992,7 @@ rippleFades:
   YampiDesert_BurstSand(px(232), 0, px(184));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   partner->velocityY = px(6);
-  partner->priorityFlags &= ~2;
+  partner->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 2);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
                        0);
@@ -1207,9 +1207,9 @@ void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count) {
     struct Actor *actor = Actor_GetById(first + i);
 
     if (show)
-      actor->priorityFlags &= ~0x10;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
     else
-      actor->priorityFlags |= 0x10;
+      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
 }
 
@@ -1782,18 +1782,19 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_DisableById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
-  (*followed)->motionFlags = 3;
+  (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 3);
   Actor_SetSpeed(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION);
-  Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlags = 3;
+  Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     leader->riseCounter = 0;
     leader->update = YampiDesert_ScorpionRoamsPsynergyStone;
@@ -1883,18 +1884,19 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-  (*followed)->motionFlags = 3;
+  (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
-  Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags = 3;
+  Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                      px(232), px(664), 0);
@@ -2000,18 +2002,19 @@ void YampiDesert_SetUpTrappedScorpion(void) {
 
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   *followed = (struct Actor *)object;
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
-  (*followed)->motionFlags = 3;
+  (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
-  Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags = 3;
+  Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_CORNERED)) {
     angle = FACING_SOUTH;
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
@@ -2174,7 +2177,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 1);
   FieldEvent_Wait(24);
   YampiDesert_BurstSand(leader->x.fixed, leader->y.fixed, leader->z.fixed);
@@ -2183,7 +2186,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimationAndWait(party->leaderActorId, 49);
   Sound_Play(SE_DUST_PUFF);
-  actor8->motionFlags = 3;
+  actor8->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), 1);
   FieldEvent_Wait(24);
   YampiDesert_BurstSand(actor8->x.fixed, actor8->y.fixed, actor8->z.fixed);
@@ -2313,7 +2316,7 @@ void YampiDesert_SetUpBlitz(void) {
 
 /// Sets up a stake: behind the leader, disabled, in its standing animation.
 void YampiDesert_ReadyStake(s32 id) {
-  Actor_GetById(id)->priorityFlags |= 2;
+  Actor_GetById(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(id, 3);
   Actor_DisableById(id);
   Actor_SetAnimationById(id, 2);
@@ -2501,7 +2504,7 @@ loop:
     s32 kind = (s16)entry[1];
     s32 flag = (s16)entry[2];
 
-    object->collisionFlags &= 0xfe;
+    object->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
@@ -2752,11 +2755,11 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
     entry->min = low;
     entry->unk10 = 1;
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     entry->step = 0;
     entry->phase = 0;
     entry->unk14 = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   rider = Import_ActorCreate(0x8000, object->x.fixed, object->y.fixed,
                              object->z.fixed);

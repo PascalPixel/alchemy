@@ -146,11 +146,13 @@ u32 gFieldEffect_LongScript[] = {
 
 struct Actor;
 struct EffectOptions;
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
+/// MapWork.groundEffects read as its bit-fields: the footprints, and the kind
+/// of wading (1 in rooms with a second level).
+struct MapGroundEffects {
+  u8 unusedBeforeGroundEffects[23]; ///< MapWork's fields before it
+  u8 footprints : 2;
+  u8 wading : 2;
+  u8 unusedHighBits : 4; ///< no code names them
 };
 /// One rising platform and what rides it.
 struct Geyser {
@@ -203,7 +205,7 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   }
 }
 
-void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
+void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 unused[3]; // Unused: gives the stack frame its 12 bytes.
   struct EffectOptions options;
@@ -493,7 +495,7 @@ s32 Scene_Initialize(void) {
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
-  ((struct MapLayerBits *)Ram_HeapSlots->mapGrid)->priority = 1;
+  ((struct MapGroundEffects *)Ram_HeapSlots->mapGrid)->wading = 1;
 done:
   return 0;
 }

@@ -2081,11 +2081,13 @@ void Islets_InitializePier(void) {
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
+/// MapWork.groundEffects read as its bit-fields: the footprints, and the kind
+/// of wading (1 in rooms with a second level).
+struct MapGroundEffects {
+  u8 unusedBeforeGroundEffects[23]; ///< MapWork's fields before it
+  u8 footprints : 2;
+  u8 wading : 2;
+  u8 unusedHighBits : 4; ///< no code names them
 };
 
 void Islets_StartPaletteCycle(void);
@@ -2096,7 +2098,7 @@ void Islets_InitializeTurtle(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  ((struct MapLayerBits *)map)->priority = 1;
+  ((struct MapGroundEffects *)map)->wading = 1;
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Islets_StartPaletteCycle();
@@ -2351,8 +2353,8 @@ static __inline__ s32 BoxSpan(s32 kind, s32 start) {
          4;
 }
 
-static __inline__ s32 CallFunc_02003e2c(struct Actor *object,
-                                        struct Vector3 *cell) {
+static __inline__ s32 PushTarget_CheckCollision(struct Actor *object,
+                                                struct Vector3 *cell) {
   return MapGrid_CheckCollision(object, cell);
 }
 
@@ -2392,8 +2394,9 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
         for (j = 0; j < height; j++) {
           cell.x = push->x + px(gPushFootprints[0][index]);
           for (i = 0; i < width; i++) {
-            /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c. */
-            if (CallFunc_02003e2c(object, &cell) == 2)
+            /* FAKEMATCH(wrapper): the call through PushTarget_CheckCollision.
+             */
+            if (PushTarget_CheckCollision(object, &cell) == 2)
               goto blocked;
             cell.x += px(16);
           }

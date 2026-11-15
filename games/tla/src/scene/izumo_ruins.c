@@ -27,31 +27,6 @@
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
 
-struct IzumoRuinsAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unk0a[8];
-  u16 angle;
-};
-
-struct IzumoRuinsMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct IzumoRuinsMapWork {
-  u8 unk000[0x108];
-  struct IzumoRuinsMapLayer layers[3];
-};
-
-struct IzumoRuinsPlacement {
-  u16 id;
-  u16 unk02;
-  s16 flag;
-};
-
 struct IzumoRuinsEffectWork {
   u8 unk00[26];
   s16 objectId;
@@ -153,14 +128,13 @@ extern u32 gFieldEffect_LongScript[];
 #define FLAG_IZUMO_RUINS_POOL_PARCHED 0x941
 
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
-  struct IzumoRuinsMapWork *map =
-      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
     return 0;
   if (layer <= 2)
-    cell = map->layers[layer].cells;
+    cell = (u8 *)map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
@@ -168,15 +142,14 @@ s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
 }
 
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
-  struct IzumoRuinsMapWork *map =
-      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
   if (map == NULL)
     return 0;
   if (layer <= 2)
-    cell = map->layers[layer].cells;
+    cell = (u8 *)map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
@@ -268,17 +241,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Starts the effect for this scene's room, then, for a first argument of 1,
 /// runs IzumoRuins_ShowPillarState on the effect work's object.
-void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
+void IzumoRuins_PoundPillar(s32 mode, s32 target) {
   struct IzumoRuinsEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
   scene = party->next;
   if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-    Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
+    Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, mode, target);
   else
-    Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
-  if (aArg == 1)
+    Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, mode, target);
+  if (mode == 1)
     IzumoRuins_ShowPillarState(Actor_Get(work->objectId));
 }
 

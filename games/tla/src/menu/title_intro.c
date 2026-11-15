@@ -15,6 +15,7 @@
 #include "macros.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "window/window.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
@@ -854,15 +855,10 @@ done:
 /// running TitleIntro_ShowLighthouse when all finish, then restores the display
 /// and the CPU-load flag it saved.
 s32 TitleIntro_Run(void) {
-  /* FAKEMATCH(volatile): the saved flag lives in a stack byte across the calls.
-   */
-  volatile u8 cpuLoad;
+  u8 cpuLoad;
   s32 result;
-  /* FAKEMATCH(temporary): the flag is read before the stack byte's address is
-   * formed. */
-  u8 saved = gCpuLoadDisplayEnabled;
 
-  cpuLoad = saved;
+  Io_Write8(gCpuLoadDisplayEnabled, &cpuLoad);
   DebugText_Clear();
   VramCache_Reset();
   wait(1);

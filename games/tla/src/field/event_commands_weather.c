@@ -179,7 +179,7 @@ void Weather_UpdateLightning(void) {
   case 5:
   case 10:
     PaletteFade_SetTarget(work, 1);
-    Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
+    Dma_Set(work->delta, target->delta, DMA_COPY_WORDS(672), REG_DMA3);
     target->duration = 12;
     target->step = 0;
     break;

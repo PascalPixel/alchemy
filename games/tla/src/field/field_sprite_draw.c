@@ -128,13 +128,13 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   decoderWasLoaded = 1;
   decodePicture = Ram_HeapSlots->frameScratch;
   if (decodePicture == NULL) {
-    Dma_Set(Render_DecodePictureCode,
-            HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
-                           (s32)Render_DecodePictureBlockSize),
-            0x84000000 | ((u32)(Render_DecodePictureCopyEnd -
-                                Render_DecodePictureCode) >>
-                          2),
-            REG_DMA3);
+    Dma_Set(
+        Render_DecodePictureCode,
+        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
+                       (s32)Render_DecodePictureBlockSize),
+        DMA_COPY_WORDS(
+            (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
+        REG_DMA3);
     decodePicture = Ram_HeapSlots->frameScratch;
     decoderWasLoaded = 0;
   }
@@ -303,7 +303,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         OutlineFn outline = Heap_Alloc(codeSize);
         u32 outlineHeight;
 
-        Dma_Set(Grid_DrawOutlineCode, outline, 0x84000000 | (codeSize >> 2),
+        Dma_Set(Grid_DrawOutlineCode, outline, DMA_COPY_WORDS(codeSize >> 2),
                 REG_DMA3);
         {
           /* FAKEMATCH(temporary): the width read into a local before the asm

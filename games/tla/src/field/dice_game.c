@@ -475,37 +475,32 @@ void SuperLuckyDice_Run(void) {
           REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsSmallDoubleUpBanner);
-  Dma_Set(resourceAddress, spritePalette + 112,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette + 112, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsFinalGameBanner);
-  Dma_Set(resourceAddress, spritePalette + 96,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette + 96, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011500,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsOrangeDigits);
-  Dma_Set(resourceAddress, spritePalette + 128,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette + 128, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011900,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsTimesSign);
-  Dma_Set(resourceAddress, spritePalette + 144,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette + 144, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06012300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x60,
           REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
-  Dma_Set(resourceAddress, spritePalette + 160,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette + 160, DMA_COPY_WORDS(8), REG_DMA3);
   {
     u16 *src;
     u16 *dst;
@@ -526,8 +521,8 @@ void SuperLuckyDice_Run(void) {
       dst++;
     }
   }
-  Dma_Set(spritePalette + 176, (void *)(OBJ_PLTT + 11 * 16),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(spritePalette + 176, (void *)(OBJ_PLTT + 11 * 16), DMA_COPY_WORDS(8),
+          REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06016600,
@@ -1065,9 +1060,9 @@ void SuperLuckyDice_Run(void) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsHigherBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 12 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(resourceAddress, spritePalette + 192,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(resourceAddress, spritePalette + 192, DMA_COPY_WORDS(8),
+                REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014000,
@@ -1075,9 +1070,9 @@ void SuperLuckyDice_Run(void) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsLowerBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 13 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(resourceAddress, spritePalette + 208,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(resourceAddress, spritePalette + 208, DMA_COPY_WORDS(8),
+                REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014600,
@@ -1105,11 +1100,11 @@ void SuperLuckyDice_Run(void) {
           }
         }
         Dma_Set(spritePalette + 224, (void *)(OBJ_PLTT + 14 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
         Dma_Set(spritePalette + 224, (void *)(OBJ_PLTT + 15 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(spritePalette + 224, spritePalette + 240,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(spritePalette + 224, spritePalette + 240, DMA_COPY_WORDS(8),
+                REG_DMA3);
       } else if (paletteRequest == 3) {
         switch (resultKind) {
         case 0:
@@ -1138,7 +1133,7 @@ void SuperLuckyDice_Run(void) {
           break;
         }
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 13 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014000,
@@ -1146,7 +1141,7 @@ void SuperLuckyDice_Run(void) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsGreenDigits);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 12 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06015000,
@@ -1155,9 +1150,9 @@ void SuperLuckyDice_Run(void) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsDoubleUpBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 14 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(resourceAddress, spritePalette + 224,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(resourceAddress, spritePalette + 224, DMA_COPY_WORDS(8),
+                REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06012480,
@@ -1165,9 +1160,9 @@ void SuperLuckyDice_Run(void) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsCashOutBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 15 * 16),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(resourceAddress, spritePalette + 240,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(resourceAddress, spritePalette + 240, DMA_COPY_WORDS(8),
+                REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06012e80,

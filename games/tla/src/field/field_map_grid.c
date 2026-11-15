@@ -1104,7 +1104,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   sourceTiles = decodedTile;
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
-    Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);
+    Dma_Set(sourceTiles, quarterCells, DMA_COPY_WORDS(16), REG_DMA3);
     sourceTiles += 32;
     quarterCells += 128;
   }

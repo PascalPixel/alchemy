@@ -490,8 +490,8 @@ void WorldMapPicture_Draw(void) {
     z = 0;
   }
   graphics = Resource_GetTableEntry(resource);
-  Dma_Set((u8 *)graphics + graphics[0], (void *)BG_PLTT, 0x84000078,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((u8 *)graphics + graphics[0], (void *)BG_PLTT, DMA_COPY_WORDS(120),
+          REG_DMA3);
   *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
   right = px(272);
@@ -535,8 +535,8 @@ void WorldMapPicture_Draw(void) {
        * i. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
       for (; i <= 30; i++) {
-        Dma_Set((void *)x, (void *)((tile << 6) + to), 0x84000010,
-                (volatile u32 *)0x040000d4);
+        Dma_Set((void *)x, (void *)((tile << 6) + to), DMA_COPY_WORDS(16),
+                REG_DMA3);
         x += 64;
         tile++;
         if (i + column == 31)

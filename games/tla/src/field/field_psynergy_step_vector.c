@@ -323,7 +323,7 @@ void BattleEffect_StartCanvasSprite(void) {
   work->depth = 250;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
   Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
-          0x84000000 | CANVAS_SIZE / 4, REG_DMA3);
+          DMA_COPY_WORDS(CANVAS_SIZE / 4), REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,

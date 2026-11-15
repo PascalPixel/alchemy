@@ -102,7 +102,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)BG_PLTT, 0x84000070, REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
     {
       u8 *anim = Data_0202d000;
       PaletteFade_LoadPaletteFar(buffer);
@@ -116,25 +116,29 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
     break;
   case 10:
-    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), 0x84000800, REG_DMA3);
+    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 9:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
     break;
   case 8:
-    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 7:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
     break;
   case 6:
-    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 5:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
     break;
   case 4:
-    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 3:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);

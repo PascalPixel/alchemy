@@ -61,9 +61,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   work->particles[FIRE_PUPPET_SAVED_TARGET].z = target->z;
   work->particles[FIRE_PUPPET_SAVED_TARGET].velocityX = target->scaleX;
   work->particles[FIRE_PUPPET_SAVED_TARGET].velocityY = target->scaleY;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F2,
+  Resource_LoadAndDecompress((s32)&ResourceId_GhostSkullTexture,
                              work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
@@ -249,7 +249,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SlashFlameSheet, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
                        SHEET_PALETTE_BYTES);

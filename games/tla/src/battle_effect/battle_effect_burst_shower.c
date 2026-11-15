@@ -345,7 +345,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   } else if (mode == BURST_SHOWER_MODE_FUGUE ||
              mode == BURST_SHOWER_MODE_DJINNFEST) {
     // Remap the levels: 0 stays, 1-16 become 1, the rest drop by 16.
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0, 0);
     for (i = 0; i != 0xc00; i++) {
       u8 *cell = work->sheet + i;
       u32 value = *cell;

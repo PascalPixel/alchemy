@@ -282,7 +282,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_CrestSheet, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + SPARK_OFFSET, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -536,7 +536,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0D8,
+  Resource_LoadAndDecompress((s32)&ResourceId_BurningSkullSheet,
                              work->sheet + WYRD_CURSE_BURNING_SKULLS, 0, 0);
 
   zero = 0;
@@ -739,7 +739,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              work->sheet + RADIANT_FIRE_FIRE_RING, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

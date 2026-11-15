@@ -105,7 +105,7 @@ void Naribwe_PrepareBlaze(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s8 *flag;
 
-  flag = &work->unkd38;
+  flag = &work->blazeLongSpray;
   *flag = 1;
   if (gMainRoutineWork.entrance != 10)
     *flag = 0;

@@ -1518,7 +1518,7 @@ loop:
 void MagmaRockInside_TakeFlame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->unkd38 = 1;
+  work->blazeLongSpray = 1;
   if (!Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_EAST_TORCH_FLAME), 15);
     Actor_SetPosition(ACTOR_EAST_TORCH_FLAME, 632, 312);
@@ -1549,7 +1549,7 @@ void MagmaRockInside_GrowFlame(void) {
   struct Actor *other;
   s32 i;
 
-  object = Actor_GetById(work->unkd30);
+  object = Actor_GetById(work->psynergyHitObject);
   FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
@@ -1558,7 +1558,7 @@ void MagmaRockInside_GrowFlame(void) {
     wait(5);
     i++;
   } while (i != 16);
-  Event_SetFlag(work->unkd30 + 0x2ee);
+  Event_SetFlag(work->psynergyHitObject + 0x2ee);
   if (Event_GetFlag(FLAG_WEST_TORCH_LIT) &&
       Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
     other = Actor_GetById(ACTOR_BLOCKING_PILLAR);
@@ -1570,7 +1570,7 @@ void MagmaRockInside_GrowFlame(void) {
     FieldCamera_MoveTo(616, CAMERA_KEEP, 296, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(30);
-    Event_PlaySound(SE_557);
+    Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
     REG_BLDALPHA = BLEND_ALPHA(0, 16);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     {
@@ -1598,7 +1598,7 @@ void MagmaRockInside_GrowFlame(void) {
 }
 
 void MagmaRockInside_PutOutFlames(void) {
-  if (gFieldWork->unkd30 == -1) {
+  if (gFieldWork->psynergyHitObject == -1) {
     if (!Event_GetFlag(FLAG_EAST_TORCH_LIT))
       Actor_SetPosition(ACTOR_EAST_TORCH_FLAME, 0, 0);
     if (!Event_GetFlag(FLAG_WEST_TORCH_LIT))
@@ -1819,7 +1819,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *other;
   s32 i;
 
-  object = Actor_Get(gFieldWork->unkd30);
+  object = Actor_Get(gFieldWork->psynergyHitObject);
   FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
@@ -1838,7 +1838,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   FieldCamera_MoveTo(120, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
-  Event_PlaySound(SE_557);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
@@ -1865,7 +1865,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
 }
 
 void MagmaRockInside_PutOutTabletFlame(void) {
-  if (gFieldWork->unkd30 == -1) {
+  if (gFieldWork->psynergyHitObject == -1) {
     if (!Event_GetFlag(FLAG_TABLET_TORCH_LIT))
       Actor_SetPosition(ACTOR_TORCH_FLAME, 0, 0);
   }
@@ -2113,7 +2113,7 @@ column:
   MapGrid_SetShake(0, 0, 0);
   Actor_SetSpriteColorById(a, 0);
   Actor_SetSpriteColorById(b, 0);
-  Event_PlaySound(SE_574);
+  Event_PlaySound(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetScript(a, gMagmaRockInside_BlazeCasterReturnScript);

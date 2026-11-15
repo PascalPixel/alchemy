@@ -123,15 +123,15 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
         break;
       case TEXT_STYLE_POP:
         output->motion = WINDOW_SPRITE_MOTION_POP;
-        output->animStep = 8;
+        output->animationStep = 8;
         break;
       case TEXT_STYLE_SPIN:
         output->motion = WINDOW_SPRITE_MOTION_SPIN;
-        output->animStep = 0;
+        output->animationStep = 0;
         break;
       case TEXT_STYLE_WOBBLE:
         output->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-        output->animStep = 0;
+        output->animationStep = 0;
         break;
       }
       {
@@ -168,7 +168,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       attr[1] = work->glyphTiles + index;
       sprite = &output->sprite;
     }
-    output->sentinel = 253;
+    output->depth = 253;
     output->x = sprite->oam.x;
     output->y = sprite->oam.y;
     output->index = index;
@@ -231,7 +231,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   sprite = (struct GlyphSprite *)&output->sprite;
-  output->sentinel = 253;
+  output->depth = 253;
   output->x = sprite->x;
   output->y = sprite->y;
   output->index = index;
@@ -289,7 +289,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   /* FAKEMATCH(temporary): the cell read back through a pointer to output's
    * sprite. */
   sprite = &output->sprite;
-  output->sentinel = 253;
+  output->depth = 253;
   output->x = sprite->oam.x;
   output->y = sprite->oam.y;
   output->index = index;
@@ -478,19 +478,19 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 
   switch ((u8)windowSprite->motion) {
   case WINDOW_SPRITE_MOTION_SWELL:
-    scale = gWindowSprite_BounceScales[windowSprite->animStep++ & 31];
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31];
     break;
   case WINDOW_SPRITE_MOTION_SWELL_HALF:
-    scale = gWindowSprite_BounceScales[windowSprite->animStep++ & 31] >> 1;
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31] >> 1;
     break;
   case WINDOW_SPRITE_MOTION_SHRINK:
-    if (windowSprite->animStep <= 7)
-      scale = gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16];
+    if (windowSprite->animationStep <= 7)
+      scale = gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16];
     break;
   case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-    if (windowSprite->animStep <= 7)
+    if (windowSprite->animationStep <= 7)
       scale =
-          gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16] >> 1;
+          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16] >> 1;
     break;
   }
   if (scale == 256) {

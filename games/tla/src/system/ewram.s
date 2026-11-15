@@ -89,10 +89,7 @@ gIoWriteQueue:
 	.space 0x00000190
 	.global gSerialTransfer
 gSerialTransfer:
-	.space 0x00000004
-	.global gData_02003a74
-gData_02003a74:
-	.space 0x0000001c
+	.space 0x00000020
 	.global gData_02003a90
 gData_02003a90:
 	.space 0x00000ce8
@@ -316,14 +313,14 @@ gEndingPicture_Strips:
 	.global gOverlayArea
 gOverlayArea:
 	.space 0x00007f58
-	.global Data_0200ff58
-Data_0200ff58:
+	.global gScriptedBattle_Snapshot
+gScriptedBattle_Snapshot:
 	.space 0x00000014
-	.global Data_0200ff6c
-Data_0200ff6c:
+	.global gScriptedBattle_SnapshotBytes
+gScriptedBattle_SnapshotBytes:
 	.space 0x00000080
-	.global Data_0200ffec
-Data_0200ffec:
+	.global gScriptedBattle_SnapshotVitals
+gScriptedBattle_SnapshotVitals:
 	.space 0x0000000c
 	.global Data_0200fff8
 Data_0200fff8:
@@ -409,8 +406,8 @@ gHaures_WingStrip:
 	.global Data_02010af0
 Data_02010af0:
 	.space 0x000000f0
-	.global Data_02010be0
-Data_02010be0:
+	.global gHaures_WingStripEnd
+gHaures_WingStripEnd:
 	.space 0x00000076
 	.global Data_02010c56
 Data_02010c56:
@@ -697,8 +694,8 @@ Data_020176e8:
 	.global gActorSpriteSlots
 gActorSpriteSlots:
 	.space 0x00001600
-	.global Data_02019600
-Data_02019600:
+	.global gTitleIntro_LighthouseTilesTail
+gTitleIntro_LighthouseTilesTail:
 	.space 0x00002a00
 	.global gDecodeBuffer
 gDecodeBuffer:
@@ -715,11 +712,11 @@ Data_02020202:
 	.global gMapShapeGrid
 gMapShapeGrid:
 	.space 0x00002800
-	.global Data_02026800
-Data_02026800:
+	.global gTitleIntro_LogoTileBuffer
+gTitleIntro_LogoTileBuffer:
 	.space 0x00001800
-	.global gData_02028000
-gData_02028000:
+	.global gMapGridAnimTiles
+gMapGridAnimTiles:
 	.space 0x00002000
 	.global gWorldMapWork
 gWorldMapWork:

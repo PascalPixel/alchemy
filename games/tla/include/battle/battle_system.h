@@ -5,12 +5,12 @@
 #include "battle/battle_type.h"
 #include "edition.h"
 
-struct BattleAct *Ability_GetDirect(s32 abilityId);
+struct AbilityDefinition *Ability_GetDirect(s32 abilityId);
 /// Returns a unit's record, a party member's or an enemy's.
 struct Unit *Unit_GetFar(s32 unitId);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (Ability_GetDirect); every bank reads abilities so.
-struct BattleAct *Ability_Get(s32 abilityId);
+struct AbilityDefinition *Ability_Get(s32 abilityId);
 /// Returns whether a game flag is set.
 s32 GameFlag_GetFar(s32 flag_id);
 /// Recomputes the unit's HP and PP gauges from its current HP and PP.
@@ -20,6 +20,6 @@ s32 Battle_RandomFar(void);
 /// Returns 1 for the revive effects, which only work on a downed unit.
 s32 Battle_IsReviveEffectFar(s32 effect_id);
 u32 Ability_IsPsynergy(s32 actionId);
-s32 Battle_ClassifyEntryKind(const struct BattleAct *entry);
+s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *entry);
 
 #endif

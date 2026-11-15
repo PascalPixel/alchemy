@@ -308,7 +308,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   Event_PlaySound(SE_SHIMMER);
   Actor_SetAnimationSpeed(leader, 64);
   FieldEvent_Wait(50);
-  Event_PlaySound(SE_178);
+  Event_PlaySound(SE_GATHERING_POWER);
   leader->timer = 0;
   leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);

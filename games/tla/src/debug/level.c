@@ -111,11 +111,11 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
   if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
     Event_SetMessageId(actorId + (s32)MsgFixingThisWill);
   else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
-    Event_SetMessageId(actorId + (s32)MsgFortuneTeller2);
+    Event_SetMessageId(actorId + (s32)MsgNamesFortuneTeller);
   else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_THIRD)
-    Event_SetMessageId(actorId + (s32)MsgConfirmGraphic2);
+    Event_SetMessageId(actorId + (s32)MsgNamesConfirmGraphic);
   else
-    Event_SetMessageId(actorId + (s32)MsgPiers2);
+    Event_SetMessageId(actorId + (s32)MsgNamesPiers);
   Event_ShowMessageAndWait(actorId, 0);
   Event_End();
 }
@@ -126,7 +126,7 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
 void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(character + (s32)MsgIsaac2);
+  Event_SetMessageId(character + (s32)MsgNamesIsaac);
   MessageArgument_Push(character, MESSAGE_ARGUMENT_ACTOR);
   Event_ShowMessageAndWait(character, 0);
   // XXX: why Garet's name is followed by a message from Isaac; the room's

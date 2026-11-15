@@ -550,10 +550,10 @@ struct RenderInput *MenuCursor_Create(void *source) {
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
   sentinel = OAM_DEPTH_FRONT - 1;
-  icon->sentinel = sentinel;
+  icon->depth = sentinel;
   sentinel -= 255;
   work->tabIndex[1] = zero;
-  work->sideIcon[1]->sentinel = sentinel;
+  work->sideIcon[1]->depth = sentinel;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);

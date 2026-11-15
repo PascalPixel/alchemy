@@ -63,7 +63,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
                              work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, TEXTURE_PIXELS, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, TEXTURE_PIXELS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
@@ -307,7 +307,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != RING_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
     if (frame == 0)
       lift = 0;
 

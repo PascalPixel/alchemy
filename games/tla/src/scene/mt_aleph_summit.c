@@ -589,7 +589,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_ALEX, 13);
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), 2);
-    Event_PlaySound(SE_178);
+    Event_PlaySound(SE_GATHERING_POWER);
     Event_StartColorTransition(8, RGB(4, 4, 16));
     FieldEvent_Wait(20);
     Actor_SetAnimation(ACTOR_WISE_ONE, 3);
@@ -651,7 +651,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(2);
     MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(56);
-    Event_PlaySound(SE_178);
+    Event_PlaySound(SE_GATHERING_POWER);
     i = 0;
     Actor_Get(ACTOR_ALEX)->motionFlags = i;
     do {

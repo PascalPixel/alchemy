@@ -319,7 +319,7 @@ void GondowanCliffs_TalkToDog(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceEachOther(ACTOR_DOG, gMainRoutineWork.leaderActorId, 0);
-    FieldEvent_SetMessageId((s32)MsgRrruffRrruff2);
+    FieldEvent_SetMessageId((s32)MsgRrruffRrruff);
     // "Rrruff! Rrruff!"
     Event_ShowMessage(ACTOR_DOG, 0);
     Actor_FaceDirection(ACTOR_DOG, FACING_WEST, 0);
@@ -540,7 +540,7 @@ void Geysers_Update(void) {
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Sound_Play(SOUND_FADE_OUT_SE5);
+      Sound_Play(SOUND_FADE_OUT_EXIT_SE);
       entry->step = -8;
     }
     if (entry->step != 0) {
@@ -680,7 +680,7 @@ void Geysers_Start(s32 unused, s32 value) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->entry = VramCache_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

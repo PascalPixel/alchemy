@@ -1,5 +1,5 @@
 /// Whirlwind_Update as the lower floors' copies compile it.
-void Whirlwind_UpdateLower(struct Actor *self) {
+void Whirlwind_Update(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];

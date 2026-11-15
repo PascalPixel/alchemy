@@ -379,9 +379,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   } else if (kind == CASTING_IMPACT_IMPACT_BROIL) {
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, buffer, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_JIP) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, buffer + 0x4000, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, buffer + 0x4000, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_BOLT) {
     s32 j;
     s32 k;
@@ -409,7 +409,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_SARGASSO ||
              kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, buffer, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
              kind == CASTING_IMPACT_IMPACT_DINOX ||
              kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
@@ -593,7 +593,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       kind == CASTING_IMPACT_IMPACT_STUN_JIP ||
       kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
       kind == CASTING_IMPACT_IMPACT_BOSCA_HIT)
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, buffer, 0, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
@@ -850,11 +850,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_RaidensWrathSheet, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_ApocalypseSheet, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_ASURA) {
@@ -865,7 +865,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0F0, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_SarcophagusSheet, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
 
@@ -2265,7 +2265,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                    0);
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
-          Sound_PlayFar(SE_104);
+          Sound_PlayFar(SE_LAUNCH);
         if (fade >= -63) {
           fade = frame << 12;
           if (kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
@@ -2515,7 +2515,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
           model->scrollV = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
-            Sound_PlayFar(SE_104);
+            Sound_PlayFar(SE_LAUNCH);
           if (frame > start) {
             fade = (start - frame) * 8 + 56;
             if (fade > -16)

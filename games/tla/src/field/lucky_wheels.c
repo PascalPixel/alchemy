@@ -135,7 +135,7 @@ const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
 const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
 /// The tile of each title letter.
-const u8 gLuckyWheels_TitleLetterTiles[REEL_TITLE_LETTERS] = {
+const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0, 1, 2, 3, 4,
     2, 5, 6
@@ -156,7 +156,7 @@ const u8 gLuckyWheels_MachineSpriteY[LUCKY_WHEELS_MACHINE_LIGHTS] = {
     2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108};
 
 /// The advance of each title letter.
-const u8 gLuckyWheels_TitleLetterWidths[REEL_TITLE_LETTERS] = {
+const u8 gLuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     32, 24, 22, 28,
     28, 22, 18
@@ -944,7 +944,7 @@ void LuckyWheels_Update(void) {
   }
 
   if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
-    for (i = 0; i != REEL_TITLE_LETTERS; i++) {
+    for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
       struct Particle *p = &fx->particles[i];
 
       if (LUCKY_WHEELS_TITLE_FIRST_TURNED && i == 0)
@@ -1174,7 +1174,7 @@ void LuckyWheels_InitializeTitle(void) {
     SPARKS[i].variant = 0;
 
   letter = work->particles;
-  for (i = 0; i != REEL_TITLE_LETTERS; i++) {
+  for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
     letter[i].x = px(left + LUCKY_WHEELS_TITLE_X);
     left += gLuckyWheels_TitleLetterWidths[i];
     letter[i].y = px(-32 - i * 8);

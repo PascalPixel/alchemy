@@ -93,7 +93,7 @@ s32 LinkBattle_SendParty(void) {
   count = BattleParty_PrepareMembers(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
-    ((struct Unit *)buffer)->side = BATTLE_UNIT_PARTY;
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
     work->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
@@ -101,7 +101,7 @@ s32 LinkBattle_SendParty(void) {
     wait(2);
   }
   for (; i <= 2; i++) {
-    ((struct Unit *)buffer)->side = BATTLE_UNIT_ABSENT;
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();

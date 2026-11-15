@@ -2531,7 +2531,7 @@ void YampiDesert_UpdateRisingSand(void) {
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Sound_Play(SOUND_FADE_OUT_SE5);
+      Sound_Play(SOUND_FADE_OUT_EXIT_SE);
       entry->step = -8;
     }
     if (entry->step != 0) {
@@ -2668,7 +2668,7 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->entry = VramCache_FindFreeEntry();
   VramCache_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

@@ -837,17 +837,17 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer, 0,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gMapGridCellBuffer, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
   Picture_MirrorIntoQuadrants(
       work->sheet, Ram_MapCellBuffer + CRUEL_RUIN_RUNE_CIRCLE, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                              work->sheet + CRUEL_RUIN_SWIRL, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + CRUEL_RUIN_BAND_A, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
                              work->sheet + CRUEL_RUIN_BAND_B, 0, 0);
   for (i = 0; i != 10; i++) {
     s32 size = i * 2 + 2;
@@ -911,7 +911,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         for (i = 0; i != 6; i++) {
           if (frame == 140 + i * 4) {
-            Sound_PlayFar(SE_104);
+            Sound_PlayFar(SE_LAUNCH);
           }
         }
         if (frame == 169) {
@@ -1233,7 +1233,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                              (s32)&ResourceId_VioletSkyBackdrop, 0);
     Palette_BrightenBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
                                work->sheet + CRUEL_RUIN_BAND_A, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_PinkBarSheet,
                                work->sheet + CRUEL_RUIN_PINK_BAR, 0, 0);
@@ -1612,7 +1612,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
                              work->sheet + CRUEL_RUIN_BURST_BAND, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {

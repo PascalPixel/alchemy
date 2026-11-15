@@ -336,7 +336,7 @@ s32 Scene_TalkToActor(s32 id) {
         Sound_PlayFar(MUS_TREASURE_FOUND);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
-        FieldMessage_ShowFar((s32)&MsgKey0e10,
+        FieldMessage_ShowFar((s32)&MsgCoinsReceived,
                              FIELD_MESSAGE_ZOOM |
                                  FIELD_MESSAGE_WAITING_FOR_SOUND);
         Party_AdjustCoinsFar(contents);

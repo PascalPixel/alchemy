@@ -522,7 +522,7 @@ s32 Enemy_GetFreeUnitId(void) {
 
   for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
     unitId = enemySlot + FIRST_ENEMY_UNIT;
-    if (Unit_Get(unitId)->side == BATTLE_UNIT_ABSENT)
+    if (Unit_Get(unitId)->side == BATTLE_SIDE_NONE)
       break;
   }
   if (enemySlot == ENEMY_BATTLE_SIZE)

@@ -435,7 +435,7 @@ void FieldPsynergy_Halt(void) {
     Vector_AddPolarOffset(px(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
-    Animation_ApplyChildValuesToRecordFar(effect->object, SPRITE_COLOR_WHITE);
+    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -807,7 +807,7 @@ void FieldPsynergy_Lash(void) {
           Sound_PlayFar(SE_LASH);
           Rope_Lash(event->targetX, event->targetY, event->targetZ);
           work->hit = 1;
-          Sound_PlayFar(SOUND_FADE_OUT_SE5);
+          Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
         }
         wait(1);
       }
@@ -908,7 +908,7 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
   Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);
   wait(30);
-  actor->update = (void (*)(void))Actor_ApplyRandomChildValues;
+  actor->update = (void (*)(void))Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
   wait(40);
@@ -937,7 +937,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
-    Animation_ApplyChildValuesToRecordFar(effect->object, Random_Below(7));
+    Sprite_SetAnimationColorModesFar(effect->object, Random_Below(7));
     scale = (Random16() >> 1) + Q16_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -1722,7 +1722,7 @@ void FieldPsynergy_Arrow(void) {
     wait(1);
   Task_Remove(FieldPsynergy_UpdateArrow);
   if (work->done != 0 && work->result != -1)
-    event->unkd30 = work->result;
+    event->psynergyHitObject = work->result;
   VramCache_FreeEntry(arrowSlot);
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();

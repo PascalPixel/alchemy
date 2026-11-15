@@ -45,7 +45,7 @@ s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 /// member when the action's range is ABILITY_RANGE_ALL.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
-  struct BattleAct *effect;
+  struct AbilityDefinition *effect;
   struct ItemMenuWork *menu;
   struct Unit *target;
   struct Unit *caster;

@@ -2655,7 +2655,7 @@ L_0200c66c:
   FieldActor_Jump(ACTOR_KRADEN, 2, 10);
   FieldActor_Jump(ACTOR_KRADEN, 4, 10);
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_SPIN);

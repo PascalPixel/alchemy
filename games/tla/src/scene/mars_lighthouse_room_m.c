@@ -371,14 +371,14 @@ void MarsLighthouseRoomM_LeaveLedge(void) {
   FieldEvent_SetExitRequest(gMainRoutineWork.entrance);
 }
 
-// XXX: what Blaze does otherwise once the field work's unkd38 is set (its
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
 // mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
 // mode would settle it.
 /// Blaze is cast at the ledge's torch.
 void MarsLighthouseRoomM_BeginBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->unkd38 = 1;
+  event->blazeLongSpray = 1;
 }
 
 /// The camera follows Blaze up to the flame.

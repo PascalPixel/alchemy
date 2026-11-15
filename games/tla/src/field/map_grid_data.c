@@ -369,7 +369,7 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_RISE_ENABLED
 };
 
-// Each layout's resources, as offsets from ResourceId_Map000, by map number;
+// Each layout's resources, as offsets from ResourceId_EmptyMap, by map number;
 // the comment names its folder in src/map.
 
 // clang-format off

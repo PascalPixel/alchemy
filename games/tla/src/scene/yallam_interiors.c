@@ -322,7 +322,7 @@ void YallamInteriors_TalkToHealer(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Event_SetMessageId((s32)MsgMikasallaInteriors27);
+    Event_SetMessageId((s32)MsgEvenOutInFarOffShores);
     // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(actor, 0);
     Event_End();

@@ -383,7 +383,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Event_Wait(60);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;

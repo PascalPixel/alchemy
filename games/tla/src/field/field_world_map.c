@@ -276,7 +276,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
                       WORLD_MAP_TILE_SET(3));
   Dma_Set(WORLD_MAP_TILE_SET(3), BG_CHAR_BLOCK(3) + WORLD_MAP_TILE_SET_BYTES,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);

@@ -323,7 +323,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
-  struct BattlePresentationTransition *view;
+  struct BattleBackgroundWork *view;
   void *saved;
   s32 angle;
   s32 adjusted;
@@ -498,8 +498,8 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *itemDefinition;
-  struct BattlePresentationTransition *transition =
-      (struct BattlePresentationTransition *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition =
+      (struct BattleBackgroundWork *)Ram_HeapSlots->battleBackground;
   s32 targetYaw;
 
   if (plan->unitId > 4)
@@ -649,7 +649,7 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
 /// BattlePlayback_Run around the battle effect.
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
-  struct BattlePresentationTransition *transition =
+  struct BattleBackgroundWork *transition =
       Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   struct HeapSlots *heap;
@@ -802,7 +802,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
   // Ally formation.
   work = Ram_HeapSlots->battleWork;
-  Unit_Get(id)->side = BATTLE_UNIT_ABSENT;
+  Unit_Get(id)->side = BATTLE_SIDE_NONE;
   for (i = 0;; i++) {
     unit = work->partyUnits[i];
     if (unit == id) {
@@ -847,14 +847,14 @@ void BattleMotion_ShowDowned(s32 id) {
   unit = Unit_Get(id);
   n = 0;
   while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
-    if (unit->side != BATTLE_UNIT_ENEMY)
+    if (unit->side != BATTLE_SIDE_ENEMY)
       Sprite_StartAnimationFar(rec, POSE_PARTY_HELD);
     else
       Sprite_StartAnimationFar(rec, POSE_ENEMY_DOWN);
     n++;
   }
 
-  if (unit->side == BATTLE_UNIT_ENEMY) {
+  if (unit->side == BATTLE_SIDE_ENEMY) {
     n = 0;
     while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
       ent = rec->entries[0];

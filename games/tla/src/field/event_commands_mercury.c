@@ -127,7 +127,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(slot,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(*(struct Sprite **)slot,
+    Sprite_SetAnimationColorModesFar(*(struct Sprite **)slot,
                                           SPRITE_COLOR_BLUE_TINT);
     remaining--;
     wait(1);

@@ -287,9 +287,9 @@ struct Reel {
 /// Lucky Wheels' effect work: the title letters' particles, the BG and OBJ
 /// shades, and its transfer to the screen.
 struct ReelEffectWork {
-  struct Particle particles[REEL_TITLE_LETTERS];
+  struct Particle particles[LUCKY_WHEELS_TITLE_LETTERS];
   /// No code names it.
-  u8 unusedAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
+  u8 unusedAfterParticles[0x700 - LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
   u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
@@ -652,7 +652,7 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
-extern u8 gData_02028000[];
+extern u8 gMapGridAnimTiles[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
@@ -853,11 +853,5 @@ void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 void Scene_ChooseMusic(void);
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant);
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
-
-struct WorldCamera {
-  u8 unk000[0x11c];
-  u16 unk11c;
-  u16 yaw;
-};
 
 #endif

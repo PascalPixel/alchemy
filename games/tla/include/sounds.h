@@ -225,7 +225,7 @@ enum SoundId {
   /// Something launched: the Stone Justice boulders thrown up, a rolling block
   /// launched ahead (Actor_LaunchAhead), and the Azul, Charon, Megiddo, Flora,
   /// Moloch and other battle effects; The Broken Seal's row 104 note for note.
-  SE_104,
+  SE_LAUNCH,
   /// Super Lucky Dice's winnings counted into the party's coins.
   SE_COIN_PAYOUT,
   SE_DRIP,
@@ -300,7 +300,7 @@ enum SoundId {
   /// Idejima off on the World Map, the whirlwinds clearing Air's Rock's sand
   /// wall and fog, and the Meteor Blow, Megaera and Daedalus battle effects;
   /// The Broken Seal's row 163 note for note.
-  SE_163,
+  SE_WAVE_HIGH,
   SE_SCATTER,
   /// Played as the birds land on Venus Lighthouse's entrance and fly off.
   SE_BIRD_WINGS,
@@ -323,14 +323,14 @@ enum SoundId {
   SE_KOLIMA_BRIDGE_HOP,
   /// The Thunder card striking in Legend's element cards
   /// (BattleEffect_RunElementCards); The Broken Seal's row 177 note for note.
-  SE_177,
+  SE_THUNDER_CARD,
   /// Power gathering round someone: the leader lighting Jupiter Lighthouse, and
   /// Alex's arc of energy at Mt. Aleph and Venus Lighthouse; The Broken Seal's
   /// row 178 note for note.
-  SE_178,
+  SE_GATHERING_POWER,
   /// The wind funnel battle effect forming (BattleEffect_RunWindFunnel); The
   /// Broken Seal's row 179 note for note.
-  SE_179,
+  SE_WIND_FUNNEL,
   SE_SETTLE,
   SE_BOOM,
   SE_GEM_SET,
@@ -347,7 +347,7 @@ enum SoundId {
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
   /// Broken Seal's row 192 note for note.
-  SE_192,
+  SE_SHRIEK,
   /// A doll placed on one of Gaia Rock's altars ("Felix placed a doll on the
   /// altar.").
   SE_DOLL_PLACED,
@@ -362,11 +362,11 @@ enum SoundId {
   /// The Great Gabomba speaking to Kibombo's witch doctor
   /// (GabombaStatueChamber_GabombaNamesWitchDoctor): one note bent down and
   /// down; The Broken Seal's row 197 note for note.
-  SE_197,
+  SE_GABOMBA_VOICE,
   SE_KOLIMA_BRIDGE_POST,
   /// A water column rising (BattleEffect_RunWaterColumn); The Broken Seal's row
   /// 199 note for note.
-  SE_199,
+  SE_WATER_COLUMN,
   SE_SPARKLE_FALL,
   SE_ASCEND,
   SE_FLAME_FLARE,
@@ -421,7 +421,7 @@ enum SoundId {
   /// Held while a room's air or water streams: queued with Air's Rock's inner
   /// rooms and the Kandorean Temple's lift room, and played as the Shrine of
   /// the Sea God's water falls; The Broken Seal's row 245 note for note.
-  SE_245,
+  SE_AMBIENT_STREAM,
   SE_GLITTER,
   SE_COLOSSO_LETTERING,
   /// An arrow of the Gabomba Statue raised or lowered once its statues are
@@ -474,7 +474,7 @@ enum SoundId {
   SE_TAKE_FLIGHT,
   SE_ERUPTION_COLUMNS,
   SE_293,
-  SE_STOP_MUSIC_PLAYER_5 = 298,
+  SE_STOP_EXIT_SE = 298,
   SE_TOLBI_SPRING_TOSS = 300,
   SE_TOLBI_SPRING_OBSTACLE_HIT,
   SE_LUCKY_DICE_THROW,
@@ -493,7 +493,7 @@ enum SoundId {
   /// play.
   SOUND_FADE_OUT_ACTION_SE = 390,
   /// Not a sound: fades out what MUSIC_PLAYER_SE5 plays.
-  SOUND_FADE_OUT_SE5 = 395,
+  SOUND_FADE_OUT_EXIT_SE = 395,
   /// The field Psynergy Lash.
   SE_LASH = 512,
   SE_520 = 520,
@@ -543,11 +543,11 @@ enum SoundId {
   /// SE_RISE_WITH_SPARKS two semitones higher, held until stopped: the Ankohl
   /// Ruins' sand rising, Aqua Rock's pillars rising as its stones are Doused,
   /// Jupiter Lighthouse's angels lifted, and the Sea of Time's waves stilled.
-  SE_556,
+  SE_RISE_WITH_SPARKS_HIGH,
   /// SE_RISE_WITH_SPARKS three semitones lower, held until stopped: Aqua Rock's
   /// spring and pillars sinking, Magma Rock's flames growing, and the Sea of
   /// Time's waves starting and the sea opening.
-  SE_557,
+  SE_RISE_WITH_SPARKS_LOW,
   SE_558,
   SE_559,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
@@ -561,12 +561,12 @@ enum SoundId {
   SE_UNUSED_COIN_PAYOUT_A,
   /// SE_COIN_PAYOUT's notes on voices 92 and 90: a stone face's eyes glowing as
   /// its piece is set, in the Ankohl Ruins and at Gaia Rock's altars.
-  SE_564,
+  SE_EYES_GLOW,
   /// SE_LUCKY_WHEELS_HOLD five semitones lower, on voice 92; nothing plays it.
   SE_UNUSED_LUCKY_WHEELS_HOLD_LOW,
   /// The leader spinning as Sand begins (FieldPsynergy_Sand), and as the party
   /// rides Aqua Rock's falls.
-  SE_566,
+  SE_SPIRAL,
   /// The field Psynergy Pound strikes, and the like blows of Magma Rock's rocks
   /// and Treasure Isle's spiky rock.
   SE_POUND,
@@ -586,13 +586,13 @@ enum SoundId {
   /// The white flash: as Psynergy is learned in the four rocks, as a pillar of
   /// the Anemos Inner Sanctum lights, and as Burst breaks Mars Lighthouse's
   /// ice.
-  SE_574,
+  SE_FLASH,
   /// A face piece or pillar set in place in the Ankohl Ruins.
   SE_ANKOHL_RUINS_PIECE,
   /// A statue stirring: Gaia Rock's faces turning to the doll set before them,
   /// the Great Gabomba answering Kibombo's offerings, and Gabomba bestowing its
   /// power in the catacombs.
-  SE_576,
+  SE_STATUE_STIRS,
   /// The Great Gabomba's jaws opening as it sees Kibombo's jewel.
   SE_GABOMBA_JAWS_OPEN,
   /// SE_UNUSED_LOUD_CURRENT_A's notes again; nothing plays it.

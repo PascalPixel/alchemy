@@ -26,7 +26,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   y &= 0xff;
   *(u32 *)&output->sprite.oam = (x << 16) | y | flags;
   ((u32 *)&output->sprite.oam)[1] = gVramCacheEntries[slot].offset >> 5;
-  output->sentinel = 254;
+  output->depth = 254;
   output->x = x;
   output->y = (s16)y;
   output->next = NULL;
@@ -83,7 +83,7 @@ WindowSprite_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
   }
   Icon_BuildCommandIconTiles(icon, 1, &count, &unused, 1);
   result = WindowSprite_Create(count, OUTPUT_SIZE_16X16, window, x, y);
-  result->sentinel = 251;
+  result->depth = 251;
   return result;
 }
 
@@ -159,12 +159,12 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   Icon_LoadWithPalette(id, unused, &entry, &tile, palette + 14, 1);
 }
 
-/// Sets active to mode and resets the animation step (animStep) to zero.
+/// Sets active to mode and resets the animation step (animationStep) to zero.
 /// out: sprite output; nothing happens if NULL.
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
     out->motion = mode;
-    out->animStep = 0;
+    out->animationStep = 0;
   }
 }
 

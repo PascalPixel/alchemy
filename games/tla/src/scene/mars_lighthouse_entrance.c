@@ -235,14 +235,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMarsLighthouseEntrance_Placements;
 }
 
-// XXX: what Blaze does otherwise once the field work's unkd38 is set (its
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
 // mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
 // mode would settle it.
 /// Unused: as the dragon hall's, readies Blaze for a dragon statue.
 UNUSED void MarsLighthouseEntrance_BeginBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->unkd38 = 1;
+  event->blazeLongSpray = 1;
 }
 
 extern struct MapCell gMapGridCellBuffer[];
@@ -497,7 +497,7 @@ void MarsLighthouseEntrance_TeleportFromLapis(void) {
 /// flying (FLAG_LAPIS_SHEET_BURST).
 void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
-    Event_PlaySound(SE_574);
+    Event_PlaySound(SE_FLASH);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
     MapGrid_CopyCellPictureCellsRect_(47, 94, 10, 6, 47, 100);
@@ -514,8 +514,8 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
 }
 
 /// Blaze on the dragon statue: it shoots a fireball at the ice sheet.
-void MarsLighthouseEntrance_BlazeRoom3Statue(void) {
-  MarsLighthouseEntrance_ShootFireballAtRoom3IceSheet();
+void MarsLighthouseEntrance_BlazeLapisStatue(void) {
+  MarsLighthouseEntrance_ShootFireballAtLapisIceSheet();
 }
 
 /// The camera follows the fireball to the ice sheet it cracks.
@@ -536,7 +536,7 @@ void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   Event_End();
 }
 
-void MarsLighthouseEntrance_DrawRoom3CrackedSheet(void) {
+void MarsLighthouseEntrance_DrawLapisCrackedSheet(void) {
   MapGrid_CopyCellAttributes(14, 55, 14, 3, 14, 41);
   MapGrid_CopyCellsLayered(64, 64, 14, 3, 78, 41);
   MapGrid_CopyCellsLayered(64, 64, 14, 3, 14, 104);
@@ -545,7 +545,7 @@ void MarsLighthouseEntrance_DrawRoom3CrackedSheet(void) {
 }
 
 /// The fireball reaches the ice sheet and cracks it.
-void MarsLighthouseEntrance_CrackRoom3IceSheet(void) {
+void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
   struct Actor *object = Actor_Get(ACTOR_SECOND_ICE_SHEET);
 
   if (!Flag_IsSet(FLAG_LAPIS_SECOND_SHEET_BURST)) {
@@ -554,14 +554,14 @@ void MarsLighthouseEntrance_CrackRoom3IceSheet(void) {
     object->x.fixed = object->homeX << 16;
     object->z.fixed = object->homeZ << 16;
     Flag_Set(FLAG_LAPIS_SECOND_SHEET_CRACKED);
-    MarsLighthouseEntrance_DrawRoom3CrackedSheet();
+    MarsLighthouseEntrance_DrawLapisCrackedSheet();
   }
 }
 
 #define DEFINE_BURST_ICE_SHEET(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
-      Event_PlaySound(SE_574);                                                 \
+      Event_PlaySound(SE_FLASH);                                                 \
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);                \
       PaletteFade_Interpolate(60);                                             \
       MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
@@ -600,7 +600,7 @@ void MarsLighthouseEntrance_BlockRetreatAtChest(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
 }
 
-void MarsLighthouseEntrance_TeleportFromRoom4(void) {
+void MarsLighthouseEntrance_TeleportFromBalm(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -626,13 +626,13 @@ void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
   }
 }
 
-void MarsLighthouseEntrance_BlazeRoom5WestStatue(void) {
+void MarsLighthouseEntrance_BlazeHiddenCircleWestStatue(void) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(88, CAMERA_KEEP, 696, 1);
-  MarsLighthouseEntrance_ShootFireballAtRoom5IceSheet();
+  MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet();
 }
 
-void MarsLighthouseEntrance_WatchFireballCrackRoom5Ice(void) {
+void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
@@ -643,7 +643,7 @@ void MarsLighthouseEntrance_WatchFireballCrackRoom5Ice(void) {
   Event_End();
 }
 
-void MarsLighthouseEntrance_CrackRoom5IceSheet(void) {
+void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
   struct Actor *object = Actor_Get(ACTOR_HIDDEN_CIRCLE_ICE_SHEET);
 
   if (!Flag_IsSet(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
@@ -655,7 +655,7 @@ void MarsLighthouseEntrance_CrackRoom5IceSheet(void) {
   }
 }
 
-void MarsLighthouseEntrance_BlazeRoom5EastStatue(void) {
+void MarsLighthouseEntrance_BlazeHiddenCircleEastStatue(void) {
   MarsLighthouseEntrance_ShootFireballThroughIce();
 }
 
@@ -675,7 +675,7 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   Event_End();
 }
 
-void MarsLighthouseEntrance_TeleportFromRoom5(void) {
+void MarsLighthouseEntrance_TeleportFromHiddenCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -711,7 +711,7 @@ void MarsLighthouseEntrance_ClearFireballRow(void) {
   MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9);
 }
 
-void MarsLighthouseEntrance_TeleportFromRoom6West(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieWest(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -720,7 +720,7 @@ void MarsLighthouseEntrance_TeleportFromRoom6West(void) {
   Teleport_StopShimmer();
 }
 
-void MarsLighthouseEntrance_TeleportFromRoom6East(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieEast(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -1127,10 +1127,10 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_LAPIS_SECOND_SHEET_BURST)) {
       MapGrid_CopyCellsLayered(28, 92, 8, 8, 28, 100);
       MapGrid_CopyCellAttributes(92, 38, 8, 8, 28, 38);
-      MarsLighthouseEntrance_DrawRoom3CrackedSheet();
+      MarsLighthouseEntrance_DrawLapisCrackedSheet();
       Actor_SetPosition(ACTOR_SECOND_ICE_SHEET, 0, 0);
     } else if (Event_GetFlag(FLAG_LAPIS_SECOND_SHEET_CRACKED)) {
-      MarsLighthouseEntrance_DrawRoom3CrackedSheet();
+      MarsLighthouseEntrance_DrawLapisCrackedSheet();
       Event_SetFlag(FLAG_LAPIS_SECOND_SHEET_SHOWN);
     } else {
       Actor_SetPosition(ACTOR_SECOND_ICE_SHEET, 0, 0);
@@ -1173,7 +1173,7 @@ s32 Scene_Initialize(void) {
     if (entrance == 10 || entrance == 1) {
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_BalmBeamTargets,
                           (s32)gMarsLighthouseEntrance_BalmBeamStops,
-                          (s32)MarsLighthouseEntrance_ShootRoom4Fireball, 88);
+                          (s32)MarsLighthouseEntrance_ShootBalmFireball, 88);
       Ride_SetEntryCount(0, 1);
     }
     MarsLighthouseEntrance_PlaceIceCones(
@@ -1208,7 +1208,7 @@ s32 Scene_Initialize(void) {
 
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_ValkyrieLowerBeamTargets,
                           (s32)gMarsLighthouseEntrance_ValkyrieLowerBeamStops,
-                          (s32)MarsLighthouseEntrance_ShootRoom6LowerFireball,
+                          (s32)MarsLighthouseEntrance_ShootValkyrieLowerFireball,
                           88);
       Ride_SetEntryCount(0, 1);
       if (entrance == 11) {
@@ -1282,8 +1282,8 @@ extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
  * a2, s32 a3, const void *script); tried as the definition's void
  * Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script),
  * MarsLighthouseEntrance_ShootValkyrieUpperFireball moves: 1 of 11
- * instructions, MarsLighthouseEntrance_ShootRoom6LowerFireball moves: 1 of 11
- * instructions, MarsLighthouseEntrance_ShootRoom4Fireball moves: 1 of 12
+ * instructions, MarsLighthouseEntrance_ShootValkyrieLowerFireball moves: 1 of 11
+ * instructions, MarsLighthouseEntrance_ShootBalmFireball moves: 1 of 12
  * instructions, 3 more in tla-ja. */
 extern s32 Actor_Attach__s1930(s32 id, s32 a1, s32 a2, s32 a3,
                                const void *script) __asm__("Actor_Attach");
@@ -1301,17 +1301,17 @@ void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void) {
                       gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
 }
 
-void MarsLighthouseEntrance_ShootRoom6LowerFireball(void) {
+void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
   Actor_Attach__s1930(12, 19, 20, 0,
                       gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
-void MarsLighthouseEntrance_ShootRoom4Fireball(void) {
+void MarsLighthouseEntrance_ShootBalmFireball(void) {
   Actor_Attach__s1930(9, 18, 20, 0x4000,
                       gMarsLighthouseEntrance_BalmFireballPath);
 }
 
-void MarsLighthouseEntrance_ShootFireballAtRoom5IceSheet(void) {
+void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void) {
   Actor_Attach__s1930(9, 13, 14, 0,
                       gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
 }
@@ -1321,7 +1321,7 @@ void MarsLighthouseEntrance_ShootFireballThroughIce(void) {
                       gMarsLighthouseEntrance_FireballThroughIce);
 }
 
-void MarsLighthouseEntrance_ShootFireballAtRoom3IceSheet(void) {
+void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
   Actor_Attach__s1930(13, 21, 22, 0,
                       gMarsLighthouseEntrance_FireballToLapisIceSheet);
 }
@@ -2774,7 +2774,7 @@ s32 gMarsLighthouseEntrance_BalmFireballPath[] = {
 
 s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[] = {                                                               
       46, (s32)Actor_PopUp, 4,  0x600000, 0x200000, 0x2a80000, 1,  4,          0x600000, 0x160000,         0x2a80000, 1,   
-      4,  0x700000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackRoom5IceSheet, 46, (s32)Actor_Park, 17,      
+      4,  0x700000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackHiddenCircleIceSheet, 46, (s32)Actor_Park, 17,      
   };
 
 s32 gMarsLighthouseEntrance_FireballThroughIce[] = {
@@ -2810,7 +2810,7 @@ s32 gMarsLighthouseEntrance_FireballThroughIce[] = {
 
 s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {                                                               
       46, (s32)Actor_PopUp, 4,  0x700000, 0x200000, 0x2a80000, 1,  4,          0x700000, 0x160000,         0x2a80000, 1,   
-      4,  0x800000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackRoom3IceSheet, 46, (s32)Actor_Park, 17,      
+      4,  0x800000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackLapisIceSheet, 46, (s32)Actor_Park, 17,      
   };
 
 s32 gScriptedPart_Script[] = {                                                               
@@ -3211,7 +3211,7 @@ struct Trigger gMarsLighthouseEntrance_LapisTriggers[] = {
      ACTOR_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_LAPIS_TORCH_A, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeRoom3Statue)},
+     EVENT(MarsLighthouseEntrance_BlazeLapisStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_LAPIS_TORCH_A, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballCrackIce)},
@@ -3262,7 +3262,7 @@ struct Trigger gMarsLighthouseEntrance_BalmTriggers[] = {
      ACTOR_BALM_ICE_CONE_E, FLAG_SCENE_TEMP_08,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 14,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromRoom4)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromBalm)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3285,15 +3285,15 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
      ACTOR_WEST_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeRoom5WestStatue)},
+     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleWestStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_WatchFireballCrackRoom5Ice)},
+     EVENT(MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_EAST_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeRoom5EastStatue)},
+     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleEastStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballMeltIce)},
@@ -3301,7 +3301,7 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
      IF_FLAG_SET(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN),
      EVENT(MarsLighthouseEntrance_BurstHiddenCircleIceSheet)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 14,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromRoom5)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromHiddenCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_RevealTeleportCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -3353,9 +3353,9 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
      ACTOR_VALKYRIE_ICE_CONE_F, FLAG_SCENE_TEMP_15,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 12,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromRoom6West)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieWest)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 13,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromRoom6East)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieEast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoValkyrieFlames)},

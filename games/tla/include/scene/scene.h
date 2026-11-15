@@ -722,17 +722,17 @@ extern u8 gField_CachedTilesA[];
 
 extern u8 gField_CachedTilesD[];
 
-extern const u8 gField_Tiles679[];
+extern const u8 gField_GroundTiles[];
 
 s32 Speaker_GetVoice(s32 object);
 
-extern const u16 Field_Palette685[];
+extern const u16 Field_ExplosionPalette[];
 
 void FieldPsynergy_StartCast(void);
 
 void EasternAlhafraShip_CountAnswer();
 
-extern const u8 gField_Tiles64D[];
+extern const u8 gField_GeyserTiles[];
 
 extern u8 gField_CachedTilesB[];
 

@@ -462,7 +462,7 @@ enum RedCrescentPicture {
 #define SMOKE_PUFF_HEIGHT 48
 #define FLASH_BURST_WIDTH 32
 #define FLASH_BURST_HEIGHT 64
-/// CloudPuffSheet (ResourceId_Data0CF): four 32x32 puffs of cloud.
+/// BlueCloudPuffSheet: four 32x32 puffs of cloud.
 #define CLOUD_PUFF_WIDTH 32
 #define CLOUD_PUFF_HEIGHT 32
 #define SKULL_WIDTH 24
@@ -1080,8 +1080,8 @@ void Transform_ResetMatrix(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
-void VramBlock_Load93Far(void);
-void VramBlock_Reset93Far(void);
+void ActorShadow_LoadTilesFar(void);
+void ActorShadow_FreeTilesFar(void);
 void wait(s32 frames);
 
 // The tables of effect_table.c, in its order.
@@ -1724,7 +1724,7 @@ extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
 extern u8 gHaures_WingStrip[];
-extern u8 Data_02010be0[];
+extern u8 gHaures_WingStripEnd[];
 extern u8 gHaures_WingShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;

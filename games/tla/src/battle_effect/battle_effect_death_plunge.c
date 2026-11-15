@@ -44,7 +44,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   pixels = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, pixels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,

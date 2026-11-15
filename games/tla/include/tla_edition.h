@@ -56,9 +56,9 @@
 
 // The letters of Lucky Wheels' title, as in The Broken Seal.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-#define REEL_TITLE_LETTERS 9
+#define LUCKY_WHEELS_TITLE_LETTERS 9
 #else
-#define REEL_TITLE_LETTERS 8
+#define LUCKY_WHEELS_TITLE_LETTERS 8
 #endif
 
 #endif

@@ -84,7 +84,7 @@ FarCall_FieldTable:
 	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
-	export Animation_ApplyChildValuesToRecordFar, Animation_ApplyChildValuesToRecord
+	export Sprite_SetAnimationColorModesFar, Sprite_SetAnimationColorModes
 	export Animation_ApplyChildValueToFirstFar, Animation_ApplyChildValueToFirst
 	export Actor_SetSpritePriorityDirectFar, Actor_SetSpritePriorityDirect
 	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
@@ -116,8 +116,8 @@ FarCall_FieldTable:
 	export MapGrid_GetCellHeightFar, MapGrid_GetCellHeight
 	export Animation_SkipToStopFar, Animation_SkipToStop
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
-	export VramBlock_Reset93Far, VramBlock_Reset93
-	export VramBlock_Load93Far, VramBlock_Load93
+	export ActorShadow_FreeTilesFar, ActorShadow_FreeTiles
+	export ActorShadow_LoadTilesFar, ActorShadow_LoadTiles
 	export Map_CopyPaletteFar, Map_CopyPalette
 	export SpriteViewer_RunFar, SpriteViewer_Run
 	export Actor_SpawnWaterSplashFar, Actor_SpawnWaterSplash

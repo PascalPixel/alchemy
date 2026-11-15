@@ -3,6 +3,6 @@
 @ rising sand, Trial Road's fountains and Venus Lighthouse's entrance load
 @ them into one VRAM cache entry.
 	.section .rodata
-	.global gField_Tiles64D
-gField_Tiles64D:
+	.global gField_GeyserTiles
+gField_GeyserTiles:
 	.incbin "games/tla/src/graphics/field/geyser.8bpp.lz"

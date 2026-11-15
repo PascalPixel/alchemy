@@ -357,7 +357,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
-    output->sentinel = OAM_DEPTH_FRONT;
+    output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
@@ -646,7 +646,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
-    output->sentinel = OAM_DEPTH_FRONT;
+    output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);

@@ -160,7 +160,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   FieldActor_SetPositionAndResetMotion(lid, lid->x.fixed, lid->y.fixed,
                                        lid->z.fixed);
   if (mode == 0 || mode == 2) {
-    Event_PlaySound(SE_556);
+    Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
     for (i = 0; i <= 63; i++) {
       left->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;
@@ -170,7 +170,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
       System_Wait(1);
     }
   } else {
-    Event_PlaySound(SE_556);
+    Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
     for (i = 0; i <= 63; i++) {
       right->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;

@@ -587,7 +587,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
-  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+  Sound_Play(SE_STOP_EXIT_SE);
   Event_End();
 }
 

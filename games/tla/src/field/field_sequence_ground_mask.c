@@ -190,7 +190,7 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
 
 /// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
-void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 a, s32 b,
+void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 a, s32 b,
                                  s32 c) {
   EffectSprite_Init(sprite, a, b, c,
                     gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >>
@@ -214,8 +214,8 @@ void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
   EffectSprite_Draw(sprite);
 }
 
-/// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
-void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
+/// The twin of EffectSprite_InitWithFadeOverlay with object mode 1 and priority 0.
+void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite, s32 a,
                                         s32 b, s32 c) {
   EffectSprite_Init(sprite, a, b, c,
                     gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >>

@@ -356,7 +356,7 @@ s32 Actor_HasArrived(struct Actor *object);
 void Leader_StopIfPending(void);
 void Actor_SteerByPad(struct Actor *object);
 /// Sets byte 2 of a rectangle of one layer's map cells.
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
@@ -421,14 +421,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMarsLighthouseRoomF_Placements;
 }
 
-// XXX: what Blaze does otherwise once the field work's unkd38 is set (its
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
 // mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
 // mode would settle it.
 /// Blaze is cast at a torch.
 void MarsLighthouseRoomF_BeginBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->unkd38 = 1;
+  event->blazeLongSpray = 1;
 }
 
 /// Walking east or west at a gap in the Venus tower: across it, unless one of
@@ -2331,7 +2331,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->scaleY = 0;
   actor->timer = 0;
   actor->watchedActor = self->watchedActor;
-  Event_PlaySound(SE_104);
+  Event_PlaySound(SE_LAUNCH);
 }
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
@@ -2595,12 +2595,12 @@ s32 PushTarget_FillFootprint(s32 id) {
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  Map_FillCellRectByte2(0, x, z, width, height, 255);
-  Map_FillCellRectByte2(2, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, x, z, width, height, 255);
   return 1;
 }
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cells = (u8 *)map->layers[layer].cells;
@@ -2667,7 +2667,7 @@ void PushTarget_Push(struct PushTarget target) {
   height = (ABS(gPushFootprints[footprint][1]) +
             ABS(gPushFootprints[footprint][3])) >>
            4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
@@ -2700,7 +2700,7 @@ void PushTarget_Push(struct PushTarget target) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
@@ -2713,14 +2713,14 @@ void PushTarget_Push(struct PushTarget target) {
   originZ = *(s32 *)(map + 332) >> 20;
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
-  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height, 255);
   cell[0] = FIELD_CELL(from[0] + (gPushFootprints[footprint][0] << 16));
   cell[2] = FIELD_CELL(from[2] + (gPushFootprints[footprint][1] << 16));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(2, cell[0], cell[2], width, height, 0);
   Event_NoOp();
 }
 

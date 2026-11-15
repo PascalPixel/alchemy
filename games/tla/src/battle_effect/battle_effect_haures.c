@@ -132,7 +132,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   {
     u8 *c = work->sheet;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0F7, c, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ChainTexture, c, 0, 0);
     Picture_MirrorIntoQuadrants(c, SCRATCH, 64, 64);
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
@@ -147,7 +147,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     u32 *w;
     u32 mask;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                                w = (u32 *)(work->sheet + 0x4000), 0, 0);
     mask = 0x7f7f7f7f;
     for (i = 0; i != 1024; i++) {
@@ -164,9 +164,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   }
   // The strip ends with a face of no corners, cleared through the end's own
   // name.
-  Data_02010be0[0] = 0;
-  Data_02010be0[1] = 0;
-  Data_02010be0[2] = 0;
+  gHaures_WingStripEnd[0] = 0;
+  gHaures_WingStripEnd[1] = 0;
+  gHaures_WingStripEnd[2] = 0;
   {
     dst = &BG_PLTT_COLOR(0, 1);
 
@@ -744,7 +744,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       if (frame <= 266) {
-        work->unk78ec = 1;
+        work->stampPending = 1;
       }
       wait(1);
       frame++;

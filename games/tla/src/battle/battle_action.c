@@ -89,7 +89,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   s32 abilityId;
 
   s32 BattleActionRun_SetTargets(s32 abilityId) {
-    struct BattleAct *ability = Ability_Get(abilityId);
+    struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
     s32 includeDowned = 0;
     s32 targetCount;
@@ -297,7 +297,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     break;
 
   case COMMAND_PSYNERGY: {
-    struct BattleAct *ability;
+    struct AbilityDefinition *ability;
     s32 canCast = 1;
 
     abilityId = request->parameter;
@@ -503,7 +503,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       return ACTION_REPORTED;
     }
     {
-      struct BattleAct *ability;
+      struct AbilityDefinition *ability;
 
       if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
         return ACTION_REPORTED;
@@ -608,7 +608,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         plan->targetCritical[0] = CRITICAL_HIT;
     }
   } else {
-    struct BattleAct *ability = Ability_Get(abilityId);
+    struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 chance;
     s32 amount;
 

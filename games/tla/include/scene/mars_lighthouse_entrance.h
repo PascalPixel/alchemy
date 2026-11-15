@@ -39,14 +39,14 @@ void Ride_SpawnForward();
 
 s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value);
 
-void MarsLighthouseEntrance_DrawRoom3CrackedSheet(void);
+void MarsLighthouseEntrance_DrawLapisCrackedSheet(void);
 
-void MarsLighthouseEntrance_ShootFireballAtRoom5IceSheet(void);
+void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void);
 
 void Teleport_StartShimmer(void);
 void Teleport_StopShimmer(void);
 
-void MarsLighthouseEntrance_ShootFireballAtRoom3IceSheet(void);
+void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void);
 
 void MarsLighthouseEntrance_ShootFireballThroughIce(void);
 
@@ -70,8 +70,8 @@ void Leader_SetSlideStopped(s32 value);
 
 void MarsLighthouseEntrance_ScatterIceChips(s32 value);
 
-void MarsLighthouseEntrance_ShootRoom6LowerFireball(void);
-void MarsLighthouseEntrance_ShootRoom4Fireball(void);
+void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void);
+void MarsLighthouseEntrance_ShootBalmFireball(void);
 
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
@@ -98,9 +98,9 @@ s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-void MarsLighthouseEntrance_CrackRoom3IceSheet(void);
+void MarsLighthouseEntrance_CrackLapisIceSheet(void);
 
-void MarsLighthouseEntrance_CrackRoom5IceSheet(void);
+void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void);
 
 void MarsLighthouseEntrance_MeltIceInPath(void);
 
@@ -112,27 +112,27 @@ void MarsLighthouseEntrance_CheckIce(void);
 
 void MarsLighthouseEntrance_Teleport(void);
 
-void MarsLighthouseEntrance_BlazeRoom3Statue(void);
+void MarsLighthouseEntrance_BlazeLapisStatue(void);
 
 void MarsLighthouseEntrance_BlockRetreatAtChest(void);
 
-void MarsLighthouseEntrance_TeleportFromRoom4(void);
+void MarsLighthouseEntrance_TeleportFromBalm(void);
 
-void MarsLighthouseEntrance_BlazeRoom5WestStatue(void);
+void MarsLighthouseEntrance_BlazeHiddenCircleWestStatue(void);
 
-void MarsLighthouseEntrance_WatchFireballCrackRoom5Ice(void);
+void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void);
 
-void MarsLighthouseEntrance_BlazeRoom5EastStatue(void);
+void MarsLighthouseEntrance_BlazeHiddenCircleEastStatue(void);
 
 void MarsLighthouseEntrance_WatchFireballMeltIce(void);
 
-void MarsLighthouseEntrance_TeleportFromRoom5(void);
+void MarsLighthouseEntrance_TeleportFromHiddenCircle(void);
 
 void MarsLighthouseEntrance_HideTeleportCircle(void);
 
-void MarsLighthouseEntrance_TeleportFromRoom6West(void);
+void MarsLighthouseEntrance_TeleportFromValkyrieWest(void);
 
-void MarsLighthouseEntrance_TeleportFromRoom6East(void);
+void MarsLighthouseEntrance_TeleportFromValkyrieEast(void);
 
 void MarsLighthouseEntrance_WakeDragonFace(void);
 

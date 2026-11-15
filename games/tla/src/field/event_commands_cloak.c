@@ -354,7 +354,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   object->velocityX = 0;
   right->x.fixed = p->x - px(16);
   right->velocityX = 0;
-  target->update = Actor_ApplyRandomChildValues;
+  target->update = Actor_CycleSpriteColors;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_PSYNERGY_START);
   target->motionFlags = 4;

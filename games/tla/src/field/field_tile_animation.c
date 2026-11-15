@@ -164,7 +164,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
             DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 3:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
     break;
   case 1:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
@@ -257,7 +257,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       WORLD_MAP_TILE_SET(2));
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
                       WORLD_MAP_TILE_SET(3));
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;

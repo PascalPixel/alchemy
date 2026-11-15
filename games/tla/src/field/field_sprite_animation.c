@@ -453,12 +453,12 @@ void ActorSystem_Configure(s32 mode) {
 }
 
 /// Frees the actors' shadow tiles (VRAM_CACHE_ENTRY_ACTOR_SHADOW).
-void VramBlock_Reset93(void) {
+void ActorShadow_FreeTiles(void) {
   VramCache_FreeEntry(VRAM_CACHE_ENTRY_ACTOR_SHADOW);
 }
 
 /// Loads the actors' shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW.
-void VramBlock_Load93(void) {
+void ActorShadow_LoadTiles(void) {
   const u8 *data = gActor_ShadowTiles;
   s32 size = ANIM_SHADOW_TILE_BYTES;
 

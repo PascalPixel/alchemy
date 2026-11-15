@@ -114,7 +114,7 @@
 	export MapGrid_SetShownLayers, MapGrid_SetShownLayersFar
 	export MapGrid_WaitForShakeToSettle, MapGrid_WaitForShakeToSettleFar
 	export MapGrid_SetCellBehaviorAt, MapGrid_SetCellBehaviorAtFar
-	export Animation_ApplyChildValuesToRecord, Animation_ApplyChildValuesToRecordFar
+	export Sprite_SetAnimationColorModes, Sprite_SetAnimationColorModesFar
 	export Actor_SetSpriteColorMode, Actor_SetSpriteColorModeFar
 	export WorldMap_IsWalkable, WorldMap_IsWalkableFar
 	export WorldMap_GetBlockPlace, WorldMap_GetBlockPlaceFar
@@ -472,12 +472,12 @@
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
 	export Import_DebugMadPlantLeap, MadPlant_LeapAtLeaderFar
 	export Tightrope_Settle, Tightrope_SettleFar
-	export EffectSprite_InitFromSlot94, EffectSprite_InitFromSlot94Far
+	export EffectSprite_InitWithFadeOverlay, EffectSprite_InitWithFadeOverlayFar
 	export BattleEffect_DrawSpriteAtWorldPosition, BattleEffect_DrawSpriteAtWorldPositionFar
 	export Actor_ResetTargetsAndVelocity, Actor_ResetTargetsAndVelocityFar
 	export Shop_Run, Shop_RunFar
-	export Actor_ApplyRandomChildValues, Actor_ApplyRandomChildValuesFar
-	export EffectSprite_InitFromSlot94Blended, EffectSprite_InitFromSlot94BlendedFar
+	export Actor_CycleSpriteColors, Actor_CycleSpriteColorsFar
+	export EffectSprite_InitWithFadeOverlayBlended, EffectSprite_InitWithFadeOverlayBlendedFar
 	export Sanctum_Run, Sanctum_RunFar
 	export WorldMap_SetReturnLeavingScene, WorldMap_SetReturnLeavingSceneFar
 	export MadPlant_LeapAtLeader, MadPlant_LeapAtLeaderFar

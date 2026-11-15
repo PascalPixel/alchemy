@@ -164,7 +164,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       if (firstEntry != drawnFirstEntry) {
         WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-          struct BattleAct *action;
+          struct AbilityDefinition *action;
 
           encodedAction = actions[firstEntry + i];
           if (encodedAction == 0)

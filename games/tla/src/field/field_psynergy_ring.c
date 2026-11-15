@@ -121,7 +121,7 @@ void FieldPsynergy_UpdateRing(void) {
   if (event->ringTimerRunning != 0 && event->ringFrames != 0)
     event->ringFrames--;
   if (event->ringFrames == 0)
-    event->psynergy = ABILITY_155 | ACT_PACKED;
+    event->psynergy = ABILITY_RING | ACT_PACKED;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT
@@ -278,7 +278,7 @@ void FieldPsynergy_Ring(void) {
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingWaves), work);
     {
       s32 heading;
       s32 moteEntry = VramCache_FindFreeEntry();

@@ -582,7 +582,7 @@ void AirsRock_BlowGust(void) {
                           gAirsRock_GustTargets[2][1], cell.x, cell.z, 1, 1);
       MapGrid_CenterOnFollowedPoint();
     }
-    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+    Sound_Play(SE_STOP_EXIT_SE);
     Event_SetFlag(flag + FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN);
   }
   gust->acceleration = 0;
@@ -725,7 +725,7 @@ row:
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
   Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
-  Event_PlaySound(SE_163);
+  Event_PlaySound(SE_WAVE_HIGH);
   REG_BLDALPHA = BLEND_ALPHA(0, 15);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= 0x100;
@@ -1523,7 +1523,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(8);
   Task_AddFrame(AirsRock_LiftFog, TASK_PASS_FRAME);
-  Event_PlaySound(SE_163);
+  Event_PlaySound(SE_WAVE_HIGH);
   REG_DISPCNT |= 0x100;
   MapGrid_SetShake(3, 3, 1);
   z = 0xffff8000;

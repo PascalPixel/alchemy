@@ -41,9 +41,9 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
 
   MenuTitle_Load(group, index);
   first = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x, y);
-  first->sentinel = OAM_DEPTH_FRONT - 2;
+  first->depth = OAM_DEPTH_FRONT - 2;
   second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
-  second->sentinel = OAM_DEPTH_FRONT - 2;
+  second->depth = OAM_DEPTH_FRONT - 2;
   second->sprite.oam.index += 8;
   return first;
 }
@@ -99,7 +99,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
     CommandIcon_Load(icon, index, remap);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
     entity->sprite.oam.fullColor = 1;
-    entity->sentinel = OAM_DEPTH_FRONT - 4;
+    entity->depth = OAM_DEPTH_FRONT - 4;
   }
   return entity;
 }
@@ -121,7 +121,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
     obj->sprite.oam.affineMode = 3;
     obj->sprite.oam.x = obj->x + 0xfff0;
     obj->sprite.oam.y = (u8)obj->y + 0xf0;
-    obj->sentinel = OAM_DEPTH_FRONT - 3;
+    obj->depth = OAM_DEPTH_FRONT - 3;
   }
 }
 

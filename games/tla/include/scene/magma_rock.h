@@ -51,13 +51,13 @@ struct MagmaRockSparkWork {
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
-extern s16 gMagmaRock_Room1Pillars[];
+extern s16 gMagmaRock_SlidePillars[];
 
-extern s16 gMagmaRock_Room2LowerPillars[];
+extern s16 gMagmaRock_SalamanderTailLowerPillars[];
 
-extern s16 gMagmaRock_Room2MiddlePillars[];
-extern s16 gMagmaRock_Room2UpperPillars[];
-extern s16 gMagmaRock_Room2TopPillars[];
+extern s16 gMagmaRock_SalamanderTailMiddlePillars[];
+extern s16 gMagmaRock_SalamanderTailUpperPillars[];
+extern s16 gMagmaRock_SalamanderTailTopPillars[];
 
 void MagmaRock_RollMagmaRock(struct Actor *object);
 
@@ -65,12 +65,12 @@ extern u32 gMagmaRock_EmberScript[];
 
 void MagmaRock_BurnStatue(struct Actor *object);
 
-extern s16 gMagmaRock_Room1Statues[];
-extern s16 gMagmaRock_Room2LowerStatues[];
-extern s16 gMagmaRock_Room2MiddleStatues[];
-extern s16 gMagmaRock_Room2UpperStatues[];
-extern s16 gMagmaRock_Room2TopStatues[];
-extern s16 gMagmaRock_Room3Statues[];
+extern s16 gMagmaRock_SlideStatues[];
+extern s16 gMagmaRock_SalamanderTailLowerStatues[];
+extern s16 gMagmaRock_SalamanderTailMiddleStatues[];
+extern s16 gMagmaRock_SalamanderTailUpperStatues[];
+extern s16 gMagmaRock_SalamanderTailTopStatues[];
+extern s16 gMagmaRock_StatueStatues[];
 
 void MagmaRock_FlashStatue(struct Actor *object);
 

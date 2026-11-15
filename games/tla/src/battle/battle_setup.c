@@ -17,7 +17,7 @@ void Transform_SetPosition(s32 *position);
 /// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct BattlePresentationTransition *transition =
+  struct BattleBackgroundWork *transition =
       Ram_HeapSlots->battleBackground;
   struct FixedPointPosition eyeOffset;
   s32 *focus;

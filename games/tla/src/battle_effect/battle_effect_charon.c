@@ -82,7 +82,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   struct ModelTexture openingTexture;
   u8 *canvas;
   struct BattleEffectWork *work;
-  struct BattlePresentationTransition *backgroundView;
+  struct BattleBackgroundWork *backgroundView;
   s32 j;
   s32 frame;
   u32 savedWidth;
@@ -209,7 +209,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       glyphs[cell * cell * j * 2 + i] = value;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CharmRingSheet,
                              work->sheet + CHARON_ACT_PICTURES, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
@@ -261,7 +261,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 350) {
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 0) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
@@ -788,7 +788,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               0x100);
           source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
           Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
-          Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+          Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                                      work->sheet + CHARON_ACT_PICTURES, 0, 0);
           Graphics_LoadGreyRamp();
         }
@@ -1046,7 +1046,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 y;
 
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RuneSealSheet);
         source += 32;
         Decompress_TaggedLz(source, work->sheet + CHARON_RUNE_SEAL);
         for (y = 0; y != RUNE_SEAL_HEIGHT; y++) {
@@ -1070,7 +1070,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
       if (frame < 88) {
-        u16 *color = Resource_GetTableEntry((s32)&ResourceId_Data0B5);
+        u16 *color = Resource_GetTableEntry((s32)&ResourceId_RuneSealSheet);
         u16 *entry = (u16 *)&BG_PLTT_COLOR(14, 0);
 
         for (i = 0; i != 16; i++, color++, entry++) {
@@ -1256,7 +1256,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                  Q16_ONE);
   Iwram_FillWords(work->sheet + CHARON_BRIGHT_BLOCK, 0x1000,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C3,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowRingTexture,
                              work->sheet + CHARON_GLOW_RING, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, glyphs, 0, 0);
   {

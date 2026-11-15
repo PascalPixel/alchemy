@@ -17,7 +17,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Whirlwind_UpdateLower;
+  object->update = Whirlwind_Update;
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;

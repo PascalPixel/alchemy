@@ -201,7 +201,7 @@ s32 DjinnMenu_RunScreen(void) {
   menu = Ram_HeapSlots->menuWork;
   icon = menu->cursor;
   icon->motion = ICON_HIDDEN;
-  icon->animStep = 0;
+  icon->animationStep = 0;
   Menu_OpenBackdropScreen();
   wait(1);
   step = DJINN_STEP_SELECT_DJINN;

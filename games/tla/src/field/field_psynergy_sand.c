@@ -454,7 +454,7 @@ void FieldPsynergy_Sand(void) {
     if (frame > 0)
       owner->y.fixed += 0x3999;
     if (frame & 31)
-      Sound_PlayFar(SE_566);
+      Sound_PlayFar(SE_SPIRAL);
     owner->facing += TRIG_TURN / 8;
     wait(1);
   }
@@ -503,7 +503,7 @@ void FieldPsynergy_Sand(void) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
   owner->timer = 0;
   owner->userValue = 0;
-  event->unkd4a = 3;
+  event->sandTrailPriority = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
     Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);

@@ -412,10 +412,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SPIN);
     }
     if (frame == 138) {
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 152) {
-      Sound_PlayFar(SE_163);
+      Sound_PlayFar(SE_WAVE_HIGH);
     }
     if (frame == 7) {
       Sound_PlayFar(SE_POWER_UP);
@@ -559,12 +559,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                  (Ram_MapCellBuffer + AZUL_TEXTURES), 1, 0);
       Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + AZUL_TEXTURES,
                                   gMapGridCellBuffer, 64, 64);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+      Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
     }
     u = frame - 80;

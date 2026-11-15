@@ -57,7 +57,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                              work->sheet + MOLOCH_RING_TEXTURE, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Graphics_LoadGreyRamp();
@@ -350,7 +350,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 /// 96 on: each channel is darkened and the three are rotated (red to green,
 /// green to blue, blue to red).
 void Iris_ChangeBackdrop(void) {
-  struct BattlePresentationTransition *transition =
+  struct BattleBackgroundWork *transition =
       Ram_HeapSlots->battleBackground;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s16 list[UNIT_MAX];
@@ -1119,7 +1119,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 6; i++)
       if (frame == 644 + i * 12)
-        Sound_PlayFar(SE_104);
+        Sound_PlayFar(SE_LAUNCH);
     if (frame == 755)
       Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 6; i++)

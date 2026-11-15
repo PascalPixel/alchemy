@@ -57,8 +57,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
     copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, JAW_TEXTURE, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, Ram_MapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, JAW_TEXTURE, 0, 0);
   if (mode == BREATH_BEAM) {
     for (i = 0; i != 16; i++) {
       u8 *pixel = work->sheet + i * 0x400;
@@ -81,7 +81,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       }
     }
   } else if (mode == BREATH_BLAST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA, work->sheet, 0, 0);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_DustCloudSheet, work->sheet, 1,
                                0);

@@ -1421,7 +1421,7 @@ void AirsRockInside_BlowGust(void) {
       }
       FieldEvent_Wait(1);
     }
-    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+    Sound_Play(SE_STOP_EXIT_SE);
   }
 shrink:
   gust->acceleration = 0;
@@ -2540,7 +2540,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
-  Sound_Play(SE_574);
+  Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletSettleScript);
@@ -3155,7 +3155,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next ==
              SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     AirsRockInside_StartRestoringCells();
-    Scene_QueueMusic(SE_245);
+    Scene_QueueMusic(SE_AMBIENT_STREAM);
     REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
@@ -3291,7 +3291,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
-    Scene_QueueMusic(SE_245);
+    Scene_QueueMusic(SE_AMBIENT_STREAM);
     REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);

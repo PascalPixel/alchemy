@@ -314,7 +314,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 #define FIGURE_SWING_FRAME 30 ///< the first blow
 #define FIGURE_HIT_FRAME 80   ///< the second, which starts the result phase
 
-// The parts of the figure in Resource_Data0DC, unpacked into the map cells.
+// The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the map cells.
 #define FIGURE_BODY 0             ///< 96x83
 #define FIGURE_ARM_LOWERED 0x1f20 ///< 42x35
 #define FIGURE_ARM_RAISED 0x24de  ///< 48x51
@@ -348,7 +348,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_HeartbreakSheet, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)heap->ramCode;

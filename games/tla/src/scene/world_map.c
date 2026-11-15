@@ -436,7 +436,7 @@ void WorldMap_SetUpFlyingShip(void) {
     WorldMap_Freeze();
     MessageArgument_Push(ABILITY_HOVER, MESSAGE_ARGUMENT_ABILITY);
     // "Hover"
-    Message_ShowCentered((s32)MsgBlank2, 4);
+    Message_ShowCentered((s32)MsgCastAbilityName, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Actor_StartRenderModeScript();
@@ -1434,7 +1434,7 @@ void WorldMap_MeetEcho(void) {
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     wait(16);
     flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);
-    Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
+    Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey));
     i = 15;
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     WorldMap_ReloadPendingAreaGraphics();
@@ -1932,7 +1932,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   Actor_SetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
   Actor_WalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
-  Event_PlaySound(SE_163);
+  Event_PlaySound(SE_WAVE_HIGH);
 #ifdef UBFIX
   WorldMap_LoadTidalWave();
 #else

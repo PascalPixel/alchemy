@@ -4151,7 +4151,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "MsgRustySword2"
+msgctxt "MsgRustySword"
 msgid "01024"
 msgstr "{article_class:2}Rusty Sword"
 
@@ -14282,7 +14282,7 @@ msgctxt "MsgItemWoreOff"
 msgid "03521"
 msgstr "{argument_item_name:1}'s effects wore off.{end_wait}"
 
-msgctxt "MsgBlank2"
+msgctxt "MsgCastAbilityName"
 msgid "03522"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
@@ -14630,7 +14630,7 @@ msgstr ""
 "{protagonist_name} found\n"
 "{argument_item_name:2}.{page_break}"
 
-msgctxt "MsgKey0e10"
+msgctxt "MsgCoinsReceived"
 msgid "03600"
 msgstr ""
 "{protagonist_name} got\n"
@@ -20521,7 +20521,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "Alhafran Mayor{end_wait}"
 
-msgctxt "MsgFortuneTeller2"
+msgctxt "MsgNamesFortuneTeller"
 msgid "04936"
 msgstr "Fortune-teller{end_wait}"
 
@@ -20609,11 +20609,11 @@ msgctxt "message"
 msgid "04957"
 msgstr "Prox Elder{end_wait}"
 
-msgctxt "MsgConfirmGraphic2"
+msgctxt "MsgNamesConfirmGraphic"
 msgid "04958"
 msgstr "Confirm graphic{end_wait}"
 
-msgctxt "MsgIsaac2"
+msgctxt "MsgNamesIsaac"
 msgid "04959"
 msgstr "Isaac{end_wait}"
 
@@ -20637,7 +20637,7 @@ msgctxt "message"
 msgid "04964"
 msgstr "Sheba{end_wait}"
 
-msgctxt "MsgPiers2"
+msgctxt "MsgNamesPiers"
 msgid "04965"
 msgstr "Piers{end_wait}"
 
@@ -37923,7 +37923,7 @@ msgstr ""
 "This rock is in my way.\n"
 "I want to get to the other side.{end_wait}"
 
-msgctxt "MsgRrruffRrruff2"
+msgctxt "MsgRrruffRrruff"
 msgid "07551"
 msgstr "Rrruff! Rrruff!{end_wait}"
 
@@ -40154,7 +40154,7 @@ msgstr ""
 "power of Psynergy, but that\n"
 "can't possibly be...{end_wait}"
 
-msgctxt "MsgBlank7"
+msgctxt "MsgPiersStartled"
 msgid "07854"
 msgstr "?!?{end_wait}"
 
@@ -45365,7 +45365,7 @@ msgstr ""
 "defeat him is to stab him\n"
 "with a trident...{end_wait}"
 
-msgctxt "MsgPenPen3"
+msgctxt "MsgPenPenExclaimed"
 msgid "08625"
 msgstr "Pen pen!{end_wait}"
 
@@ -45402,7 +45402,7 @@ msgstr ""
 "from Pengus as a reward for\n"
 "saving dear little Pengulina.{end_wait}"
 
-msgctxt "MsgPenPen2"
+msgctxt "MsgPenPen"
 msgid "08631"
 msgstr "Pen pen.{end_wait}"
 
@@ -45447,7 +45447,7 @@ msgstr ""
 "around! I feel like I'm being\n"
 "smothered...and I don't like it!{end_wait}"
 
-msgctxt "MsgChirpChirp2"
+msgctxt "MsgChirpChirp"
 msgid "08639"
 msgstr "Chirp chirp!{end_wait}"
 
@@ -45487,7 +45487,7 @@ msgstr ""
 "fabulous on me! I love\n"
 "fancy accessories!{end_wait}"
 
-msgctxt "MsgMooMoo2"
+msgctxt "MsgMooMoo"
 msgid "08645"
 msgstr "Moo! Moo!{end_wait}"
 
@@ -45555,7 +45555,7 @@ msgstr ""
 "Are you giving that red\n"
 "neckerchief to moooooi?{end_wait}"
 
-msgctxt "MsgArffArff2"
+msgctxt "MsgArffArff"
 msgid "08656"
 msgstr "Arff! Arff!{end_wait}"
 
@@ -45597,7 +45597,7 @@ msgstr ""
 "I don't want to waste, so\n"
 "I'm just taking little laps.{end_wait}"
 
-msgctxt "MsgBlank3"
+msgctxt "MsgGeorgeSilence"
 msgid "08663"
 msgstr "...{end_wait}"
 
@@ -45701,7 +45701,7 @@ msgstr ""
 "Take your time! I don't\n"
 "like to rush...{end_wait}"
 
-msgctxt "MsgYup2"
+msgctxt "MsgYup"
 msgid "08682"
 msgstr "Yup!{end_wait}"
 
@@ -46104,7 +46104,7 @@ msgstr ""
 "fish after the swamp dried up.\n"
 "We probably won't catch many.{end_wait}"
 
-msgctxt "MsgMikasallaInteriors27"
+msgctxt "MsgEvenOutInFarOffShores"
 msgid "08737"
 msgstr ""
 "Even out in these far-off\n"
@@ -48700,7 +48700,7 @@ msgstr ""
 "with the Cloud Brand was\n"
 "hardly a finishing blow.{end_wait}"
 
-msgctxt "MsgIDisagree2"
+msgctxt "MsgIDisagree"
 msgid "09106"
 msgstr "I disagree...{end_wait}"
 
@@ -48889,7 +48889,7 @@ msgstr ""
 "you are incapable of\n"
 "peering into my heart.{end_wait}"
 
-msgctxt "MsgWait2"
+msgctxt "MsgJennaWait"
 msgid "09137"
 msgstr "{actor_name:5}, wait!{end_wait}"
 
@@ -60235,7 +60235,7 @@ msgstr ""
 "engraved on the columns\n"
 "leading to Trial Road.{end_wait}"
 
-msgctxt "MsgAhhhh2"
+msgctxt "MsgAhhhh"
 msgid "10802"
 msgstr "Ahhhh!!!"
 
@@ -61314,7 +61314,7 @@ msgstr ""
 "Don't worry! They'll be fine!\n"
 "Now prepare for the end!{end_wait}"
 
-msgctxt "MsgBlank5"
+msgctxt "MsgCallJenna"
 msgid "10980"
 msgstr "{actor_name:5}!{end_wait}"
 
@@ -61350,7 +61350,7 @@ msgstr ""
 "Don't worry, {actor_name:5}!\n"
 "I'm here to help!{end_wait}"
 
-msgctxt "MsgBlank6"
+msgctxt "MsgCallSheba"
 msgid "10986"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -69038,7 +69038,7 @@ msgstr ""
 "been out on a risky journey to\n"
 "increase our fighting strength.{end_wait}"
 
-msgctxt "MsgIFound2"
+msgctxt "MsgIFoundName"
 msgid "12125"
 msgstr "I found {actor_name:1}!{end_wait}"
 
@@ -69878,7 +69878,7 @@ msgstr ""
 "That's all you have to do\n"
 "to unleash a set Djinni!{end_wait}"
 
-msgctxt "MsgHey2"
+msgctxt "MsgHey"
 msgid "12257"
 msgstr "Hey!{end_wait}"
 

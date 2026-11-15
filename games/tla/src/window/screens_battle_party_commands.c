@@ -12,7 +12,7 @@
 /// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
 /// 5 revive, 6 cure all ailments.
 /// act: ability data.
-s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
+s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
   s32 abilityKind;
   s32 targetKind;
 

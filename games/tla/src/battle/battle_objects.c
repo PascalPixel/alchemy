@@ -158,7 +158,7 @@ void BattleObject_UpdatePose(s32 id) {
   value = POSE_STANDING;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
-      value = (state->side != BATTLE_UNIT_ENEMY) * 4;
+      value = (state->side != BATTLE_SIDE_ENEMY) * 4;
   } else {
     s32 changed = state->side ^ value;
     value = NONZERO(changed);

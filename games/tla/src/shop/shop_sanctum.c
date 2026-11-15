@@ -379,14 +379,14 @@ void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
                                     window, 88, -12);
       icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animStep = 0;
+      icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, 0);
       icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animStep = 0;
+      icon->animationStep = 0;
     }
     for (i = 0; i < SHOP_PARTY_PAGE_MEMBERS; i++) {
       s32 unitId = shop->partyMemberIds[first + i];
@@ -469,7 +469,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *sparkle) {
   }
 }
 
-void Animation_ApplyChildValuesToRecordFar(void *object, s32 value);
+void Sprite_SetAnimationColorModesFar(void *object, s32 value);
 
 /// Moves the burst's sparkles each frame and gives the party member's icon a
 /// random colour mode while the burst plays on it. Runs as a task.
@@ -482,7 +482,7 @@ void Sanctum_UpdateBurst(void) {
     FieldParticle_UpdateFar(&shop->effects[i]);
   burstMember = shop->burstMember;
   if (burstMember != -1)
-    Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[burstMember],
+    Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
                                           (Random16() * 7) >> 16);
 }
 
@@ -520,7 +520,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar((struct FieldParticle *)effect,
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct FieldParticle *)effect, 7);
-    Animation_ApplyChildValuesToRecordFar(effect->object,
+    Sprite_SetAnimationColorModesFar(effect->object,
                                           (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
@@ -550,7 +550,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   wait(20);
   Sound_PlayFar(SE_RECOVERY);
   shop->burstMember = -1;
-  Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[member], 0);
   wait(20);
 
   {

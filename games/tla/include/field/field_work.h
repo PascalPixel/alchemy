@@ -179,7 +179,7 @@ struct FieldWork {
                                 ///< Actor_PlaceMovedBlock
   /// The cells a Psynergy touches, as cell coordinates, ended by -1.
   s16 psynergyCells[56];
-  s8 unkd30;
+  s8 psynergyHitObject;
   s8 targetX;
   s8 targetY;
   s8 targetZ;
@@ -188,7 +188,7 @@ struct FieldWork {
   s16 scoopedItem;
   s8 sceneAttributeLow;
   s8 sceneAttributeHigh;
-  s8 unkd38;
+  s8 blazeLongSpray;
   s8 hoverReady; ///< a party member knows Hover and the ship flies
   s8 terrainKind;
   s8 climbing;
@@ -203,8 +203,8 @@ struct FieldWork {
   s16 glow;
   s16 glowHeld;
   s16 standing;
-  u16 unkd4a;
-  u16 unkd4c;
+  u16 sandTrailPriority;
+  u16 psynergyDrawFlags;
   u8 padding[2];
 };
 
@@ -236,7 +236,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, targetX) == 0xd31);
 STATIC_ASSERT(offsetof(struct FieldWork, sceneAttributeLow) == 0xd36);
 STATIC_ASSERT(offsetof(struct FieldWork, hoverReady) == 0xd39);
 STATIC_ASSERT(offsetof(struct FieldWork, glow) == 0xd44);
-STATIC_ASSERT(offsetof(struct FieldWork, unkd4c) == 0xd4c);
+STATIC_ASSERT(offsetof(struct FieldWork, psynergyDrawFlags) == 0xd4c);
 
 /// The running field scene's work, heap slot 108; FieldSequence_Run takes it
 /// and frees it.

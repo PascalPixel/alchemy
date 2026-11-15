@@ -39,7 +39,7 @@ extern struct BattleCamera *gCameraWork;
 
 /// The battle background's heap slot as the camera reads it: the yaw the
 /// camera eases toward and the frames left to ease it.
-struct BattlePresentationTransition {
+struct BattleBackgroundWork {
   s32 targetYaw;  ///< 1/65536 turns
   s32 frames;     ///< frames left to ease the yaw, a sixteenth a frame
   s32 mode;       ///< BattleBackgroundView's mode
@@ -65,8 +65,8 @@ struct BattlePresentationWork {
   u8 params[8][4];  ///< each target's animation entries' param, kept
 };
 
-STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
-STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
+STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 0x20);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, active) == 0x10);
 STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
@@ -91,7 +91,7 @@ enum BattleBackgroundMode {
 /// The battle background's heap slot as the background code reads it: its
 /// display mode.
 struct BattleBackgroundView {
-  u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames
+  u8 unk00[8];    ///< BattleBackgroundWork's targetYaw and frames
   s32 mode;       ///< enum BattleBackgroundMode
   s32 secondMode; ///< set by an effect while its canvas is open
   s32 busy;

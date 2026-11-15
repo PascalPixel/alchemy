@@ -17,8 +17,8 @@ s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 base);
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 void SpriteAnimation_StartFar(void *work, s32 no);
-void VramBlock_Reset93Far(void);
-void VramBlock_Load93Far(void);
+void ActorShadow_FreeTilesFar(void);
+void ActorShadow_LoadTilesFar(void);
 s32 WorldMap_GetBattleEnvironmentFar(void *position, s32 *kind);
 /// Sets up the world map's perspective view.
 void WorldMap_InitializePerspectiveFar(void);

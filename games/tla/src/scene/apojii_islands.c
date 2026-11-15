@@ -1014,7 +1014,7 @@ void ApojiiIslands_StartSparkles(void) {
               sizeof(struct GroundParticleWork) / 4,
           REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Decompress_ByteLz(gField_Tiles679, buf);
+  Decompress_ByteLz(gField_GroundTiles, buf);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = Vram_Load(work->entry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

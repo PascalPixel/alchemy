@@ -193,7 +193,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   pillarY = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                              work->sheet + PLUME_EDGE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
@@ -431,7 +431,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
                              1, 1);
   Picture_MirrorIntoQuadrants(work->sheet, work->sheet + WATER_SHEET_MIRRORED,
                               32, 32);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                              work->sheet + WATER_SHEET_SWIRL, 0, 0);
   if (mode == WATER_SHEET_WATERY_GRAVE) {
     u8 *pixel;
@@ -824,7 +824,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   if (mode == WIND_FUNNEL_AROMA && args->targetCount > 4) {
     frames = args->targetCount * 6 + 12;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress(
       (s32)&ResourceId_JupiterDjinnSmallSheet,
@@ -864,7 +864,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
           head[2] = (s32)vertices;
         }
       }
-      Sound_PlayFar(SE_179);
+      Sound_PlayFar(SE_WIND_FUNNEL);
     }
     if (frame > 19) {
       if (mode == WIND_FUNNEL_WAFT) {
@@ -1060,10 +1060,10 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet,
                              cells + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, cells + 0x1000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, cells + 0x1000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // DEAD: frame 0 sets top to -104 before anything reads it; the ROM keeps

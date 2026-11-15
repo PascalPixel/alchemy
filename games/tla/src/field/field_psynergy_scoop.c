@@ -223,7 +223,7 @@ void FieldPsynergy_Scoop(void) {
   if (object == NULL)
     goto end;
   object->motionFlags = 0;
-  if (event->unkd4c & 2) {
+  if (event->psynergyDrawFlags & 2) {
     if ((object->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)object->sprite)->oam.priority = 1;
       object->priorityFlags &= 254;
@@ -247,7 +247,7 @@ void FieldPsynergy_Scoop(void) {
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
-  if (!(event->unkd4c & 1))
+  if (!(event->psynergyDrawFlags & 1))
     FieldPsynergy_StartSceneSprite();
   Sound_PlayFar(SE_ITEM_BREAK);
   FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
@@ -378,7 +378,7 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1E9), work);
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ScoopEarth), work);
     pictureEntry = VramCache_FindFreeEntry();
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;

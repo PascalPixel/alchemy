@@ -364,8 +364,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  Map_FillCellRectByte2(0, x, z, width, height, 255);
-  Map_FillCellRectByte2(2, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, x, z, width, height, 255);
   return 1;
 }
 
@@ -398,7 +398,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 void PushTarget_UpdatePusher(struct Actor *object);
 
 /// PushTarget_Push for the rooms that fill the cells with
-/// Map_FillCellRectByte2.
+/// PushedActor_FillGridAttributeRectangle.
 void PushTarget_PushFill(struct PushTarget target) {
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
@@ -429,7 +429,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   height = (ABS(gPushFootprints[footprint][1]) +
             ABS(gPushFootprints[footprint][3])) >>
            4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
@@ -462,7 +462,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
@@ -475,14 +475,14 @@ void PushTarget_PushFill(struct PushTarget target) {
   originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
-  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height, 255);
   cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(2, cell[0], cell[2], width, height, 0);
   Event_NoOp();
 }
 

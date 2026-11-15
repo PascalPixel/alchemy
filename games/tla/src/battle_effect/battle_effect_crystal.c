@@ -46,7 +46,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_CogTexture, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(

@@ -111,7 +111,7 @@ void TileMap_ConvertBuffer(void) {
 
 /// A layout's resource, counted in gMaps from the empty map.
 #define MAPGRID_RESOURCE(offset)                                               \
-  Resource_GetTableEntry((offset) + (u32)&ResourceId_Map000)
+  Resource_GetTableEntry((offset) + (u32)&ResourceId_EmptyMap)
 
 /// Decodes the palette resource of a map's header row (its second halfword)
 /// and copies its 224 colors to destination, keeping the current backdrop
@@ -269,7 +269,7 @@ s32 MapGrid_LoadMap(s32 index) {
                                graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, BG_CHAR_SIZE);
       Decompress_MoveToFrontLz(MAPGRID_RESOURCE(sceneResources->animationTiles),
-                               gData_02028000);
+                               gMapGridAnimTiles);
       Heap_Release(graphicsBuffer);
     }
   }

@@ -4153,7 +4153,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "MsgRustySword2"
+msgctxt "MsgRustySword"
 msgid "01024"
 msgstr "Spada arrugg."
 
@@ -16124,7 +16124,7 @@ msgctxt "MsgItemWoreOff"
 msgid "03982"
 msgstr "Finito effetto di {argument_item_name:1}.{end_wait}"
 
-msgctxt "MsgBlank2"
+msgctxt "MsgCastAbilityName"
 msgid "03983"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
@@ -16468,7 +16468,7 @@ msgstr ""
 "{protagonist_name} trova\n"
 "{argument_item_name:1}.{page_break}"
 
-msgctxt "MsgKey0e10"
+msgctxt "MsgCoinsReceived"
 msgid "04061"
 msgstr ""
 "{protagonist_name} ottiene\n"
@@ -22353,7 +22353,7 @@ msgctxt "message"
 msgid "05395"
 msgstr "Sindaco di Alhafra{end_wait}"
 
-msgctxt "MsgFortuneTeller2"
+msgctxt "MsgNamesFortuneTeller"
 msgid "05396"
 msgstr "Divinatore{end_wait}"
 
@@ -22441,11 +22441,11 @@ msgctxt "message"
 msgid "05417"
 msgstr "Anziano di Prox{end_wait}"
 
-msgctxt "MsgConfirmGraphic2"
+msgctxt "MsgNamesConfirmGraphic"
 msgid "05418"
 msgstr "Confirm graphic{end_wait}"
 
-msgctxt "MsgIsaac2"
+msgctxt "MsgNamesIsaac"
 msgid "05419"
 msgstr "Isaac{end_wait}"
 
@@ -22469,7 +22469,7 @@ msgctxt "message"
 msgid "05424"
 msgstr "Sara{end_wait}"
 
-msgctxt "MsgPiers2"
+msgctxt "MsgNamesPiers"
 msgid "05425"
 msgstr "Piers{end_wait}"
 
@@ -39328,7 +39328,7 @@ msgstr ""
 "Questo masso mi blocca la via.\n"
 "Io devo andare dall'altra parte.{end_wait}"
 
-msgctxt "MsgRrruffRrruff2"
+msgctxt "MsgRrruffRrruff"
 msgid "08002"
 msgstr "Arf! Arf!{end_wait}"
 
@@ -41554,7 +41554,7 @@ msgstr ""
 "il potere della Psinergia,\n"
 "ma non può essere...{end_wait}"
 
-msgctxt "MsgBlank7"
+msgctxt "MsgPiersStartled"
 msgid "08305"
 msgstr "?!?{end_wait}"
 
@@ -46755,7 +46755,7 @@ msgstr ""
 "un solo modo per sconfiggerlo,\n"
 "colpirlo con un tridente...{end_wait}"
 
-msgctxt "MsgPenPen3"
+msgctxt "MsgPenPenExclaimed"
 msgid "09076"
 msgstr "Pin pin!{end_wait}"
 
@@ -46792,7 +46792,7 @@ msgstr ""
 "pietra da Pingus, come\n"
 "ricompensa per l'aiuto.{end_wait}"
 
-msgctxt "MsgPenPen2"
+msgctxt "MsgPenPen"
 msgid "09082"
 msgstr "Pin pin.{end_wait}"
 
@@ -46837,7 +46837,7 @@ msgstr ""
 "Mi sembra di soffocare...\n"
 "Non mi piace!{end_wait}"
 
-msgctxt "MsgChirpChirp2"
+msgctxt "MsgChirpChirp"
 msgid "09090"
 msgstr "Chirp chirp!{end_wait}"
 
@@ -46877,7 +46877,7 @@ msgstr ""
 "bene addosso! Adoro\n"
 "gli accessori eleganti!{end_wait}"
 
-msgctxt "MsgMooMoo2"
+msgctxt "MsgMooMoo"
 msgid "09096"
 msgstr "Muu! Muu!{end_wait}"
 
@@ -46945,7 +46945,7 @@ msgstr ""
 "Muuu dai quella\n"
 "bella sciarpa?{end_wait}"
 
-msgctxt "MsgArffArff2"
+msgctxt "MsgArffArff"
 msgid "09107"
 msgstr "Arf! Arf!{end_wait}"
 
@@ -46987,7 +46987,7 @@ msgstr ""
 "Non voglio esagerare, ne\n"
 "bevo a piccoli sorsi.{end_wait}"
 
-msgctxt "MsgBlank3"
+msgctxt "MsgGeorgeSilence"
 msgid "09114"
 msgstr "...{end_wait}"
 
@@ -47091,7 +47091,7 @@ msgstr ""
 "Con comodo! Non mi piace\n"
 "andare di fretta...{end_wait}"
 
-msgctxt "MsgYup2"
+msgctxt "MsgYup"
 msgid "09133"
 msgstr "Yup!{end_wait}"
 
@@ -47493,7 +47493,7 @@ msgstr ""
 "prosciugata non c'erano più pesci.\n"
 "Non ne prenderemo più molti.{end_wait}"
 
-msgctxt "MsgMikasallaInteriors27"
+msgctxt "MsgEvenOutInFarOffShores"
 msgid "09188"
 msgstr ""
 "Anche qui, lontano da\n"
@@ -50071,7 +50071,7 @@ msgstr ""
 "Portanubi non è certo\n"
 "stato un colpo finale.{end_wait}"
 
-msgctxt "MsgIDisagree2"
+msgctxt "MsgIDisagree"
 msgid "09557"
 msgstr "Non concordo...{end_wait}"
 
@@ -50260,7 +50260,7 @@ msgstr ""
 "ma non puoi scrutare\n"
 "il mio cuore.{end_wait}"
 
-msgctxt "MsgWait2"
+msgctxt "MsgJennaWait"
 msgid "09588"
 msgstr "{actor_name:5}, aspetta!{end_wait}"
 
@@ -61590,7 +61590,7 @@ msgstr ""
 "sui totem che portano\n"
 "alla Via delle Prove.{end_wait}"
 
-msgctxt "MsgAhhhh2"
+msgctxt "MsgAhhhh"
 msgid "11253"
 msgstr "Ahhhh!!!"
 
@@ -62668,7 +62668,7 @@ msgstr ""
 "Tranquilli! Staranno benone!\n"
 "Ora preparatevi a morire!{end_wait}"
 
-msgctxt "MsgBlank5"
+msgctxt "MsgCallJenna"
 msgid "11431"
 msgstr "{actor_name:5}!{end_wait}"
 
@@ -62704,7 +62704,7 @@ msgstr ""
 "Non preoccuparti, {actor_name:5}!\n"
 "Ti aiuterò!{end_wait}"
 
-msgctxt "MsgBlank6"
+msgctxt "MsgCallSheba"
 msgid "11437"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -70384,7 +70384,7 @@ msgstr ""
 "abbiamo affrontato un viaggio\n"
 "pericoloso per migliorare.{end_wait}"
 
-msgctxt "MsgIFound2"
+msgctxt "MsgIFoundName"
 msgid "12576"
 msgstr "Ho trovato {actor_name:1}!{end_wait}"
 
@@ -71228,7 +71228,7 @@ msgstr ""
 "È così che si scatena un\n"
 "Djinn piazzato!{end_wait}"
 
-msgctxt "MsgHey2"
+msgctxt "MsgHey"
 msgid "12708"
 msgstr "Ehi!{end_wait}"
 

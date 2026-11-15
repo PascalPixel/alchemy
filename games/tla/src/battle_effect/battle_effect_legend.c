@@ -63,9 +63,9 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet,
                              work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
                              work->sheet + LEGEND_FLAME_GRADIENT, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cells, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->variant * 16 + 86; frame++) {
@@ -348,7 +348,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_BoltCardSheet, work->sheet, 1,
                                1);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+    Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
                                work->sheet + ELEMENT_CARDS_PICTURES, 0, 0);
   }
   REG_BLDCNT = 0;
@@ -392,7 +392,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       if (mode == CARD_FROST)
         Sound_PlayFar(SE_CLATTER);
       if (mode == CARD_FLAME)
-        Sound_PlayFar(SE_104);
+        Sound_PlayFar(SE_LAUNCH);
       if (mode == CARD_THUNDER)
         Sound_PlayFar(SE_RISE_WITH_SPARKS);
       if (mode != CARD_BRAMBLE) {
@@ -509,7 +509,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           if (mode == CARD_FROST)
             Sound_PlayFar(SE_HEAVY_IMPACT);
           else if (mode == CARD_THUNDER)
-            Sound_PlayFar(SE_177);
+            Sound_PlayFar(SE_THUNDER_CARD);
           else
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)

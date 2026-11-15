@@ -168,7 +168,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
         // Each target's streaks set out with the mode's cry.
         if (frame == k * STREAKS_TARGET_DELAY) {
           if (mode == 1)
-            Sound_PlayFar(SE_192);
+            Sound_PlayFar(SE_SHRIEK);
           if (mode == 2)
             Sound_PlayFar(SE_STONE_GRIND);
           if (mode == 3)

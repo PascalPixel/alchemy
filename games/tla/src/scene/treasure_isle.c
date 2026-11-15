@@ -603,7 +603,7 @@ void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RUSTY_SWORD_MESSAGE 0
 #else
-#define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
+#define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword)
 #endif
 
 void TreasureIsle_LiftSecondRock(void);

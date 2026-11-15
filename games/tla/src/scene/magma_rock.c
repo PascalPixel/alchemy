@@ -351,21 +351,21 @@ void MagmaRock_UnblockMovedPillar(void) {
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
-    Actor_LiftTargetBlock(gMagmaRock_Room1Pillars);
+    Actor_LiftTargetBlock(gMagmaRock_SlidePillars);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3) {
-      Actor_LiftTargetBlock(gMagmaRock_Room2LowerPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowerPillars);
     } else if (gMainRoutineWork.entrance <= 7) {
-      Actor_LiftTargetBlock(gMagmaRock_Room2MiddlePillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailMiddlePillars);
     } else if (gMainRoutineWork.entrance <= 11) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
-      Actor_LiftTargetBlock(gMagmaRock_Room2UpperPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailUpperPillars);
     } else {
       if (work->target->z.part[0].pixel == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
-      Actor_LiftTargetBlock(gMagmaRock_Room2TopPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailTopPillars);
     }
   }
   MagmaRockInside_ClearBlockCells(event->movedBlock);
@@ -387,19 +387,19 @@ s32 MagmaRock_BlockMovedPillar(void) {
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
-    Blocks_MarkCells(gMagmaRock_Room1Pillars);
+    Blocks_MarkCells(gMagmaRock_SlidePillars);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3) {
-      Blocks_MarkCells(gMagmaRock_Room2LowerPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailLowerPillars);
     } else if (gMainRoutineWork.entrance <= 8) {
-      Blocks_MarkCells(gMagmaRock_Room2MiddlePillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailMiddlePillars);
     } else if (gMainRoutineWork.entrance <= 12) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
-      Blocks_MarkCells(gMagmaRock_Room2UpperPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailUpperPillars);
     } else {
       MapGrid_CopyCellAttributes(103, 39, 1, 1, 103, 38);
       MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
-      Blocks_MarkCells(gMagmaRock_Room2TopPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailTopPillars);
     }
   }
   x = FIELD_CELL(leader->x.fixed);
@@ -688,20 +688,20 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
 /// with MagmaRock_FlashStatue.
 void MagmaRock_TargetStatue(s32 mode) {
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
-  s16 *table = gMagmaRock_Room1Statues;
+  s16 *table = gMagmaRock_SlideStatues;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (party->entrance <= 3)
-      table = gMagmaRock_Room2LowerStatues;
+      table = gMagmaRock_SalamanderTailLowerStatues;
     else if (party->entrance <= 8)
-      table = gMagmaRock_Room2MiddleStatues;
+      table = gMagmaRock_SalamanderTailMiddleStatues;
     else if (party->entrance <= 12)
-      table = gMagmaRock_Room2UpperStatues;
+      table = gMagmaRock_SalamanderTailUpperStatues;
     else
-      table = gMagmaRock_Room2TopStatues;
+      table = gMagmaRock_SalamanderTailTopStatues;
   } else if (party->next == SCENE_MAGMA_ROCK_STATUE) {
-    table = gMagmaRock_Room3Statues;
+    table = gMagmaRock_StatueStatues;
   }
   if (mode == 2) {
     struct Actor *target;
@@ -1081,7 +1081,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     id = 0;
     if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
       id = MagmaRock_LookUpCellStatue(object->x.fixed, object->z.fixed,
-                                      gMagmaRock_Room1Statues);
+                                      gMagmaRock_SlideStatues);
     } else if (gMainRoutineWork.next ==
                SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
       s16 entrance = gMainRoutineWork.entrance;
@@ -1089,13 +1089,13 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       s32 z = object->z.fixed;
 
       if (entrance <= 3)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_Room2LowerStatues);
+        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailLowerStatues);
       else if (entrance <= 8)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_Room2MiddleStatues);
+        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailMiddleStatues);
       else if (entrance <= 12)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_Room2UpperStatues);
+        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailUpperStatues);
       else
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_Room2TopStatues);
+        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailTopStatues);
     }
     fifthPart = Actor_Get(id);
     fifthPart->riseCounter = 4;
@@ -1308,7 +1308,7 @@ void MagmaRock_PushPillarEast(void) {
   MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(object->x.fixed),
                                FIELD_CELL(object->z.fixed),
                                (object->groundHeight >> 19) + 4);
-  Blocks_MarkCells(gMagmaRock_Room2UpperPillars);
+  Blocks_MarkCells(gMagmaRock_SalamanderTailUpperPillars);
   cell[0] = FIELD_CELL(object->x.fixed);
   cell[2] = FIELD_CELL(object->z.fixed);
   if (cell[0] == 16 && cell[2] == 36)
@@ -1341,7 +1341,7 @@ void MagmaRock_PushPillarWest(void) {
   MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(object->x.fixed),
                                FIELD_CELL(object->z.fixed),
                                (object->groundHeight >> 19) + 4);
-  Blocks_MarkCells(gMagmaRock_Room2TopPillars);
+  Blocks_MarkCells(gMagmaRock_SalamanderTailTopPillars);
   position[0] = FIELD_CELL(object->x.fixed);
   position[2] = FIELD_CELL(object->z.fixed);
   if (position[0] == 35 && position[2] == 38)
@@ -1660,7 +1660,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_A)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
-    MagmaRockInside_RaiseActorCells(gMagmaRock_Room1Statues);
+    MagmaRockInside_RaiseActorCells(gMagmaRock_SlideStatues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       MagmaRock_PlaceVolley(ACTOR_SLIDE_MAGMA_ROCK,
                             ACTOR_SLIDE_PAIR_EAST_STATUE, 0);
@@ -1668,7 +1668,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SLIDE_PILLAR_A, 264, 360);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_B_PUSHED))
       Actor_SetPosition(ACTOR_SLIDE_PILLAR_B, 248, 408);
-    other = (s32)gMagmaRock_Room1Pillars;
+    other = (s32)gMagmaRock_SlidePillars;
     destinationX = 78;
     Actor_PlaceBlocks(other);
     MapGrid_CopyCellAttributes(98, 21, 4, 3, destinationX, 21);
@@ -1698,13 +1698,13 @@ s32 Scene_Initialize(void) {
       s32 id;
 
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
-      MagmaRockInside_RaiseActorCells(gMagmaRock_Room2LowerStatues);
+      MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailLowerStatues);
       Tightrope_Initialize();
       MagmaRock_PlaceTightrope(0, ACTOR_LOWER_TIGHTROPE_WEST_POST,
                                ACTOR_LOWER_TIGHTROPE_EAST_POST);
       if (Event_GetFlag(FLAG_LOWER_PILLAR_PUSHED))
         Actor_SetPosition(ACTOR_LOWER_PILLAR, 440, 536);
-      Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
+      Actor_PlaceBlocks(gMagmaRock_SalamanderTailLowerPillars);
       id = *entrance;
       if (id == 1) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1748,8 +1748,8 @@ s32 Scene_Initialize(void) {
         }
         if (Event_GetFlag(FLAG_MIDDLE_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_MIDDLE_PILLAR, 888, 568);
-        Actor_PlaceBlocks(gMagmaRock_Room2MiddlePillars);
-        MagmaRockInside_RaiseActorCells(gMagmaRock_Room2MiddleStatues);
+        Actor_PlaceBlocks(gMagmaRock_SalamanderTailMiddlePillars);
+        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailMiddleStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_MIDDLE_FLAME_A);
           other = 0x10000;
@@ -1787,13 +1787,13 @@ s32 Scene_Initialize(void) {
       } else if (*entrance <= 12) {
         if (Event_GetFlag(FLAG_UPPER_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_UPPER_PILLAR, 264, 584);
-        rise = (s32)gMagmaRock_Room2UpperPillars;
+        rise = (s32)gMagmaRock_SalamanderTailUpperPillars;
         Actor_PlaceBlocks(rise);
         Blocks_MarkCells(rise);
         Rope_Initialize();
         Call4((void (*)())MagmaRock_PlaceRope, 0, 0x250,
               ACTOR_UPPER_ROPE_POST_B, ACTOR_UPPER_ROPE_POST_A);
-        MagmaRockInside_RaiseActorCells(gMagmaRock_Room2UpperStatues);
+        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailUpperStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_UPPER_FLAME_A);
           other = 0x10000;
@@ -1817,7 +1817,7 @@ s32 Scene_Initialize(void) {
           goto move;
         }
       } else {
-        MagmaRockInside_RaiseActorCells(gMagmaRock_Room2TopStatues);
+        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailTopStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_TOP_FLAME);
           actor->x.fixed += px(1);
@@ -1831,7 +1831,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(ACTOR_TOP_PILLAR_A, 648, 600);
         if (Event_GetFlag(FLAG_TOP_PILLAR_B_PUSHED))
           Actor_SetPosition(ACTOR_TOP_PILLAR_B, 568, 616);
-        MagmaRock_SettleBlocks(gMagmaRock_Room2TopPillars);
+        MagmaRock_SettleBlocks(gMagmaRock_SalamanderTailTopPillars);
         if (Event_GetFlag(FLAG_SCENE_TEMP_50))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
         if (Event_GetFlag(FLAG_SCENE_TEMP_51))
@@ -1866,7 +1866,7 @@ s32 Scene_Initialize(void) {
     }
     leader = &work->leaderActorId;
     Actor_GetById(*leader)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-    MagmaRockInside_RaiseActorCells(gMagmaRock_Room3Statues);
+    MagmaRockInside_RaiseActorCells(gMagmaRock_StatueStatues);
     if (work->entrance <= 2) {
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
         actor = Actor_GetById(*leader);
@@ -2410,19 +2410,19 @@ s32 gMagmaRock_FlameEmberScript[] = {
     SC_END,
 };
 
-s16 gMagmaRock_Room1Pillars[] = {
+s16 gMagmaRock_SlidePillars[] = {
     8, 10, -1,
 };
 
-s16 gMagmaRock_Room1Statues[] = {
+s16 gMagmaRock_SlideStatues[] = {
     9, 50, 20, 12, 30, -1, -1,
 };
 
-s16 gMagmaRock_Room2LowerPillars[] = {
+s16 gMagmaRock_SalamanderTailLowerPillars[] = {
     8, 15, -1,
 };
 
-s16 gMagmaRock_Room2LowerStatues[] = {
+s16 gMagmaRock_SalamanderTailLowerStatues[] = {
     13, 30, -1, -1,
 };
 
@@ -2430,32 +2430,32 @@ s16 gMagmaRock_CrumblingPillars[] = {
     9, 512, 10, 514, -1,
 };
 
-s16 gMagmaRock_Room2MiddleStatues[] = {
+s16 gMagmaRock_SalamanderTailMiddleStatues[] = {
     14, 50, 15, 17, 51, 18, -1,
 };
 
-s16 gMagmaRock_Room2MiddlePillars[] = {
+s16 gMagmaRock_SalamanderTailMiddlePillars[] = {
     16, -1,
 };
 
-s16 gMagmaRock_Room2UpperStatues[] = {
+s16 gMagmaRock_SalamanderTailUpperStatues[] = {
     9, 50, 10, 11, 51, 12, -1,
 };
 
-s16 gMagmaRock_Room2UpperPillars[] = {
+s16 gMagmaRock_SalamanderTailUpperPillars[] = {
     8, -1,
 };
 
-s16 gMagmaRock_Room2TopPillars[] = {
+s16 gMagmaRock_SalamanderTailTopPillars[] = {
     8, 9, -1,
 };
 
-s16 gMagmaRock_Room2TopStatues[] = {
+s16 gMagmaRock_SalamanderTailTopStatues[] = {
     11, 30, -1, 12, 50, 13, 15, 31,
     -1, -1,
 };
 
-s16 gMagmaRock_Room3Statues[] = {
+s16 gMagmaRock_StatueStatues[] = {
     9, 50, -1, -1, 0,
 };
 

@@ -4154,7 +4154,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "MsgRustySword2"
+msgctxt "MsgRustySword"
 msgid "01024"
 msgstr "Rostig. Schwert"
 
@@ -16203,7 +16203,7 @@ msgctxt "MsgItemWoreOff"
 msgid "03982"
 msgstr "{argument_item_name:1} lässt nach.{end_wait}"
 
-msgctxt "MsgBlank2"
+msgctxt "MsgCastAbilityName"
 msgid "03983"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
@@ -16551,7 +16551,7 @@ msgstr ""
 "{protagonist_name} erhält\n"
 "{argument_item_name:1}.{page_break}"
 
-msgctxt "MsgKey0e10"
+msgctxt "MsgCoinsReceived"
 msgid "04061"
 msgstr ""
 "{protagonist_name} erhält\n"
@@ -22696,7 +22696,7 @@ msgctxt "message"
 msgid "05438"
 msgstr "Bürgermeister von Alhafra{end_wait}"
 
-msgctxt "MsgFortuneTeller2"
+msgctxt "MsgNamesFortuneTeller"
 msgid "05439"
 msgstr "Hellseher{end_wait}"
 
@@ -22784,11 +22784,11 @@ msgctxt "message"
 msgid "05460"
 msgstr "Ältester von Prox{end_wait}"
 
-msgctxt "MsgConfirmGraphic2"
+msgctxt "MsgNamesConfirmGraphic"
 msgid "05461"
 msgstr "Bestätigungsgrafik{end_wait}"
 
-msgctxt "MsgIsaac2"
+msgctxt "MsgNamesIsaac"
 msgid "05462"
 msgstr "Isaac{end_wait}"
 
@@ -22812,7 +22812,7 @@ msgctxt "message"
 msgid "05467"
 msgstr "Cosma{end_wait}"
 
-msgctxt "MsgPiers2"
+msgctxt "MsgNamesPiers"
 msgid "05468"
 msgstr "Aaron{end_wait}"
 
@@ -40890,7 +40890,7 @@ msgstr ""
 "Ich will aber auf die andere\n"
 "Seite!{end_wait}"
 
-msgctxt "MsgRrruffRrruff2"
+msgctxt "MsgRrruffRrruff"
 msgid "08045"
 msgstr "Wrruff! Wrruff!{end_wait}"
 
@@ -43334,7 +43334,7 @@ msgstr ""
 "eine Form der Psynergy gefühlt\n"
 "habe. Aber das ist wohl unmöglich.{end_wait}"
 
-msgctxt "MsgBlank7"
+msgctxt "MsgPiersStartled"
 msgid "08348"
 msgstr "?!?{end_wait}"
 
@@ -49099,7 +49099,7 @@ msgstr ""
 "wenn man ihn mit einem\n"
 "Dreizack niederstreckt.{end_wait}"
 
-msgctxt "MsgPenPen3"
+msgctxt "MsgPenPenExclaimed"
 msgid "09119"
 msgstr "Squiek! Squak!{end_wait}"
 
@@ -49139,7 +49139,7 @@ msgstr ""
 "einen wunderschönen Stein für\n"
 "die Rettung seiner Pingulina.{end_wait}"
 
-msgctxt "MsgPenPen2"
+msgctxt "MsgPenPen"
 msgid "09125"
 msgstr "Squiek! Squiek!{end_wait}"
 
@@ -49186,7 +49186,7 @@ msgstr ""
 "Liebe sehr erdrückend.{page_break}"
 "Und das mag ich nicht...{end_wait}"
 
-msgctxt "MsgChirpChirp2"
+msgctxt "MsgChirpChirp"
 msgid "09133"
 msgstr "Tschiep! Tschiep!{end_wait}"
 
@@ -49233,7 +49233,7 @@ msgstr ""
 "Ich liebe ausgefallene\n"
 "Accessoires!{end_wait}"
 
-msgctxt "MsgMooMoo2"
+msgctxt "MsgMooMoo"
 msgid "09139"
 msgstr "Muh! Muh!{end_wait}"
 
@@ -49303,7 +49303,7 @@ msgstr ""
 "Willst du mir dieses entzückende\n"
 "Ding überlassen?{end_wait}"
 
-msgctxt "MsgArffArff2"
+msgctxt "MsgArffArff"
 msgid "09150"
 msgstr "Wiff! Waff!{end_wait}"
 
@@ -49349,7 +49349,7 @@ msgstr ""
 "Ich werde nur ein ganz klein\n"
 "wenig daran schlabbern.{end_wait}"
 
-msgctxt "MsgBlank3"
+msgctxt "MsgGeorgeSilence"
 msgid "09157"
 msgstr "...{end_wait}"
 
@@ -49460,7 +49460,7 @@ msgstr ""
 "Lasst euch Zeit! Eile liegt mir\n"
 "ohnehin nicht...{end_wait}"
 
-msgctxt "MsgYup2"
+msgctxt "MsgYup"
 msgid "09176"
 msgstr "Yep!{end_wait}"
 
@@ -49910,7 +49910,7 @@ msgstr ""
 "Daher werden zukünftige Fänge\n"
 "auch eher dürftig ausfallen.{end_wait}"
 
-msgctxt "MsgMikasallaInteriors27"
+msgctxt "MsgEvenOutInFarOffShores"
 msgid "09231"
 msgstr ""
 "Selbst an diesen fernen\n"
@@ -52792,7 +52792,7 @@ msgstr ""
 "Himmelszeichen kann man kaum\n"
 "als Gnadenstoß bezeichnen.{end_wait}"
 
-msgctxt "MsgIDisagree2"
+msgctxt "MsgIDisagree"
 msgid "09600"
 msgstr "Da bin ich anderer Meinung!{end_wait}"
 
@@ -52995,7 +52995,7 @@ msgstr ""
 "Du kannst meine Gedanken sehen,\n"
 "aber nicht in mein Herz blicken!{end_wait}"
 
-msgctxt "MsgWait2"
+msgctxt "MsgJennaWait"
 msgid "09631"
 msgstr "{actor_name:5}, warte!{end_wait}"
 
@@ -65649,7 +65649,7 @@ msgstr ""
 "an der Straße der Prüfungen\n"
 "zieren.{end_wait}"
 
-msgctxt "MsgAhhhh2"
+msgctxt "MsgAhhhh"
 msgid "11296"
 msgstr "Aaaah!!!"
 
@@ -66827,7 +66827,7 @@ msgstr ""
 "nichts fehlen! Und jetzt sei\n"
 "bereit für das Ende!{end_wait}"
 
-msgctxt "MsgBlank5"
+msgctxt "MsgCallJenna"
 msgid "11474"
 msgstr "{actor_name:5}!{end_wait}"
 
@@ -66864,7 +66864,7 @@ msgstr ""
 "Keine Sorge, {actor_name:5}!\n"
 "Ich bin hier, um euch zu helfen!{end_wait}"
 
-msgctxt "MsgBlank6"
+msgctxt "MsgCallSheba"
 msgid "11480"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -75408,7 +75408,7 @@ msgstr ""
 "stählen wir unsere Körper auf\n"
 "einer gefahrvollen Reise.{end_wait}"
 
-msgctxt "MsgIFound2"
+msgctxt "MsgIFoundName"
 msgid "12619"
 msgstr "Ich habe {actor_name:1} gefunden!{end_wait}"
 
@@ -76333,7 +76333,7 @@ msgstr ""
 "musst, um einen verbündeten\n"
 "Dschinn freizusetzen!{end_wait}"
 
-msgctxt "MsgHey2"
+msgctxt "MsgHey"
 msgid "12751"
 msgstr "Hey!{end_wait}"
 

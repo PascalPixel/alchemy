@@ -17,7 +17,7 @@ s32 Field_UsePsynergy(u32 code) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 abilityId = ABILITY_ID(code);
   struct PendingEvent *before;
-  s32 group = Ability_Get(abilityId)->fieldEffect;
+  s32 group = Ability_Get(abilityId)->fieldPsynergy;
   s32 userId = ACT_UNIT(code);
   s32 retreat = 0;
   struct PendingEvent *after;
@@ -31,7 +31,7 @@ s32 Field_UsePsynergy(u32 code) {
   u8 *effect;
 
   Leader_StopMoving();
-  event->unkd30 = 255;
+  event->psynergyHitObject = 255;
   event->standing = retreat;
   GameFlag_Clear(FLAG_ITEM_USE);
   if (userId == 15)
@@ -110,7 +110,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
   if (userId <= 7) {
-    struct BattleAct *action = Ability_Get(abilityId);
+    struct AbilityDefinition *action = Ability_Get(abilityId);
 
     struct FieldUnit *unit = Unit_Get(userId);
     s32 ppCost = action->ppCost;
@@ -175,13 +175,13 @@ s32 Field_UsePsynergy(u32 code) {
       FieldPsynergy_Run();
   }
   BattleEffect_StopMainActor();
-  hit = event->unkd30;
+  hit = event->psynergyHitObject;
   if (hit != -1) {
     selector = hit | 0x100;
     pending = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, selector);
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, userId, event->unkd30);
+      Field_RunPsynergyEvent(pending, userId, event->psynergyHitObject);
   }
   Field_RunPsynergyEvent(after, userId, target);
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST))

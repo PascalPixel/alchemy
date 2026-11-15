@@ -103,7 +103,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   battle = Ram_HeapSlots->battleWork;
   VramCache_FreeEntry(battle->arrowTiles);
-  VramBlock_Reset93Far();
+  ActorShadow_FreeTilesFar();
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
@@ -239,14 +239,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
   }
   Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F9, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningTexture, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
                              work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                   SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   zero = 0;
   camZ = 0;
@@ -823,16 +823,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame == 552) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+      Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
                                  Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if (frame == 551) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0EF,
+      Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
                                  work->sheet + CATASTROPHE_PENTAGON_SEAL, 0, 0);
     }
     if (frame == 602) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                                  Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if ((u32)(frame - 602) <= 6) {
@@ -972,7 +972,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   for (i = 0; i != CATASTROPHE_SPRITES; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
-  VramBlock_Load93Far();
+  ActorShadow_LoadTilesFar();
   battle->arrowTiles = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->args);
   for (i = 0; i != args->targetCount; i++) {
@@ -1016,11 +1016,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, cellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0EF,
+  Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, cellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
                              Ram_MapCellBuffer + CATASTROPHE_PENTAGON_SEAL, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   {
     s32 rise;
@@ -1079,7 +1079,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame == 96) {
-          Sound_PlayFar(SE_104);
+          Sound_PlayFar(SE_LAUNCH);
         }
         if (frame == 128) {
           u16 *c;

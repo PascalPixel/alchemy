@@ -682,7 +682,7 @@ void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   }
 }
 
-void Animation_ApplyChildValuesToRecord(struct Sprite *record, u32 value) {
+void Sprite_SetAnimationColorModes(struct Sprite *record, u32 value) {
   s32 i;
 
   if (record != NULL) {

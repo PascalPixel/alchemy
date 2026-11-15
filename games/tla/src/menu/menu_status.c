@@ -252,7 +252,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   result = 0;
   cursor = menu->memberCursors[slot];
   cursor->motion = ICON_SHOWN;
-  cursor->animStep = 0;
+  cursor->animationStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->memberWindow);
   if (GameFlag_Get(FLAG_LINK_BATTLE_ARRANGED))
     Window_DrawDividerLineFar(menu->memberWindow, 9, 1, 9, 3);
@@ -1205,7 +1205,7 @@ extern u8 MsgUsableAnywhere[];
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct PagedList *state) {
   struct PsynergyMenuWork *menu;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s32 row;
   s32 base;
 
@@ -1240,7 +1240,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #if LANGUAGE == LANGUAGE_JAPANESE
     // One line for each place the ability works, then the end of the
     // sentence on the line below them.
-    if (ability->fieldEffect != 0 ||
+    if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       Text_DrawMessageAsTilesFar(MSG_USABLE_IN_FIELD, window, 0, USABLE_TOP);
       row = 1;
@@ -1253,7 +1253,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     Text_DrawMessageAsTilesFar(MSG_CAN_BE_USED, window, 0,
                                row * 8 + USABLE_TOP);
 #else
-    if (ability->fieldEffect != 0 ||
+    if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
@@ -1372,7 +1372,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   if (rows > row) {
     offset = (s32)(first * 2) + PSY_LIST_OFFSET;
     do {
-      struct BattleAct *act;
+      struct AbilityDefinition *act;
       s32 msg;
       s32 y;
       s32 range;

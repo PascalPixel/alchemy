@@ -59,7 +59,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(effect, 7);
-    Animation_ApplyChildValuesToRecordFar(effect->object,
+    Sprite_SetAnimationColorModesFar(effect->object,
                                           (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
@@ -130,7 +130,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
 struct FieldEffectWork;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
+  ((void (*)(s32, s32))Sprite_SetAnimationColorModesFar)
 #define gEffectWork Ram_HeapSlots->fieldEffectWork
 
 /// Field effect sprite callback of a Mars Djinni's sparks: the spark flies 120

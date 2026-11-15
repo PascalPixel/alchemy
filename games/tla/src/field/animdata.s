@@ -36,7 +36,7 @@ gResourceSlot_NumberTable:
 	.2byte ResourceId_MummySprites, 552
 	.2byte ResourceId_RaptorSprites, 553
 	.2byte ResourceId_GreenKnightSprites, 554
-	.2byte ResourceId_Data21F, 555
+	.2byte ResourceId_WyvernSprites, 555
 	.2byte ResourceId_HydraSprites, 556
 	.2byte ResourceId_LarvaSprites, 557
 	.2byte ResourceId_JackalSprites, 558

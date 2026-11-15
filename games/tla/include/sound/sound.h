@@ -167,7 +167,7 @@ enum {
 };
 
 /// The sound effect from SOUND_SE_FIRST up each player last started, by player;
-/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_SE5 clear the entries they fade.
+/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE clear the entries they fade.
 extern u16 gMusicPlayerLastSound[MUSIC_PLAYER_COUNT];
 
 void Sound_SetFixedSampleFreq(u32 mode);

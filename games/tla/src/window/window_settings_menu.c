@@ -180,7 +180,7 @@ void SettingsMenu_Release(void) {
 
 extern const u8 gResource_FixedBlockBTiles[];
 extern const u8 gSettingsMenu_SliderTiles[];
-extern const u16 Data_080aa0e8[];
+extern const u16 gWorkspaceOptions_SliderPalette[];
 
 extern s8 gOptionMenu_SpeedIcons[];
 extern s8 gOptionMenu_SpeechIcons[];
@@ -238,7 +238,7 @@ struct RenderInput *SettingsMenu_Open(void) {
 
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    Dma_Set(Data_080aa0e8, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
+    Dma_Set(gWorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
             DMA_COPY_HALFWORDS(32), REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
@@ -398,7 +398,7 @@ s32 SettingsMenu_Run(void) {
 
       for (i = 0; i <= 2; i++) {
         icon = work->choiceIcons[0][i];
-        icon->sentinel = OAM_DEPTH_FRONT - 4;
+        icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -408,7 +408,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
-        icon->sentinel = OAM_DEPTH_FRONT - 4;
+        icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -418,7 +418,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
-        icon->sentinel = OAM_DEPTH_FRONT - 4;
+        icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -709,7 +709,7 @@ s32 PauseMenu_Choose(s32 initial) {
         pauseIcons = gMenu_WorkspaceIcons;
         do {
           icon = work->icon[i];
-          icon->sentinel = OAM_DEPTH_FRONT - 4;
+          icon->depth = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;

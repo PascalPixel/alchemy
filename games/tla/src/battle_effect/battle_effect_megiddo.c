@@ -117,7 +117,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SPIN);
     }
     if (frame == 84) {
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 143) {
       Sound_PlayFar(SE_191);
@@ -131,10 +131,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                                  Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                                  work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,
                                  work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);

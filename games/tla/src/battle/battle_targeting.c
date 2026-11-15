@@ -264,7 +264,7 @@
 /// Picks the target of an enemy's ability, or a confused unit's, at random
 /// among those it would affect; a single-target attack by an enemy with a
 /// strategy favours the strongest.
-s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
+s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
   s32 targetPositions[6];
@@ -568,7 +568,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct BattleObject *runtime;
 
   creature = Unit_Get(unitId);
-  if (creature->side == BATTLE_UNIT_ENEMY) {
+  if (creature->side == BATTLE_SIDE_ENEMY) {
     Unit_SetHpFar(creature, 0);
     BattleObject_RemoveFromLists(unitId);
     BattleObject_MarkForRelease(unitId);
@@ -807,7 +807,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 /// The Lost Age adds the shields that turn an ability away, the abilities that
 /// call reinforcements, and the Djinn and summon effects of its own.
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s32 abilityId;
   struct Unit *actor;
   s32 unitId;
@@ -2060,7 +2060,7 @@ power_end:
       if (BattleUnit_KeepsOneHp(targetId) != 0)
         break;
       BattlePlayback_Push(PLAYBACK_DEFEAT, targetId);
-      if (target->side == BATTLE_UNIT_PARTY)
+      if (target->side == BATTLE_SIDE_PARTY)
         PUSH_MESSAGE(MsgKoDown);
       else if (abilityId == ABILITY_DROWN)
         PUSH_MESSAGE(MsgSuffocate);
@@ -2366,7 +2366,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   struct ItemDefinition *item;
   s32 useItem;
   s8 strategyKind;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s32 abilityId;
   u8 counts[4];
   u8 summons[36];

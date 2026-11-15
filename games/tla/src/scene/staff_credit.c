@@ -21,6 +21,7 @@
 #include "field/field.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
+#include "field/perspective.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -211,7 +212,7 @@ enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
 /// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
 /// back; BEACON_BEAMS_MEET is the four beams meeting over Mt. Aleph.
 void StaffCredit_ShowBeacon(s32 stage) {
-  struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
+  struct WorldMapView *map = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 palette;
   u8 *buffer;
   u8 *grid;
@@ -237,7 +238,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   WorldMap_UpdateCurrentTileBlock();
   FieldEffect_ScheduleRatioTransition(gStaffCredit_StartZooms[stage], 1);
   map->yaw = TRIG_TURN / 16;
-  map->unk11c = TRIG_TURN * 13 / 16;
+  map->pitch = TRIG_TURN * 13 / 16;
   Iwram_ClearWordsEntry((void *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
                         PALETTE_COLORS * 2);
   wait(1);
@@ -255,7 +256,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
         FieldEffect_ScheduleRatioTransition(gStaffCredit_EndZooms[stage], 60);
     }
     if (frame >= gStaffCredit_FlightFrames[stage] - 64) {
-      u16 *turn = (u16 *)&map->unk11c;
+      u16 *turn = &map->pitch;
       u8 *step = gStaffCredit_FlightTurns + 1;
 
       *turn += step[stage];

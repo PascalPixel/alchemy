@@ -5,10 +5,10 @@
 #include "static_assert.h"
 
 /// Unit.side: which side a unit fights on, if it is in the battle.
-enum BattleUnitPresence {
-  BATTLE_UNIT_ABSENT = 0,
-  BATTLE_UNIT_ENEMY = 1,
-  BATTLE_UNIT_PARTY = 2
+enum BattleSide {
+  BATTLE_SIDE_NONE = 0,
+  BATTLE_SIDE_ENEMY = 1,
+  BATTLE_SIDE_PARTY = 2
 };
 
 /// Marks in a list of unit ids, such as BattleWork.partyUnits and enemyIds.

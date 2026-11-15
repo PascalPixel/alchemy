@@ -792,7 +792,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
     System_Wait(1);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(32);
-    Event_PlaySound(SE_574);
+    Event_PlaySound(SE_FLASH);
     AnemosInnerSanctum_DropSpark(targetX, targetZ, part);
     FieldEvent_Wait(80);
     if (GameFlag_Get(FLAG_ANEMOS_VENUS_SYMBOL_LIT) &&

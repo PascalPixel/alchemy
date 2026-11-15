@@ -4145,7 +4145,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "MsgRustySword2"
+msgctxt "MsgRustySword"
 msgid "01024"
 msgstr "さびたソード"
 
@@ -14282,7 +14282,7 @@ msgctxt "MsgItemWoreOff"
 msgid "03522"
 msgstr "{argument_item_name:233} こうかがきれた{end_wait}"
 
-msgctxt "MsgBlank2"
+msgctxt "MsgCastAbilityName"
 msgid "03523"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
@@ -14629,7 +14629,7 @@ msgstr ""
 "{protagonist_name}は\n"
 "{argument_item_name:134} 見つけた{page_break}"
 
-msgctxt "MsgKey0e10"
+msgctxt "MsgCoinsReceived"
 msgid "03601"
 msgstr ""
 "{protagonist_name}は\n"
@@ -20386,7 +20386,7 @@ msgctxt "message"
 msgid "04921"
 msgstr "アラフラ町長{end_wait}"
 
-msgctxt "MsgFortuneTeller2"
+msgctxt "MsgNamesFortuneTeller"
 msgid "04922"
 msgstr "まじないし{end_wait}"
 
@@ -20474,11 +20474,11 @@ msgctxt "message"
 msgid "04943"
 msgstr "プロクス村のちょうろう{end_wait}"
 
-msgctxt "MsgConfirmGraphic2"
+msgctxt "MsgNamesConfirmGraphic"
 msgid "04944"
 msgstr "かおグラかくにん{end_wait}"
 
-msgctxt "MsgIsaac2"
+msgctxt "MsgNamesIsaac"
 msgid "04945"
 msgstr "ロビン{end_wait}"
 
@@ -20502,7 +20502,7 @@ msgctxt "message"
 msgid "04950"
 msgstr "シバ{end_wait}"
 
-msgctxt "MsgPiers2"
+msgctxt "MsgNamesPiers"
 msgid "04951"
 msgstr "ピカード{end_wait}"
 
@@ -39080,7 +39080,7 @@ msgstr ""
 "この岩が じゃまだワン\n"
 "むこうに いきたいワン!{end_wait}"
 
-msgctxt "MsgRrruffRrruff2"
+msgctxt "MsgRrruffRrruff"
 msgid "07825"
 msgstr "ワンワンワン!{end_wait}"
 
@@ -41431,7 +41431,7 @@ msgstr ""
 "ちかくで かんじたけど\n"
 "まさか 気のせいだよな。{end_wait}"
 
-msgctxt "MsgBlank7"
+msgctxt "MsgPiersStartled"
 msgid "08155"
 msgstr "?!{end_wait}"
 
@@ -46470,7 +46470,7 @@ msgstr ""
 "ヤツをたおすには3つまたのヤリで\n"
 "つきさすしかないらしいがのう・・・。{end_wait}"
 
-msgctxt "MsgPenPen3"
+msgctxt "MsgPenPenExclaimed"
 msgid "08926"
 msgstr "ペン ペン・・・。{end_wait}"
 
@@ -46509,7 +46509,7 @@ msgstr ""
 "ペンコをたすけたおれいに\n"
 "きれいな石をもらった。{end_wait}"
 
-msgctxt "MsgPenPen2"
+msgctxt "MsgPenPen"
 msgid "08932"
 msgstr "ペン ペン。{end_wait}"
 
@@ -46553,7 +46553,7 @@ msgstr ""
 "くっついてばかりいられるのも\n"
 "こまりものね ペーン ペーン。{end_wait}"
 
-msgctxt "MsgChirpChirp2"
+msgctxt "MsgChirpChirp"
 msgid "08940"
 msgstr "ピー ピー。{end_wait}"
 
@@ -46591,7 +46591,7 @@ msgstr ""
 "おしゃれなアクセサリーは\n"
 "ワタシにぴったりっピー。{end_wait}"
 
-msgctxt "MsgMooMoo2"
+msgctxt "MsgMooMoo"
 msgid "08946"
 msgstr "モー モー。{end_wait}"
 
@@ -46660,7 +46660,7 @@ msgstr ""
 "もしかして アタシに\n"
 "あかいヌノをくれるのかモー?{end_wait}"
 
-msgctxt "MsgArffArff2"
+msgctxt "MsgArffArff"
 msgid "08957"
 msgstr "ワン ワン。{end_wait}"
 
@@ -46705,7 +46705,7 @@ msgstr ""
 "もったいないから すこしずつ\n"
 "ミルクを のんでるんだワン。{end_wait}"
 
-msgctxt "MsgBlank3"
+msgctxt "MsgGeorgeSilence"
 msgid "08964"
 msgstr "・・・。{end_wait}"
 
@@ -46806,7 +46806,7 @@ msgstr ""
 "それじゃ 気がすむまで\n"
 "たんけんしてきてカメ。{end_wait}"
 
-msgctxt "MsgYup2"
+msgctxt "MsgYup"
 msgid "08983"
 msgstr "カメ カメ。{end_wait}"
 
@@ -47201,7 +47201,7 @@ msgstr ""
 "あの川ザカナも すくないから\n"
 "ことしは たべられないかもね。{end_wait}"
 
-msgctxt "MsgMikasallaInteriors27"
+msgctxt "MsgEvenOutInFarOffShores"
 msgid "09038"
 msgstr ""
 "こんな わすれられたばしょでも\n"
@@ -49693,7 +49693,7 @@ msgstr ""
 "オロチをさしつらぬいたけど\n"
 "とどめをさしたとはいえないぜ。{end_wait}"
 
-msgctxt "MsgIDisagree2"
+msgctxt "MsgIDisagree"
 msgid "09407"
 msgstr "そうかのう・・・?{end_wait}"
 
@@ -49874,7 +49874,7 @@ msgstr ""
 "わたしのこころをのぞくのは\n"
 "あなたでは ムリですわよ。{end_wait}"
 
-msgctxt "MsgWait2"
+msgctxt "MsgJennaWait"
 msgid "09438"
 msgstr "まってくれ {actor_name:5}!{end_wait}"
 
@@ -60911,7 +60911,7 @@ msgstr ""
 "いずれは かれらの名前を\n"
 "きざまなければならないな。{end_wait}"
 
-msgctxt "MsgAhhhh2"
+msgctxt "MsgAhhhh"
 msgid "11104"
 msgstr "キャーッ!"
 
@@ -61956,7 +61956,7 @@ msgstr ""
 "さあ これであんしんしたろう\n"
 "こころおきなく 死ぬがいい!{end_wait}"
 
-msgctxt "MsgBlank5"
+msgctxt "MsgCallJenna"
 msgid "11282"
 msgstr "兄さん!{end_wait}"
 
@@ -61991,7 +61991,7 @@ msgctxt "message"
 msgid "11287"
 msgstr "わたしも戦うわ 兄さん!{end_wait}"
 
-msgctxt "MsgBlank6"
+msgctxt "MsgCallSheba"
 msgid "11288"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -69543,7 +69543,7 @@ msgstr ""
 "{actor_name:1}殿におしえてあげなければ\n"
 "かれが ひどい目にあってしまうぞ。{end_wait}"
 
-msgctxt "MsgIFound2"
+msgctxt "MsgIFoundName"
 msgid "12434"
 msgstr "見つけたぞ {actor_name:1}!{end_wait}"
 
@@ -70352,7 +70352,7 @@ msgstr ""
 "セットじょうたいから\n"
 "ときはなてるんですよ!{end_wait}"
 
-msgctxt "MsgHey2"
+msgctxt "MsgHey"
 msgid "12566"
 msgstr "あっ!{end_wait}"
 

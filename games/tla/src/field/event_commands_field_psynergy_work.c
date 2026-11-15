@@ -103,7 +103,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     work = Ram_HeapSlots->fieldEffectWork;
   }
   work->action = abilityId;
-  work->fieldPsynergy = Ability_Get(abilityId)->fieldEffect;
+  work->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
   running = event->psynergyActing;
   if (running != 0)
     return;
@@ -142,8 +142,8 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   event->targetX = 0;
   event->targetY = 0;
   event->targetZ = 0;
-  event->unkd38 = 0;
-  event->unkd30 = 255;
+  event->blazeLongSpray = 0;
+  event->psynergyHitObject = 255;
   BattleEffect_StartArcEffect();
   Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_VBLANK);
 }
@@ -215,7 +215,7 @@ void FieldPsynergy_StartCast(void) {
     work->messageShown = 1;
     Actor_SetOthersPaused(object, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
-    FieldMessage_ShowFar((s32)&MsgBlank2, work->messageMode);
+    FieldMessage_ShowFar((s32)&MsgCastAbilityName, work->messageMode);
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = 0;
   }

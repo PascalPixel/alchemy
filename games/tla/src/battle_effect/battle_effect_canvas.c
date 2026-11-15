@@ -87,7 +87,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       list[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(list, 0);
       VramCache_FreeEntry(battle->arrowTiles);
-      VramBlock_Reset93Far();
+      ActorShadow_FreeTilesFar();
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_EarthHorizonBackdrop, 0);
@@ -154,7 +154,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, FLASHES, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, FLASHES, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Ram_MapCellBuffer + 0x400;
@@ -287,7 +287,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                      work->sheet + ECLIPSE_TORNADO_PICTURES, 1,
                                      0);
-          Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+          Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                                      work->sheet + ECLIPSE_GLOW_BAND_A, 0, 0);
         }
         verts = Heap_AllocEwram(32);
@@ -409,7 +409,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   for (i = 0; i != 32; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
-  VramBlock_Load93Far();
+  ActorShadow_LoadTilesFar();
   battle->arrowTiles = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->args);
   for (i = 0; i != args->targetCount; i++) {
@@ -436,7 +436,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
@@ -535,9 +535,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                              work->sheet + ECLIPSE_FLAME_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   {
     s32 *v = &FLASHES[0].variant;
@@ -793,9 +793,9 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                              (Ram_MapCellBuffer + 0x2000), 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;

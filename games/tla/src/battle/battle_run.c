@@ -144,7 +144,7 @@ void Sound_LoadReverbCode(s32 preset);
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct BattleWork *battle;
-  struct BattlePresentationTransition *transition;
+  struct BattleBackgroundWork *transition;
   s32 enemyCount;
   u8 *enemyUnitDestination;
   s32 round;
@@ -162,7 +162,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
   transition = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
-                                   sizeof(struct BattlePresentationTransition));
+                                   sizeof(struct BattleBackgroundWork));
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
@@ -498,7 +498,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
+    Unit_Get(owner)->side = BATTLE_SIDE_PARTY;
   }
 
   if (owners != 0)
@@ -526,7 +526,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
+    Unit_Get(owner)->side = BATTLE_SIDE_PARTY;
   }
 
   if (owners != 0)
@@ -552,7 +552,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (Unit_Get(id)->side != BATTLE_UNIT_ABSENT) {
+      if (Unit_Get(id)->side != BATTLE_SIDE_NONE) {
         *output = id;
         listed++;
         output++;
@@ -613,7 +613,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
+        if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;
@@ -680,7 +680,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
+        if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;

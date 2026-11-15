@@ -94,7 +94,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   struct SpritePlacement position;
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct BattlePresentationTransition *presentation;
+  struct BattleBackgroundWork *presentation;
   void *canvas;
   struct BattleEffectWork *work;
   s8 *path;

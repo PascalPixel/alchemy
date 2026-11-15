@@ -328,7 +328,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS);
-  FieldEvent_SetMessageId((s32)MsgIFound2);
+  FieldEvent_SetMessageId((s32)MsgIFoundName);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   // "I found Isaac!"
   FieldEvent_ShowMessageThenWait(ACTOR_SATRAGE, 0, 1);

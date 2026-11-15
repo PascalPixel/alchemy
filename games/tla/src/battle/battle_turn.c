@@ -14,7 +14,7 @@
 /// pixels up, a quarter turn of yaw, a slight downward pitch, 750 pixels away.
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct BattlePresentationTransition *secondary =
+  struct BattleBackgroundWork *secondary =
       Ram_HeapSlots->battleBackground;
   struct FixedPointPosition local;
   u32 result;
@@ -231,7 +231,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
     struct BattleActionRecord *entry = &entries[i];
 
     if (entry->command == COMMAND_DJINN) {
-      struct BattleAct *action;
+      struct AbilityDefinition *action;
 
       Unit_Get(entry->unitId);
       action = Ability_Get(Djinn_GetAbilityIdFar((entry->parameter) >> 8 & 15,

@@ -111,7 +111,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   Text_DrawMessage(message, (s32)window, 40, 88);
   Text_DrawMessage(message + 1, (s32)window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
-  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
+  Sound_PlayFar(SE_STOP_EXIT_SE);
   wait(10);
   Heap_Release(tiles);
   return window;

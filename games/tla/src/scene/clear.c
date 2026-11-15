@@ -53,7 +53,6 @@
 #include "item_ids.h"
 #include "field/field_sequence.h"
 
-extern u16 gData_02003a74[];
 
 /// A question's window, left open for the Yes/No menu below it.
 #define QUESTION_MESSAGE                                                       \
@@ -728,7 +727,7 @@ scan:
 
     if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
         signature[3] == 48) {
-      request = gData_02003a74;
+      request = (u16 *)gSerialTransfer.payload;
       request[0] = REQUEST_EDITION;
       request[1] = 'V';
       request[2] = 'T';
@@ -759,7 +758,7 @@ transfer:
     Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
   }
   if (i == 9 && gSerialReceivedSize == 0) {
-    request = gData_02003a74;
+    request = (u16 *)gSerialTransfer.payload;
     request[0] = 0;
     request[1] = 0;
     request[2] = 0;
@@ -1036,7 +1035,7 @@ s32 Clear_EnterPassword(void) {
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
-    sprite->sentinel = 255;
+    sprite->depth = 255;
     sprite->sprite.oam.priority = 0;
     Cursor_Place(&gridStore, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }

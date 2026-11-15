@@ -59,7 +59,7 @@ void Field_StartEncounterTransition(s32 unused) {
 
   work = Ram_HeapSlots->fieldWork;
   Sound_PlayFar(gMainRoutineWork.battleMusic);
-  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
+  Sound_PlayFar(SE_STOP_EXIT_SE);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));

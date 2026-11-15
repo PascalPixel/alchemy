@@ -77,9 +77,9 @@ struct WindowSprite {
   u16 x;                      ///< screen pixels
   u16 y;                      ///< screen pixels
   u16 unused;                 ///< nothing reads it
-  u16 animStep;               ///< step of its motion's animation
+  u16 animationStep;               ///< step of its motion's animation
   s8 index;                   ///< VRAM cache slot, or a glyph's tile
-  u8 sentinel;                ///< depth slot it is drawn at
+  u8 depth;                   ///< depth slot it is drawn at
   struct QueuedSprite sprite; ///< queued at its depth each frame
 };
 
@@ -103,9 +103,9 @@ struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
                                             struct RenderInput *window, s32 x,
                                             s32 y);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, animStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, sentinel) == 0x0f);
+STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 0x0f);
 STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 0x10);
 STATIC_ASSERT(offsetof(struct WindowSprite, sprite.oam) == 0x14);
 STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);

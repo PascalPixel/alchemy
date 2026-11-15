@@ -127,7 +127,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Actor_ApplyRandomChildValues(void);
+void Actor_CycleSpriteColors(void);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
@@ -220,7 +220,7 @@ void AlhafranCave_CloseWayToJail(void) {
 void AlhafranCave_CastSand(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->unkd4a = 2;
+  work->sandTrailPriority = 2;
 }
 
 /// The current scene's triggers: the cave's or the jail's.
@@ -355,7 +355,7 @@ void AlhafranCave_SetUpCave(void) {
 }
 
 void FieldEffect_StartBlankOverlay(s32 value);
-void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 pivotX,
+void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
                                  s32 pivotY, u32 attributes);
 
 /// Sets up the jail and the cave: who is held and who visits, by how far the
@@ -371,14 +371,14 @@ void AlhafranCave_SetUpJail(void) {
   FieldEffect_StartBlankOverlay(0);
   crate = &gAlhafranCave_CrateSprite;
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94, (s32)crate, 8, 15,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlay, (s32)crate, 8, 15,
         OBJ_SIZE_16X16);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
       gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE) {
     work = Ram_HeapSlots->fieldWork;
 
-    work->unkd4c = 3;
+    work->psynergyDrawFlags = 3;
   }
   Rope_Initialize();
   Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_POLE,
@@ -804,7 +804,7 @@ void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 /// While Eoleo's Psynergy runs, the actors shake.
 void AlhafranCave_ShakeUnderEoleosPower(void) {
-  Actor_ApplyRandomChildValues();
+  Actor_CycleSpriteColors();
 }
 
 #include "shared/pillars_place.h"

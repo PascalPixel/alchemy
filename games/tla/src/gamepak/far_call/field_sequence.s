@@ -282,15 +282,15 @@ FarCall_OverworldTable:
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Event_ShowMessageAndOfferScoopFar, Event_ShowMessageAndOfferScoop
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
-	export EffectSprite_InitFromSlot94Far, EffectSprite_InitFromSlot94
+	export EffectSprite_InitWithFadeOverlayFar, EffectSprite_InitWithFadeOverlay
 	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
-	.global EffectSprite_InitFromSlot94BlendedFar
+	.global EffectSprite_InitWithFadeOverlayBlendedFar
 	.thumb_func
-EffectSprite_InitFromSlot94BlendedFar:
+EffectSprite_InitWithFadeOverlayBlendedFar:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte EffectSprite_InitFromSlot94Blended
-	export Actor_ApplyRandomChildValuesFar, Actor_ApplyRandomChildValues
+	.4byte EffectSprite_InitWithFadeOverlayBlended
+	export Actor_CycleSpriteColorsFar, Actor_CycleSpriteColors
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	.global Actor_PlaySoundInViewFar
 	.thumb_func

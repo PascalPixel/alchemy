@@ -185,8 +185,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   MapGrid_CopyCellAttributes(x, z, w, h, (u16)i + x, (u16)az + z);
   MapGrid_CopyCellAttributes((u16)(bx >> 20) + x, (u16)(bz >> 20) + z, w, h,
                              x + 64, z + 64);
-  Map_FillCellRectByte2(0, x, z, w, h, 255);
-  Map_FillCellRectByte2(2, x, z, w, h, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, w, h, 255);
+  PushedActor_FillGridAttributeRectangle(2, x, z, w, h, 255);
   return 1;
 }
 
@@ -396,7 +396,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   h = (ABS(gYampiDesertCave_LogFootprints[kind * 4 + 1]) +
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
       4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
+  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   wait(15);
@@ -429,7 +429,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y.fixed,
                                   rect.word[2]);
@@ -446,8 +446,8 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
                              ax + rect.word[0], az + rect.word[2]);
   MapGrid_CopyCellAttributes(rect.word[0] + bx, rect.word[2] + bz, w, h,
                              rect.word[0] + 64, rect.word[2] + 64);
-  Map_FillCellRectByte2(0, rect.word[0], rect.word[2], w, h, 255);
-  Map_FillCellRectByte2(2, rect.word[0], rect.word[2], w, h, 255);
+  PushedActor_FillGridAttributeRectangle(0, rect.word[0], rect.word[2], w, h, 255);
+  PushedActor_FillGridAttributeRectangle(2, rect.word[0], rect.word[2], w, h, 255);
   cell[0] = (from[0] + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
   cell[2] = (from[2] + px(gYampiDesertCave_LogFootprints[kind * 4 + 1])) >> 20;
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],

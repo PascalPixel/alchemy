@@ -30,7 +30,7 @@ void Event_ResolvePendingActions(s32 skip) {
   if (state->revealActive != 0 && !(skip & 1))
     Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
   if (state->ringActive != 0 && !(skip & 2))
-    Field_RunPsynergyEndEvents(ABILITY_155 | ACT_PACKED);
+    Field_RunPsynergyEndEvents(ABILITY_RING | ACT_PACKED);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
     Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
@@ -257,7 +257,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
     s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
     s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
-    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
+    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
@@ -323,7 +323,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
     s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
     s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
-    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
+    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
@@ -373,7 +373,7 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
 
   action = ABILITY_ID(packed);
   mode = ACT_UNIT(packed);
-  kind = Ability_Get(action)->fieldEffect;
+  kind = Ability_Get(action)->fieldPsynergy;
   selector = Scene_SelectPsynergyTarget(kind);
   first = (struct PendingEvent *)Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), kind, selector);

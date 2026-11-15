@@ -1208,7 +1208,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);
-    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+    Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
@@ -1223,7 +1223,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
 
       *flags = value;
     }
-    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+    Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);
   }
@@ -2855,7 +2855,7 @@ void TrialRoad_UpdateFountains(void) {
       mover->speed = 4;
     }
     if (mover->phase == mover->fallAt) {
-      Sound_Play(SOUND_FADE_OUT_SE5);
+      Sound_Play(SOUND_FADE_OUT_EXIT_SE);
       mover->speed = -8;
     }
     if (mover->speed != 0) {
@@ -3016,7 +3016,7 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords(work, 0x1c8);
   buffer = Pool_Alloc(0x800);
-  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x800, buffer);
   Heap_Release(buffer);

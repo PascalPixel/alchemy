@@ -136,7 +136,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 /// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
-  struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *work = Ram_HeapSlots->battleBackground;
 
   IWRAM_FILL_WORDS(block, 0x2a0, 0);
   work->mode = 0;
@@ -151,7 +151,7 @@ void BattleBackground_Free(void) {
 /// darkened by level steps of 1/60 (none when level is negative), its tile
 /// table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
-  struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
   struct BattleWork *session = (struct BattleWork *)Ram_HeapSlots->battleWork;
   ModelDecoder decode;

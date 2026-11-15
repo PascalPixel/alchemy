@@ -1015,7 +1015,7 @@ settle:
   Actor_GetById(i)->update = (void (*)(void))AquaRock_SwayMoaiBack;
   if (++i <= 21)
     goto settle;
-  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+  Sound_Play(SE_STOP_EXIT_SE);
   Event_Wait(60);
   {
     struct Actor *object = Actor_GetById(ACTOR_FIRST_STEPPING_MOAI + 4);
@@ -1550,7 +1550,7 @@ void AquaRock_StartSparkles(void) {
               sizeof(struct GroundParticleWork) / 4,
           REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Decompress_ByteLz(gField_Tiles679, buf);
+  Decompress_ByteLz(gField_GroundTiles, buf);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

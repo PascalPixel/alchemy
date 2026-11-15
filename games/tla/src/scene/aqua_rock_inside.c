@@ -480,7 +480,7 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
       42;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_556);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   // AquaRockInside_SetPillarHeight, defined below, is called with no prototype
   // in scope.
   for (i = 0; i <= 31; i++) {
@@ -507,7 +507,7 @@ void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_556);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 0; i <= 31; i++) {
     AquaRockInside_SetPillarsHeight(i << 16);
     layer->offsetY += px(1);
@@ -585,7 +585,7 @@ void AquaRockInside_SpringDries(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-  Event_PlaySound(SE_557);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   priority = 0x480;
   FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
@@ -798,7 +798,7 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_557);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   for (i = 31; i >= 0; i--) {
     layer->offsetY += px(1);
     System_Wait(4);
@@ -906,7 +906,7 @@ void AquaRockInside_RideFalls(s32 value) {
   System_Wait(13);
   Actor_SetSpriteColorMode(object, 9);
   Actor_SelectAnimation(object, 28);
-  Event_PlaySound(SE_566);
+  Event_PlaySound(SE_SPIRAL);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -930,7 +930,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-    Event_PlaySound(SE_557);
+    Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
     Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
     MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
@@ -1067,7 +1067,7 @@ void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_556);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 31; i >= 0; i--) {
     layer->offsetY += px(1);
     System_Wait(4);
@@ -1295,7 +1295,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
-  Sound_Play(SE_574);
+  Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);

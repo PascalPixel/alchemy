@@ -37,7 +37,7 @@ enum Element {
   ELEMENT_COUNT = ELEMENT_NONE
 };
 
-/// BattleAct.range of an ability that reaches every unit on the side, each
+/// AbilityDefinition.range of an ability that reaches every unit on the side, each
 /// as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
@@ -82,7 +82,7 @@ enum AbilityTarget {
   ABILITY_TARGET_SELF = 4    ///< the user alone, whatever the range
 };
 
-/// BattleAct.effect: what an ability does besides its damage or healing,
+/// AbilityDefinition.effect: what an ability does besides its damage or healing,
 /// applied by BattleAbility_ApplyToTarget unless noted. Each is named for the
 /// abilities that have it (actions.tsv, with their English names and
 /// descriptions). Sidestep (48), Crazy Voice (52) and Vengeance (89) have
@@ -200,7 +200,7 @@ enum AbilityEffect {
 
 /// An ability's definition, a row of gAbilityDefinitions: its
 /// targeting, kind, element, effect, range, PP cost and power.
-struct BattleAct {
+struct AbilityDefinition {
   u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 kind (ABILITY_FORMULA_MASK, enum AbilityFormula).
@@ -208,14 +208,14 @@ struct BattleAct {
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
   u16 icon;   ///< the ability's icon
-  u8 fieldEffect;
-  u8 unused; ///< 0 in every row
+  u8 fieldPsynergy;              ///< enum FieldPsynergy, or 0 for none
+  u8 reservedAfterFieldPsynergy; ///< 0 in every row
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
   u16 power; ///< what the kind applies, 0 for none
 };
 
-/// BattleAct.flags: where an ability can be used.
+/// AbilityDefinition.flags: where an ability can be used.
 enum BattleActionUse {
   ACTION_USABLE_IN_FIELD = 0x40, ///< can be used outside battle
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
@@ -327,7 +327,7 @@ struct Unit {
   /// CLASS_NONE marks an enemy, and code throughout tests it to tell the two
   /// apart.
   u8 classId;
-  /// BATTLE_UNIT_ABSENT (0), BATTLE_UNIT_ENEMY (1) or BATTLE_UNIT_PARTY (2).
+  /// BATTLE_SIDE_NONE (0), BATTLE_SIDE_ENEMY (1) or BATTLE_SIDE_PARTY (2).
   /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnit_Set
   /// draft).
   u8 side;
@@ -380,9 +380,9 @@ struct Unit {
   u16 enemyId;
 };
 
-STATIC_ASSERT(offsetof(struct BattleAct, effect) == 0x03);
-STATIC_ASSERT(offsetof(struct BattleAct, power) == 0x0a);
-STATIC_ASSERT(sizeof(struct BattleAct) == 12);
+STATIC_ASSERT(offsetof(struct AbilityDefinition, effect) == 0x03);
+STATIC_ASSERT(offsetof(struct AbilityDefinition, power) == 0x0a);
+STATIC_ASSERT(sizeof(struct AbilityDefinition) == 12);
 
 STATIC_ASSERT(sizeof(struct PsynergyEntry) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);

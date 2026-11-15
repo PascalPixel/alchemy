@@ -74,7 +74,7 @@ void Sound_Play(s32 id) {
     m4aMPlayFadeOut(&gMPlayInfo_ActionSE, 3);
     gMusicPlayerLastSound[MUSIC_PLAYER_SE5] = 0;
     m4aMPlayFadeOut(&gMPlayInfo_SE5, 3);
-  } else if (id == SOUND_FADE_OUT_SE5) {
+  } else if (id == SOUND_FADE_OUT_EXIT_SE) {
     gMusicPlayerLastSound[MUSIC_PLAYER_SE5] = 0;
     m4aMPlayFadeOut(&gMPlayInfo_SE5, 3);
   } else if (id >= SOUND_SE_END) {

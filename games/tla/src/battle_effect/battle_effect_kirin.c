@@ -34,7 +34,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   s32 baseX;
   s32 grow;
   s32 savedX;
-  struct BattlePresentationTransition *view;
+  struct BattleBackgroundWork *view;
   s32 shift;
   s32 wave;
   s32 frame;

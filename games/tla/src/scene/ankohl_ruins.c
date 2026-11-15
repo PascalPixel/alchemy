@@ -675,7 +675,7 @@ void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
     Event_PlaySound(SE_THUMP);
     FieldEvent_Wait(45);
     Actor_SetAnimation(ACTOR_GREAT_FACE, 4);
-    Event_PlaySound(SE_564);
+    Event_PlaySound(SE_EYES_GLOW);
     Event_SetFlag(FLAG_GREAT_FACE_HALF_PLACED);
   }
 }
@@ -949,7 +949,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   leader->motionFlags = 0;
   MapGrid_SetShake(4, 4, 1);
   FieldEvent_Wait(30);
-  Event_PlaySound(SE_556);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   MapGrid_CopyCells(22, 66, 3, 1, 7, 66);
   MapGrid_CopyCells(22, 1, 3, 5, 7, 1);
   for (i = 0; i <= 15; i++) {
@@ -1031,7 +1031,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   leader->motionFlags = 0;
   MapGrid_SetShake(5, 5, 1);
   FieldEvent_Wait(30);
-  Event_PlaySound(SE_556);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   MapGrid_CopyCells(22, 66, 3, 1, 7, 84);
   MapGrid_CopyCells(22, 1, 3, 5, 7, 19);
   for (i = 0; i <= 15; i++) {

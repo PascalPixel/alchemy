@@ -184,7 +184,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PaletteFade_SetTarget(0x403108, 1);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  Sound_Play(SE_197);
+  Sound_Play(SE_GABOMBA_VOICE);
   wait(1);
   if (gGabombaStatueChamber_ShownItem != 0) {
     i = 0;
@@ -546,7 +546,7 @@ void GabombaStatueChamber_ArriveByLift(void) {
     wait(1);
   }
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+  Sound_Play(SE_STOP_EXIT_SE);
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
@@ -584,7 +584,7 @@ void GabombaStatueChamber_RideLiftUp(void) {
     wait(1);
   }
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+  Sound_Play(SE_STOP_EXIT_SE);
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);

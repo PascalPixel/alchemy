@@ -149,7 +149,7 @@ void BattleParty_ReturnAllToSpots(void) {
 /// already down.
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
                                  s32 delay) {
-  struct BattlePresentationTransition *view;
+  struct BattleBackgroundWork *view;
   struct BattleWork *battle;
   struct BattleCamera *camera;
   struct Unit *unit;
@@ -374,7 +374,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 /// 7 times in 10. Returns 1 when the party got away.
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
-  struct BattlePresentationTransition *presentation =
+  struct BattleBackgroundWork *presentation =
       Ram_HeapSlots->battleBackground;
   u32 aid = plan->unitId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
@@ -446,7 +446,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   actor = plan->unitId;
   target = plan->targetIds[0];
   if (plan->battleEffect & EFFECT_SUMMON) {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
 
     if (actor <= ALLY_MAX)
       view->targetYaw = YAW_PARTY_ACTION;
@@ -454,7 +454,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       view->targetYaw = YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
     s32 yaw;
 
     yaw = YAW_ENEMY_ACTION;

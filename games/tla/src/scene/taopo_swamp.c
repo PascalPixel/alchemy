@@ -293,7 +293,7 @@ struct ChildGroup;
 
 extern u32 gTaopoSwamp_SplashFades[];
 s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
-void Animation_ApplyChildValuesToRecord(struct FieldSprite *record, u32 value);
+void Sprite_SetAnimationColorModes(struct FieldSprite *record, u32 value);
 void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
@@ -337,7 +337,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
           ((s32 (*)())Sprite_StartAnimation)(splashSprite, 1);
           splashSprite->nextFrame = k;
           splashSprite->priority = sprite->priority;
-          Animation_ApplyChildValuesToRecord(splashSprite, 13);
+          Sprite_SetAnimationColorModes(splashSprite, 13);
           Sprite_SetAnimationSpeed(splashSprite, 8);
         }
       }

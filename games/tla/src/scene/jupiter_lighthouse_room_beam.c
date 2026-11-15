@@ -116,7 +116,7 @@ extern u32 gFieldEffect_LongScript[];
 u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 extern s32 gJupiterLighthouse_GlowPosition[3];
 extern const u8 gJupiterLighthouse_GlowSprite[];
-void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
+void EffectSprite_InitWithFadeOverlayBlended(const void *script, s32 a, s32 b,
                                         s32 c);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
@@ -484,7 +484,7 @@ s32 Scene_Initialize(void) {
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94Blended,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlayBlended,
         (s32)gJupiterLighthouse_GlowSprite, 0, 0, 0x80000000);
   JupiterLighthouse_SetLayerCellsByLeader();
   JupiterLighthouse_SpawnBeamMotes();

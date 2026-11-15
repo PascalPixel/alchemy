@@ -1257,7 +1257,7 @@ void KandoreanTemple_RunWestLift(void) {
     if (*(long *)&lift->y.fixed < -px(5))
       Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
     if (lift->y.fixed <= -px(20)) {
-      Scene_QueueMusic(SE_245);
+      Scene_QueueMusic(SE_AMBIENT_STREAM);
       Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
       Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
       gKandoreanTemple_LeftTimer = 0;
@@ -1315,7 +1315,7 @@ void KandoreanTemple_RunEastLift(void) {
     if (*(long *)&lift->y.fixed < -px(5))
       Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
     if (lift->y.fixed <= -px(20)) {
-      Scene_QueueMusic(SE_245);
+      Scene_QueueMusic(SE_AMBIENT_STREAM);
       Actor_SetPosition(ACTOR_EAST_LIFT, 0, 0);
       Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
       gKandoreanTemple_RightTimer = 0;
@@ -1934,7 +1934,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  Scene_QueueMusic(SE_245);
+  Scene_QueueMusic(SE_AMBIENT_STREAM);
   Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
   Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
   Actor_SetPosition(ACTOR_EAST_LIFT, 0, 0);

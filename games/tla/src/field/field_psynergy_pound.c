@@ -214,7 +214,7 @@ void FieldPsynergy_Pound(void) {
   if (shine == NULL)
     goto end;
   shine->motionFlags = 0;
-  if (event->unkd4c & 2) {
+  if (event->psynergyDrawFlags & 2) {
     if ((shine->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
       shine->priorityFlags &= 254;
@@ -224,7 +224,7 @@ void FieldPsynergy_Pound(void) {
   }
   shine->facing = caster->facing;
   Actor_SelectAnimationFar(shine, 2);
-  if (!(event->unkd4c & 1))
+  if (!(event->psynergyDrawFlags & 1))
     FieldPsynergy_StartSceneSprite();
 
   BattleEffect_StartCanvasSprite();
@@ -320,7 +320,7 @@ void FieldPsynergy_Pound(void) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;
-      if (event->mode != ACTOR_SYSTEM_WORLD_MAP && !(event->unkd4c & 1)) {
+      if (event->mode != ACTOR_SYSTEM_WORLD_MAP && !(event->psynergyDrawFlags & 1)) {
         glow = &work->glow;
         EffectSprite_Draw(glow);
       }

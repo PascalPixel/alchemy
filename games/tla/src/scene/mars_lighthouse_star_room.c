@@ -141,14 +141,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-// XXX: what Blaze does otherwise once the field work's unkd38 is set (its
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
 // mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
 // mode would settle it.
 /// Blaze is cast at the dragon statue.
 void MarsLighthouseStarRoom_BeginBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->unkd38 = 1;
+  event->blazeLongSpray = 1;
 }
 
 /// Blaze reaches the statue: it shoots its two fireballs.
@@ -274,7 +274,7 @@ void MarsLighthouseStarRoom_ClearDragonIce(void);
 /// wake.
 void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if (phase == 1) {
-    Event_PlaySound(SE_574);
+    Event_PlaySound(SE_FLASH);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
     MarsLighthouseStarRoom_ClearDragonIce();

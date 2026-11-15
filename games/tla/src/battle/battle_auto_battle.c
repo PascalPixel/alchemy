@@ -82,7 +82,7 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
 /// holds it.
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
-  struct BattlePresentationTransition *trans = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *trans = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
     cam->yaw += TRIG_TURN / 128;
@@ -98,7 +98,7 @@ void BattleCamera_AdjustByShoulderKeys(void) {
 /// Auto battle: plays one action, a defeated target replaced by a living unit
 /// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
-  struct BattlePresentationTransition *transition;
+  struct BattleBackgroundWork *transition;
   s32 unitId;
   s32 yaw;
   struct Unit *actor;
@@ -135,7 +135,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
     view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
     view->flag = 0;
@@ -232,7 +232,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     return -1;
 
   {
-    struct BattlePresentationTransition *transition =
+    struct BattleBackgroundWork *transition =
         Ram_HeapSlots->battleBackground;
     transition->targetYaw =
         action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
@@ -362,7 +362,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 /// and Psynergy.
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
-  struct BattlePresentationTransition *transition =
+  struct BattleBackgroundWork *transition =
       Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   s32 facing;

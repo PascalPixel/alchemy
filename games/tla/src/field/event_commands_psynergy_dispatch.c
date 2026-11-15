@@ -272,7 +272,7 @@ void FieldPsynergy_RunExtraHandler(void) {
 
 /// Per-frame update: sets every part of an actor's sprite to colour mode
 /// frame % 6, which cycles its colours.
-void Actor_ApplyRandomChildValues(struct Actor *actor) {
+void Actor_CycleSpriteColors(struct Actor *actor) {
   struct Sprite *sprite;
   s32 count;
   s32 i;

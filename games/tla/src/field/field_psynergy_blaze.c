@@ -99,7 +99,7 @@ void FieldPsynergy_Blaze(void) {
       }
     }
   } else {
-    if (event->unkd38 == 0)
+    if (event->blazeLongSpray == 0)
       work->mode = 2;
     else
       work->mode = 3;
@@ -216,14 +216,14 @@ void FieldPsynergy_Blaze(void) {
       if (Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
                                     scene->fieldPsynergy,
                                     (s16)(work->hitObject | 0x100)) != NULL) {
-        event->unkd30 = work->hitObject;
+        event->psynergyHitObject = work->hitObject;
         break;
       }
     }
     if (gInput.pressed & KEY_B)
       break;
   }
-  Sound_PlayFar(SOUND_FADE_OUT_SE5);
+  Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
   work->emitting = 0;
   for (k = 0; k < 60; k++) {
     cursor.particle = work->dropMotion;

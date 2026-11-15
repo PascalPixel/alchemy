@@ -34,7 +34,6 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
-extern u16 gData_02003a74[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -1273,7 +1272,6 @@ void Event_End(void);
 
 extern s32 gLinkLobby_WaitFrames;
 extern s32 gLinkLobby_CallFrames;
-extern u16 gData_02003a74[];
 
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
@@ -1306,7 +1304,7 @@ s32 LinkLobby_Initialize(void) {
   wait(1);
   TilesetAnim_Pause(5);
   {
-    u16 *name = gData_02003a74;
+    u16 *name = (u16 *)gSerialTransfer.payload;
 
     name[4] = 'T';
     name[5] = 'A';

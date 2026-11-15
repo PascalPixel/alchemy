@@ -36,7 +36,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   void *canvas;
   u8 *graphics;
   struct MotionObject *caster;
-  struct BattlePresentationTransition *transition;
+  struct BattleBackgroundWork *transition;
   s32 savedScrollX;
   struct RenderModel *model;
   void *projected;
@@ -77,9 +77,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gMapGridCellBuffer,
                                  0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
+      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
                                  Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
                                  0);
       Graphics_LoadGreyRamp();
@@ -446,7 +446,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   s32 savedScrollX;
   u8 *canvas;
   struct BattleEffectWork *work;
-  struct BattlePresentationTransition *transition;
+  struct BattleBackgroundWork *transition;
   DrawRectangle draw;
   const u8 *palette;
   s32 frame;
@@ -732,7 +732,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// own backdrop over the summon's.
 void Iris_RestoreBattle(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BattlePresentationTransition *transition =
+  struct BattleBackgroundWork *transition =
       Ram_HeapSlots->battleBackground;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;

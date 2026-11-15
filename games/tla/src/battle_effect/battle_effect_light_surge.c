@@ -65,9 +65,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C4,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbTexture,
                              work->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,

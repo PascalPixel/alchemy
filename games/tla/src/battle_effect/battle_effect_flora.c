@@ -144,7 +144,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
                              cells + i * OBJ_32X32_8BPP_BYTES,
                              OBJ_32X32_8BPP_BYTES);
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, work->sheet, 0, 0);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
@@ -556,7 +556,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 223) {
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 252) {
       Sound_PlayFar(SE_POWER_UP);

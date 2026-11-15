@@ -1652,7 +1652,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   wait(2);
   object->scaleX = 0;
   Actor_SetSpriteFlags(object, 0);
-  Dma_Set(Field_Palette685, (void *)0x050003e0, DMA_COPY_HALFWORDS(16),
+  Dma_Set(Field_ExplosionPalette, (void *)0x050003e0, DMA_COPY_HALFWORDS(16),
           REG_DMA3);
   Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);

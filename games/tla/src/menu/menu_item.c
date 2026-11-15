@@ -2979,8 +2979,8 @@ s32 ItemMenu_RunList(s32 pane) {
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-          icon->animStep = 0;
-          icon->sentinel = OAM_DEPTH_FRONT - 5;
+          icon->animationStep = 0;
+          icon->depth = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->partyCount; i++)
           Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);

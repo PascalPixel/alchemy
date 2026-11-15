@@ -106,7 +106,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                              work->sheet + GEODE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

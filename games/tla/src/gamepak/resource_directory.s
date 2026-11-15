@@ -37,11 +37,11 @@ Resource_DirectoryTable:
 	resource IntroClouds, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
-	resource Data01B, Resource_SubtitlePalette
-	resource Data01C, Resource_SubtitleA
-	resource Data01D, Resource_SubtitleB
-	resource Data01E, Resource_SubtitleC
-	resource Data01F, Resource_SubtitleD
+	resource SubtitlePalette, Resource_SubtitlePalette
+	resource SubtitleA, Resource_SubtitleA
+	resource SubtitleB, Resource_SubtitleB
+	resource SubtitleC, Resource_SubtitleC
+	resource SubtitleD, Resource_SubtitleD
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
@@ -186,52 +186,52 @@ Resource_DirectoryTable:
 	resource WhiteSpikesTiles, Summon_WhiteSpikesTiles
 	resource GoldenScalesTiles, Summon_GoldenScalesTiles
 	resource GlowOrbSetSheet, BattleEffect_GlowOrbSetSheet
-	resource Data0B0, Resource_Data0B0
-	resource Data0B1, Resource_Data0B1
+	resource ArcherSheet, BattleEffect_ArcherSheet
+	resource UlyssesSilhouette, BattleEffect_UlyssesSilhouette
 	resource , BattleEffect_UnusedSilhouette
-	resource Data0B3, Resource_Data0B3
-	resource Data0B4, Resource_Data0B4
-	resource Data0B5, Resource_Data0B5
+	resource FlutteringFlakeSheet, BattleEffect_FlutteringFlakeSheet
+	resource SwirlTexture, BattleEffect_SwirlTexture
+	resource RuneSealSheet, BattleEffect_RuneSealSheet
 	resource CharmRingSheet, BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
 	resource VioletPaletteE, BattleEffect_VioletPaletteE
 	resource GreyPaletteA, BattleEffect_GreyPaletteA
-	resource Data0BA, Resource_Data0BA
-	resource Data0BB, Resource_Data0BB
+	resource RocketFlameSheet, BattleEffect_RocketFlameSheet
+	resource BirdFlockSheet, BattleEffect_BirdFlockSheet
 	resource , BattleEffect_ThinBoltSheet
 	resource BoltSheet, BattleEffect_BoltSheet
 	resource CurseSealSheet, BattleEffect_CurseSealSheet
 	resource CrackedTextureSheet, BattleEffect_CrackedTextureSheet
 	resource CrossTextureSheet, BattleEffect_CrossTextureSheet
-	resource Data0C1, Resource_Data0C1
-	resource Data0C2, Resource_Data0C2
-	resource Data0C3, Resource_Data0C3
-	resource Data0C4, Resource_Data0C4
+	resource FlameBandTexture, BattleEffect_FlameBandTexture
+	resource FireRingTexture, BattleEffect_FireRingTexture
+	resource GlowRingTexture, BattleEffect_GlowRingTexture
+	resource GlowOrbTexture, BattleEffect_GlowOrbTexture
 	resource PetalSheet, BattleEffect_PetalSheet
 	resource CrescentRowSheet, BattleEffect_CrescentRowSheet
 	resource RuneCircleSheet, BattleEffect_RuneCircleSheet
-	resource Data0C8, Resource_Data0C8
-	resource Data0C9, Resource_Data0C9
-	resource Data0CA, Resource_Data0CA
-	resource Data0CB, Resource_Data0CB
+	resource FadingCrescentSheet, BattleEffect_FadingCrescentSheet
+	resource GlowBandTextureA, BattleEffect_GlowBandTextureA
+	resource GlowBandTextureB, BattleEffect_GlowBandTextureB
+	resource FlameWallTexture, BattleEffect_FlameWallTexture
 	resource CloudSwirlSheet, BattleEffect_CloudSwirlSheet
 	resource DustBlobSheet, BattleEffect_DustBlobSheet
-	resource Data0CE, Resource_Data0CE
-	resource Data0CF, Resource_Data0CF
-	resource Data0D0, Resource_Data0D0
+	resource CrestSheet, BattleEffect_CrestSheet
+	resource BlueCloudPuffSheet, BattleEffect_BlueCloudPuffSheet
+	resource CometTexture, BattleEffect_CometTexture
 	resource FeatherSheet, BattleEffect_FeatherSheet
-	resource Data0D2, Resource_Data0D2
-	resource Data0D3, Resource_Data0D3
+	resource EmberTexture, BattleEffect_EmberTexture
+	resource StreakTexture, BattleEffect_StreakTexture
 	resource LightBurstSheet, BattleEffect_LightBurstSheet
 	resource StarCrossSheet, BattleEffect_StarCrossSheet
 	resource CornerGlowSheet, BattleEffect_CornerGlowSheet
-	resource Data0D7, Resource_Data0D7
-	resource Data0D8, Resource_Data0D8
+	resource MusicNoteSheet, BattleEffect_MusicNoteSheet
+	resource BurningSkullSheet, BattleEffect_BurningSkullSheet
 	resource ImpFaceSheet, BattleEffect_ImpFaceSheet
-	resource Data0DA, Resource_Data0DA
+	resource BillowTexture, BattleEffect_BillowTexture
 	resource GreatSwordSheet, BattleEffect_GreatSwordSheet
-	resource Data0DC, Resource_Data0DC
-	resource Data0DD, Resource_Data0DD
+	resource HeartbreakSheet, BattleEffect_HeartbreakSheet
+	resource ApocalypseSheet, BattleEffect_ApocalypseSheet
 	resource SunCardSheet, BattleEffect_SunCardSheet
 	resource VineCardSheet, BattleEffect_VineCardSheet
 	resource DragonCardSheet, BattleEffect_DragonCardSheet
@@ -243,29 +243,29 @@ Resource_DirectoryTable:
 	resource BoulderPicture, BattleEffect_BoulderPicture
 	resource BladeSheet, BattleEffect_BladeSheet
 	resource ClawSlashSheet, BattleEffect_ClawSlashSheet
-	resource Data0E9, Resource_Data0E9
+	resource FlameGradientTexture, BattleEffect_FlameGradientTexture
 	resource CrystalBitmapSheet, BattleEffect_CrystalBitmapSheet
 	resource SmallFlameSheet, BattleEffect_SmallFlameSheet
 	resource CornerRuneASheet, BattleEffect_CornerRuneASheet
 	resource CornerRuneBSheet, BattleEffect_CornerRuneBSheet
-	resource Data0EE, Resource_Data0EE
-	resource Data0EF, Resource_Data0EF
-	resource Data0F0, Resource_Data0F0
-	resource Data0F1, Resource_Data0F1
-	resource Data0F2, Resource_Data0F2
-	resource Data0F3, Resource_Data0F3
+	resource TriangleSealTexture, BattleEffect_TriangleSealTexture
+	resource PentagonSealTexture, BattleEffect_PentagonSealTexture
+	resource SarcophagusSheet, BattleEffect_SarcophagusSheet
+	resource RaidensWrathSheet, BattleEffect_RaidensWrathSheet
+	resource GhostSkullTexture, BattleEffect_GhostSkullTexture
+	resource SlashFlameSheet, BattleEffect_SlashFlameSheet
 	resource SmokeBandSheet, BattleEffect_SmokeBandSheet
-	resource Data0F5, Resource_Data0F5
+	resource LifeShearSheet, BattleEffect_LifeShearSheet
 	resource DustCloudSheet, BattleEffect_DustCloudSheet
-	resource Data0F7, Resource_Data0F7
-	resource Data0F8, Resource_Data0F8
-	resource Data0F9, Resource_Data0F9
-	resource Data0FA, Resource_Data0FA
-	resource Data0FB, Resource_Data0FB
-	resource Data0FC, Resource_Data0FC
-	resource Data0FD, Resource_Data0FD
+	resource ChainTexture, BattleEffect_ChainTexture
+	resource JaggedStreakSheet, BattleEffect_JaggedStreakSheet
+	resource LightningTexture, BattleEffect_LightningTexture
+	resource FlameZigzagTexture, BattleEffect_FlameZigzagTexture
+	resource CogTexture, BattleEffect_CogTexture
+	resource ScaleTexture, BattleEffect_ScaleTexture
+	resource BubbleAnimationSheet, BattleEffect_BubbleAnimationSheet
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
-	resource Data0FF, Resource_Data0FF
+	resource ShortStreakPicture, BattleEffect_ShortStreakPicture
 	resource AxeSheet, BattleEffect_AxeSheet
 	resource GiantSwordBladeSheet, BattleEffect_GiantSwordBladeSheet
 	resource GiantSwordSheet, BattleEffect_GiantSwordSheet
@@ -499,11 +499,11 @@ Resource_DirectoryTable:
 	resource FlamingArrow, FieldEffect_FlamingArrow
 	resource BowDraw, FieldEffect_BowDraw
 	resource FieldEffectExplosion, FieldEffect_Explosion
-	resource Data1E9, FieldEffect_ScoopEarth
+	resource ScoopEarth, FieldEffect_ScoopEarth
 	resource SparkleFade, FieldEffect_SparkleFade
 	resource StarSparkleFade, FieldEffect_StarSparkleFade
 	resource WhitePuff, FieldEffect_WhitePuff
-	resource Data1ED, FieldEffect_RingWaves
+	resource RingWaves, FieldEffect_RingWaves
 	resource ShakeTiles, FieldEffect_ShakeTiles
 	resource ColouredOrbs, FieldEffect_ColouredOrbs
 	resource FallingRock, FieldEffect_FallingRock
@@ -553,7 +553,7 @@ Resource_DirectoryTable:
 	resource MummySprites, Monster_MummySprites
 	resource RaptorSprites, Monster_RaptorSprites
 	resource GreenKnightSprites, Monster_GreenKnightSprites
-	resource Data21F, Monster_WyvernSprites
+	resource WyvernSprites, Monster_WyvernSprites
 	resource HydraSprites, Monster_HydraSprites
 	resource LarvaSprites, Monster_LarvaSprites
 	resource JackalSprites, Monster_JackalSprites
@@ -630,7 +630,7 @@ Resource_DirectoryTable:
 	resource PurpleBeastSprites, Monster_PurpleBeastSprites
 	resource RedWarriorSprites, Monster_RedWarriorSprites
 	resource SwordGirlSprites, Monster_SwordGirlSprites
-	resource Map000, Field_Map000
+	resource EmptyMap, Field_Map000
 	resource , Resource_Data26D
 	resource , Resource_Data26E
 	resource , Resource_Data26F

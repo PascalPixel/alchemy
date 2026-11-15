@@ -332,7 +332,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   pusher->speedLimit = px(4);
   pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = 4;
-  target->update = (void (*)(void))Actor_ApplyRandomChildValues;
+  target->update = (void (*)(void))Actor_CycleSpriteColors;
   target->speedLimit = px(2) / 5;
   target->acceleration = px(1) / 5;
   target->steeringFlags = moved;
@@ -985,7 +985,7 @@ void FieldPsynergy_LiftOnTarget(void) {
 
   Actor_WaitForMoveFar(anchors[0]);
   ((struct EffectChild *)child)->callback =
-      (void (*)(void))Actor_ApplyRandomChildValues;
+      (void (*)(void))Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_START);
   ((struct EffectChild *)child)->flag = 4;
 
@@ -1205,7 +1205,7 @@ void FieldPsynergy_Force(void) {
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(slot->object, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(slot->object, SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = Q16_ONE * 7 / 10;
     slot->scaleX = Q16_ONE * 7 / 10;
     wait(2);

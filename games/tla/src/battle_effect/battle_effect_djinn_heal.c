@@ -52,7 +52,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_TARGET_X),
                                    anchor, size);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0D0,
+    Resource_LoadAndDecompress((s32)&ResourceId_CometTexture,
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
@@ -540,7 +540,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
               (Q_16_16_TO_INT(position.y)) - 58, 60, 100);
     }
     if (frame == 157) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, ringPixels, 0, 0);
     }
     if ((frame & 1) && skip) {
       goto shake;

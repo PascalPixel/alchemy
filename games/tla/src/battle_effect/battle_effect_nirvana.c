@@ -170,7 +170,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     if (frame == 0)
       Sound_PlayFar(SE_GATE_MOVE);
     if (frame == 64)
-      Sound_PlayFar(SE_104);
+      Sound_PlayFar(SE_LAUNCH);
 
     // Frame 0: the boulders stand in a column 2 pixels apart, on the
     // user's side of the canvas, and are thrown upward at random speeds.
@@ -526,7 +526,7 @@ struct ProjectedPoint {
 
 #define SERAC_FRAMES 88
 
-/// Where CloudPuffSheet is decoded in the effect's pictures.
+/// Where BlueCloudPuffSheet is decoded in the effect's pictures.
 #define SERAC_CLOUD_PUFFS 0x400
 
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
@@ -565,9 +565,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + 0x4000;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CF,
+  Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet,
                              work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);

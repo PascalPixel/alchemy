@@ -890,7 +890,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_EndOffering();
   Event_Wait(160);
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
@@ -1027,7 +1027,7 @@ extern u32 gKibombo_PartyFollowsScript[];
 /// Djinn; Felix's two answers are counted in the event work.
 void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_NORTH, 0);
-  Event_SetMessageId(MsgBlank7);
+  Event_SetMessageId(MsgPiersStartled);
   // "?!?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2571,7 +2571,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_Wait(160);
   // "Please, Great Gabomba! Accept this jewel!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(20);
   // "Look! The Great Gabomba has noticed the light of the jewel!"
@@ -2796,7 +2796,7 @@ void Kibombo_GabombaStillNotPleased(void) {
 
 void Kibombo_GabombaSeesOrb(void) {
   Kibombo_OpenCeremonyScene();
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 7);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 7);
   wait(8);
@@ -2835,7 +2835,7 @@ void Kibombo_GabombaResponds(void) {
   Event_SetMessageId((s32)MsgLookTheGreat);
   // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 20);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_WAVE);
@@ -2879,7 +2879,7 @@ void Kibombo_GabombaRespondsToGift(void) {
     object->y.fixed += px(1) / 8;
     wait(1);
   }
-  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
+  Sound_Play(SE_STOP_EXIT_SE);
   if (gKibombo_BlackCrystal != 0) {
     struct Actor *gift = gKibombo_BlackCrystal;
 

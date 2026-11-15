@@ -906,7 +906,7 @@ void JupiterLighthouse_FightKarstAndAgatio(void) {
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetMessageId((s32)MsgBlank5);
+  FieldEvent_SetMessageId((s32)MsgCallJenna);
   // "Felix!"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -998,7 +998,7 @@ void JupiterLighthouse_AfterTheFight(void) {
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetMessageId((s32)MsgBlank6);
+  FieldEvent_SetMessageId((s32)MsgCallSheba);
   // "Jenna!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_SetAnimation(ACTOR_AGATIO, 9);

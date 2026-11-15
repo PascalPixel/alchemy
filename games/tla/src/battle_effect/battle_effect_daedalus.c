@@ -496,14 +496,14 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     work->scrollStepX = -1;
     work->scrollStepY = 0;
     ctl[4] = 1;
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet, work->sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + DAEDALUS_FLASH_BURST_PICTURES, 1,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BB,
+    Resource_LoadAndDecompress((s32)&ResourceId_BirdFlockSheet,
                                work->sheet + DAEDALUS_BIRD_FLOCK, 0, 0);
     pixels = DECODE_BUFFER;
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, pixels, 0, 0);
     Iwram_CopyWords(
         (void *)BG_PLTT,
         (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
@@ -710,7 +710,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_CRASH);
       }
       if (frame == 578)
-        Sound_PlayFar(SE_163);
+        Sound_PlayFar(SE_WAVE_HIGH);
       for (i = 0; i != 16; i++) {
         struct Particle *p;
 
@@ -1231,7 +1231,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     }
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA,
+    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet,
                                work->sheet + DAEDALUS_ROCKET_FLAMES, 0, 0);
     {
       const void *colors =
@@ -1585,7 +1585,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
           ring->variant = delay;
           delay -= 4;
         }
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                                    work->sheet + DAEDALUS_ALT_GLOW_BAND, 0, 0);
       }
       vertices = Heap_AllocEwram(32);

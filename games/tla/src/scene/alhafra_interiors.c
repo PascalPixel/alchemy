@@ -343,7 +343,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 s32 BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
                                            s32 y, s32 z);
-void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 pivotX,
+void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
                                  s32 pivotY, u32 attributes);
 
 /// The first guest's update: draws its extra sprite 12 pixels above it.
@@ -378,9 +378,9 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
-  Call4((void (*)())EffectSprite_InitFromSlot94,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
   gAlhafraInteriors_SecondGuestSprite.scaleY = Q16_ONE * 3 / 2;
   Actor_Get(ACTOR_DEMANDING_GUEST)->update =
@@ -425,9 +425,9 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
-  Call4((void (*)())EffectSprite_InitFromSlot94,
+  Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
   gAlhafraInteriors_SecondGuestSprite.scaleY = Q16_ONE * 3 / 2;
   Actor_Get(ACTOR_DEMANDING_GUEST)->update =

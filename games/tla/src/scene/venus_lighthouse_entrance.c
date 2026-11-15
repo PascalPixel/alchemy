@@ -646,7 +646,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   BattleEffect_StartArcEffect();
   actor = Actor_GetById(ACTOR_ALEX);
   BattleEffect_SetObjectUpdateMode(actor, 2);
-  Event_PlaySound(SE_178);
+  Event_PlaySound(SE_GATHERING_POWER);
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, 0x4084);
   FieldEvent_Wait(60);
@@ -1444,7 +1444,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->x = actor->x.fixed;
   work->y = actor->y.fixed;
   work->z = actor->z.fixed + px(2);
-  Decompress_TaggedLz(gField_Tiles64D, work);
+  Decompress_TaggedLz(gField_GeyserTiles, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;

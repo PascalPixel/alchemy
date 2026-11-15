@@ -86,7 +86,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
   offset = (s32)gMapGridCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+  Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
                              work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
   orange = orangeBase + 4;
   size = 2;
@@ -107,10 +107,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, (u8 *)cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FA,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, (u8 *)cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameZigzagTexture,
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                              Ram_MapCellBuffer + TRIDENT_BILLOW, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -512,9 +512,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+    Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                                work->sheet + LEAPING_STRIKE_BILLOW, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                                work->sheet + LEAPING_STRIKE_FLAME_BAND, 0, 0);
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,

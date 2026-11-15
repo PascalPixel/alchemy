@@ -127,7 +127,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              Ram_MapCellBuffer + JUDGMENT_FIRE_RING, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);

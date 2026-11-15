@@ -450,7 +450,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
       child->flags = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Animation_ApplyChildValuesToRecord((struct Sprite *)child, 13);
+        Sprite_SetAnimationColorModes((struct Sprite *)child, 13);
         Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
       }
     }

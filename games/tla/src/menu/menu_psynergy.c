@@ -146,7 +146,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
   s32 targetMode;
   s32 actionEntry;
   s32 chosenTarget;
-  struct BattleAct *action;
+  struct AbilityDefinition *action;
 
   step = PSYNERGY_STEP_MEMBER;
   done = 0;
@@ -313,14 +313,14 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 /// 0xff), 1 on one chosen party member when its target mode is 2, and 0
 /// otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct BattleAct *psynergy;
+  struct AbilityDefinition *psynergy;
   s32 diff;
   s32 ret;
 
   psynergy = Ability_Get(
       PSYNERGY_ABILITY_MASK &
       ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->sideAction[0]);
-  if (Scene_HasPsynergyTriggerFar(psynergy->fieldEffect) != 0)
+  if (Scene_HasPsynergyTriggerFar(psynergy->fieldPsynergy) != 0)
     return 0;
   ret = 2;
   if (psynergy->range != 0xff) {
@@ -351,7 +351,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   result = 0;
   icon = menu->sideIcon[partySlot];
   icon->motion = ICON_SHOWN;
-  icon->animStep = result;
+  icon->animationStep = result;
   menu->cursorIcon->motion = ICON_HIDDEN;
   menu->tabCounts[partySlot] = menu->memberCount;
 
@@ -788,7 +788,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 i;
   s32 count;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s32 offset;
 
   count = 0;
@@ -799,7 +799,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
     for (i = 0; i < 32; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
         if (Ability_Get(unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK)
-                ->fieldEffect != 0) {
+                ->fieldPsynergy != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
@@ -810,7 +810,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
       if (unit->psynergy[i].encodedAction != 0) {
         ability = Ability_Get(unit->psynergy[i].encodedAction &
                               PSYNERGY_ABILITY_MASK);
-        if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
+        if (ability->fieldPsynergy != 0 || (ability->flags & 0x40) != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
@@ -821,7 +821,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
         if (unit->psynergy[i].encodedAction != 0) {
           ability = Ability_Get(unit->psynergy[i].encodedAction &
                                 PSYNERGY_ABILITY_MASK);
-          if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
+          if (ability->fieldPsynergy == 0 && (ability->flags & 0x40) == 0) {
             actions[count] = unit->psynergy[i].encodedAction;
             count++;
           }
@@ -956,7 +956,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   u8 row;
   s32 cursor;
   struct Unit *owner;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
 
   (void)unused;
@@ -1034,7 +1034,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 /// PsynergyMenu_RunList runs the Psynergy list of the member in paneIndex.
 s32 PsynergyMenu_RunList(s32 paneIndex) {
   struct PsynergyMenuWork *menu;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   struct WindowSprite *icon;
   s32 window;
   s32 changed;
@@ -1095,8 +1095,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-          icon->animStep = 0;
-          icon->sentinel = OAM_DEPTH_FRONT - 5;
+          icon->animationStep = 0;
+          icon->depth = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++)
           Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);
@@ -1123,7 +1123,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if ((gInput.pressed & KEY_SELECT) && shortcutHelp == 0) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 PSYNERGY_ABILITY_MASK);
-          if (ability->fieldEffect == 0) {
+          if (ability->fieldPsynergy == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
           } else {
             Sound_PlayFar(SE_NOTE_MID);
@@ -1210,7 +1210,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gInput.pressed & KEY_L) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               PSYNERGY_ABILITY_MASK);
-        if (ability->fieldEffect == 0) {
+        if (ability->fieldPsynergy == 0) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],
@@ -1226,7 +1226,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gInput.pressed & KEY_R) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               PSYNERGY_ABILITY_MASK);
-        if (ability->fieldEffect == 0) {
+        if (ability->fieldPsynergy == 0) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],

@@ -611,7 +611,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
-  Sound_Play(SE_245);
+  Sound_Play(SE_AMBIENT_STREAM);
   i = 0;
   do {
     i++;
@@ -736,7 +736,7 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   object->motionFlags = 0;
-  Sound_Play(SE_245);
+  Sound_Play(SE_AMBIENT_STREAM);
   MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   i = 0;
 loop:

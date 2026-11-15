@@ -175,7 +175,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                                  s32 page, s32 *pageCount) {
   struct Unit *unit;
   struct Unit *savedUnit;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s16 *numberText;
   s32 oldHp;
   s32 oldPp;
@@ -205,7 +205,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       output->kind = WINDOW_SPRITE_ICON;
       output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)&output->sprite;
-      output->sentinel = OAM_DEPTH_WINDOW;
+      output->depth = OAM_DEPTH_WINDOW;
       output->x = 120;
       output->y = 120;
       entry->attributes.word =

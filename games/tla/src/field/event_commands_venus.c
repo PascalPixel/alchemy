@@ -68,7 +68,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(effect, 7);
-    Animation_ApplyChildValuesToRecordFar(effect->object,
+    Sprite_SetAnimationColorModesFar(effect->object,
                                           SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = Q16_ONE / 2;
     effect->scaleY = Random16() + Q16_ONE * 3 / 2;
@@ -107,7 +107,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   }
 
   wait(100);
-  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
+  Sound_PlayFar(SE_STOP_EXIT_SE);
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;

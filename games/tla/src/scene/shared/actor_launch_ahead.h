@@ -28,5 +28,5 @@ void Actor_LaunchAhead(struct Actor *self) {
   } while (0);
   actor->timer = 0;
   actor->watchedActor = self->watchedActor;
-  Event_PlaySound(SE_104);
+  Event_PlaySound(SE_LAUNCH);
 }

@@ -16,7 +16,7 @@
 #include "stddef.h"
 #include "types.h"
 
-struct BattlePresentationTransition;
+struct BattleBackgroundWork;
 struct BattleWork;
 struct MapWork;
 struct ObjectSystemWork;
@@ -91,7 +91,7 @@ struct HeapSlots {
   void *titleIntro;       ///< the title intro's state
   /// The battle background's view and entry transition (32 bytes), from
   /// Battle_Run.
-  struct BattlePresentationTransition *battleBackground;
+  struct BattleBackgroundWork *battleBackground;
   /// The dice games' sprites, or a field Psynergy's canvas map.
   u16 *canvasMap;
   void *unusedAfterCanvasMap; ///< no code allocates this slot

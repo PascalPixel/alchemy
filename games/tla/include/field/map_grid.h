@@ -53,12 +53,12 @@ struct MapCell {
   u8 attributeB;
 };
 
-/// A row of gMaps: a layout's resources, each counted from ResourceId_Map000.
+/// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
   u16 header;
   u16 palette;
   u16 tiles[3];       ///< for char blocks 1, 2 and 3
-  u16 animationTiles; ///< into gData_02028000
+  u16 animationTiles; ///< into gMapGridAnimTiles
 };
 /// Every layout's resources, by map number (field/map_grid_data.c).
 extern const struct MapResources gMaps[];
@@ -183,7 +183,7 @@ enum WorldMapCollision {
 
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width, u32 height,
                            s32 value);
 
 STATIC_ASSERT(sizeof(struct MapLayer) == 56);

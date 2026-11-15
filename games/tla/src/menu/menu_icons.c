@@ -90,7 +90,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
       return -1;
   }
   object->kind = 0;
-  object->animStep = 0;
+  object->animationStep = 0;
   object->motion = ICON_SHOWN;
   return 1;
 }
@@ -119,7 +119,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
       return -1;
   }
   object->kind = 0;
-  object->animStep = 0;
+  object->animationStep = 0;
   object->motion = ICON_SHOWN;
   return 1;
 }
@@ -173,13 +173,13 @@ void Menu_SetPageArrowsA(s32 index, s32 count) {
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-    arrow->animStep = 0;
+    arrow->animationStep = 0;
   }
   arrow = menu->pageArrows[1];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-    arrow->animStep = 0;
+    arrow->animationStep = 0;
   }
 }
 
@@ -196,13 +196,13 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_LEFT;
-    arrow->animStep = 0;
+    arrow->animationStep = 0;
   }
   arrow = menu->pageArrows[1];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_RIGHT;
-    arrow->animStep = 0;
+    arrow->animationStep = 0;
   }
 }
 

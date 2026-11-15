@@ -453,7 +453,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// interrogators by the story flags.
 void MadraInteriors_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    gFieldWork->unkd4c = 3;
+    gFieldWork->psynergyDrawFlags = 3;
     if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
       MadraInteriors_InterrogatePiers();
     } else {
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_HOUSES) {
     event = Ram_HeapSlots->fieldWork;
-    event->unkd4c = 3;
+    event->psynergyDrawFlags = 3;
     if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);

@@ -29,7 +29,7 @@ s32 Forge_Run(s32 actorId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   icon =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
-  icon->sentinel = OAM_DEPTH_FRONT;
+  icon->depth = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);

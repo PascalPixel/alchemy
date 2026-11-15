@@ -117,8 +117,8 @@ struct TitleScreenWork {
 };
 
 void TitlePaletteFade_SetCurrent(s32 index, s32 transform);
-extern u8 Data_02026800[];
-extern u8 Data_02019600[];
+extern u8 gTitleIntro_LogoTileBuffer[];
+extern u8 gTitleIntro_LighthouseTilesTail[];
 extern u8 Data_02017080[];
 extern const u8 gTitle_PromptBlendLevels[];
 extern u16 gTitleIntro_ChannelCurve[];
@@ -578,7 +578,7 @@ extern s16 gTitleIntro_GullPath[];
 
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
-    u8 *buffer = Data_02026800;                                                \
+    u8 *buffer = gTitleIntro_LogoTileBuffer;                                                \
     Decompress_ByteLz(Resource_GetTableEntry((s32)&(id)), buffer);             \
     Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
@@ -620,10 +620,10 @@ void TitleIntro_UpdateLogo(void) {
     }
     x = gTitleIntro_GullPath[logo->step];
     if (x == -1) {
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_Data01B),
+      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_SubtitlePalette),
               (void *)OBJ_PLTT,
               (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
-      LOAD_LOGO_TILES(ResourceId_Data01C);
+      LOAD_LOGO_TILES(ResourceId_SubtitleA);
       logo->phase = TITLE_LOGO_ZOOM;
       logo->frame = 1;
       logo->timer = 0;
@@ -675,11 +675,11 @@ void TitleIntro_UpdateLogo(void) {
         REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
       }
       if (logo->timer == 8)
-        LOAD_LOGO_TILES(ResourceId_Data01D)
+        LOAD_LOGO_TILES(ResourceId_SubtitleB)
       else if (logo->timer == 16)
-        LOAD_LOGO_TILES(ResourceId_Data01E)
+        LOAD_LOGO_TILES(ResourceId_SubtitleC)
       else if (logo->timer == 24)
-        LOAD_LOGO_TILES(ResourceId_Data01F)
+        LOAD_LOGO_TILES(ResourceId_SubtitleD)
     }
   }
 }
@@ -759,7 +759,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.pos = 0;
   scroll.limit = 176;
   scroll.step = i;
-  scroll.src = Data_02019600;
+  scroll.src = gTitleIntro_LighthouseTilesTail;
   scroll.dst = (u8 *)BG_CHAR_BLOCK(0) + LIGHTHOUSE_SCREEN_BYTES;
   scroll.cursor = map;
   scroll.tile = tile;
@@ -1175,7 +1175,7 @@ s32 Title_ShowCamelotLogo(void) {
 }
 
 /// Unused: an empty routine in the far-call table.
-void Data_081a786c(void) {}
+void Title_NoOpColor(void) {}
 
 /// Writes to step, for each of the 1536 RGB components of 512 colours, the
 /// difference between current and target values divided by frames.

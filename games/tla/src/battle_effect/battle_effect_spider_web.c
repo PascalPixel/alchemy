@@ -306,7 +306,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   cells = work->sheet + ULYSSES_PICTURES;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B1, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_UlyssesSilhouette, cells, 0, 0);
   for (i = 0; i != PICTURE_BYTES(ULYSSES_SILHOUETTE); i++, cells++) {
     if (*cells) {
       *cells += 128;
@@ -319,7 +319,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, picture, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlutteringFlakeSheet, picture, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprites, 0, 0);
   loaded = 0;
   ship.x = px(200);
@@ -514,7 +514,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       for (i = 0; i != 96; i++) {
         q[i].variant = -1;
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C8, gMapGridCellBuffer,
+      Resource_LoadAndDecompress((s32)&ResourceId_FadingCrescentSheet, gMapGridCellBuffer,
                                  0, 0);
     }
     if (frame == 76) {

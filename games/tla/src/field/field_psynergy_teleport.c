@@ -203,7 +203,7 @@ void Teleport_PlaySparks(void) {
   Actor_FaceDirectionById(owner, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(object, 28);
-  object->update = Actor_ApplyRandomChildValues;
+  object->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
   Sound_PlayFar(SE_SHIMMER);

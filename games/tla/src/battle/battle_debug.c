@@ -25,10 +25,10 @@ UNUSED void DebugBattle_RunForever(void) {
 /// begins.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
-  struct Snapshot *snap = &Data_0200ff58;
+  struct Snapshot *snap = &gScriptedBattle_Snapshot;
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
-  struct SnapshotCopy *copies = Data_0200ff6c;
+  struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
 
   for (; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(ids[i]);
@@ -47,7 +47,7 @@ void ScriptedBattle_SaveUnits(void) {
           /* FAKEMATCH(temporary): the PP value held in a local while pv is
            * built. */
           pp = (u16)unit->pp;
-          base = Data_0200ffec;
+          base = gScriptedBattle_SnapshotVitals;
           // The address as an integer sum, i * 4 first: &base[i] puts the
           // base first in the add.
           pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
@@ -97,8 +97,8 @@ void ScriptedBattle_SaveUnits(void) {
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
-  struct Snapshot *snap = &Data_0200ff58;
-  struct SnapshotCopy *copies = Data_0200ff6c;
+  struct Snapshot *snap = &gScriptedBattle_Snapshot;
+  struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
 
   for (i = 0; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(gScriptedBattle_Units[i]);
@@ -135,7 +135,7 @@ void ScriptedBattle_RestoreUnits(void) {
       unit->challenge = copies->challenge;
       if (i > 2) {
         Unit_SetHpFar(unit, snap->vitals[i].hp);
-        Unit_SetPpFar(unit, Data_0200ff58.vitals[i].pp);
+        Unit_SetPpFar(unit, gScriptedBattle_Snapshot.vitals[i].pp);
       }
     }
   }

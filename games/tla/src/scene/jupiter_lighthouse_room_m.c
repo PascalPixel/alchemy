@@ -664,7 +664,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetMessageId(MsgAhhhh2);
+  FieldEvent_SetMessageId(MsgAhhhh);
   Event_PlaySound(SE_CHEST_OPEN);
   FieldEvent_Wait(26);
   Event_PlaySound(SE_FLOOR_SWITCH);

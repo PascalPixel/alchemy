@@ -295,7 +295,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
@@ -303,7 +303,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animStep = zero;
+      icon->animationStep = zero;
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
@@ -316,16 +316,16 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
         definition = Item_GetDirectFar(itemId);
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
-        icon->sentinel = OAM_DEPTH_FRONT - 3;
+        icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           highlightFrame = 10;
-          icon->animStep = highlightFrame;
-          icon->sentinel = OAM_DEPTH_FRONT - 2;
+          icon->animationStep = highlightFrame;
+          icon->depth = OAM_DEPTH_FRONT - 2;
         }
         icon =
             Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
-        icon->sentinel = OAM_DEPTH_FRONT - 4;
+        icon->depth = OAM_DEPTH_FRONT - 4;
       }
     }
   }
@@ -460,14 +460,14 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
                                     window, 88, -12);
       icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animStep = 0;
+      icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, 0);
       icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animStep = 0;
+      icon->animationStep = 0;
     }
     for (i = 0; i < SHOP_PARTY_PAGE_MEMBERS; i++) {
       s32 unitId = shop->partyMemberIds[first + i];

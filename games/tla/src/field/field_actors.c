@@ -562,7 +562,7 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
 /// animations, except those drawn hidden.
 void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    Animation_ApplyChildValuesToRecord(((struct Sprite *)object->sprite),
+    Sprite_SetAnimationColorModes(((struct Sprite *)object->sprite),
                                        value);
 }
 

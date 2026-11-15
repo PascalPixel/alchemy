@@ -104,7 +104,7 @@ void Islets_ShimmerWater(void);
 
 void Field_TryJumpForward();
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
@@ -333,14 +333,14 @@ void Islets_TalkToPengus(void) {
       Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
     } else {
-      FieldEvent_SetMessageId((s32)MsgPenPen2);
+      FieldEvent_SetMessageId((s32)MsgPenPen);
     }
     Event_ShowMessage(ACTOR_PENGUS, 0);
   } else {
     FieldActor_Stop(ACTOR_PENGUS);
     System_Wait(1);
     Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
-    FieldEvent_SetMessageId((s32)MsgPenPen3);
+    FieldEvent_SetMessageId((s32)MsgPenPenExclaimed);
     // "Pen pen!"
     Event_ShowMessage(ACTOR_PENGUS, 0);
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
@@ -378,7 +378,7 @@ void Islets_TalkToPengulina(void) {
       Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
     } else {
-      FieldEvent_SetMessageId((s32)MsgPenPen2);
+      FieldEvent_SetMessageId((s32)MsgPenPen);
     }
     Event_ShowMessage(ACTOR_PENGULINA, 0);
   } else {
@@ -476,7 +476,7 @@ void Islets_TalkToBird(void) {
   if (Event_GetFlag(FLAG_BIRD_TRADED)) {
     FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineWork.leaderActorId);
   }
-  FieldEvent_SetMessageId((s32)MsgChirpChirp2);
+  FieldEvent_SetMessageId((s32)MsgChirpChirp);
   // "Chirp chirp!"
   Event_ShowMessage(ACTOR_BIRD, 0);
   Event_End();
@@ -2270,7 +2270,7 @@ extern s8 gPushFootprints[][4];
 /// picks one of the six footprints in gPushFootprints (four signed bytes each,
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
-/// is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for a shape with
+/// is filled with 255 (PushedActor_FillGridAttributeRectangle). Returns 1, or 0 for a shape with
 /// no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -2307,12 +2307,12 @@ s32 PushTarget_FillFootprint(s32 id) {
   fromZ = FIELD_CELL(map->layers[1].offsetY);
   fromX = (u16)b;
   Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
-  Map_FillCellRectByte2(0, x, z, width, height, 255);
-  Map_FillCellRectByte2(2, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, x, z, width, height, 255);
   return 1;
 }
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value) {
   struct MapCell *cells = Ram_HeapSlots->mapGrid->layers[layer].cells;
   struct MapCell *cell;
@@ -2425,7 +2425,7 @@ void PushTarget_Push(struct PushTarget target) {
   height = (ABS(gPushFootprints[footprint][1]) +
             ABS(gPushFootprints[footprint][3])) >>
            4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
@@ -2458,7 +2458,7 @@ void PushTarget_Push(struct PushTarget target) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
@@ -2471,14 +2471,14 @@ void PushTarget_Push(struct PushTarget target) {
   originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
-  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height, 255);
   cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  PushedActor_FillGridAttributeRectangle(2, cell[0], cell[2], width, height, 0);
   Event_NoOp();
 }
 
@@ -2859,7 +2859,7 @@ struct Trigger gIslets_DogTriggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgEverSinceThe)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Islets_TalkToSailorsSon)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYouReLucky)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgArffArff2)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgArffArff)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgTheWaterwaysNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -2912,7 +2912,7 @@ struct Trigger gIslets_CowTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIJustWant)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTheSeaOf)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMooMoo2)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMooMoo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgDadAndGrandpa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -2979,8 +2979,8 @@ struct Trigger gIslets_TurtleTriggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYouUsedTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgIRememberHow)},
-    {TRIGGER_TALK, 9, FLAG_GEORGE_HAS_THE_TURTLE, MSGNO(MsgBlank3)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYup2)},
+    {TRIGGER_TALK, 9, FLAG_GEORGE_HAS_THE_TURTLE, MSGNO(MsgGeorgeSilence)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYup)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SCENE_TEMP_17,
      EVENT(Islets_GiveTurtle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,

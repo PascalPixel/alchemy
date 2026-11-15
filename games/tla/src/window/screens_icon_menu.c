@@ -20,7 +20,6 @@
 #include "window/window.h"
 #include "resource_ids.h"
 
-extern u16 gData_02003a74[];
 
 // Where the Japanese layout differs: the summon window, the item window and
 // the summon's Djinn costs, in tiles; the x of the acting member's icon and of
@@ -151,7 +150,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       u16 *signature;
 
       state->linkTimer = 1;
-      signature = gData_02003a74;
+      signature = (u16 *)gSerialTransfer.payload;
       signature[4] = 'V';
       signature[5] = 'S';
       signature[6] = 'S';
@@ -402,7 +401,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       case COMMAND_ICON_PSYNERGY: {
         s32 k;
         struct MenuSprite *iconSprite;
-        struct BattleAct *ability;
+        struct AbilityDefinition *ability;
         struct WindowWork *work;
         u16 *list;
         u8 *pick;
@@ -491,7 +490,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       case COMMAND_ICON_SUMMON: {
         const struct SummonDefinition *summon;
-        struct BattleAct *ability;
+        struct AbilityDefinition *ability;
         struct MenuSprite *iconSprite;
         s32 ok;
         s32 j;
@@ -571,7 +570,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       case COMMAND_ICON_DJINN: {
-        struct BattleAct *ability;
+        struct AbilityDefinition *ability;
         s32 cost;
         s32 element;
         s32 index;
@@ -646,7 +645,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       case COMMAND_ICON_ITEM: {
         s32 k;
         struct MenuSprite *iconSprite;
-        struct BattleAct *ability;
+        struct AbilityDefinition *ability;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -767,7 +766,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   }
 
   if (state->linkTimer != 0) {
-    u16 *signature = gData_02003a74;
+    u16 *signature = (u16 *)gSerialTransfer.payload;
 
     signature[4] = 'E';
     signature[5] = 'D';

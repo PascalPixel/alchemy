@@ -76,7 +76,7 @@ struct BattleEffectWork {
   /// 1 once the effect has drawn a frame; the canvas transfer callback copies
   /// the canvas and clears it.
   s32 transferPending;
-  s32 unk78ec; ///< one draft sets 1 for a frame range; no reader found
+  s32 stampPending; ///< one draft sets 1 for a frame range; no reader found
   struct BattleEffectParams *args; ///< the command being run
 };
 

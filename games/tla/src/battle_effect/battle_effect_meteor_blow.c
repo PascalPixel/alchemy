@@ -187,7 +187,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_WAVE);
     }
     if (frame == 120) {
-      Sound_PlayFar(SE_163);
+      Sound_PlayFar(SE_WAVE_HIGH);
     }
     fade = frame - 96;
     if ((u32)fade <= 16) {
@@ -415,9 +415,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
                              work->sheet + METEOR_BLOW_BILLOW, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

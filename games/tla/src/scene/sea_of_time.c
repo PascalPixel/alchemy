@@ -645,7 +645,7 @@ s32 SeaOfTime_StartWaves(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetFlag(FLAG_WAVES_RUNNING);
-  Event_PlaySound(SE_557);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   do {
     wait(10);
     changed = 0;
@@ -702,7 +702,7 @@ s32 SeaOfTime_StopWaves(void) {
   Task_Remove(SeaOfTime_TrackWaves);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(SE_556);
+  Sound_Play(SE_RISE_WITH_SPARKS_HIGH);
   gSeaOfTime_WaveState = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.
@@ -883,7 +883,7 @@ void SeaOfTime_CrossToLemuria(void) {
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(ACTOR_SHIP);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Sound_Play(SE_556);
+  Sound_Play(SE_RISE_WITH_SPARKS_HIGH);
   // Fills palette 3's entries 1 to 14 with one colour.
   fill = RGB(11, 6, 23);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
@@ -1261,7 +1261,7 @@ void SeaOfTime_Open(void) {
     wait(1);
   }
   Actor_Release(actor);
-  Event_PlaySound(SE_557);
+  Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   do {
     wait(10);
     changed = 0;

@@ -3,6 +3,6 @@
 @ (FieldEffect_Explosion), and Loho's sparks and the Northern Reaches' crash do
 @ the same.
 	.section .rodata
-	.global Field_Palette685
-Field_Palette685:
+	.global Field_ExplosionPalette
+Field_ExplosionPalette:
 	.incbin "games/tla/src/graphics/field/explosion_palette.gbapal"

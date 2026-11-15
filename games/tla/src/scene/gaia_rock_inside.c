@@ -1184,7 +1184,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
-  Sound_Play(SE_574);
+  Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletSettleScript);
@@ -1491,7 +1491,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   FieldEvent_Wait(45);
   Actor_FaceActor(ACTOR_FIRST_ALTAR_WEST_FACE, *leaderId, 0);
   Actor_FaceActor(ACTOR_FIRST_ALTAR_EAST_FACE, *leaderId, 0);
-  Event_PlaySound(SE_576);
+  Event_PlaySound(SE_STATUE_STIRS);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 5);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 5);
   System_Wait(30);
@@ -1572,7 +1572,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_WEST_FACE, gMainRoutineWork.leaderActorId, 0);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Actor_SetAnimationById(ACTOR_WEST_FACE, 5);
   wait(30);
   Actor_SetAnimationById(ACTOR_WEST_FACE, 2);
@@ -1603,7 +1603,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(SE_564);
+    Sound_Play(SE_EYES_GLOW);
     Actor_SetAnimationById(ACTOR_WEST_FACE, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1663,7 +1663,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_EAST_FACE, gMainRoutineWork.leaderActorId, 0);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Actor_SetAnimationById(ACTOR_EAST_FACE, 5);
   wait(30);
   Actor_SetAnimationById(ACTOR_EAST_FACE, 2);
@@ -1694,7 +1694,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(SE_564);
+    Sound_Play(SE_EYES_GLOW);
     Actor_SetAnimationById(ACTOR_EAST_FACE, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1754,7 +1754,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_ALTAR_FACE, gMainRoutineWork.leaderActorId, 0);
-  Sound_Play(SE_576);
+  Sound_Play(SE_STATUE_STIRS);
   Actor_SetAnimationById(ACTOR_ALTAR_FACE, 5);
   wait(30);
   Actor_SetAnimationById(ACTOR_ALTAR_FACE, 2);
@@ -1785,7 +1785,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(SE_564);
+    Sound_Play(SE_EYES_GLOW);
     Actor_SetAnimationById(ACTOR_ALTAR_FACE, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -2170,7 +2170,7 @@ s32 Scene_Initialize(void) {
           GameFlag_Set(FLAG_BUSHES_STREAM_OPEN);
           ending = 24;
         }
-        Sound_Play(SE_564);
+        Sound_Play(SE_EYES_GLOW);
         GaiaRockInside_OpenHallPassages();
         Event_Wait(15);
         Actor_SetAnimationById(ACTOR_SERPENT, 3);

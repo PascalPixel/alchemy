@@ -143,11 +143,11 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep1Map, one level darker down the ramp of colours
+/// gColorBuffer_DarkenOneLevelMap, one level darker down the ramp of colours
 /// 0xe0 to 0xfe.
 void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
   if (count > 0) {
-    const u8 *table = gColorBuffer_FadeStep1Map;
+    const u8 *table = gColorBuffer_DarkenOneLevelMap;
 
     do {
       if (*buffer != 0)
@@ -159,10 +159,10 @@ void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep2Map, two levels darker.
+/// gColorBuffer_DarkenTwoLevelsMap, two levels darker.
 void ColorBuffer_DarkenTwoLevels(u8 *buffer, s32 count) {
   if (count > 0) {
-    const u8 *table = gColorBuffer_FadeStep2Map;
+    const u8 *table = gColorBuffer_DarkenTwoLevelsMap;
 
     do {
       if (*buffer != 0)
@@ -174,10 +174,10 @@ void ColorBuffer_DarkenTwoLevels(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep3Map, four levels darker.
+/// gColorBuffer_DarkenFourLevelsMap, four levels darker.
 void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
   if (count > 0) {
-    const u8 *table = gColorBuffer_FadeStep3Map;
+    const u8 *table = gColorBuffer_DarkenFourLevelsMap;
 
     do {
       if (*buffer != 0)

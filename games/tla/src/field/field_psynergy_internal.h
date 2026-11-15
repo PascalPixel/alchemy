@@ -72,7 +72,7 @@ struct WhirlSpark {
 
 /// Per-frame update: sets every part of an actor's sprite to colour mode
 /// frame % 6, which cycles its colours.
-void Actor_ApplyRandomChildValues(struct Actor *actor);
+void Actor_CycleSpriteColors(struct Actor *actor);
 
 /// The effect sprites a field Psynergy has (FieldEffectWork.particles).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24

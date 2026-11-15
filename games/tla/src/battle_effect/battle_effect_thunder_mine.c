@@ -513,7 +513,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       }
     }
     if (frame == 64) {
-      Sound_PlayFar(SE_163);
+      Sound_PlayFar(SE_WAVE_HIGH);
     }
     {
       s32 crackle;

@@ -185,13 +185,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      /* FAKEMATCH(temporary): the left pose copied into left before the call's
-       * other argument is read. */
-      {
-        u8 left = gCybele_ObjectPoses[pose * 2];
-
-        Sprite_StartAnimationFar(work->sprites[3], left);
-      }
+      Sprite_StartAnimationFar(work->sprites[3], gCybele_ObjectPoses[pose * 2]);
       Sprite_StartAnimationFar(work->sprites[4],
                                gCybele_ObjectPoses[pose * 2 + 1]);
     }

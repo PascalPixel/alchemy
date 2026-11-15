@@ -6,14 +6,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/* VIEW(f15b3b0): routine Sprite_StartAnimationFar as s32
- * Sprite_StartAnimationFar(void *, s32); ability_effects has void
- * Sprite_StartAnimationFar(void *object, s32 value); tried as the rest of the
- * object declares it, EffectSprite_Acquire moves: 1 of 46 instructions in
- * tla-ja. */
-/// Sprite_StartAnimationFar as Ulysses's part sees it: returning a word.
-extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
-    "Sprite_StartAnimationFar");
 
 /// Takes the first free effect sprite of the 64 with a new animation entry.
 /// Its callers also pass the sprite's OAM shape and mode, which it leaves for
@@ -41,7 +33,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
   sprite->count = 1;
   sprite->flags = 0;
   sprite->rotation = 0;
-  Animation_ApplyChildArgumentFar__f15b3b0(sprite, 0);
+  Sprite_StartAnimationFar(sprite, 0);
   return found;
 }
 
@@ -182,7 +174,7 @@ void Ulysses_MoveLastParticle(void) {
     ULYSSES_LAST_PARTICLE.velocityY -= px(1) / 16;
   if (work->frame > 11)
     ULYSSES_LAST_PARTICLE.velocityX += px(1) / 16;
-  Animation_ApplyChildArgumentFar__f15b3b0(work->sprites[7],
+  Sprite_StartAnimationFar(work->sprites[7],
                                            work->frame / 7 % 8 + 7);
   work->frame++;
 }

@@ -1034,7 +1034,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 
 // Routines of other banks the parts call.
-void Sprite_StartAnimationFar(void *object, s32 value);
+s32 Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 void BattleBackground_SetModeFar(s32 mode, s32 resource, s32 speed);

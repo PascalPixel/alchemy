@@ -4,6 +4,7 @@
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
+#include "system/io_write.h"
 
 #define DRAGON_CLOUD_FRAMES 150
 
@@ -99,10 +100,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 13;
     }
-    step->velocityZ = ((Random16() & 63) - 32) << 14;
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
+    Io_Write32(((Random16() & 63) - 32) << 14, &step->velocityZ);
     step->variant = 1;
   }
 
@@ -127,10 +125,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       step->x = (Q_16_16_TO_INT(Trig_Sin(angle) * 24)) + 88;
     else
       step->x = (Q_16_16_TO_INT(-(Trig_Sin(angle) * 24))) + 16;
-    step->y = (Q_16_16_TO_INT(Trig_Cos(angle) * 16)) + 40;
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
+    Io_Write32((Q_16_16_TO_INT(Trig_Cos(angle) * 16)) + 40, &step->y);
     step->variant = -(i * 2);
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);

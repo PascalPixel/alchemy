@@ -315,8 +315,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     for (panel = 0; panel <= 6; panel++) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
-        /* FAKEMATCH(volatile): the window tilemap, in RAM, stored through a
-         * volatile pointer. */
+        // The VBlank handler uploads this tilemap (WindowSystem_UploadTilemap).
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap +
                             (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +

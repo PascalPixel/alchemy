@@ -256,6 +256,11 @@ enum StormNightAreaFlag {
 static s32 sShakeDone;
 static s32 sShakeShift;
 
+/// A random pause of 20 to 39 frames between the glances of
+/// gValePrologue_LookAroundScript.
+#define VALE_PROLOGUE_GLANCE_PAUSE()                                           \
+  (Math_RemainderUnsigned(Random_Next(), 20) + 20)
+
 /// The step of gValePrologue_LookAroundScript.
 static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 timer = actor->timer;
@@ -263,7 +268,7 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 
   if (timer == 0) {
     actor->facing = Random_Next();
-    countdown = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+    countdown = VALE_PROLOGUE_GLANCE_PAUSE();
     actor->timer = countdown;
   }
   actor->timer = countdown - 1;
@@ -2119,15 +2124,15 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   lookingActor = Actor_Get(ACTOR_PARTY_LEADER);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_GARET_CHILD);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_JENNA_CHILD);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_DORA);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookAroundActions = gValePrologue_LookAroundScript;
   Actor_SetScript(ACTOR_DORA, lookAroundActions);
   Event_Wait(30);

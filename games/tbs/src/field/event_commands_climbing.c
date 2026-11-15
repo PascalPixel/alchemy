@@ -25,7 +25,8 @@ s32 Field_TryJumpForward(void) {
   struct FieldPosition *position;
   struct Actor *platform;
 
-  /* FAKEMATCH(temporary): position holds &positionStorage. */
+  /* LEFTOVER(template): position holds &positionStorage, as Field_ClimbDown
+   * and Field_ClimbUp point position at their stack vector. */
   position = &positionStorage;
 again:
   // The middle of the cell in front, then of the cell beyond.

@@ -1953,7 +1953,8 @@ s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
   struct Actor *leader;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED s32 unused[3];
 
   if (event->transitionActive == 0) {

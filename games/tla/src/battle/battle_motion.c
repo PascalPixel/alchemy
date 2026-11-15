@@ -308,7 +308,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   FIXED scale;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();

@@ -516,7 +516,8 @@ next_state:
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
 void FieldPsynergy_Move(void) {
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   s32 work[3];
   struct FieldEffectWork *scene;
   void *object;

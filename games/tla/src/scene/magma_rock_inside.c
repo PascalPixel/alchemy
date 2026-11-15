@@ -1998,7 +1998,8 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   u16 noMotion;
   s32 probe;
   const u8 *script;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   s32 unused[3];
 
   script = gMagmaRockInside_BlazeWatcherScript;

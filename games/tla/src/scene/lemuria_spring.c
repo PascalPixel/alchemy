@@ -630,7 +630,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
   FIXED maxX;
   FIXED minZ;
   FIXED maxZ;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   struct Vector3 spare;
 
   toss = &gLemuriaSpring_Toss;

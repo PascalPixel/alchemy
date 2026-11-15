@@ -2647,7 +2647,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   s32 runSize;
   u32 *runCopy;
   u32 control;
-  // Unused: gives the stack frame its 136 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   u32 frame[34];
 
   src = BattleEffect_PatchTemplateCode;

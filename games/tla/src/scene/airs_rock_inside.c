@@ -2442,7 +2442,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   struct Actor *b = Actor_GetById(idB);
   s32 i;
   s16 *angle;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   s32 unused[3];
 
   Sound_Play(SOUND_FADE_OUT_BGM);

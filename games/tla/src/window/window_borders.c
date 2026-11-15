@@ -398,7 +398,8 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 entry;
   s32 result = 0;
-  // Unused: gives the stack frame its 8 bytes above the outgoing arguments.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED u16 frameReserve[4];
 
   work->speakerVoiceSound = 0;

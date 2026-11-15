@@ -503,7 +503,8 @@ void Credits_InitCrawlSprites(void) {
 /// canvas of one byte a pixel, packed to two pixels a byte, and copied into
 /// object tiles from slot on, its top half then its bottom half.
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
-  // Unused: gives the stack frame its 32 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   u32 unused[8];
   u8 *canvas;
   u8 *src;

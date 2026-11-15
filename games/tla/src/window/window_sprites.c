@@ -265,7 +265,8 @@ void Glyph_DrawToTiles(const void *source, void *destination) {
 /// fill, or NULL when no window sprite is free.
 void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   struct WindowWork *work = Ram_HeapSlots->windowWork;
-  // Unused: gives the stack frame its 128 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;

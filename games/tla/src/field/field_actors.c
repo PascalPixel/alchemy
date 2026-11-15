@@ -925,7 +925,8 @@ void ActorSystem_ProjectSprites(void) {
   struct Actor *actor;
   s32 angle;
   s32 i;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   struct ActorCameraPoint unused;
 
   Render_LoadDecoder();

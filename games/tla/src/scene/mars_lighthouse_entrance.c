@@ -1664,7 +1664,8 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
   struct Actor *leader;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   s32 frame[3];
 
   if (event->transitionActive == 0) {

@@ -1053,7 +1053,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   s32 enemyId;
   s32 levelTotal;
   s32 enemyCount;
-  // Unused: gives the stack frame its 28 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED s32 levels[7];
 
   enemyCount = 0;

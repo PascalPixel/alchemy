@@ -1187,7 +1187,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   s32 i;
   u16 noMotion;
   const u8 *script;
-  // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   s32 unused[3];
 
   script = gAquaRockInside_PiersRiseScript;

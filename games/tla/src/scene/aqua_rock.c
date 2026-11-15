@@ -259,7 +259,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 s32 AquaRock_PickRandomSpot(struct Actor *object) {
   struct Vector3 spot;
-  struct Vector3 unused; // Unused: gives the stack frame its 12 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
+  struct Vector3 unused;
   struct Vector3 *p;
   s32 x;
   FIXED coordinate;

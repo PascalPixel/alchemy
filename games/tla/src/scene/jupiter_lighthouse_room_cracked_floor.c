@@ -209,7 +209,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -238,10 +238,10 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -254,7 +254,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -263,7 +263,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -403,75 +403,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.

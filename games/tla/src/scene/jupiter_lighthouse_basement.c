@@ -65,7 +65,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOam[];
 void Import_MapGridSetCellHeight();
 
@@ -163,7 +163,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     SET_VECTOR(position, px(200), px(-32), px(164));
     radius = Random16();
     angle = Random16();
-    FieldVector_AddPolarOffsetFixed((radius << 5) + 0x80000, angle, position);
+    FieldVector_AddPolarOffsetFixed((radius << 5) + px(8), angle, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
   }
   object->userValue = object->timer;
@@ -219,8 +219,8 @@ void JupiterLighthouse_SpawnSparks(void) {
 
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->speedLimit = (i << 12) + 0x8000;
-    object->acceleration = (i << 12) + 0x8000;
+    object->speedLimit = (i << 12) + px(1) / 2;
+    object->acceleration = (i << 12) + px(1) / 2;
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
@@ -309,7 +309,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -342,14 +342,14 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     s32 y;
 
     params.priority = 3;
-    params.startScaleX = 0xb333;
-    params.startScaleY = 0xb333;
+    params.startScaleX = Q16_ONE * 7 / 10;
+    params.startScaleY = Q16_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)(((Random_Below(5)) << 16) + 0x50000) / 10, 0,
-                      0xb0000, &params);
+                      (s32)(px(Random_Below(5)) + px(5)) / 10, 0, px(11),
+                      &params);
   }
   return 0;
 }
@@ -363,8 +363,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
@@ -376,17 +376,17 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = ((y + z) >> 16) + 58;
+      depth = FIELD_PIXEL(y + z) + 58;
       big = gLightSpriteLargeOam;
       big = gLightSpriteLargeOam;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -406,8 +406,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
@@ -434,7 +434,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void LightSprites_InitA(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 0xc00, buffer);
@@ -448,7 +448,7 @@ void LightSprites_InitA(void) {
 void LightSprites_InitB(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesB, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 0x800, buffer);
@@ -462,7 +462,7 @@ void LightSprites_InitB(void) {
 void LightSprites_InitC(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 0x800, buffer);
@@ -485,75 +485,12 @@ void JupiterLighthouse_SetLightLevel(s32 value) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

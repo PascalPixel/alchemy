@@ -33,6 +33,9 @@
 #include "scene/scene.h"
 #include "sprite_ids.h"
 
+/// The morning after a night at the inn (GarohInteriors_WakeAtInn).
+enum { ENTRANCE_WAKE_AT_INN = 99 };
+
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
@@ -364,19 +367,19 @@ void GarohInteriors_AskAboutReveal(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 room1 = SCENE_GAROH_INTERIORS_HOUSES;
+  s32 houses = SCENE_GAROH_INTERIORS_HOUSES;
   s32 scene;
 
   if (shared) {
     scene = party->next;
-    if (scene == room1)
+    if (scene == houses)
       return gGarohInteriors_InnMorningTriggers;
     if (scene == SCENE_GAROH_INTERIORS_SHOP)
       return gGarohInteriors_HouseMorningTriggers;
   } else {
     scene = party->next;
-    if (scene == room1) {
-      if (party->entrance == 99)
+    if (scene == houses) {
+      if (party->entrance == ENTRANCE_WAKE_AT_INN)
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;
     }
@@ -392,33 +395,22 @@ s32 Scene_Initialize(void) {
   s32 turn;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_HOUSES) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
-        gMainRoutineWork.entrance == 99) {
+        gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN) {
       Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
       Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
     } else {
-      {
-        s32 x;
-        s32 z;
-        s32 id;
-
-        turn = FACING_SOUTHEAST;
-        x = 153;
-        id = ACTOR_DISAPPOINTED_TRAVELER;
-        /* FAKEMATCH(barrier): the forced id keeps its load right after that
-         * half. */
-        asm volatile("" : "+l"(id));
-        x <<= 17;
-        z = 335 << 16;
-        Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, turn);
-      }
+      turn = FACING_SOUTHEAST;
+      Actor_SetPositionAndFacing(ACTOR_DISAPPOINTED_TRAVELER, px(306), px(335),
+                                 turn);
       {
         s32 angle = FACING_SOUTHWEST;
-        s32 z = 336 << 16;
+        s32 z = px(336);
 
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
                                                        px(345), z, angle);
@@ -438,7 +430,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
-    if (gMainRoutineWork.entrance == 99 &&
+    if (gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN &&
         !GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       GarohInteriors_WakeAtInn();
   }

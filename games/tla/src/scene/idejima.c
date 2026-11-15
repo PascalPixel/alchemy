@@ -59,9 +59,16 @@
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
 #define FLAG_IDEJIMA_LEADER_WALKED_BACK 0x200
 
-/// The shore of the new continent, where Felix wakes; the second is taken after
-/// a load.
-enum IdejimaEntrance { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
+/// The entrances the triggers are chosen by: two out of the door on the hill,
+/// and two onto the shore, the second of which is taken after a load.
+enum IdejimaEntrance {
+  /// Out of the door at (184, 168), whose one trigger is the door.
+  ENTRANCE_FROM_DOOR = 1,
+  /// The shore of the new continent, where Felix wakes.
+  ENTRANCE_WAKE = 2,
+  ENTRANCE_FROM_DOOR_AGAIN = 3,
+  ENTRANCE_WAKE_AGAIN = 4
+};
 
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.
@@ -78,7 +85,7 @@ enum IdejimaActorId {
 extern struct SceneEntrance gIdejimaEntrances[];
 extern u32 gIdejimaExits[];
 extern struct Trigger gIdejimaEvents[];
-extern struct Trigger gIdejimaEventsEntrance1[];
+extern struct Trigger gIdejimaEventsFromDoor[];
 extern struct Trigger gIdejimaEventsWake[];
 extern struct ActorPlacement gIdejimaPlacements[];
 extern s32 gIdejima_StretchScript[];
@@ -133,9 +140,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
-  case 1:
-  case 3:
-    return gIdejimaEventsEntrance1;
+  case ENTRANCE_FROM_DOOR:
+  case ENTRANCE_FROM_DOOR_AGAIN:
+    return gIdejimaEventsFromDoor;
   case ENTRANCE_WAKE:
   case ENTRANCE_WAKE_AGAIN:
     return gIdejimaEventsWake;
@@ -819,10 +826,11 @@ void Idejima_ComputeWaves(void) {
 
   for (i = 0; i != 160; i++) {
     s32 wave =
-        Math_Sin(((u8)gIdejima_WavePhase - i - (layer->y >> 16) + 160) << 9) +
+        Math_Sin(((u8)gIdejima_WavePhase - i - FIELD_PIXEL(layer->y) + 160)
+                 << 9) +
         0x10000;
 
-    line[i] = (layer->y >> 16) + (wave >> 15);
+    line[i] = FIELD_PIXEL(layer->y) + (wave >> 15);
   }
   gIdejima_WaveBuffer ^= 1;
   gIdejima_WavePhase++;
@@ -986,9 +994,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  DriftScene_SpawnObject(0xee0000, 0x300000, 0xac0000, 0xe000);
+  DriftScene_SpawnObject(px(238), px(48), px(172), 0xe000);
   FieldEvent_Wait(10);
-  DriftScene_SpawnObject(0xf60000, 0x300000, 0xac0000, 0x2000);
+  DriftScene_SpawnObject(px(246), px(48), px(172), 0x2000);
   FieldEvent_Wait(30);
   // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -1113,7 +1121,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 432, 234);
-  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = 0xffff0000;
+  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = -Q16_ONE;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetPosition(ACTOR_ALEX, 392, 172);
@@ -1287,7 +1295,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
-  Actor_Get(ACTOR_SHEBA)->steeringFlags &= 254;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_SHEBA, 340, 226);
   FieldActor_Jump(ACTOR_SHEBA, 4, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_STAND);
@@ -1297,7 +1305,7 @@ void Idejima_RideTheTidalWave(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(ACTOR_SHEBA)->steeringFlags |= 1;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1388,7 +1396,8 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 254;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 314, 226);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -1398,7 +1407,8 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 80);
@@ -1865,7 +1875,7 @@ struct Trigger gIdejimaEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIdejimaEventsEntrance1[] = {
+struct Trigger gIdejimaEventsFromDoor[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
      EVENT(Idejima_EnterDoor)},
     {TRIGGER_TABLE_END},

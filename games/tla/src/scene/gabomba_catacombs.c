@@ -5,6 +5,9 @@
 /// (GabombaCatacombs_FightMud).
 
 #include "flags.h"
+/// Set as the Great Gabomba bestows its power
+/// (GabombaCatacombs_GabombaBestowsPower).
+#define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 #include "djinn_ids.h"
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
@@ -89,6 +92,21 @@ void Actor_DepartInRing(s32 id);
 /// Mud, the Djinni waiting in this room.
 enum { ACTOR_MUD = 8 };
 
+/// The hidden wall's seven puddles under the bushes Cyclone clears, the
+/// stream's puddle, and the Tomegathericon's room: the seated idol the Great
+/// Gabomba speaks through, and Kraden.
+enum {
+  ACTOR_PUDDLE_A = 8,
+  ACTOR_PUDDLE_B,
+  ACTOR_PUDDLE_C,
+  ACTOR_PUDDLE_D,
+  ACTOR_PUDDLE_E,
+  ACTOR_PUDDLE_F,
+  ACTOR_PUDDLE_G
+};
+enum { ACTOR_STREAM_PUDDLE = 8 };
+enum { ACTOR_SEATED_IDOL = 8, ACTOR_KRADEN };
+
 void GabombaCatacombs_FightMud(void) {
   Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
@@ -124,7 +142,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
 
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
-    Actor_SetPosition(64, 392, 344);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (FIELD_CELL(leader->x.fixed) == 24 &&
         FIELD_CELL(leader->z.fixed) == 21) {
       LEADER_HOP();
@@ -170,16 +188,18 @@ void GabombaCatacombs_TakeThirdTeleporter(void) {
   }
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFirstPuddle, 7, 22, 3, 58, 8, 136, 376, 8, 23)
+    GabombaCatacombs_UncoverFirstPuddle, 7, 22, 3, 58, ACTOR_PUDDLE_A, 136, 376,
+    8, 23)
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSecondPuddle, 5, 13, 5, 52, 9, 136, 248, 8, 15)
+    GabombaCatacombs_UncoverSecondPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_B, 136,
+    248, 8, 15)
 
 void GabombaCatacombs_UncoverThirdPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(10, 152, 264);
+  Actor_SetPosition(ACTOR_PUDDLE_C, 152, 264);
   if (FIELD_CELL(leader->x.fixed) == 9 && FIELD_CELL(leader->z.fixed) == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -193,22 +213,26 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
 }
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFourthPuddle, 5, 13, 5, 52, 11, 136, 280, 8, 17)
+    GabombaCatacombs_UncoverFourthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_D, 136,
+    280, 8, 17)
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFifthPuddle, 5, 13, 5, 52, 12, 104, 280, 6, 17)
+    GabombaCatacombs_UncoverFifthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_E, 104, 280,
+    6, 17)
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSixthPuddle, 5, 13, 5, 52, 13, 88, 264, 5, 16)
+    GabombaCatacombs_UncoverSixthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_F, 88, 264,
+    5, 16)
 
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSeventhPuddle, 5, 13, 5, 52, 14, 104, 248, 6, 15)
+    GabombaCatacombs_UncoverSeventhPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_G, 104,
+    248, 6, 15)
 
 void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
-  Actor_SetPosition(8, 280, 296);
+  Actor_SetPosition(ACTOR_STREAM_PUDDLE, 280, 296);
   if (FIELD_CELL(leader->x.fixed) == 17 && FIELD_CELL(leader->z.fixed) == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -344,8 +368,8 @@ void Actor_MoveToObject(s32 actor, s32 target);
 /// At the end of the catacombs the Great Gabomba speaks: "By reaching this
 /// place, you have proven your power."
 void GabombaCatacombs_GabombaBestowsPower(void) {
-  struct Actor *follower = Actor_GetById(9);
-  struct Actor *statue = Actor_GetById(64);
+  struct Actor *follower = Actor_GetById(ACTOR_KRADEN);
+  struct Actor *statue = Actor_GetById(FIELD_TREASURE_ACTOR);
   u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   struct Actor *glow, *leader;
   s32 speed;
@@ -358,17 +382,17 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Event_Wait(60);
-  Actor_SetAnimationById(8, 2);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   Sound_Play(SE_576);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
-  Actor_SetPosition(64, 168, 152);
+  Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
   statue->motionFlags = 6;
   statue->groundHeight += px(16);
   Sound_Play(SE_SHIMMER);
-  glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
+  glow = ((struct Actor *)Import_ActorCreate(SPRITE_FIREBALL, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
@@ -385,66 +409,66 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   TALK();
   Actor_SetDestinationById(gMainRoutineWork.leaderActorId, 166, 188);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   speed = 0x10000;
   follower->speedLimit = speed;
-  Actor_SetDestinationById(9, 184, 188);
-  Actor_WaitForMoveById(9);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_SetDestinationById(ACTOR_KRADEN, 184, 188);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   // "By reaching this place, you have proven your power."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   TALK();
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   // "By rights, Akafubu should bear this power... But I shall keep my..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   TALK();
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   TALK();
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_Wait(30);
   // "I am grateful for your promise... But I am worried that we have done..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   TALK();
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-  Actor_FaceDirectionById(9, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_WEST, 0);
   Event_Wait(10);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   TALK();
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
   TALK();
   Event_Wait(40);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(40);
-  Actor_SetAnimationById(9, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   // "Akafubu has not honed his own powers, and the fault lies with him..."
-  Event_ShowMessageAndWait(9, 0);
-  Actor_SetAnimationById(8, 2);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   TALK();
   Event_Wait(30);
-  Actor_SetAnimationById(8, 4);
-  Actor_SetAnimationById(9, 2);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(9, leader->x.part[0].pixel,
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
-  Actor_WaitForMoveById(9);
-  Actor_SetPosition(9, 0, 0);
-  Actor_WaitForMoveById(9);
-  GameFlag_Set(0x9ce);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  GameFlag_Set(FLAG_GABOMBA_BESTOWED_POWER);
   Scene_PlayMusic();
   PaletteFade_ApplyTarget(speed, 0);
   PaletteFade_StartInterpolation(60);
@@ -454,7 +478,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
 }
 
 void GabombaCatacombs_TalkToStatue(void) {
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(FIELD_TREASURE_ACTOR);
 
   if (object != NULL && object->x.fixed != 0)
     Scene_TalkToActor(4160);
@@ -553,10 +577,10 @@ s32 Scene_Initialize(void) {
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
-      GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
+      GameFlag_Get(FLAG_GABOMBA_BESTOWED_POWER) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    statue = Actor_GetById(64);
-    Actor_SetPosition(64, 168, 152);
+    statue = Actor_GetById(FIELD_TREASURE_ACTOR);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
     statue->motionFlags = 6;
     statue->groundHeight += px(16);
   }
@@ -720,7 +744,8 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
 
 struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 40, 0x9ce, EVENT(GabombaCatacombs_GabombaBestowsPower)},
+    {TRIGGER_STEP, 40, FLAG_GABOMBA_BESTOWED_POWER,
+     EVENT(GabombaCatacombs_GabombaBestowsPower)},
     {TRIGGER_TALK, 8, 0xf93, EVENT(GabombaCatacombs_TalkToStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTomegathericonBushes)},

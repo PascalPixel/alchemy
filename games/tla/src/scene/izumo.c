@@ -11,6 +11,7 @@
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "field/emote.h"
 #include "sounds.h"
 #include "field/field_sequence_event.h"
@@ -44,6 +45,22 @@
 #define FLAG_STONE_IN_PLACE 0x250
 /// Set while Reveal is shown.
 #define FLAG_REVEALING 0x301
+
+/// The village's actors the events move: the stone Move sets back in the
+/// circle ("The misaligned stone! It's back in its original position!"), the
+/// circle's guard, the seven who dance once the Serpent is slain, and Susa.
+enum {
+  ACTOR_MISALIGNED_STONE = 12,
+  ACTOR_STONE_CIRCLE_GUARD = 22,
+  ACTOR_DANCER_A = 25,
+  ACTOR_DANCER_B,
+  ACTOR_DANCER_C,
+  ACTOR_DANCER_D,
+  ACTOR_DANCER_E,
+  ACTOR_DANCER_F,
+  ACTOR_DANCER_G,
+  ACTOR_SUSA
+};
 /// Set while the one who stopped the party waits by the gate.
 #define FLAG_THANKFUL_ONE_WAITS 0x302
 /// Set as the party is stopped on its way out to be thanked.
@@ -112,7 +129,7 @@ void Izumo_StartMovingStone(void) {
 }
 
 void Izumo_FinishMovingStone(void) {
-  struct Actor *actor = Actor_GetById(12);
+  struct Actor *actor = Actor_GetById(ACTOR_MISALIGNED_STONE);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
 
@@ -126,23 +143,26 @@ void Izumo_FinishMovingStone(void) {
     if (!Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldCamera_FollowActor(22, 1);
+      FieldCamera_FollowActor(ACTOR_STONE_CIRCLE_GUARD, 1);
       FieldCamera_WaitForArrival();
-      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+      Actor_ShowEmoteById(ACTOR_STONE_CIRCLE_GUARD,
+                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       FieldEvent_Wait(60);
-      Actor_FaceDirectionById(22, FACING_WEST, 0);
+      Actor_FaceDirectionById(ACTOR_STONE_CIRCLE_GUARD, FACING_WEST, 0);
       FieldEvent_Wait(60);
-      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+      Actor_ShowEmoteById(ACTOR_STONE_CIRCLE_GUARD,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
       // "The misaligned stone! It's back in its original position! How did..."
-      Event_ShowMessageAndWait(22, 0);
+      Event_ShowMessageAndWait(ACTOR_STONE_CIRCLE_GUARD, 0);
       FieldEvent_Wait(30);
-      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+      Actor_ShowEmoteById(ACTOR_STONE_CIRCLE_GUARD,
+                          EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
       FieldEvent_Wait(30);
       // "Hmmm... Either Susa or Kushinada must have moved it when I wasn't..."
-      Event_ShowMessageAndWait(22, 0);
-      Actor_FaceDirectionById(22, FACING_SOUTH, 0);
+      Event_ShowMessageAndWait(ACTOR_STONE_CIRCLE_GUARD, 0);
+      Actor_FaceDirectionById(ACTOR_STONE_CIRCLE_GUARD, FACING_SOUTH, 0);
       Event_End();
       Flag_Set(FLAG_GUARD_SAW_STONE_MOVED);
     }
@@ -169,13 +189,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void Izumo_CycloneFirstPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
 void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
           px(584));
@@ -196,7 +216,7 @@ void Izumo_CycloneSecondPatch(void) {
 void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
           px(552));
@@ -216,21 +236,21 @@ void Izumo_CycloneThirdPatch(void) {
 }
 
 void Izumo_CycloneFourthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 44, 5, 8, 5, 7, 32, 0);
+  FieldTileCopies_CopyTouchedCells(44, 5, 8, 5, 7, 32, 0);
 }
 
 void Izumo_CycloneFifthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 55, 0, 4, 2, 16, 23, 0);
+  FieldTileCopies_CopyTouchedCells(55, 0, 4, 2, 16, 23, 0);
 }
 
 void Izumo_CycloneSixthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
+  FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
 }
 
 void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
+  FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
           px(328));
@@ -249,11 +269,11 @@ void Izumo_CycloneSeventhPatch(void) {
 }
 
 void Izumo_CycloneEighthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 49, 0, 5, 4, 24, 16, 0);
+  FieldTileCopies_CopyTouchedCells(49, 0, 5, 4, 24, 16, 0);
 }
 
 void Izumo_CycloneNinthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 36, 0, 5, 3, 16, 9, 0);
+  FieldTileCopies_CopyTouchedCells(36, 0, 5, 3, 16, 9, 0);
 }
 
 void Izumo_EnterDoor(void) {
@@ -261,7 +281,7 @@ void Izumo_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(1) / 2, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
@@ -393,46 +413,46 @@ void Izumo_StopThePartyToThankThem(void) {
   Actor_WalkToById(gMainRoutineWork.leaderActorId, 200, 264);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   // "Felix, wait!"
-  Event_ShowMessageAndWait(32, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA, px(200),
         px(216));
-  Actor_WalkToById(32, 200, 248);
-  Actor_WaitForMoveById(32);
+  Actor_WalkToById(ACTOR_SUSA, 200, 248);
+  Actor_WaitForMoveById(ACTOR_SUSA);
   FieldEvent_Wait(30);
   // "It troubled me to let you leave like this..."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, 32, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_SUSA, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationById(32, 4);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "I owe you much for your help, but I didn't have any way to thank you..."
-  Event_ShowMessageAndWait(32, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "And then I thought of something."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_SetAnimationById(32, 3);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(15);
   // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
-  FieldMessage_ShowAtActor(32, 0);
+  FieldMessage_ShowAtActor(ACTOR_SUSA, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       1) {
     FieldEvent_Wait(90);
     Call3((void (*)())Actor_SetSpeedParameters, 32, 0x6666, 0x3333);
-    Actor_WalkToById(32, 200, 216);
-    Actor_WaitForMoveById(32);
+    Actor_WalkToById(ACTOR_SUSA, 200, 216);
+    Actor_WaitForMoveById(ACTOR_SUSA);
     FieldCamera_MoveToActorById(32, 1);
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_FaceDirectionById, 32, FACING_SOUTH, 0);
-    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "Are you sure about that? I was only hoping to show you my appreciation."
-    Event_ShowMessageAndWait(32, 0);
-    Actor_SetSpritePriority(32, 3);
-    Actor_GetById(32)->motionFlags |= 2;
+    Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+    Actor_SetSpritePriority(ACTOR_SUSA, 3);
+    Actor_GetById(ACTOR_SUSA)->motionFlags |= 2;
     GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
   } else {
     Izumo_TellTheCloudBrandLegend();
@@ -442,45 +462,45 @@ void Izumo_StopThePartyToThankThem(void) {
 
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
-  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "This token isn't something I possess. It's a legend, one that might..."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_FaceDirectionById(32, FACING_SOUTHEAST, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceDirectionById(ACTOR_SUSA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   // "Long ago, the Great Serpent of Mikage would sleep with its body..."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_FaceActorById(32, gMainRoutineWork.leaderActorId, 0);
-  Actor_SetAnimationById(32, 3);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_StartRepeatedMotion(32, 1);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_StartRepeatedMotion(ACTOR_SUSA, 1);
   FieldEvent_Wait(30);
   // "The serpent was once the sword's protector, but it lost the sword..."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_SetAnimationById(32, 4);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "Anyway, maybe you want to go check out the dragon again... I left..."
-  Event_ShowMessageAndWait(32, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(15);
-  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Well, I've said what I came to say. I'm going back to Kushinada."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_FaceActorById(32, gMainRoutineWork.leaderActorId, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(15);
   // "I hope you are successful in your quest."
-  Event_ShowMessageAndWait(32, 0);
-  Actor_SetAnimationById(32, 3);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_SetSpeedParameters(32, 0x3333, 0x1999);
-  Actor_GetById(32)->motionFlags = 0;
-  Actor_SetSpritePriority(32, 3);
-  Actor_WalkToById(32, 200, 208);
-  Actor_WaitForMoveById(32);
-  Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
+  Actor_SetSpeedParameters(ACTOR_SUSA, 0x3333, 0x1999);
+  Actor_GetById(ACTOR_SUSA)->motionFlags = 0;
+  Actor_SetSpritePriority(ACTOR_SUSA, 3);
+  Actor_WalkToById(ACTOR_SUSA, 200, 208);
+  Actor_WaitForMoveById(ACTOR_SUSA);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_SUSA, 0, 0);
   GameFlag_Set(FLAG_TOKEN_OFFERED);
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
 }
@@ -491,16 +511,16 @@ void Izumo_OfferATokenOfGratitude(void) {
 
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
-    FieldMessage_ShowAtActor(32, 0);
+    FieldMessage_ShowAtActor(ACTOR_SUSA, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         0) {
       Izumo_TellTheCloudBrandLegend();
     } else {
       Event_SetMessageId(message - 1);
-      Event_ShowMessageAndWait(32, 0);
+      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
     }
     Event_End();
   } else {
@@ -515,13 +535,13 @@ s32 Scene_Initialize(void) {
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
-    Actor_SetAnimationById(25, 5);
-    Actor_SetAnimationById(26, 5);
-    Actor_SetAnimationById(27, 5);
-    Actor_SetAnimationById(28, 5);
-    Actor_SetAnimationById(29, 6);
-    Actor_SetAnimationById(30, 6);
-    Actor_SetAnimationById(31, 5);
+    Actor_SetAnimationById(ACTOR_DANCER_A, 5);
+    Actor_SetAnimationById(ACTOR_DANCER_B, 5);
+    Actor_SetAnimationById(ACTOR_DANCER_C, 5);
+    Actor_SetAnimationById(ACTOR_DANCER_D, 5);
+    Actor_SetAnimationById(ACTOR_DANCER_E, 6);
+    Actor_SetAnimationById(ACTOR_DANCER_F, 6);
+    Actor_SetAnimationById(ACTOR_DANCER_G, 5);
     if (gMainRoutineWork.entrance == 8 &&
         GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
         !GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
@@ -531,10 +551,10 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
-            px(216));
-      Actor_SetSpritePriority(32, 3);
-      Actor_GetById(32)->motionFlags |= 2;
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA,
+            px(200), px(216));
+      Actor_SetSpritePriority(ACTOR_SUSA, 3);
+      Actor_GetById(ACTOR_SUSA)->motionFlags |= 2;
       GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
     }
   }

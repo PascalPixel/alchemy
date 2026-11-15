@@ -12,6 +12,7 @@
 /// link between.
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -81,34 +82,32 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-s32 TileCopies_CopyTouchedCells();
-
 void JupiterLighthouse_CycloneFirstPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 70, 19, 1);
 }
 
 void JupiterLighthouse_CycloneSecondPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x45, 0x16, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 69, 22, 1);
 }
 
 void JupiterLighthouse_CycloneThirdPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
 }
 
 void JupiterLighthouse_CycloneFourthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x55, 0x1a, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 85, 26, 1);
 }
 
 void JupiterLighthouse_CycloneFifthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x5e, 0x1a, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
   if (!Event_GetFlag(0xfe2)) {
-    Actor_SetPosition(64, 280, 440);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 280, 440);
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 27) {
       Event_Start();
@@ -203,10 +202,10 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Iwram_MulQ16(px(8), Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -219,7 +218,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -231,13 +230,13 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
   phase = gFrameCount & 7;
   if (phase == 0) {
     params.priority = 3;
-    params.startScaleX = 0xb333;
-    params.startScaleY = 0xb333;
+    params.startScaleX = Q16_ONE * 7 / 10;
+    params.startScaleY = Q16_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x + (((s32)(Random_Below(9)) - 4) << 16);
-    y = object->y + ((32 - (s32)(Random_Below(20))) << 16);
-    speed = ((((s32)(Random_Below(5))) << 16) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, 0xb0000, &params);
+    x = object->x + px((s32)(Random_Below(9)) - 4);
+    y = object->y + px(32 - (s32)(Random_Below(20)));
+    speed = (px((s32)(Random_Below(5))) + 0x50000) / 10;
+    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, px(11), &params);
   }
   return 0;
 }
@@ -351,75 +350,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

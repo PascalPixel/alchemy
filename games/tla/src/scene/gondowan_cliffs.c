@@ -33,6 +33,8 @@
 #include "field/scene_tables.h"
 #include "field/actor_script.h"
 #include "flags.h"
+/// Set once the party has met Piers at Kibombo (Kibombo_MeetPiers).
+#define FLAG_KIBOMBO_PIERS_MET 0x8f3
 #include "djinn_ids.h"
 #include "field/map_grid.h"
 #include "field/field_sequence_event.h"
@@ -56,9 +58,18 @@ extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 /// Kindle the Mars Djinni, and Kraden (Jenna's and Sheba's rows take their own
 /// numbers).
 enum {
+  ACTOR_TIGHTROPE_POST_A = 8,
+  ACTOR_TIGHTROPE_POST_B,
+  ACTOR_ROPE_POST_A,
+  ACTOR_ROPE_POST_B,
   ACTOR_FIRST_PUDDLE = 12,
   ACTOR_SECOND_PUDDLE = 13,
+  ACTOR_IVY,
+  /// The stump that stands in the stream once
+  /// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER is set.
+  ACTOR_STUMP,
   ACTOR_DOG = 16,
+  ACTOR_GEYSER, ///< the unseen point the geyser rises from
   ACTOR_KINDLE = 21,
   ACTOR_KRADEN = 22
 };
@@ -135,11 +146,13 @@ u32 gFieldEffect_LongScript[] = {
 
 struct Actor;
 struct EffectOptions;
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
+/// MapWork.groundEffects read as its bit-fields: the footprints, and the kind
+/// of wading (1 in rooms with a second level).
+struct MapGroundEffects {
+  u8 unusedBeforeGroundEffects[23]; ///< MapWork's fields before it
+  u8 footprints : 2;
+  u8 wading : 2;
+  u8 unusedHighBits : 4; ///< no code names them
 };
 /// One rising platform and what rides it.
 struct Geyser {
@@ -192,7 +205,7 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   }
 }
 
-void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
+void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 unused[3]; // Unused: gives the stack frame its 12 bytes.
   struct EffectOptions options;
@@ -204,7 +217,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-  if (FIELD_CELL(Actor_GetById(15)->x.fixed) == 76) {
+  if (FIELD_CELL(Actor_GetById(ACTOR_STUMP)->x.fixed) == 76) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
@@ -213,12 +226,12 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
       sprite->rotation -= 256;
       actor->x.fixed -=
           Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
-      actor->targetX = 0x80000000;
+      actor->targetX = TARGET_UNSET;
     }
     actor->update = GondowanCliffs_RollPillar;
     Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
-    actor->gravity = 0xcccc;
+    actor->gravity = px(4) / 5;
     actor->motionFlags = 3;
     actor->layer = 0;
     FieldActor_WaitForMoveById(id);
@@ -232,10 +245,10 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     // effect options.
     *(u32 *)&actor->update = 0;
     options.type = 276;
-    options.startScaleX = 0x8000;
-    options.targetScaleX = 0x18000;
-    options.targetScaleY = 0x13333;
-    options.startScaleY = 0xcccc;
+    options.startScaleX = Q16_ONE / 2;
+    options.targetScaleX = Q16_ONE * 3 / 2;
+    options.targetScaleY = Q16_ONE * 6 / 5;
+    options.startScaleY = Q16_ONE * 4 / 5;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
@@ -243,7 +256,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     Event_PlaySound(SE_CAST);
     Actor_SetAnimation(id, 3);
     FieldMapGrid_WaitForShakeToSettle();
-    Actor_GetById(15)->priorityFlags |= 2;
+    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER);
   }
   Event_End();
@@ -278,9 +291,9 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   struct Actor *object;
 
   if (cell == 30) {
-    object = Actor_Get(17);
+    object = Actor_Get(ACTOR_GEYSER);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, 1912, 728);
+    Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
     object->groundHeight = object->y.fixed =
         Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
@@ -300,7 +313,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[1] = object->y.fixed;
   out[2] = object->z.fixed;
   FieldVector_AddPolarOffset(16, object->facing, out);
-  if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
+  if (FIELD_CELL(position.x) == 119 && FIELD_CELL(position.z) == 45) {
     gFieldWork->fieldMenu = 1;
   } else {
     Event_Start();
@@ -392,13 +405,13 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -436,51 +449,53 @@ s32 Scene_Initialize(void) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
-  if (GameFlag_Get(0x8f3) && !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
+  if (GameFlag_Get(FLAG_KIBOMBO_PIERS_MET) &&
+      !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
     GondowanCliffs_TurnBackToHelpPiers();
     return 0;
   }
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next != SCENE_GONDOWAN_CLIFFS)
     goto done;
   Rope_Initialize();
-  Rope_Place(0, 0x200, 10, 11);
+  Rope_Place(0, FLAG_SCENE_TEMP_00, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Tightrope_Initialize();
-    Tightrope_Place(0, 8, 9);
+    Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
   }
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
-    Actor_SetPosition(14, 0, 0);
+    Actor_SetPosition(ACTOR_IVY, 0, 0);
   else
-    Actor_GetById(14)->scaleY = Q16_ONE * 5 / 4;
+    Actor_GetById(ACTOR_IVY)->scaleY = Q16_ONE * 5 / 4;
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Geysers_Start(0, 240);
-  Geyser_Add(0, 17, 0, 0, 64);
+  Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
-    actor = Actor_GetById(17);
+    actor = Actor_GetById(ACTOR_GEYSER);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, 1912, 728);
+    Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
     height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     actor->y.fixed = height;
     actor->groundHeight = height;
   }
-  Actor_SetAnimation(16, 4);
+  Actor_SetAnimation(ACTOR_DOG, 4);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetPosition(15, 1193, 530);
-    Actor_GetById(15)->priorityFlags |= 2;
-    Actor_GetById(15)->collisionFlags = 0;
-    Actor_SetAnimation(15, 2);
+    Actor_SetPosition(ACTOR_STUMP, 1193, 530);
+    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_STUMP)->collisionFlags = 0;
+    Actor_SetAnimation(ACTOR_STUMP, 2);
   } else {
-    Actor_GetById(15)->collisionFlags |= 16;
+    Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
-  ((struct MapLayerBits *)Ram_HeapSlots->mapGrid)->priority = 1;
+  ((struct MapGroundEffects *)Ram_HeapSlots->mapGrid)->wading = 1;
 done:
   return 0;
 }
@@ -545,7 +560,7 @@ void Geysers_Update(void) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
-    index = (FIELD_CELL(object->x.fixed)) + (FIELD_CELL(object->z.fixed)) * 128;
+    index = FIELD_CELL(object->x.fixed) + FIELD_CELL(object->z.fixed) * 128;
     terrain[index] = (u8)work->value + i;
     *collision = ((PIXEL_PART(object->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
@@ -561,13 +576,13 @@ void Geysers_Update(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y.fixed = object->y.fixed + -0x100000;
+      rider->y.fixed = object->y.fixed + -px(16);
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
-      rider->y.fixed = object->y.fixed + (entry->height << 16) + wave;
+      wave = Iwram_MulQ16(px(2), Trig_Sin(entry->phase)) + -px(14);
+      rider->y.fixed = object->y.fixed + px(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
     rider->z.fixed = object->z.fixed;
@@ -596,7 +611,7 @@ void Geysers_Draw(void) {
 
   scrollX = view[0];
   scrollX &= 0xffff0000;
-  scrollZ = view[1] & 0xffff0000;
+  scrollZ = view[1] & FIELD_PIXEL_MASK;
   lift = map->origin[1];
   for (k = 15; k >= 0; k--, swing++) {
     if (swing->id == 0 || swing->height == 0)
@@ -610,12 +625,12 @@ void Geysers_Draw(void) {
     if (count > 79)
       goto next;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + (h << 16) - lift;
+    y = actor->y.fixed + px(h) - lift;
     z = actor->z.fixed - scrollZ - lift;
-    x = (x >> 16) - 8;
+    x = FIELD_PIXEL(x) - 8;
     screenY = z - y;
-    screenY = (screenY >> 16) - 16;
-    depth = ((y + z) >> 16) + 58;
+    screenY = FIELD_PIXEL(screenY) - 16;
+    depth = FIELD_PIXEL(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       goto next;
     x &= 511;
@@ -635,16 +650,15 @@ void Geysers_Draw(void) {
     if (count > 79)
       continue;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + (swing->height << 16) - lift;
+    y = actor->y.fixed + px(swing->height) - lift;
     z = actor->z.fixed - scrollZ - lift;
     screenY = z - y;
-    x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded. */
+    x = FIELD_PIXEL(x) - 8;
     screenY =
-        ((screenY + Math_MulQ16(-0x20000, Trig_Sin(swing->phase)) + -0x20000) >>
+        ((screenY + Math_MulQ16(-px(2), Trig_Sin(swing->phase)) + -px(2)) >>
          16) -
         4;
-    depth = ((y + z) >> 16) + 58;
+    depth = FIELD_PIXEL(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
     x &= 511;
@@ -706,7 +720,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->step = 0;
     entry->phase = 0;
     entry->unk14 = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   rider = (FieldActor_Create(0x8000, object->x.fixed, object->y.fixed,
                              object->z.fixed));
@@ -792,9 +806,9 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
     ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_KRADEN, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

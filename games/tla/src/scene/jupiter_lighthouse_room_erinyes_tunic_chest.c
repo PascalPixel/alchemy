@@ -61,8 +61,23 @@ struct PushTarget {
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
-/// The log the leader pushes off the ledge, one of four blue logs.
-enum { ACTOR_LEDGE_LOG = ACTOR_FIRST_PLACED + 2 };
+/// The room's four blue logs (fallen columns), the third the one the leader
+/// pushes off the ledge, and the two pillars Move drops into the gaps.
+enum {
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_LOG,
+  ACTOR_LEDGE_LOG,
+  ACTOR_FOURTH_LOG,
+  /// The two seedlings the vines hang from (SPRITE_SEEDLING, at x 360 and 488).
+  ACTOR_WEST_VINE,
+  ACTOR_EAST_VINE,
+  ACTOR_LEFT_PILLAR = ACTOR_FIRST_PLACED + 6,
+  ACTOR_RIGHT_PILLAR
+};
+
+/// The entrances at (152, 840) and (696, 840), where the leader arrives in a
+/// ring (Actor_DepartInRing).
+enum { ENTRANCE_WEST_RING = 12, ENTRANCE_EAST_RING = 13 };
 
 void Scene_SetArrivalFlags(s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
@@ -88,7 +103,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 extern u16 gPushKinds[];
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
@@ -137,7 +152,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
     System_Wait(5);
     Event_PlaySound(SE_HEAVY_IMPACT);
     object->motionFlags = 2;
-    for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
+    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
@@ -183,13 +198,13 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  HangingVine_Place(12, 1);
-  HangingVine_Place(13, 1);
+  HangingVine_Place(ACTOR_WEST_VINE, 1);
+  HangingVine_Place(ACTOR_EAST_VINE, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == 12)
+      gMainRoutineWork.entrance == ENTRANCE_WEST_RING)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == 13)
+      gMainRoutineWork.entrance == ENTRANCE_EAST_RING)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   return 0;
 }
@@ -201,40 +216,40 @@ s32 Scene_PrepareMap(void) {
 
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
-    object = Actor_Get(14);
+    object = Actor_Get(ACTOR_LEFT_PILLAR);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPosition(14, 328, 584);
+    Actor_SetPosition(ACTOR_LEFT_PILLAR, 328, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
-    object = Actor_Get(15);
+    object = Actor_Get(ACTOR_RIGHT_PILLAR);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPosition(15, 520, 584);
+    Actor_SetPosition(ACTOR_RIGHT_PILLAR, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
-  Actor_Get(8)->priorityFlags |= 32;
-  Actor_Get(9)->priorityFlags |= 32;
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 32;
-  Actor_Get(11)->priorityFlags |= 32;
-  FieldActor_SetSpritePriority(8, 3);
+  Actor_Get(ACTOR_FIRST_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_SECOND_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_FOURTH_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_FIRST_LOG, 3);
   FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
-  FieldActor_SetSpritePriority(9, 3);
-  FieldActor_SetSpritePriority(11, 3);
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 2;
-  Actor_DisableById(8);
-  Actor_DisableById(9);
-  Actor_DisableById(10);
-  Actor_DisableById(11);
-  PushTarget_FillFootprint(8);
-  PushTarget_FillFootprint(9);
-  PushTarget_FillFootprint(10);
-  PushTarget_FillFootprint(11);
+  FieldActor_SetSpritePriority(ACTOR_SECOND_LOG, 3);
+  FieldActor_SetSpritePriority(ACTOR_FOURTH_LOG, 3);
+  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_DisableById(ACTOR_FIRST_LOG);
+  Actor_DisableById(ACTOR_SECOND_LOG);
+  Actor_DisableById(ACTOR_LEDGE_LOG);
+  Actor_DisableById(ACTOR_FOURTH_LOG);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG);
+  PushTarget_FillFootprint(ACTOR_SECOND_LOG);
+  PushTarget_FillFootprint(ACTOR_LEDGE_LOG);
+  PushTarget_FillFootprint(ACTOR_FOURTH_LOG);
   if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
-    for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
+    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
@@ -275,8 +290,8 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 #include "shared/whirlwind_carry_leader_lower.h"
 
 s32 Position_FlatDistance(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
+  s32 dx = FIELD_PIXEL(a[0] - b[0]);
+  s32 dz = FIELD_PIXEL(a[2] - b[2]);
   s32 dxsq = dx * dx;
   s32 dzsq = dz * dz;
 
@@ -316,7 +331,7 @@ extern s8 gPushFootprints[][4];
 /// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
 /// filled with 255. Returns 1, or 0 for a shape with no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
   s16 i = 0;
@@ -341,11 +356,11 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = (actor->x.fixed + (gPushFootprints[j][0] << 16)) >> 20;
-  z = (actor->z.fixed + (gPushFootprints[j][1] << 16)) >> 20;
-  mapX = *(s32 *)(map + 328) >> 20;
+  x = FIELD_CELL(actor->x.fixed + px(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + px(gPushFootprints[j][1]));
+  mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX; // i is reused to hold mapX.
-  mapZ = *(s32 *)(map + 332) >> 20;
+  mapZ = FIELD_CELL(map->layers[1].offsetY);
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
@@ -385,7 +400,8 @@ void PushTarget_UpdatePusher(struct Actor *object);
 /// PushTarget_Push for the rooms that fill the cells with
 /// Map_FillCellRectByte2.
 void PushTarget_PushFill(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map =
+      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
@@ -405,8 +421,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -433,7 +449,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
                              (gPushLeaderSteps[direction] << 16) >> 31,
@@ -441,7 +457,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
@@ -451,18 +467,18 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints[footprint][0] << 16);
-  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x = target.x + px(gPushFootprints[footprint][0]);
+  target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
+  originX = FIELD_CELL(map->layers[1].offsetX);
+  originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -569,75 +585,12 @@ void CrackedTiles_Update(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

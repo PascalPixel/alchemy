@@ -236,16 +236,23 @@ void IsletCave_FightMeld(void) {
   return;
 }
 
-/// Serac, the Djinni waiting in this room.
-enum { ACTOR_SERAC = 9 };
+/// Serac, the Djinni waiting in this room, and the winged statue Tremor shakes
+/// him out of.
+enum { ACTOR_WINGED_STATUE = 8, ACTOR_SERAC = 9 };
+
+/// The Sentinel and the first of the ten fires around it.
+enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
+
+/// Set once the Sentinel is beaten, as the party comes back to its room.
+#define FLAG_SENTINEL_DEFEATED 0x9cf
 
 void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
   return;
 }
 
-s32 IsletCave_ClearScriptedActorSpriteFlags(s32 arg0) {
-  Actor_SetSpriteFlags(arg0, 0);
+s32 IsletCave_ClearScriptedActorSpriteFlags(s32 actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -395,13 +402,9 @@ loop:
   index >>= 1;
   {
     s32 x = gIsletCave_Doors[index].x;
-    /* FAKEMATCH(temporary): x read first and y read through a pointer to x from
-     * a separate byte offset. */
-    u32 offset = index * sizeof(struct MapGridCellAnimation) +
-                 offsetof(struct MapGridCellAnimation, x);
-    const u16 *position = (const u16 *)((const u8 *)gIsletCave_Doors + offset);
+    s32 y = gIsletCave_Doors[index].y;
 
-    MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, position[1]);
+    MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, y);
   }
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -430,18 +433,19 @@ s32 Scene_Initialize(void) {
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
   } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
-    Actor_SetSpriteFlags(Actor_GetById(9), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == 2) {
-      Actor_SetPosition(8, 0, 0);
-      GameFlag_Set(0x9cf);
+      Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
+      GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
   } else if (scene == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
     } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetMovementTypeById(8, gIsletCave_TremorTargetScript);
+      Actor_SetPosition(ACTOR_SERAC, 0, 0);
+      Actor_SetMovementTypeById(ACTOR_WINGED_STATUE,
+                                gIsletCave_TremorTargetScript);
     }
   } else {
     goto other;
@@ -477,7 +481,7 @@ void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
       Actor_SetPosition(id, x, z);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, b, 3, 1, (FIELD_CELL(object->x.fixed)) - 1,
+    MapGrid_CopyCellAttributes(a, b, 3, 1, FIELD_CELL(object->x.fixed) - 1,
                                FIELD_CELL(object->z.fixed));
   }
 }
@@ -494,14 +498,14 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
     MapGrid_CopyCellAttributes(a, bArg, 1, 3, FIELD_CELL(object->x.fixed),
-                               (FIELD_CELL(object->z.fixed)) - 1);
+                               FIELD_CELL(object->z.fixed) - 1);
   }
 }
 
 /// A log the leader steps onto rocks under him.
-void IsletCave_SettleLog(s32 arg0) {
-  Actor_SetAnimationById(arg0, 1);
-  Actor_SetAnimationById(arg0, 2);
+void IsletCave_SettleLog(s32 logId) {
+  Actor_SetAnimationById(logId, 1);
+  Actor_SetAnimationById(logId, 2);
   return;
 }
 
@@ -564,15 +568,15 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = ((leader->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((leader->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
-  leader->speedLimit = 0x10000;
+  x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+  z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
+  leader->speedLimit = px(1);
   leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, 27);
-  x = ((actor->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((actor->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
-  actor->speedLimit = 0x10000;
+  x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+  z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
+  actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {
@@ -597,10 +601,11 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
                                                                                \
     IsletCave_RideLog(logId, dx, 0);                                           \
     wait(2);                                                                   \
-    Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,            \
+    Map_CopyCellAttributeRect(FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,  \
                               FIELD_CELL(Actor_GetById(logId)->x.fixed),       \
-                              (fromZ >> 20) - 1);                              \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);     \
+                              FIELD_CELL(fromZ) - 1);                          \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),                   \
+                              FIELD_CELL(fromZ) - 1);                          \
     flagCall(flag);                                                            \
   }
 
@@ -629,9 +634,11 @@ void IsletCave_RideSecondLogEast(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, 96, 0);
   wait(2);
   Map_CopyCellAttributeRect(
-      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
-  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
+      FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed),
+      FIELD_CELL(fromZ) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
+                            FIELD_CELL(fromZ) - 1);
   GameFlag_Clear(FLAG_SCENE_TEMP_81);
 }
 
@@ -643,9 +650,11 @@ void IsletCave_RideSecondLogWest(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, -96, 0);
   wait(2);
   Map_CopyCellAttributeRect(
-      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
-  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
+      FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed),
+      FIELD_CELL(fromZ) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
+                            FIELD_CELL(fromZ) - 1);
   GameFlag_Set(FLAG_SCENE_TEMP_81);
 }
 
@@ -685,7 +694,7 @@ void IsletCave_RideSeventhLogNorth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
   wait(2);
-  column = (column >> 20) - 1;
+  column = FIELD_CELL(column) - 1;
   MapGrid_CopyCellAttributes(
       column, fromRow, 3, 1, column,
       FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
@@ -703,7 +712,7 @@ void IsletCave_RideSeventhLogSouth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 112);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 128);
   wait(2);
-  column = (column >> 20) - 1;
+  column = FIELD_CELL(column) - 1;
   fromRow >>= 20;
   MapGrid_CopyCellAttributes(
       column, fromRow, 3, 1, column,
@@ -727,7 +736,7 @@ void IsletCave_SentinelAwaits(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_StartRepeatedMotion(8, 2);
+  Actor_StartRepeatedMotion(ACTOR_SENTINEL, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_SetTarget(0x10003, 1);
@@ -739,8 +748,8 @@ void IsletCave_SentinelAwaits(void) {
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0) {
-    Actor_SetDestinationById(8, FIELD_AT((u8 *)object, s16, 10),
-                             FIELD_AT((u8 *)object, s16, 18));
+    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
@@ -752,15 +761,15 @@ void IsletCave_SentinelAwaits(void) {
 /// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
-    struct Actor *object = Actor_GetById(9);
+    struct Actor *object = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
-    Actor_SetPosition(9, 296, 160);
+    Actor_SetPosition(ACTOR_SERAC, 296, 160);
     object->speedLimit = px(3) / 2;
     object->velocityY = px(15);
-    Actor_MoveToAndWait(9, 344, ((owner->z.fixed >> 19) << 3) + 24);
-    Actor_Stop(8);
+    Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
+    Actor_Stop(ACTOR_WINGED_STATUE);
     object->speedLimit = px(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);
   }
@@ -839,7 +848,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gIsletCave_Placements[] = {
-    ACTOR_PLACEMENT(170, 0x9cf, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(170, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

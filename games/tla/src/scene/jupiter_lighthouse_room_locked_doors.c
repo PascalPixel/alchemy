@@ -192,8 +192,8 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (232 << 16),
-      (height * 3 << 16) - (120 << 16), 130 << 18);
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(232),
+      (height * px(3)) - px(120), px(520));
   if ((s16)object->userValue == 1)
     Actor_SelectAnimation(object, 7);
   if ((s16)object->userValue == 38)
@@ -269,7 +269,8 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(40);
     leader->gravity = px(1);
     leader->priorityFlags |= 64;
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_AUTOMATIC;
     Event_End();
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
@@ -363,18 +364,18 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
-      if (*((u8 *)self + 0x62) == 0) {
+      if (self->riseCounter == 0) {
         distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
@@ -385,8 +386,8 @@ void Whirlwind_UpdateLower(struct Actor *self) {
             work->raisedTrigger = delay;
           }
           gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
+          self->riseCounter = 1;
+          self->riseEnabled = 1;
         }
       }
       {
@@ -407,7 +408,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
 stop:
   {
     s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
+    self->riseEnabled = zero;
     self->update = zero;
     Actor_StartScript(self, gWhirlwindEndScript);
     Event_PlaySound(SE_SPARKLING_PASSAGE);
@@ -431,12 +432,12 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
 
   if ((gFrameCount & 7) == 0) {
     options.priority = 3;
-    options.startScaleX = 0xb333;
-    options.startScaleY = 0xb333;
+    options.startScaleX = Q16_ONE * 7 / 10;
+    options.startScaleY = Q16_ONE * 7 / 10;
     options.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
-    velocityY = (s32)((((Random_Below(5)) << 16) + 0x50000)) / 10;
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
+    velocityY = (s32)((px(Random_Below(5)) + 0x50000)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
@@ -451,17 +452,28 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 /// angel the archers have energized raised with its half of the lid, and all
 /// three lifted clear once both are. The aerie's beacon floor keeps the same
 /// routine.
+/// The aerie beacon's actors, which the unused copy below of its
+/// JupiterLighthouse_EnergizeAngels places (jupiter_lighthouse_aerie_beacon.c).
+enum {
+  ACTOR_LEFT_ANGEL = 9,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LID_A = 23,
+  ACTOR_LID_B
+};
+
 UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
-  struct Actor *left = Actor_Get(9);
-  struct Actor *right = Actor_Get(10);
-  struct Actor *rider = Actor_Get(23);
+  struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
+  struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
+  struct Actor *rider = Actor_Get(ACTOR_LID_A);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(23, 512, 248);
-  Actor_SetPosition(9, 472, 256);
-  Actor_SetPosition(10, 552, 256);
-  Actor_Get(24)->scaleX = 0;
+  Actor_SetPosition(ACTOR_LID_B, 512, 248);
+  Actor_SetPosition(ACTOR_LID_A, 512, 248);
+  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
+  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
+  Actor_Get(ACTOR_LID_B)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;
   left->motionFlags = 0;
@@ -473,16 +485,16 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_Get(9), 4);
-    Actor_SetSpriteColorMode(Actor_Get(11), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_Get(10), 4);
-    Actor_SetSpriteColorMode(Actor_Get(12), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
@@ -495,7 +507,7 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   }
 }
 
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
@@ -509,8 +521,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
@@ -522,16 +534,16 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = ((y + z) >> 16) + 58;
+      depth = FIELD_PIXEL(y + z) + 58;
       big = gLightSpritesLarge;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -551,8 +563,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
@@ -711,77 +723,12 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-  u32 start;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
-  else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  start = flags & EFFECT_USE_START_SCALE;
-  if (start != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
-    s32 count;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    targetX = options->targetScaleX;
-    count = script[3];
-    if (start != 0) {
-      effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (targetX - Q16_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.
@@ -860,8 +807,8 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = ((x + dx) << 20) + 0x80000;
-    object->z.fixed = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = FIELD_CELL_CENTER(x + dx);
+    object->z.fixed = FIELD_CELL_CENTER(z + dz);
     shadow = *(struct Actor **)(event + 460);
     shadow->x.fixed = object->x.fixed;
     shadow->z.fixed = object->z.fixed;

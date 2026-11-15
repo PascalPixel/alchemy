@@ -19,6 +19,7 @@
 #include "system/frame.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "field/effect_sprite.h"
 #include "window/window.h"
 #include "graphics/resource.h"
@@ -66,8 +67,8 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Each frame while a name is shown, keeps the green panel under it.
 void Epilogue_PlaceNamePanel(void) {
   if (gEpilogueNameShown != 0) {
-    gEpilogueNamePanel.x = gEpilogueNameX << 16;
-    gEpilogueNamePanel.y = gEpilogueNameY << 16;
+    gEpilogueNamePanel.x = px(gEpilogueNameX);
+    gEpilogueNamePanel.y = px(gEpilogueNameY);
     EffectSprite_Draw(&gEpilogueNamePanel);
   }
 }
@@ -89,17 +90,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-static __inline__ void Set(struct EffectSprite *sprite, s32 a, s32 b, u32 c,
-                           s32 tile) {
-  /* FAKEMATCH(wrapper): forwarded inline. */
-  EffectSprite_Init(sprite, a, b, c, tile);
-}
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 /// Loads the green panel the speakers' names are written on, and starts
 /// Epilogue_PlaceNamePanel.
 void Epilogue_LoadNamePanel(void) {
-  /* FAKEMATCH(wrapper): the size through Value1. */
-  void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
+  void *buffer = BumpAlloc(0x800);
   struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
@@ -118,7 +114,7 @@ void Epilogue_LoadNamePanel(void) {
   tileSlot = &gEpilogueNamePanelTile;
   value = Vram_Load(value, 0x800, buffer);
   *tileSlot = value;
-  Set(sprite, 0, 0, 0xc0000000, value);
+  FieldEffectSprite_Init(sprite, 0, 0, 0xc0000000, value);
   sprite->depth = 240;
   sprite->oam.priority = 0;
   sprite->oam.fullColor = 0;
@@ -132,23 +128,28 @@ void Epilogue_LoadNamePanel(void) {
 
 struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
 
-/// Opens the epilogue's message window at x and y and, unless bit 15 of the
-/// message is set, a name window at left and line that Epilogue_PlaceNamePanel
-/// follows; in mode 2 it restarts the window's text. Then it waits for the
-/// text, closes both windows and waits the given frames.
-void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
+/// A speaker (a sprite number) or'd with this shows the line without the
+/// speaker's name.
+#define EPILOGUE_NO_NAME 0x8000
+
+/// Opens the epilogue's message window at x and y and, unless the speaker has
+/// EPILOGUE_NO_NAME, a name window at left and line that
+/// Epilogue_PlaceNamePanel follows; in mode 2 it restarts the window's text.
+/// Then it waits for the text, closes both windows and waits the given frames.
+
+void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
                          s32 frames, s32 mode) {
   s32 wide;
   struct EpilogueWindow *window;
   struct EpilogueWindow *name;
 
   name = 0;
-  wide = 0x8000 & message;
-  message &= 0x7fff;
+  wide = EPILOGUE_NO_NAME & speaker;
+  speaker &= EPILOGUE_NO_NAME - 1;
   window = Message_OpenWindow(gEpilogueMessage, x, y,
-                              (Speaker_GetVoice(message) << 16) | 4);
+                              (Speaker_GetVoice(speaker) << 16) | 4);
   if (!wide) {
-    name = Portrait_OpenWindow(message, 0, left, line);
+    name = Portrait_OpenWindow(speaker, 0, left, line);
     gEpilogueNameShown = 1;
     gEpilogueNameX = left << 3;
     gEpilogueNameY = line << 3;
@@ -182,7 +183,7 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
 
 void Text_GetMessageSize();
 
-void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
+void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
   s32 x;
   s32 y;
   s32 width;
@@ -197,7 +198,7 @@ void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
   left = 0;
   x = left;
   y = left;
-  wide = message & 0x8000;
+  wide = speaker & EPILOGUE_NO_NAME;
   Text_GetMessageSize(gEpilogueMessage, &x, &y, &width, &height);
   if (width <= 24) {
     if (!wide)
@@ -226,7 +227,7 @@ void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
       line = 15;
     }
   }
-  Epilogue_ShowLineAt(message, x, y, left, line, frames, mode);
+  Epilogue_ShowLineAt(speaker, x, y, left, line, frames, mode);
 }
 
 s32 SceneState_SetScrollTarget();
@@ -266,25 +267,25 @@ s32 Scene_Initialize(void) {
   gEpilogueMessage = (s32)MsgFinallyWeVe;
   Epilogue_LoadNamePanel();
   FieldEvent_Wait(30);
-  Epilogue_ShowLine(5, 0, 40);
-  Epilogue_ShowLine(1, 1, 40);
-  Epilogue_ShowLine(6, 0, 40);
-  Epilogue_ShowLine(2, 1, 40);
+  Epilogue_ShowLine(SPRITE_JENNA, 0, 40);
+  Epilogue_ShowLine(SPRITE_GARET, 1, 40);
+  Epilogue_ShowLine(SPRITE_SHEBA, 0, 40);
+  Epilogue_ShowLine(SPRITE_IVAN, 1, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(2, 1, 40);
+  Epilogue_ShowLine(SPRITE_IVAN, 1, 40);
 #endif
-  Epilogue_ShowLine(3, 0, 30);
-  Epilogue_ShowLine(7, 1, 30);
-  Epilogue_ShowLine(56, 0, 40);
-  Epilogue_ShowLine(60, 1, 30);
-  Epilogue_ShowLine(61, 1, 40);
-  Epilogue_ShowLine(0, 0, 40);
-  Epilogue_ShowLine(62, 1, 30);
-  Epilogue_ShowLine(0, 0, 30);
-  Epilogue_ShowLine(0, 0, 30);
-  Epilogue_ShowLine(5, 1, 40);
-  Epilogue_ShowLine(4, 0, 30);
-  Epilogue_ShowLine(1, 1, 30);
+  Epilogue_ShowLine(SPRITE_MIA, 0, 30);
+  Epilogue_ShowLine(SPRITE_PIERS, 1, 30);
+  Epilogue_ShowLine(SPRITE_KRADEN, 0, 40);
+  Epilogue_ShowLine(SPRITE_JENNAS_FATHER, 1, 30);
+  Epilogue_ShowLine(SPRITE_JENNAS_MOTHER, 1, 40);
+  Epilogue_ShowLine(SPRITE_ISAAC, 0, 40);
+  Epilogue_ShowLine(SPRITE_KYLE, 1, 30);
+  Epilogue_ShowLine(SPRITE_ISAAC, 0, 30);
+  Epilogue_ShowLine(SPRITE_ISAAC, 0, 30);
+  Epilogue_ShowLine(SPRITE_JENNA, 1, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 0, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 1, 30);
   Event_PlaySound(MUS_EPILOGUE);
   scroll = gBgScroll;
   scroll[3].y = 16;
@@ -292,15 +293,15 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingCliffDayPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);
-  Epilogue_ShowLine(60, 2, 30);
-  Epilogue_ShowLine(61, 2, 40);
-  Epilogue_ShowLine(0, 2, 30);
-  Epilogue_ShowLine(62, 2, 30);
-  Epilogue_ShowLine(1, 2, 40);
+  Epilogue_ShowLine(SPRITE_JENNAS_FATHER, 2, 30);
+  Epilogue_ShowLine(SPRITE_JENNAS_MOTHER, 2, 40);
+  Epilogue_ShowLine(SPRITE_ISAAC, 2, 30);
+  Epilogue_ShowLine(SPRITE_KYLE, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(5, 2, 40);
+  Epilogue_ShowLine(SPRITE_JENNA, 2, 40);
 #endif
-  Epilogue_ShowLine(5, 2, 40);
+  Epilogue_ShowLine(SPRITE_JENNA, 2, 40);
   SceneState_SetScrollTarget(120);
   System_Wait(1);
   EndingPicture_WaitForScroll();
@@ -308,64 +309,64 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())EndingPicture_Show,
         (s32)&ResourceId_EndingCliffSunsetPicture, (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
-  Epilogue_ShowLine(5, 2, 30);
-  Epilogue_ShowLine(7, 2, 30);
-  Epilogue_ShowLine(56, 2, 40);
-  Epilogue_ShowLine(4, 2, 40);
-  Epilogue_ShowLine(4, 2, 40);
-  Epilogue_ShowLine(4, 2, 40);
-  Epilogue_ShowLine(4, 2, 40);
-  Epilogue_ShowLine(4, 2, 30);
+  Epilogue_ShowLine(SPRITE_JENNA, 2, 30);
+  Epilogue_ShowLine(SPRITE_PIERS, 2, 30);
+  Epilogue_ShowLine(SPRITE_KRADEN, 2, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 40);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(4, 2, 30);
+  Epilogue_ShowLine(SPRITE_FELIX, 2, 30);
 #endif
-  Epilogue_ShowLine(0, 2, 30);
-  Epilogue_ShowLine(62, 2, 30);
-  Epilogue_ShowLine(1, 2, 40);
-  Epilogue_ShowLine(1, 2, 40);
-  Epilogue_ShowLine(6, 2, 30);
-  Epilogue_ShowLine(5, 2, 30);
+  Epilogue_ShowLine(SPRITE_ISAAC, 2, 30);
+  Epilogue_ShowLine(SPRITE_KYLE, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 40);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 40);
+  Epilogue_ShowLine(SPRITE_SHEBA, 2, 30);
+  Epilogue_ShowLine(SPRITE_JENNA, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(5, 2, 30);
+  Epilogue_ShowLine(SPRITE_JENNA, 2, 30);
 #endif
-  Epilogue_ShowLine(3, 2, 40);
+  Epilogue_ShowLine(SPRITE_MIA, 2, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(1, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 30);
 #endif
-  Epilogue_ShowLine(1, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 30);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Epilogue_ShowLine(0x8040, 2, 30);
-  Epilogue_ShowLine(0, 2, 30);
-  Epilogue_ShowLine(0x8041, 2, 30);
-  Epilogue_ShowLine(0, 2, 30);
-  Epilogue_ShowLine(0x8045, 2, 30);
-  Epilogue_ShowLine(1, 2, 30);
+  Epilogue_ShowLine(EPILOGUE_NO_NAME | SPRITE_MAN_IN_TEAL_SHIRT, 2, 30);
+  Epilogue_ShowLine(SPRITE_ISAAC, 2, 30);
+  Epilogue_ShowLine(EPILOGUE_NO_NAME | SPRITE_WOMAN_IN_GREEN_HEADSCARF, 2, 30);
+  Epilogue_ShowLine(SPRITE_ISAAC, 2, 30);
+  Epilogue_ShowLine(EPILOGUE_NO_NAME | SPRITE_BOY_WITH_ORANGE_HAIR, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 30);
   Call3((void (*)())EndingPicture_Show,
         (s32)&ResourceId_EndingVillagersPictureA, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_EPILOGUE_VILLAGERS);
   FieldEvent_Wait(30);
-  Epilogue_ShowLine(64, 2, 30);
+  Epilogue_ShowLine(SPRITE_MAN_IN_TEAL_SHIRT, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Epilogue_ShowLine(64, 2, 30);
+  Epilogue_ShowLine(SPRITE_MAN_IN_TEAL_SHIRT, 2, 30);
 #endif
-  Epilogue_ShowLine(65, 2, 30);
-  Epilogue_ShowLine(67, 2, 30);
-  Epilogue_ShowLine(62, 2, 30);
-  Epilogue_ShowLine(70, 2, 30);
-  Epilogue_ShowLine(68, 2, 30);
-  Epilogue_ShowLine(56, 2, 30);
-  Epilogue_ShowLine(1, 2, 40);
-  Epilogue_ShowLine(56, 2, 40);
+  Epilogue_ShowLine(SPRITE_WOMAN_IN_GREEN_HEADSCARF, 2, 30);
+  Epilogue_ShowLine(SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, 2, 30);
+  Epilogue_ShowLine(SPRITE_KYLE, 2, 30);
+  Epilogue_ShowLine(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, 2, 30);
+  Epilogue_ShowLine(SPRITE_YOUNG_MAN_WITH_RED_HAIR, 2, 30);
+  Epilogue_ShowLine(SPRITE_KRADEN, 2, 30);
+  Epilogue_ShowLine(SPRITE_GARET, 2, 40);
+  Epilogue_ShowLine(SPRITE_KRADEN, 2, 40);
   SceneState_SetScrollTarget(200);
   System_Wait(1);
   EndingPicture_WaitForScroll();
   FieldEvent_Wait(30);
-  Epilogue_ShowLine(62, 2, 20);
-  Epilogue_ShowLine(0, 2, 40);
-  Epilogue_ShowLine(66, 2, 20);
-  Epilogue_ShowLine(62, 2, 30);
-  Epilogue_ShowLine(66, 2, 40);
+  Epilogue_ShowLine(SPRITE_KYLE, 2, 20);
+  Epilogue_ShowLine(SPRITE_ISAAC, 2, 40);
+  Epilogue_ShowLine(SPRITE_DORA, 2, 20);
+  Epilogue_ShowLine(SPRITE_KYLE, 2, 30);
+  Epilogue_ShowLine(SPRITE_DORA, 2, 40);
   Call3((void (*)())EndingPicture_Show, 0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   scroll[3].y = zero;
@@ -374,13 +375,14 @@ s32 Scene_Initialize(void) {
   EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture,
                      (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  goto L_02008692;
-L_0200868c:
+  // The embrace stays until a button is pressed.
+  goto checkForPress;
+waitForPress:
   System_Wait(1);
-L_02008692:
+checkForPress:
   p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
-    goto L_0200868c;
+    goto waitForPress;
   Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingReunionPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
@@ -398,16 +400,16 @@ L_02008692:
   p = &gMainRoutineWork;
   ((struct MainRoutineWork *)p)->messageSpeed = saved;
   FieldEvent_Wait(300);
+  // The End stays until a button is pressed, or for three minutes.
   count = 0;
-  if (gInput.pressed != 0)
-    goto L_0200871e;
-  do {
-    System_Wait(1);
-    count++;
-    if (count > 10799)
-      goto L_0200871e;
-  } while (gInput.pressed == 0);
-L_0200871e:
+  if (gInput.pressed == 0) {
+    do {
+      System_Wait(1);
+      count++;
+      if (count >= 3 * 60 * FRAMES_PER_SECOND)
+        break;
+    } while (gInput.pressed == 0);
+  }
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Io_Write16(0, &REG_BLDCNT);

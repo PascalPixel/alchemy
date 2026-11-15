@@ -107,7 +107,7 @@ void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
@@ -277,8 +277,8 @@ static __inline__ void Bring(s32 id) {
   object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
-  object->scaleY = 0xffff0000;
-  object->scaleX = 0x1999;
+  object->scaleY = -Q16_ONE;
+  object->scaleX = Q16_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }
 
@@ -315,9 +315,9 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   from[0] = leader->x.fixed;
   from[1] = leader->y.fixed + px(20);
   from[2] = leader->z.fixed;
-  to[0] = 170 << 18;
+  to[0] = px(680);
   to[1] = 0;
-  to[2] = 0x23e0000;
+  to[2] = px(574);
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
@@ -436,7 +436,7 @@ void JupiterLighthouse_AlexAppears(void) {
   s32 x;
   s32 y;
   u32 random;
-  u32 random2;
+  u32 randomY;
   u32 scaled;
 
   actor = ((struct SparkActor *)Actor_Get(ACTOR_ALEX));
@@ -447,7 +447,7 @@ void JupiterLighthouse_AlexAppears(void) {
   p->kind = 5;
   p->tile = 0x2a0;
   p->spread = 0x6666;
-  p->rise = 0x30000;
+  p->rise = px(3);
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -458,11 +458,11 @@ void JupiterLighthouse_AlexAppears(void) {
       scaled += random;
       x = actor->x;
       x += (((scaled << 3) >> 16) << 16);
-      x += -0xc0000;
-      random2 = Random16();
+      x += -px(12);
+      randomY = Random16();
       y = actor->y;
-      FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + 0x200000,
-                        actor->z, 0, -0x40000, 0, 0x1b0000, p);
+      FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + px(32),
+                        actor->z, 0, -px(4), 0, px(27), p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
@@ -595,7 +595,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
-  Actor_SetMovementType(Actor_Get(64), 9);
+  Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR), 9);
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
@@ -661,89 +661,12 @@ void MapGrid_SetCellHeight();
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gJupiterLighthouse_OrbScript[];
-extern s32 gJupiterLighthouse_OrbFrame;
+extern s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-void JupiterLighthouse_UpdateOrb(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
-    position[0] = self->x.fixed;
-    position[1] = self->y.fixed;
-    position[2] = self->z.fixed;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > 0x1100000)
-      goto stop;
-    if (distance < -0x200000)
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
-          near = 1;
-        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
-          }
-          gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
-         */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gJupiterLighthouse_OrbScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gJupiterLighthouse_OrbFrame = zero;
-  }
-}
+#include "shared/whirlwind_update.h"
 
 struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct Vector3 position;
@@ -751,10 +674,10 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -763,11 +686,11 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = JupiterLighthouse_UpdateOrb;
+  object->update = Whirlwind_Update;
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -780,12 +703,12 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   if (phase != 0)
     goto done;
   options.priority = 3;
-  options.startScaleX = 0xb333;
-  options.startScaleY = 0xb333;
+  options.startScaleX = Q16_ONE * 7 / 10;
+  options.startScaleY = Q16_ONE * 7 / 10;
   options.palette = 14;
-  x = object->x.fixed + (((s32)(Random_Below(9)) - 4) << 16);
-  y = object->y.fixed + ((32 - (s32)(Random_Below(20))) << 16);
-  speed = (((s32)(Random_Below(5)) << 16) + 0x50000) / 10;
+  x = object->x.fixed + px((s32)(Random_Below(9)) - 4);
+  y = object->y.fixed + px(32 - (s32)(Random_Below(20)));
+  speed = (px((s32)(Random_Below(5))) + 0x50000) / 10;
   FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,
@@ -867,7 +790,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
     do {
       spark = &work->sparks[work->next];
       angle = ((Random16() * 3) >> 2) + 0x6000;
-      radius = 0x400000;
+      radius = px(64);
       speed = ((Random16() << 4) >> 16) + 16;
       spark->dx = Iwram_MulQ16(Trig_Cos(angle), radius) >> 16;
       spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
@@ -1200,7 +1123,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-s32 gJupiterLighthouse_OrbScript[] = {
+s32 gWhirlwindEndScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
     SC_RELEASE,

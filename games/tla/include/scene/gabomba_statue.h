@@ -9,10 +9,10 @@
 
 struct Actor;
 
-void GabombaStatue_TurnCogs(s32 value);
+void GabombaStatue_TurnCogs(s32 direction);
 
 void GabombaStatue_StopClock(void);
-s32 GabombaStatue_RunCharges(s32 a, s32 b);
+s32 GabombaStatue_RunCharges(s32 first, s32 check);
 
 void GabombaStatue_TurnWithCog(void);
 
@@ -58,7 +58,7 @@ extern u32 gGabombaStatue_KradenPointsScript[];
 extern s32 gGabombaStatue_StepBackScript[];
 extern s32 gGabombaStatue_GirlsStepBackScript[];
 
-extern u32 gGabombaStatue_ElixirChestGuardScript[];
+extern u32 gGabombaStatue_PinionReleaseScript[];
 
 extern u32 gGabombaStatue_JennaWatchesScript[];
 extern u32 gGabombaStatue_ShebaWatchesScript[];
@@ -88,10 +88,10 @@ void GabombaStatue_StartClock();
 void GabombaStatue_ResetClock();
 s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c,
                           s32 d);
-void GabombaStatue_WritePiece(s32 col, s32 row, s32 a, s32 b);
+void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state);
 s32 abs(s32);
-s32 GabombaStatue_PickPiece(s32 from, s32 to, s32 kind);
-void GabombaStatue_ShowTiles(s32 id, s32 value);
+s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction);
+void GabombaStatue_ShowTiles(s32 id, s32 show);
 
 void GabombaStatue_LoadTileGraphics(void);
 void GabombaStatue_ClearGrid(void);
@@ -109,7 +109,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count);
 
 void GabombaStatue_LandFromFall(void);
 
-void GabombaStatue_DropIntoHole(s32 message, s32 value);
+void GabombaStatue_DropIntoHole(s32 x, s32 z);
 
 s32 GabombaStatue_GetClock(void);
 extern u32 gGabombaStatue_CogCellPictures[];

@@ -66,7 +66,6 @@ void Garoh_PuffAround(s32 id);
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-struct SpawnObject;
 extern struct ActorPlacement gGaroh_VillageDayActorPlacements[];
 extern struct Trigger gGaroh_BlocksTriggers[];
 void Garoh_WerewolvesRevealThemselves(void);
@@ -190,7 +189,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
   // after its first instruction.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
-  /* FAKEMATCH(pin): line held in r5. */
+  /* FAKEMATCH(pin): the form kept; as a plain local, 60 of 124 instructions
+   * differ in tla-en. */
   register u16 *line asm("r5") = gGaroh_WaveLines;
 
   if (gFieldWork->revealActive == 0) {
@@ -203,7 +203,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     layer->speedY = 0;
     frame = *(u8 *)&gFrameCount;
     i = 0;
-    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test. */
+    /* FAKEMATCH(barrier): the form kept; as no asm, 48 of 124 instructions
+     * differ in tla-en. */
     asm("" : "+r"(i));
     z = *(s16 *)((u8 *)layer + 6);
     x = *(s16 *)((u8 *)layer + 2);
@@ -214,7 +215,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
     for (; i != 160; i++) {
-      /* FAKEMATCH(pin): s1 held in r8. */
+      /* FAKEMATCH(pin): the form kept; as a plain local, 43 of 124
+       * instructions differ in tla-en. */
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
@@ -762,7 +764,7 @@ void Garoh_RaisePillar(s32 id, struct Actor *object) {
     s32 z;                                                                     \
                                                                                \
     raw = object->z.fixed;                                                     \
-    z = raw >> 20;                                                             \
+    z = FIELD_CELL(raw);                                                       \
     if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
       Garoh_RaisePillar(actorId, object);                                      \
       Flag_Set(flag);                                                          \
@@ -940,14 +942,12 @@ void Garoh_PuffAround(s32 objectId) {
     x += x / 3;
     vec.x = x;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, 0x01000001, &params);
+                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
     angleStep += 2;
   } while (angleStep <= 16);
 }
 
 extern u32 gGaroh_PuffScript[];
-
-void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Garoh_LashRope(void) {
   Rope_Lash(1, 10, 11);
@@ -959,24 +959,23 @@ s32 Garoh_MetWerewolves(void) {
     return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
 }
 
-/// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
+/// Spawns a puff at (x, y, z), its picture turned by rotation, that waits
+/// timer frames: the shape of Eastern Alhafra's notes.
 void Garoh_SpawnPuff(x, y, z, rotation, timer) s32 x, y, z;
 s16 rotation;
 s32 timer;
 {
-  struct SpawnObject *object;
-  struct FieldSprite *sprite;
+  struct Actor *object;
+  struct Sprite *sprite;
 
-  object = (struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z);
-  if (object != 0) {
+  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
+  if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gGaroh_PuffScript);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__ volatile("");
-    object->unk5e = timer;
-    sprite->nextFrame = 0;
+    object->wait = timer;
+    sprite->flags = 0;
     sprite->rotation = rotation;
   }
 }
@@ -1725,7 +1724,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
-  Call2(FieldMessage_ShowAtActor, ACTOR_MAHA, 0);
+  FieldMessage_ShowAtActor(ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);

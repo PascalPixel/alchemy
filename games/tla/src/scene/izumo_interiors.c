@@ -26,6 +26,14 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
+/// Story flags: Uzume has told the party where Susa went; her prayer for him
+/// has been read with Mind Read; Kushinada has said her farewell to Susa; and
+/// Uzume has caught the party reading her mind ("Trying again, Felix?").
+#define FLAG_UZUME_SPOKE_OF_SUSA 0x922
+#define FLAG_UZUMES_PRAYER_READ 0x923
+#define FLAG_KUSHINADA_PLEADED 0x925
+#define FLAG_UZUME_MIND_READ 0x92b
+
 extern struct ActorPlacement gIzumoInteriors_ActorPlacements[];
 extern struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[];
 extern struct ActorPlacement
@@ -49,11 +57,11 @@ extern s32 gIzumoInteriors_RockingScript[];
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    if ((u32)(object->x.fixed - n2) <= 0x80000) {                              \
+    if ((u32)(object->x.fixed - n2) <= px(8)) {                                \
       s32 z = object->z.fixed;                                                 \
                                                                                \
-      if (z >= 0x26c0000) {                                                    \
-        if (z <= 0x2740000)                                                    \
+      if (z >= px(620)) {                                                      \
+        if (z <= px(628))                                                      \
           return 0;                                                            \
       }                                                                        \
     }                                                                          \
@@ -99,6 +107,39 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIzumoInteriors_Triggers;
 }
 
+/// Before the Serpent is slain: Kushinada, whose turn it is to be offered to
+/// the Serpent, and the healer ("Why would our guardian spirit demand a
+/// sacrifice?"), who keeps his trade once it is slain.
+enum { ACTOR_KUSHINADA = 17, ACTOR_HEALER = 22, ACTOR_HEALER_ONCE_SLAIN = 12 };
+
+/// Susa's house (entrance 7) before the Serpent is slain: Lady Uzume, Susa's
+/// sister ("If the serpent defeats Susa, I'll...be alone."), with two men
+/// pacing and two more by the walls.
+enum {
+  ACTOR_SUSAS_HOUSE_UZUME = 8,
+  ACTOR_SUSAS_HOUSE_FIRST_PACER,
+  ACTOR_SUSAS_HOUSE_SECOND_PACER,
+  ACTOR_SUSAS_HOUSE_WEST_VILLAGER,
+  ACTOR_SUSAS_HOUSE_EAST_VILLAGER
+};
+
+/// Once the Serpent is slain, Susa's house holds Lady Uzume ("This is my home,
+/// and I am having a private conversation."), the same four men, Kushinada,
+/// Susa, the man who saw the heroes come down Mt. Mikage ("Yes... After the
+/// serpent's roar, these warriors appeared.") and Kraden.
+enum {
+  ACTOR_UZUME = 15,
+  ACTOR_FIRST_PACER,
+  ACTOR_SECOND_PACER,
+  ACTOR_WEST_VILLAGER,
+  ACTOR_EAST_VILLAGER,
+  ACTOR_SAVED_KUSHINADA,
+  ACTOR_SUSA,
+  ACTOR_WITNESS,
+  ACTOR_KRADEN,
+  ACTOR_COAL ///< the Mars Djinni Uzume gives the party
+};
+
 void IzumoInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -110,11 +151,11 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
     if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
       // "Now that peace has been restored, our island is flourishing once..."
-      Event_ShowMessageAndWait(12, 0);
+      Event_ShowMessageAndWait(ACTOR_HEALER_ONCE_SLAIN, 0);
     } else {
       Event_SetMessageId((s32)MsgWhyWouldOur);
       // "Why would our guardian spirit demand a sacrifice? It's..."
-      Event_ShowMessageAndWait(22, 0);
+      Event_ShowMessageAndWait(ACTOR_HEALER, 0);
     }
     Event_End();
   }
@@ -125,15 +166,6 @@ enum { SHOP_IZUMO = 24 };
 
 /// Izumo's inn, as Inn_CheckIn numbers the inns.
 enum { IZUMO_INN = 9 };
-
-/// Uzume, the old woman who keeps the shrine ("If you have time, won't you
-/// enjoy a little of our celebratory festival?"), and Kushinada, whose turn it
-/// is to be offered to the Serpent.
-enum { ACTOR_UZUME = 15, ACTOR_KUSHINADA = 17 };
-
-/// Susa's house (entrance 7): "Susa's not here. I believe he went to Mt.
-/// Mikage."
-enum { ACTOR_WOMAN_ON_SUSA = 8 };
 
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
@@ -174,43 +206,43 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
 void IzumoInteriors_AskAfterSusa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (!Event_GetFlag(0x922)) {
+  if (!Event_GetFlag(FLAG_UZUME_SPOKE_OF_SUSA)) {
     Event_SetMessageId((s32)MsgSusaSNot);
     // "Susa's not here. I believe he went to Mt. Mikage."
-    Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(ACTOR_WOMAN_ON_SUSA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                        0);
+    Actor_ShowEmoteById(ACTOR_SUSAS_HOUSE_UZUME,
+                        EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_Wait(60);
     // "He believes he can save Kushinada, and so he has gone to fight the..."
-    Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(ACTOR_WOMAN_ON_SUSA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
+    Actor_ShowEmoteById(ACTOR_SUSAS_HOUSE_UZUME,
+                        EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
     // "He truly believes he can defeat the Great Serpent of Mikage."
-    Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
     Event_Wait(30);
-    Actor_StartRepeatedMotion(ACTOR_WOMAN_ON_SUSA, 1);
+    Actor_StartRepeatedMotion(ACTOR_SUSAS_HOUSE_UZUME, 1);
     Event_Wait(60);
     // "It's all for naught, though, as a hero will certainly appear and..."
-    Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
     Event_Wait(30);
-    GameFlag_Set(0x922);
+    GameFlag_Set(FLAG_UZUME_SPOKE_OF_SUSA);
   }
-  Actor_SetAnimationById(ACTOR_WOMAN_ON_SUSA, 4);
+  Actor_SetAnimationById(ACTOR_SUSAS_HOUSE_UZUME, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgIfTheSerpent);
   // "If the serpent defeats Susa, I'll...be alone."
-  Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
   Event_End();
 }
 
 void IzumoInteriors_ReadPrayerForSusa(void) {
-  GameFlag_Set(0x923);
+  GameFlag_Set(FLAG_UZUMES_PRAYER_READ);
   Event_SetMessageId((s32)MsgIPrayThat);
   // "I pray that our guardian's anger is not aroused and that Susa will..."
-  Event_ShowMessageAndWait(ACTOR_WOMAN_ON_SUSA, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
 }
 
 void IzumoInteriors_TalkToUzume(void) {
@@ -242,7 +274,7 @@ void IzumoInteriors_AskAboutMtMikage(void) {
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
   // "They've been saying that you went into Mt. Mikage, too... Is that true?"
-  FieldMessage_ShowAtActor(16, 0);
+  FieldMessage_ShowAtActor(ACTOR_FIRST_PACER, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -250,7 +282,7 @@ void IzumoInteriors_AskAboutMtMikage(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(16, 0);
+  Event_ShowMessageAndWait(ACTOR_FIRST_PACER, 0);
   Event_End();
 }
 
@@ -258,7 +290,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActorById(ACTOR_UZUME, gMainRoutineWork.leaderActorId, 0);
-  if (Event_GetFlag(0x92b)) {
+  if (Event_GetFlag(FLAG_UZUME_MIND_READ)) {
     Event_SetMessageId((s32)MsgTryingAgainWhat);
     // "Trying again, Felix? What a pest. You can see my mind, but you are..."
     Event_ShowMessageAndWait(ACTOR_UZUME, 0);
@@ -266,16 +298,16 @@ void IzumoInteriors_ReadUzumesMind(void) {
     Event_SetMessageId((s32)MsgAndWhatWere);
     // "And what were you planning to do, once you'd read my mind, hm?"
     Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-    if (GameFlag_Get(0x923)) {
+    if (GameFlag_Get(FLAG_UZUMES_PRAYER_READ)) {
       LeaderAnimate(256, 30);
       Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       Event_ShowMessageAndWait(ACTOR_UZUME, 0);
       LeaderAnimate(258, 30);
-      Actor_SetAnimationById(ACTOR_UZUME, 4);
+      Actor_SetAnimationById(ACTOR_UZUME, ANIM_SHAKE_HEAD);
       Event_Wait(30);
       Event_ShowMessageAndWait(ACTOR_UZUME, 0);
     }
-    GameFlag_Set(0x92b);
+    GameFlag_Set(FLAG_UZUME_MIND_READ);
   }
   Actor_FaceDirection(ACTOR_UZUME, FACING_SOUTH, 0);
   Event_End();
@@ -284,7 +316,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
 s32 IzumoInteriors_KushinadaPleads(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (!Event_GetFlag(0x925)) {
+  if (!Event_GetFlag(FLAG_KUSHINADA_PLEADED)) {
     Event_SetMessageId((s32)MsgSusaDonT);
     // "Susa, don't come for me..."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
@@ -305,16 +337,18 @@ s32 IzumoInteriors_KushinadaPleads(void) {
     // "And so I shall remain here, until the coming of the next full..."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
     Event_Wait(60);
-    Event_SetFlag(0x925);
+    Event_SetFlag(FLAG_KUSHINADA_PLEADED);
   } else {
     Event_SetMessageId((s32)MsgSusaPleaseDon);
     // "Susa, please... Don't try to save me."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkByById(gMainRoutineWork.leaderActorId, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Event_End();
   return 0;
 }
@@ -341,49 +375,54 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldCamera_MoveTo(143, CAMERA_KEEP, 560, 1);
   party = (s32)&gMainRoutineWork;
   if (mode == 0) {
-    Actor_WalkToAndWait(*(s32 *)(party + 532), 184, 568);
+    Actor_WalkToAndWait(
+        *(s32 *)(party + offsetof(struct MainRoutineWork, leaderActorId)), 184,
+        568);
   } else {
-    Actor_WalkToAndWait(*(s32 *)(party + 532), 104, 568);
+    Actor_WalkToAndWait(
+        *(s32 *)(party + offsetof(struct MainRoutineWork, leaderActorId)), 104,
+        568);
   }
   FieldEvent_Wait(15);
   FieldEvent_SetMessageId((s32)MsgWarriorsAppearedFrom);
   // "Warriors appeared from within Mt. Mikage?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  Actor_SetAnimation(22, 3);
+  Actor_SetAnimation(ACTOR_WITNESS, ANIM_NOD);
   // "Yes... After the serpent's roar, these warriors appeared."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_WITNESS, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "So, it wasn't Susa who defeated the serpent, but those heroes..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(22, 3);
+  Actor_SetAnimation(ACTOR_WITNESS, ANIM_NOD);
   FieldEvent_Wait(15);
   // "It might have been..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_WITNESS, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  FieldActor_StartRepeatedMotion(22, 3);
-  Actor_SetAttachedEffect(22, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_WITNESS, 3);
+  Actor_SetAttachedEffect(ACTOR_WITNESS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   // "Lady Kushinada, please forgive me..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
-  Actor_FaceDirection(20, FACING_EAST, 30);
-  Actor_SetAnimation(20, 4);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_WITNESS, 0);
+  Actor_FaceDirection(ACTOR_SAVED_KUSHINADA, FACING_EAST, 30);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_SHAKE_HEAD);
   // "I don't care who defeated the serpent... I'm more worried about what..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_UZUME, FACING_WEST, 30);
-  Actor_SetAnimation(ACTOR_UZUME, 3);
+  Actor_SetAnimation(ACTOR_UZUME, ANIM_NOD);
   FieldEvent_Wait(30);
   // "So, Susa never came down from Mt. Mikage?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  Actor_SetAnimation(22, 3);
+  Actor_SetAnimation(ACTOR_WITNESS, ANIM_NOD);
   FieldEvent_Wait(15);
   // "He returned to the village after the heroes appeared, and he knew..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
-  FieldActor_StartRepeatedMotion(20, 2);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_WITNESS, 0);
+  FieldActor_StartRepeatedMotion(ACTOR_SAVED_KUSHINADA, 2);
   FieldEvent_Wait(15);
   // "Oh, Susa..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   Actor_FaceActor(ACTOR_UZUME, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(30);
   Actor_SetDestinationOffset(ACTOR_UZUME, 0, 16);
@@ -397,87 +436,87 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   Actor_FaceDirection(ACTOR_UZUME, FACING_SOUTH, 0);
   owner = (s32)&gMainRoutineWork;
-  owner = owner + 532;
-  Actor_FaceActor(20, *(s32 *)owner, 0);
+  owner = owner + offsetof(struct MainRoutineWork, leaderActorId);
+  Actor_FaceActor(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   // "Who are you?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   FieldEvent_Wait(30);
   // "This is my home, and I am having a private conversation. Leave at once!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  FieldActor_Jump(22, 4, 0);
-  Actor_SetAttachedEffect(22,
+  FieldActor_Jump(ACTOR_WITNESS, 4, 0);
+  Actor_SetAttachedEffect(ACTOR_WITNESS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(20, FACING_SOUTH, 30);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceDirection(ACTOR_SAVED_KUSHINADA, FACING_SOUTH, 30);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What is it?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_FaceActor(22, 20, 0);
-  Actor_SetAttachedEffect(22,
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
+  Actor_FaceActor(ACTOR_WITNESS, ACTOR_SAVED_KUSHINADA, 0);
+  Actor_SetAttachedEffect(ACTOR_WITNESS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   // "There can be no doubt... These are the heroes who appeared on Mt...."
-  Event_ShowMessage(22, 0);
+  Event_ShowMessage(ACTOR_WITNESS, 0);
   FieldEvent_Wait(30);
   FieldEvent_Wait(30);
   // "Are you the ones who defeated the serpent?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  FieldActor_StartRepeatedMotion(20, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_SAVED_KUSHINADA, 2);
   FieldEvent_Wait(30);
-  Actor_FaceActor(20, *(s32 *)owner, 0);
+  Actor_FaceActor(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   // "So it was you..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "My apologies... You are welcome here."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
   Actor_WalkTo(ACTOR_UZUME, 144, 520);
   FieldActor_WaitForMoveById(ACTOR_UZUME);
   Actor_FaceDirection(ACTOR_UZUME, FACING_SOUTH, 0);
-  Actor_FaceDirection(20, FACING_SOUTH, 0);
-  Actor_SetAnimation(*(s32 *)owner, 3);
+  Actor_FaceDirection(ACTOR_SAVED_KUSHINADA, FACING_SOUTH, 0);
+  Actor_SetAnimation(*(s32 *)owner, ANIM_NOD);
   FieldEvent_Wait(30);
   if (mode == 0) {
-    Actor_WalkTo(22, 104, 568);
+    Actor_WalkTo(ACTOR_WITNESS, 104, 568);
   } else {
-    Actor_WalkTo(22, 184, 568);
+    Actor_WalkTo(ACTOR_WITNESS, 184, 568);
   }
-  FieldActor_WaitForMoveById(22);
+  FieldActor_WaitForMoveById(ACTOR_WITNESS);
   if (mode == 0) {
-    Actor_FaceDirection(22, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
   } else {
-    Actor_FaceDirection(22, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
   }
   party = (s32)&gMainRoutineWork;
-  owner = party + 532;
+  owner = party + offsetof(struct MainRoutineWork, leaderActorId);
   Actor_WalkTo(*(s32 *)owner, 144, 560);
   FieldActor_WaitForMoveById(*(s32 *)owner);
   Actor_FaceDirection(*(s32 *)owner, FACING_NORTH, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 24, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -8, 24, FACING_NORTH);
-  FieldActor_LaunchFromLeader(23, -24, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, -24, 24, FACING_NORTH);
   FieldEvent_Wait(60);
   // "Who are you?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_SetAnimation(23, 3);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   // "I'm Kraden, and this is Felix."
-  Event_ShowMessage(23, 0);
-  Actor_SetAnimation(*(s32 *)owner, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAnimation(*(s32 *)owner, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(ACTOR_UZUME, 3);
-  Actor_SetAnimation(20, 3);
+  Actor_SetAnimation(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_FaceActor(23, ACTOR_PIERS, 0);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_PIERS, 0);
   FieldEvent_Wait(30);
   // "Behind him is Piers."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Pleased to meet you."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimation(ACTOR_UZUME, 3);
-  Actor_SetAnimation(20, 3);
+  Actor_SetAnimation(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
@@ -485,18 +524,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(ACTOR_UZUME, 3);
-  Actor_SetAnimation(20, 3);
+  Actor_SetAnimation(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_FaceActor(ACTOR_JENNA, 23, 0);
-  Actor_SetAnimation(23, 3);
+  Actor_FaceActor(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   // "We're on a quest. Our travels across the Great Eastern Sea brought..."
-  Event_ShowMessage(23, 0);
-  Actor_SetAnimation(20, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "You were seen coming down from Mt. Mikage. What brought you to such..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "To complete our quest, we need many types of Psynergy."
@@ -504,41 +543,41 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Psynergy?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  Actor_FaceEachOther(ACTOR_UZUME, 20, 0);
+  Actor_FaceEachOther(ACTOR_UZUME, ACTOR_SAVED_KUSHINADA, 0);
   FieldEvent_Wait(60);
   Actor_FaceActor(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActor(20, *(s32 *)owner, 0);
+  Actor_FaceActor(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(20, 4);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "What is Psynergy?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_FaceActor(*(s32 *)owner, 23, 0);
-  Actor_FaceActor(ACTOR_JENNA, 23, 0);
-  Actor_FaceActor(ACTOR_SHEBA, 23, 0);
-  Actor_FaceActor(ACTOR_PIERS, 23, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
+  Actor_FaceActor(*(s32 *)owner, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_KRADEN, 0);
   FieldEvent_Wait(30);
-  Actor_FaceActor(23, *(s32 *)owner, 0);
+  Actor_FaceActor(ACTOR_KRADEN, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
-  Actor_FaceActor(23, ACTOR_UZUME, 0);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_UZUME, 0);
   FieldEvent_Wait(30);
   // "Psynergy is many things... The power to move things with one's mind..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   // "All with one's mind?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  Actor_FaceActor(*(s32 *)owner, 15, 0);
+  Actor_FaceActor(*(s32 *)owner, ACTOR_UZUME, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_UZUME, 0);
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_UZUME, 0);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_UZUME, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(*(s32 *)owner, 3);
+  Actor_SetAnimation(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Tell me, is it something like...this?"
@@ -556,28 +595,29 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(ACTOR_JENNA, 1);
   FieldEvent_Wait(15);
   // "That power? Lady Uzume?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceActor(ACTOR_UZUME, 20, 0);
+  Actor_FaceActor(ACTOR_UZUME, ACTOR_SAVED_KUSHINADA, 0);
   FieldEvent_Wait(30);
   Actor_FaceActor(ACTOR_UZUME, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
   // "It's not mine alone. Kushinada and Susa possess it as well."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(30);
   // "This is the power we possess. I assume you have something like it..."
-  Event_OpenMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 1) {
     FieldEvent_SetMessageId((s32)MsgIThoughtSo);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                    30);
     // "I thought so. Only those who can wield the power can see it. And you..."
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(30);
@@ -589,152 +629,152 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Event_ShowMessage(ACTOR_PIERS, 0);
   }
   FieldEvent_SetMessageId((s32)MsgSoYouCall);
-  Actor_SetAnimation(20, 3);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "So, you call what we do "Psynergy," and you can do it, too?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_SetAnimation(*(s32 *)owner, 3);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
+  Actor_SetAnimation(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(ACTOR_UZUME, 3);
-  Actor_SetAnimation(20, 3);
+  Actor_SetAnimation(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   FieldEvent_Wait(60);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceActor(20, *(s32 *)owner, 0);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceActor(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
   // "If you already have Psynergy, why do you need more of this power?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SAVED_KUSHINADA, 0);
   FieldEvent_Wait(90);
   // "Their powers are different from our own. There seem to be many forms..."
-  Event_ShowMessage(21, 0);
-  Actor_SetPosition(21, 144, 680);
-  Actor_FaceActor(*(s32 *)owner, 21, 0);
-  Actor_FaceActor(ACTOR_JENNA, 21, 0);
-  Actor_FaceActor(ACTOR_SHEBA, 21, 0);
-  Actor_FaceActor(ACTOR_PIERS, 21, 0);
-  Actor_FaceActor(23, 21, 0);
-  Actor_FaceActor(22, 21, 0);
+  Event_ShowMessage(ACTOR_SUSA, 0);
+  Actor_SetPosition(ACTOR_SUSA, 144, 680);
+  Actor_FaceActor(*(s32 *)owner, ACTOR_SUSA, 0);
+  Actor_FaceActor(ACTOR_JENNA, ACTOR_SUSA, 0);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_SUSA, 0);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_SUSA, 0);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_SUSA, 0);
+  Actor_FaceActor(ACTOR_WITNESS, ACTOR_SUSA, 0);
   FieldEvent_Wait(120);
   // "Susa!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_UZUME, 0);
   FieldEvent_Wait(30);
-  EventCamera_FollowActor(21, 1);
+  EventCamera_FollowActor(ACTOR_SUSA, 1);
   FieldEvent_Wait(120);
-  Actor_SetSpeed(21, 0.6);
-  Actor_SetSpeed(21, 0.6);
-  Actor_GetById(21)->priorityFlags &= ~1;
-  Actor_WalkTo(21, 144, 648);
+  Actor_SetSpeed(ACTOR_SUSA, 0.6);
+  Actor_SetSpeed(ACTOR_SUSA, 0.6);
+  Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~1;
+  Actor_WalkTo(ACTOR_SUSA, 144, 648);
   if (mode == 0) {
-    Actor_WalkToAndWait(21, 88, 648);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_WalkToAndWait(21, 56, 616);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_WalkToAndWait(21, 56, 584);
-    Actor_GetById(22)->steeringFlags &= ~1;
-    Actor_WalkToAndWait(22, 88, 568);
+    Actor_WalkToAndWait(ACTOR_SUSA, 88, 648);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_WalkToAndWait(ACTOR_SUSA, 56, 616);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_WalkToAndWait(ACTOR_SUSA, 56, 584);
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkToAndWait(ACTOR_WITNESS, 88, 568);
     Event_Wait(1);
-    Actor_GetById(22)->steeringFlags |= 1;
-    Actor_FaceDirectionById(22, FACING_EAST, 0);
-    Actor_SetSpritePriority(21, 1);
-    Actor_WalkToAndWait(21, 104, 568);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_SetSpritePriority(23, 1);
-    Actor_SetSpritePriority(21, 2);
-    Actor_WalkToAndWaitById(21, 120, 568);
-    Actor_SetSpritePriority(21, 3);
-    Actor_SetSpritePriority(23, 3);
-    Actor_WalkToAndWait(21, 120, 536);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_SetAnimationById(22, 3);
-    Actor_WalkToAndWait(22, 56, 584);
-    Actor_WalkToAndWait(22, 88, 648);
-    Actor_SetPosition(22, 0, 0);
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_FaceDirectionById(ACTOR_WITNESS, FACING_EAST, 0);
+    Actor_SetSpritePriority(ACTOR_SUSA, 1);
+    Actor_WalkToAndWait(ACTOR_SUSA, 104, 568);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_SetSpritePriority(ACTOR_KRADEN, 1);
+    Actor_SetSpritePriority(ACTOR_SUSA, 2);
+    Actor_WalkToAndWaitById(ACTOR_SUSA, 120, 568);
+    Actor_SetSpritePriority(ACTOR_SUSA, 3);
+    Actor_SetSpritePriority(ACTOR_KRADEN, 3);
+    Actor_WalkToAndWait(ACTOR_SUSA, 120, 536);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_SetAnimationById(ACTOR_WITNESS, ANIM_NOD);
+    Actor_WalkToAndWait(ACTOR_WITNESS, 56, 584);
+    Actor_WalkToAndWait(ACTOR_WITNESS, 88, 648);
+    Actor_SetPosition(ACTOR_WITNESS, 0, 0);
   } else {
-    Actor_WalkToAndWait(21, 200, 648);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_WalkToAndWait(21, 232, 616);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_WalkToAndWait(21, 232, 584);
-    Actor_GetById(22)->steeringFlags &= ~1;
-    Actor_WalkToAndWait(22, 200, 568);
+    Actor_WalkToAndWait(ACTOR_SUSA, 200, 648);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_WalkToAndWait(ACTOR_SUSA, 232, 616);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_WalkToAndWait(ACTOR_SUSA, 232, 584);
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkToAndWait(ACTOR_WITNESS, 200, 568);
     Event_Wait(1);
-    Actor_GetById(22)->steeringFlags |= 1;
-    Actor_FaceDirection(22, FACING_WEST, 0);
-    Actor_SetSpritePriority(21, 1);
-    Actor_WalkToAndWait(21, 184, 568);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_SetSpritePriority(21, 2);
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
+    Actor_SetSpritePriority(ACTOR_SUSA, 1);
+    Actor_WalkToAndWait(ACTOR_SUSA, 184, 568);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_SetSpritePriority(ACTOR_SUSA, 2);
     Actor_SetSpritePriority(ACTOR_SHEBA, 1);
-    Actor_WalkToAndWaitById(21, 168, 568);
-    Actor_SetSpritePriority(21, 3);
+    Actor_WalkToAndWaitById(ACTOR_SUSA, 168, 568);
+    Actor_SetSpritePriority(ACTOR_SUSA, 3);
     Actor_SetSpritePriority(ACTOR_SHEBA, 3);
-    Actor_WalkToAndWait(21, 168, 536);
-    Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
-    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
-    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
-    Actor_FaceActorById(23, 21, 0);
-    Actor_FaceActorById(ACTOR_UZUME, 21, 0);
-    Actor_FaceActorById(20, 21, 0);
-    Actor_FaceActorById(22, 21, 0);
-    Actor_SetAnimationById(22, 3);
-    Actor_WalkToAndWait(22, 232, 584);
-    Actor_WalkToAndWait(22, 200, 648);
-    Actor_SetPosition(22, 0, 0);
+    Actor_WalkToAndWait(ACTOR_SUSA, 168, 536);
+    Actor_FaceActorById(*(s32 *)owner, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_PIERS, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
+    Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
+    Actor_SetAnimationById(ACTOR_WITNESS, ANIM_NOD);
+    Actor_WalkToAndWait(ACTOR_WITNESS, 232, 584);
+    Actor_WalkToAndWait(ACTOR_WITNESS, 200, 648);
+    Actor_SetPosition(ACTOR_WITNESS, 0, 0);
   }
-  person = Actor_GetById(21);
+  person = Actor_GetById(ACTOR_SUSA);
   {
     u8 *priority = &person->priorityFlags;
     s32 flags = *priority | 1;
@@ -742,101 +782,102 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     owner = (s32)&gMainRoutineWork;
     *priority = flags;
   }
-  owner = owner + 532;
+  owner = owner + offsetof(struct MainRoutineWork, leaderActorId);
   Actor_FaceDirection(*(s32 *)owner, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirectionById(23, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH, 0);
   Event_Wait(15);
   // "Susa..."
-  Event_ShowMessageAndWait(20, 0);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(15);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "So, you lived after all, Susa..."
-  Event_ShowMessageAndWait(20, 0);
-  Actor_FaceActorById(21, 20, 0);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
+  Actor_FaceActorById(ACTOR_SUSA, ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(30);
   // "Yes, I've survived, and I've made it home to you both."
-  Event_ShowMessageAndWait(21, 0);
-  Actor_FaceActorById(21, *(s32 *)owner, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceActorById(ACTOR_SUSA, *(s32 *)owner, 0);
   Event_Wait(60);
-  Actor_FaceActorById(21, 20, 0);
+  Actor_FaceActorById(ACTOR_SUSA, ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(30);
   // "Thanks to them, actually..."
-  Event_ShowMessageAndWait(21, 0);
-  Actor_TurnToFaceEachOther(ACTOR_UZUME, 20, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_UZUME, ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(30);
   Actor_FaceActorById(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActorById(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   // "Felix, our gratitude to you and your friends grows deeper each..."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
-  Actor_SetAnimationById(20, 3);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Susa, you spoke of different types of power. Tell me, what did you mean?"
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_FaceActorById(21, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SUSA, *(s32 *)owner, 0);
   // "I can only describe what I saw, my sister. Ask Felix here about it."
-  Event_ShowMessageAndWait(21, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_FaceActorById(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActorById(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
   Event_Wait(30);
   Actor_ShowEmoteById(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   // "Ah, yes. Psynergy... I have dedicated most of my life to its study..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
-  Actor_SetAnimationById(20, 3);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   // "The power of Psynergy comes from the four basic forces of earth..."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(30);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "You don't know Alchemy? The four elements? Why, they're the very..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_ShowEmote(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "All existing matter comes from Alchemy and this Psynergy?"
-  Event_ShowMessageAndWait(21, 0);
-  Actor_FaceActorById(23, 21, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
   Event_Wait(30);
   // "Yes, that's right. Everything you see around you is some combination..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(20, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_ShowEmoteById(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
+                      30);
   // "Does this mean that there are as many types of Psynergy as there are..."
-  Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "That's right, Kushinada. You're a smart lass."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_SetAnimationById(23, 3);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   // "Mt. Mikage was a place of great earth powers. I'd imagine your..."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "That's right, but how did you know this?"
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_FaceActorById(ACTOR_PIERS, 23, 0);
+  Actor_FaceActorById(ACTOR_PIERS, ACTOR_KRADEN, 0);
   Event_Wait(30);
   // "Kraden... Mt. Mikage is Gaia Rock, isn't it?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_FaceActorById(23, ACTOR_PIERS, 0);
-  Actor_SetAnimationById(23, 3);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_PIERS, 0);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceActorById(23, ACTOR_UZUME, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_UZUME, 0);
   Event_Wait(30);
   // "...Gaia Rock? Mt. Mikage is the sacred mount of our people!"
@@ -844,24 +885,24 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Yes, but there are many mountains like your Mt. Mikage all across..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "You have seen other mountains like our Mt. Mikage?"
-  Event_ShowMessageAndWait(21, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(30);
   // "Yes! In fact, it seems that each of these rocks contains a different..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  Actor_SetAnimationById(20, 3);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   Event_Wait(30);
   // "And now, you are questing to gather the power of these elements, yes?"
-  Event_ShowMessageAndWait(20, 0);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(90);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
   // "And you only defeated the Great Serpent of Mikage to accomplish this..."
   Event_OpenMessage(ACTOR_UZUME, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
@@ -877,30 +918,30 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   message = (s32)MsgYouReNotImplying;
   Event_SetMessageId(message);
-  Actor_StartRepeatedMotion(23, 1);
+  Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(30);
   // "You're...not implying that we defeated the serpent, are you?"
-  Event_ShowMessageAndWait(23, 0);
-  Actor_FaceActorById(ACTOR_UZUME, 23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_FaceActorById(ACTOR_UZUME, ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   // "It's true that we did fight the creature..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_FaceActorById(23, 21, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
   Event_Wait(30);
   // "But without Susa's power, the battle might not have ended so happily."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_TurnToFaceEachOther(ACTOR_UZUME, 20, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_UZUME, ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(30);
   // "What... What are you°"
-  Event_ShowMessageAndWait(21, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(30);
   // "Susa had given the beast a lot of Dragonsbane in order to weaken it."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_UZUME, FACING_SOUTH, 0);
-  Actor_FaceDirectionById(20, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_SAVED_KUSHINADA, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
@@ -911,66 +952,66 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(15);
-  Actor_FaceActorById(ACTOR_UZUME, 21, 0);
+  Actor_FaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
   // "Susa, perhaps, after all, you are..."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "No, I didn't..."
-  Event_ShowMessageAndWait(21, 0);
+  Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   owner = (s32)&gMainRoutineWork;
-  owner = owner + 532;
+  owner = owner + offsetof(struct MainRoutineWork, leaderActorId);
   Actor_FaceActorById(ACTOR_SHEBA, *(s32 *)owner, 0);
   // "Don't forget, Susa dealt the finishing blow, didn't he?"
   Event_OpenMessage(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_JENNA, *(s32 *)owner, 0);
   Actor_FaceActorById(ACTOR_SHEBA, *(s32 *)owner, 0);
   Actor_FaceActorById(ACTOR_PIERS, *(s32 *)owner, 0);
-  Actor_FaceActorById(23, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, *(s32 *)owner, 0);
   Actor_FaceActorById(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActorById(20, *(s32 *)owner, 0);
-  Actor_FaceActorById(21, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SUSA, *(s32 *)owner, 0);
   Event_Wait(30);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId(message + 10);
-    Actor_SetAnimationById(21, 4);
+    Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
     Event_Wait(30);
     // "Finishing blow? All I did was stab it with the Cloud Brand."
-    Event_ShowMessageAndWait(21, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   } else {
     Event_SetMessageId(message + 11);
-    Actor_SetAnimationById(21, 3);
+    Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
     Event_Wait(30);
     // "That's right. Piercing it with the Cloud Brand was hardly a..."
-    Event_ShowMessageAndWait(21, 0);
+    Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   }
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
-  Actor_FaceActorById(23, 21, 0);
-  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "I disagree..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_SetAnimationById(23, 3);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   // "You weakened the serpent. You dealt the final blow. I'd say you were..."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   owner = (s32)&gMainRoutineWork;
-  owner = owner + 532;
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  owner = owner + offsetof(struct MainRoutineWork, leaderActorId);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(30);
-  Actor_FaceActorById(23, ACTOR_UZUME, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_UZUME, 0);
   Event_Wait(30);
   // "So, Lady Uzume, wouldn't you say that Susa deserves the reward for..."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceActorById(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActorById(23, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, *(s32 *)owner, 0);
   Event_Wait(30);
   // "Even Felix agrees, don't you, Felix?"
-  Event_OpenMessage(23, 0);
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId(message + 4);
@@ -998,56 +1039,56 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   }
   Event_SetMessageId((s32)MsgAsYouCanSee);
-  Actor_FaceActorById(23, ACTOR_UZUME, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_UZUME, 0);
   Event_Wait(30);
   // "As you can see."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_TurnToFaceEachOther(ACTOR_UZUME, 20, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_UZUME, ACTOR_SAVED_KUSHINADA, 0);
   Event_Wait(30);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
-  Actor_SetAnimationById(20, 3);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   Event_Wait(30);
   party = (s32)&gMainRoutineWork;
-  owner = party + 532;
+  owner = party + offsetof(struct MainRoutineWork, leaderActorId);
   Actor_FaceActorById(ACTOR_UZUME, *(s32 *)owner, 0);
-  Actor_FaceActorById(20, *(s32 *)owner, 0);
-  Actor_StartRepeatedMotion(21, 1);
+  Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, *(s32 *)owner, 0);
+  Actor_StartRepeatedMotion(ACTOR_SUSA, 1);
   Event_Wait(15);
-  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Actor_FaceActorById(23, *(s32 *)owner, 0);
+  Actor_ShowEmote(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Actor_FaceActorById(ACTOR_KRADEN, *(s32 *)owner, 0);
   Event_Wait(30);
   // "Now, it's about time for us to leave Izumo Village."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_FaceActorById(*(s32 *)owner, 23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_FaceActorById(*(s32 *)owner, ACTOR_KRADEN, 0);
   Event_Wait(15);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(30);
   // "Yes, indeed! We're on our way to Lemuria."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_FaceActorById(ACTOR_JENNA, 23, 0);
-  Actor_FaceActorById(ACTOR_SHEBA, 23, 0);
-  Actor_FaceActorById(ACTOR_PIERS, 23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Actor_FaceActorById(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);
+  Actor_FaceActorById(ACTOR_PIERS, ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SAVED_KUSHINADA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(30);
   // "You're leaving so soon?"
-  Event_ShowMessageAndWait(20, 0);
-  Actor_FaceActorById(*(s32 *)owner, 15, 0);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
+  Actor_FaceActorById(*(s32 *)owner, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_UZUME, 0);
-  Actor_FaceActorById(23, ACTOR_UZUME, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_UZUME, 0);
   Event_Wait(30);
   // "We are in a great hurry."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Then you must return to Izumo someday."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
@@ -1055,10 +1096,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   // "I'm sure we'll be back once our mission is completed."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  Actor_SetAnimationById(20, 3);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
   Event_Wait(30);
   // "Excellent! I shall accept that as your oath!"
-  Event_ShowMessageAndWait(20, 0);
+  Event_ShowMessageAndWait(ACTOR_SAVED_KUSHINADA, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   // "...Oath?"
@@ -1072,7 +1113,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   // "I understand... We must vow to return, everyone."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_TurnToFaceEachOther(*(s32 *)owner, 7, 0);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -1080,29 +1121,29 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(15);
   Actor_TurnToFaceEachOther(*(s32 *)owner, 5, 0);
   Actor_TurnToFaceEachOther(ACTOR_PIERS, ACTOR_SHEBA, 0);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
-  Actor_FaceActorById(*(s32 *)owner, 15, 0);
+  Actor_FaceActorById(*(s32 *)owner, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_UZUME, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_UZUME, 0);
-  Actor_FaceActorById(23, ACTOR_UZUME, 0);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
+  Actor_FaceActorById(ACTOR_KRADEN, ACTOR_UZUME, 0);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
   Event_Wait(30);
   // "We'll be waiting."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_SetAnimationById(*(s32 *)owner, 3);
+  Actor_SetAnimationById(*(s32 *)owner, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationById(23, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(15);
-  Actor_SetAnimationById(ACTOR_UZUME, 3);
-  Actor_SetAnimationById(20, 3);
-  Actor_SetAnimationById(21, 3);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SAVED_KUSHINADA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   Event_Wait(60);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
@@ -1125,13 +1166,13 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  Actor_SetAnimationById(23, 2);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(23, leader->x.part[0].pixel,
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
-  Actor_WaitForMoveById(23);
-  Actor_SetPosition(23, 0, 0);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
   GameFlag_Set(FLAG_AREA_TEMP_50);
   Event_End();
@@ -1140,10 +1181,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
 /// The Move cast below has nothing to move.
 s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 
-/// Actor 15 casts Move, with no target.
+/// Uzume casts Move, with no target.
 void IzumoInteriors_ShowMove(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
-  FieldPsynergy_SetupActorPair(15, -1);
+  FieldPsynergy_SetupActorPair(ACTOR_UZUME, -1);
   FIELD_AT(Ram_HeapSlots->fieldEffectWork, HandlerFn, 36) =
       IzumoInteriors_FindNoMoveTarget;
   FIELD_AT(Ram_HeapSlots->fieldEffectWork, u8, 32) = 1;
@@ -1188,11 +1229,11 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   BattleEffect_SetObjectUpdateMode(t21, 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
-  Actor_SetPosition(24, 144, 520);
-  Actor_Jump(24, 6, 0);
-  Actor_SetDestination(24, 160, 520);
-  Actor_WaitForMoveById(24);
-  Actor_FaceDirectionById(24, FACING_SOUTH, 0);
+  Actor_SetPosition(ACTOR_COAL, 144, 520);
+  Actor_Jump(ACTOR_COAL, 6, 0);
+  Actor_SetDestination(ACTOR_COAL, 160, 520);
+  Actor_WaitForMoveById(ACTOR_COAL);
+  Actor_FaceDirectionById(ACTOR_COAL, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(ACTOR_UZUME));
   BattleEffect_SetObjectUpdateMode(t31, 0);
@@ -1200,7 +1241,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   BattleEffect_EndArcEffect();
   Event_Wait(30);
   Event_Wait(30);
-  Actor_FaceActorById(ACTOR_UZUME, 24, 0);
+  Actor_FaceActorById(ACTOR_UZUME, ACTOR_COAL, 0);
   Event_Wait(30);
   // "This is my pet. It's very dear to me."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
@@ -1209,23 +1250,23 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "I am unsure how it works, but this fellow seems to magnify our power..."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   Event_Wait(30);
-  Actor_SetAnimationById(ACTOR_UZUME, 4);
+  Actor_SetAnimationById(ACTOR_UZUME, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   // "Though it saddens me to part with it, I would have you take him, as..."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_TurnToFaceEachOther(ACTOR_UZUME, 24, 0);
+  Actor_TurnToFaceEachOther(ACTOR_UZUME, ACTOR_COAL, 0);
   // "Felix and his friends have agreed to care for you from now on."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   Event_Wait(60);
-  Actor_Jump(24, 4, 20);
+  Actor_Jump(ACTOR_COAL, 4, 20);
   Event_Wait(60);
   Actor_FaceActorById(ACTOR_UZUME, gMainRoutineWork.leaderActorId, 0);
-  Actor_FaceActorById(24, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_COAL, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(60);
   // "Please, accept this gift."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-  Actor_Jump(24, 2, 20);
-  Djinn_JoinParty(24, DJINNI_COAL / DJINN_PER_ELEMENT,
+  Actor_Jump(ACTOR_COAL, 2, 20);
+  Djinn_JoinParty(ACTOR_COAL, DJINNI_COAL / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_COAL));
   Event_End();
   Event_Start();
@@ -1250,21 +1291,21 @@ s32 Scene_Initialize(void) {
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
     Event_PlaySound(MUS_IZUMO);
-    Actor_SetPosition(22, 144, 568);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(16, 0, 0);
-    Actor_SetPosition(ACTOR_KUSHINADA, 0, 0);
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(19, 0, 0);
+    Actor_SetPosition(ACTOR_WITNESS, 144, 568);
+    Actor_SetPosition(ACTOR_SUSA, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_WEST_VILLAGER, 0, 0);
+    Actor_SetPosition(ACTOR_EAST_VILLAGER, 0, 0);
   }
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
     Event_PlaySound(MUS_IZUMO);
-    Actor_SetPosition(16, 0, 0);
-    Actor_SetPosition(ACTOR_KUSHINADA, 0, 0);
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(19, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_WEST_VILLAGER, 0, 0);
+    Actor_SetPosition(ACTOR_EAST_VILLAGER, 0, 0);
   }
   if (gMainRoutineWork.entrance == 5 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_SetAnimation(ACTOR_KUSHINADA, 5);
@@ -1274,12 +1315,12 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 7 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *object;
 
-    Actor_SetAnimation(9, 5);
-    Actor_SetAnimation(10, 5);
-    Actor_SetAnimation(11, 5);
-    Actor_SetAnimation(12, 5);
-    object = Actor_GetById(11);
-    object->scaleX = -Actor_GetById(11)->scaleX;
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_PACER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_SECOND_PACER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_WEST_VILLAGER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_EAST_VILLAGER, 5);
+    object = Actor_GetById(ACTOR_SUSAS_HOUSE_WEST_VILLAGER);
+    object->scaleX = -Actor_GetById(ACTOR_SUSAS_HOUSE_WEST_VILLAGER)->scaleX;
   }
   return 0;
 }

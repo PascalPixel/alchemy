@@ -23,6 +23,7 @@
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -100,7 +101,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 void JupiterLighthouse_UpdateBeam(void);
 
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
@@ -161,7 +162,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   if (mode == 0 || mode == 2) {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      left->y.fixed += 0x1999;
+      left->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;
       // Through a union, so this store may alias the sprite read after it.
       ((union ActorCoordinate *)&lid->x.fixed)->value += -0xa3d;
@@ -171,7 +172,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   } else {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      right->y.fixed += 0x1999;
+      right->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;
       lid->x.fixed += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
@@ -185,9 +186,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
   for (i = 255; i >= 0; i--) {
-    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += 0x1999;
-    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += 0x1999;
-    lid->y.fixed += 0x1999;
+    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += px(1) / 10;
+    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += px(1) / 10;
+    lid->y.fixed += px(1) / 10;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -344,7 +345,8 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   JupiterLighthouse_LoadPalettesZero(0);
   Import_HangingVinePlace(ACTOR_FIRST_VINE, 1);
   Import_HangingVinePlace(ACTOR_SECOND_VINE, 1);
@@ -374,7 +376,8 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
   } else {
     LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, 3);
-    Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |= 32;
+    Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   }
   object = Actor_Get(ACTOR_LEFT_PATH_BLOCK);
   object->motionFlags = 0;
@@ -391,7 +394,8 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
   } else {
     LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, 5);
-    Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |= 32;
+    Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   }
   object = Actor_Get(ACTOR_RIGHT_PATH_BLOCK);
   object->motionFlags = 0;
@@ -400,8 +404,8 @@ s32 Scene_PrepareMap(void) {
 
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, last);
   }
-  BYTE_AT(Actor_Get(ACTOR_LEFT_ARCHER), 0x62) = 1;
-  BYTE_AT(Actor_Get(ACTOR_RIGHT_ARCHER), 0x62) = 1;
+  Actor_Get(ACTOR_LEFT_ARCHER)->riseCounter = 1;
+  Actor_Get(ACTOR_RIGHT_ARCHER)->riseCounter = 1;
   return 0;
 }
 
@@ -444,7 +448,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   work->glowHeld = 0;
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
-  while (*((u8 *)linked + 0x63) != 0) {
+  while (linked->riseEnabled != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;
@@ -484,7 +488,8 @@ void JupiterLighthouse_RideTheBeam(void) {
     System_Wait(1);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
@@ -493,90 +498,13 @@ void JupiterLighthouse_RideTheBeam(void) {
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gJupiterLighthouse_BeamScript[];
-extern s32 gJupiterLighthouse_BeamSparkScript;
+extern s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Whirlwind_Update(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
-    position[0] = self->x.fixed;
-    position[1] = self->y.fixed;
-    position[2] = self->z.fixed;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > 0x1100000)
-      goto stop;
-    if (distance < -0x200000)
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
-          near = 1;
-        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
-          }
-          gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
-         */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gJupiterLighthouse_BeamScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gJupiterLighthouse_BeamSparkScript = zero;
-  }
-}
+#include "shared/whirlwind_update.h"
 
 struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct Vector3 position;
@@ -584,10 +512,10 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -600,7 +528,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -615,13 +543,13 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     s32 speed;
 
     spark.priority = 3;
-    spark.startScaleX = 0xb333;
-    spark.startScaleY = 0xb333;
+    spark.startScaleX = Q16_ONE * 7 / 10;
+    spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
-    speed = (s32)(((Random_Below(5)) << 16) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, 0xb0000, &spark);
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
+    speed = (s32)(px(Random_Below(5)) + 0x50000) / 10;
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, px(11), &spark);
   }
   return 0;
 }
@@ -702,9 +630,9 @@ void JupiterLighthouse_UpdateBeam(void) {
   switch (work->step) {
   case 0:
     work->duration = 30;
-    aside = work->side == 0 ? 0xa0000 : -0xa0000;
+    aside = work->side == 0 ? px(10) : -px(10);
     a[0] = work->from[0] - aside;
-    a[1] = work->from[1] + 0x180000;
+    a[1] = work->from[1] + px(24);
     a[2] = work->from[2];
     b[0] = work->from[0];
     b[1] = work->from[1];
@@ -712,7 +640,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->pointA[0] = LERP(a[0], b[0], t, work->duration);
     work->pointA[1] = LERP(a[1], b[1], t, work->duration);
     work->pointA[2] = LERP(a[2], b[2], t, work->duration);
-    a[1] = work->from[1] - 0x180000;
+    a[1] = work->from[1] - px(24);
     work->pointB[0] = LERP(a[0], b[0], t, work->duration);
     work->pointB[1] = LERP(a[1], b[1], t, work->duration);
     work->pointB[2] = LERP(a[2], b[2], t, work->duration);
@@ -723,7 +651,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     break;
   case 1:
     work->duration = 60;
-    aside = work->side == 0 ? 0x1e0000 : -0x1e0000;
+    aside = work->side == 0 ? px(30) : -px(30);
     a[0] = work->from[0];
     a[1] = work->from[1];
     a[2] = work->from[2];
@@ -746,7 +674,7 @@ void JupiterLighthouse_UpdateBeam(void) {
   case 2:
     if (work->frame == 0)
       work->still = 1;
-    aside = work->side == 0 ? 0x8000 : -0x8000;
+    aside = work->side == 0 ? px(1) / 2 : -px(1) / 2;
     work->pointA[0] += aside;
     work->pointB[0] += aside;
     if (work->frame == 14) {
@@ -764,7 +692,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->carried[2] = LERP(work->from[2], work->to[2], t, 96);
     Actor_SetPositionAndResetMotion(carrier, work->carried[0], work->carried[1],
                                     work->carried[2]);
-    aside = work->side == 0 ? 0x100000 : -0x100000;
+    aside = work->side == 0 ? px(16) : -px(16);
     work->pointA[0] = work->carried[0] - aside;
     work->pointA[1] = work->carried[1];
     work->pointA[2] = work->carried[2];
@@ -857,27 +785,22 @@ struct BeamWork__s17a8 {
   u8 unkaa8[0x1c];
   s32 from[3];
   s32 to[3];
-  s32 start[3];
-  u8 unkae8[0x18];
+  s32 carried[3];
+  s32 pointA[3];
+  s32 pointB[3];
   s16 step;
-  s16 unkb02;
+  s16 frame;
   u16 largeTile;
   u16 smallTile;
-  u8 unkb08;
-  u8 unkb09;
-  u8 unkb0a;
+  u8 duration;
+  u8 loop;
+  u8 still;
   u8 side;
   struct Actor *first;
   struct Actor *second;
 };
 
 void Actor_StartIdle(struct Actor *object);
-
-static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
-                             s32 pivotY, u32 attributes, s32 tile) {
-  /* FAKEMATCH(wrapper): the setup forwarded inline. */
-  EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
-}
 
 void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
@@ -922,7 +845,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   }
   work->largeTile = largeTile;
   large = &work->large;
-  SetUp(large, 30, 7, 0x80004000, largeTile);
+  FieldEffectSprite_Init(large, 30, 7, 0x80004000, largeTile);
   *(u16 *)&large->depth = 240;
   large->oam.priority = 1;
   large->oam.fullColor = 1;
@@ -930,36 +853,36 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   large->scaleX = 0;
   large->scaleY = 0;
   if (side == 0) {
-    work->from[0] = 152 << 16;
-    work->from[1] = 0x200000;
-    work->from[2] = 164 << 16;
-    work->to[0] = 235 << 17;
-    work->to[1] = 0x200000;
-    work->to[2] = 164 << 16;
+    work->from[0] = px(152);
+    work->from[1] = px(32);
+    work->from[2] = px(164);
+    work->to[0] = px(470);
+    work->to[1] = px(32);
+    work->to[2] = px(164);
   } else {
-    work->from[0] = 218 << 18;
-    work->from[1] = 0x200000;
-    work->from[2] = 164 << 16;
-    work->to[0] = 0x2260000;
-    work->to[1] = 0x200000;
-    work->to[2] = 164 << 16;
+    work->from[0] = px(872);
+    work->from[1] = px(32);
+    work->from[2] = px(164);
+    work->to[0] = px(550);
+    work->to[1] = px(32);
+    work->to[2] = px(164);
   }
-  work->start[0] = work->from[0];
-  work->start[1] = work->from[1];
-  work->start[2] = work->from[2];
+  work->carried[0] = work->from[0];
+  work->carried[1] = work->from[1];
+  work->carried[2] = work->from[2];
   carrier->speedLimit = px(1) / 2;
   carrier->acceleration = px(1) / 2;
   Actor_StartIdle(carrier);
-  FieldActor_SetMoveTargetFixed(carrier, work->start[0], work->start[1],
-                                work->start[2]);
+  FieldActor_SetMoveTargetFixed(carrier, work->carried[0], work->carried[1],
+                                work->carried[2]);
   Event_PlaySound(SE_SWIRL);
   JupiterLighthouse_StartBeamFlicker(work->first);
   FieldEvent_Wait(40);
   work->side = side;
   work->step = 0;
-  work->unkb02 = 0;
-  work->unkb09 = 1;
-  work->unkb0a = 0;
+  work->frame = 0;
+  work->loop = 1;
+  work->still = 0;
   Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_VBLANK);
   while (work->step != 999)
     System_Wait(1);
@@ -1000,75 +923,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
@@ -1148,8 +1008,8 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = ((x + dx) << 20) + 0x80000;
-    object->z.fixed = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = FIELD_CELL_CENTER(x + dx);
+    object->z.fixed = FIELD_CELL_CENTER(z + dz);
     shadow = *(struct Actor **)(event + 460);
     shadow->x.fixed = object->x.fixed;
     shadow->z.fixed = object->z.fixed;
@@ -1232,7 +1092,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-s32 gJupiterLighthouse_BeamScript[] = {
+s32 gWhirlwindEndScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
     SC_RELEASE,

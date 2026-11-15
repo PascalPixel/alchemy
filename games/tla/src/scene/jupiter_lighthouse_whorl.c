@@ -360,7 +360,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(object)) {
         object->motionFlags = 4;
-        object->y.fixed = 0x208000;
+        object->y.fixed = px(65) / 2;
       }
     } while (++i <= 5);
   }
@@ -590,8 +590,8 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   FieldVector_AddPolarOffset(16, facing, position);
-  x = position[0] >> 20;
-  z = position[2] >> 20;
+  x = FIELD_CELL(position[0]);
+  z = FIELD_CELL(position[2]);
   if (first->y.fixed == 0 && x == FIELD_CELL(first->x.fixed) &&
       z == FIELD_CELL(first->z.fixed))
     found = 1;
@@ -631,7 +631,8 @@ void LightSprites_AddCounted();
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);
@@ -789,18 +790,18 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
-      if (*((u8 *)self + 0x62) == 0) {
+      if (self->riseCounter == 0) {
         distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
@@ -811,8 +812,8 @@ void Whirlwind_UpdateLower(struct Actor *self) {
             work->raisedTrigger = delay;
           }
           gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
+          self->riseCounter = 1;
+          self->riseEnabled = 1;
         }
       }
       {
@@ -833,7 +834,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
 stop:
   {
     s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
+    self->riseEnabled = zero;
     self->update = zero;
     Actor_StartScript(self, gWhirlwindEndScript);
     Event_PlaySound(SE_SPARKLING_PASSAGE);
@@ -920,7 +921,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         a = list[0];
         flag = list[1];
         if (count < 8)
-          object->scaleY -= 0x1f00;
+          object->scaleY -= Q16_ONE * 31 / 256;
         if (mode == 1) {
           Event_SetFlag(flag);
           Actor_SetCellOpen(id, a, flag, object->layer);
@@ -966,75 +967,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.

@@ -88,7 +88,7 @@ s32 Position_FlatDistance(s32 *a, s32 *b);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritePriority;
 
@@ -163,13 +163,13 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 32) {
-    target[0] = 136 << 16;
-    target[1] = 144 << 16;
-    target[2] = 148 << 18;
+    target[0] = px(136);
+    target[1] = px(144);
+    target[2] = px(592);
   } else {
-    target[0] = 248 << 16;
-    target[1] = 144 << 16;
-    target[2] = 144 << 18;
+    target[0] = px(248);
+    target[1] = px(144);
+    target[2] = px(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -192,7 +192,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     leader->y.fixed += -px(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->y.fixed = leader->y.fixed + -px(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
@@ -226,13 +226,13 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 30) {
-    target[0] = 136 << 16;
-    target[1] = 144 << 16;
-    target[2] = 148 << 18;
+    target[0] = px(136);
+    target[1] = px(144);
+    target[2] = px(592);
   } else {
-    target[0] = 248 << 16;
-    target[1] = 144 << 16;
-    target[2] = 144 << 18;
+    target[0] = px(248);
+    target[1] = px(144);
+    target[2] = px(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -251,7 +251,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     leader->y.fixed += px(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->y.fixed = leader->y.fixed + -px(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
@@ -265,8 +265,8 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   effect->scaleX = Q16_ONE / 2;
   effect->scaleY = Q16_ONE * 3 / 4;
   for (i = 31; i >= 0; i--) {
-    effect->scaleX += 0x800;
-    effect->scaleY += 0x200;
+    effect->scaleX += Q16_ONE / 32;
+    effect->scaleY += Q16_ONE / 128;
     System_Wait(1);
   }
   effect->scaleX = Q16_ONE * 3 / 2;
@@ -277,7 +277,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   i = 19;
   do {
     leader->facing += 0x2000;
-    leader->scaleX += 0x800;
+    leader->scaleX += Q16_ONE / 32;
     leader->scaleY = leader->scaleX;
     System_Wait(1);
     i--;
@@ -326,7 +326,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   s32 y;
 
   y = object->y.fixed;
-  if (y >= 0x200000) {
+  if (y >= px(32)) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
@@ -359,9 +359,9 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   s32 i;
 
   object->motionFlags = 3;
-  Actor_Get(id)->priorityFlags |= 1;
+  Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   party = &gMainRoutineWork;
-  Actor_Get(party->leaderActorId)->priorityFlags |= 1;
+  Actor_Get(party->leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   if (FIELD_CELL(object->x.fixed) == 20 && FIELD_CELL(object->z.fixed) == 39)
     FieldActor_SetSpritePriority(id, 3);
   if (object->groundHeight !=
@@ -390,7 +390,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
   }
 }
 
@@ -437,12 +437,12 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
-      (height * 3 << 16) + px(8), 170 << 18);
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(214),
+      (height * px(3)) + px(8), px(680));
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
-  if (object->y.fixed > 170 << 17)
+  if (object->y.fixed > px(340))
     object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -481,7 +481,7 @@ s32 Scene_Initialize(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldActor_SetSpritePriority(ACTOR_FIRST_BEAM_PILLAR, 3);
   FieldActor_SetSpritePriority(ACTOR_SECOND_BEAM_PILLAR, 3);
-  Io_Write16(0x3f06, &REG_BLDCNT);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())EffectSprite_InitFromSlot94Blended,
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
   } else {
     LightSprites_InitB();
     LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);
@@ -566,7 +566,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -637,75 +637,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.

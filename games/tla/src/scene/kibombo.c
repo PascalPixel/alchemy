@@ -11,6 +11,14 @@
 
 #include "system/task.h"
 #include "flags.h"
+/// Set while the charges stick: the music rules play silence in Kibombo and the
+/// Gabomba Statue (sounds.h).
+#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
+/// Set as the scene leaves the ceremony below for the statue's inside; the
+/// arrows room clears it.
+#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
+/// Set once the party has met Piers at Kibombo (Kibombo_MeetPiers).
+#define FLAG_KIBOMBO_PIERS_MET 0x8f3
 #include "item_ids.h"
 #include "field/sprite.h"
 #include "types.h"
@@ -21,6 +29,8 @@
 #include "graphics/resource.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/ground_mask.h"
+#include "field/field_psynergy_work.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -194,6 +204,8 @@ enum KibomboStatueGroundsActorId {
   ACTOR_STATUE_JAW_A = 12,
   ACTOR_STATUE_JAW_B = 13,
   ACTOR_STATUE_TONGUE = 14,
+  ACTOR_GROUNDS_SHADE_A = 15, ///< black squares (spr_337)
+  ACTOR_GROUNDS_SHADE_B = 16,
   /// On the ceremony night: Akafubu, "Let us now present our jewel to the
   /// Great Gabomba!", and the eight warriors in a ring before him.
   ACTOR_AKAFUBU = 17,
@@ -210,6 +222,29 @@ enum KibomboStatueGroundsActorId {
   /// (Kibombo_CarryBlackCrystal); Piers's, Jenna's and Sheba's rows take
   /// their own numbers, so it follows Kraden.
   ACTOR_CRYSTAL_CARRIER = 27
+};
+
+/// The village by day and on the ceremony night: the frozen puddle, the two
+/// candlesticks by the statue path, the flame, and the rope's two posts. By day
+/// two warriors keep the gate and the signal fire smokes; at night a shade
+/// covers the doorway the leader walks behind, and six candlesticks burn.
+enum {
+  ACTOR_VILLAGE_PUDDLE = 8,
+  ACTOR_CANDLESTICK_A,
+  ACTOR_CANDLESTICK_B,
+  ACTOR_FLAME,
+  ACTOR_ROPE_POST_A,
+  ACTOR_ROPE_POST_B,
+  ACTOR_GATE_GUARD_A = 22,
+  ACTOR_GATE_GUARD_B,
+  ACTOR_SIGNAL_FIRE = 25,
+  ACTOR_DOORWAY_SHADE = 29,
+  ACTOR_LIT_CANDLESTICK_A,
+  ACTOR_LIT_CANDLESTICK_B,
+  ACTOR_LIT_CANDLESTICK_C,
+  ACTOR_LIT_CANDLESTICK_D,
+  ACTOR_LIT_CANDLESTICK_E,
+  ACTOR_LIT_CANDLESTICK_F
 };
 
 /// The houses, inn and shops (SceneId_KibomboHouses).
@@ -251,11 +286,6 @@ s32 Kibombo_KeepShakeCentre(struct Actor *object) {
 
 extern s16 gKibombo_HousesExitRegions[];
 
-struct KibomboWork90 {
-  u8 unk00[0x18];
-  struct Actor *leader;
-};
-
 s32 Kibombo_ShakeInPlace(struct Actor *object) {
   if (gFrameCount & 1) {
     s32 dx;
@@ -263,8 +293,8 @@ s32 Kibombo_ShakeInPlace(struct Actor *object) {
 
     dx = -0x10000;
     dy = dx;
-    dx += (Random_Below(3)) << 16;
-    dy += (Random_Below(3)) << 16;
+    dx += px(Random_Below(3));
+    dy += px(Random_Below(3));
 
     Actor_SetPositionAndResetMotion(object, object->bounce + dx,
                                     object->gravity + dy, object->z.fixed);
@@ -545,7 +575,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
     if (show)
       actor->priorityFlags &= ~0x10;
     else
-      actor->priorityFlags |= 0x10;
+      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
 }
 
@@ -654,7 +684,7 @@ void Kibombo_MeetPiers(void) {
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   Actor_SetSpritePriority(ACTOR_JENNA, 2);
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
-  Actor_SetSpeed(26, 0.8);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(5, 0.8);
   Actor_SetSpeed(6, 0.8);
   Actor_SetMovementTypeById(ACTOR_KRADEN, gKibombo_KradenMeetsPiersScript);
@@ -662,18 +692,18 @@ void Kibombo_MeetPiers(void) {
   Actor_SetMovementTypeAndWaitById(ACTOR_SHEBA, gKibombo_ShebaMeetsPiersScript);
   // "What... What are your intentions?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  if (GameFlag_Get(0x911))
+  if (GameFlag_Get(FLAG_PIERS_INTERROGATED))
     Kibombo_PiersHasForgottenParty();
   else
     Kibombo_PiersTakesPartyForEnemies();
   Kibombo_AkafubuOffersCrystal();
-  Actor_SetSpeed(26, 1.6);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(5, 1.6);
   Actor_SetSpeed(6, 1.6);
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyGathersScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_PartyGathersScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gKibombo_PartyGathersScript);
-  GameFlag_Set(0x8f3);
+  GameFlag_Set(FLAG_KIBOMBO_PIERS_MET);
   Event_End();
 }
 
@@ -702,11 +732,11 @@ void Kibombo_PiersHasForgottenParty(void) {
   // "Wait a second... I know you..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 20);
   // "You're the travelers who came seeking me when I was in jail."
@@ -749,11 +779,11 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   // "I must admit, you don't look much like Kibombo..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
   FieldEffect_SetAttached(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -838,7 +868,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 3);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CRYSTAL_CARRIER), 0);
@@ -926,7 +956,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(111, CAMERA_KEEP, 356, 1);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetAnimationById(ACTOR_KRADEN, 1);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 40);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
@@ -934,7 +964,8 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
-  Event_OpenMessage(0x601a, 0);
+  Event_OpenMessage(
+      SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Event_ShowMessageAndWait(
@@ -968,7 +999,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   Event_SetMessageId((s32)MsgNowThatIKnow);
   // "Now that I know the orb is here, I won't leave this village without..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_GetById(ACTOR_PIERS)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_PIERS)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkToAndWait(7, 56, 420);
   Actor_WalkToAndWait(7, 40, 344);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -1034,7 +1065,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1089,7 +1120,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
@@ -1111,19 +1142,19 @@ void Kibombo_PiersJoinsParty(void) {
     ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
     ((struct FieldWork *)EVENT_WORK)->message += 2;
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1131,7 +1162,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1153,7 +1184,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 20);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1166,7 +1197,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -1182,7 +1213,7 @@ void Kibombo_PiersJoinsParty(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1205,7 +1236,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
@@ -1240,7 +1271,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
@@ -1251,7 +1282,7 @@ void Kibombo_PiersJoinsParty(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1294,7 +1325,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetSpeed(ACTOR_PIERS, 0.4);
@@ -1302,7 +1333,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyFollowsScript + 0);
@@ -1406,7 +1437,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0.4);
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 248, 156);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "So that's how it works..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 26);
@@ -1414,10 +1445,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
   Actor_WatchAndSetScript(ACTOR_PIERS, 26);
   Event_Wait(20);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 248, 188);
   Event_Wait(1);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_SetAnimationById(ACTOR_KRADEN, 7);
   Event_Wait(20);
@@ -1439,12 +1470,12 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.4);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 280, 188);
-  Actor_SetAnimationById(ACTOR_KRADEN, 1);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(10);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 238, 188);
   Event_Wait(1);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   // "Dig there!"
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
@@ -1471,17 +1502,17 @@ ask:
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
@@ -1515,7 +1546,7 @@ ask:
   Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
@@ -1538,7 +1569,7 @@ ask:
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 10);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
@@ -1567,7 +1598,7 @@ ask:
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
@@ -1578,7 +1609,7 @@ ask:
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
@@ -1590,7 +1621,7 @@ ask:
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -1612,15 +1643,16 @@ ask:
 #undef EVENT_WORK
 
 void Kibombo_TrackLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
+  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
-  work->leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  work->actor =
+      (struct FadeActor *)Actor_GetById(gMainRoutineWork.leaderActorId);
 }
 
 void Kibombo_StopTrackingLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
+  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
-  work->leader = 0;
+  work->actor = 0;
 }
 
 s32 Kibombo_ClampColor(s32 value) {
@@ -1676,16 +1708,19 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
   }
 }
 
-#define DEFINE_KIBOMBO_WOBBLE(name, n1, n2, n3, n4, call1, n5, n6, n7)         \
+#define DEFINE_KIBOMBO_WOBBLE(name, secondIndex, secondRange, secondBias,      \
+                              thirdIndex, flickerFourth, fourthIndex,          \
+                              fourthRange, fourthBias)                         \
   void name(void) {                                                            \
     struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
                                                                                \
     if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 && \
         (gFrameCount & 7) == 0) {                                              \
       Kibombo_FlickerColor(9, 0, (Random_Below(10)) - 5);                      \
-      Kibombo_FlickerColor(n1, 1, (Random_Below(n2)) - n3);                    \
-      Kibombo_FlickerColor(n4, 2, (Random_Below(4)) - 2);                      \
-      call1(n5, 3, (Random_Below(n6)) - n7);                                   \
+      Kibombo_FlickerColor(secondIndex, 1,                                     \
+                           (Random_Below(secondRange)) - secondBias);          \
+      Kibombo_FlickerColor(thirdIndex, 2, (Random_Below(4)) - 2);              \
+      flickerFourth(fourthIndex, 3, (Random_Below(fourthRange)) - fourthBias); \
     }                                                                          \
   }
 
@@ -1736,12 +1771,12 @@ void Kibombo_SetRoofByLeaderHeight(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (leader->y.fixed > px(16)) {
-    Actor_SetPosition(29, 0, 0);
-    Actor_SetSpritePriority(30, 2);
+    Actor_SetPosition(ACTOR_DOORWAY_SHADE, 0, 0);
+    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 2);
   } else {
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(29), px(120), 0,
-                                         px(168));
-    Actor_SetSpritePriority(30, 3);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_DOORWAY_SHADE),
+                                         px(120), 0, px(168));
+    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
   }
 }
 
@@ -1770,7 +1805,8 @@ void Kibombo_RaiseEmbers(void) {
   s32 phase = gFrameCount & 3;
 
   if (phase == 0) {
-    struct Actor *object = Import_ActorCreate(0x16e, px(264), px(32), px(316));
+    struct Actor *object =
+        Import_ActorCreate(SPRITE_BLAZE_FLAME, px(264), px(32), px(316));
     s32 value;
 
     if (object != 0) {
@@ -1795,10 +1831,10 @@ void Kibombo_RaiseEmbers(void) {
 void Kibombo_RiseSmoke(struct Actor *object) {
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
-  object->scaleX += 0x51e;
-  object->scaleY += 0x51e;
+  object->scaleX += Q16_ONE / 50;
+  object->scaleY += Q16_ONE / 50;
   object->timer += 2;
   if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
@@ -1807,7 +1843,8 @@ void Kibombo_RiseSmoke(struct Actor *object) {
 /// Smoke puffs from the fire every 64 frames.
 void Kibombo_PuffSmoke(void) {
   if ((gFrameCount & 63) == 0) {
-    struct Actor *object = Import_ActorCreate(0x11d, px(88), px(16), px(314));
+    struct Actor *object =
+        Import_ActorCreate(SPRITE_DUST_CLOUD, px(88), px(16), px(314));
     u8 *part;
     s32 mask;
 
@@ -1847,7 +1884,7 @@ void Kibombo_FlickerFlame(struct Actor *object) {
 
 /// A flame that flickers by its own timer.
 void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
-  struct Actor *object = Import_ActorCreate(0x106, x, y, z);
+  struct Actor *object = Import_ActorCreate(SPRITE_FLAME_AND_SMOKE, x, y, z);
   struct FieldSprite *sprite;
 
   if (object != 0) {
@@ -1865,28 +1902,17 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
   }
 }
 
-struct KibomboEffectWork {
-  u8 unk000[0x7c4];
-  s16 field7c4;
-};
-
-static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
-  Kibombo_SpawnFlame(x, y, z);
-}
-
 void Kibombo_LightFlameRow(void) {
-  s32 x = 0x1b80000;
+  s32 x;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  Kibombo_Spawn(x, 0x280000, 0x1c20000);
-  Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
-  Kibombo_Spawn(x, 0x340000, 0x1aa0000);
-  Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
-  /* FAKEMATCH(dead): an empty once-only block before the last spawn. */
-  do {
-  } while (0);
-  Kibombo_SpawnFlame(x, 0x400000, 0x1920000);
+  x = px(440);
+  Kibombo_SpawnFlame(x, px(40), px(450));
+  Kibombo_SpawnFlame(x, px(46), px(438));
+  Kibombo_SpawnFlame(x, px(52), px(426));
+  Kibombo_SpawnFlame(x, px(58), px(414));
+  Kibombo_SpawnFlame(x, px(64), px(402));
 }
 
 #include "shared/actor_hide.h"
@@ -1900,22 +1926,22 @@ void Scene_RunUnlessFlag(void) {
   }
 }
 
-// Hides the grounds' two objects of sprite 337 before the room opens.
-// XXX: what sprite 337 shows here; staging the statue grounds would settle it.
+/// Hides the grounds' two shades (black squares, spr_337) before the room
+/// opens.
 void Kibombo_HideGroundsPair(void) {
   u32 i;
   s32 zero;
 
   for (i = 0; i <= 1; i++) {
-    s32 id = i + 15;
+    s32 id = i + ACTOR_GROUNDS_SHADE_A;
     struct Actor *object = Actor_GetById(id);
 
     Actor_Hide(id);
     zero = 0;
     object->motionFlags = zero;
   }
-  Actor_GetById(15)->y.fixed = px(32);
-  Actor_GetById(16)->y.fixed = zero;
+  Actor_GetById(ACTOR_GROUNDS_SHADE_A)->y.fixed = px(32);
+  Actor_GetById(ACTOR_GROUNDS_SHADE_B)->y.fixed = zero;
   Scene_RunUnlessFlag();
 }
 
@@ -1988,8 +2014,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   radius = object->actor.riseBaseY;
   spin = (s16)object->actor.userValue;
   turn = *action;
-  Vector_AddPolarOffset((radius << 16) + wobble, turn * 3 * 256 + spin,
-                        &centre);
+  Vector_AddPolarOffset(px(radius) + wobble, turn * 3 * 256 + spin, &centre);
   object->actor.x.fixed = centre.x;
   object->actor.y.fixed = centre.y;
   object->actor.z.fixed = centre.z;
@@ -2088,7 +2113,7 @@ void Kibombo_AkafubuChants(void) {
     x = center->x.fixed;
     y = center->y.fixed + px(24);
     z = center->z.fixed;
-    spark = Import_ActorCreate(673, x, y, z);
+    spark = Import_ActorCreate(SPRITE_SPARKLE, x, y, z);
     if (spark != 0) {
       previous = Sprite_ShareVramCacheEntry(spark->sprite, previous);
       spark->motionFlags = 0;
@@ -2182,9 +2207,9 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
 
 /// While Scoop is cast, digs the marking the event is scooping.
 void Kibombo_DigMarkingUnderLeader(void) {
-  struct KibomboEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  if (work->field7c4 != 0) {
+  if (work->stage != 0) {
     if (GameFlag_Get(FLAG_SCOOPING_FIRST_MARKING))
       Kibombo_DigFirstMarking();
     else if (GameFlag_Get(FLAG_SCOOPING_SECOND_MARKING))
@@ -2245,7 +2270,7 @@ void Kibombo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 x;
-  s32 px;
+  s32 pixelX;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   Event_Start();
@@ -2254,8 +2279,8 @@ void Kibombo_EnterDoor(void) {
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   x = leader->x.fixed;
-  px = x >> 16;
-  Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y.fixed,
+  pixelX = FIELD_PIXEL(x);
+  Actor_SetMoveTarget(leader, px(8 - pixelX % 16) + x, leader->y.fixed,
                       leader->z.fixed);
   Actor_WaitForMove(leader);
   leader->facing = FACING_NORTH;
@@ -2369,7 +2394,7 @@ done:
 /// Three flashes of light, each with the camera at another place.
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -2382,7 +2407,7 @@ void Kibombo_StatueFlashes(void) {
   wait(1);
 
   Sound_Play(SE_POWER_UP);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   FieldCamera_MoveTo(584, CAMERA_KEEP, 248, 0);
@@ -2489,12 +2514,12 @@ void Kibombo_CeremonyBegins(void) {
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 20);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "I'm not sure what will happen, but we'd better hurry, Felix."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
-  Actor_SetAnimationById(ACTOR_KRADEN, 2);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
@@ -2520,7 +2545,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   FieldCamera_MoveTo(264, CAMERA_KEEP, 388, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 3);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
   Event_SetMessageId((s32)MsgLetUsNow);
   // "Let us now present our jewel to the Great Gabomba!"
   Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
@@ -2600,11 +2625,11 @@ void Kibombo_GabombaNotPleased(void) {
       object = gKibombo_BlackCrystal;
     }
   }
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 4);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
-  GameFlag_Clear(0x8f7);
+  GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
   Sound_Play(MUS_KIBOMBO);
   Event_Wait(80);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -2632,7 +2657,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   // "Oh! The magic, the power of the witch doctor fills my body!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessage(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Task_Remove(Kibombo_FlickerCeremonyFires);
@@ -2642,7 +2667,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   gFieldWork->transition = effect;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2725,12 +2750,12 @@ void Kibombo_CrowdCheers(void) {
   Actor_FaceDirection(ACTOR_WARRIOR_G, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_WARRIOR_H, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Event_ShowMessage(0x8000 + 17, 0);
-  Event_ShowMessage(0x8000 + 17, 0);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 3);
-  Event_ShowMessage(0x8000 + 17, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Actor_Jump(ACTOR_AKAFUBU, 4, 10);
-  Event_ShowMessageAndWait(0x8000 + 17, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
 }
 
 void Kibombo_GabombaStillNotPleased(void) {
@@ -2758,13 +2783,13 @@ void Kibombo_GabombaStillNotPleased(void) {
       } while ((*slot)->y.fixed > px(36));
     }
   }
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 4);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_SHAKE_HEAD);
   // "No! This time, he seemed almost like he might..."
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   // "We must continue! Drums! More drums!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2791,7 +2816,7 @@ void Kibombo_GabombaSeesOrb(void) {
   Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 12);
   Event_Wait(120);
   Kibombo_CrowdCheers();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2817,7 +2842,7 @@ void Kibombo_GabombaResponds(void) {
   Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
-  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
@@ -2844,14 +2869,14 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
-  object->scaleY = 0x1999;
+  object->scaleY = Q16_ONE / 10;
   Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE), px(264),
                                   px(24), px(308));
   wait(1);
   Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 3);
   for (i = 0; i < 64; i++) {
-    object->scaleY += 0x400;
-    object->y.fixed += 0x2000;
+    object->scaleY += Q16_ONE / 64;
+    object->y.fixed += px(1) / 8;
     wait(1);
   }
   Sound_Play(SE_STOP_MUSIC_PLAYER_5);
@@ -2861,7 +2886,7 @@ void Kibombo_GabombaRespondsToGift(void) {
     gift->motionFlags = 0;
     if (gift->y.fixed > px(36)) {
       do {
-        gKibombo_BlackCrystal->y.fixed -= 0x8000;
+        gKibombo_BlackCrystal->y.fixed -= px(1) / 2;
         wait(1);
       } while (gKibombo_BlackCrystal->y.fixed > px(36));
     }
@@ -2873,14 +2898,14 @@ void Kibombo_GabombaRespondsToGift(void) {
     do {
       gKibombo_BlackCrystal->y.fixed += px(6);
       object->scaleY -= Q16_ONE / 8;
-      object->y.fixed -= 0x8000;
+      object->y.fixed -= px(1) / 2;
       wait(1);
       i++;
     } while (i < 4);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     for (i = 0; i < 4; i++) {
       object->scaleY -= Q16_ONE / 8;
-      object->y.fixed -= 0x8000;
+      object->y.fixed -= px(1) / 2;
       wait(1);
     }
   }
@@ -2899,18 +2924,18 @@ void Kibombo_GabombaRespondsToGift(void) {
   wait(1);
   for (i = 0; i < 8; i++) {
     object->scaleY += Q16_ONE / 8;
-    object->y.fixed += 0x8000;
+    object->y.fixed += px(1) / 2;
     wait(1);
   }
   FieldEffect_SetAttached(ACTOR_AKAFUBU,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, 0x3000);
-  Event_ShowMessage(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   FieldActor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessage(0x4011, 0);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 3);
-  Event_ShowMessageAndWait(0x4011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 320);
   Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
@@ -2943,46 +2968,46 @@ void Kibombo_CeremonyEnds(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, 3);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, 3);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, ANIM_NOD);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 20);
   Actor_GetById(ACTOR_KRADEN_AT_HOME)->velocityY = px(3);
   Event_Wait(40);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, 3);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, 3);
+  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, ANIM_NOD);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(40);
   wait(60);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Event_SetMessageId((s32)MsgRightWellI);
   // "Right... Well, I guess that's that!"
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBUS_FATHER, 3);
+  Actor_SetAnimationAndWait(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
   // "You are virtuous men, coming here to deliver this message. My son..."
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN_AT_HOME, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 10);
-  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_Jump(ACTOR_AKAFUBU_AT_HOME, 4, 10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_AKAFUBUS_FATHER, FACING_EAST);
   Actor_ShowEmoteById(ACTOR_AKAFUBU_AT_HOME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_ShowEmoteById(ACTOR_AKAFUBUS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_WEST);
-  Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, 4);
-  Event_ShowMessage(0x2008, 0);
+  Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_SOUTH_SOUTHWEST);
-  Event_ShowMessage(0x2008, 0);
-  Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
+  Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirection(ACTOR_AKAFUBUS_FATHER, FACING_NORTH_NORTHEAST, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU_AT_HOME, 1.6);
@@ -2993,20 +3018,20 @@ void Kibombo_CeremonyEnds(void) {
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBUS_FATHER, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, 4);
+  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
   Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN_AT_HOME, FACING_EAST);
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_WEST);
-  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetSpeed(ACTOR_KRADEN_AT_HOME, 0.8);
-  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, 2);
+  Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN_AT_HOME, leader->x.part[0].pixel,
@@ -3042,25 +3067,25 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: the frozen puddles, the rope and the roofs.
 void Kibombo_InitializeVillage(void) {
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
-  Actor_SetSpriteFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
   FieldEffect_StartBlankOverlay(0);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
-  Actor_SetSpritePriority(8, 3);
+  Actor_SetSpritePriority(ACTOR_VILLAGE_PUDDLE, 3);
   Rope_Initialize();
-  Rope_Place(0, 0x9e9, 12, 13);
-  Actor_GetById(22)->collisionFlags |= 0x80;
-  Actor_GetById(23)->collisionFlags |= 0x80;
+  Rope_Place(0, 0x9e9, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Actor_GetById(ACTOR_GATE_GUARD_A)->collisionFlags |= 0x80;
+  Actor_GetById(ACTOR_GATE_GUARD_B)->collisionFlags |= 0x80;
 }
 
 void Kibombo_InitializeVillageByDay(void) {
-  Actor_SetPosition(11, 88, 314);
-  Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  Actor_GetById(11)->scaleY = Q16_ONE / 2;
+  Actor_SetPosition(ACTOR_FLAME, 88, 314);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME), 0);
+  Actor_GetById(ACTOR_FLAME)->scaleY = Q16_ONE / 2;
   Kibombo_InitializeVillage();
   GameFlag_Clear(0x86b);
-  Actor_DisableById(25);
-  Actor_SetAnimationById(25, 2);
+  Actor_DisableById(ACTOR_SIGNAL_FIRE);
+  Actor_SetAnimationById(ACTOR_SIGNAL_FIRE, 2);
   Task_Add(Kibombo_PuffSmoke, TASK_PASS_VBLANK);
   Kibombo_LightFlameRow();
 }
@@ -3068,21 +3093,6 @@ void Kibombo_InitializeVillageByDay(void) {
 // Kibombo's setup.
 
 struct Unit *Unit_Get(u32 unitId);
-
-static __inline__ s32 Gauge(s32 value, s32 max) {
-  s32 gauge = (value << 14) / max;
-
-  s32 result;
-
-  if (gauge > 0x4000)
-    result = 0x4000;
-  else {
-    result = 0;
-    if (gauge >= 0)
-      result = gauge;
-  }
-  return result;
-}
 
 /// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
 /// Piers in the party, restores his HP and PP, sets his gauges, clears two of
@@ -3092,7 +3102,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 /// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
 /// Kibombo_FlickerVillageFires scheduled.
 void Kibombo_InitializeCeremony(void) {
-  struct Actor *actor = Actor_GetById(11);
+  struct Actor *actor = Actor_GetById(ACTOR_FLAME);
   struct Unit *unit;
   s32 done;
 
@@ -3103,23 +3113,14 @@ void Kibombo_InitializeCeremony(void) {
     actor->motionFlags = done;
     actor->y.fixed = px(42);
     actor->z.fixed += px(-42);
-    Actor_SetSpriteFlags(Actor_GetById(11), 0);
-    Actor_SetSpritePriority(11, 1);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME), 0);
+    Actor_SetSpritePriority(ACTOR_FLAME, 1);
     if (gMainRoutineWork.entrance == 19 &&
         GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
       unit = Unit_Get(ACTOR_PIERS);
       unit->hp = unit->hpMax;
       unit->pp = unit->ppMax;
-      /* FAKEMATCH(dead): both copies stored before the gauge's argument is
-       * extended. */
-      do {
-      } while (0);
-      unit->hpGauge = Gauge(unit->hp, unit->hpMax);
-      if (unit->hpGauge == 0 && unit->hp != 0)
-        unit->hpGauge = 1;
-      unit->ppGauge = Gauge(unit->pp, unit->ppMax);
-      if (unit->ppGauge == 0 && unit->pp != 0)
-        unit->ppGauge = 1;
+      Unit_UpdateGauges(unit);
       unit->poison = 0;
       unit->haunt = 0;
       GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
@@ -3133,18 +3134,18 @@ void Kibombo_InitializeCeremony(void) {
   gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
   gKibombo_FireColors[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
   Kibombo_InitializeVillage();
-  Actor_SetSpriteFlags(Actor_GetById(30), 0);
-  Actor_SetSpriteFlags(Actor_GetById(31), 0);
-  Actor_SetSpriteFlags(Actor_GetById(32), 0);
-  Actor_SetSpriteFlags(Actor_GetById(33), 0);
-  Actor_SetSpriteFlags(Actor_GetById(34), 0);
-  Actor_SetSpriteFlags(Actor_GetById(35), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_C), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_D), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_E), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_F), 0);
   GameFlag_Set(FLAG_SCENE_TEMP_09);
-  actor = Actor_GetById(29);
+  actor = Actor_GetById(ACTOR_DOORWAY_SHADE);
   actor->motionFlags = 0;
   actor->y.fixed = 0;
-  Actor_Hide(29);
-  Actor_SetSpritePriority(30, 3);
+  Actor_Hide(ACTOR_DOORWAY_SHADE);
+  Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Actor_SetPosition(26, 0, 0);
     Actor_SetPosition(27, 0, 0);
@@ -3167,24 +3168,25 @@ void Kibombo_CreateBlackCrystal(void);
 /// The grounds before the statue: the Black Crystal, the markings dug, the vent
 /// and the block Moved for Piers.
 void Kibombo_InitializeStatueGrounds(void) {
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
-  Actor_SetSpriteFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
   if (!GameFlag_Get(FLAG_GABOMBA_RESPONDED))
     Kibombo_CreateBlackCrystal();
   Kibombo_HideGroundsPair();
   if (!GameFlag_Get(0x869))
     GameFlag_Set(FLAG_SCENE_TEMP_01);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
-  Actor_SetSpritePriority(8, 2);
-  Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  Actor_GetById(11)->motionFlags = 0;
+  Actor_SetSpritePriority(ACTOR_GROUNDS_PUDDLE, 2);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_GROUNDS_PILLAR), 0);
+  Actor_GetById(ACTOR_GROUNDS_PILLAR)->motionFlags = 0;
   if (GameFlag_Get(FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS)) {
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(11), 208 << 15, 0,
-                                         148 << 17);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_GROUNDS_PILLAR),
+                                         px(104), 0, px(296));
     MapGrid_CopyCellAttributes(5, 18, 1, 1, 6, 18);
     wait(10);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (GameFlag_Get(FLAG_KIBOMBO_VENT_UNCOVERED))
     Kibombo_UncoverVent();
   if (GameFlag_Get(FLAG_FIRST_MARKING_DUG))
@@ -3283,7 +3285,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
     s32 angle = FACING_SOUTHEAST;
 
-    Actor_SetPositionAndFacing(7, 152 << 17, 176 << 15, angle);
+    Actor_SetPositionAndFacing(7, px(304), px(88), angle);
   }
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Kibombo_SetStatueTongue(1, 6);
@@ -4103,7 +4105,7 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3,
      IF_FLAG_SET(FLAG_KIBOMBO_VENT_UNCOVERED), EVENT(Kibombo_EnterVent)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
-    {TRIGGER_STEP, 5, 0x8f3, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 5, FLAG_KIBOMBO_PIERS_MET, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 5, FLAG_KIBOMBO_PIERS_STAYED_BEHIND,
      EVENT(Kibombo_PiersRefusesToLeave)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
@@ -4123,7 +4125,7 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
      FLAG_THIRD_MARKING_DUG, EVENT(Kibombo_ScoopThirdMarking)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14,
      FLAG_FOURTH_MARKING_DUG, EVENT(Kibombo_ScoopFourthMarking)},
-    {TRIGGER_STEP, 20, 0x8f3, EVENT(Kibombo_MeetPiers)},
+    {TRIGGER_STEP, 20, FLAG_KIBOMBO_PIERS_MET, EVENT(Kibombo_MeetPiers)},
     {TRIGGER_STEP, 22, FLAG_KIBOMBO_PIERS_WITH_PARTY,
      EVENT(Kibombo_PiersThanksParty)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},

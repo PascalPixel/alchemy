@@ -6,6 +6,7 @@
 /// Serpent, Susa rejoices here that Kushinada is safe.
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -16,6 +17,11 @@
 #include "system/system.h"
 #include "types.h"
 #include "flags.h"
+/// Set once Susa has said he only needs rest ("I'm not dying... I'm just so
+/// tired...").
+#define FLAG_SUSA_RESTED 0xa61
+/// Set once Susa has rejoiced with the party (GaiaRock_SusaRejoices).
+#define FLAG_SUSA_REJOICED 0x9ab
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
@@ -212,30 +218,30 @@ void GaiaRock_FinishPushingBlock(void) {
 }
 
 void GaiaRock_CycloneClearsWall(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 110, 64, 14, 12, 110, 47, 1);
+  FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }
 
 void GaiaRock_RevealIdol(void) {
-  struct Actor *object = Actor_Get(64);
+  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
   s32 done;
 
   if (object == NULL)
     return;
   done = Event_GetFlag(0xf74);
   if (done == 0) {
-    Actor_SetPosition(64, 657, 246);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 657, 246);
     object->motionFlags = done;
     object->y.fixed = px(80);
   }
 }
 
 void GaiaRock_HideIdol(void) {
-  if (Actor_Get(64) != NULL)
-    Actor_SetPosition(64, 0, 0);
+  if (Actor_Get(FIELD_TREASURE_ACTOR) != NULL)
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
 }
 
 void GaiaRock_CheckAltar(void) {
-  struct Actor *object = Actor_Get(64);
+  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x.fixed != 0) {
@@ -258,13 +264,13 @@ void GaiaRock_SusaRejoices(void) {
     FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(ACTOR_SUSA, 0);
-    Event_SetFlag(0x9ab);
+    Event_SetFlag(FLAG_SUSA_REJOICED);
     Event_End();
   }
 }
 
 void GaiaRock_TalkToSusa(void) {
-  if (Event_GetFlag(0x9ab)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
     Event_AskYesNo(ACTOR_SUSA, 0);
   } else {
@@ -275,7 +281,7 @@ void GaiaRock_TalkToSusa(void) {
 }
 
 void GaiaRock_MindReadSusa(void) {
-  if (Event_GetFlag(0x9ab)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     // "Kushinada's safe... She's safe! Nothing else matters."
     Event_ShowMessage(ACTOR_SUSA, 0);
@@ -294,22 +300,24 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGaiaRock_Triggers;
 }
 
+/// A circling leaf as its update reads it: struct Actor's fields under a type
+/// of its own, the timer unsigned and the update taking the leaf.
 struct OrbitEffect {
-  u8 unk00[6];
-  u16 angle;
+  u8 unused[6]; ///< the script and its cursor, not read here
+  u16 facing;
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[15];
+  u8 unusedAfterZ[15];
   u8 priorityFlags;
-  u8 unk24[4];
-  s32 scale;
-  u8 unk2c[28];
-  s32 speed;
-  u8 unk4c[24];
+  u8 unusedAfterPriority[4];
+  s32 velocityY;
+  u8 unusedAfterVelocityY[28];
+  s32 gravity;
+  u8 unusedAfterGravity[24];
   u16 timer;
-  s16 pause;
-  struct OrbitEffect *anchor;
+  s16 pause; ///< Actor.userValue
+  struct OrbitEffect *watchedActor;
   void (*update)(struct OrbitEffect *);
 };
 
@@ -322,15 +330,15 @@ void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 dz;
 
   radius = Random16() + 0x20000;
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
-  effect->angle += 0xfff0;
+  effect->facing += 0xfff0;
   if (effect->pause != 0) {
     effect->pause--;
-    effect->angle += 0x800;
+    effect->facing += 0x800;
   } else if ((Random16() << 5) >> 16 == 0) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
@@ -351,20 +359,19 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
       s32 position[3];
 
       position[0] = source->x;
-      position[1] = source->y + i * 0xcccc + 0x40000;
+      position[1] = source->y + i * 0xcccc + px(4);
       position[2] = source->z;
       radius = Random16();
-      FieldVector_AddPolarOffsetFixed(radius * 5 + 0x30000, Random16(),
-                                      position);
+      FieldVector_AddPolarOffsetFixed(radius * 5 + px(3), Random16(), position);
       effect = (struct OrbitEffect *)Value4(
           (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
       if (effect != NULL) {
         effect->update = GaiaRock_CircleLeaf;
         effect->timer = timer;
         effect->pause = 0;
-        effect->speed = 0x1999;
-        effect->scale = 0x30000;
-        effect->angle = Random16();
+        effect->gravity = 0x1999;
+        effect->velocityY = px(3);
+        effect->facing = Random16();
         effect->priorityFlags = 0;
         Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
       }
@@ -375,18 +382,9 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   return 0;
 }
 
-struct A4SlotValues {
-  s16 id;
-  s16 unk02;
-  s32 value04;
-  u8 unk08[8];
-  s32 value10;
-  u8 unk14[8];
-};
-
-static inline struct A4SlotValues *FindSlot(s32 id) {
+static inline struct HangingVineSlot *FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
-  struct A4SlotValues *found = NULL;
+  struct HangingVineSlot *found = NULL;
   s32 i;
 
   // Default: as HangingVine_FindSlot, the index zero is copied from found.
@@ -394,7 +392,7 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
 
   for (i = 0; i < 8; i++) {
     if (work->slots[i].id == id) {
-      found = (struct A4SlotValues *)&work->slots[i];
+      found = &work->slots[i];
       break;
     }
   }
@@ -402,17 +400,17 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
 }
 
 void GaiaRock_StartVineSwing(void) {
-  struct A4SlotValues *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(8);
 
-  slot->value10 = 0x4000;
-  slot->value04 = 64;
+  slot->phase = 0x4000;
+  slot->swing = 64;
 }
 
 void GaiaRock_SwingVineHarder(void) {
-  struct A4SlotValues *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(8);
 
-  slot->value10 = 0x4000;
-  slot->value04 += 128;
+  slot->phase = 0x4000;
+  slot->swing += 128;
 }
 
 void Actor_PlaySoundInView(struct Actor *object, s32 a);
@@ -429,7 +427,7 @@ void GaiaRock_StatueBlowsWind(void) {
       object->acceleration = px(2);
       object->speedLimit = px(2);
       object->scaleX = Q16_ONE / 2;
-      object->scaleY = 0x1999;
+      object->scaleY = Q16_ONE / 10;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
       FieldActor_SetMoveTargetFixed(object, object->x.fixed - px(32),
@@ -455,7 +453,8 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCREEN_EFFECT;
   gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
   gMainRoutineWork.retreatEntrance = 5;
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_VBLANK);
     Call2((void (*)())HangingVine_Place, 8, 1);
@@ -492,24 +491,24 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(0x9ab)) {
-      Actor_SetPosition(20, 798, 800);
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(FLAG_SUSA_REJOICED)) {
+      Actor_SetPosition(ACTOR_SUSA, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
-      Actor_SetAnimationById(20, 5);
-      if (!Event_GetFlag(0xa61)) {
+      Actor_SetAnimationById(ACTOR_SUSA, 5);
+      if (!Event_GetFlag(FLAG_SUSA_RESTED)) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        FieldActor_StartRepeatedMotion(20, 3);
-        FieldCamera_MoveToActorById(20, 1);
+        FieldActor_StartRepeatedMotion(ACTOR_SUSA, 3);
+        FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
         FieldEvent_Wait(30);
         FieldEvent_SetMessageId((s32)MsgIMNot);
         // "I'm not dying... I'm just so tired... I'm going to lie down for
         // a..."
-        Event_ShowMessage(20, 0);
-        FieldActor_StartRepeatedMotion(20, 2);
+        Event_ShowMessage(ACTOR_SUSA, 0);
+        FieldActor_StartRepeatedMotion(ACTOR_SUSA, 2);
         FieldEvent_Wait(30);
-        Event_SetFlag(0xa61);
+        Event_SetFlag(FLAG_SUSA_RESTED);
         Event_End();
       }
     }
@@ -525,18 +524,18 @@ s32 Scene_Initialize(void) {
       GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      GaiaRock_PlaceStatue(17, 0x2fc0000, -0x1870000, 0x1a80000);
+      GaiaRock_PlaceStatue(17, px(764), -px(391), px(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      GaiaRock_PlaceStatue(18, 0x3150000, -0xf80000, 0x1a80000);
+      GaiaRock_PlaceStatue(18, px(789), -px(248), px(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
+      GaiaRock_PlaceStatue(19, px(778), -px(119), px(424));
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
-    actor = Actor_GetById(64);
+    actor = Actor_GetById(FIELD_TREASURE_ACTOR);
     if (actor != 0) {
-      Actor_SetPosition(64, 0, 0);
+      Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
     }
     work = Ram_HeapSlots->fieldWork;
     actor = work->actors[16];
@@ -553,7 +552,7 @@ s32 Scene_PrepareMap(void) {
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapGrid->layers[1];
 
-    layer[2] = -0x800000;
+    layer[2] = -px(128);
     layer[3] = 0x4480000;
   }
   return 0;
@@ -564,8 +563,8 @@ void GaiaRock_TriggerWallCell(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / 0x100000;
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / 0x100000;
+    s32 x = object->x.fixed / px(16);
+    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / px(16);
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;
@@ -578,13 +577,13 @@ void GaiaRock_TriggerWallCell(void) {
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
-  s32 cellX = x / 0x100000;
-  s32 cellZ = (z - y + 0x7fff) / 0x100000;
+  s32 cellX = x / px(16);
+  s32 cellZ = (z - y + 0x7fff) / px(16);
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = 255;
-  object->x.fixed = (x & 0xfff00000) + 0x80000;
-  object->z.fixed = (z & 0xfff00000) + 0x80000;
+  object->x.fixed = (x & FIELD_CELL_MASK) + px(8);
+  object->z.fixed = (z & FIELD_CELL_MASK) + px(8);
   object->y.fixed = object->z.fixed - (cellZ << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
@@ -605,29 +604,28 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
   i = 15;
   do {
-    {
-      struct Actor *dust = FieldActor_Create(
-          255, leader->x.fixed, leader->y.fixed + px(16), leader->z.fixed);
+    struct Actor *dust =
+        FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
+                          leader->y.fixed + px(16), leader->z.fixed);
 
-      if (dust != 0) {
-        s32 angle;
-        s32 speed;
-        u32 size;
-        s32 scale;
+    if (dust != 0) {
+      s32 angle;
+      s32 speed;
+      u32 size;
+      s32 scale;
 
-        Actor_StartScript(dust, gGaiaRock_DustScript);
-        angle = Random16();
-        speed = Random16();
-        size = Random16();
-        scale = (size >> 1) + 0x2000;
-        dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
-        dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
-        dust->acceleration = 0;
-        dust->scaleX = scale;
-        dust->scaleY = scale;
-        dust->gravity = 0x547a;
-        dust->bounce = Q16_ONE / 2;
-      }
+      Actor_StartScript(dust, gGaiaRock_DustScript);
+      angle = Random16();
+      speed = Random16();
+      size = Random16();
+      scale = (size >> 1) + 0x2000;
+      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
+      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
+      dust->acceleration = 0;
+      dust->scaleX = scale;
+      dust->scaleY = scale;
+      dust->gravity = px(33) / 100;
+      dust->bounce = Q16_ONE / 2;
     }
   } while (--i >= 0);
   Event_PlaySound(SE_STATUE_RISE);
@@ -639,16 +637,11 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
-  id = 0;
-  leader->gravity = 0x547a;
-  goto fall;
-next:
-  id++;
-fall:
-  if (id <= 179) {
+  leader->gravity = px(33) / 100;
+  for (id = 0; id < 180; id++) {
     System_Wait(1);
-    if (leader->y.fixed > leader->groundHeight)
-      goto next;
+    if (leader->y.fixed <= leader->groundHeight)
+      break;
   }
   Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
@@ -774,7 +767,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 42, 0x9ab, EVENT(GaiaRock_SusaRejoices)},
+    {TRIGGER_STEP, 42, FLAG_SUSA_REJOICED, EVENT(GaiaRock_SusaRejoices)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},

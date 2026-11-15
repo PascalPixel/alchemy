@@ -133,7 +133,8 @@ s32 gRangeFalloff_HealPp[] = {100, 80, 60, 40, 20, 10};
 s32 gRangeFalloff_EffectDamage[] = {100, 50, 30, 10, 10, 10};
 
 /// The enemy definitions Dullahan acts as, one drawn at random.
-u16 gBattleAI_DullahanForms[] = {ENEMY_DULLAHAN, ENEMY_DULLAHAN_B, ENEMY_DULLAHAN_C};
+u16 gBattleAI_DullahanForms[] = {ENEMY_DULLAHAN, ENEMY_DULLAHAN_B,
+                                 ENEMY_DULLAHAN_C};
 
 /// Unused: three zeros after Dullahan's forms that no code reads.
 u16 gBattleAI_UnusedDullahanForms[] = {0, 0, 0};

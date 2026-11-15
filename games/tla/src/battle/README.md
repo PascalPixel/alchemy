@@ -20,9 +20,8 @@ taking two. So one formation is a family of line-ups, not one. Each enemy
 becomes a unit filled in from its row of the enemy table. It is
 `BattleFormation_BuildEnemyList`.
 
-The Lost Age has 660 formations. Here they are still assembly rows in
-[`battle_tables.s`](battle_tables.s), `gFormations`; The Broken
-Seal writes its formations as a C array. With one game flag set, the
+The Lost Age has 660 formations, the C array `gFormations` in
+[`formations.c`](formations.c), as The Broken Seal's are. With one game flag set, the
 battle passes over the number it was given: it picks among the formations
 whose enemies are near the party's average level, and moves the enemies'
 levels by the difference.
@@ -86,8 +85,8 @@ How an action is shown is its [staging](../../glossary.md#staging). Most
 abilities are staged by what they are: an Attack is a run and a blow,
 anything that costs PP is a cast, an item is raised. The rest name a
 staging of their own in a table, and beside it a second names each
-ability's battle effect. Both are assembly rows in `battle_tables.s` here
-too.
+ability's battle effect. Both are in
+[`ability_staging.c`](ability_staging.c), as in The Broken Seal.
 
 ## Staging an action
 
@@ -173,9 +172,12 @@ is switched from one to the other partway down the screen as it is drawn.
 - `LinkBattle_SyncTurn` and its neighbours are a battle against another
   console: the parties exchanged and the handshake after every action.
 - The bank's C is one object, as The Broken Seal's is:
-  [`battle.c`](battle.c) includes its parts, the files beside it named
+  [`battle.c`](battle.c) includes its parts, files beside it named
   `battle_*.c`, in ROM order, cut where The Broken Seal's are
   (`battle_setup.c`, `battle_turn.c`, `battle_staging.c`,
   `battle_spoils.c`), with what they share in `battle_internal.h`. Its
-  tables are the assembly rows of `battle_tables.s`, the debug
-  battles' `gDebug_ParameterSets` among them.
+  tables follow it as C files of their own, each named for what it holds
+  and listed in the linker script in ROM order: `battle_tables.c`,
+  `ability_staging.c`, `debug_parameter_sets.c`, `formations.c`,
+  `battle_sprites.c` and the rest. The curtain's pictures are
+  `transition/curtain.s`.

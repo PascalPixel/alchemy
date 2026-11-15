@@ -772,10 +772,7 @@ s32 WorldPicture_Show(s32 mode) {
       blend = REG_BLDALPHA;
     } while (0);
   } else {
-    do {
-      /* FAKEMATCH(dead): the statement in a once-only block. */
-      event->camera->paused = 1;
-    } while (0);
+    Io_Write8(1, &event->camera->paused);
     savedDelay = event->transitionFrames;
     event->transitionFrames = 6;
     event->transition = 0;

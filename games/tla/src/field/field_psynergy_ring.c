@@ -13,6 +13,7 @@
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "system/bg_scroll.h"
+#include "system/io_write.h"
 #include "field/map_grid.h"
 #include "field/view_move.h"
 #include "version.h"
@@ -183,35 +184,15 @@ void FieldPsynergy_Ring(void) {
       y = *((s16 *)pos + 5);
       gBgScroll[0].y = 64 - y;
     }
-    {
-      s32 (*fill)(void *, s32, u32);
+    IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
 
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      fill = Iwram_FillWordsEntry;
-      fill((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
-    }
-
-    /* FAKEMATCH(dead): the picture's release and allocation in a once-only
-     * block. */
-    do {
-      HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
-      picture = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_CANVAS, 0x2000);
-    } while (0);
-    Iwram_FillWordsEntry(picture, 0x2000, 0);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+    picture = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_CANVAS, 0x2000);
+    IWRAM_FILL_WORDS(picture, 0x2000, 0);
 
     wait(1);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    {
-      s32 control;
-
-      control = 0x480;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      REG_BG0CNT = control;
-    }
+    Io_Write16(0x480, &REG_BG0CNT);
     Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
     entry = VramCache_FindFreeEntry();
@@ -392,26 +373,10 @@ void FieldPsynergy_EndRing(void) {
   event->ringFrames = 0;
   Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
-  /* FAKEMATCH(dead): a once-only block. */
-  do {
-    Sound_PlayFar(SE_MAP_TRANSITION);
-    {
-      s32 (*fill)(void *, s32, u32);
-      // A once-only block: the fill's entry loads ahead of the size (as a
-      // direct Iwram_FillWords call, 2 of 226 differ).
-      do {
-      } while (0);
-      fill = Iwram_FillWordsEntry;
-      fill((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
-    }
-    Window_LoadGraphics();
-  } while (0);
-  {
-    /* FAKEMATCH(temporary): the control word in a local of its own. */
-    s32 control = 0x400;
-
-    REG_BG0CNT = control;
-  }
+  Sound_PlayFar(SE_MAP_TRANSITION);
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
+  Window_LoadGraphics();
+  Io_Write16(0x400, &REG_BG0CNT);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;

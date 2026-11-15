@@ -32,7 +32,6 @@ void FieldPsynergy_UpdatePound(void) {
   struct EffectSprite *sprite;
   s32 i;
   s32 base, blue;
-  s32 color;
   s32 red, green;
   s32 *frames;
 
@@ -50,11 +49,7 @@ void FieldPsynergy_UpdatePound(void) {
     green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
-    /* FAKEMATCH(dead): the colour in a once-only block. */
-    do {
-      color = (green << 5) | blue | red;
-      *(u16 *)(0x050003c0 + i * 2) = color;
-    } while (0);
+    Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(14, i));
     if (++i < 32)
       goto palette;
   }

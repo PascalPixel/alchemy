@@ -642,8 +642,6 @@ s32 Field_PlaceAtEntrance(void) {
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
-      /* FAKEMATCH(barrier): an empty asm reading work. */
-      asm("" : : "r"(work));
       cursor++;
       x = Stream_ReadS16(&cursor);
       z = Stream_ReadS16(&cursor);

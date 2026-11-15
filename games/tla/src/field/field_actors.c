@@ -723,16 +723,7 @@ void ActorSystem_PlaceSprites(void) {
   viewZ = view[1] & FIELD_PIXEL_MASK;
   system = Ram_HeapSlots->actorSystem;
   originY = map->origin[1];
-  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
-  do {
-    Dma_Set(
-        Render_DecodePictureCode,
-        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
-                       (s32)Render_DecodePictureBlockSize),
-        DMA_COPY_WORDS(
-            (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
-        REG_DMA3);
-  } while (0);
+  Render_LoadDecoder();
   {
     // The zero is set before the objects are read.
     u32 zero = 0;
@@ -953,16 +944,7 @@ void ActorSystem_ProjectSprites(void) {
   // Unused: gives the stack frame its 12 bytes.
   struct ActorCameraPoint unused;
 
-  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
-  do {
-    Dma_Set(
-        Render_DecodePictureCode,
-        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
-                       (s32)Render_DecodePictureBlockSize),
-        DMA_COPY_WORDS(
-            (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
-        REG_DMA3);
-  } while (0);
+  Render_LoadDecoder();
   eye = &camera->eye;
   target = &camera->target;
   if (camera->followEye != NULL)

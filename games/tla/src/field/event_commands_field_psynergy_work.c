@@ -99,10 +99,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
 
   if (event->psynergyActing == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(*work));
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    Iwram_FillWordsEntry(work, sizeof(*work), 0);
+    IWRAM_FILL_WORDS(work, sizeof(*work), 0);
   } else {
     work = Ram_HeapSlots->fieldEffectWork;
   }
@@ -206,20 +203,14 @@ void FieldPsynergy_StartCast(void) {
   s8 sound;
 
   Actor_SelectAnimationFar(object, 20);
-  /* FAKEMATCH(dead): the stores in a once-only block keep them all ahead of the
-   * sound's read. */
-  do {
-    object->targetX = object->x.fixed;
-    object->velocityX = 0;
-    object->targetY = object->y.fixed;
-    object->velocityY = 0;
-    object->targetZ = object->z.fixed;
-    object->velocityZ = 0;
-  } while (0);
+  object->targetX = object->x.fixed;
+  object->velocityX = 0;
+  object->targetY = object->y.fixed;
+  object->velocityY = 0;
+  object->targetZ = object->z.fixed;
+  object->velocityZ = 0;
   sound = work->visible;
-  /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
-   * read. */
-  asm("" : "=r"(zero) : "0"(0));
+  zero = 0;
   if (sound != 0) {
     Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);

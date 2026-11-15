@@ -351,8 +351,6 @@ void FieldPsynergy_EndSand(void) {
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
-  /* FAKEMATCH(barrier): an empty asm reading party. */
-  asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
   Sand_InitLeaderSprite(&work->leader, sprite);

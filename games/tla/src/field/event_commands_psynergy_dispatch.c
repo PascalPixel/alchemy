@@ -376,10 +376,7 @@ void Func_080dba5c(void) {
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    Iwram_FillWordsEntry(buffer, 0x200, 0);
+    IWRAM_FILL_WORDS(buffer, 0x200, 0);
     slot = VramCache_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
     scene->vramSlot = slot;

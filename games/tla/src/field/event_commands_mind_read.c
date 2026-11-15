@@ -738,12 +738,8 @@ void FieldPsynergy_Reveal(void) {
       Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
-  /* FAKEMATCH(dead): leave the centre (in pixels) and the time in the event
-   * work. */
-  do {
-    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
-    event->revealActive = 1;
-  } while (0);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
+  Io_Write8(1, &event->revealActive);
   event->revealCenterX = transition->centreX / Q16_ONE;
   event->revealCenterY = transition->centreY / Q16_ONE;
   event->revealFrames = REVEAL_FRAMES;

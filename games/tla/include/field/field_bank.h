@@ -289,16 +289,6 @@ struct MapActor {
   s16 event;
 };
 
-struct ContextAnimation {
-  u8 unused[0x1a]; ///< no code names it
-  u8 flags;
-};
-
-struct ContextEffect {
-  u8 unused[5]; ///< no code names it
-  u8 param;
-};
-
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
 /// and the sprite Tightrope_Draw puts between it and the next node.
 struct TightropeNode {
@@ -488,21 +478,6 @@ struct DescendingOrbitObject {
   u8 unk14[80];
   u16 timer;
   s16 angle;
-};
-
-struct ContextSprite {
-  u8 unused[0xc]; ///< no code names it
-  s32 scale;
-  u8 unusedAfterScale[0xa]; ///< no code names it
-  u8 flags;
-  u8 count;
-  u8 unusedAfterCount[0xc]; ///< no code names it
-  void *entries[4];
-};
-
-struct ContextEffectEntry {
-  u8 unused[5]; ///< no code names it
-  u8 param;
 };
 
 struct DmaFxPage {

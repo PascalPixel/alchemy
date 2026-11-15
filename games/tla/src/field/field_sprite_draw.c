@@ -99,13 +99,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   decoderWasLoaded = 1;
   decodePicture = Ram_HeapSlots->frameScratch;
   if (decodePicture == NULL) {
-    Dma_Set(
-        Render_DecodePictureCode,
-        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
-                       (s32)Render_DecodePictureBlockSize),
-        DMA_COPY_WORDS(
-            (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
-        REG_DMA3);
+    Render_LoadDecoder();
     decodePicture = Ram_HeapSlots->frameScratch;
     decoderWasLoaded = 0;
   }

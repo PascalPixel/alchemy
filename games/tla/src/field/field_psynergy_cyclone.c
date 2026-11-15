@@ -226,10 +226,7 @@ void FieldPsynergy_Cyclone(void) {
   blue = RGB_LEVEL_MAX << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    *palette++ = (c << 5) | blue | c;
+    Io_Write16((c << 5) | blue | c, palette++);
     /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   }

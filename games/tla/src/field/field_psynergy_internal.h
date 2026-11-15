@@ -13,6 +13,7 @@
 #include "window/message_argument.h"
 #include "field/perspective.h"
 #include "system/iwram_call.h"
+#include "system/io_write.h"
 #include "field/objdisp.h"
 #include "system/system.h"
 #include "fixed_math.h"

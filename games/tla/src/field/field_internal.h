@@ -17,6 +17,7 @@
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
+#include "system/io_write.h"
 #include "system/heap_release.h"
 #include "system/iwram_call.h"
 #include "graphics/resource.h"
@@ -289,5 +290,20 @@ struct IconOwner {
   u8 unusedB[5]; ///< no code names it
   u8 iconId;
 };
+
+/// Copies Render_DecodePicture into the frame scratch slot, the block sized for
+/// the routine and the colour tables it keeps after its code; the copy stops at
+/// the tables, which the decoder fills itself. As RamCode_LoadSlot, a
+/// statement.
+#define Render_LoadDecoder()                                                   \
+  do {                                                                         \
+    Dma_Set(Render_DecodePictureCode,                                          \
+            HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,                            \
+                           (s32)Render_DecodePictureBlockSize),                \
+            DMA_COPY_WORDS((u32)(Render_DecodePictureCopyEnd -                 \
+                                 Render_DecodePictureCode) >>                  \
+                           2),                                                 \
+            REG_DMA3);                                                         \
+  } while (0)
 
 #endif // ALCHEMY_FIELD_INTERNAL_H

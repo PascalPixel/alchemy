@@ -67,13 +67,7 @@ void FieldPsynergy_UpdateBurst(void) {
            16)
           << 5;
 
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      *palette++ = green | blue | red;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
+      Io_Write16(green | blue | red, palette++);
     }
   } else if (work->paletteMode == 2) {
     Dma_Set(Data_080f0fa0, (void *)&OBJ_PLTT_COLOR(15, 0),

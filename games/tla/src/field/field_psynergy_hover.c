@@ -114,11 +114,9 @@ void HoverGlow_Update(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
   for (i = 0; i < 16; i++) {
-    /* FAKEMATCH(dead): the colour's store in a once-only block. */
-    do {
-      *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
-                                      i == 15 ? 14 : i);
-    } while (0);
+    Io_Write16(HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
+                                  i == 15 ? 14 : i),
+               palette++);
   }
   work->phase++;
 

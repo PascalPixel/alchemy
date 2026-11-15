@@ -101,6 +101,13 @@ struct AnimationSpritePart {
   u8 unusedAfterPalette[2]; ///< no code names it
 };
 
+/// Sprite.flags.
+enum SpriteFlag {
+  SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
+  /// Drawn as an outline, in the actor system's edge and fill colours.
+  SPRITE_FLAG_OUTLINED = 1 << 1
+};
+
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
 /// four sprite animations.
 struct Sprite {

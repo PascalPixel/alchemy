@@ -147,8 +147,8 @@ void Field_StartColorTransition(s32 a, s32 b);
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \
-    if (object->scale >= 0x10000) {                                            \
-      object->scale = 0x10000;                                                 \
+    if (object->scale >= Q16_ONE) {                                            \
+      object->scale = Q16_ONE;                                                 \
       object->update = 0;                                                      \
     }                                                                          \
     object->scaleCopy = object->scale;                                         \
@@ -938,8 +938,8 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_OBABA, 6);
   Actor_SetPosition(ACTOR_SALAMANDER, 724, 252);
-  Actor_GetById(ACTOR_SALAMANDER)->scaleX = 0x13333;
-  Actor_GetById(ACTOR_SALAMANDER)->scaleY = 0x13333;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleX = Q16_ONE * 6 / 5;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleY = Q16_ONE * 6 / 5;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -963,7 +963,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
     ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
     ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
-    object->gravity = 0x4000;
+    object->gravity = px(1) / 4;
     object->motionFlags = 2;
     object->groundHeight = -px(999);
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
@@ -999,13 +999,13 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
-    object->gravity = 0x10000;
+    object->gravity = px(1);
     object->motionFlags = 2;
     object->groundHeight = 0;
     object->y.fixed = px(32);
-    object->scaleX = 0x4000;
+    object->scaleX = Q16_ONE / 4;
     object->update = (s32)ChampaCliffCaves_GrowThrownSlowly;
-    object->scaleY = 0x4000;
+    object->scaleY = Q16_ONE / 4;
     Actor_Jump(ACTOR_AVIMANDER, 11, 0);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(ACTOR_AVIMANDER, 3.2);

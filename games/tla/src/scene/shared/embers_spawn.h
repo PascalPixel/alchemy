@@ -22,12 +22,12 @@ next:
       Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity
        * stores. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
+      scale = (size >> 1) + (Q16_ONE / 4);
+      object->velocityY = rise + (px(5) / 4);
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = object->scaleX;
       object->bounce = Q16_ONE / 2;

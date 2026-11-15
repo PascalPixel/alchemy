@@ -277,7 +277,7 @@ void Caverns_StartMovingAngaraBlock(void) {
   search:
     object = Actor_GetById(*ids);
     if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-        position[1] / px(1) == object->y.fixed / 0x10000 &&
+        position[1] / px(1) == object->y.fixed / px(1) &&
         position[2] >> 20 == FIELD_CELL(object->z.fixed))
       goto search_done;
     ids++;
@@ -390,8 +390,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
       options.palette = 7;
       options.priority = 2;
       options.update = (void (*)(union FieldObject *))Caverns_DriftDust;
-      options.startScaleX = 0xcccc;
-      options.startScaleY = 0xcccc;
+      options.startScaleX = Q16_ONE * 4 / 5;
+      options.startScaleY = Q16_ONE * 4 / 5;
       i = 0;
     loop:
       {
@@ -400,8 +400,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[1] = 0;
         velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
-        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
-        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
+        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - (px(3) / 8);
+        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (px(3) / 16);
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
         FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,

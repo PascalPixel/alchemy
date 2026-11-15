@@ -159,7 +159,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
        * scale's load and finishes it after. */
       asm("" : "+r"(limit) : "r"(object->scaleX));
       if (object->scaleX <= (limit << 8) + 255)
-        object->scaleX += 0xa00;
+        object->scaleX += Q16_ONE * 5 / 128;
     }
     object->scaleY = object->scaleX;
     wait(1);
@@ -241,7 +241,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
     /* FAKEMATCH(temporary): the object read again through p after the turn. */
     p = object;
     if (p->scaleX <= 0xffff)
-      p->scaleX += 0xa00;
+      p->scaleX += Q16_ONE * 5 / 128;
     p->scaleY = p->scaleX;
     wait(1);
   }

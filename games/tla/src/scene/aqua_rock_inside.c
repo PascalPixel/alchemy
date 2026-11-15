@@ -342,7 +342,7 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
     if (row == 12) {
       object->motionFlags = 0;
       {
-        s32 step = -0x10000;
+        s32 step = -px(1);
 
         object->y.fixed += step;
       }
@@ -354,7 +354,7 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
     if (FIELD_CELL(object->x.fixed) == 51) {
       object->motionFlags = 0;
       {
-        s32 step = -0x10000;
+        s32 step = -px(1);
 
         object->y.fixed += step;
       }
@@ -822,7 +822,7 @@ void AquaRockInside_RideFalls(s32 value) {
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
-    speed += 0x4000;
+    speed += px(1) / 4;
     object->y.fixed += speed;
     if ((i & 7) == 0)
       AquaRockInside_SpawnSplash(Actor_Get(15));
@@ -1030,8 +1030,8 @@ void AquaRockInside_SpawnSpark(struct Actor *object) {
   struct Actor *child = Import_ActorCreate_(0x2a0, object->x.fixed,
                                             object->y.fixed, object->z.fixed);
 
-  child->scaleY = 0x6666;
-  child->scaleX = 0x6666;
+  child->scaleY = Q16_ONE * 2 / 5;
+  child->scaleX = Q16_ONE * 2 / 5;
   child->motionFlags = 0;
   FieldActor_SetSpriteColor(child, 2);
   Scene_SetActorSpritePriority(child, 1);
@@ -1132,8 +1132,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
-  first->acceleration = 0x3333;
-  first->speedLimit = 0x3333;
+  first->acceleration = px(1) / 5;
+  first->speedLimit = px(1) / 5;
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletRiseScript);
   Sound_Play(SE_194);
   Event_Wait(45);
@@ -1148,7 +1148,7 @@ burst:
   object->x.fixed += ((Random16() & 31) - 16) << 16;
   object->y.fixed += ((Random16() & 15) - 8) << 16;
   object->speedLimit = px(8);
-  object->acceleration = 0x3333;
+  object->acceleration = px(1) / 5;
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
@@ -1199,8 +1199,8 @@ spiral:
   if (i == 3) {
     Actor_SetSpriteColorById(secondId, 256);
     second->motionFlags = noMotion;
-    second->acceleration = 0x3333;
-    second->speedLimit = 0x3333;
+    second->acceleration = px(1) / 5;
+    second->speedLimit = px(1) / 5;
     Actor_SetMovementTypeById(secondId, script);
   }
 tail:
@@ -1464,12 +1464,12 @@ void AquaRockInside_FallThroughWater(void) {
   Actor_SetSpriteColorMode(object, 9);
   *flags = 0;
   object->y.fixed = px(80);
-  speed = 0x30000;
+  speed = px(3);
   i = 31;
 fall:
   object->y.fixed -= speed;
   object->facing += 0x2000;
-  speed += -0xccc;
+  speed += -(px(1) / 20);
   Actor_SetSpriteFlags(object, 0);
   System_Wait(1);
   i--;
@@ -1962,15 +1962,15 @@ void AquaRockInside_FlowWithStream(void) {
   hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
-  position[0] = actor->x.fixed + 0x5b333;
+  position[0] = actor->x.fixed + (px(57) / 10);
   position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + 0x5b333;
+  position[2] = actor->z.fixed + (px(57) / 10);
   hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
-  position[0] = actor->x.fixed - 0x5b333;
+  position[0] = actor->x.fixed - (px(57) / 10);
   position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + 0x5b333;
+  position[2] = actor->z.fixed + (px(57) / 10);
   hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
@@ -1998,7 +1998,7 @@ void Leader_SpinAway(s32 entrance) {
 
     if (i == 30)
       Event_FinishScreenTransition();
-    leader->y.fixed -= 0x4000;
+    leader->y.fixed -= px(1) / 4;
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
@@ -2414,7 +2414,8 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((u32)(Random16() * (Q16_ONE * 3 / 16)) >> 16) +
+                              (Q16_ONE * 3 / 16));
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool

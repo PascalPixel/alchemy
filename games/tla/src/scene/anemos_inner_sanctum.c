@@ -650,8 +650,8 @@ void AnemosInnerSanctum_LightThePillar(void) {
   actor = (FieldActor_Create((u16)type, leader->x.fixed,
                              leader->y.fixed + px(8), leader->z.fixed));
   actor->motionFlags = 0;
-  actor->scaleY = 0x1999;
-  actor->scaleX = 0x1999;
+  actor->scaleY = Q16_ONE / 10;
+  actor->scaleX = Q16_ONE / 10;
   Actor_SetSpriteFlags((s32)actor, 0);
   Actor_StartScript(actor, gAnemosInnerSanctum_PillarRisesScript);
   Actor_SetBlendMode(actor, 1);
@@ -969,7 +969,7 @@ void AnemosInnerSanctum_RaisePlatform(void) {
   object->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   object->speedLimit = px(2);
-  object->acceleration = 0x800;
+  object->acceleration = px(1) / 32;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
   FieldActor_SetMoveTargetFixed(object, object->x.fixed,
                                 object->y.fixed + px(4), object->z.fixed);
@@ -1669,8 +1669,8 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - Q16_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -1734,8 +1734,8 @@ void CrackedTile_DropIn(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   i = 0;
 loop:
   {
@@ -1752,8 +1752,8 @@ loop:
       velocity[1] = 0;
       velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] >> 1;
-      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+      velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
+      velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
       FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                              velocity[0], velocity[1], velocity[2], 0x1090001,
                              &options);

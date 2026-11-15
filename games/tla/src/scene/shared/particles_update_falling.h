@@ -4,7 +4,7 @@ void Particles_UpdateFalling(void) {
   struct Particle *particle = work->particles;
   struct ParticleSprite *sprite = work->sprites;
   s32 i;
-  s32 step = -0x8000;
+  s32 step = -(px(1) / 2);
 
   i = 63;
 next:

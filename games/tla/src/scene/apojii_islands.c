@@ -745,14 +745,14 @@ void ApojiiIslands_FlowWithStream(void) {
       position[2] = leader->z.fixed + px(8);
       result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
-        position[0] = leader->x.fixed + 0x5b333;
+        position[0] = leader->x.fixed + (px(57) / 10);
         position[1] = leader->y.fixed;
-        position[2] = leader->z.fixed + 0x5b333;
+        position[2] = leader->z.fixed + (px(57) / 10);
         result = MapGrid_CheckCollision(leader, position);
         if (result <= 0) {
-          position[0] = leader->x.fixed - 0x5b333;
+          position[0] = leader->x.fixed - (px(57) / 10);
           position[1] = leader->y.fixed;
-          position[2] = leader->z.fixed + 0x5b333;
+          position[2] = leader->z.fixed + (px(57) / 10);
           result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
             anchor->z.fixed += px(2);
@@ -785,7 +785,7 @@ void Leader_SpinAway(s32 entrance) {
 
     if (i == 30)
       Event_FinishScreenTransition();
-    leader->y.fixed -= 0x4000;
+    leader->y.fixed -= px(1) / 4;
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)

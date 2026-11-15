@@ -34,9 +34,9 @@ retry:
   object->velocityX = 0;
   object->velocityZ = 0;
   p = position;
-  p[0] = x = (object->x.fixed & 0xfff00000) + 0x80000;
+  p[0] = x = (object->x.fixed & 0xfff00000) + px(8);
   p[1] = object->y.fixed;
-  p[2] = z = (object->z.fixed & 0xfff00000) + 0x80000;
+  p[2] = z = (object->z.fixed & 0xfff00000) + px(8);
   targetZ = z;
   targetX = x;
   layer = &object->layer;
@@ -70,7 +70,7 @@ retry:
   p[0] = x;
   p[2] = z;
   object->speedLimit = px(2);
-  object->acceleration = 0x1999;
+  object->acceleration = px(1) / 10;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y.fixed, z);
   Actor_SelectAnimation(object, 2);
@@ -114,7 +114,7 @@ overlap:
   targetX = q[0];
   targetZ = q[2];
   object->speedLimit = px(2);
-  object->acceleration = 0x1999;
+  object->acceleration = px(1) / 10;
   Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
   goto test;

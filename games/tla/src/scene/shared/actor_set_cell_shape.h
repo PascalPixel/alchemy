@@ -11,6 +11,6 @@ void Actor_SetCellShape(s32 level, s32 layer, s32 owner) {
 
   height += level;
 
-  shape += object->x.fixed / 0x100000 + object->z.fixed / 0x100000 * 128;
+  shape += object->x.fixed / px(16) + object->z.fixed / px(16) * 128;
   *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }

@@ -268,7 +268,7 @@ next:
   {
     object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
     object->motionFlags = 0;
-    object->y.fixed += 0x8000;
+    object->y.fixed += px(1) / 2;
     object->acceleration = px(1) / 16;
     object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);

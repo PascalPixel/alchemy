@@ -773,9 +773,9 @@ void DehkanPlateau_StepOnCrack(void) {
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
         Sound_Play(SE_DUST_PUFF);
-      leader->scaleX += -0x400;
-      leader->scaleY += -0x300;
-      leader->y.fixed += -0x9999;
+      leader->scaleX += -(Q16_ONE / 64);
+      leader->scaleY += -(Q16_ONE * 3 / 256);
+      leader->y.fixed += -(px(3) / 5);
       wait(1);
     }
     gFieldWork->transition = 0x209;
@@ -1135,7 +1135,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
 
   if (work->frame != -1 && work->frame <= 7)
-    object->scaleY += -0x1f00;
+    object->scaleY += -(Q16_ONE * 31 / 256);
   if (work->stage != 0) {
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 4);
@@ -1206,8 +1206,8 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
       Actor_SetSpriteFlags(object, 0);
       Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gDehkanPlateau_DustScript);
-      object->scaleX = 0xb333;
-      object->scaleY = 0xb333;
+      object->scaleX = Q16_ONE * 7 / 10;
+      object->scaleY = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       effect->velocity.x = 0;
       effect->velocity.z = 0;
@@ -1326,9 +1326,9 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   for (i = 0; i < 40; i++) {
     if (i == 5)
       Sound_Play(SE_DUST_PUFF);
-    leader->scaleX -= 0x400;
-    leader->scaleY -= 0x300;
-    leader->y.fixed -= 0x9999;
+    leader->scaleX -= Q16_ONE / 64;
+    leader->scaleY -= Q16_ONE * 3 / 256;
+    leader->y.fixed -= px(3) / 5;
     wait(1);
   }
   gFieldWork->transition = 0x209;
@@ -1420,8 +1420,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
     FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, px(248), 0,
                                          px(120));
     wait(1);
-    gDehkanPlateau_PoundCube->speedLimit = 0x19999;
-    gDehkanPlateau_PoundCube->acceleration = 0x19999;
+    gDehkanPlateau_PoundCube->speedLimit = px(8) / 5;
+    gDehkanPlateau_PoundCube->acceleration = px(8) / 5;
     gDehkanPlateau_PoundCube->velocityY = px(8);
   }
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -1858,8 +1858,8 @@ void DehkanPlateau_LandFromFall(void) {
   opts = &options;
   opts->palette = 7;
   opts->update = FieldEffect_AdvanceMotion;
-  opts->startScaleX = 0xa3d7;
-  opts->startScaleY = 0xa3d7;
+  opts->startScaleX = Q16_ONE * 16 / 25;
+  opts->startScaleY = Q16_ONE * 16 / 25;
   opts = &options;
   spawn = 1;
   i = 0;
@@ -1877,8 +1877,8 @@ loop:
       velocity[2] = Trig_Sin(angle);
       velocity[0] += velocity[0] >> 1;
       velocity[0] += ((Random16() * 3) << 14) >> 16;
-      velocity[0] += -0x6000;
-      velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
+      velocity[0] += -(px(3) / 8);
+      velocity[2] += (((Random16() * 3) << 13) >> 16) + -(px(3) / 16);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocity[0], velocity[1], velocity[2], 0x01090001,
                         opts);

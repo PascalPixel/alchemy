@@ -171,7 +171,7 @@ void WorldMap_UpdatePlacedActors(void) {
           object->facing = placement->angle;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
-          sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
+          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
           *slot = object;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
@@ -237,7 +237,7 @@ s32 WorldMap_RiseFromAnchor(struct Actor *object) {
 
   if (step > 31)
     return 0;
-  scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
+  scale = Iwram_MulQ16(Math_Sin(step << 10), Q16_ONE * 5 / 4);
   object->scaleX = scale;
   object->scaleY = scale;
   object->x.fixed = parent->x.fixed;
@@ -260,7 +260,7 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
 
   /* FAKEMATCH(temporary): the resident multiply called through a local pointer.
    */
-  mulQ16(object->scaleX, 0x18000);
+  mulQ16(object->scaleX, Q16_ONE * 3 / 2);
   spark =
       FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
   if (spark != NULL) {
@@ -300,7 +300,7 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   struct Actor *particle;
   struct FieldSprite *sprite;
 
-  Iwram_MulQ16(object->scaleX, 0x18000);
+  Iwram_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
   SET_VECTOR(position, object->x.fixed, object->y.fixed + px(2),
              object->z.fixed);
   angle = Random16();
@@ -311,9 +311,9 @@ void WorldMap_SpawnParticle(struct Actor *object) {
     sprite = particle->sprite;
     Actor_StartScript(particle, gWorldMap_ParticleScript);
     Sprite_StartAnimation(sprite, 2);
-    particle->gravity = 0x200;
-    particle->scaleX = 0xcccc;
-    particle->scaleY = 0xcccc;
+    particle->gravity = px(1) / 128;
+    particle->scaleX = Q16_ONE * 4 / 5;
+    particle->scaleY = Q16_ONE * 4 / 5;
     if (sprite != NULL)
       sprite->nextFrame = 0;
   }

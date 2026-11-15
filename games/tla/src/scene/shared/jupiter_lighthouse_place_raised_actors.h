@@ -46,8 +46,8 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    leftAngel->y.fixed += 0x199900;
-    rightAngel->y.fixed += 0x199900;
+    leftAngel->y.fixed += px(6553) / 256;
+    rightAngel->y.fixed += px(6553) / 256;
     {
       s32 step = 0x1b8480;
 

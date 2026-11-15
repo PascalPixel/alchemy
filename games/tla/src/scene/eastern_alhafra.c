@@ -348,7 +348,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   if (hit) {
     if (id != ACTOR_FIRST_CRATE)
       Event_PlaySound(SE_310);
-    object->gravity = 0x170a;
+    object->gravity = px(9) / 100;
     object->motionFlags = 3;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
@@ -365,7 +365,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     spark = (FieldActor_Create(276, object->x.fixed, object->y.fixed,
                                object->z.fixed));
     sparks[i] = spark;
-    spark->scaleX = 0xa666;
+    spark->scaleX = Q16_ONE * 13 / 20;
     Actor_SelectAnimation(spark, 1);
     Actor_SetSpriteFlags(spark, 0);
     Event_PlaySound(SE_CAST);
@@ -461,7 +461,7 @@ void EasternAlhafra_RollLog(void) {
       Actor_SetAnimation(ACTOR_LOG, 3);
       Actor_SetDestinationOffset(ACTOR_LOG, 0, 16);
       FieldEvent_Wait(20);
-      log->gravity = 0xccc;
+      log->gravity = px(1) / 20;
       log->motionFlags = 3;
       i = 0;
       if (log->y.fixed > 0) {
@@ -1717,7 +1717,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
 void EasternAlhafra_BriggsStealsShip(void) {
   struct MapWork *map;
   s32 i;
-  s32 step = 0x10000;
+  s32 step = px(1);
 
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;

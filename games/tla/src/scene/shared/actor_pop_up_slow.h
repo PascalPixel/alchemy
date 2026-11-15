@@ -4,7 +4,7 @@ s32 Actor_PopUpSlow(struct Actor *object) {
 
   if (frame == 0) {
     object->y.fixed =
-        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + 0x100000;
+        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + px(16);
     object->scaleX = frame;
     object->scaleY = frame;
     object->speedLimit = px(1);

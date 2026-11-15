@@ -225,8 +225,8 @@ void AnkohlRuins_LandFromFall(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   i = 0;
 loop:
   angle = i << 12;
@@ -234,8 +234,8 @@ loop:
   velocity[1] = 0;
   velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
-  velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
-  velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
+  velocity[0] += ((Random16() * 3) << 14 >> 16) - (px(3) / 8);
+  velocity[2] += ((Random16() * 3) << 13 >> 16) - (px(3) / 16);
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                     velocity[0], velocity[1], velocity[2], 0x1090001, &options);
   i++;
@@ -476,8 +476,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
   s32 z;
 
   params.palette = 1;
-  params.startScaleX = 0xc000;
-  params.startScaleY = 0xc000;
+  params.startScaleX = Q16_ONE * 3 / 4;
+  params.startScaleY = Q16_ONE * 3 / 4;
   row = 0;
   if (row < rows) {
     z = startZ;
@@ -662,8 +662,8 @@ void AnkohlRuins_FlowWithSand(void) {
   position[2] = leader->z.fixed + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
     work->stepTrigger = 66;
-  leader->z.fixed += 0x8000;
-  companion->z.fixed += 0x8000;
+  leader->z.fixed += px(1) / 2;
+  companion->z.fixed += px(1) / 2;
 }
 
 void AnkohlRuins_PushedOffLedge(void) {
@@ -1064,7 +1064,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandStepDelay = 7;
     gAnkohlRuins_SandTimer = done;
     gAnkohlRuins_SandTime = 200;
-    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandStep = px(1) / 2;
     gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseFirstSand();
@@ -1105,7 +1105,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandStepDelay = 3;
     gAnkohlRuins_SandTimer = done;
     gAnkohlRuins_SandTime = 100;
-    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandStep = px(1) / 2;
     gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseSecondSand();
@@ -1131,7 +1131,7 @@ void AnkohlRuins_RideRaftDown(void) {
 
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && work->stepTrigger != 40)
     return;
-  raft->z.fixed += 0xcccc;
+  raft->z.fixed += px(4) / 5;
   column = FIELD_CELL(leader->x.fixed);
   if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
@@ -1292,8 +1292,8 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     dy = Random16() & 7;
     params.type = 673;
     FieldEffect_Spawn(object->x.fixed + px(dx - 8),
-                      object->y.fixed + px(dy - 8), object->z.fixed, 0, 0x8000,
-                      phase, 0x100000, &params);
+                      object->y.fixed + px(dy - 8), object->z.fixed, 0,
+                      px(1) / 2, phase, 0x100000, &params);
   }
 }
 
@@ -2146,7 +2146,7 @@ s16 gAnkohlRuins_SandTimer = 0;
 
 s16 gAnkohlRuins_SandTime = 0;
 
-s32 gAnkohlRuins_SandStep = 0x8000;
+s32 gAnkohlRuins_SandStep = px(1) / 2;
 
 s32 gAnkohlRuins_SandRoom = 0;
 

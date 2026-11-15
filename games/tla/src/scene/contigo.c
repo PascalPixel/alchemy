@@ -423,8 +423,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -681,7 +681,7 @@ void Contigo_RaiseMotes(void) {
       object->motionFlags = 0;
       object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
       object->userValue = 0;
-      object->gravity = 0x1999;
+      object->gravity = px(1) / 10;
       object->velocityY = px(3);
       object->facing = Random16();
     }
@@ -726,12 +726,12 @@ void Contigo_BabyThinks(void) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
     effect->motionFlags = 0;
-    effect->scaleX = 0x1999;
-    effect->scaleY = 0x1999;
+    effect->scaleX = Q16_ONE / 10;
+    effect->scaleY = Q16_ONE / 10;
     i = 0;
   grow:
-    effect->scaleX += 0x666;
-    effect->scaleY += 0x666;
+    effect->scaleX += Q16_ONE / 40;
+    effect->scaleY += Q16_ONE / 40;
     wait(1);
     i++;
     if (i < 28)
@@ -1194,8 +1194,8 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
-                      velocity[0], velocity[1] + 0x1999, velocity[2], px(2),
-                      &options);
+                      velocity[0], velocity[1] + (px(1) / 10), velocity[2],
+                      px(2), &options);
   }
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);
@@ -1452,8 +1452,8 @@ void Contigo_SendToSuperLuckyDice(void) {
 void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->scaleX = 0xb333;
-  object->scaleY = 0xb333;
+  object->scaleX = Q16_ONE * 7 / 10;
+  object->scaleY = Q16_ONE * 7 / 10;
   object->radius = 8;
 }
 

@@ -650,12 +650,13 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   s32 y;
 
   y = first->y.fixed;
-  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed, 0x1000, 15);
+  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed, px(1) / 16,
+                         15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y.fixed;
-  Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed, 0xf000,
-                         15);
+  Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed,
+                         px(15) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
@@ -663,7 +664,7 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
-                         second->z.fixed, 0xf000, 15);
+                         second->z.fixed, px(15) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }

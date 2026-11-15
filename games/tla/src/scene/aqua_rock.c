@@ -306,7 +306,7 @@ void AquaRock_TurnSprite(struct Actor *object) {
 s32 AquaRock_StartDrifter(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   object->speedLimit = px(1);
-  object->acceleration = 0xccc;
+  object->acceleration = px(1) / 20;
   object->collisionFlags = 0;
   object->update = (void (*)(void))AquaRock_TurnSprite;
   return 0;
@@ -694,15 +694,15 @@ void AquaRock_RideStreamUp(void) {
       Import_EventSetExitRequest(6);
       return;
     }
-    ahead.x = leader->x.fixed + 0x5b333;
+    ahead.x = leader->x.fixed + (px(57) / 10);
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed - 0x5b333;
+    ahead.z = leader->z.fixed - (px(57) / 10);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    ahead.x = leader->x.fixed - 0x5b333;
+    ahead.x = leader->x.fixed - (px(57) / 10);
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed - 0x5b333;
+    ahead.z = leader->z.fixed - (px(57) / 10);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
@@ -998,7 +998,7 @@ scatter:
     struct Actor *object = Actor_GetById(i);
 
     object->speedLimit = px(1) / 4;
-    object->acceleration = 0x400;
+    object->acceleration = px(1) / 64;
     object->update = (void (*)(void))AquaRock_SwayMoai;
     object->timer = Random16();
     object->userValue = 0;
@@ -1246,15 +1246,15 @@ void AquaRock_FlowWithStream(void) {
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x.fixed + 0x5b333;
+  position[0] = leader->x.fixed + (px(57) / 10);
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + 0x5b333;
+  position[2] = leader->z.fixed + (px(57) / 10);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x.fixed - 0x5b333;
+  position[0] = leader->x.fixed - (px(57) / 10);
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + 0x5b333;
+  position[2] = leader->z.fixed + (px(57) / 10);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
@@ -1292,7 +1292,7 @@ void AquaRock_SpinUpAndAway(s32 arg0) {
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
-    object->y.fixed -= 0x4000;
+    object->y.fixed -= px(1) / 4;
     angle = object->facing;
     angle += 0x1000;
     object->facing = angle;
@@ -1318,7 +1318,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
-  leader->speedLimit = 0x3333;
+  leader->speedLimit = px(1) / 5;
   Actor_SetAnimationById(*owner, 2);
   Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);

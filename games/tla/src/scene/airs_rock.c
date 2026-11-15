@@ -483,15 +483,15 @@ void AirsRock_BlowGust(void) {
       FieldActor_Create(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
-  gust->scaleX = 0x1b333;
-  gust->scaleY = 0x3333;
+  gust->scaleX = Q16_ONE * 17 / 10;
+  gust->scaleY = Q16_ONE / 5;
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->target->sprite)->priority;
   Actor_SetMoveTarget(gust, effect->target->x.fixed, effect->target->y.fixed,
                       effect->target->z.fixed - px(1));
   while (gust->scaleY <= 0x14ccb) {
-    gust->scaleY += 0x1999;
+    gust->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_WaitForMove(gust);
@@ -503,7 +503,7 @@ void AirsRock_BlowGust(void) {
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
-      spark->gravity = 0xcccc;
+      spark->gravity = px(4) / 5;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -576,7 +576,7 @@ void AirsRock_BlowGust(void) {
     while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
-        dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
+        dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + Q16_ONE;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = px(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
@@ -629,9 +629,9 @@ void AirsRock_BlowGust(void) {
   gust->targetY = 0;
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
-    gust->scaleX -= 0x2666;
+    gust->scaleX -= Q16_ONE * 3 / 20;
     gust->scaleY -= Q16_ONE / 4;
-    gust->y.fixed += 0x38000;
+    gust->y.fixed += px(7) / 2;
     Event_Wait(1);
   }
   Actor_Release(gust);
@@ -657,10 +657,10 @@ void AirsRock_SwirlLeaf(struct Actor *object) {
   object->z.fixed += object->riseBaseY;
   if ((object->x.fixed >> 19) <= 39) {
     object->bounce += Q16_ONE * 3 / 2;
-    scale = object->scaleX + 0xccc;
+    scale = object->scaleX + (Q16_ONE / 20);
   } else {
     object->bounce -= Q16_ONE * 3 / 2;
-    scale = object->scaleX - 0x51e;
+    scale = object->scaleX - (Q16_ONE / 50);
   }
   object->scaleX = scale;
   object->scaleY = scale;
@@ -1012,7 +1012,7 @@ extern u32 gAirsRock_WhirlwindFadesScript[];
 void AirsRock_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 speed = 0x18000;
+  s32 speed = px(3) / 2;
   s32 cue = 539;
   struct Actor *other, *launcher;
   s32 i;
@@ -1211,8 +1211,8 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
 
   first = FieldActor_Create(255, x, 0, z);
   options.priority = 1;
-  options.startScaleX = 0x20000;
-  options.startScaleY = 0x20000;
+  options.startScaleX = Q16_ONE * 2;
+  options.startScaleY = Q16_ONE * 2;
   for (i = 0; i != 12; i++) {
     scatter.x = x + px(Random16() & 63) - px(32);
     scatter.y = (Random16() & 15) << 12;
@@ -1235,11 +1235,11 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
     Actor_StartScript(rock, gAirsRock_RubbleScript);
     Actor_SelectAnimation(rock, 2);
     rock->velocityY = px(Random16() & 3) + px(4);
-    rock->gravity = 0x3333;
-    rock->bounce = 0x6666;
-    rock->scaleX = 0xcccc;
-    rock->scaleY = 0xcccc;
-    rock->speedLimit = 0xcccc;
+    rock->gravity = px(1) / 5;
+    rock->bounce = Q16_ONE * 2 / 5;
+    rock->scaleX = Q16_ONE * 4 / 5;
+    rock->scaleY = Q16_ONE * 4 / 5;
+    rock->speedLimit = px(4) / 5;
     scatter.y = Random16() & 7;
     scatter.x = Iwram_MulQ16(Trig_Cos(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);

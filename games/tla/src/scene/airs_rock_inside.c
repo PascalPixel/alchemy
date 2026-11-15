@@ -312,7 +312,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       a = list[0];
       flag = list[1];
       if (count < 8)
-        object->scaleY -= 0x1f00;
+        object->scaleY -= Q16_ONE * 31 / 256;
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->layer);
@@ -526,14 +526,14 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
   } else if (step <= 5) {
-    second->y.fixed += 0x53333;
+    second->y.fixed += px(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
   if (step <= 7)
-    first->scaleY += -0x1f00;
+    first->scaleY += -(Q16_ONE * 31 / 256);
   if (mode == 1) {
     first->scaleY = Q16_ONE;
     second->y.fixed = second->groundHeight;
@@ -768,7 +768,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = 0x18000;
+  s32 speed = px(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || gMainRoutineWork.movementMode == 5) {
@@ -891,7 +891,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = 0x18000;
+  s32 speed = px(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || work->transitionActive == 0) {
@@ -1085,8 +1085,8 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   object->z.fixed += object->speedLimit;
   object->x.fixed += object->acceleration;
   object->speedLimit -= object->riseBaseY;
-  object->scaleX += 0xccc;
-  object->scaleY += 0xccc;
+  object->scaleX += Q16_ONE / 20;
+  object->scaleY += Q16_ONE / 20;
 }
 
 /// A puff of air rising from a vent.
@@ -1100,10 +1100,10 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
   object->timer = 27;
   object->motionFlags = 0;
   object->steeringFlags = 0;
-  object->scaleX = 0x8000;
+  object->scaleX = Q16_ONE / 2;
   object->speedLimit = px(4);
   object->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
-  object->riseBaseY = 0x3800;
+  object->riseBaseY = px(7) / 32;
   object->update = (s32)AirsRockInside_UpdateVentPuff;
 }
 
@@ -1220,8 +1220,8 @@ void AirsRockInside_BlowGust(void) {
                                             leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
-  gust->scaleX = 0x1b333;
-  gust->scaleY = 0x3333;
+  gust->scaleX = Q16_ONE * 17 / 10;
+  gust->scaleY = Q16_ONE / 5;
   gust->motionFlags = 0;
   /* FAKEMATCH(signature): the target's word read as long, an alias set outside
    * struct Actor's. */
@@ -1232,7 +1232,7 @@ void AirsRockInside_BlowGust(void) {
                       TARGET(effect)->z.fixed - px(1));
   gust->groundHeight = Map_GetTerrainHeight(0, gust->x.fixed, gust->z.fixed);
   while (gust->scaleY <= 0x14ccb) {
-    gust->scaleY += 0x1999;
+    gust->scaleY += Q16_ONE / 10;
     FieldEvent_Wait(1);
   }
   Actor_WaitForMove(gust);
@@ -1247,7 +1247,7 @@ void AirsRockInside_BlowGust(void) {
       spark->groundHeight =
           Map_GetTerrainHeight(0, spark->x.fixed, spark->z.fixed);
       spark->bounce = spark->x.fixed;
-      spark->gravity = 0xcccc;
+      spark->gravity = px(4) / 5;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1398,7 +1398,7 @@ void AirsRockInside_BlowGust(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         {
-          dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
+          dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + Q16_ONE;
         }
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = px(1);
@@ -1452,9 +1452,9 @@ shrink:
   gust->targetY = 0;
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
-    gust->scaleX -= 0x2666;
+    gust->scaleX -= Q16_ONE * 3 / 20;
     gust->scaleY -= Q16_ONE / 4;
-    gust->y.fixed += 0x38000;
+    gust->y.fixed += px(7) / 2;
     FieldEvent_Wait(1);
   }
   Actor_Release(gust);
@@ -1517,8 +1517,8 @@ shrink:
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
           FieldEffect_Spawn(velocity.x + px(Random16() & 15), velocity.y,
-                            velocity.z - px(Random16() & 31), 0, 0, -0x8000,
-                            EFFECT_USE_PRIORITY, &dust);
+                            velocity.z - px(Random16() & 31), 0, 0,
+                            -(px(1) / 2), EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);
       } else {
@@ -1723,10 +1723,10 @@ void AirsRockInside_BurstDust(s32 x, s32 z) {
   s32 i;
 
   options.priority = 1;
-  options.startScaleX = 0x20000;
-  options.startScaleY = 0x20000;
-  options.targetScaleX = 0x8000;
-  options.targetScaleY = 0x8000;
+  options.startScaleX = Q16_ONE * 2;
+  options.startScaleY = Q16_ONE * 2;
+  options.targetScaleX = Q16_ONE / 2;
+  options.targetScaleY = Q16_ONE / 2;
   i = 0;
 burst:
   spawn.x = x + px(Random16() & 63) - px(32);
@@ -1750,7 +1750,7 @@ void AirsRockInside_ScatterSparks(s32 x, s32 z) {
 
   spawn.kind = 0x2a0;
   spawn.mode = 1;
-  spawn.scaleX = 0xcccc;
+  spawn.scaleX = Q16_ONE * 4 / 5;
   spawn.scaleY = Q16_ONE * 3;
   i = 0;
 next:
@@ -1893,7 +1893,7 @@ row:
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeedFixed(0x10000, 0x2000);
+  FieldCamera_SetSpeedFixed(px(1), px(1) / 8);
   FieldCamera_MoveToFixed(px(312), -1, px(680), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(11)->update = 0;
@@ -1929,7 +1929,7 @@ fade:
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0x1380000, 0x2d00000);
   MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
-  Camera_SetSpeedParameters(0x18000, 0x3000);
+  Camera_SetSpeedParameters(px(3) / 2, px(3) / 16);
   FieldCamera_MoveToActorById(10, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
@@ -2202,7 +2202,7 @@ row:
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeedFixed(0x10000, 0x2000);
+  FieldCamera_SetSpeedFixed(px(1), px(1) / 8);
   FieldCamera_MoveToFixed(px(216), -1, px(224), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(10)->update = 0;
@@ -2238,7 +2238,7 @@ fade:
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0xd80000, 0x12d0000);
   MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
-  Camera_SetSpeedParameters(0x18000, 0x3000);
+  Camera_SetSpeedParameters(px(3) / 2, px(3) / 16);
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
@@ -2288,7 +2288,7 @@ void AirsRockInside_StepOffRide(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 376, 668);
   flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags;
   *flags = bit | *flags;
@@ -2406,8 +2406,8 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   struct Actor *object = FieldActor_Create(0x2a0, source->x.fixed,
                                            source->y.fixed, source->z.fixed);
 
-  object->scaleY = 0x6666;
-  object->scaleX = 0x6666;
+  object->scaleY = Q16_ONE * 2 / 5;
+  object->scaleX = Q16_ONE * 2 / 5;
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
@@ -2495,7 +2495,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
 
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
-  Camera_SetSpeedParameters(0x8000, 0x1000);
+  Camera_SetSpeedParameters(px(1) / 2, px(1) / 16);
   FieldCamera_MoveWithinMapBounds(px(a->x.part[0].pixel),
                                   a->y.part[0].pixel << 16,
                                   a->z.part[0].pixel << 16, 1);
@@ -2505,8 +2505,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
-  a->acceleration = 0x3333;
-  a->speedLimit = 0x3333;
+  a->acceleration = px(1) / 5;
+  a->speedLimit = px(1) / 5;
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletRiseScript);
   Sound_Play(SE_194);
   FieldEvent_Wait(45);
@@ -2522,7 +2522,7 @@ first:
     spark->x.fixed += px((Random16() & 31) - 16);
     spark->y.fixed += px((Random16() & 15) - 8);
     spark->speedLimit = px(8);
-    spark->acceleration = 0x3333;
+    spark->acceleration = px(1) / 5;
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
@@ -2574,8 +2574,8 @@ second:
     if (i == 3) {
       Actor_SetSpriteColorById(idB, 0x100);
       b->motionFlags = 0;
-      b->acceleration = 0x3333;
-      b->speedLimit = 0x3333;
+      b->acceleration = px(1) / 5;
+      b->speedLimit = px(1) / 5;
       /* FAKEMATCH(barrier): the empty asm before the call. */
       asm("");
       Actor_SetMovementTypeById(idB, gAirsRockInside_ShebaRiseScript);
@@ -2670,8 +2670,8 @@ void AirsRockInside_ReadRevealTablet(void) {
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
     EVENT_WORK->message++;
-    Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, 0xb333, 0x5999);
-    Actor_SetSpeedFixed(6, 0xb333, 0x5999);
+    Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, px(7) / 10, px(7) / 20);
+    Actor_SetSpeedFixed(6, px(7) / 10, px(7) / 20);
     Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 136);
@@ -2710,7 +2710,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(20);
-    Actor_SetSpeedFixed(6, 0x13333, 0x9999);
+    Actor_SetSpeedFixed(6, px(6) / 5, px(3) / 5);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != 0)
@@ -2836,15 +2836,15 @@ found:
   i = 0;
 step:
   if (i <= 4) {
-    second->y.fixed += 0x53333;
+    second->y.fixed += px(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
-  leader->y.fixed += -0x38000;
+  leader->y.fixed += -(px(7) / 2);
   leader->groundHeight = leader->y.fixed;
-  first->scaleY += -0x1f00;
+  first->scaleY += -(Q16_ONE * 31 / 256);
   wait(1);
   i++;
   if (i != 8)
@@ -2879,7 +2879,7 @@ void AirsRockInside_RideFaceWarp(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
@@ -2982,8 +2982,8 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_SelectAnimation(lift, 2);
   Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
-  lift->speedLimit = 0x16666;
-  lift->acceleration = 0x16666;
+  lift->speedLimit = px(7) / 5;
+  lift->acceleration = px(7) / 5;
   Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed + px(80),
                       leader->z.fixed);
   Actor_SetMoveTarget(lift, lift->x.fixed, lift->y.fixed + px(72),
@@ -3046,7 +3046,7 @@ void AirsRockInside_SpawnMotes(void) {
       object->motionFlags = zero;
       object->priorityFlags = zero;
     }
-    object->acceleration = object->speedLimit = (i << 12) + 0x8000;
+    object->acceleration = object->speedLimit = (i << 12) + (px(1) / 2);
     object->update = AirsRockInside_DriftMote;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
@@ -3149,8 +3149,8 @@ void AirsRockInside_LandInHall(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 4 / 5;
+  options.startScaleY = Q16_ONE * 4 / 5;
   for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
@@ -3161,8 +3161,8 @@ void AirsRockInside_LandInHall(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14) >> 16;
-    velocity[0] += -0x6000;
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
+    velocity[0] += -(px(3) / 8);
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -(px(3) / 16);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

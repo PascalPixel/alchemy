@@ -160,7 +160,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    object->y.fixed += 0x3333;
+    object->y.fixed += px(1) / 5;
     Event_Wait(1);
   }
   Event_Wait(70);

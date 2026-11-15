@@ -66,7 +66,7 @@ top:
   position->x = startX;
   position->z = startZ;
   actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
+  actor->acceleration = px(1) / 10;
   actor->timer = 0;
   FieldActor_SetMoveTargetFixed(actor, startX, actor->y.fixed, startZ);
   Actor_SelectAnimation(actor, 2);
@@ -99,7 +99,7 @@ body:
   x = next->x;
   z = next->z;
   actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
+  actor->acceleration = px(1) / 10;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
   if (nextBehavior != startBehavior) {

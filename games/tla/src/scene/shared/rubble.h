@@ -17,8 +17,7 @@ void Rubble_Spray(s32 spread) {
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -27,19 +26,19 @@ void Rubble_Spray(s32 spread) {
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
       Actor_StartScript(effect, gRubble_SprayScript);
-      effect->scaleY = effect->scaleX = 0xb333;
+      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), px(6) / 5);
         effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
+      effect->velocity.y = -(((Random16() << 14) >> 16) + (px(3) / 8));
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
-      effect->scaleRateY = -0x600;
+      effect->scaleRateX = -(Q16_ONE / 32);
+      effect->scaleRateY = -(Q16_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
     i++;
@@ -74,8 +73,8 @@ void Rubble_Burst(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
+      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - (px(3) / 8);
+      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - (px(3) / 16);
       effect->spin = ((Random16() << 12) >> 16) - 0x800;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;

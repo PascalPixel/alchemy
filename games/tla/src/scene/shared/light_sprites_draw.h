@@ -18,7 +18,7 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;

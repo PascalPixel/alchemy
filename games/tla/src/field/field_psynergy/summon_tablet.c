@@ -485,11 +485,6 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     leader->y.fixed = leader->groundHeight = height;
 }
 
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_RunDrainMotes(void *effect, s32 mode);

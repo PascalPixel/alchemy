@@ -36,7 +36,7 @@ void WorldMap_InitializePerspective(void) {
   u8 *affinePages;
   s32 *cameraPosition;
   volatile u32 fill;
-  struct EyeOffset eyeOffset;
+  struct FixedPointPosition eyeOffset;
   s32 farPlane;
   s32 tileIndex;
 
@@ -316,8 +316,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks the
 /// BG mode from the window's top and bottom.
 void WorldMap_ApplyAffinePage(void) {
-  struct MapAffinePair(*affinePages)[160] =
-      ((struct MapAffineWork *)Ram_HeapSlots->worldMapAffine)->pages;
+  struct WorldMapAffinePair(*affinePages)[160] =
+      ((struct WorldMapAffineWork *)Ram_HeapSlots->worldMapAffine)->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)0x04000020;
   struct WorldMapView *perspective =
@@ -464,7 +464,7 @@ void WorldMap_UpdateView(void) {
   s32 tileRow;
   s32 shakeOffsetX;
   s32 shakeOffsetY;
-  struct EyeOffset eyeOffset;
+  struct FixedPointPosition eyeOffset;
 
   shakeOffsetX = 0;
   shakeOffsetY = 0;

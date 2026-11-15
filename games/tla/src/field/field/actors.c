@@ -185,7 +185,7 @@ void ActorSystem_Initialize(s32 mode) {
     Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
-    Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_ProjectSprites, TASK_PASS_VBLANK);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
   system->edge = 15;
@@ -670,7 +670,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
   u16 dispcnt;
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
-  Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
+  Task_SuspendAll(ActorSystem_ProjectSprites);
   PaletteFade_SetTargetFar(0x10000, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
@@ -683,7 +683,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
   u16 dispcnt;
 
   Task_ResumeAll(ActorSystem_PlaceSprites);
-  Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(ActorSystem_ProjectSprites);
   dispcnt = REG_DISPCNT;
   REG_DISPCNT = dispcnt & 0xe1ff;
 }
@@ -706,7 +706,7 @@ s32 Actor_ReturnTrue(void) { return 1; }
 /// screen.
 void ActorSystem_PlaceSprites(void) {
   // Unused: gives the stack frame its 36 bytes, as The Broken Seal's.
-  struct CameraPoint unusedPoints[3];
+  struct ActorCameraPoint unusedPoints[3];
   struct SpritePlacement point;
   struct SpriteScale scale;
   s32 objectIndex;
@@ -966,16 +966,16 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
 /// Each frame, with the fixed camera: places every active object, from the
 /// 64th down. While battle commands are chosen (flag 363) it uses the fixed
 /// view matrix and turns the objects by an eighth of a turn less.
-void ObjectSystem_UpdateCameraFixed(void) {
-  struct FixedCamera *camera = Ram_HeapSlots->cameraWork;
+void ActorSystem_ProjectSprites(void) {
+  struct ActorCameraFixed *camera = Ram_HeapSlots->cameraWork;
   struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
-  struct CameraPoint *eye;
-  struct CameraPoint *target;
+  struct ActorCameraPoint *eye;
+  struct ActorCameraPoint *target;
   struct Actor *actor;
   s32 angle;
   s32 i;
   // Unused: gives the stack frame its 12 bytes.
-  struct CameraPoint unused;
+  struct ActorCameraPoint unused;
 
   /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
@@ -989,10 +989,10 @@ void ObjectSystem_UpdateCameraFixed(void) {
   } while (0);
   eye = &camera->eye;
   target = &camera->target;
-  if (camera->eyeOverride != NULL)
-    eye = camera->eyeOverride;
-  if (camera->targetOverride != NULL)
-    target = camera->targetOverride;
+  if (camera->followEye != NULL)
+    eye = camera->followEye;
+  if (camera->followPosition != NULL)
+    target = camera->followPosition;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   if (GameFlag_Get(363)) {

@@ -24,7 +24,7 @@ void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void ObjectSystem_UpdateCamera(void);
-void ObjectSystem_UpdateCameraFixed(void);
+void ActorSystem_ProjectSprites(void);
 s32 Actor_FindLastActiveId(void);
 void BattleMotion_ProjectPositionFar(s32, s32 *);
 s32 Unit_KnowsPsynergyFar(s32 group, s32 entry);

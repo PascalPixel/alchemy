@@ -128,11 +128,6 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   return NULL;
 }
 
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
 struct FxGroup {
   u8 unk00[32];
   struct Actor *objects[8];

@@ -168,12 +168,21 @@ enum DisplayControl {
 /// Background colour 0, the backdrop shown where no layer draws.
 #define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
 
+#define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
+#define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
+/// Colours in palette RAM: the background's, then the sprites'.
+#define PLTT_COLORS (2 * BG_PLTT_COLORS)
+
 #define BG_PLTT ((volatile u16 *)0x05000000) ///< 16 palettes of 16 colours
+/// Colours in one 16-colour palette.
+#define PALETTE_COLORS 16
 /// Colour `color` of 16-colour background palette `palette`.
-#define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
-#define OBJ_PLTT ((volatile u16 *)0x05000200)
+#define BG_PLTT_COLOR(palette, color)                                          \
+  (BG_PLTT[(palette) * PALETTE_COLORS + (color)])
+#define OBJ_PLTT ((volatile u16 *)0x05000200) ///< the sprites' 256 colours
 /// Colour `color` of 16-colour sprite palette `palette`.
-#define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
+#define OBJ_PLTT_COLOR(palette, color)                                         \
+  (OBJ_PLTT[(palette) * PALETTE_COLORS + (color)])
 
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
@@ -415,6 +424,14 @@ enum KeyMask {
 #define SIO_ERROR 0x0040 ///< multiplayer: the last transfer failed
 /// OAM's size in bytes: 128 sprites of 8 bytes.
 #define OAM_SIZE 1024
+
+/// A sprite's mode, OAM attribute 0's bits 11..10.
+enum ObjMode {
+  OBJ_MODE_NORMAL = 0,
+  OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
+  OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
+};
+
 /// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
 /// routines that build their own sprite lists write them; x, 0 to 511, is
 /// shifted into the high half and y, 0 to 255, is the low byte.
@@ -432,6 +449,9 @@ enum KeyMask {
 #define OBJ_AFFINE 0x00000100 ///< drawn through its affine matrix
 /// An affine sprite drawn in a box twice its size, so turning never clips it.
 #define OBJ_DOUBLE_SIZE 0x00000200
+/// A sprite's x in the attr01 word of an OamWords entry, whose attribute 1 is
+/// its high half.
+#define OBJ_X(x) ((x) << 16)
 #define OBJ_MODE(mode) ((mode) << 10) ///< an enum ObjMode
 #define OBJ_256_COLORS 0x00002000     ///< 8bpp tiles, as BGCNT_256_COLORS
 #define OBJ_HFLIP 0x10000000          ///< a plain sprite mirrored left to right

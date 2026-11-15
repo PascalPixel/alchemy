@@ -18,11 +18,12 @@ enum InventoryEncoding {
   /// The item id with its broken and equipped bits, all but the quantity.
   INVENTORY_ENTRY_MASK = 0x7ff,
   /// The quantity field holds the count less one; a stack (ITEM_STACKABLE)
-  /// grows to 30 (Inventory_AddItem).
+  /// grows to INVENTORY_STACK_MAX (Inventory_AddItem).
   INVENTORY_QUANTITY_SHIFT = 11,
   INVENTORY_QUANTITY_STEP = 0x800, ///< one more in the stack
   INVENTORY_QUANTITY_MASK = 0xf800,
-  INVENTORY_SLOTS = 15 ///< Unit.inventory's entries
+  INVENTORY_SLOTS = 15,    ///< Unit.inventory's entries
+  INVENTORY_STACK_MAX = 30 ///< the most items a stack holds
 };
 
 /// What Inventory_Remove and Inventory_Discard return.

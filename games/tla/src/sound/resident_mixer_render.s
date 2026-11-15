@@ -4,6 +4,18 @@
 @ str r1, [pc, #252] writes it over the ldmgt at .L_03000e60, a store into
 @ code; movs r9, r9 copies and tests without a shift; fp (r11) holds packed
 @ samples, not a frame pointer.
+@ Why assembly: push {r2, r3, r9, ip} saves without lr; fp (r11) holds the
+@ packed volumes, an operand of add, sub and mla, not a frame pointer.
+	.section .data,"aw",%progbits
+	.section .text.resident_mixer_render,"ax",%progbits
+.syntax unified
+	.section .data,"aw",%progbits
+	.arm
+	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, gData_02003a90, 0x000000b0, 0x00000000, 0xfff80035
+	.4byte	0x0034fff8
+
+	.section .text.resident_mixer_render,"ax",%progbits
+	.balign 4
 .syntax unified
 	.thumb
 	.global IwramSoundRenderVBlank
@@ -129,3 +141,124 @@ AlchemyUncreditedEnd_080012fa:
 gSoundMixerClipped:
 	.4byte	0
 	.4byte	IwramSoundMixWorkspace
+
+	.section .text.resident_mixer_render,"ax",%progbits
+	.balign 4
+.syntax unified
+	.arm
+	.global IwramSoundSynthWave
+IwramSoundSynthWave:
+	cmp	ip, #0
+	bne	.L_03000fb8
+	ldrb	r6, [r3, #2]
+	add	r2, r2, r6, lsl #24
+	ldrb	r6, [r3, #4]
+	adds	r6, r2, r6, lsl #24
+	mvnmi	r6, r6
+	lsr	sl, r6, #8
+	ldrb	r1, [r3, #3]
+	ldrb	r0, [r3, #1]
+	lsl	r0, r0, #24
+	mla	r6, sl, r1, r0
+	push	{r2, r3, r9, ip}
+.L_03000f20:
+	ldm	r5, {r0, r1, r2, r3, r9, sl, ip, lr}
+	cmp	r7, r6
+	addcc	r0, r0, fp, lsl #6
+	subcs	r0, r0, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	r1, r1, fp, lsl #6
+	subcs	r1, r1, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	r2, r2, fp, lsl #6
+	subcs	r2, r2, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	r3, r3, fp, lsl #6
+	subcs	r3, r3, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	r9, r9, fp, lsl #6
+	subcs	r9, r9, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	sl, sl, fp, lsl #6
+	subcs	sl, sl, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	ip, ip, fp, lsl #6
+	subcs	ip, ip, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	cmp	r7, r6
+	addcc	lr, lr, fp, lsl #6
+	subcs	lr, lr, fp, lsl #6
+	adds	r7, r7, r4, lsl #3
+	stmia	r5!, {r0, r1, r2, r3, r9, sl, ip, lr}
+	subs	r8, r8, #8
+	bgt	.L_03000f20
+	pop	{r2, r3, r9, ip}
+	b	IwramSoundMixDone
+.L_03000fb8:
+	subs	ip, ip, #1
+	bne	.L_03001044
+	mov	r6, #0x300
+	lsr	fp, fp, #1
+	bic	fp, fp, #0xff00
+	mov	ip, #112
+.L_03000fd0:
+	ldm	r5, {r0, r1, sl, lr}
+	adds	r7, r7, r4, lsl #3
+	rsb	r9, ip, r7, lsr #24
+	lsl	r6, r7, #1
+	sub	r9, r9, r6, lsr #27
+	adds	r2, r9, r2, asr #1
+	mlane	r0, fp, r2, r0
+	adds	r7, r7, r4, lsl #3
+	rsb	r9, ip, r7, lsr #24
+	lsl	r6, r7, #1
+	sub	r9, r9, r6, lsr #27
+	adds	r2, r9, r2, asr #1
+	mlane	r1, fp, r2, r1
+	adds	r7, r7, r4, lsl #3
+	rsb	r9, ip, r7, lsr #24
+	lsl	r6, r7, #1
+	sub	r9, r9, r6, lsr #27
+	adds	r2, r9, r2, asr #1
+	mlane	sl, fp, r2, sl
+	adds	r7, r7, r4, lsl #3
+	rsb	r9, ip, r7, lsr #24
+	lsl	r6, r7, #1
+	sub	r9, r9, r6, lsr #27
+	adds	r2, r9, r2, asr #1
+	mlane	lr, fp, r2, lr
+	stmia	r5!, {r0, r1, sl, lr}
+	subs	r8, r8, #4
+	bgt	.L_03000fd0
+	b	IwramSoundMixDone
+.L_03001044:
+	mov	r6, #128
+	mov	ip, #0x180
+.L_0300104c:
+	ldm	r5, {r0, r1, sl, lr}
+	adds	r7, r7, r4, lsl #3
+	rsbpl	r9, r6, r7, asr #23
+	submi	r9, ip, r7, lsr #23
+	mla	r0, fp, r9, r0
+	adds	r7, r7, r4, lsl #3
+	rsbpl	r9, r6, r7, asr #23
+	submi	r9, ip, r7, lsr #23
+	mla	r1, fp, r9, r1
+	adds	r7, r7, r4, lsl #3
+	rsbpl	r9, r6, r7, asr #23
+	submi	r9, ip, r7, lsr #23
+	mla	sl, fp, r9, sl
+	adds	r7, r7, r4, lsl #3
+	rsbpl	r9, r6, r7, asr #23
+	submi	r9, ip, r7, lsr #23
+	mla	lr, fp, r9, lr
+	stmia	r5!, {r0, r1, sl, lr}
+	subs	r8, r8, #4
+	bgt	.L_0300104c
+	b	IwramSoundMixDone

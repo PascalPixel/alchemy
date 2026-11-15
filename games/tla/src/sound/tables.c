@@ -127,7 +127,7 @@ const u8 gCgb3Vol[] = {
 };
 
 /// The ticks each length code 0 to 48 stands for; MPlayMain and ply_note
-/// (driver/mplay_main.s, driver/handle_note.s) read it for the lengths of
+/// (mplay_main.s) read it for the lengths of
 /// their waits and notes.
 const u8 gClockTable[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,

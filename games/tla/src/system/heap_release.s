@@ -1,3 +1,6 @@
+@ Why assembly: HeapSlot_Release branches on lsrs flags without cmp/cmn
+@ (lsrs r3, r1, #22 / beq); alchemy-gcc's Thumb cbranchsi4 and
+@ negated_cbranchsi4 always emit a compare.
 @ Why Irq_HaltOnGamePakRemoved is assembly:
 @ swi 0x30000 is a BIOS software interrupt (Halt), and b . - 8 branches back
 @ to the same swi.
@@ -6,11 +9,36 @@
 @ (IE & IF & 0x2000) is zero, its final bne falls straight into the Thumb
 @ System_Initialize, the next object's first routine, while the CPU is still in
 @ ARM mode. Neither a procedure return nor a tail call can have this linkage.
-@ Heap_Release, as HeapSlot_Release (heap_slot_release.s) before it:
+@ Heap_Release, as HeapSlot_Release before it:
 @ hand-written, scratching r4 for the 0x03000000 base. The ARM after it is
 @ ☀️'s heap_release.s tail: a halt (SWI 3) and Irq_StopOnGamePakRemoved,
 @ which every edition here keeps (☀️ only DE and ES), falling through on
 @ no cartridge interrupt as shipped.
+	.section .text,"ax",%progbits
+	.balign 2
+.syntax unified
+	.thumb
+	.global HeapSlot_Release
+	.thumb_func
+HeapSlot_Release:
+	movs	r4, #3
+	lsls	r4, r4, #24
+	ldr	r1, [r0, r4]
+	lsrs	r3, r1, #22
+	beq.n	.L_08013160
+	movs	r2, #0
+	str	r2, [r0, r4]
+	movs	r0, #4
+	ands	r3, r0
+	str	r1, [r3, r4]
+.L_08013160:
+	bx	lr
+AlchemyUncredited_08013162:
+	.2byte	0x0000
+AlchemyUncreditedEnd_08013162:
+
+	.section .text,"ax",%progbits
+	.balign 4
 .syntax unified
 	.thumb
 	.global Heap_Release

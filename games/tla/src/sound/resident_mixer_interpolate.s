@@ -8,10 +8,19 @@
 @ nop slots before it runs, stores into code; movs r6, r2 copies and tests
 @ without a shift; and add r0, pc, #1 / bx r0 switches back to Thumb, a mode
 @ switch inside a function.
+	.section .data,"aw",%progbits
+	.section .text.resident_mixer_channel,"ax",%progbits
+.syntax unified
+	.section .data,"aw",%progbits
+	.arm
+	.4byte	0x00000000
+
+	.section .text.resident_mixer_channel,"ax",%progbits
+	.balign 4
 .syntax unified
 	.thumb_func
 	.arm
-@ Three six-instruction templates resident_mixer_lanes.s copies into its slots.
+@ Three six-instruction templates the mixer lanes (resident_mixer.s) copy into its slots.
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
 	adds	r7, r7, r4

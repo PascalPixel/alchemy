@@ -44,7 +44,7 @@ extern u8 gNumberTextHexEnd[];
 extern u8 gLink_TimeLabelString[];
 /// Each resource's ROM address by resource id (Resource_GetTableEntry).
 extern void *Resource_DirectoryTable[];
-/// The size of Resource_PatchThumbBranch (patch_thumb_branch.s).
+/// The size of Resource_PatchThumbBranch (decompress_tagged_lz.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 extern u8 gResourceSlot_ConversionTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15

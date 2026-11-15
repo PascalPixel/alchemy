@@ -129,7 +129,7 @@ void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree, joining
 /// it to the frame and divider tiles already on the tilemap.
-void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
+void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 void WindowSprite_UpdateAll(void);
 void WindowSystem_StartBattleUpdate(s32 kind);
 /// Sets the text colour (0 to 15) of drawn text.

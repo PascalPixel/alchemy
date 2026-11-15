@@ -1,42 +1,39 @@
 #ifndef ALCHEMY_DISPLAY_TRANSITION_H
 #define ALCHEMY_DISPLAY_TRANSITION_H
 
+/// @file
+/// The screen transition's frames, windows and state.
+
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
-/// The screen transition state as the dissolve reads it: the dissolve's tile
-/// pixels and the transition's progress.
+/// The screen transition state as the centre-line transition and the dissolve
+/// read it: the dissolve's tile pixels and the transition's progress.
 struct ScreenTransitionDissolveState {
-  u8 unk000[0x508]; ///< ScreenTransitionState's pages; not named here
-  /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte.
-  u8 paletteNibbles[0x22];
-  u16 value; ///< ScreenTransitionState's value
-  /// ScreenTransitionState's centreX to unk538; not named here.
-  u8 unk52c[13];
-  u8 ditherToggle; ///< ScreenTransitionState's page
-  s8 start;        ///< the value's first step
-  s8 end;          ///< the value's last step
-  s8 duration;     ///< frames; 0 when the value is not moving
-  s8 step;         ///< frames
-};
-
-/// The map work's display fields that transitions use: its display control
-/// bits and the lines where the centre-line transition shows and hides the
-/// screen, with the VCount interrupt's copies and phase.
-struct ScreenTransitionWin {
-  u32 unk000[5];   ///< map work fields no transition names
-  u16 dispcnt;     ///< display control bits ORed into DISPCNT
-  u8 unk016[0xea]; ///< map work fields no transition names
-  /// scanlines: where the screen is hidden, 200 when it is not
-  u16 firstLine;
-  /// scanlines: where the screen is shown again, 250 when it is not hidden
-  u16 secondLine;
-  u16 irqFirstLine;  ///< scanlines; firstLine as the VCount interrupt reads it
-  u16 irqSecondLine; ///< scanlines; secondLine as the VCount interrupt reads it
-  /// The VCount interrupt's phase: 0 waiting for a line above 159, 1 neither
-  /// line passed, 2 the first passed, 3 the second passed first, 9 done.
-  u16 irqPhase;
+  u16 pages[2][322]; ///< ScreenTransitionState's; not named here
+  /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
+  /// dissolve sets two more each frame and copies the tile to BG character
+  /// block 0.
+  u8 paletteNibbles[34];
+  /// The progress, moved from start to end over duration frames: bit 5 says
+  /// whether the dissolve fills or clears, the low 5 bits how far it is.
+  u16 value;
+  /// ScreenTransitionState's centreX to its unused byte; not named here.
+  ///@{
+  s32 centreX;
+  s32 centreY;
+  s16 mask;
+  s16 active;
+  u8 unused;
+  ///@}
+  /// ScreenTransitionState's page: the dissolve flips it each frame and
+  /// never reads it.
+  u8 ditherToggle;
+  s8 start;    ///< the value's first step
+  s8 end;      ///< the value's last step
+  s8 duration; ///< frames; 0 when the value is not moving
+  s8 step;     ///< frames
 };
 
 /// The screen transition state: two pages of window edges for every line,
@@ -56,22 +53,19 @@ struct ScreenTransitionState {
   s32 centreY; ///< as centreX: the target's z less its y
   s16 mask;    ///< a window register value: 0x3f3f when a transition starts
   s16 active;  ///< a window register value: bit 0 set when one starts
-  u8 unk538;   ///< not named by TLA code
+  u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving
   s8 step;     ///< frames
-  s8 nextMode; ///< not named by TLA code
+  /// The mode taken when the value reaches its end; 0 ends the transition.
+  s8 nextMode;
 };
 
 STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 0x52a);
 STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 0x53a);
 STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 0x540);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, dispcnt) == 0x14);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, firstLine) == 0x100);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, irqPhase) == 0x108);
-STATIC_ASSERT(sizeof(struct ScreenTransitionWin) == 0x10c);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 0x508);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 0x539);
@@ -87,7 +81,6 @@ void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
-void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200);
 void ScreenTransition_Update(void);
 void ScreenTransition_UpdateFromCentre(void);
 void ScreenTransition_UpdateScanline(void);

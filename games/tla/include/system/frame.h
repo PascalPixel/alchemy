@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+/// Frames in a second: the screen refreshes about 60 times a second.
+#define FRAMES_PER_SECOND 60
+
 /// The VBlank handler copies the OAM list only while it is set; scenes clear
 /// it to keep their own sprites on screen.
 extern u8 gOamCopyEnabled;

@@ -19,7 +19,7 @@ extern struct IoWriteQueue gIoWriteQueue;
 
 // A control word's bits 16 and 17 give a register write's width and bits 18
 // and 19 its operation, as Resource_ExecuteTransfer reads them
-// (system/execute_transfer.s); a word with no width is a DMA.
+// (system/decompress_tagged_lz.s); a word with no width is a DMA.
 
 /// Writes a byte.
 #define IO_WRITE_8 (1 << 16)

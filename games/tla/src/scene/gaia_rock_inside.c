@@ -2936,10 +2936,7 @@ typedef struct {
 
 #define gPath ((Path *)(gInventorySnapshot + 0x288))
 
-static __inline__ void *Heap_AllocEwram_(s32 size) {
-  /* FAKEMATCH(wrapper): forwarded inline. */
-  return Heap_AllocEwram(size);
-}
+static inline void *BumpAllocEwram(s32 size) { return Heap_AllocEwram(size); }
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
 #define AT_ADDRESS(x, y)                                                       \
@@ -2962,7 +2959,7 @@ void GaiaRockInside_LayMaze(s32 seed) {
     return;
   gRandomSeed = seed;
 restart:
-  grid = Heap_AllocEwram_(sizeof *grid);
+  grid = BumpAllocEwram(sizeof *grid);
   Iwram_ClearWordsEntry(grid, sizeof *grid);
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28
   // cells and the last row's marks land after the block.
@@ -3278,58 +3275,48 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(object, 0);
 }
 
-extern s32 gGaiaRockInside_DustScript[];
-extern u32 gGaiaRockInside_StatueRiseScript[];
+extern s32 gGaiaRockInside_StatueRiseScript[];
+extern u32 gGaiaRockInside_DustScript[];
 
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
-  struct MainRoutineWork *entryWork = &gMainRoutineWork;
-  struct Actor *leader;
-  s32 gravity;
-  s32 value;
-  struct Actor *object;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 gravity = leader->gravity;
+  struct Actor *pillar;
   s32 i;
-  struct MainRoutineWork *work;
 
-  /* FAKEMATCH(barrier): the form kept. */
-  __asm__("" : "=r"(entryWork) : "0"(entryWork));
-  /* FAKEMATCH(barrier): the form kept. */
-  __asm__("");
-  /* FAKEMATCH(temporary): the form kept. */
-  value = id;
-  leader = Actor_Get(entryWork->leaderActorId);
-  gravity = leader->gravity;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  object = Actor_Get(value);
-  GaiaRockInside_PlaceStatue(value, leader->x.fixed, leader->y.fixed,
+  pillar = Actor_Get(id);
+  GaiaRockInside_PlaceStatue(id, leader->x.fixed, leader->y.fixed,
                              leader->z.fixed);
-  Actor_StartScript(object, gGaiaRockInside_DustScript);
+  Actor_StartScript(pillar, gGaiaRockInside_StatueRiseScript);
   i = 15;
-burst:
-  object = (FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
-                              leader->y.fixed + px(16), leader->z.fixed));
-  if (object != NULL) {
-    u32 angle;
-    u32 size;
-    s32 scale;
+  do {
+    struct Actor *dust =
+        FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
+                          leader->y.fixed + px(16), leader->z.fixed);
 
-    Actor_StartScript(object, gGaiaRockInside_StatueRiseScript);
-    angle = Random16();
-    value = Random16();
-    size = Random16();
-    scale = (size >> 1) + 0x2000;
-    object->velocityY = Iwram_MulQ16(value << 3, Trig_Cos(angle));
-    object->velocityX = Iwram_MulQ16(value << 3, Math_Sin(angle));
-    object->acceleration = 0;
-    object->scaleX = scale;
-    object->scaleY = scale;
-    object->gravity = px(33) / 100;
-    object->bounce = Q16_ONE / 2;
-  }
-  i--;
-  if (i >= 0)
-    goto burst;
+    if (dust != 0) {
+      s32 angle;
+      s32 speed;
+      u32 size;
+      s32 scale;
+
+      Actor_StartScript(dust, gGaiaRockInside_DustScript);
+      angle = Random16();
+      speed = Random16();
+      size = Random16();
+      scale = (size >> 1) + 0x2000;
+      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
+      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
+      dust->acceleration = 0;
+      dust->scaleX = scale;
+      dust->scaleY = scale;
+      dust->gravity = px(33) / 100;
+      dust->bounce = Q16_ONE / 2;
+    }
+  } while (--i >= 0);
   Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
@@ -3340,15 +3327,15 @@ burst:
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   leader->gravity = px(33) / 100;
-  for (value = 0; value < 180; value++) {
+  for (id = 0; id < 180; id++) {
     System_Wait(1);
     if (leader->y.fixed <= leader->groundHeight)
       break;
   }
   Event_PlaySound(SE_THUMP);
-  work = &gMainRoutineWork;
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(work->leaderActorId, ATTACHED_EFFECT_REMOVE);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+                          ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
@@ -3361,7 +3348,7 @@ burst:
   Actor_SelectAnimation(leader, 1);
   leader->velocityY = px(4);
   System_Wait(20);
-  work->movementMode = 0;
+  gMainRoutineWork.movementMode = 0;
   Event_End();
   Event_SetFlag(flag);
 }
@@ -3955,13 +3942,13 @@ struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gGaiaRockInside_StatueRiseScript[] = {
+u32 gGaiaRockInside_DustScript[] = {
     0, 40, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gGaiaRockInside_DustScript[] = {                                                               
+s32 gGaiaRockInside_StatueRiseScript[] = {                                                               
       SC_ADD(SW_SCALE_X, 0x8000),                                              
       SC_ADD(SW_SCALE_Y, 0x8000),                                              
       SC_WAIT(2),                                                              

@@ -604,29 +604,28 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
   i = 15;
   do {
-    {
-      struct Actor *dust = FieldActor_Create(
-          255, leader->x.fixed, leader->y.fixed + px(16), leader->z.fixed);
+    struct Actor *dust =
+        FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
+                          leader->y.fixed + px(16), leader->z.fixed);
 
-      if (dust != 0) {
-        s32 angle;
-        s32 speed;
-        u32 size;
-        s32 scale;
+    if (dust != 0) {
+      s32 angle;
+      s32 speed;
+      u32 size;
+      s32 scale;
 
-        Actor_StartScript(dust, gGaiaRock_DustScript);
-        angle = Random16();
-        speed = Random16();
-        size = Random16();
-        scale = (size >> 1) + 0x2000;
-        dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
-        dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
-        dust->acceleration = 0;
-        dust->scaleX = scale;
-        dust->scaleY = scale;
-        dust->gravity = px(33) / 100;
-        dust->bounce = Q16_ONE / 2;
-      }
+      Actor_StartScript(dust, gGaiaRock_DustScript);
+      angle = Random16();
+      speed = Random16();
+      size = Random16();
+      scale = (size >> 1) + 0x2000;
+      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
+      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
+      dust->acceleration = 0;
+      dust->scaleX = scale;
+      dust->scaleY = scale;
+      dust->gravity = px(33) / 100;
+      dust->bounce = Q16_ONE / 2;
     }
   } while (--i >= 0);
   Event_PlaySound(SE_STATUE_RISE);
@@ -638,16 +637,11 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
-  id = 0;
   leader->gravity = px(33) / 100;
-  goto fall;
-next:
-  id++;
-fall:
-  if (id <= 179) {
+  for (id = 0; id < 180; id++) {
     System_Wait(1);
-    if (leader->y.fixed > leader->groundHeight)
-      goto next;
+    if (leader->y.fixed <= leader->groundHeight)
+      break;
   }
   Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;

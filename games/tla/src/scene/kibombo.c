@@ -3100,21 +3100,6 @@ void Kibombo_InitializeVillageByDay(void) {
 
 struct Unit *Unit_Get(u32 unitId);
 
-static __inline__ s32 Gauge(s32 value, s32 max) {
-  s32 gauge = (value << 14) / max;
-
-  s32 result;
-
-  if (gauge > 0x4000)
-    result = 0x4000;
-  else {
-    result = 0;
-    if (gauge >= 0)
-      result = gauge;
-  }
-  return result;
-}
-
 /// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
 /// Piers in the party, restores his HP and PP, sets his gauges, clears two of
 /// his bytes, marks him as staying behind (FLAG_KIBOMBO_PIERS_STAYED_BEHIND)
@@ -3141,16 +3126,7 @@ void Kibombo_InitializeCeremony(void) {
       unit = Unit_Get(ACTOR_PIERS);
       unit->hp = unit->hpMax;
       unit->pp = unit->ppMax;
-      /* FAKEMATCH(dead): both copies stored before the gauge's argument is
-       * extended. */
-      do {
-      } while (0);
-      unit->hpGauge = Gauge(unit->hp, unit->hpMax);
-      if (unit->hpGauge == 0 && unit->hp != 0)
-        unit->hpGauge = 1;
-      unit->ppGauge = Gauge(unit->pp, unit->ppMax);
-      if (unit->ppGauge == 0 && unit->pp != 0)
-        unit->ppGauge = 1;
+      Unit_UpdateGauges(unit);
       unit->poison = 0;
       unit->haunt = 0;
       GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);

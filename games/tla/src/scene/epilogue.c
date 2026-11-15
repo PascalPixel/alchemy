@@ -19,6 +19,7 @@
 #include "system/frame.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "field/effect_sprite.h"
 #include "window/window.h"
 #include "graphics/resource.h"
@@ -89,17 +90,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-static __inline__ void Set(struct EffectSprite *sprite, s32 a, s32 b, u32 c,
-                           s32 tile) {
-  /* FAKEMATCH(wrapper): forwarded inline. */
-  EffectSprite_Init(sprite, a, b, c, tile);
-}
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 /// Loads the green panel the speakers' names are written on, and starts
 /// Epilogue_PlaceNamePanel.
 void Epilogue_LoadNamePanel(void) {
-  /* FAKEMATCH(wrapper): the size through Value1. */
-  void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
+  void *buffer = BumpAlloc(0x800);
   struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
@@ -118,7 +114,7 @@ void Epilogue_LoadNamePanel(void) {
   tileSlot = &gEpilogueNamePanelTile;
   value = Vram_Load(value, 0x800, buffer);
   *tileSlot = value;
-  Set(sprite, 0, 0, 0xc0000000, value);
+  FieldEffectSprite_Init(sprite, 0, 0, 0xc0000000, value);
   sprite->depth = 240;
   sprite->oam.priority = 0;
   sprite->oam.fullColor = 0;

@@ -1079,10 +1079,9 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Event_End();
 }
 
-static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from the
-   * pool at each call. */
-  Unit_AddPp(owner, delta);
+/// Unit_AddPp as an event calls it, beside system_call.h's FieldUnit_AddHp.
+static inline s32 FieldUnit_AddPp(s32 owner, s32 delta) {
+  return Unit_AddPp(owner, delta);
 }
 
 /// Places actors 0, 2, 27 and 26 and shows an apology; then the party is left
@@ -1138,7 +1137,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Unit_Calculate(0);
   Unit_Calculate(2);
   FieldUnit_AddHp(0, 173);
-  JupiterLighthouseRoomM_AddPp(2, -10000);
+  FieldUnit_AddPp(2, -10000);
   Unit_AddPp(0, -10000);
   gMainRoutineWork.leaderActorId = 0;
   Field_RequestBattleFromEncounterTable(102, 4);

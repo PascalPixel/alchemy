@@ -661,89 +661,12 @@ void MapGrid_SetCellHeight();
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gJupiterLighthouse_OrbScript[];
-extern s32 gJupiterLighthouse_OrbFrame;
+extern s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-void JupiterLighthouse_UpdateOrb(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
-    position[0] = self->x.fixed;
-    position[1] = self->y.fixed;
-    position[2] = self->z.fixed;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > px(272))
-      goto stop;
-    if (distance < -px(32))
-      goto stop;
-    {
-      if (self->riseCounter == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < px(12))
-          near = 1;
-        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
-          }
-          gMainRoutineWork.movementMode = 0;
-          self->riseCounter = 1;
-          self->riseEnabled = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
-         */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    self->riseEnabled = zero;
-    self->update = zero;
-    Actor_StartScript(self, gJupiterLighthouse_OrbScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gJupiterLighthouse_OrbFrame = zero;
-  }
-}
+#include "shared/whirlwind_update.h"
 
 struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct Vector3 position;
@@ -763,7 +686,7 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = JupiterLighthouse_UpdateOrb;
+  object->update = Whirlwind_Update;
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
@@ -1200,7 +1123,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-s32 gJupiterLighthouse_OrbScript[] = {
+s32 gWhirlwindEndScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
     SC_RELEASE,

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gJupiterLighthouse_BeamSparkScript
-gJupiterLighthouse_BeamSparkScript:
+	.global gWhirlwindRiding
+gWhirlwindRiding:
 	.space 0x00000004
 	.global gPaletteCycleColors
 gPaletteCycleColors:

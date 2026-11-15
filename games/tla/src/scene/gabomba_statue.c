@@ -2106,15 +2106,15 @@ void GabombaStatue_InitializeBoneArmletChest(void) {
   GabombaStatue_DimBoneArmletChestActors();
 }
 
-static __inline__ void GabombaStatue_TieRope(s32 index, s32 flag, s32 firstPost,
-                                             s32 secondPost) {
+/// Places rope index between two posts, tied when its flag is set, else coiled
+/// (Rope_Place): the event inline over the scene's import, as event_inline.h
+/// writes them.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 firstPost,
+                                   s32 secondPost) {
   GabombaStatue_PlaceRope(index, flag, firstPost, secondPost);
 }
 
 void GabombaStatue_InitializeElixirChest(void) {
-  /* FAKEMATCH(wrapper): the ropes tied through an inline; as
-   * GabombaStatue_PlaceRope called directly, 4 of 66 instructions differ in
-   * tla-en. */
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
     Actor_SetScript(ACTOR_ELIXIR_PINION_A, gGabombaStatue_PinionReleaseScript);
     Actor_SetScript(ACTOR_ELIXIR_PINION_B, gGabombaStatue_PinionReleaseScript);
@@ -2125,10 +2125,10 @@ void GabombaStatue_InitializeElixirChest(void) {
       !Event_GetFlag(FLAG_GABOMBA_SECOND_CONE_POUNDED))
     Actor_Get(ACTOR_FLASHING_COG)->y.fixed = px(16);
   Rope_Initialize();
-  GabombaStatue_TieRope(0, FLAG_SCENE_TEMP_01, ACTOR_FIRST_ROPE_POST_A,
-                        ACTOR_FIRST_ROPE_POST_B);
-  GabombaStatue_TieRope(1, FLAG_SCENE_TEMP_02, ACTOR_SECOND_ROPE_POST_A,
-                        ACTOR_SECOND_ROPE_POST_B);
+  FieldRope_Place(0, FLAG_SCENE_TEMP_01, ACTOR_FIRST_ROPE_POST_A,
+                  ACTOR_FIRST_ROPE_POST_B);
+  FieldRope_Place(1, FLAG_SCENE_TEMP_02, ACTOR_SECOND_ROPE_POST_A,
+                  ACTOR_SECOND_ROPE_POST_B);
   GabombaStatue_DimElixirChestActors();
 }
 
@@ -3228,9 +3228,13 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->riseCounter = 2;
   actor->riseEnabled = 1;
   actor->riseBaseY = 0;
-  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer, called
-   * without the actor it reads from r0. */
+#ifdef UBFIX
+  Actor_StartIdle(actor);
+#else
+  // UB: called without the actor it starts, which it finds in r0 only because
+  // Actor_Get left it there.
   Actor_StartIdle();
+#endif
   Actor_SelectAnimation(actor, 2);
   id = second;
   actor = Actor_Get(id++);

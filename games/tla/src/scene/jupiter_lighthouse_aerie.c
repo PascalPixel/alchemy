@@ -23,6 +23,7 @@
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -497,90 +498,13 @@ void JupiterLighthouse_RideTheBeam(void) {
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gJupiterLighthouse_BeamScript[];
-extern s32 gJupiterLighthouse_BeamSparkScript;
+extern s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Whirlwind_Update(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
-    position[0] = self->x.fixed;
-    position[1] = self->y.fixed;
-    position[2] = self->z.fixed;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > px(272))
-      goto stop;
-    if (distance < -px(32))
-      goto stop;
-    {
-      if (self->riseCounter == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < px(12))
-          near = 1;
-        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
-          }
-          gMainRoutineWork.movementMode = 0;
-          self->riseCounter = 1;
-          self->riseEnabled = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
-         */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    self->riseEnabled = zero;
-    self->update = zero;
-    Actor_StartScript(self, gJupiterLighthouse_BeamScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gJupiterLighthouse_BeamSparkScript = zero;
-  }
-}
+#include "shared/whirlwind_update.h"
 
 struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct Vector3 position;
@@ -878,12 +802,6 @@ struct BeamWork__s17a8 {
 
 void Actor_StartIdle(struct Actor *object);
 
-static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
-                             s32 pivotY, u32 attributes, s32 tile) {
-  /* FAKEMATCH(wrapper): the setup forwarded inline. */
-  EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
-}
-
 void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamWork__s17a8));
@@ -927,7 +845,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   }
   work->largeTile = largeTile;
   large = &work->large;
-  SetUp(large, 30, 7, 0x80004000, largeTile);
+  FieldEffectSprite_Init(large, 30, 7, 0x80004000, largeTile);
   *(u16 *)&large->depth = 240;
   large->oam.priority = 1;
   large->oam.fullColor = 1;
@@ -1174,7 +1092,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-s32 gJupiterLighthouse_BeamScript[] = {
+s32 gWhirlwindEndScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
     SC_RELEASE,

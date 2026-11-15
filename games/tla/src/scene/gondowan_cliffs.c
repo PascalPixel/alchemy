@@ -654,7 +654,6 @@ void Geysers_Draw(void) {
     z = actor->z.fixed - scrollZ - lift;
     screenY = z - y;
     x = FIELD_PIXEL(x) - 8;
-    /* FAKEMATCH(wrapper): forwarded. */
     screenY =
         ((screenY + Math_MulQ16(-px(2), Trig_Sin(swing->phase)) + -px(2)) >>
          16) -

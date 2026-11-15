@@ -27,7 +27,6 @@
 #include "field_sequence/psynergy.c"
 #include "field_sequence/treasure_spots.c"
 
-#undef ObjectEvent_PlaceOnGround
 #undef PartyInventory_GiveItem
 #undef BattleEffect_GetFlags
 

@@ -10,14 +10,19 @@
 #include "macros.h"
 #include "field_sprite.h"
 
+/// Moves a 2D point by its velocity, damped and pulled by gravity
+/// (BattleEffect_IntegrateVector2).
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
 }
 
+/// Moves a 3D point by its velocity, damped and pulled by gravity
+/// (BattleEffect_IntegrateVector3).
 void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector3(vector, damping, gravity);
 }
 
+/// Plots a pixel of colour color at (x, y) on the 64-pixel canvas.
 void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas;
@@ -26,6 +31,8 @@ void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   canvas[map[(y << 6) + x]] = color;
 }
 
+/// Plots a pixel of colour color at (x, y) on the 128-pixel-wide canvas pair:
+/// x from 64 lands on the second canvas.
 void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -135,6 +142,8 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep1Map: step 1 of the canvas's fade.
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep1Map;
@@ -148,6 +157,8 @@ void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep2Map: step 2 of the canvas's fade.
 void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep2Map;
@@ -161,6 +172,8 @@ void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep3Map: step 3 of the canvas's fade.
 void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep3Map;

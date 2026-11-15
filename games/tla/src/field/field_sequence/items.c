@@ -9,6 +9,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/field_sequence.h"
 
+/// Runs message as an event of its own, shown at actor.
 void Event_RunMessage(s32 actor, s32 message) {
   Event_Start();
   Event_SetMessageId(message);
@@ -16,8 +17,12 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
+/// Ends every lasting Psynergy (Event_ResolvePendingActions with none skipped).
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
+/// Ends the lasting Psynergy and runs their end events: Reveal unless skip bit
+/// 0 is set, the lasting Psynergy unkcac marks unless bit 1, and the one
+/// pendingThird marks unless bit 2.
 void Event_ResolvePendingActions(s32 skip) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
 
@@ -30,6 +35,8 @@ void Event_ResolvePendingActions(s32 skip) {
     Field_RunPsynergyEndEvents(0x208b);
 }
 
+/// Returns the leader's actor id, or 8 while gMainRoutineWork.ownerOverride is
+/// set.
 s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
@@ -40,6 +47,8 @@ s32 Party_GetLeaderActor(void) {
   return actor;
 }
 
+/// Returns 1 when item_id answers filter: the item itself, 0x1ff any item, or
+/// 0x1fe any item of types 1 to 4; else 0.
 s32 Item_MatchesFilter(s32 filter, s32 item_id) {
   if (filter == item_id)
     return 1;

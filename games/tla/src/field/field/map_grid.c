@@ -389,6 +389,8 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   }
 }
 
+/// Copies one column (tileHalf 0 or 1) of a cell's 2 by 2 picture tiles into
+/// the screen map at the row and column offsets.
 static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
                                                  u32 screenRowOffset,
                                                  u32 screenColumnOffset,
@@ -549,6 +551,8 @@ void MapGrid_UpdateLayerScroll(void) {
   }
 }
 
+/// Copies a cell's 2 by 2 picture tiles into the screen map at the row and
+/// column offsets.
 static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
                                                u32 screenRowOffset,
                                                u32 screenColumnOffset) {
@@ -791,6 +795,9 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 
+/// Copies the attributes and shapes of a rectangle of cells from (srcX, srcY)
+/// to (dstX, dstY), width by height cells, keeping each destination's
+/// picture.
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
@@ -941,6 +948,8 @@ void MapGrid_SetShownLayers(u32 v) {
   state->flags = flags;
 }
 
+/// Plays every edit of the map whose flag is set, as Map_ApplyFlagEdits does,
+/// bit 12 of an edit's flag word choosing attributes over pictures.
 void Map_ApplySetFlagEdits(void) {
   u8 *cursor = gData_0202e002;
   u32 entry;
@@ -969,6 +978,8 @@ void Map_ApplySetFlagEdits(void) {
   }
 }
 
+/// Reads the little-endian halfword at *cursor, which may be unaligned, and
+/// moves the cursor past it.
 u32 Map_ReadEditU16(u8 **cursor) {
   u32 low = *(*cursor)++;
   u32 high = *(*cursor)++;
@@ -976,18 +987,26 @@ u32 Map_ReadEditU16(u8 **cursor) {
   return low | (high << 8);
 }
 
+/// Sets flag (its low 12 bits) and plays its map edits on the cells' pictures.
 void Map_SetFlagAndApplyEdits(s32 flag) {
   flag &= 0xfff;
   GameFlag_Set(flag);
   Map_ApplyFlagEdits(flag, 0);
 }
 
+/// Sets flag (its low 12 bits) and plays its map edits on the cells'
+/// attributes.
 void Map_SetFlagAndApplyAttributeEdits(s32 flag) {
   flag &= 0xfff;
   GameFlag_Set(flag);
   Map_ApplyFlagEdits(flag, 1);
 }
 
+/// Plays the map's edits for flag: each copies a rectangle of cells (their
+/// pictures, or with attributes their attributes and shapes) from one place
+/// of the map to another. The map's extra data lists the edits, each a flag
+/// then source x and y, destination x and y, width and height in bytes, ended
+/// by 0xffff.
 void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   u8 *cursor = gData_0202e002;
   u32 entry;
@@ -1016,6 +1035,8 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   }
 }
 
+/// Reads map's four header extents: size[0] and size[2] from its first two
+/// bytes, size[1] and size[3] from the next two, where 0 means 256.
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
 
@@ -1034,6 +1055,8 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
     size[3] = header[3];
 }
 
+/// Decodes the current map's cells into the map cell buffer and converts them,
+/// then decodes its cell shapes into gMapShapeGrid.
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(

@@ -82,7 +82,7 @@ void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
-void ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z);
+void ObjectEvent_PlaceOnGround(u32 actorId, s32 x, s32 z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
@@ -156,9 +156,9 @@ void Actor_SetActionById(s32 actorId, s32 steps);
 void Actor_ShowItemIconById(s32 actorId, s32 item);
 void Actor_SetItemIcon(struct Actor *actor, s32 item);
 void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py);
-s32 FieldCamera_MoveToActor(s32 actorId, s32 pan);
+void FieldCamera_MoveToActor(s32 actorId, s32 pan);
 void Actor_SetSpriteRotationById(s32 actorId, s32 angle);
-s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior);
+u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior);
 
 /// Shows the event's next line of dialogue and waits for the player to read
 /// it.

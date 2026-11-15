@@ -140,16 +140,7 @@ u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->collisionCode;
 }
 
-/* VIEW(event_commands): routine MapGrid_SetCellBehavior as u8
- * MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value); field/event.h
- * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior); tried
- * as the definition's u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32
- * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:161: conflicting types for
- * `MapGrid_SetCellBehavior'. */
-u8 MapGrid_SetCellBehavior__event_commands(
-    s32 x, s32 z, s32 layer, s32 value) __asm__("MapGrid_SetCellBehavior");
-#define MapGrid_SetCellBehavior MapGrid_SetCellBehavior__event_commands
+/// Sets the cell behavior of the map cell at x, z in layer, and returns it.
 u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
   MapGrid_GetCellAt(x, z, layer)->collisionCode = value;
   return value;

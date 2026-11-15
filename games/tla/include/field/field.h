@@ -76,7 +76,7 @@ void FieldPsynergy_RunExtraHandler(void);
 s32 Event_PlayCueNearFocusFar(struct Actor *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
-void BattleEffect_DropObjectAtAnchor(u32 objectId);
+void BattleEffect_DropObjectAtAnchor(s32 actorId);
 void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);

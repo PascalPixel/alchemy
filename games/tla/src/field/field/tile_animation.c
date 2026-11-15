@@ -324,6 +324,7 @@ void TilesetAnim_Update(void) {
   }
 }
 
+/// Resumes tileset animation no by clearing its paused byte.
 void Map_ClearLayerEntryFlag(u32 no) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
@@ -331,6 +332,7 @@ void Map_ClearLayerEntryFlag(u32 no) {
   anim->paused = 0;
 }
 
+/// Pauses tileset animation no by setting its paused byte.
 void Map_SetLayerEntryFlag(u32 no) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
@@ -501,6 +503,7 @@ void PaletteCycle_Initialize(void) {
 
 #include "../palqueue_add.c"
 
+/// Stops the palette cycles: removes their task and frees their work.
 void PaletteQueue_Stop(void) {
   Task_Remove(PaletteCycle_Step);
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
@@ -622,6 +625,7 @@ s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position) {
   return start + (delta >> 4);
 }
 
+/// A slope along y: from sample 0 at the top to sample 1 at the bottom.
 s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position) {
   s32 base;
   s32 offset;
@@ -772,6 +776,7 @@ s32 Terrain_GetStepXHeight(const s8 *samples, u32 position) {
   return value << CURVE_VALUE_SHIFT;
 }
 
+/// A step along y: sample 0 above the middle, sample 1 below it.
 s32 Terrain_GetStepYHeight(const s8 *samples, u32 unused, u32 position) {
   s32 value;
   if (position < CURVE_HALF_STEPS)

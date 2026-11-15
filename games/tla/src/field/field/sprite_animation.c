@@ -122,6 +122,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
+/// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
 s32 Animation_LookupValueByKey(s32 key) {
   struct ObjectSystemWork *work = Ram_HeapSlots->actorSystem;
   u32 no;
@@ -177,6 +178,9 @@ s32 InitializeAnimationObjects__resource_slot(
     struct ActorSpriteView__resource_slot
         *state) __asm__("InitializeAnimationObjects");
 #define InitializeAnimationObjects InitializeAnimationObjects__resource_slot
+/// Resets each sprite animation of a sprite from its animation's metadata: its
+/// facing kind, pictures, scripts and codec, with no picture shown and no
+/// script running.
 s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
   s32 index;
   struct AnimationEntry **slot;
@@ -268,6 +272,9 @@ s32 ResourceMetadata_Register__resource_slot(
     struct MetadataSlotState *state,
     s32 id) __asm__("ResourceMetadata_Register");
 #define ResourceMetadata_Register ResourceMetadata_Register__resource_slot
+/// Adds a sprite animation of animation id to a sprite, in the first of its
+/// four slots that is free; returns it, 0 when none could be taken, or -1 when
+/// all four are in use.
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   s32 value = state->slots[0];
   s32 index = 0;
@@ -386,6 +393,9 @@ s32 Animation_ApplyChildArgument__resource_slot(
     struct AnimationGroup *state,
     s32 flags) __asm__("Animation_ApplyChildArgument");
 #define Animation_ApplyChildArgument Animation_ApplyChildArgument__resource_slot
+/// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
+/// keeps each sprite animation's place and timer), unless the sprite plays it
+/// already.
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
   s32 highBit;
   s32 index;
@@ -467,6 +477,8 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
 void Animation_ApplyChildValue__resource_slot(
     struct ChildGroup *group, s32 value) __asm__("Animation_ApplyChildValue");
 #define Animation_ApplyChildValue Animation_ApplyChildValue__resource_slot
+/// Sets the timer step, the animation speed, of each playing sprite animation
+/// of a sprite (16 is normal speed).
 void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
   s32 i;
 
@@ -513,8 +525,10 @@ void ActorSystem_Configure(s32 mode) {
                    Render_CopyStridedCodeSize);
 }
 
+/// Frees VRAM cache entry 93, the actors' shadow tiles.
 void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
 
+/// Loads the actors' shadow tiles into VRAM cache entry 93.
 void VramBlock_Load93(void) {
   const u8 *data = gActor_ShadowTiles;
   s32 size = 128;

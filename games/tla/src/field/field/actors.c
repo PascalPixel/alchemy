@@ -27,6 +27,8 @@
 #include "field/field.h"
 #include "field/script_operands.h"
 
+/// Waits, at most 90 frames, for a sprite's animation to change or for its
+/// first sprite animation's script to reach code 241.
 void Animation_WaitForTrackEnd(struct AnimObject *object) {
   u8 frame = object->frame;
   struct AnimTrack *track = object->track;
@@ -190,6 +192,7 @@ void ActorSystem_Initialize(s32 mode) {
 /// Two empty functions follow; nothing in the ROM refers to either.
 void ActorSystem_ReservedNoOpA(void) {}
 
+/// An empty routine.
 void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
@@ -340,6 +343,8 @@ void Actor_StartScript(struct Actor *object, const s32 *script) {
   }
 }
 
+/// Starts animation argument on an actor's sprite, or on each of the four
+/// sprites of a group (Animation_ApplyChildArgument).
 void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
@@ -365,6 +370,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   }
 }
 
+/// Sets the timer step, the animation speed, of an actor's sprite, or of each
+/// sprite of a group (16 is normal speed).
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   s32 count;
   struct ActorSpriteView *child;
@@ -527,6 +534,9 @@ void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
   }
 }
 
+/// Waits until the actor's script reaches SC_END, at most 600 frames; it
+/// returns as soon as the script idles, and after the limit whether or not it
+/// has.
 void Actor_WaitForCommandEnd(struct Actor *object) {
   s32 cnt = 0;
 
@@ -554,6 +564,8 @@ void Actor_SetBlendMode(struct Actor *object, u32 value) {
     ((struct ActorSpriteView *)object->sprite)->stateFlags = value;
 }
 
+/// Sets a one-sprite actor's sprite's own-scale bit: drawn at its own scale,
+/// not scaled by distance.
 void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == 1)
     ((struct ActorSpriteView *)object->sprite)->displayFlag = value;
@@ -567,6 +579,8 @@ void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
         ((struct ActorSpriteView *)object->sprite), value);
 }
 
+/// Fixes the priority of a one-sprite actor's sprite and its shadow, which
+/// then no longer follow its depth (clears priorityFlags bit 0).
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   struct FieldSprite *sprite;
 

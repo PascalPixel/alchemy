@@ -210,6 +210,8 @@ u16 BattleEffect_GetCycledTableWord(void) {
   return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
 }
 
+/// Returns the entry of gBattleEffect_EightWayHeadingWords for the direction
+/// pad's keys held.
 u16 BattleEffect_GetEightWayHeadingWord(void) {
   struct InputState *input = &gInput;
   u16 *words = gBattleEffect_EightWayHeadingWords;

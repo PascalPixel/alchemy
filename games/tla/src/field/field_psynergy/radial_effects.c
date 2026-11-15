@@ -156,8 +156,9 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 #define TARGET_ANIMATION_A 372
 #define TARGET_ANIMATION_B 373
 
-/// Animation 14: carry an orb from the caster to the scene's position over
-/// ten frames, growing it from a quarter size, then play out the kind.
+/// Whirlwind: carries an orb from the caster to the Psynergy's position over
+/// ten frames, growing it from a quarter size, then plays out what it does
+/// there.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainActor;
@@ -288,6 +289,8 @@ void FieldPsynergy_Whirlwind(void) {
 #undef TARGET_ANIMATION_A
 #undef TARGET_ANIMATION_B
 
+/// Per-frame update: counts the actor's frames and, at frame 80, plays
+/// SE_WHOOSH and stops itself.
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
     object->update = 0;
@@ -1179,6 +1182,8 @@ void FieldPsynergy_Avoid(void) {
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }
 
+/// Waits, at most 90 frames, until both pairs of swelling arcs have run their
+/// 32 frames.
 void BattleEffect_WaitForArcGroups(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 i = 0;
@@ -1191,7 +1196,9 @@ void BattleEffect_WaitForArcGroups(void) {
   }
 }
 
-void BattleEffect_FlickerObjectAndSpawnArcs(struct Actor *object) {
+/// Per-frame update: flashes an actor between colour mode 7 and 0 every 2
+/// frames and spawns the swelling arcs on it every 16.
+void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorModeFar(object, 7);
   } else {
@@ -1202,21 +1209,26 @@ void BattleEffect_FlickerObjectAndSpawnArcs(struct Actor *object) {
   }
 }
 
-void BattleEffect_CycleObjectAndSpawnArcs(struct Actor *object) {
+/// Per-frame update: cycles an actor through colour modes 0 to 5, one step
+/// every 2 frames, and spawns the swelling arcs on it every 16.
+void FieldEffect_CycleActorAndSpawnArcs(struct Actor *object) {
   if (gFrameCount & 1)
     Actor_SetSpriteColorModeFar(object, (gFrameCount >> 1) % 6);
   if ((gFrameCount & 15) == 0)
     BattleEffect_SpawnScaledArcObjects(object);
 }
 
+/// Gives the caster its look while it casts: 0 none (normal colours), 1
+/// flashing white with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs), 2
+/// cycling colours with them (FieldEffect_CycleActorAndSpawnArcs).
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Actor_SetSpriteColorModeFar(object, 0);
   } else if (mode == 1) {
-    object->update = (void (*)(void))BattleEffect_FlickerObjectAndSpawnArcs;
+    object->update = (void (*)(void))FieldEffect_FlickerActorAndSpawnArcs;
   } else {
-    object->update = (void (*)(void))BattleEffect_CycleObjectAndSpawnArcs;
+    object->update = (void (*)(void))FieldEffect_CycleActorAndSpawnArcs;
   }
 }
 
@@ -1260,6 +1272,10 @@ struct ArcSprite__f0e150c {
   u8 unk20[8];
 };
 
+/// Task: draws the two pairs of swelling arcs on their actor: each pair swells
+/// and shrinks over 32 frames (scale sin(age / 64 turn)) as it rises a pixel a
+/// frame, the second arc of a pair upside down, one in front of the actor and
+/// one behind.
 void BattleEffect_UpdateArcEffect(void) {
   struct ArcWork *work = Ram_HeapSlots->arcEffect;
   struct Actor *target = work->target;
@@ -1302,6 +1318,8 @@ void BattleEffect_UpdateArcEffect(void) {
   }
 }
 
+/// Starts the swelling arcs over a caster: loads their tiles and starts
+/// BattleEffect_UpdateArcEffect with no pair showing.
 void BattleEffect_StartArcEffect(void) {
   struct ArcEffectWork *work =
       HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*work));
@@ -1315,6 +1333,8 @@ void BattleEffect_StartArcEffect(void) {
   Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_VBLANK);
 }
 
+/// Ends the swelling arcs: frees their tiles and their work, and stops their
+/// task.
 void BattleEffect_EndArcEffect(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
 

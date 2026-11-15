@@ -454,17 +454,6 @@ end:
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
-/* VIEW(psynergy): routine BattleEffect_DropObjectAtAnchor as void
- * BattleEffect_DropObjectAtAnchor(s32 id); field/field.h has void
- * BattleEffect_DropObjectAtAnchor(u32 objectId); tried as the definition's void
- * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/scoop.c:494: conflicting types for
- * `BattleEffect_DropObjectAtAnchor'. */
-void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
-    "BattleEffect_DropObjectAtAnchor");
-#define BattleEffect_DropObjectAtAnchor                                        \
-  BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;

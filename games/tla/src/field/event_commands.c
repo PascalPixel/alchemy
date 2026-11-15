@@ -28,8 +28,6 @@
 
 #undef Actor_ShowEmoteById
 #undef PaletteFade_SetTarget
-#undef FieldCamera_MoveToActor
-#undef MapGrid_SetCellBehavior
 #undef FieldPsynergy_SteerPushedTarget
 #undef FieldPsynergy_ForceOnTarget
 #undef FieldPsynergy_FrostOnTarget

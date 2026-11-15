@@ -81,6 +81,8 @@ void ParticleBurst_Update(void) {
   work->frame++;
 }
 
+/// Ends the particle burst (ParticleBurst_Start): stops its task and frees its
+/// tiles.
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleEffect;
 
@@ -184,6 +186,7 @@ void Cyclone_LiftLeader(void) {
   work->follower->z.fixed = owner->z.fixed;
 }
 
+/// Per-frame update: turns an actor 1/16 turn a frame.
 void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += TRIG_TURN / 16;
 }

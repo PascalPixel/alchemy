@@ -35,6 +35,13 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 void IsletCave_TeleportIn(void);
 
 s32 List_CountEntries(u16 *list);
@@ -756,7 +763,7 @@ void IsletCave_SentinelAwaits(void) {
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
    * second. */

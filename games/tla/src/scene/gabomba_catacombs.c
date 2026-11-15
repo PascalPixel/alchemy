@@ -29,6 +29,13 @@
 #include "fixed_math.h"
 #include "field/event_commands.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
@@ -231,7 +238,7 @@ void GabombaCatacombs_UncoverMadPlant(void) {
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
     GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 0);
   }
 }

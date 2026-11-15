@@ -54,6 +54,13 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
@@ -129,7 +136,7 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
     JupiterLighthouse_MadPlantLeaps(SPRITE_MAD_PLANT, 424, 488);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
   }
 }

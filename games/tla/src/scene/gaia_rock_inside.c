@@ -47,6 +47,13 @@
 #include "field/actor_script.h"
 #include "../field/actor_set_sprite_priority.c"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 #include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
@@ -748,7 +755,7 @@ void GaiaRockInside_CycloneMadPlant(void) {
   if (Event_GetFlag(FLAG_MAD_PLANT(2)) == 0) {
     GaiaRockInside_MadPlantLeaps(SPRITE_MAD_PLANT, 328, 344);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(2));
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 2);
   }
 }
@@ -1458,14 +1465,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     s32 scene;
 
     count = a + b + c + Event_GetFlag(FLAG_BUSHES_STREAM_OPEN);
-    /* FAKEMATCH(dead): the count is summed before the battle rule store. */
-    do {
-    } while (0);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-    /* FAKEMATCH(dead): the scene address is loaded after the battle rule store.
-     */
-    do {
-    } while (0);
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
     FieldEvent_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindMember(ITEM_DANCING_IDOL) != -1) {

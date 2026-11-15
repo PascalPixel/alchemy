@@ -352,12 +352,6 @@ void JupiterLighthouse_PushEnergyBlock(s32 a0, s32 a1) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                             s32 destX, s32 destY) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
-  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, destX, destY);
-}
-
 /// The energy path block lands with a thump once pushed off its ledge; landed
 /// in the gap at cell (20, 39), it stays there and the path beyond it lights
 /// up in three steps.
@@ -394,7 +388,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     MapGrid_CopyCellsLayered(92, 40, 1, 1, 84, 40);
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
-    CopyCells(92, 41, 1, 1, 84, 41);
+    MapGrid_CopyCellsLayered(92, 41, 1, 1, 84, 41);
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);

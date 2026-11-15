@@ -51,6 +51,13 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 /// The placed actors this file moves by number. The party's rows take their
 /// characters' numbers; the rest count on from 8 (a render of the beacon with
 /// FLAG_ISAAC_AND_IVAN_FELL set shows Agatio's sheet at 27, Karst's at 28).
@@ -888,10 +895,8 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_Wait_(5);
   ACTOR_SET_MODE_AND_WAIT(ACTOR_AGATIO, 3, 20);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  do {
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
@@ -1032,10 +1037,8 @@ void JupiterLighthouse_FightKarstAndAgatio(void) {
   if (gMainRoutineWork.sequenceResult == -1) {
     FieldUnit_AddHp(4, -10);
   }
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  do {
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
@@ -1144,10 +1147,8 @@ void JupiterLighthouse_AfterTheFight(void) {
   FieldEvent_Wait(4);
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  do {
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 12);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 13);

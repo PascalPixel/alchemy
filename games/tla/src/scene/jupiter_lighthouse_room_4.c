@@ -107,15 +107,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
-  ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
-}
-
 void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
-  SetCollisionCode(0x1300000, 0xa00000, 0, 254);
+  FieldMapGrid_SetCellBehavior(0x1300000, 0xa00000, 0, 254);
   Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);

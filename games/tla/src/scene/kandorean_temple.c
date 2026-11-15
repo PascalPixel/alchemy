@@ -40,6 +40,7 @@
 #include "field/field_effect.h"
 #include "field/object.h"
 #include "scene/scene.h"
+#include "field/call.h"
 #include "shared/tables.h"
 #include "sound/sound.h"
 #include "system/field_effect.h"
@@ -52,6 +53,13 @@
 #include "system/system.h"
 #include "system/task.h"
 #include "text/msg_ids.h"
+
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -250,20 +258,6 @@ static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
 static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, s32 x,
                                                             s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
-}
-
-/// Places a rope between two poles (Rope_Place).
-static __inline__ void KandoreanTemple_PlaceRope(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH(wrapper): the call through this inline. */
-  Rope_Place(a, b, c, d);
-}
-
-/// Copies map cells as the leader touches them (TileCopies_CopyTouchedCells).
-static __inline__ void KandoreanTemple_CopyTouchedCells(s32 a, s32 b, s32 c,
-                                                        s32 d, s32 e, s32 f,
-                                                        s32 g) {
-  /* FAKEMATCH(wrapper): the call through this inline. */
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 /// The Kandorean Temple's story, from the hidden passage Kraden suspects to
@@ -1889,10 +1883,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   Actor_SetDestinationById(ACTOR_WEST_CHESTBEATER, 300, 164);
   Actor_MoveToAndWaitById(ACTOR_EAST_CHESTBEATER, 356, 164);
   Event_Wait(40);
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_CHESTBEATERS, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
@@ -1900,27 +1891,27 @@ void KandoreanTemple_FightChestbeaters(void) {
 
 /// Cyclone blows away the first of five patches by the gate.
 void KandoreanTemple_CycloneFirstPatch(void) {
-  KandoreanTemple_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
+  Call7(TileCopies_CopyTouchedCells, 76, 0, 2, 2, 73, 14, 1);
 }
 
 /// Cyclone blows away the second of five patches by the gate.
 void KandoreanTemple_CycloneSecondPatch(void) {
-  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
+  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 75, 16, 1);
 }
 
 /// Cyclone blows away the third of five patches by the gate.
 void KandoreanTemple_CycloneThirdPatch(void) {
-  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
+  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 74, 18, 1);
 }
 
 /// Cyclone blows away the fourth of five patches by the gate.
 void KandoreanTemple_CycloneFourthPatch(void) {
-  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
+  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 80, 18, 1);
 }
 
 /// Cyclone blows away the fifth of five patches by the gate.
 void KandoreanTemple_CycloneFifthPatch(void) {
-  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
+  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 87, 15, 1);
 }
 
 /// Sets up the room being entered.
@@ -2606,9 +2597,8 @@ void KandoreanTemple_StartGate(void) {
 void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
   if (Event_GetFlag(FLAG_NORTH_ROPE_TIED) == 0) {
     Event_SetFlag(FLAG_NORTH_ROPE_TIED);
-    KandoreanTemple_PlaceRope(1, FLAG_NORTH_ROPE_TIED,
-                              ACTOR_NORTH_ROPE_EAST_POLE,
-                              ACTOR_NORTH_ROPE_WEST_POLE);
+    Call4(Rope_Place, 1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POLE,
+          ACTOR_NORTH_ROPE_WEST_POLE);
   }
   {
     s32 angle = FACING_SOUTH_SOUTHEAST;
@@ -2622,8 +2612,8 @@ void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
 void KandoreanTemple_StartPoisHall(void) {
   gFieldWork->transition = 521;
   Rope_Initialize();
-  KandoreanTemple_PlaceRope(0, FLAG_SOUTH_ROPE_TIED, ACTOR_SOUTH_ROPE_WEST_POLE,
-                            ACTOR_SOUTH_ROPE_EAST_POLE);
+  Call4(Rope_Place, 0, FLAG_SOUTH_ROPE_TIED, ACTOR_SOUTH_ROPE_WEST_POLE,
+        ACTOR_SOUTH_ROPE_EAST_POLE);
   Rope_Place(1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POLE,
              ACTOR_NORTH_ROPE_WEST_POLE);
   if (Event_GetFlag(FLAG_MET_POI) == 0) {

@@ -25,6 +25,13 @@
 #include "field/actor.h"
 #include "item_ids.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 void Leader_CenterInCell(void);
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -1117,11 +1124,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   Actor_WalkBy(ACTOR_AGATIO, 24, 0);
   FieldEvent_Wait(20);
-  do {
-    /* FAKEMATCH(dead): the store kept in a once-only block, whose end ends
-     * CSE's block. */
-    gMainRoutineWork.battleType = BATTLE_TYPE_LOST;
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_LOST);
   FieldEvent_SetAfterBattleDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
   Event_SetDefeatDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
   Party_RemoveMember(4);

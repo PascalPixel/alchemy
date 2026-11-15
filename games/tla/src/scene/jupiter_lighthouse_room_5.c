@@ -211,12 +211,6 @@ void Orb_Update(struct Actor *self) {
 
 void Actor_StartScript(struct OrbitEffect *object, const void *script);
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
-                                                    s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline. */
-  return ((struct OrbitEffect *)Import_ActorCreate(type, x, y, z));
-}
-
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
@@ -233,18 +227,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;

@@ -128,7 +128,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   // Atalanta: eleven sprite objects with their tiles.
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-  Iwram_CopyWords(OBJ_PLTT, picture, 512);
+  Iwram_CopyWords(OBJ_PLTT, picture, OBJ_PLTT_SIZE);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
   picture += 256;
@@ -140,7 +140,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     piece->image.priority = 1;
     work->sprites[i] = piece;
     Iwram_CopyWordsEntry(OBJ_VRAM + gVramCacheEntries[piece->slot].offset,
-                         tiles + i * 0x400, 0x400);
+                         tiles + i * OBJ_32X32_8BPP_BYTES,
+                         OBJ_32X32_8BPP_BYTES);
   }
 
   // The shafts, the sky and Atalanta's path.

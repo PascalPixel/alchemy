@@ -82,8 +82,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
-    Iwram_CopyWords((void *)OBJ_PLTT, sheet, 0x200);
-    sheet += 0x200;
+    Iwram_CopyWords((void *)OBJ_PLTT, sheet, OBJ_PLTT_SIZE);
+    sheet += OBJ_PLTT_SIZE;
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
       struct Sprite *object = EffectSprite_CreateWithTiles(
@@ -93,7 +93,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       work->sprites[i] = object;
       Iwram_CopyWords(
           (void *)(OBJ_VRAM0 + gVramCacheEntries[object->slot].offset),
-          tiles + i * 0x400, 0x400);
+          tiles + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
     }
   }
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;

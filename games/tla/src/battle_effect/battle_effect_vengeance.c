@@ -1317,7 +1317,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
 
-    Iwram_CopyWords((void *)OBJ_PLTT, e, 512);
+    Iwram_CopyWords((void *)OBJ_PLTT, e, OBJ_PLTT_SIZE);
     Decompress_TaggedLz(e + 512, cellBuffer);
     {
       u8 *cells;

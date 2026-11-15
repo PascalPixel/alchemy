@@ -140,7 +140,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
         work->sprites[i] = obj;
-        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                             cells + i * OBJ_32X32_8BPP_BYTES,
+                             OBJ_32X32_8BPP_BYTES);
       }
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet, 0, 0);
     }

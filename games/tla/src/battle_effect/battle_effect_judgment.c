@@ -102,16 +102,18 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-  Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-  pal += 512;
+  Iwram_CopyWords((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+  pal += OBJ_PLTT_SIZE;
   Decompress_TaggedLz(pal, cells);
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
     struct Sprite *obj = EffectSprite_CreateWithTiles(
         32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
     obj->image.priority = 2;
     work->sprites[i] = obj;
-    Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+    Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                         cells + i * OBJ_32X32_8BPP_BYTES,
+                         OBJ_32X32_8BPP_BYTES);
   }
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -146,14 +148,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         struct Sprite *obj = work->sprites[i];
 
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
-                             Ram_MapCellBuffer + i * 0x400, 0x400);
+                             Ram_MapCellBuffer + i * OBJ_32X32_8BPP_BYTES,
+                             OBJ_32X32_8BPP_BYTES);
       }
       depth = -px(64);
       zoom = Q16_ONE * 8;
@@ -233,24 +236,25 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame == 72) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
-                          (u32)(cells + i * 0x400), DMA_COPY_WORDS(0x100));
+                          (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
+                          DMA_COPY_WORDS(0x100));
       }
     }
     if (frame == 76) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
                 (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
-            (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400),
+            (u32)(PassBuffer(Ram_MapCellBuffer) + i * OBJ_32X32_8BPP_BYTES),
             DMA_COPY_WORDS(0x100));
       }
     }

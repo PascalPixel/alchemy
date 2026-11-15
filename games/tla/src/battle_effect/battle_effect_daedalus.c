@@ -431,7 +431,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         work->sprites[DAEDALUS_MACHINE + i] = obj;
         Iwram_CopyWords(
             (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
-            DECODE_BUFFER + i * 0x400, 0x400);
+            DECODE_BUFFER + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
       }
       obj = EffectSprite_CreateWithTiles(32, 64,
                                          OBJ_SIZE_32X64 | OBJ_256_COLORS, 0);

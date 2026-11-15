@@ -24,6 +24,7 @@
 #include "field/event_inline.h"
 #include "system/input.h"
 #include "field/sprite.h"
+#include "graphics/palette_buffers.h"
 
 /// Talks each person gives once, the first time spoken to.
 #define FLAG_GRUMBLED_ABOUT_THE_MAYOR 0x8ba
@@ -394,7 +395,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
   Event_Wait(40);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(0x10002, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
   Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
@@ -442,12 +443,12 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(15);
   Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 70);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  PaletteFade_SetSource(0x10002, 0);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetSource(PALETTE_TINT_SEPIA, PALETTES_ALL);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   Event_WaitTransitionFrames();
   Event_Wait(60);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);

@@ -23,6 +23,7 @@
 #include "scene/airs_rock.h"
 #include "scene/dehkan_plateau.h"
 #include "scene/gabomba_statue.h"
+#include "graphics/palette_buffers.h"
 
 /// Set once Move has left the hall's pillar on cell (103, 41) in
 /// half cells.
@@ -59,19 +60,6 @@
 #define FLAG_AIRS_ROCK_HALL_STATUE_WOKEN 0x89a
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
-
-struct AirsRockInsideMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct AirsRockInsideMapWork {
-  u8 unk000[0x108];
-  struct AirsRockInsideMapLayer layers[3];
-};
-
-extern u8 gMapGridCellBuffer[];
 
 void Actor_StartScript(struct Actor *object, const u8 *data);
 
@@ -451,41 +439,11 @@ void AirsRockInside_TakeOverWhirlwind(void) {
   ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
 
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct AirsRockInsideMapWork *map =
-      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 #include "../field/actor_wait_until_idle.c"
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct AirsRockInsideMapWork *map =
-      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
-}
+#include "../field/map_cell_get.c"
 
 /// Sets an object's cells by its flag (its action parameter): when the flag is
 /// set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
@@ -864,7 +822,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
     return;
   if (object->timer == 240) {
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
-      Actor_PlaySoundInView(object, 202);
+      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
     if (object->facing == 0xc000) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
@@ -874,8 +832,8 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
       position.z =
           object->z.fixed + Math_MulQ16(px(8), Trig_Sin(object->facing));
     }
-    shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y.fixed,
-                                              position.z);
+    shot = (struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, position.x,
+                                              object->y.fixed, position.z);
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
@@ -993,7 +951,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
   if (object->timer == 240) {
     shot = 0;
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
-      Actor_PlaySoundInView(object, 202);
+      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
     if (object->facing == 0xc000) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
@@ -1103,7 +1061,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
 
 /// A puff of air rising from a vent.
 void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
-  struct Actor *object = Import_ActorCreate(0x11d, x, y, z);
+  struct Actor *object = Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
 
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
@@ -1225,7 +1183,7 @@ void AirsRockInside_BlowGust(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_RUSH);
-  gust = (struct Actor *)Import_ActorCreate(280, leader->x.fixed,
+  gust = (struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed,
                                             leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
@@ -1248,9 +1206,9 @@ void AirsRockInside_BlowGust(void) {
   gust->z.fixed = TARGET(effect)->z.fixed - px(1);
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(0x2a0, TARGET(effect)->x.fixed,
-                                                 TARGET(effect)->y.fixed,
-                                                 TARGET(effect)->z.fixed);
+      spark = (struct Actor *)Import_ActorCreate(
+          SPRITE_PARTICLE, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
+          TARGET(effect)->z.fixed);
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->groundHeight =
@@ -1746,7 +1704,7 @@ burst:
   i++;
   if (i != 8)
     goto burst;
-  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
@@ -1877,8 +1835,8 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -1893,16 +1851,16 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  PaletteFade_SetSource(0x7fff, 0);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetSource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
-  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   i = 0;
 fade:
@@ -1911,8 +1869,8 @@ fade:
   i++;
   if (i != 32)
     goto fade;
-  PaletteFade_SetSource(0x10003, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
@@ -2178,8 +2136,8 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -2194,16 +2152,16 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  PaletteFade_SetSource(0x7fff, 0);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetSource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
-  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   i = 0;
 fade:
@@ -2212,8 +2170,8 @@ fade:
   i++;
   if (i != 32)
     goto fade;
-  PaletteFade_SetSource(0x10003, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
@@ -2282,7 +2240,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   struct FieldSprite *sprite;
   s32 i, cellX, cellY;
 
-  marker = Import_ActorCreate(288, px(x), 0, px(y));
+  marker = Import_ActorCreate(SPRITE_STACKED_CRATES, px(x), 0, px(y));
   REG_BLDALPHA = BLEND_ALPHA(16, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(marker, 0);
@@ -2475,8 +2433,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
                                   a->z.part[0].pixel << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = px(1) / 5;
@@ -2489,7 +2447,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
     struct Actor *spark =
-        Import_ActorCreate(0x2a0, a->x.fixed, a->y.fixed, a->z.fixed);
+        Import_ActorCreate(SPRITE_PARTICLE, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);
     spark->x.fixed += px((Random16() & 31) - 16);
     spark->y.fixed += px((Random16() & 15) - 8);
@@ -2564,14 +2522,14 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   wait(16);
-  MapGrid_SetScreenShake(0, 0, 0);
+  MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(SE_574);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(idB, gAirsRockInside_ShebaSettleScript);
@@ -2902,8 +2860,8 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_SetSpriteFlags(leader, 0);
   leader->speedLimit = px(3) / 2;
   leader->acceleration = px(3) / 2;
-  lift = Import_ActorCreate(280, leader->x.fixed, leader->y.fixed - px(8),
-                            leader->z.fixed);
+  lift = Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed,
+                            leader->y.fixed - px(8), leader->z.fixed);
   Actor_SelectAnimation(lift, 2);
   Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
@@ -2962,7 +2920,7 @@ void AirsRockInside_SpawnMotes(void) {
   struct FieldSprite *sprite;
 
   do {
-    object = Import_ActorCreate(672, 0, 0, 0);
+    object = Import_ActorCreate(SPRITE_PARTICLE, 0, 0, 0);
     sprite = object->sprite;
     sprite->priority = 1;
     object->riseEnabled = i << 4;

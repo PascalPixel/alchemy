@@ -25,6 +25,7 @@
 #include "system/io_reg.h"
 #include "field/field_sprite.h"
 #include "system/frame.h"
+#include "graphics/palette_buffers.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
@@ -341,8 +342,8 @@ void AquaRock_DripAtRandom(struct Actor *object) {
     s32 x = object->x.fixed;
 
     x += spread * 48;
-    child =
-        Import_ActorCreate(0x2a2, x - px(24), object->y.fixed, object->z.fixed);
+    child = Import_ActorCreate(SPRITE_GLINT, x - px(24), object->y.fixed,
+                               object->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
       child->update = (void (*)(void))AquaRock_SinkOrFlow;
@@ -543,11 +544,11 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
-    PaletteFade_SetTarget(0x10000, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(10);
     wait(10);
   }
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   if (Event_GetFlag(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK) == 0) {
@@ -572,7 +573,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     AquaRock_SetCellMarkerAnchor(0);
   }
   Event_Wait(30);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   Event_End();
@@ -812,11 +813,11 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
-    PaletteFade_SetTarget(0x10000, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(10);
     wait(10);
   }
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   GameFlag_Set(FLAG_AQUA_ROCK_DRY_MOAI_DOUSED);
@@ -827,7 +828,7 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   FieldCamera_SetSpeed(1);

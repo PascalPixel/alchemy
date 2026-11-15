@@ -617,7 +617,7 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = FieldActor_Create(0x1e8, x, y, z);
+  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);

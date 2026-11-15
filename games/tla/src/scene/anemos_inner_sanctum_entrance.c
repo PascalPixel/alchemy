@@ -16,6 +16,7 @@
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
+#include "graphics/palette_buffers.h"
 
 struct AnemosInnerSanctumEntranceParty {
   u8 unk000[0x24b];
@@ -127,8 +128,8 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_SHADOW, 2);
   Event_Wait(20);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);

@@ -21,6 +21,7 @@
 #include "fixed_math.h"
 #include "field/actor_view.h"
 #include "scene/dehkan_plateau.h"
+#include "graphics/palette_buffers.h"
 
 /// Set once Move has left the second room's first pillar on its ledge, cell
 /// (16, 43).
@@ -131,41 +132,9 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 a0) {
   return 0;
 }
 
-extern u8 gMapGridCellBuffer[];
+#include "../field/map_cell_get.c"
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct AirsRockMapWork *map =
-      (struct AirsRockMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
-}
-
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct AirsRockMapWork *map =
-      (struct AirsRockMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 #include "../field/actor_wait_until_idle.c"
 
@@ -468,8 +437,8 @@ void AirsRock_BlowGust(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_RUSH);
-  gust =
-      FieldActor_Create(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+  gust = FieldActor_Create(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed,
+                           leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = Q16_ONE * 17 / 10;
@@ -487,8 +456,8 @@ void AirsRock_BlowGust(void) {
   gust->z.fixed = effect->child->z.fixed - px(1);
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(0x2a0, effect->child->x.fixed,
-                                                 0, effect->child->z.fixed);
+      spark = (struct Actor *)Import_ActorCreate(
+          SPRITE_PARTICLE, effect->child->x.fixed, 0, effect->child->z.fixed);
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -1097,7 +1066,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
     return;
   if (object->timer == 240) {
     if (!Event_GetFlag(FLAG_RIDING_WHIRLWIND))
-      Actor_PlaySoundInView(object, 202);
+      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
     if (object->facing == 0xc000) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
@@ -1107,7 +1076,8 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
       position.z =
           object->z.fixed + Math_MulQ16(px(8), Math_Sin(object->facing));
     }
-    shot = FieldActor_Create(280, position.x, object->y.fixed, position.z);
+    shot = FieldActor_Create(SPRITE_WHIRLWIND, position.x, object->y.fixed,
+                             position.z);
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
@@ -1191,7 +1161,7 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   s32 shakeA = -1;
   s32 shakeC = 0xe666;
 
-  first = FieldActor_Create(255, x, 0, z);
+  first = FieldActor_Create(SPRITE_ROCK, x, 0, z);
   options.priority = 1;
   options.startScaleX = Q16_ONE * 2;
   options.startScaleY = Q16_ONE * 2;
@@ -1210,7 +1180,7 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   for (i = 0; i != 6; i++) {
     rock = first;
     if (i != 0) {
-      rock = FieldActor_Create(255, x, 0, z);
+      rock = FieldActor_Create(SPRITE_ROCK, x, 0, z);
       Sprite_ShareVramCacheEntry(rock->sprite, first->sprite);
     }
     Actor_SetSpriteFlags(rock, 0);
@@ -1300,8 +1270,8 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_Interpolate(60);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -1316,13 +1286,13 @@ row:
   gBgScroll[0].y = 0x10;
   System_Wait(30);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(1);
   Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
   System_Wait(1);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellsTo(52, 12, 29, 9, 9, 9);
@@ -1339,12 +1309,12 @@ fadeFirstCrumble:
   gBgScroll[0].y = 0;
   System_Wait(1);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellsTo(52, 22, 29, 9, 9, 9);
@@ -1358,8 +1328,8 @@ fadeSecondCrumble:
   if (i != 32)
     goto fadeSecondCrumble;
   Event_PlaySound(SE_CRASH);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(1);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   FieldEvent_Wait(20);
@@ -1369,12 +1339,12 @@ fadeSecondCrumble:
   MapGrid_CopyCellsTo(62, 2, 29, 9, 9, 9);
   MapGrid_CopyCellAttributes(62, 2, 9, 9, 29, 9);
   MapGrid_CopyCellsTo(62, 66, 29, 73, 9, 9);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_Interpolate(60);
   System_Wait(60);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(60);
   System_Wait(70);
   Window_LoadGraphics();
@@ -1541,12 +1511,12 @@ void AirsRock_WhirlwindClearsFog(void) {
   FieldTask_Remove(AirsRock_DriftFog);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(8);
   Task_AddFrame(AirsRock_LiftFog, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);

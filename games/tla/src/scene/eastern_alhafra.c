@@ -46,6 +46,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/falling_rocks.h"
+#include "graphics/palette_buffers.h"
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
@@ -362,7 +363,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     Actor_SelectAnimation(object, 4);
     i = 0;
   create:
-    spark = (FieldActor_Create(276, object->x.fixed, object->y.fixed,
+    spark = (FieldActor_Create(SPRITE_SPLASH, object->x.fixed, object->y.fixed,
                                object->z.fixed));
     sparks[i] = spark;
     spark->scaleX = Q16_ONE * 13 / 20;
@@ -1224,7 +1225,7 @@ s32 timer;
   struct Actor *object;
   struct Sprite *sprite;
 
-  object = FieldActor_Create(0x1e8, x, y, z);
+  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
   if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
@@ -1751,7 +1752,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(ACTOR_KRADEN, 744, 1016);
   Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 744, 1016);
   Event_PlaySound(MUS_BRIGGS_STEALS_SHIP);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(30);
@@ -1974,7 +1975,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
                                          center->y.fixed, center->z.fixed);
   }
   FieldEvent_Wait(30);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(15);

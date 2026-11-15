@@ -29,7 +29,6 @@
 #define FLAG_ANGARA_BLOCKS_STACKED FLAG_SCENE_TEMP_12
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
 
-extern u8 gMapGridCellBuffer[];
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];
@@ -121,37 +120,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCaverns_Placements;
 }
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
+#include "../field/map_cell_get.c"
 
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = (struct MapCell *)gMapGridCellBuffer;
-  cell += x + (y << 7);
-  return (cell->collisionCode << 8) | cell->attributeB;
-}
-
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = (struct MapCell *)gMapGridCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 #include "../field/actor_wait_until_idle.c"
 

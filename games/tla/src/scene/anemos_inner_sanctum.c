@@ -49,6 +49,7 @@
 #include "scene/event_layer.h"
 #include "scene/mars_lighthouse_entrance.h"
 #include "scene/mars_lighthouse_star_room.h"
+#include "graphics/palette_buffers.h"
 
 struct Actor;
 struct CellTarget;
@@ -266,7 +267,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     AnemosInnerSanctum_TeleportIn();
 }
@@ -305,7 +306,7 @@ void AnemosInnerSanctum_TeleportIn(void) {
 
   saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -313,7 +314,7 @@ void AnemosInnerSanctum_TeleportIn(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   AnemosInnerSanctum_StopPaletteCycle();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {
@@ -345,7 +346,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -686,8 +688,8 @@ void AnemosInnerSanctum_LightThePillar(void) {
   Actor_SetSpriteFlags((s32)actor, 0);
   Actor_StartScript(actor, gAnemosInnerSanctum_PillarRisesScript);
   Actor_SetBlendMode(actor, 1);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(60);
   BlendScript_Suspend();
   alpha = alpha & 255;
@@ -741,7 +743,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
     Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
     BlendScript_Suspend();
     alpha = REG_BLDALPHA & 255;
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(60);
     for (i = alpha; i != 0;) {
       REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
@@ -785,10 +787,10 @@ void AnemosInnerSanctum_LightThePillar(void) {
     }
     FieldEvent_Wait(12);
     System_Wait(16);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
     PaletteFade_Interpolate(1);
     System_Wait(1);
-    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(32);
     Event_PlaySound(SE_574);
     AnemosInnerSanctum_DropSpark(targetX, targetZ, part);
@@ -1262,12 +1264,12 @@ void AnemosInnerSanctum_MarkEntrance(void) {
 void AnemosInnerSanctum_SummonTheGuardian(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgSummonInheritedEarthDarkness, 0, 6);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   Event_SetFlag(FLAG_ANEMOS_GUARDIAN_SPOKE);
@@ -1638,7 +1640,8 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 

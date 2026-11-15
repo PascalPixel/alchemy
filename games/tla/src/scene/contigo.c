@@ -19,6 +19,7 @@
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "scene/sparkle.h"
+#include "graphics/palette_buffers.h"
 
 /// The party set out on the winged ship (as Atteka Inlet names it).
 /// Force has freed Shine from the ground it was stuck in.
@@ -286,7 +287,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Contigo_TeleportIn();
 }
@@ -333,7 +334,7 @@ void Contigo_TeleportIn(void) {
 
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -341,7 +342,7 @@ void Contigo_TeleportIn(void) {
   Teleport_PlayWhirl();
   wait(40);
   Contigo_StopPaletteCycle();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -371,7 +372,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -704,13 +706,14 @@ void Contigo_BabyThinks(void) {
     // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
   Actor_SetAnimationById(ACTOR_BABY, 3);
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x204084, 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
                                    2);
-  effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
+  effect =
+      ((struct ContigoGlow *)Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z));
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
@@ -745,7 +748,7 @@ void Contigo_BabyThinks(void) {
                                    0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
     Event_SetMessageId((s32)MsgContigoGooGooGaaGaaWaaa);

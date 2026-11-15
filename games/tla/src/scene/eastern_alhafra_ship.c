@@ -247,7 +247,7 @@ s32 timer;
   struct Actor *object;
   struct Sprite *sprite;
 
-  object = Import_ActorCreate(0x1e8, x, y, z);
+  object = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
   if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);

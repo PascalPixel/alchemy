@@ -244,8 +244,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
 
   // DEAD: a scale multiplied and dropped; the ROM keeps the call.
   Math_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
-  spark =
-      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -259,8 +259,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
       sprite->priority = 1;
     }
   }
-  spark =
-      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -288,7 +288,8 @@ void WorldMap_SpawnParticle(struct Actor *object) {
              object->z.fixed);
   angle = Random16();
   FieldVector_AddPolarOffsetFixed(angle * 20, Random16(), position);
-  particle = (FieldActor_Create(674, position[0], position[1], position[2]));
+  particle =
+      (FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->groundHeight = object->groundHeight;
     sprite = particle->sprite;

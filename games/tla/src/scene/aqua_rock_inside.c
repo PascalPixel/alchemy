@@ -28,6 +28,7 @@
 #include "field/event_commands.h"
 #include "scene/dehkan_plateau.h"
 #include "window/item_icon.h"
+#include "graphics/palette_buffers.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
@@ -1203,8 +1204,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
                                   FIELD_PIXEL(first->z.fixed) << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = px(1) / 5;
@@ -1216,8 +1217,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
-    object = ((void *)Import_ActorCreate(672, first->x.fixed, first->y.fixed,
-                                         first->z.fixed));
+    object = ((void *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
+                                         first->y.fixed, first->z.fixed));
     Sound_Play(SE_GLITTER);
     object->x.fixed += ((Random16() & 31) - 16) << 16;
     object->y.fixed += ((Random16() & 15) - 8) << 16;
@@ -1293,14 +1294,14 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(SE_574);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(secondId, gAquaRockInside_PiersSettleScript);

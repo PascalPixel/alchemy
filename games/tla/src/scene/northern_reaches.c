@@ -238,7 +238,7 @@ fire:
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0))
+  if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
     goto ready;
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, 16);

@@ -747,7 +747,7 @@ answeredNo:
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_CONSERVATO, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Event_OpenMessage(ACTOR_CONSERVATO, 0);
-  if (!Event_AskYesNoWithActorAnimation(4, 0)) {
+  if (!Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     Event_Wait(15);
     Event_ShowMessageThenWait(ACTOR_CONSERVATO, 0, 5);
     gFieldWork->message = (gFieldWork->message) + 1;

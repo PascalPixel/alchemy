@@ -1224,7 +1224,7 @@ void Madra_MeetKarst(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 4);
-  SET_MODE_AND_WAIT(34, 3, 20);
+  SET_MODE_AND_WAIT(ACTOR_MAYOR, 3, 20);
   // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -1240,7 +1240,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(34, 4);
+    SET_MODE(ACTOR_MAYOR, 4);
     Event_Wait(33);
     Event_Wait(20);
     // "Imagine! You came all this way to put us at ease, and I totally..."
@@ -1253,7 +1253,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(34, 4);
+    SET_MODE(ACTOR_MAYOR, 4);
     Event_Wait(33);
     Event_Wait(20);
     (gFieldWork->message)++;
@@ -1263,7 +1263,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Regardless, I told you that I would reward you when the boat was..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(34, 3);
+  SET_MODE(ACTOR_MAYOR, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "That being the case, I'd like to give you that reward now."
@@ -1275,7 +1275,7 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Event_Wait(20);
-  SET_MODE(5, 4);
+  SET_MODE(ACTOR_JENNA, 4);
   Event_Wait(33);
   Event_Wait(20);
   // "Madra is still in shambles from the disaster... We couldn't possibly..."
@@ -1312,23 +1312,23 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(34, 3);
+  SET_MODE(ACTOR_MAYOR, 3);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-  SET_MODE(4, 3);
-  SET_MODE(5, 3);
-  SET_MODE(6, 3);
-  SET_MODE(7, 3);
+  SET_MODE(ACTOR_FELIX, 3);
+  SET_MODE(ACTOR_JENNA, 3);
+  SET_MODE(ACTOR_SHEBA, 3);
+  SET_MODE(ACTOR_PIERS, 3);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_NORTH);
   Actor_WalkToAndWait(ACTOR_MAYOR, 153, 259);
   Actor_SetPosition(ACTOR_MAYOR, 0, 0);
-  SET_MODE(32, 4);
+  SET_MODE(ACTOR_KRADEN, 4);
   Event_Wait(33);
   Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
@@ -1383,7 +1383,7 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_Wait(40);
-    SET_MODE(33, 3);
+    SET_MODE(ACTOR_KARST, 3);
     Event_Wait(20);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
@@ -1393,7 +1393,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-    SET_MODE(6, 4);
+    SET_MODE(ACTOR_SHEBA, 4);
     Event_Wait(33);
     Event_Wait(20);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -1408,7 +1408,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-    SET_MODE(6, 4);
+    SET_MODE(ACTOR_SHEBA, 4);
     Event_Wait(33);
     Event_Wait(20);
     FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -1420,14 +1420,14 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Who is this Isaac?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(32, 4);
-  SET_MODE(4, 4);
-  SET_MODE(7, 4);
-  SET_MODE(6, 4);
-  SET_MODE(5, 4);
+  SET_MODE(ACTOR_KRADEN, 4);
+  SET_MODE(ACTOR_FELIX, 4);
+  SET_MODE(ACTOR_PIERS, 4);
+  SET_MODE(ACTOR_SHEBA, 4);
+  SET_MODE(ACTOR_JENNA, 4);
   Event_Wait(33);
   Event_Wait(20);
-  SET_MODE(33, 3);
+  SET_MODE(ACTOR_KARST, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "What? You feign ignorance? Why? Would you protect him from my fury!?"
@@ -1444,7 +1444,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  SET_MODE(33, 3);
+  SET_MODE(ACTOR_KARST, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "Is this Isaac the same one they've been speaking of? Is he pursuing you?"
@@ -1460,7 +1460,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "What do you take me for? I'm a warrior, like my sister... I can..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(33, 4);
+  SET_MODE(ACTOR_KARST, 4);
   Event_Wait(33);
   Event_Wait(20);
   // "Even if you doubled Felix's power, he would still be no match for my..."
@@ -1478,12 +1478,12 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   Event_Wait(20);
-  SET_MODE(33, 3);
+  SET_MODE(ACTOR_KARST, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "But I must congratulate you on your successes at both the Mercury..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(33, 4);
+  SET_MODE(ACTOR_KARST, 4);
   Event_Wait(33);
   Event_Wait(20);
   // "Although your success there now prevents us from returning to the..."
@@ -1516,7 +1516,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "And if you make the journey, you'll have to light Jupiter on your..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(33, 3);
+  SET_MODE(ACTOR_KARST, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "We have our own work to do, and number one on the list is taking..." Yes:
@@ -1535,13 +1535,13 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   }
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  SET_MODE(32, 4);
+  SET_MODE(ACTOR_KRADEN, 4);
   Event_Wait(33);
-  SET_MODE(32, 4);
+  SET_MODE(ACTOR_KRADEN, 4);
   Event_Wait(33);
   // "No, thank you. I believe we'll just find Jupiter Lighthouse on our..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(33, 3);
+  SET_MODE(ACTOR_KARST, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "I see. Just don't let us down."
@@ -1564,7 +1564,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Wow. And I thought Saturos and Menardi had issues."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  SET_MODE(5, 3);
+  SET_MODE(ACTOR_JENNA, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "We shouldn't take Karst too lightly..."
@@ -1574,7 +1574,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Wait a moment... Karst did say "we," didn't she?"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  SET_MODE(32, 3);
+  SET_MODE(ACTOR_KRADEN, 3);
   Event_Wait(20);
   Event_Wait(10);
   // "Yes. Saturos and Menardi traveled as a pair. Perhaps she has a..."
@@ -1587,7 +1587,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Believe me, I'd love to see Isaac again, but we just don't have time..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  SET_MODE(32, 3);
+  SET_MODE(ACTOR_KRADEN, 3);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
@@ -1649,49 +1649,49 @@ void Madra_MeetKarst(void) {
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_KRADEN, 0);
   Event_Wait(40);
-  SET_MODE(32, 3);
+  SET_MODE(ACTOR_KRADEN, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "They were strong enough to defeat Saturos and Menardi. They won't be..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(4, 3);
-  SET_MODE(5, 3);
-  SET_MODE(6, 3);
-  SET_MODE(7, 3);
+  SET_MODE(ACTOR_FELIX, 3);
+  SET_MODE(ACTOR_JENNA, 3);
+  SET_MODE(ACTOR_SHEBA, 3);
+  SET_MODE(ACTOR_PIERS, 3);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(32, 3);
+  SET_MODE(ACTOR_KRADEN, 3);
   Event_Wait(20);
   Event_Wait(20);
   // "We should continue on ahead, just as Saturos and Menardi would have..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(5, 3);
+  SET_MODE(ACTOR_JENNA, 3);
   Event_Wait(20);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Sheba? Piers? Are you ready?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(6, 3);
-  SET_MODE(7, 3);
+  SET_MODE(ACTOR_SHEBA, 3);
+  SET_MODE(ACTOR_PIERS, 3);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(32, 3);
+  SET_MODE(ACTOR_KRADEN, 3);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   // "Then we should be going, right, Felix?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(4, 3);
+  SET_MODE(ACTOR_FELIX, 3);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(6, 3);
-  SET_MODE(5, 3);
+  SET_MODE(ACTOR_SHEBA, 3);
+  SET_MODE(ACTOR_JENNA, 3);
   Event_Wait(20);
-  SET_MODE(4, 3);
+  SET_MODE(ACTOR_FELIX, 3);
   Event_Wait(20);
-  SET_MODE_AND_WAIT(32, 3, 20);
+  SET_MODE_AND_WAIT(ACTOR_KRADEN, 3, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  SET_MODE(32, 2);
+  SET_MODE(ACTOR_KRADEN, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
     Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
@@ -1699,7 +1699,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
-  SET_MODE(5, 2);
+  SET_MODE(ACTOR_JENNA, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
     Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].pixel,
@@ -1707,7 +1707,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
-  SET_MODE(6, 2);
+  SET_MODE(ACTOR_SHEBA, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
     Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
@@ -1715,7 +1715,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
-  SET_MODE(7, 2);
+  SET_MODE(ACTOR_PIERS, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
     Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].pixel,

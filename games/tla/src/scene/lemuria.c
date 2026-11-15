@@ -568,7 +568,7 @@ void Lemuria_OfferSpringLuck(void) {
   FieldEvent_Wait(5);
   // "Do you wish to test your luck at the Spring of Lemuria?"
   Event_OpenMessage(ACTOR_MAN_AT_THE_SPRING, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 0);
   } else {
@@ -1046,7 +1046,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   // "And you, Felix? Do you agree?"
   Event_OpenMessage(ACTOR_PIERS, 0);
-  result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     FieldEvent_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);

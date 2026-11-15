@@ -519,7 +519,7 @@ askCannon:
   FieldCamera_WaitForArrival();
   // "That boat's yours, isn't it?"
   Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0))
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
     goto answeredNo;
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);

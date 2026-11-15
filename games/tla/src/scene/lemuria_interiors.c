@@ -464,7 +464,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(20);
   // "What should we do, Felix? Should we follow Piers?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
     goto answeredNo;
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
@@ -577,7 +577,7 @@ visited:
   Actor_ShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "You look confused... Piers told you about this, did he not?"
   Event_OpenMessage(ACTOR_PIERS_UNCLE, 0);
-  answer = Event_AskYesNoWithActorAnimation(4, 0);
+  answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
@@ -609,7 +609,7 @@ visited:
   FieldEvent_Wait(50);
   Actor_ShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_OpenMessage(ACTOR_PIERS_UNCLE, 0);
-  answer = Event_AskYesNoWithActorAnimation(4, 0);
+  answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
@@ -886,7 +886,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_ShowEmote(ACTOR_MAN_ASKING_FOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "If Piers brought you, you must be working to break the seal on..."
   Event_OpenMessage(ACTOR_MAN_ASKING_FOR_PIERS, 0);
-  result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
@@ -1065,8 +1065,8 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(20);
-  Event_OpenMessage(5, 0);
-  result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  Event_OpenMessage(ACTOR_JENNA, 0);
+  result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_MAN_ASKING_FOR_PIERS, FACING_NORTH_NORTHEAST, 0);
@@ -1093,7 +1093,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Event_OpenMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
-  result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);

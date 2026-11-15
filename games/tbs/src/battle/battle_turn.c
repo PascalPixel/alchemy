@@ -11,11 +11,11 @@ void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
 
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < PALETTE_COLORS; i++) {
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
     // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
     u32 angle = (gFrameCount * 3U) << 10;
-    u32 color = palette[16];
+    u32 color = palette[PALETTE_COLORS];
     s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
     s32 blue = RGB_BLUE(color);
     s32 green = RGB_GREEN(color);
@@ -284,11 +284,11 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
     if (entry->command == COMMAND_DJINN) {
       struct AbilityDefinition *action;
 
-      // parameter: the Djinni's element in bits 8 to 11, its number below.
       // The unit lookup's result is unused.
       Unit_GetFar(entry->unitId);
-      action = Ability_Get(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
-                                                 entry->parameter & 0xff));
+      action = Ability_Get(
+          Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(entry->parameter),
+                                DJINN_COMMAND_INDEX(entry->parameter)));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
           action->effect == ABILITY_EFFECT_GROUND) {
@@ -501,13 +501,13 @@ fail:
 /// Copies BG palette 15 to 14 and 5 to 4, each channel moved by offset.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
-  s32 source = 15;
+  s32 source = WINDOW_PALETTE;
   s32 i;
 
   // Palettes 15 and 5, each into the palette before it, 14 and 4.
   for (bank = 0; bank < 2; bank++) {
-    for (i = 0; i < 16; i++) {
-      s32 index = source * 16 + i;
+    for (i = 0; i < PALETTE_COLORS; i++) {
+      s32 index = source * PALETTE_COLORS + i;
       u32 color = ((u16 *)BG_PLTT)[index];
       s32 blue = RGB_BLUE(color);
       s32 green = RGB_GREEN(color);
@@ -532,7 +532,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       adjusted = blue << 10;
       adjusted |= green << 5;
       adjusted |= red;
-      ((u16 *)BG_PLTT)[index - 16] = adjusted;
+      ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
     source = 5;
   }

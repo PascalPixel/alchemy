@@ -536,8 +536,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandKind = COMMAND_DJINN;
         parameter = mode;
         gBattleMenuWork->chosenDjinn[commandIndex] = mode;
-        element = (parameter >> 8) & 15;
-        index = parameter & 255;
+        element = DJINN_COMMAND_ELEMENT(parameter);
+        index = DJINN_COMMAND_INDEX(parameter);
         if (Djinn_IsSetFar(unitId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
@@ -545,7 +545,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           state->icons[0].oam.f.x = 64;
           Window_SetTilemapEntry(commandWindow,
                                  element + LIST_TILE_SUMMON_ELEMENT, 0, 0, 0);
-          Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
+          Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                      MsgDjinnName,
                                   commandWindow, 16, 0);
           command->range = cost;
           wait(1);
@@ -573,7 +574,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_SetColor(TEXT_COLOR_RED);
         Window_SetTilemapEntry(commandWindow,
                                element + LIST_TILE_SUMMON_ELEMENT, 0, 0, 0);
-        Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
+        Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                    MsgDjinnName,
                                 commandWindow, 16, 0);
         Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;

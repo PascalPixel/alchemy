@@ -47,6 +47,9 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// scale by: 256 is 1.
 #define FULL_RATE 256
 
+/// The element power an item, or an ability with no element, acts with.
+#define ITEM_ELEMENT_POWER 100
+
 /// A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
@@ -172,7 +175,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
   else
-    elementPower = 100;
+    elementPower = ITEM_ELEMENT_POWER;
 
   // 2. The Djinn bonus, and whether the effect lands.
   if (plan->command == COMMAND_DJINN &&
@@ -442,7 +445,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       // An ability with no element (an item) heals as if at power 100.
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealHp[distance] / 100;
       amount *= multiplier;
       amount += Battle_RandomFar() & 3;
@@ -596,7 +600,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       pp = target->pp;
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealPp[distance] / 100;
       amount *= multiplier;
       pp += amount;

@@ -50,7 +50,7 @@ void Shop_InitializeWork(void) {
   Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   resourceSlot = VramCache_FindFreeEntry();

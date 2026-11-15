@@ -12,6 +12,10 @@
 #define OWNER_STATUS_VALUE_X 176
 #endif
 
+/// The places of the status icons in a row beside the party member's name, 15
+/// pixels apart.
+#define OWNER_STATUS_ICON_PLACES 11
+
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else
@@ -127,9 +131,9 @@ struct StatusCursor {
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
-  s32 statusSlots[11];
-  s8 statusKinds[11];
-  struct MenuSprite statusSprites[11];
+  s32 statusSlots[OWNER_STATUS_ICON_PLACES];
+  s8 statusKinds[OWNER_STATUS_ICON_PLACES];
+  struct MenuSprite statusSprites[OWNER_STATUS_ICON_PLACES];
   struct MenuSprite nameSprite;
   struct StatusCursor cursor;
   struct WindowWork *work;
@@ -183,7 +187,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursor.group = STATUS_CURSOR_GENERAL;
 
   cursorSlot = VramCache_AllocEntry(128);
-  for (i = 0; i <= 10; i++) {
+  for (i = 0; i < OWNER_STATUS_ICON_PLACES; i++) {
     statusSlots[i] = VramCache_AllocEntry(128);
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
@@ -637,8 +641,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           statusKinds[0] = OWNER_CONDITION_NORMAL;
           i = 1;
         }
-        if (i <= 10) {
-          for (j = i; j < 11; j++) {
+        if (i < OWNER_STATUS_ICON_PLACES) {
+          for (j = i; j < OWNER_STATUS_ICON_PLACES; j++) {
             statusKinds[j] = OWNER_CONDITION_EMPTY;
           }
         }
@@ -743,7 +747,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     {
       struct VramCacheEntry *entry;
 
-      for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramCacheEntries, iconX = 112;
+           i < OWNER_STATUS_ICON_PLACES; i++) {
         statusSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         statusSprite->oam.word.attr23 = 0;
@@ -790,7 +795,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   {
     s32 *statusSlotCursor = statusSlots;
 
-    for (i = 0; i < 11; i++) {
+    for (i = 0; i < OWNER_STATUS_ICON_PLACES; i++) {
       VramCache_FreeEntry(*statusSlotCursor++);
     }
   }

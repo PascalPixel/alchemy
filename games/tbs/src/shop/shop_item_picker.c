@@ -26,7 +26,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   cursorAnchor->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, result);
 
   while (1) {
@@ -36,7 +36,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(partyWindow, memberIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Shop_DrawParty(partyWindow, memberIndex, 0);
       Shop_DrawMemberItems(shop->itemWindow, unitId);
     }
@@ -52,7 +52,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
       itemSlot = ItemPicker_SelectItem(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-        shop->mode = 12;
+        shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
         redraw = 1;
         continue;
       }
@@ -148,7 +148,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
                        WINDOW_FLAG_INSTANT);
   descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   slot = 0;
 
   while (1) {
@@ -163,7 +163,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       x = slot % SHOP_INVENTORY_COLUMNS << 4;
       y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
       MenuCursor_Place(window, x, y);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       ItemPicker_DrawItem(priceWindow, unitId, slot);
       Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
     }

@@ -767,7 +767,7 @@ void Djinn_CountOwned(u8 *ownedCounts) {
     unit = Unit_GetFar(menu->members[memberIndex]);
     ownedCount = 0;
     for (element = 0; element <= 3; element++) {
-      for (djinnIndex = 0; djinnIndex <= 19; djinnIndex++) {
+      for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[element] & (1 << djinnIndex))
           ownedCount++;
         else if (unit->djinnHeld[element] & (1 << djinnIndex))

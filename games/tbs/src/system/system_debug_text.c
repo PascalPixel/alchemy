@@ -98,7 +98,8 @@ void DebugText_Print(const u8 *text) {
       // The end of the 32 by 20 entry screen wraps to its start.
       do {
         *cursor++ = c | palette;
-        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2))
+        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) +
+                              BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2))
           cursor = (u16 *)BG_SCREEN_BLOCK(4);
         if (++count > 31)
           break;
@@ -129,7 +130,8 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
 void DebugText_Clear(void) {
-  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
+  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4),
+             BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }

@@ -11,7 +11,7 @@ s32 Inn_CheckInFar(s32 mode, s32 actorId);
 void MenuCursor_AdvanceFar(struct MenuCursor *cursor);
 void MenuCursor_MoveTowardTargetFar(struct MenuCursor *cursor);
 void MenuCursor_SetFar(struct MenuCursor *cursor, s32 targetX, s32 targetY,
-                       s32 kind);
+                       s32 frames);
 void MenuCursor_SetPositionImmediateFar(struct MenuCursor *cursor, s32 x,
                                         s32 y);
 void QuantityBar_FillFar(s32 count, s32 selector, u8 *base);

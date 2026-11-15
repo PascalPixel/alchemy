@@ -193,7 +193,7 @@ s32 Sanctum_RunPartyService(void) {
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   // redraw is 1 here: the hand's first move to a party member takes one frame
-  shop->mode = redraw;
+  shop->cursorFrames = redraw;
   Menu_CreatePartyFiguresFar(listWindow, 2, 0, 8, 0);
   priceWindow =
       Window_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
@@ -229,7 +229,7 @@ s32 Sanctum_RunPartyService(void) {
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow, memberIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Sanctum_HighlightMembers(listWindow, memberIndex);
       Sanctum_DrawFee(priceWindow, unitId);
     }

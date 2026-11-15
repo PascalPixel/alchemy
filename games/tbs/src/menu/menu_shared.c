@@ -698,8 +698,8 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
   Icon_PrepareActor(icon);
 }
 
-/// Lays the inventory's 15 item icons out five to a row from (116, y): y is
-/// 56 for layout 1 and 40 otherwise.
+/// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
+/// y): y is 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
@@ -723,7 +723,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
     }
     index++;
     slot++;
-  } while (index < 15);
+  } while (index < INVENTORY_SLOTS);
 }
 
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.
@@ -797,16 +797,16 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
-  for (i = 0; i < 15; i++)
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     items[i] = inventory[i];
 
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] != 0)
       count++;
   }
 
-  for (i = count; i < 15; i++)
+  for (i = count; i < INVENTORY_SLOTS; i++)
     sorted[i] = 0;
 
   // One pass for each entry of the order: move its items across, the highest

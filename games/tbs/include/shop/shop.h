@@ -13,6 +13,9 @@
 #include "system/heap_slots.h"
 #include "window/cursor.h"
 
+/// The frames the hand cursor takes to glide into a newly opened list.
+#define SHOP_CURSOR_ENTER_FRAMES 12
+
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the field effect sprites.
 ///
@@ -54,7 +57,9 @@ struct ShopWork {
   u16 keeperGraphics; ///< the shopkeeper's animation; picks the portrait
   s8 stockCount;
   s8 partyMemberCount;
-  u8 mode;        ///< passed on as the hand cursor's kind; set to 12 at first
+  /// The frames the hand cursor's next move takes (MenuCursor_Place):
+  /// SHOP_CURSOR_ENTER_FRAMES into a new list, then a few a step.
+  u8 cursorFrames;
   u8 shopType;    ///< the stock row's type (enum ShopType)
   s8 action;      ///< the counter chosen (enum ShopAction)
   s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
@@ -122,7 +127,7 @@ void Shop_RestoreFieldPalette(void);
 void MenuCursor_Advance(struct MenuCursor *cursor);
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor);
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
-                    s32 kind);
+                    s32 frames);
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y);
 void MenuCursor_Place(struct Window *window, s32 x, s32 y);
 

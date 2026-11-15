@@ -37,7 +37,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   unit = Unit_Get(unitId);
   Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);
-  if (index > 164)
+  if (index >= ENEMY_DEFINITION_COUNT)
     index = 0;
   enemy = &gEnemy_Definitions[index];
   unit->level = enemy->level;

@@ -65,7 +65,7 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(window, memberIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Shop_DrawParty(window, memberIndex, shop->selectedItem);
       Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
     }

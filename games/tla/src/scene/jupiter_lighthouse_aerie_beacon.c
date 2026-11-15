@@ -193,11 +193,6 @@ struct SceneActor {
   u8 unk_55;
 };
 
-struct ScrollWork {
-  s32 unk00[3];
-  s32 height;
-};
-
 /// The object this update drives: an Actor with its own bytes over the callback
 /// word.
 struct Object6a5 {
@@ -241,7 +236,7 @@ s32 MapGrid_GetCellBehavior();
 
 extern s32 gJupiterLighthouse_WhirlwindRiding;
 
-void MapGrid_SetCellHeight(void);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -2190,23 +2185,6 @@ void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
   }
 }
 
-struct SceneWork {
-  u8 pad0[12];
-  s32 unk_0c;
-};
-/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2101: structure has no
- * member named `unk_178'. */
-struct FieldWork__s0198 {
-  u8 pad0[0x178];
-  struct SceneWork unk_178;
-};
-struct Iwram {
-  u8 pad0[32];
-  struct FieldWork__s0198 *field;
-};
 extern s32 gJupiterLighthouse_FirstBeamObjects[];
 extern s32 gJupiterLighthouse_SecondBeamObjects[];
 extern s32 gJupiterLighthouse_ThirdBeamObjects[];
@@ -2221,12 +2199,12 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   s32 *q;
   u32 i;
   u32 j;
-  struct SceneWork *work;
+  struct MapLayer *beam;
 
-  work = &((struct Iwram *)Ram_HeapSlots)->field->unk_178;
+  beam = &Ram_HeapSlots->mapGrid->layers[2];
   speed = 0x1999;
   count = 0;
-  gJupiterLighthouse_BeamLevel = work->unk_0c;
+  gJupiterLighthouse_BeamLevel = beam->offsetY;
   switch (mode) {
   case 0:
   case 3:
@@ -2258,7 +2236,7 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   Event_PlaySound(SE_LIFT);
 
   for (i = 0; i <= 227; i++) {
-    work->unk_0c -= speed;
+    beam->offsetY -= speed;
     for (j = 0; j < count; j++) {
       struct SceneActor *actor;
 
@@ -2301,22 +2279,10 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   }
 }
 
-/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2192: structure has no
- * member named `map'. */
-struct HeapSlotWords__s0198 {
-  s32 unk00[8];
-  u8 *map;
-};
-
 extern s32 gJupiterLighthouse_BeamRiders[];
 
 void JupiterLighthouse_ScrollBeam(s32 mode) {
-  struct ScrollWork *work =
-      (struct ScrollWork
-           *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
+  struct MapLayer *beam = &Ram_HeapSlots->mapGrid->layers[2];
   s32 speed = 0x18000;
   u32 count = 0;
   u32 i;
@@ -2329,8 +2295,8 @@ void JupiterLighthouse_ScrollBeam(s32 mode) {
   if (mode != 0) {
     Event_PlaySound(SE_LIFT);
     i = 0;
-    work->height += 0x18000;
-    while (work->height < gJupiterLighthouse_BeamLevel) {
+    beam->offsetY += 0x18000;
+    while (beam->offsetY < gJupiterLighthouse_BeamLevel) {
       u32 j;
 
       for (j = 0; j < count; j++) {
@@ -2341,7 +2307,7 @@ void JupiterLighthouse_ScrollBeam(s32 mode) {
         actor->targetZ = Actor_Get(ids[j])->z.fixed;
       }
       if ((i & 3) == 3 &&
-          gJupiterLighthouse_BeamLevel < speed * 15 * 2 + work->height)
+          gJupiterLighthouse_BeamLevel < speed * 15 * 2 + beam->offsetY)
         speed = speed * 15 / 16;
       if (speed <= 0xccb)
         speed = 0xccc;
@@ -2351,10 +2317,10 @@ void JupiterLighthouse_ScrollBeam(s32 mode) {
       i++;
       if (i > 119)
         break;
-      work->height += speed;
+      beam->offsetY += speed;
     }
   }
-  work->height = gJupiterLighthouse_BeamLevel;
+  beam->offsetY = gJupiterLighthouse_BeamLevel;
   MapGrid_CenterOnFollowedPoint();
   System_Wait(2);
 }
@@ -2442,14 +2408,7 @@ s32 Scene_PrepareMap(void) {
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef SET_MODE_AND_WAIT
 
-/* VIEW(s3f54): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2327:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__s3f54 __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__s3f54
+extern s32 gPaletteCyclePausesInEvents;
 
 void JupiterLighthouse_SetCycleFrame(s32 a0) {
   gPaletteCyclePausesInEvents = a0;
@@ -2461,14 +2420,6 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 #include "shared/palette_cycle_step.h"
-
-/* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
- * scene/scene.h has void MapGrid_SetCellHeight(void); tried as the
- * definition's void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height),
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2344: conflicting types
- * for `MapGrid_SetCellHeight'. */
-extern void MapGrid_SetCellHeight__beacon() __asm__("MapGrid_SetCellHeight");
 
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
@@ -2499,8 +2450,8 @@ void Actor_RaiseFromCell(s32 id) {
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight__beacon(object->x.fixed, object->z.fixed, 0,
-                                (height >> 19) + 6);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
+                        (height >> 19) + 6);
   MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
 }
 
@@ -2729,7 +2680,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef FIELD_AT
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef SET_MODE_AND_WAIT
-#undef gPaletteCyclePausesInEvents
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -3152,9 +3102,7 @@ LATE_DATA s32 gJupiterLighthouse_BeamObjects[] = {
 
 LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA u32 gJupiterLighthouse_WhirlwindFadesScript[] = {
     39, 5, 0, 12, 38,

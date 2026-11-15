@@ -2911,7 +2911,7 @@ s32 Scene_PrepareMap(void) {
       struct MapLayer *layer;
 
       *(s32 *)(gInventorySnapshot + 0x288) = 1;
-      layer = (struct MapLayer *)(map + 376);
+      layer = &((struct MapWork *)map)->layers[2];
       layer->maskX = 127;
       layer->speedX = 0;
       layer->speedY = 0;

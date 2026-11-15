@@ -65,6 +65,17 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 #include "../field/field_effect_move.c"
 
+/// The entrance room (gAnemosInnerSanctumEntrance_Room1Placements).
+enum AnemosInnerSanctumEntranceActorId {
+  /// "I am the shadow, the keeper of light."
+  ACTOR_SHADOW = ACTOR_FIRST_PLACED,
+  /// The six stone beasts set in place before the way opens.
+  ACTOR_FIRST_STATUE,
+  ACTOR_BLUE_ORB = ACTOR_FIRST_STATUE + 6,
+  /// The room's fourteen torches.
+  ACTOR_FIRST_TORCH
+};
+
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -119,7 +130,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_StartRepeatedMotion(8, 2);
+  Actor_StartRepeatedMotion(ACTOR_SHADOW, 2);
   Event_Wait(20);
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x10003, 1);
@@ -134,7 +145,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 }
 
 void AnemosInnerSanctumEntrance_GlowRises(void) {
-  struct Actor *object = Actor_GetById(15);
+  struct Actor *object = Actor_GetById(ACTOR_BLUE_ORB);
 
   object->motionFlags = 0;
   object->scaleX = Q16_ONE / 4;
@@ -142,14 +153,15 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
-  Actor_SetSpriteColor(Actor_GetById(8), 7);
-  Actor_SetSpriteColor(Actor_GetById(15), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHADOW), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_BLUE_ORB), 7);
   Event_Wait(20);
   Sound_Play(SE_WARP);
-  Actor_MoveToObject(15, 8);
+  Actor_MoveToObject(ACTOR_BLUE_ORB, 8);
   wait(1);
-  Actor_SetMovementTypeById(8, gAnemosInnerSanctumEntrance_ShadowScript);
-  Actor_SetMovementTypeAndWaitById(15,
+  Actor_SetMovementTypeById(ACTOR_SHADOW,
+                            gAnemosInnerSanctumEntrance_ShadowScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_BLUE_ORB,
                                    gAnemosInnerSanctumEntrance_GlowGrowsScript);
   Actor_SetMovementTypeAndWaitById(
       15, gAnemosInnerSanctumEntrance_GlowShrinksScript);
@@ -281,7 +293,7 @@ lower:
   }
   if (++i <= 14)
     goto lower;
-  Actor_WaitForMove(Actor_GetById(9));
+  Actor_WaitForMove(Actor_GetById(ACTOR_FIRST_STATUE));
   wait(40);
   i = 9;
 land:
@@ -321,7 +333,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   LightSprites_Add(id, v);
 }
 
-/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+/// Sets the event route to 0x204. In the first room, gives the six statues
 /// their values and priority bits, and under flag 0x200 runs
 /// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
 /// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
@@ -335,19 +347,19 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
-    SetObjectValue(9, 0);
-    SetObjectValue(10, 1);
-    SetObjectValue(11, 2);
-    SetObjectValue(12, 3);
-    SetObjectValue(13, 128);
-    SetObjectValue(14, 129);
+    SetObjectValue(ACTOR_FIRST_STATUE, 0);
+    SetObjectValue(ACTOR_FIRST_STATUE + 1, 1);
+    SetObjectValue(ACTOR_FIRST_STATUE + 2, 2);
+    SetObjectValue(ACTOR_FIRST_STATUE + 3, 3);
+    SetObjectValue(ACTOR_FIRST_STATUE + 4, 128);
+    SetObjectValue(ACTOR_FIRST_STATUE + 5, 129);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-    Actor_GetById(9)->priorityFlags |= 0xc0;
-    Actor_GetById(10)->priorityFlags |= 0x80;
-    Actor_GetById(11)->priorityFlags |= 0x80;
-    Actor_GetById(12)->priorityFlags |= 0x80;
-    Actor_GetById(13)->priorityFlags |= 0x80;
-    Actor_GetById(14)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE)->priorityFlags |= 0xc0;
+    Actor_GetById(ACTOR_FIRST_STATUE + 1)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 2)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 3)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 4)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 5)->priorityFlags |= 0x80;
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       AnemosInnerSanctumEntrance_SetLightPicture(1);
       AnemosInnerSanctumEntrance_PlaceStatues();

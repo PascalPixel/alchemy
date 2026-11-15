@@ -23,7 +23,7 @@
 
 #include "field/scene_tables.h"
 
-/// Obaba's room, numbering gChampaCliffCaves_Room4PlacementsBriggsHome and
+/// Obaba's room, numbering gChampaCliffCaves_AvimanderPlacementsBriggsHome and
 /// the room's other tables to ACTOR_HELD_ITEM.
 enum ChampaCliffCavesObabasRoomActorId {
   ACTOR_OBABA = ACTOR_FIRST_PLACED,
@@ -38,7 +38,7 @@ enum ChampaCliffCavesObabasRoomActorId {
 };
 
 /// Briggs's home once Avimander is beaten
-/// (gChampaCliffCaves_Room3PlacementsAfterAvimander).
+/// (gChampaCliffCaves_ObabaPlacementsAfterAvimander).
 enum ChampaCliffCavesBriggsHomeActorId {
   /// Briggs, lying in bed.
   ACTOR_BRIGGS_IN_BED = ACTOR_FIRST_PLACED
@@ -102,17 +102,17 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
 void Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_WatchActor(struct Actor *object, struct Actor *target);
 
-extern struct ActorPlacement gChampaCliffCaves_Room1Placements[];
+extern struct ActorPlacement gChampaCliffCaves_BriggsPlacements[];
 extern struct ActorPlacement gChampaCliffCaves_Room2Placements[];
-extern struct ActorPlacement gChampaCliffCaves_Room1PlacementsBriggsHome[];
+extern struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[];
 extern struct ActorPlacement gChampaCliffCaves_Room2PlacementsBriggsHome[];
-extern struct ActorPlacement gChampaCliffCaves_Room3PlacementsBriggsHome[];
-extern struct ActorPlacement gChampaCliffCaves_Room1PlacementsAfterAvimander[];
+extern struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[];
+extern struct ActorPlacement gChampaCliffCaves_BriggsPlacementsAfterAvimander[];
 extern struct ActorPlacement gChampaCliffCaves_Room2PlacementsAfterAvimander[];
-extern struct ActorPlacement gChampaCliffCaves_Room3PlacementsAfterAvimander[];
+extern struct ActorPlacement gChampaCliffCaves_ObabaPlacementsAfterAvimander[];
 extern struct Trigger gChampaCliffCaves_Room2Triggers[];
-extern struct Trigger gChampaCliffCaves_Room3Triggers[];
-extern struct Trigger gChampaCliffCaves_Room4Triggers[];
+extern struct Trigger gChampaCliffCaves_ObabaTriggers[];
+extern struct Trigger gChampaCliffCaves_AvimanderTriggers[];
 
 void ChampaCliffCaves_AskIfBriggsLearned(void);
 void ChampaCliffCaves_BriggsMournsSalamander(void);
@@ -162,10 +162,10 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gChampaCliffCaves_Room3Placements[];
-extern struct ActorPlacement gChampaCliffCaves_Room4Placements[];
-extern s16 gChampaCliffCaves_Room4PlacementsBriggsHome[];
-extern s16 gChampaCliffCaves_Room4PlacementsAfterAvimander[];
+extern struct ActorPlacement gChampaCliffCaves_ObabaPlacements[];
+extern struct ActorPlacement gChampaCliffCaves_AvimanderPlacements[];
+extern s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[];
+extern s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene;
@@ -173,37 +173,37 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
     scene = gMainRoutineWork.next;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-      return gChampaCliffCaves_Room1PlacementsAfterAvimander;
+      return gChampaCliffCaves_BriggsPlacementsAfterAvimander;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
       return gChampaCliffCaves_Room2PlacementsAfterAvimander;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
-      return gChampaCliffCaves_Room3PlacementsAfterAvimander;
+      return gChampaCliffCaves_ObabaPlacementsAfterAvimander;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER)
-      return gChampaCliffCaves_Room4PlacementsAfterAvimander;
+      return gChampaCliffCaves_AvimanderPlacementsAfterAvimander;
   } else {
     if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
       scene = gMainRoutineWork.next;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-        return gChampaCliffCaves_Room1PlacementsBriggsHome;
+        return gChampaCliffCaves_BriggsPlacementsBriggsHome;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
         return gChampaCliffCaves_Room2PlacementsBriggsHome;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
-        return gChampaCliffCaves_Room3PlacementsBriggsHome;
+        return gChampaCliffCaves_ObabaPlacementsBriggsHome;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER)
-        return gChampaCliffCaves_Room4PlacementsBriggsHome;
+        return gChampaCliffCaves_AvimanderPlacementsBriggsHome;
     } else {
       scene = gMainRoutineWork.next;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-        return gChampaCliffCaves_Room1Placements;
+        return gChampaCliffCaves_BriggsPlacements;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
         return gChampaCliffCaves_Room2Placements;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
-        return gChampaCliffCaves_Room3Placements;
+        return gChampaCliffCaves_ObabaPlacements;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER)
-        return gChampaCliffCaves_Room4Placements;
+        return gChampaCliffCaves_AvimanderPlacements;
     }
   }
-  return gChampaCliffCaves_Room1Placements;
+  return gChampaCliffCaves_BriggsPlacements;
 }
 
 /// Stepping into a door: it opens, the leader walks through and the scene
@@ -332,7 +332,7 @@ void ChampaCliffCaves_CloseWall(void) {
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 664, 280);
 }
 
-extern struct Trigger gChampaCliffCaves_Room1Triggers[];
+extern struct Trigger gChampaCliffCaves_BriggsTriggers[];
 
 void ChampaCliffCaves_PickUpTrident(s32 a) {
   Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
@@ -342,14 +342,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-    return gChampaCliffCaves_Room1Triggers;
+    return gChampaCliffCaves_BriggsTriggers;
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
     return gChampaCliffCaves_Room2Triggers;
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
-    return gChampaCliffCaves_Room3Triggers;
+    return gChampaCliffCaves_ObabaTriggers;
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER)
-    return gChampaCliffCaves_Room4Triggers;
-  return gChampaCliffCaves_Room1Triggers;
+    return gChampaCliffCaves_AvimanderTriggers;
+  return gChampaCliffCaves_BriggsTriggers;
 }
 
 s32 Scene_Initialize(void) {
@@ -2180,7 +2180,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gChampaCliffCaves_Room1Placements[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 224,
@@ -2200,7 +2200,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3Placements[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 424,
@@ -2208,7 +2208,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gChampaCliffCaves_Room4Placements[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_AvimanderPlacements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
@@ -2216,7 +2216,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gChampaCliffCaves_Room1PlacementsBriggsHome[] =
+LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[] =
     {
         ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 552,
                         FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -2244,7 +2244,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_Room2PlacementsBriggsHome[] =
         {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3PlacementsBriggsHome[] =
+LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
     {
         ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 392,
                         FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH,
@@ -2255,7 +2255,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3PlacementsBriggsHome[] =
         {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gChampaCliffCaves_Room4PlacementsBriggsHome[] = {
+LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
     36,
     -1,
     1,
@@ -2403,7 +2403,7 @@ LATE_DATA s16 gChampaCliffCaves_Room4PlacementsBriggsHome[] = {
 };
 
 LATE_DATA struct ActorPlacement
-    gChampaCliffCaves_Room1PlacementsAfterAvimander[] = {
+    gChampaCliffCaves_BriggsPlacementsAfterAvimander[] = {
         ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH,
                         0),
@@ -2434,7 +2434,7 @@ LATE_DATA struct ActorPlacement
 };
 
 LATE_DATA struct ActorPlacement
-    gChampaCliffCaves_Room3PlacementsAfterAvimander[] = {
+    gChampaCliffCaves_ObabaPlacementsAfterAvimander[] = {
         ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 704,
                         FACING_SOUTH, TALK_FACING_KEEP, 0),
         ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
@@ -2446,7 +2446,7 @@ LATE_DATA struct ActorPlacement
         {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gChampaCliffCaves_Room4PlacementsAfterAvimander[] = {
+LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
     36,  -1,     1,   0,      0,  648, 0,
     0,   0,      188, 0x5000, 2,  115, -1,
     1,   0,      0,   216,    0,  0,   0,
@@ -2474,7 +2474,7 @@ LATE_DATA s32 gChampaCliffCaves_SecondDoor[] = {
     0x58000b,
 };
 
-LATE_DATA struct Trigger gChampaCliffCaves_Room1Triggers[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_BriggsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2581,7 +2581,7 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_ObabaTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15,
      IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
      EVENT(ChampaCliffCaves_EnterDoor)},
@@ -2621,7 +2621,7 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gChampaCliffCaves_Room4Triggers[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_AvimanderTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},

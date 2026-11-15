@@ -17,6 +17,22 @@
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
+
+/// The village by the Aqua Stone (gApojiiIslands_Room1Placements).
+enum ApojiiIslandsVillageActorId {
+  /// The father who wished on the rock: "What... What just happened? That
+  /// rock couldn't have heard my wishes..."
+  ACTOR_FATHER = ACTOR_FIRST_PLACED + 8,
+  /// The blue tear-shaped Aqua Stone Douse wakes.
+  ACTOR_AQUA_STONE
+};
+
+/// The houses (gApojiiIslands_Room3Placements).
+enum ApojiiIslandsHousesActorId {
+  /// His son (ApojiiIslands_TalkToSon).
+  ACTOR_SON = ACTOR_FIRST_PLACED + 1
+};
+
 #include "system/iwram_call.h"
 #include "system/io_reg.h"
 #include "field/field_sprite.h"
@@ -48,7 +64,7 @@ void ApojiiIslands_FatherSeesTheStone(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
-void ApojiiIslands_InitializeRoom2(void);
+void ApojiiIslands_InitializeHaze(void);
 void ApojiiIslands_LeaveQuietly(void);
 void ApojiiIslands_SpawnSplash(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
@@ -146,13 +162,13 @@ static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
 extern struct ActorPlacement gApojiiIslands_Placements[];
 extern struct ActorPlacement gApojiiIslands_Room1Placements[];
 extern struct ActorPlacement gApojiiIslands_Room3Placements[];
-extern struct ActorPlacement gApojiiIslands_Room2Placements[];
+extern struct ActorPlacement gApojiiIslands_HazePlacements[];
 extern s32 gApojiiIslands_StoneCycleFrame[];
 
 extern struct Trigger gApojiiIslands_Triggers[];
 extern struct Trigger gApojiiIslands_Room1Triggers[];
 extern struct Trigger gApojiiIslands_Room3Triggers[];
-extern struct Trigger gApojiiIslands_Room2Triggers[];
+extern struct Trigger gApojiiIslands_HazeTriggers[];
 void ApojiiIslands_SinkIntoSand(void);
 void ApojiiIslands_RiseFromSand(void);
 void ApojiiIslands_ResumeSeaColors(void);
@@ -189,7 +205,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Placements;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
-    return gApojiiIslands_Room2Placements;
+    return gApojiiIslands_HazePlacements;
   return gApojiiIslands_Placements;
 }
 
@@ -351,7 +367,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   wait(30);
   Sound_Play(MUS_AQUA_ROCK);
   ApojiiIslands_StartSparkles();
-  ApojiiIslands_SetSparkleAnchor(17);
+  ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
@@ -388,7 +404,7 @@ blend:
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove. */
   FieldCamera_MoveTo(360, CAMERA_KEEP, 328, 1);
-  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_ShowEmoteById(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(440, CAMERA_KEEP, 376, 1);
   FieldCamera_WaitForArrival();
@@ -400,29 +416,30 @@ blend:
 void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_Get(17)->update = (void (*)(void))ApojiiIslands_StopFlashing;
+  Actor_Get(ACTOR_AQUA_STONE)->update =
+      (void (*)(void))ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, 16, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_FaceDirection(16, FACING_EAST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  Actor_FaceDirection(16, FACING_WEST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  Actor_FaceDirection(16, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_EAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_WEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  FieldActor_ShowEmote(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   // "What... What just happened?"
-  Event_ShowMessage(16, 0);
-  FieldActor_Jump(16, 2, 25);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  FieldActor_Jump(ACTOR_FATHER, 2, 25);
   // "That rock couldn't have heard my wishes... That's impossible!"
-  Event_ShowMessage(16, 0);
-  Actor_RunRepeatedMotion(16, 1);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  Actor_RunRepeatedMotion(ACTOR_FATHER, 1);
   // "It's got to be."
-  Event_ShowMessage(16, 0);
-  Actor_SetAnimationAndWait(16, 3);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
   // "Well, OK then... Maybe we should try putting some more of our wishes..."
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_FATHER, 0);
   Event_End();
   Event_ClearFlag(0x95e);
 }
@@ -495,11 +512,11 @@ s32 ApojiiIslands_TalkToSon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
-    Actor_FaceActor(9, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_SON, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
     // "Why does my father keep staring at that rock every day?"
-    Event_ShowMessage(9, 0);
-    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+    Event_ShowMessage(ACTOR_SON, 0);
+    Actor_FaceDirection(ACTOR_SON, FACING_SOUTHEAST, 0);
   }
   Event_End();
   return 0;
@@ -515,7 +532,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   if (facing) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
     // "I can't ever tell what kind of mood Mom and Dad are in. At least..."
-    Event_ShowMessage(9, 0);
+    Event_ShowMessage(ACTOR_SON, 0);
   }
   Event_End();
   return 0;
@@ -533,7 +550,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Triggers;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
-    return gApojiiIslands_Room2Triggers;
+    return gApojiiIslands_HazeTriggers;
   return gApojiiIslands_Triggers;
 }
 
@@ -634,7 +651,7 @@ s32 Scene_Initialize(void) {
   party = &gMainRoutineWork;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
-    ApojiiIslands_InitializeRoom2();
+    ApojiiIslands_InitializeHaze();
   } else if (scene == SCENE_APOJII_ISLANDS_1) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
     if (Event_GetFlag(0x95e))
@@ -649,7 +666,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void ApojiiIslands_InitializeRoom2(void) {
+void ApojiiIslands_InitializeHaze(void) {
   Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
@@ -1147,7 +1164,7 @@ struct ActorPlacement gApojiiIslands_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gApojiiIslands_Room2Placements[] = {
+struct ActorPlacement gApojiiIslands_HazePlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_HAZE), MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1241,7 +1258,7 @@ struct Trigger gApojiiIslands_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gApojiiIslands_Room2Triggers[] = {
+struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},

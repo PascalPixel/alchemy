@@ -385,7 +385,7 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
   s32 y;
 
   params.kind = 2;
-  params.part = *((u8 *)object + 98);
+  params.part = object->riseCounter;
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, px(1),
                     0, 0x30000, &params);
   x = FIELD_CELL(object->bounce) + 64;
@@ -403,23 +403,23 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gAnemosInnerSanctum_Placements[];
-extern struct ActorPlacement gAnemosInnerSanctum_Room1Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room2Placements[];
-extern struct ActorPlacement gAnemosInnerSanctum_Room3Placements[];
-extern s32 gAnemosInnerSanctum_Room4Placements[];
-extern struct ActorPlacement gAnemosInnerSanctum_Room5Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[];
+extern s32 gAnemosInnerSanctum_OrihalconChestPlacements[];
+extern struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST)
-    return gAnemosInnerSanctum_Room1Placements;
+    return gAnemosInnerSanctum_DragonSkinChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2)
     return gAnemosInnerSanctum_Room2Placements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES)
-    return gAnemosInnerSanctum_Room3Placements;
+    return gAnemosInnerSanctum_SwitchesPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
-    return gAnemosInnerSanctum_Room4Placements;
+    return gAnemosInnerSanctum_OrihalconChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN)
-    return gAnemosInnerSanctum_Room5Placements;
+    return gAnemosInnerSanctum_GuardianPlacements;
   return gAnemosInnerSanctum_Placements;
 }
 
@@ -792,19 +792,19 @@ void AnemosInnerSanctum_StepOntoCenter(void) {
 }
 
 extern s16 gAnemosInnerSanctum_Room2Blocks[];
-extern s16 gAnemosInnerSanctum_Room3Blocks[];
-extern s16 gAnemosInnerSanctum_Room4Blocks[];
+extern s16 gAnemosInnerSanctum_SwitchesBlocks[];
+extern s16 gAnemosInnerSanctum_OrihalconChestBlocks[];
 
 void AnemosInnerSanctum_StartMovingBlock(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2) {
     Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room2Blocks);
   } else {
     if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-      Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room3Blocks);
+      Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_SwitchesBlocks);
       Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 0xff);
     } else {
       if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
-        Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room4Blocks);
+        Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_OrihalconChestBlocks);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0xff);
@@ -1260,23 +1260,23 @@ void AnemosInnerSanctum_SummonTheGuardian(void) {
 }
 
 extern struct Trigger gAnemosInnerSanctum_Triggers[];
-extern struct Trigger gAnemosInnerSanctum_Room1Triggers[];
+extern struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[];
 extern struct Trigger gAnemosInnerSanctum_Room2Triggers[];
-extern struct Trigger gAnemosInnerSanctum_Room3Triggers[];
-extern struct Trigger gAnemosInnerSanctum_Room4Triggers[];
-extern struct Trigger gAnemosInnerSanctum_Room5Triggers[];
+extern struct Trigger gAnemosInnerSanctum_SwitchesTriggers[];
+extern struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[];
+extern struct Trigger gAnemosInnerSanctum_GuardianTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST)
-    return gAnemosInnerSanctum_Room1Triggers;
+    return gAnemosInnerSanctum_DragonSkinChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2)
     return gAnemosInnerSanctum_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES)
-    return gAnemosInnerSanctum_Room3Triggers;
+    return gAnemosInnerSanctum_SwitchesTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
-    return gAnemosInnerSanctum_Room4Triggers;
+    return gAnemosInnerSanctum_OrihalconChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN)
-    return gAnemosInnerSanctum_Room5Triggers;
+    return gAnemosInnerSanctum_GuardianTriggers;
   return gAnemosInnerSanctum_Triggers;
 }
 
@@ -1523,7 +1523,7 @@ L_0200a1b4:
 L_0200a2b8:
   Actor_SetPosition(12, 728, 472);
 L_0200a2c6:
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room3Blocks);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_SwitchesBlocks);
   goto done;
 L_0200a2ce:
   if (v_r1 != SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
@@ -1531,7 +1531,8 @@ L_0200a2ce:
   if ((Event_GetFlag(0xa86)) != 0) {
     Actor_SetPosition(9, 264, 360);
   }
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room4Blocks);
+  Call1((void (*)())Actor_PlaceBlocks,
+        (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)
@@ -1997,11 +1998,11 @@ s16 gAnemosInnerSanctum_Room2Blocks[] = {
     8, 10, -1,
 };
 
-s16 gAnemosInnerSanctum_Room3Blocks[] = {
+s16 gAnemosInnerSanctum_SwitchesBlocks[] = {
     8, 10, 11, 12, 13, -1,
 };
 
-s16 gAnemosInnerSanctum_Room4Blocks[] = {
+s16 gAnemosInnerSanctum_OrihalconChestBlocks[] = {
     9, 10, -1,
 };
 
@@ -2152,7 +2153,7 @@ struct ActorPlacement gAnemosInnerSanctum_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnemosInnerSanctum_Room1Placements[] = {
+struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -2163,7 +2164,7 @@ struct ActorPlacement gAnemosInnerSanctum_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
+struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[] = {
     {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {329, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -2174,12 +2175,12 @@ struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gAnemosInnerSanctum_Room4Placements[] = {                                                               
+s32 gAnemosInnerSanctum_OrihalconChestPlacements[] = {                                                               
       (s32)0xffff01b0, (s32)gAnemosInnerSanctum_StatueScript, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
       (s32)0xffff0110, 7,         5, 0, 0, 0x202c000, 0xffff,          0,  0,  0, 0, 0,     
   };
 
-struct ActorPlacement gAnemosInnerSanctum_Room5Placements[] = {
+struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[] = {
     {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -2195,7 +2196,7 @@ struct Trigger gAnemosInnerSanctum_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnemosInnerSanctum_Room1Triggers[] = {
+struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StepOntoCenter)},
@@ -2241,7 +2242,7 @@ struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
+struct Trigger gAnemosInnerSanctum_SwitchesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2279,7 +2280,7 @@ struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
+struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -2313,7 +2314,7 @@ struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnemosInnerSanctum_Room5Triggers[] = {
+struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

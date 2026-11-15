@@ -490,14 +490,22 @@ s32 Scene_PrepareMap(void) {
 }
 
 /// Indra Cavern: the rope Lash reaches and the pillar Move pushes.
+/// Indra's cavern: the posts the rope Lash ties is strung between, and the
+/// pillar Move pushes.
+enum CavernsIndraActorId {
+  ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_ROPE_POST,
+  ACTOR_PILLAR
+};
+
 void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
 
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= 0x20;
   Rope_Initialize();
-  Rope_Place(0, 0x200, 8, 9);
-  object = Actor_GetById(10);
+  Rope_Place(0, 0x200, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
+  object = Actor_GetById(ACTOR_PILLAR);
   object->motionFlags = 0;
 
   arg = 10;
@@ -587,7 +595,7 @@ void Caverns_WalkIntoPassage(void) {
     Actor_SetPosition(8, 224, 224);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  BYTE_AT(Actor_GetById(ACTOR_FELIX), 90) &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);

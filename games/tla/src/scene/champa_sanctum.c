@@ -28,6 +28,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// The healer behind the counter.
+#define ACTOR_HEALER ACTOR_FIRST_PLACED
+
 void Sanctum_Run(void);
 
 /// Talking to the healer from across the counter, facing north.
@@ -40,9 +43,9 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = 513;
-  Actor_SetSpritePriority(8, 2);
-  Actor_GetById(8)->collisionFlags |= 4;
-  Actor_GetById(8)->collisionFlags |= 16;
+  Actor_SetSpritePriority(ACTOR_HEALER, 2);
+  Actor_GetById(ACTOR_HEALER)->collisionFlags |= 4;
+  Actor_GetById(ACTOR_HEALER)->collisionFlags |= 16;
   return 0;
 }
 
@@ -69,15 +72,16 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_HEALER, CONDITION_ALWAYS,
      EVENT(ChampaSanctum_ServeAcrossTheCounter)},
-    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+    {TRIGGER_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaTreasureEncouragesLaziness)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER,
      IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaVillagersStoppedWorking)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+     MSGNO(MsgChampaCaptainLastHope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
      MSGNO(MsgChampaNeedsCaptainTreasure)},
     {TRIGGER_TABLE_END},
 };

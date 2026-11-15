@@ -293,26 +293,26 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gAquaRockInside_Placements[];
-extern struct ActorPlacement gAquaRockInside_Room1Placements[];
-extern struct ActorPlacement gAquaRockInside_Room2Placements[];
-extern struct ActorPlacement gAquaRockInside_Room3Placements[];
+extern struct ActorPlacement gAquaRockInside_WaterOfLifeChestPlacements[];
+extern struct ActorPlacement gAquaRockInside_SteamPlacements[];
+extern struct ActorPlacement gAquaRockInside_AquariusStonePlacements[];
 extern struct ActorPlacement gAquaRockInside_Room4Placements[];
 extern struct ActorPlacement gAquaRockInside_Room5Placements[];
 extern struct ActorPlacement gAquaRockInside_Room6Placements[];
-extern struct ActorPlacement gAquaRockInside_Room7Placements[];
+extern struct ActorPlacement gAquaRockInside_PsynergyStonePlacements[];
 extern struct ActorPlacement gAquaRockInside_Room8Placements[];
-extern struct ActorPlacement gAquaRockInside_Room9Placements[];
-extern struct ActorPlacement gAquaRockInside_Room10Placements[];
+extern struct ActorPlacement gAquaRockInside_TearStonePlacements[];
+extern struct ActorPlacement gAquaRockInside_ParchTabletPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST)
-    return gAquaRockInside_Room1Placements;
+    return gAquaRockInside_WaterOfLifeChestPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM)
-    return gAquaRockInside_Room2Placements;
+    return gAquaRockInside_SteamPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
-    return gAquaRockInside_Room3Placements;
+    return gAquaRockInside_AquariusStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_5)
@@ -320,13 +320,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_AQUA_ROCK_INSIDE_6)
     return gAquaRockInside_Room6Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
-    return gAquaRockInside_Room7Placements;
+    return gAquaRockInside_PsynergyStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
-    return gAquaRockInside_Room9Placements;
+    return gAquaRockInside_TearStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
-    return gAquaRockInside_Room10Placements;
+    return gAquaRockInside_ParchTabletPlacements;
   return gAquaRockInside_Placements;
 }
 
@@ -1379,26 +1379,26 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingWest, 280)
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingEast, 248)
 
 extern struct Trigger gAquaRockInside_Triggers[];
-extern struct Trigger gAquaRockInside_Room1Triggers[];
-extern struct Trigger gAquaRockInside_Room2Triggers[];
-extern struct Trigger gAquaRockInside_Room3Triggers[];
+extern struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[];
+extern struct Trigger gAquaRockInside_SteamTriggers[];
+extern struct Trigger gAquaRockInside_AquariusStoneTriggers[];
 extern struct Trigger gAquaRockInside_Room4Triggers[];
 extern struct Trigger gAquaRockInside_Room5Triggers[];
 extern struct Trigger gAquaRockInside_Room6Triggers[];
-extern struct Trigger gAquaRockInside_Room7Triggers[];
+extern struct Trigger gAquaRockInside_PsynergyStoneTriggers[];
 extern s16 gAquaRockInside_Room8Triggers[];
-extern struct Trigger gAquaRockInside_Room9Triggers[];
-extern struct Trigger gAquaRockInside_Room10Triggers[];
+extern struct Trigger gAquaRockInside_TearStoneTriggers[];
+extern struct Trigger gAquaRockInside_ParchTabletTriggers[];
 
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST)
-    return gAquaRockInside_Room1Triggers;
+    return gAquaRockInside_WaterOfLifeChestTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM)
-    return gAquaRockInside_Room2Triggers;
+    return gAquaRockInside_SteamTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
-    return gAquaRockInside_Room3Triggers;
+    return gAquaRockInside_AquariusStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_5)
@@ -1406,13 +1406,13 @@ const u8 *Scene_GetTriggers(void) {
   if (scene == SCENE_AQUA_ROCK_INSIDE_6)
     return gAquaRockInside_Room6Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
-    return gAquaRockInside_Room7Triggers;
+    return gAquaRockInside_PsynergyStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
-    return gAquaRockInside_Room9Triggers;
+    return gAquaRockInside_TearStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
-    return gAquaRockInside_Room10Triggers;
+    return gAquaRockInside_ParchTabletTriggers;
   return gAquaRockInside_Triggers;
 }
 
@@ -2773,7 +2773,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room1Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_WaterOfLifeChestPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 679, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2783,14 +2783,14 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room2Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_SteamPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 247, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_STEAM), MOVEMENT_TYPE_STAND, 776, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room3Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_AquariusStonePlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2826,7 +2826,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room6Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room7Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_PsynergyStonePlacements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -2836,7 +2836,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room8Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room9Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_TearStonePlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 231, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2853,7 +2853,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room9Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room10Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_ParchTabletPlacements[] = {
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
@@ -2869,7 +2869,7 @@ LATE_DATA struct Trigger gAquaRockInside_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2896,7 +2896,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
 
 LATE_DATA s32 gAquaRockInside_SpringLevel = 256;
 
-LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2915,7 +2915,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_AquariusStoneTriggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS, EVENT(AquaRockInside_StepOnLoosePlank)},
@@ -3000,7 +3000,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room7Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_PsynergyStoneTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -3019,7 +3019,7 @@ LATE_DATA s16 gAquaRockInside_Room8Triggers[] = {
     -1, -1, 0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3034,7 +3034,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room10Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_ParchTabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadParchTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},

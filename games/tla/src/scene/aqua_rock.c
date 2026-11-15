@@ -73,14 +73,46 @@ extern struct AquaRockWork gAquaRock_CellMarkers;
 extern u32 gAquaRock_SplashScript[];
 extern u32 gWaterDropScript[];
 extern const u8 gAquaRock_MarkerTiles[];
-extern s16 gAquaRock_Room1Regions[];
-extern s16 gAquaRock_Room2Regions[];
+extern s16 gAquaRock_SlopesRegions[];
+extern s16 gAquaRock_MistSabreChestRegions[];
 extern struct ActorPlacement gAquaRock_Placements[];
-extern struct ActorPlacement gAquaRock_Room1Placements[];
-extern struct ActorPlacement gAquaRock_Room2Placements[];
+extern struct ActorPlacement gAquaRock_SlopesPlacements[];
+extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
+
+/// The slopes by the entrance (gAquaRock_SlopesPlacements).
+enum AquaRockSlopesActorId {
+  /// The rock's sixteen Moai statues.
+  ACTOR_FIRST_MOAI = ACTOR_FIRST_PLACED,
+  /// The dried-up Moai Douse sets flowing again (AquaRock_DouseDryMoai).
+  ACTOR_DRY_MOAI = ACTOR_FIRST_MOAI + 7,
+  /// The five Moai that step aside together (AquaRock_MoaiStepAside).
+  ACTOR_FIRST_STEPPING_MOAI = ACTOR_FIRST_MOAI + 9,
+  /// The pillars Move pushes before the Moai.
+  ///@{
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_MOAI + 16,
+  ACTOR_SECOND_PILLAR,
+  ///@}
+  /// The Water Stone that turns the stream when Doused.
+  ACTOR_WATER_STONE
+};
+
+/// The Mist Sabre chest's room (gAquaRock_MistSabreChestPlacements).
+enum AquaRockMistSabreChestActorId {
+  ACTOR_MIST_SABRE_WATER_STONE = ACTOR_FIRST_PLACED,
+  /// The three puddles Frost freezes.
+  ACTOR_FIRST_PUDDLE,
+  /// The two fires Douse puts out.
+  ///@{
+  ACTOR_FIRST_FIRE = ACTOR_FIRST_PUDDLE + 3,
+  ACTOR_SECOND_FIRE,
+  ///@}
+  ACTOR_FIRE_GLOW,
+  /// Where the stream the dry Moai pours out starts, dropping water.
+  ACTOR_STREAM_SOURCE
+};
 extern struct Trigger gAquaRock_Triggers[];
-extern struct Trigger gAquaRock_Room1Triggers[];
-extern struct Trigger gAquaRock_Room2Triggers[];
+extern struct Trigger gAquaRock_SlopesTriggers[];
+extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
@@ -210,9 +242,9 @@ const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_1)
-    return gAquaRock_Room1Regions;
+    return gAquaRock_SlopesRegions;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-    return gAquaRock_Room2Regions;
+    return gAquaRock_MistSabreChestRegions;
   return 0;
 }
 
@@ -284,9 +316,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_1)
-    return gAquaRock_Room1Placements;
+    return gAquaRock_SlopesPlacements;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-    return gAquaRock_Room2Placements;
+    return gAquaRock_MistSabreChestPlacements;
   return gAquaRock_Placements;
 }
 
@@ -567,7 +599,7 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
     s32 column;
     s32 row;
 
-    struct Actor *first = Actor_GetById(24);
+    struct Actor *first = Actor_GetById(ACTOR_FIRST_PILLAR);
 
     column = FIELD_CELL(first->x.fixed);
     row = FIELD_CELL(first->z.fixed);
@@ -580,7 +612,7 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
     if (column == 15 && row == 35)
       GameFlag_Set(FLAG_AREA_TEMP_21);
   } else if (id == 25) {
-    struct Actor *object = Actor_GetById(25);
+    struct Actor *object = Actor_GetById(ACTOR_SECOND_PILLAR);
 
     if (FIELD_CELL(object->x.fixed) == 32) {
       wait(30);
@@ -709,7 +741,7 @@ void AquaRock_DouseTearRock(void) {
   MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
   MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
   MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
-  Actor_SetSpriteColor(Actor_GetById(12), 5);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 5);
   AquaRock_SetMoaiFace(12);
   GameFlag_Set(0xa6b);
 }
@@ -811,11 +843,12 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(248, -32, 760, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetPosition(15, 264, 792);
-  Actor_SetSpriteFlags(Actor_GetById(15), 0);
-  Actor_GetById(15)->collisionFlags = 0;
-  Actor_GetById(15)->priorityFlags |= 2;
-  Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
+  Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
+  Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
+  Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= 2;
+  Actor_GetById(ACTOR_STREAM_SOURCE)->update =
+      (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 5; i >= 0; i--) {
     Sound_Play(SE_WADE);
@@ -829,9 +862,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_1)
-    return gAquaRock_Room1Triggers;
+    return gAquaRock_SlopesTriggers;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-    return gAquaRock_Room2Triggers;
+    return gAquaRock_MistSabreChestTriggers;
   return gAquaRock_Triggers;
 }
 
@@ -974,11 +1007,11 @@ scatter:
     goto scatter;
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
-  Actor_SetDestination(17, 392, 824);
-  Actor_SetDestination(18, 424, 824);
-  Actor_SetDestination(19, 456, 824);
-  Actor_SetDestination(20, 488, 824);
-  Actor_SetDestinationById(21, 520, 824);
+  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI, 392, 824);
+  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 1, 424, 824);
+  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 2, 456, 824);
+  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 3, 488, 824);
+  Actor_SetDestinationById(ACTOR_FIRST_STEPPING_MOAI + 4, 520, 824);
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
   i = 17;
@@ -989,7 +1022,7 @@ settle:
   Sound_Play(SE_STOP_MUSIC_PLAYER_5);
   Event_Wait(60);
   {
-    struct Actor *object = Actor_GetById(21);
+    struct Actor *object = Actor_GetById(ACTOR_FIRST_STEPPING_MOAI + 4);
 
     object->update = (void (*)(void))AquaRock_RockMoai;
     object->timer = 0;
@@ -1016,14 +1049,14 @@ s32 Scene_Initialize(void) {
   map->mode = 1;
   Scene_QueueMusic(SE_170);
   if (scene == SCENE_AQUA_ROCK_1) {
-    Actor_SetSpriteColor(Actor_GetById(8), 4);
-    Actor_SetSpriteColor(Actor_GetById(9), 4);
-    Actor_SetSpriteColor(Actor_GetById(10), 4);
-    Actor_SetSpriteColor(Actor_GetById(11), 4);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI), 4);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 1), 4);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 2), 4);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 3), 4);
     if (GameFlag_Get(0xa6b))
-      Actor_SetSpriteColor(Actor_GetById(12), 5);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 5);
     else
-      Actor_SetSpriteColor(Actor_GetById(12), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 6);
     AquaRock_SetMoaiFace(8);
     AquaRock_SetMoaiFace(9);
     AquaRock_SetMoaiFace(10);
@@ -1036,19 +1069,19 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(id, 3);
     for (id = 15; id <= 23; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(15)->retainSpriteCache = 2;
-    Actor_SetAnimationById(15, 3);
+    Actor_GetById(ACTOR_DRY_MOAI)->retainSpriteCache = 2;
+    Actor_SetAnimationById(ACTOR_DRY_MOAI, 3);
     for (id = 16; id <= 23; id++) {
       Actor_SetAnimationById(id, 1);
       Actor_SetAnimationById(id, 0);
     }
     if (GameFlag_Get(0x950))
-      Actor_SetPosition(25, 520, 584);
+      Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 584);
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
-      Actor_SetHorizontalPositionWithTerrain(24, (x << 20) + px(8),
-                                             (z << 20) + px(8));
+      Actor_SetHorizontalPositionWithTerrain(
+          ACTOR_FIRST_PILLAR, (x << 20) + px(8), (z << 20) + px(8));
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
     Actor_SetSpritePriority(28, 1);
@@ -1062,20 +1095,20 @@ s32 Scene_Initialize(void) {
       TilesetAnim_Pause(6);
       TilesetAnim_Resume(7);
       TilesetAnim_Resume(8);
-      Actor_GetById(26)->update = AquaRock_StopFlashing;
+      Actor_GetById(ACTOR_WATER_STONE)->update = AquaRock_StopFlashing;
     }
-    Actor_SetSpritePriority(26, 1);
+    Actor_SetSpritePriority(ACTOR_WATER_STONE, 1);
     if (gMainRoutineWork.entrance == 5)
       AquaRock_MoaiStepAside();
     if (GameFlag_Get(0x955)) {
-      Actor_SetPosition(17, 392, 824);
-      Actor_SetPosition(18, 424, 824);
-      Actor_SetPosition(19, 456, 824);
-      Actor_SetPosition(20, 488, 824);
-      Actor_SetPosition(21, 520, 824);
+      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI, 392, 824);
+      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 1, 424, 824);
+      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 2, 456, 824);
+      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 3, 488, 824);
+      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 4, 520, 824);
       MapGrid_CopyCellAttributes(64, 66, 9, 3, 24, 53);
       MapGrid_CopyCells(64, 66, 11, 7, 87, 50);
-      Actor_GetById(21)->update = AquaRock_RockMoai;
+      Actor_GetById(ACTOR_FIRST_STEPPING_MOAI + 4)->update = AquaRock_RockMoai;
     }
     if (GameFlag_Get(0xa6b)) {
       MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
@@ -1087,21 +1120,21 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 4)
       AquaRock_ArriveFromPassage();
   } else if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
-    Actor_SetSpriteFlags(Actor_GetById(14), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_GLOW), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_22))
       MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
-    Actor_SetAnimationById(12, 2);
+    Actor_SetAnimationById(ACTOR_FIRST_FIRE, 2);
     if (GameFlag_Get(0x951)) {
-      Actor_SetPosition(12, 856, 840);
+      Actor_SetPosition(ACTOR_FIRST_FIRE, 856, 840);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
-    Actor_SetAnimationById(13, 2);
+    Actor_SetAnimationById(ACTOR_SECOND_FIRE, 2);
     if (GameFlag_Get(0x952)) {
-      Actor_SetPosition(13, 856, 936);
+      Actor_SetPosition(ACTOR_SECOND_FIRE, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
@@ -1116,19 +1149,20 @@ s32 Scene_Initialize(void) {
         TilesetAnim_Resume(5);
         TilesetAnim_Resume(6);
       }
-      Actor_SetSpriteFlags(Actor_GetById(14), 0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_GLOW), 0);
     } else {
       AquaRock_StartCellMarkers();
       AquaRock_StartSparkles();
-      Actor_GetById(8)->update = AquaRock_StopFlashing;
+      Actor_GetById(ACTOR_MIST_SABRE_WATER_STONE)->update =
+          AquaRock_StopFlashing;
       if (GameFlag_Get(0xa69)) {
         AquaRock_SetCellMarkerAnchor(8);
         AquaRock_SetSparkleAnchor(8);
-        Actor_SetPosition(15, 264, 792);
-        Actor_SetSpriteFlags(Actor_GetById(15), 0);
-        Actor_GetById(15)->collisionFlags = 0;
-        Actor_GetById(15)->priorityFlags |= 2;
-        Actor_GetById(15)->update = Actor_EmitWaterDrop;
+        Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
+        Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
+        Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= 2;
+        Actor_GetById(ACTOR_STREAM_SOURCE)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
         MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
@@ -1263,7 +1297,7 @@ void AquaRock_SpinUpAndAway(s32 arg0) {
     angle += 0x1000;
     object->facing = angle;
     if ((i & 7) == 0)
-      AquaRock_SpawnSplash(Actor_GetById(15));
+      AquaRock_SpawnSplash(Actor_GetById(ACTOR_STREAM_SOURCE));
     wait(1);
   }
   Event_End();
@@ -1674,13 +1708,13 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gAquaRock_Room1Regions[] = {
+LATE_DATA s16 gAquaRock_SlopesRegions[] = {
     176, 424, 544, 192, 440, 560, -1, 2,
     272, 424, 544, 288, 440, 560, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA s16 gAquaRock_Room2Regions[] = {
+LATE_DATA s16 gAquaRock_MistSabreChestRegions[] = {
     48, -56, 960, 64, -40, 976, -1, 2,
     144, -56, 960, 160, -40, 976, -1, 3,
     236, -108, 956, 260, -84, 980, -1, 7,
@@ -1710,7 +1744,7 @@ LATE_DATA struct ActorPlacement gAquaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRock_Room1Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRock_SlopesPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 615, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1736,7 +1770,7 @@ LATE_DATA struct ActorPlacement gAquaRock_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRock_Room2Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRock_MistSabreChestPlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1760,7 +1794,7 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRock_Room1Triggers[] = {
+LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},
     {TRIGGER_STEP, 30, FLAG_AREA_TEMP_20, EVENT(AquaRock_StepIntoCurrent)},
@@ -1778,7 +1812,7 @@ LATE_DATA struct Trigger gAquaRock_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRock_Room2Triggers[] = {
+LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(AquaRock_SpinUpAndAway)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

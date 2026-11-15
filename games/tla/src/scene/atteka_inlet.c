@@ -594,7 +594,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
   Task_Add_(AttekaInlet_RotateWaterColors, 0x480);
   Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
-  *((u8 *)Actor_GetById(ACTOR_CANNON) + 85) = 0;
+  Actor_GetById(ACTOR_CANNON)->motionFlags = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetPosition(ACTOR_FIRST_SCHOLAR, 0, 0);
     Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 1, 0, 0);

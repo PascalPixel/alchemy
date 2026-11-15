@@ -50,7 +50,7 @@ enum AnkohlRuinsFirstRoomActorId {
   ACTOR_FIRST_ROOM_FIRST_IVY = ACTOR_FIRST_STONE_FACE + 7
 };
 
-/// The Thanatos Mace chest's room (gAnkohlRuins_Room2Placements).
+/// The Thanatos Mace chest's room (gAnkohlRuins_ThanatosMaceChestPlacements).
 enum AnkohlRuinsThanatosMaceChestActorId {
   /// The left half of a stone face, pushed into place.
   ACTOR_THANATOS_FACE_HALF = ACTOR_FIRST_PLACED,
@@ -164,13 +164,13 @@ extern s32 gAnkohlRuins_SandStep;
 extern s32 gAnkohlRuins_SandRoom;
 
 extern u32 gAnkohlRuins_Room1Regions[];
-extern u32 gAnkohlRuins_Room2Regions[];
+extern u32 gAnkohlRuins_ThanatosMaceChestRegions[];
 
 const struct ActorPlacement *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return (const struct ActorPlacement *)gAnkohlRuins_Room1Regions;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return (const struct ActorPlacement *)gAnkohlRuins_Room2Regions;
+    return (const struct ActorPlacement *)gAnkohlRuins_ThanatosMaceChestRegions;
   return 0;
 }
 
@@ -271,18 +271,18 @@ s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
 
 extern struct ActorPlacement gAnkohlRuins_Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room1Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room2Placements[];
+extern struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[];
 extern struct ActorPlacement gAnkohlRuins_Room3Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room4Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room5Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
+extern struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[];
+extern struct ActorPlacement gAnkohlRuins_LeftProngPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     return gAnkohlRuins_Room1Placements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
-    return gAnkohlRuins_Room2Placements;
+    return gAnkohlRuins_ThanatosMaceChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
     return gAnkohlRuins_Room3Placements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
@@ -290,9 +290,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return gAnkohlRuins_Room5Placements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
-    return gAnkohlRuins_Room6Placements;
+    return gAnkohlRuins_SandDoorsPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return gAnkohlRuins_Room8Placements;
+    return gAnkohlRuins_LeftProngPlacements;
   return gAnkohlRuins_Placements;
 }
 
@@ -1216,12 +1216,12 @@ void AnkohlRuins_BoardRaftAgain(void) {
 
 extern struct Trigger gAnkohlRuins_Triggers[];
 extern struct Trigger gAnkohlRuins_Room1Triggers[];
-extern struct Trigger gAnkohlRuins_Room2Triggers[];
+extern struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[];
 extern struct Trigger gAnkohlRuins_Room3Triggers[];
 extern struct Trigger gAnkohlRuins_Room4Triggers[];
 extern struct Trigger gAnkohlRuins_Room5Triggers[];
-extern struct Trigger gAnkohlRuins_Room6Triggers[];
-extern struct Trigger gAnkohlRuins_Room8Triggers[];
+extern struct Trigger gAnkohlRuins_SandDoorsTriggers[];
+extern struct Trigger gAnkohlRuins_LeftProngTriggers[];
 
 void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *object = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
@@ -1263,7 +1263,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     return gAnkohlRuins_Room1Triggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
-    return gAnkohlRuins_Room2Triggers;
+    return gAnkohlRuins_ThanatosMaceChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
     return gAnkohlRuins_Room3Triggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
@@ -1271,9 +1271,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return gAnkohlRuins_Room5Triggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
-    return gAnkohlRuins_Room6Triggers;
+    return gAnkohlRuins_SandDoorsTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return gAnkohlRuins_Room8Triggers;
+    return gAnkohlRuins_LeftProngTriggers;
   return gAnkohlRuins_Triggers;
 }
 
@@ -1314,7 +1314,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gAnkohlRuins_ShrunkenSpriteScript[];
-extern u32 gAnkohlRuins_Room2Script[];
+extern u32 gAnkohlRuins_ThanatosMaceChestScript[];
 extern u32 gAnkohlRuins_Room3Script[];
 
 struct AnkohlRuinsSpriteWork;
@@ -1930,7 +1930,7 @@ u32 gAnkohlRuins_Room1Regions[] = {
     0, 0,
 };
 
-u32 gAnkohlRuins_Room2Regions[] = {
+u32 gAnkohlRuins_ThanatosMaceChestRegions[] = {
     0xffe600b4, 0xbc00a4, 0xacffee, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -2054,7 +2054,7 @@ s32 gAnkohlRuins_ShrunkenSpriteScript[] = {
     17,
 };
 
-u32 gAnkohlRuins_Room2Script[] = {
+u32 gAnkohlRuins_ThanatosMaceChestScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -2095,8 +2095,8 @@ struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2106,14 +2106,14 @@ struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
 struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room3Script, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2128,15 +2128,15 @@ struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
 
 struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room6Placements[] = {
+struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room8Placements[] = {
+struct ActorPlacement gAnkohlRuins_LeftProngPlacements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -2218,7 +2218,7 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room2Triggers[] = {
+struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2333,7 +2333,7 @@ struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room6Triggers[] = {
+struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2353,7 +2353,7 @@ struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room8Triggers[] = {
+struct Trigger gAnkohlRuins_LeftProngTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef EFFECT_SPAWN

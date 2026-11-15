@@ -51,8 +51,11 @@ the directions nobody drew. So an animation is written once and works
 facing any way.
 
 A party member's sprite is named for the character whose number it
-shares; another takes the name The Broken Seal gives the same picture.
-One with neither keeps its row's number, as `spr_010.png` does.
+shares; another takes the name The Broken Seal gives the same picture,
+or is named for who wears it or what it shows. An enemy's battle
+sprite, which has animations and no sheet of its own, is named for the
+first class that uses it (`battle_dread_hound.tsv`). One that nothing
+names yet keeps its row's number, as `spr_013.png` does.
 `include/sprite_ids.h` gives each named row its `SPRITE_` id.
 
 Every figure the field or a battle can draw has a row in the sprite table,

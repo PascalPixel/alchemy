@@ -619,25 +619,6 @@ struct IrisScene {
   struct IrisPoint streaks[IRIS_STREAKS][IRIS_STREAK_LENGTH];
 };
 
-/// The five widths a rising pillar takes.
-struct FiveWidths {
-  s32 w[5];
-};
-
-/// The seven widths a widening pillar takes.
-struct SevenWidths {
-  s32 w[7];
-};
-
-/// Where a strip's petals start across, by quarter of its rise: the left edge
-/// and the width they spread over.
-struct FourSpans {
-  struct {
-    s32 left;
-    s32 width;
-  } p[4];
-};
-
 #define IRIS_PETAL_WORK (*(struct IrisPetals *)(Ram_MapCellBuffer + 0x1f40))
 #define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 0x2ee0))
 #define IRIS_STREAK_POINTS                                                     \

@@ -290,7 +290,7 @@ SECTIONS
         "*/games/tla/src/battle_effect/render_textured_narrow_kernel.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_solid_narrow_and_transform_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/battle_effect.o"(.text)
-        "*/games/tla/src/battle_effect/fxconst.o"(.rodata)
+        "*/games/tla/src/battle_effect/effect_constants.o"(.rodata)
         "*/games/tla/src/battle_effect/blitter_fragments.o"(.text)
         "*/games/tla/src/battle_effect/blitter_color_fragments.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/patch_template.o"(.text .rodata .data .padding)

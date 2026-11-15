@@ -137,7 +137,7 @@ extern void (*const gBattleEffect_Handlers[])(struct BattleEffectParams *args);
 
 extern const struct Scale gZagan_UnitScale;
 
-extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
+extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 
 /// The battle screen's display mode while an effect plays: background mode 1
 /// with BG0 to BG2, sprites and both windows on.
@@ -1685,7 +1685,7 @@ enum FlurryExtra {
   FLURRY_EXTRA_RIPPLE  ///< BG2 swings on a sine wave and smoke rises
 };
 
-extern struct Scale gGaia_UnitScale;
+extern const struct Scale gGaia_UnitScale;
 
 /// spider_web.c
 /// A scale of one in 16.16 on both axes.
@@ -1695,7 +1695,7 @@ extern const struct SpriteScale gUlysses_ParticleScale;
 extern u8 gData_02014000[];
 
 /// neptune.c
-extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
+extern const struct Scale gNeptune_UnitScale; ///< the serpent's scale
 
 // geode.c
 
@@ -1711,9 +1711,9 @@ extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
 
-extern struct Scale gDaedalus_WaveScale;
-extern struct Scale gDaedalus_ShipScale;
-extern struct Scale gDaedalus_ParticleScale;
+extern const struct Scale gDaedalus_WaveScale;
+extern const struct Scale gDaedalus_ShipScale;
+extern const struct Scale gDaedalus_ParticleScale;
 
 extern const struct Scale gCoatlicue_UnitScale;
 

@@ -720,8 +720,8 @@ void WorldMap_GazeIntoPond(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 slot = ACTOR_POND_COINS;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
-    u8 *unit = Unit_Get(gMainRoutineWork.leaderActorId);
-    s32 amount = (((unit[15] * Random16()) << 1) >> 16) + 0x8001;
+    struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
+    s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
     /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */

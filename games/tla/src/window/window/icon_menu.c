@@ -1231,6 +1231,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   work->window = Window_Create(x, y, *widthp, 3, WINDOW_FLAG_INSTANT);
 }
 
+/// Returns table[index].
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
 
 /// Builds the field command menu, omitting Djinn when none are owned.

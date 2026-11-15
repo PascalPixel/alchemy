@@ -128,6 +128,8 @@ void WindowSprite_Pulse(struct Object *obj) {
   }
 }
 
+/// Returns the Djinn tutorial's message on giving a Djinni: the second set's
+/// while flag 0x175 is set.
 s32 Djinn_GetGiveTutorialMessage(void) {
   if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;

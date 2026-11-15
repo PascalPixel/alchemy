@@ -1154,6 +1154,9 @@ s32 Sound_PlayReturnOne(s32 cue) {
   return 1;
 }
 
+/// A VBlank task while the menus watch for Start: flashes the Start prompt's
+/// tile every four frames, and on Start plays the cancel sound, sets
+/// FLAG_MENU_START_PRESSED and removes itself.
 void Menu_UpdateCancelSound(void) {
   u32 frame;
   u32 *node;
@@ -1179,6 +1182,8 @@ void Menu_UpdateCancelSound(void) {
     ;
 }
 
+/// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
+/// Menu_UpdateCancelSound.
 void Menu_StartWatchingStart(void) {
   GameFlag_Clear(FLAG_MENU_START_PRESSED);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
@@ -1191,10 +1196,13 @@ void Menu_StopWatchingStart(void) {
   }
 }
 
+/// Draws the next text in TEXT_COLOR_NORMAL.
 void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
+/// Draws the next text in TEXT_COLOR_RED.
 void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
+/// Draws the next text in TEXT_COLOR_YELLOW.
 void UiPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
 
 #undef DRAW_LEVEL_LABEL

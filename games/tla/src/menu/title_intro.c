@@ -159,6 +159,8 @@ void TitleIntro_LoadPictureTiles(void) {
           DMA_COPY_WORDS(DATA018_TILE_BYTES / 4), REG_DMA3);
 }
 
+/// Waits frames frames, stirring the random seed each frame; returns 1 at once
+/// when a key is pressed, 0 when the wait ends.
 s32 Title_WaitOrPress(u32 frames) {
   u32 i;
 
@@ -171,6 +173,9 @@ s32 Title_WaitOrPress(u32 frames) {
   return 0;
 }
 
+/// Runs one step of the intro picture's scroll, moving BG1 and BG2 each frame
+/// by the step's speeds on the frames its masks allow; returns 0 when a key
+/// cuts it short, 1 when it ends.
 s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   s32 i;
 
@@ -516,6 +521,9 @@ done:
   return 0;
 }
 
+/// Writes one 64x64 piece of the title logo straight into OAM: double-size
+/// affine, semi-transparent, 256 colours, at x - 32 and y + 224, in the OAM
+/// entry its tile picks.
 void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   struct OamEntry oam;
 

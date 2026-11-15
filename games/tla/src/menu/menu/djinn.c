@@ -6,6 +6,8 @@
 #include "flags.h"
 #include "sounds.h"
 
+/// Returns (arg0 + arg1) modulo arg1: arg0 wrapped into 0 to arg1 - 1 when it
+/// is at least -arg1.
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
 /// Places the four party figures over their Djinn columns, 56 pixels apart
@@ -28,6 +30,8 @@ s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
   return arg0;
 }
 
+/// Returns the Djinn tutorial's message on giving a Djinni: the second set's
+/// while flag 0x175 is set.
 s32 Menu_GetDjinnGiveMessage(void) {
   if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;

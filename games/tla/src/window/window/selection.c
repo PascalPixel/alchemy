@@ -1198,6 +1198,8 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->records[1].kind = 0;
   screen->records[SELECTION_RECORD_HAND].kind = 0;
   screen->records[SELECTION_RECORD_HAND].scale = 0;
+  /// Frees the large icon's VRAM cache entry, if it holds one, and marks it
+  /// empty.
   Resource_ResetPendingTransfer();
   node = screen->head;
   while (node != NULL && screen->cursorIndex != cnt) {
@@ -1279,14 +1281,19 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
 /// With no body or caller to give them a role, they are numbered in ROM order.
 void MenuArrow_NoOpCallback(void) {}
 
+/// Does nothing.
 void MenuArrow_NoOpCallbackBank(void) {}
 
+/// Does nothing.
 void MenuArrow_NoOpCallback1(void) {}
 
+/// Does nothing.
 void MenuArrow_NoOpCallback2(void) {}
 
+/// Does nothing.
 void MenuArrow_NoOpCallback3(void) {}
 
+/// Does nothing.
 void MenuArrow_NoOpCallback4(void) {}
 
 /// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned

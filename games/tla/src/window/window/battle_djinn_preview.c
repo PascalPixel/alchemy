@@ -9,6 +9,8 @@
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
+/// Formats value as decimal text and copies its 14 characters, one a halfword,
+/// into out.
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *dst;
   s32 n;

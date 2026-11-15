@@ -138,10 +138,12 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   return slot;
 }
 
+/// Loads the UI icon tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockB(s32 slot) {
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
 }
 
+/// Loads the UI's fixed block A tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockA(s32 slot) {
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
 }

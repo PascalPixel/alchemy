@@ -62,6 +62,7 @@ void WindowSprite_InitializeFreeList(void) {
 
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
+/// Fills size bytes at dst with value through fill.
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
                                 u32 value) {
   /* FAKEMATCH(wrapper): the fill called through this inline. */

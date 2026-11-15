@@ -3110,6 +3110,8 @@ void Kibombo_InitializeCeremony(void) {
       unit = Unit_Get(ACTOR_PIERS);
       unit->hp = unit->hpMax;
       unit->pp = unit->ppMax;
+      /* FAKEMATCH(dead): both copies stored before the gauge's argument is
+       * extended. */
       do {
       } while (0);
       unit->hpGauge = Gauge(unit->hp, unit->hpMax);

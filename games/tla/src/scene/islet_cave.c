@@ -350,9 +350,13 @@ void IsletCave_DimPalette(s32 scale) {
     color = *source++;
     mask = ~0x3ff;
     value = (color >> 10) & 31;
-    value <<= 10;
-    /* FAKEMATCH(dead): blue masked like the other two channels, clearing
-     * nothing. */
+#ifdef BUGFIX
+    value *= scale;
+#else
+    // BUG: blue is multiplied by the full scale, 0x400, not by scale, so it
+    // never dims.
+    value *= 0x400;
+#endif
     value &= mask;
     if (value > 0x7c00)
       value = 0x7c00;

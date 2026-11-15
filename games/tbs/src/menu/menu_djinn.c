@@ -1541,18 +1541,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   }
   menu->selectedColumn[mode] = memberColumn;
   if (selectedRow != -1) {
+    u32 id;
     u32 entry;
-    menu->pairEntries[mode] = entry =
+
+    menu->pairEntries[mode] = id =
         backdrop->list.ids[memberColumn][selectedRow];
+    entry = (u16)id;
     menu->pairIndex[mode] = entry % (DJINN_ENTRY_INDEX + 1);
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
-    /* FAKEMATCH(dead): updates of entry that cancel out, under a test of entry,
-     * keep it live after the member's mask. */
-    if (entry) {
-      entry++;
-      entry--;
-    }
   }
   menu->selection[mode] = memberColumn + djinnRow * DJINN_CURSOR_ROW_STRIDE;
   return result;

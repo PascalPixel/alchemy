@@ -29,22 +29,10 @@ struct CellTarget {
   s16 shown;           ///< nonzero draws the sprite
   s16 tile;            ///< resource entry of the sprite's tiles
   u16 unusedAfterTile; ///< no code names it
-  u32 oam[3]; ///< the sprite's attributes, as Oam_AddSpriteAtDepth takes them
+  /// The sprite as Oam_AddSpriteAtDepth takes it: the queue's link, then OAM
+  /// attributes 0 and 1 in one word and attribute 2 in the next.
+  unsigned long oam[3];
   struct CellTargetEntry entries[1];
-};
-
-/// The head of a CellTarget: the fields the lighthouses' cracked-tile fall
-/// (CrackedTile_Fall) reads, ending at the sprite's tiles.
-struct CellTargetHead {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
 };
 
 /// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,

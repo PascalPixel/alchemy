@@ -798,7 +798,7 @@ extern s16 gLightSpritesLarge;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTargetHead *table,
+void CrackedTile_Fall(struct CellTarget *table,
                       struct CellTargetEntry *entry);
 
 extern s16 gLightSpriteCount;

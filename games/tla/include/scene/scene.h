@@ -110,14 +110,6 @@ struct CellMapWork {
   struct CellMapLayer layers[4];
 };
 
-struct PushEvent {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
-  u8 unk0a[4];
-  u16 busy;
-};
-
 struct LightOam {
   u32 link;
   u32 attr01;

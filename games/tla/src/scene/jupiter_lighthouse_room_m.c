@@ -129,7 +129,7 @@ extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTargetHead *table,
+void CrackedTile_Fall(struct CellTarget *table,
                       struct CellTargetEntry *entry);
 
 s32 Event_ClearInvalidPackedValues();

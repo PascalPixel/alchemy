@@ -24,6 +24,7 @@
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "field/actor.h"
+#include "field/map_grid.h"
 #include "system/field_effect.h"
 
 struct SeaOfTimeSprite {
@@ -31,21 +32,10 @@ struct SeaOfTimeSprite {
   u8 visible;
 };
 
-struct SeaOfTimeMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct SeaOfTimeMapWork {
-  u8 unk000[0x108];
-  struct SeaOfTimeMapLayer layers[3];
-};
-
 extern volatile u32 gSeaOfTime_WaveStartFrame;
 extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
-extern u8 gMapGridCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
@@ -85,7 +75,6 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "system/iwram_call.h"
 #include "system/main_routine_work.h"
 #include "system/io_reg.h"
-#include "field/map_grid.h"
 
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
@@ -147,9 +136,8 @@ s32 SeaOfTime_HideSprite(struct Actor *object) {
 }
 
 s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
-  struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
 
   if (map == NULL)
     return 0;
@@ -157,14 +145,13 @@ s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
+  cell += x + (y << 7);
+  return (cell->collisionCode << 8) | cell->attributeB;
 }
 
 s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
-  struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
   s32 old;
 
   if (map == NULL)
@@ -173,10 +160,10 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
   return old;
 }
 

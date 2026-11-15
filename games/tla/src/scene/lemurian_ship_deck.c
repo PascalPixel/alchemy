@@ -378,8 +378,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldEvent_SetExitRequest(10);
 }
 
-/// Sends actor id to actor 4's spot at a run.
-static inline void RunToActor4(s32 id) {
+/// Sends actor id at a run to where Felix stands, and off the deck.
+static inline void RunToFelix(s32 id) {
   struct Actor *target;
 
   Actor_SetSpeed(id, 1.2);
@@ -515,10 +515,10 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_SetAnimation(ACTOR_KRADEN, 3);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(40);
-  RunToActor4(7);
-  RunToActor4(5);
-  RunToActor4(6);
-  RunToActor4(9);
+  RunToFelix(ACTOR_PIERS);
+  RunToFelix(ACTOR_JENNA);
+  RunToFelix(ACTOR_SHEBA);
+  RunToFelix(ACTOR_KRADEN);
   FieldEvent_SetExitRequest(1);
 }
 

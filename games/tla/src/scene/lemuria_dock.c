@@ -43,7 +43,7 @@ struct WarpTarget {
 
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];
-extern s32 gLemuriaDock_ExitsWithFlag960[];
+extern s32 gLemuriaDock_ExitsToOtherWayIn[];
 extern struct WarpTarget gLemuriaDock_HouseDoor;
 
 void Event_FinishScreenTransition(void);
@@ -59,10 +59,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
+/// The dock leads back to the way into Lemuria the party came by: Lemuria's
+/// entrance sets flag 0x960 when the party leaves by its fifth exit.
 s32 *Scene_GetExits(void) {
   if (!Event_GetFlag(0x960))
     return gLemuriaDock_Exits;
-  return gLemuriaDock_ExitsWithFlag960;
+  return gLemuriaDock_ExitsToOtherWayIn;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -259,7 +261,7 @@ s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gLemuriaDock_ExitsWithFlag960[] = {
+s32 gLemuriaDock_ExitsToOtherWayIn[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AncientLemuria, 5, EXIT_FLAG_NONE),

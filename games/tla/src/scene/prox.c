@@ -1249,16 +1249,19 @@ void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
+/// A roof's puff as Prox_RisePuff reads the actor: its place, its scale, how
+/// far it drifts (the actor's timer) and the frames it has left (where an actor
+/// keeps its watched actor).
 struct RisingObject {
-  u8 unk00[8];
+  u8 beforeX[8];
   s32 x;
   s32 y;
-  u8 unk10[8];
+  u8 beforeScale[8];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[0x44];
+  u8 beforeDrift[0x44];
   s16 drift;
-  u8 unk66[2];
+  u8 afterDrift[2];
   s32 life;
 };
 
@@ -1808,11 +1811,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// A child playing tag as its handlers read the actor: whether it has reached
+/// its target, its frames left, and its update.
 struct Walker {
-  u8 unk00[0x63];
+  u8 beforeArrived[0x63];
   u8 arrived;
   u16 frames;
-  u8 unk66[6];
+  u8 beforeUpdate[6];
   void (*update)(void);
 };
 
@@ -2405,32 +2410,13 @@ void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
+#include "scene/falling_rocks.h"
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 #include "shared/particles_update_falling.h"
-
-/// One falling rock: where it is, how it moves and how long it has fallen.
-struct Rock {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.

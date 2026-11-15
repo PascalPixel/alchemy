@@ -422,7 +422,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         wait(1);
       }
       Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
-      if (!GameFlag_Get(0x151) && !shown) {
+      if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) && !shown) {
         WindowSprite_ClearListFar(menu->infoWindow);
 #if TLA_PATCH_1
         // Japanese does not redraw the info window here.
@@ -431,7 +431,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         Menu_DrawCoins(menu->infoWindow);
         shown = 1;
       } else {
-        GameFlag_Clear(0x151);
+        GameFlag_Clear(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
       }
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
@@ -538,7 +538,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
           wait(1);
         }
         Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
-        if (!GameFlag_Get(0x151) && !shown) {
+        if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) && !shown) {
           // The Japanese release clears the info window; from patch 1 it
           // redraws the window's saved rectangle.
 #if TLA_PATCH_1
@@ -558,7 +558,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 #endif
           shown = 1;
         } else {
-          GameFlag_Clear(0x151);
+          GameFlag_Clear(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
         }
       }
     }
@@ -896,7 +896,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   combined += state->row;
   state->selectedIndex = combined;
 
-  if (GameFlag_Get(0x151) == 0) {
+  if (GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) == 0) {
     // As in the item list: the Japanese release clears the info window, and
     // from patch 1 it redraws the window's saved rectangle.
 #if TLA_PATCH_1

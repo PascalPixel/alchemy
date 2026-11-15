@@ -9,6 +9,7 @@
 #include "types.h"
 #include "battle/battle.h"
 #include "window/window.h"
+#include "graphics/glyph.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "djinn_ids.h"

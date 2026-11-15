@@ -504,7 +504,8 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   icon = 0;
   slot = VramCache_FindFreeEntry();
   if (slot != 0) {
-    VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              (s32)&ResourceId_UiIconTiles);
     icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return icon;

@@ -42,7 +42,7 @@ s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
 /// Returns the Djinn tutorial's message on giving a Djinni: the second set's
 /// while flag 0x175 is set.
 s32 Menu_GetDjinnGiveMessage(void) {
-  if (GameFlag_Get(0x175))
+  if (GameFlag_Get(FLAG_ALREADY_KNOWS_DJINN))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }

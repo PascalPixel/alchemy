@@ -44,6 +44,7 @@
 #include "game/owner_state.h"
 #include "fixed_math.h"
 #include "field/field_event.h"
+#include "field/field_sequence.h"
 #include "window/item_icon.h"
 #include "game/character_ids.h"
 #include "gamepak/far_call/game.h"

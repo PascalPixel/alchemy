@@ -286,7 +286,7 @@ void BattleMotion_PlayHitFlash(s32 slot) {
   struct SpriteAnimation *effect;
 
   if (battleObject->object != NULL) {
-    if ((battleObject->object->recordStorageKind & 0xf) == 1) {
+    if ((battleObject->object->recordStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
       effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(
           battleObject->object->records, SPRITE_STAR_BURST);
       if (effect != NULL) {

@@ -515,7 +515,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   effectIndex = 0;
   effect = shop->effects;
   do {
-    FieldParticle_InitializeFar((struct FieldParticle *)effect, 0x2a0,
+    FieldParticle_InitializeFar((struct FieldParticle *)effect, SPRITE_PARTICLE,
                                 position.x, position.z);
     FieldParticle_SetCallbackFar((struct FieldParticle *)effect,
                                  Sanctum_UpdateBurstSparkle);

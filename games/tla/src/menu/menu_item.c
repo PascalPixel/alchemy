@@ -168,6 +168,34 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
+/// The item command grid, by row * 3 + column: Use, Equip and Details on top,
+/// Give, Remove and Drop below.
+enum ItemMenuCommand {
+  ITEM_COMMAND_USE,
+  ITEM_COMMAND_EQUIP,
+  ITEM_COMMAND_INSPECT, ///< Details
+  ITEM_COMMAND_GIVE,
+  ITEM_COMMAND_REMOVE,
+  ITEM_COMMAND_DROP
+};
+
+/// The steps of the item menu's command loop (ItemMenu_RunCommands).
+enum ItemMenuStep {
+  ITEM_STEP_MEMBER = 0,
+  ITEM_STEP_ITEM = 1,
+  ITEM_STEP_USE = 2,
+  ITEM_STEP_EQUIP = 3,
+  ITEM_STEP_GIVE = 4,
+  ITEM_STEP_DROP = 5,
+  ITEM_STEP_TARGET = 6, ///< Give: choose whom to give it to
+  ITEM_STEP_TRADE = 7,  ///< the receiver is full: choose what they give back
+  ITEM_STEP_IDLE = 8,   ///< nothing sets it
+  ITEM_STEP_COMMAND = 9,
+  ITEM_STEP_INSPECT = 10, ///< Details (ItemMenu_ShowDetails)
+  ITEM_STEP_REMOVE = 11,
+  ITEM_STEP_QUANTITY = 12 ///< nothing sets it
+};
+
 #ifdef MODERN
 // Called with no prototype in scope, as its bytes need; a current GCC gets
 // it here.
@@ -209,12 +237,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   done = 0;
   selection = 0;
   ret = 0;
-  state = 0;
+  state = ITEM_STEP_MEMBER;
   menu = Ram_HeapSlots->menuWork;
 
   while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
-    case 0:
+    case ITEM_STEP_MEMBER:
       menu->selectedSlots[0] = 0;
       ItemMenu_FitMessageWindowToQuestion();
       ItemMenu_PlaceItemWindowBelowQuestion();
@@ -236,12 +264,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->infoWindow);
       ItemMenu_HideAllIcons();
-      state = 1;
+      state = ITEM_STEP_ITEM;
       break;
 
-    case 1:
+    case ITEM_STEP_ITEM:
       if (ItemMenu_CountItems(menu->sideMember[0]) == 0) {
-        state = 0;
+        state = ITEM_STEP_MEMBER;
         break;
       }
       ItemMenu_FitMessageWindowToQuestion();
@@ -250,21 +278,21 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->sideIcons[0]->motion = ICON_SHOWN;
       ItemMenu_DrawMessage(0, (s32)&MsgWhichItem);
       selection = ItemMenu_RunList(0);
-      state = 0;
+      state = ITEM_STEP_MEMBER;
       if (selection == -1) {
         break;
       }
       menu->listMode = -1;
-      state = 9;
+      state = ITEM_STEP_COMMAND;
       break;
 
-    case 9:
+    case ITEM_STEP_COMMAND:
       command = ItemMenu_ChooseCommand();
       if (command == -1) {
-        state = 1;
+        state = ITEM_STEP_ITEM;
         menu->completionFlag = 1;
       }
-      if (command == 0) {
+      if (command == ITEM_COMMAND_USE) {
         if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
                                     INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
@@ -276,10 +304,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         result =
             Item_ClassifyUseMode(menu->sideMember[0], menu->selectedItems[0]);
-        if (result == 1) {
-          state = 2;
+        if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
+          state = ITEM_STEP_USE;
         }
-        if (result == 2) {
+        if (result == ITEM_USE_MODE_WHOLE_PARTY) {
           ItemMenu_Use();
           WindowSprite_ClearListFar(menu->infoWindow);
           ItemMenu_ShowMessage(menu->messageOffset + (s32)MsgItemUseResult, 0,
@@ -291,9 +319,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           menu->itemCount = ItemMenu_CollectItems(Unit_Get(menu->sideMember[0]),
                                                   menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
-          state = 0;
+          state = ITEM_STEP_MEMBER;
         }
-        if (result == -1 || result == 0) {
+        if (result == -1 || result == ITEM_USE_MODE_FROM_FIELD) {
           done = 1;
           *ownerOut = menu->sideMember[0];
           *targetOut = menu->sideMember[1];
@@ -301,24 +329,24 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ret = 1;
         }
       }
-      if (command == 1) {
-        state = 3;
+      if (command == ITEM_COMMAND_EQUIP) {
+        state = ITEM_STEP_EQUIP;
       }
-      if (command == 3) {
-        state = 6;
+      if (command == ITEM_COMMAND_GIVE) {
+        state = ITEM_STEP_TARGET;
       }
-      if (command == 5) {
-        state = 5;
+      if (command == ITEM_COMMAND_DROP) {
+        state = ITEM_STEP_DROP;
       }
-      if (command == 4) {
-        state = 11;
+      if (command == ITEM_COMMAND_REMOVE) {
+        state = ITEM_STEP_REMOVE;
       }
-      if (command == 2) {
-        state = 10;
+      if (command == ITEM_COMMAND_INSPECT) {
+        state = ITEM_STEP_INSPECT;
       }
       break;
 
-    case 2:
+    case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
       ItemMenu_FitMessageWindowToItemQuestion();
       ItemMenu_PlaceItemWindowBelowItemQuestion();
@@ -330,7 +358,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         command = 0;
         if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
                                        INVENTORY_ITEM_ID_MASK) != 0) {
-          command = 8;
+          command = STATUS_PANEL_STATS;
         }
         result = ItemMenu_Use();
         StatusPanel_Draw(menu->statusWindow, menu->sideMember[1], 0, command);
@@ -343,18 +371,18 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
           menu->sideIcons[0]->motion = ICON_HIDDEN;
           ItemMenu_TryBreak();
-          state = 1;
+          state = ITEM_STEP_ITEM;
         }
         menu->itemCount = ItemMenu_CollectItems(Unit_Get(menu->sideMember[0]),
                                                 menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->completionFlag = 1;
       } else {
-        state = 9;
+        state = ITEM_STEP_COMMAND;
       }
       break;
 
-    case 6:
+    case ITEM_STEP_TARGET:
       ItemMenu_FitMessageWindowToItemQuestion();
       ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
@@ -362,15 +390,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow, 16,
                                  16);
       n = ItemMenu_SelectTarget(1);
-      state = 4;
+      state = ITEM_STEP_GIVE;
       if (n == -1) {
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
                                   0, menu->sideMember[0]);
-        state = 9;
+        state = ITEM_STEP_COMMAND;
       }
       break;
 
-    case 5:
+    case ITEM_STEP_DROP:
       ItemMenu_HideAllIcons();
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       result = 0;
@@ -382,12 +410,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
       }
       if (result == -1) {
-        state = 9;
+        state = ITEM_STEP_COMMAND;
         break;
       }
       menu->sideMember[1] = 0;
       Resource_LoadByModeIntoSlotFar(
-          2,
+          ICON_KIND_ITEM,
           (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) |
               (result << INVENTORY_QUANTITY_SHIFT),
           (u8)menu->selectedItemIcon->index, 0);
@@ -416,16 +444,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgDroppedIt, 15, 13);
         menu->completionFlag = 1;
-        state = 1;
+        state = ITEM_STEP_ITEM;
       } else {
-        state = 9;
+        state = ITEM_STEP_COMMAND;
       }
       Unit_CalculateFar(menu->sideMember[0]);
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       Party_ClearUnusableShortcutsFar();
       break;
 
-    case 4:
+    case ITEM_STEP_GIVE:
       aborted = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       if ((item->flags & ITEM_STACKABLE) != 0) {
@@ -437,7 +465,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         if (ItemMenu_CountItems(menu->sideMember[1]) == INVENTORY_SLOTS &&
             qty == 0) {
-          state = 7;
+          state = ITEM_STEP_TRADE;
           break;
         }
         stack = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
@@ -456,7 +484,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             result = 0;
           }
           if (result == -1) {
-            state = 6;
+            state = ITEM_STEP_TARGET;
             break;
           }
           for (command = 0; command < result + 1; command++) {
@@ -478,7 +506,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             menu->selectedItems[0] &
                 (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
-          state = 7;
+          state = ITEM_STEP_TRADE;
           break;
         }
         menu->selectedSlots[1] = result;
@@ -521,7 +549,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                     0, menu->sideMember[1]);
           ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
-          if ((item->flags & 1) != 0) {
+          if ((item->flags & ITEM_CURSED) != 0) {
             Sound_PlayFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->infoWindow);
             ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
@@ -530,16 +558,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
       }
       Party_ClearUnusableShortcutsFar();
-      state = 0;
+      state = ITEM_STEP_MEMBER;
       break;
 
-    case 7:
+    case ITEM_STEP_TRADE:
       aborted = 0;
       ItemMenu_FitMessageWindowToQuestion();
       ItemMenu_PlaceItemWindowBelowQuestion();
       ItemMenu_DrawMessage(0, (s32)&MsgSwapForWhat);
       if (ItemMenu_RunList(1) == -1) {
-        state = 6;
+        state = ITEM_STEP_TARGET;
         break;
       }
       source = Unit_Get(menu->sideMember[0]);
@@ -553,7 +581,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       while (movedSource <= 29) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
-        if (result == 2) {
+        if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
         if (result == -1) {
@@ -568,13 +596,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
                                    INVENTORY_ITEM_ID_MASK);
-          if ((item->flags & 2) != 0) {
+          if ((item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
             aborted = 1;
           }
         }
         result =
             Inventory_RemoveFar(menu->sideMember[1], menu->selectedSlots[1]);
-        if (result == 2) {
+        if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
         if (result == -1) {
@@ -642,7 +670,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                       menu->sideMember[1]);
             ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
-            if ((item->flags & 1) != 0) {
+            if ((item->flags & ITEM_CURSED) != 0) {
               Sound_PlayFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->infoWindow);
               ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
@@ -656,13 +684,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Heap_Release(targetCopy);
       Heap_Release(sourceCopy);
       Party_ClearUnusableShortcutsFar();
-      state = 0;
+      state = ITEM_STEP_MEMBER;
       break;
 
-    case 3:
+    case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
       if (result == -1) {
-        state = 1;
+        state = ITEM_STEP_ITEM;
         break;
       }
       if (result == -2) {
@@ -671,7 +699,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #if !TLA_PATCH_1
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->infoWindow);
 #endif
-        state = 1;
+        state = ITEM_STEP_ITEM;
         break;
       }
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
@@ -686,15 +714,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       WindowSprite_ClearListFar(menu->infoWindow);
       ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
-      if ((item->flags & 1) != 0) {
+      if ((item->flags & ITEM_CURSED) != 0) {
         Sound_PlayFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X, 8);
       }
-      state = 1;
+      state = ITEM_STEP_ITEM;
       break;
 
-    case 11:
+    case ITEM_STEP_REMOVE:
       (Unit_Get(menu->sideMember[0]))->inventory[menu->selectedSlots[0]] &=
           0xfdff;
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
@@ -711,25 +739,25 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       WindowSprite_ClearListFar(menu->infoWindow);
       ItemMenu_ShowMessage((s32)MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
       Party_ClearUnusableShortcutsFar();
-      state = 1;
+      state = ITEM_STEP_ITEM;
       break;
 
-    case 10:
+    case ITEM_STEP_INSPECT:
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->statusWindow);
       ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
                                 menu->sideMember[0]);
       menu->sideIcons[0]->motion = ICON_SHOWN;
-      state = 9;
+      state = ITEM_STEP_COMMAND;
       break;
 
-    case 12:
-      ItemMenu_SelectGiveQuantity(0, 30, 0);
-      state = 1;
+    case ITEM_STEP_QUANTITY:
+      ItemMenu_SelectGiveQuantity(0, INVENTORY_STACK_MAX, 0);
+      state = ITEM_STEP_ITEM;
       break;
 
-    case 8:
+    case ITEM_STEP_IDLE:
       break;
 
     default:
@@ -1187,14 +1215,15 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         else
           StatusPanel_Draw(menu->statusWindow, menu->memberIds[selection],
                            menu->selectedSlots[0], 0);
-        if (!GameFlag_Get(0x151) && !descriptionShown) {
+        if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) &&
+            !descriptionShown) {
           ITEM_INFO_CLEAR(menu->infoWindow);
           ITEM_INFO_DRAW((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
                              (s32)MsgItemPlainName,
                          menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
-          GameFlag_Clear(0x151);
+          GameFlag_Clear(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
         }
       }
       redraw = 0;
@@ -1423,8 +1452,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   if (mode == 1)
     style = STATUS_PANEL_LOWER_ONLY;
   switch (item->type) {
-  case 0:
-  case 11:
+  case ITEM_TYPE_NONE: // usable items
+  case ITEM_TYPE_ELEMENTAL_STAR:
     /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
      * kept. */
     if (menu)
@@ -1432,15 +1461,15 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
     else
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     break;
-  case 10:
+  case ITEM_TYPE_CLASS_CHANGE:
     if (owner == target) {
-      style |= 9;
+      style |= STATUS_PANEL_EQUIP_CLASS;
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
       unit = Unit_Get(target);
-      size = 332;
+      size = BATTLE_UNIT_SIZE;
       buffer = Heap_Alloc(size);
       Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -1448,7 +1477,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         entry &= ~INVENTORY_EQUIPPED;
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
-          style |= 9;
+          style |= STATUS_PANEL_EQUIP_CLASS;
           StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
           StatusPanel_Draw(menu->statusWindow, target, slot, style);
@@ -1465,7 +1494,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case ITEM_TYPE_SHIELD:
   case ITEM_TYPE_HELM:
   case ITEM_TYPE_BOOTS:
-  case 7:
+  case ITEM_TYPE_TRIDENT:
   case ITEM_TYPE_RING:
   case ITEM_TYPE_SHIRT:
     if (owner == target) {
@@ -1569,17 +1598,6 @@ s32 ItemMenu_GetCommandCursorY(s32 column, s32 row);
 #define COMMAND_CURSOR_X(column, row) ((column) * 40 + 86)
 #define COMMAND_CURSOR_Y(column, row) ((row) * 8 + 30)
 #endif
-
-/// The item command grid, by row * 3 + column: Use, Equip and Details on top,
-/// Give, Remove and Drop below.
-enum ItemMenuCommand {
-  ITEM_COMMAND_USE,
-  ITEM_COMMAND_EQUIP,
-  ITEM_COMMAND_INSPECT, ///< Details
-  ITEM_COMMAND_GIVE,
-  ITEM_COMMAND_REMOVE,
-  ITEM_COMMAND_DROP
-};
 
 void ItemMenu_BuildCommands(s8 *commandStates);
 
@@ -2244,14 +2262,14 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
     consumable = 1;
     row++;
   }
-  if (def->useType != ITEM_USE_EMPTIES && def->useType != 0) {
+  if (def->useType != ITEM_USE_EMPTIES && def->useType != ITEM_USE_FREE) {
     if (!consumable) {
       Text_DrawMessageAsTilesFar((s32)MsgUsesHeading, window,
                                  ITEM_DETAILS_USES_X, row * 8);
       row++;
     }
     switch (def->useType) {
-    case 0:
+    case ITEM_USE_FREE:
       break;
     case ITEM_USE_CONSUMED:
       Text_DrawMessageAsTilesFar((s32)MsgSingleUse, window, 0, row * 8);
@@ -2483,7 +2501,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Text_DrawMessageAsTilesFar(MSG_HOW_MANY, window, HOW_MANY_X,
                                    HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
-        QuantityBar_FillFar(30, 14, tiles);
+        QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
         QuantityBar_FillFar(baseQuantity + quantityRange, 0, tiles);
         QuantityBar_FillFar(baseQuantity + value + 1, 10, tiles);
         QuantityBar_FillFar(baseQuantity, 2, tiles);

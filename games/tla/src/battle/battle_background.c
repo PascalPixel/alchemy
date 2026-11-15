@@ -519,14 +519,14 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   object = slot->object;
   if (object == 0)
     return;
-  switch (object->recordStorageKind & 15) {
-  case 1: {
+  switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  case ACTOR_SPRITE_ONE: {
     record = object->records;
     record->part[0].objectMode = mode;
     record->part[1].objectMode = mode;
     break;
   }
-  case 2: {
+  case ACTOR_SPRITE_GROUP: {
     records = object->records;
     i = 0;
     do {

@@ -1191,7 +1191,7 @@ void TitlePaletteFade_Update(void) {
   // The queued DMA keeps a pointer until VBlank.
   packed = work->packed[work->page ^ 1];
   blue = 0x7c00;
-  i = 512;
+  i = PLTT_COLORS;
   current = work->current;
   for (; i != 0; i--) {
     *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) |
@@ -1216,7 +1216,7 @@ void TitlePaletteFade_Update(void) {
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                   s32 selectedPalettes) {
   u32 colorIndex;
-  u32 colorCount = 512;
+  u32 colorCount = PLTT_COLORS;
   s32 red;
   s32 blue;
   u32 colorWork;

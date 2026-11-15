@@ -42,7 +42,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   }
 
   targetLevel = targetLevel / unitCount;
-  targetLevel += (s8)GameFlag_GetByte(0x3f8);
+  targetLevel += (s8)GameFlag_GetByte(FLAG_AREA_TEMP_F8);
   if (targetLevel <= 0)
     targetLevel = 1;
   if (targetLevel > UNIT_LEVEL_MAX)
@@ -590,7 +590,8 @@ assign_enemy:
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                               levelAdjustment);
-    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
+    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) &&
+             GameFlag_Get(FLAG_HARD_LEVEL))
       BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     battle->forceField = 0;
     enemyId = unit->enemyId;

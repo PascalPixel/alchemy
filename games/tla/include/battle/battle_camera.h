@@ -46,8 +46,7 @@ struct BattlePresentationTransition {
   s32 secondMode; ///< BattleBackgroundView's secondMode
   s32 active;     ///< BattleBackgroundView's busy, at the same offset
   s32 flag;       ///< 0 lets the camera update set the background's range
-  s32 unk18;      ///< cleared at the battle's start; not read by name in TLA
-  s32 unk1c;      ///< cleared at the battle's start; not read by name in TLA
+  s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
 /// A presentation's effect command, laid out as BattleEffectParams with a

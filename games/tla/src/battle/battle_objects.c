@@ -184,7 +184,7 @@ void ReleaseBattleObjectRecords(s32 no) {
         Sprite_DestroyFar(rec);
         i += 1;
       }
-      obj->recordStorageKind = 0; // No graphics.
+      obj->recordStorageKind = ACTOR_SPRITE_NONE; // No graphics.
       obj->records = NULL;
     }
   }
@@ -239,7 +239,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
     object = battleObject->object;
     if (object == 0)
       continue;
-    if (object->recordStorageKind != 0)
+    if (object->recordStorageKind != ACTOR_SPRITE_NONE)
       continue;
     if ((battleObject->resource & 0xfff) == 561 ||
         (battleObject->resource & 0xfff) == 631 ||
@@ -251,7 +251,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       records = (struct Sprite **)Ram_HeapSlots->actorSystem->unk08 +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
-      object->recordStorageKind = 2;
+      object->recordStorageKind = ACTOR_SPRITE_GROUP;
       object->records = records;
       Iwram_ClearWordsEntry(records, 16);
       record = (struct Sprite *)Sprite_CreateFar(spriteId);
@@ -272,7 +272,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
     } else {
       record = (struct Sprite *)Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
-        object->recordStorageKind = 1;
+        object->recordStorageKind = ACTOR_SPRITE_ONE;
         object->records = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         entry = record->entries[0];
@@ -486,10 +486,10 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   if (object != NULL) {
     storageKind = object->recordStorageKind & 0xF;
     switch (storageKind) {
-    case 1:
+    case ACTOR_SPRITE_ONE:
       ResetMotionRecordGroup(object->records);
       return;
-    case 2:
+    case ACTOR_SPRITE_GROUP:
       recordGroups = object->records;
       remaining = 3;
       do {
@@ -606,12 +606,12 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 
   if (object == NULL)
     return NULL;
-  storageKind = object->recordStorageKind & 0xF;
-  if (storageKind == 1) {
+  storageKind = object->recordStorageKind & ACTOR_SPRITE_KIND_MASK;
+  if (storageKind == ACTOR_SPRITE_ONE) {
     if (recordIndex == 0) {
       return object->records;
     }
-  } else if (storageKind == 2) {
+  } else if (storageKind == ACTOR_SPRITE_GROUP) {
     return ((void **)object->records)[recordIndex];
   }
   return NULL;

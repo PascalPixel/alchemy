@@ -19,6 +19,37 @@
 #define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member
 #define DJINN_LIST_ROWS 10   ///< entries one party member's list holds
 
+/// The Djinn tutorial's lines, counted from its first (Menu_GetDjinnGiveMessage
+/// and Tutorial_GetDjinnGiveMessage: one of its two copies, by
+/// FLAG_ALREADY_KNOWS_DJINN).
+enum DjinnTutorialLine {
+  /// "To give your Djinni to someone else, move it like this."
+  DJINN_TUTORIAL_LINE_GIVE = 0,
+  /// "After choosing who gets the Djinni, you can \"set\" it."
+  DJINN_TUTORIAL_LINE_SET_AFTER_GIVE = 1,
+  /// "When your class changes, the Psynergy you can use may also change."
+  DJINN_TUTORIAL_LINE_CLASS_PSYNERGY = 2,
+  /// "Setting a Djinni changes your attributes and sometimes even your class."
+  DJINN_TUTORIAL_LINE_SET_CHANGES = 3,
+  /// "Each Djinni has different, unique powers."
+  DJINN_TUTORIAL_LINE_POWERS = 4,
+  /// "Once we have been set, you can unleash us in battle to use our powers."
+  DJINN_TUTORIAL_LINE_UNLEASH = 5,
+  /// "So, {protagonist_name}, let me demonstrate the power of my attack now."
+  DJINN_TUTORIAL_LINE_DEMONSTRATE = 6,
+  /// "See! What did I tell you? When you unleashed me, I used my special
+  /// attack ability!"
+  DJINN_TUTORIAL_LINE_UNLEASHED = 7,
+  /// "After being unleashed, we Djinn will then stand by, ready to be summoned
+  /// back again..."
+  DJINN_TUTORIAL_LINE_STANDBY = 8,
+  /// "After a Djinni has been used to summon, it must spend time in recovery."
+  DJINN_TUTORIAL_LINE_RECOVERY = 12,
+  /// "And once we've recovered, we automatically set ourselves again, so we're
+  /// ready to attack!"
+  DJINN_TUTORIAL_LINE_SET_AGAIN = 13
+};
+
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
 /// and the tutorial's state, allocated when the menu opens and released when
 /// it closes.

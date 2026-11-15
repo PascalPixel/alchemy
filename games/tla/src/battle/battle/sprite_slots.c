@@ -58,8 +58,7 @@ s32 Enemy_HasSpriteRoom(s32 arg0) {
 /// the sprite value below, or 0 when a load fails.
 s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
-  struct BattleSpriteSlots *table =
-      (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
+  struct BattleWork *table = Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time. */
@@ -122,8 +121,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
 /// Clears those BattleWork.spriteSlots.
 void BattleObject_ReleaseSpriteSlots(s32 value) {
-  struct BattleSpriteSlots *work =
-      (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 index;
 
   for (index = 0; index <= 5; index++) {

@@ -74,36 +74,39 @@ void BattleUnit_ResetGuardLevels(void) {
 /// forbids it. Returns 1 when the party gets away.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
-  s16 livingUnits[14];
+  s16 livingUnits[UNIT_MAX];
   s32 livingCount;
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleEscapeState *escapeState;
+  struct BattleWork *escapeState;
 
   escaped = 0;
-  escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
-  if (escapeState->guaranteed == 1) {
+  escapeState = Ram_HeapSlots->battleWork;
+  if (escapeState->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
+    chance = 5000 + (escapeState->unk046 * 2000);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal +=
+          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
-    chance += __divsi3(levelTotal * 0x1F4, livingCount);
+    chance += __divsi3(levelTotal * 500, livingCount);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal +=
+          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
-    chance -= __divsi3(levelTotal * 0x1F4, livingCount);
+    chance -= __divsi3(levelTotal * 500, livingCount);
     if ((chance > 0) &&
-        ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
+        // A roll from 0 to 9999 against the chance.
+        ((u32)((u32)(10000 * Random16()) >> 16) < (u32)chance)) {
       escaped = 1;
     }
-    escapeState->failedAttempts++;
+    escapeState->unk046++;
   }
   if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
@@ -129,7 +132,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   s32 unitCount;
   s32 shuffleOrUnitIndex;
 
-  if (battle->firstStrike == 1)
+  if (battle->firstStrike == FIRST_STRIKE_PARTY)
     return 0;
 
   unitCount = BattleUnit_ListLiving(2, unitIds);
@@ -144,7 +147,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
-  if (battle->firstStrike == 2) {
+  if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     s32 limit = ((Random16() * 5) >> 16) + 1;
 
     if (limit <= 1)
@@ -197,7 +200,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
 
       entryCount++;
 
-      if (battle->firstStrike == 2)
+      if (battle->firstStrike == FIRST_STRIKE_ENEMIES)
         break;
     }
   }
@@ -488,13 +491,14 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   BattleMessage_CloseFar();
 
   // Ally commands (unavailable when enemies strike first).
-  if (*mode != 2) {
+  if (*mode != FIRST_STRIKE_ENEMIES) {
     cnt = Battle_BuildUnitActions(acts);
     if (cnt < 0)
       goto finish;
     // A failed escape gives enemies the same advantage as striking first.
-    if (cnt != 0 && acts[0].command == 99 && BattleFlee_CheckSuccess() == 0)
-      *mode = 2;
+    if (cnt != 0 && acts[0].command == COMMAND_FLEE &&
+        BattleFlee_CheckSuccess() == 0)
+      *mode = FIRST_STRIKE_ENEMIES;
   } else {
     cnt = 0;
   }

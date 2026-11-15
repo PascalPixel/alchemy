@@ -165,27 +165,17 @@ void Window_CloseAll(void) {
   }
 }
 
-struct Rect_0803cba8 {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-  u8 unk10[2];
-  u16 state;
-};
-
 extern char ResourceId_WindowBorderFlash;
 
 /// Loads frame `offset` of the flash border picture
 /// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
 /// rectangle with it.
-void Window_ShowFlashFrame(struct Rect_0803cba8 **window, s32 offset) {
+void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   u8 *source =
       (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash) + offset;
-  struct Rect_0803cba8 *rect = *window;
-  s32 x = rect->x;
-  s32 y = rect->y;
+  struct Window *rect = *window;
+  s32 x = (s16)rect->x;
+  s32 y = (s16)rect->y;
   s32 width = rect->width;
   s32 height = rect->height;
 
@@ -193,34 +183,32 @@ void Window_ShowFlashFrame(struct Rect_0803cba8 **window, s32 offset) {
   Window_DrawFlashBorder(x, y, width, height);
 }
 
-struct Window_0803cbf8 {
-  struct Rect_0803cba8 *rect;
-  u8 unk04[16];
-  u16 timer;
-};
+/// Steps a message's window animation (WINDOW_ANIMATION_SWELL): the frame
+/// flashes through the flash border's pictures as the countdown runs, the plain
+/// border returns two frames before its end, and the flash tiles are restored
+/// at the end.
+void Window_StepSwellEffect(struct UiChannelSlot *window) {
+  if (window->work->animation == WINDOW_ANIMATION_SWELL) {
+    if (window->countdown == 10)
+      Window_ShowFlashFrame(&window->work, 0x300);
+    else if (window->countdown == 9)
+      Window_ShowFlashFrame(&window->work, 0x200);
+    else if (window->countdown == 8)
+      Window_ShowFlashFrame(&window->work, 0x100);
+    else if (window->countdown == 6)
+      Window_ShowFlashFrame(&window->work, 0x200);
+    else if (window->countdown == 4)
+      Window_ShowFlashFrame(&window->work, 0x300);
+    if (window->countdown == 2) {
+      struct Window *rect = window->work;
 
-void Window_StepSwellEffect(struct Window_0803cbf8 *window) {
-  if (window->rect->state == 4) {
-    if (window->timer == 10)
-      Window_ShowFlashFrame(&window->rect, 0x300);
-    else if (window->timer == 9)
-      Window_ShowFlashFrame(&window->rect, 0x200);
-    else if (window->timer == 8)
-      Window_ShowFlashFrame(&window->rect, 0x100);
-    else if (window->timer == 6)
-      Window_ShowFlashFrame(&window->rect, 0x200);
-    else if (window->timer == 4)
-      Window_ShowFlashFrame(&window->rect, 0x300);
-    if (window->timer == 2) {
-      struct Rect_0803cba8 *rect = window->rect;
-
-      Window_DrawBorder(rect->x, rect->y, rect->width, rect->height);
+      Window_DrawBorder((s16)rect->x, (s16)rect->y, rect->width, rect->height);
     }
-    window->timer--;
-    if (window->timer == 0) {
+    window->countdown--;
+    if (window->countdown == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
               (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
-      window->rect->state = 0;
+      window->work->animation = 0;
     }
   }
 }

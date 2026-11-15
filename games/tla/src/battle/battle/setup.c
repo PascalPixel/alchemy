@@ -91,11 +91,11 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 
   BattleMessage_CloseFar();
-  if (battle->firstStrike == 1) {
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
-  } else if (battle->firstStrike == 2) {
+  } else if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartySurprised);
     BattleMessage_WaitForAdvance();

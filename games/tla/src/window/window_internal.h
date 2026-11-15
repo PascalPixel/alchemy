@@ -80,6 +80,10 @@
 #include "scene_call.h"
 #include "field/sprite.h"
 
+/// The window animation a message can start (its window-state code): the
+/// window's frame flashes as it swells, for the message's countdown.
+#define WINDOW_ANIMATION_SWELL 4
+
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4

@@ -62,6 +62,7 @@
 #include "battle/battle_random.h"
 #include "system/irq_lock.h"
 #include "battle/battle_event.h"
+#include "battle/first_strike.h"
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 #include "system/io_write_queue.h"
@@ -411,11 +412,6 @@ struct Layout {
   s16 field[6];
 };
 
-struct BattleSpriteSlots {
-  s32 enemyGroup;
-  s16 spriteSlots[6];
-};
-
 struct ActionTargets {
   u8 actorId;
   u8 count;
@@ -452,12 +448,6 @@ struct EscapeTransition {
   s32 targetYaw;
   s32 unk04[3];
   s32 active;
-};
-
-struct BattleEscapeState {
-  u8 reserved00[0x45];
-  u8 guaranteed;
-  u8 failedAttempts;
 };
 
 struct BattleLinkedActionState {

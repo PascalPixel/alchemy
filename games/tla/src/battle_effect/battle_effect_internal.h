@@ -1023,7 +1023,7 @@ extern u8 gCharon_FlashFrames[];
 extern const struct ModelVertex gBattleEffect_OctagonBandCorners[];
 extern const struct ModelVertex gBattleEffect_CylinderCorners[];
 extern const u16 gCastingImpact_BandMesh[];
-extern const u16 gGeyser_Faces[];
+extern const u16 gGeyser_Mesh[];
 extern const u16 gBattleEffect_CylinderMesh[];
 extern const struct ModelVertex gGeode_RingCorners[];
 extern const struct ModelVertex gBattleEffect_RingCorners[];

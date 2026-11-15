@@ -791,7 +791,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         }
         column->kind = 7;
         column->shade = brightness;
-        column->mesh = gGeyser_Faces;
+        column->mesh = gGeyser_Mesh;
         column->texture = &texture;
         column->vertices = vertices;
         SceneTransform_ApplyScale3(scale * 2, Q16_ONE * 7, scale * 2);

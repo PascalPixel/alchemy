@@ -65,6 +65,7 @@ void PartyStatus_Close(void);
 struct BattleObj;
 struct Actor;
 
+/// A battle object's sprite as its motion code reads it: the flags at byte 9.
 struct ParticleChild {
   u8 padding[9];
   u8 flags;

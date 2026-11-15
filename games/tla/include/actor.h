@@ -14,6 +14,8 @@
 #define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ)                          \
   ((p)->x.fixed = (fixedX), (p)->y.fixed = (fixedY), (p)->z.fixed = (fixedZ))
 
+/// A view of an actor's sprite record: the word at 0x28 points at its sprite
+/// id, which Actor_GetSpriteById and the event commands read.
 struct ObjectAnimationState {
   u8 unk00[0x28];
   s16 *value28;

@@ -9,21 +9,7 @@ s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-struct Ent {
-  s32 f00;
-  u8 f04;
-  u8 f05;
-  u16 f06 : 9;
-  u16 f07 : 7;
-  s32 f08;
-};
-
-struct Cam {
-  u8 pad[228];
-  s32 x;
-  s32 y;
-};
-
+/// A position on the field in 16.16 fixed-point pixels.
 struct FieldPosition {
   s32 x;
   s32 y;

@@ -6,6 +6,9 @@
 #include "battle/battle_side.h"
 #include "static_assert.h"
 
+/// A view of struct BattleUnit: its inventory, and as classId who the unit is
+/// (BattleUnit.enemyId). The item menus and the debug battle still read it;
+/// the game object reads struct BattleUnit.
 struct OwnerInventoryState {
   u8 unk000[0xd8];
   u16 inventory[15];
@@ -13,11 +16,14 @@ struct OwnerInventoryState {
   u16 classId;
 };
 
+/// A view of struct BattleUnit's Psynergy list (BattleUnit.psynergy).
 struct OwnerActionState {
   u8 unk000[0x58];
   struct OwnerActionSlot actionSlots[32];
 };
 
+/// The Djinn held and set, each a word an element (BattleUnit.djinnHeld and
+/// djinnSet), read as one array of eight.
 union OwnerDjinnFlags {
   struct {
     u32 owned[4];
@@ -26,6 +32,8 @@ union OwnerDjinnFlags {
   u32 slots[8];
 };
 
+/// The Djinn held and set, counted by element (BattleUnit.djinnOwnedCounts and
+/// djinnActiveCounts), read as one array of eight.
 union OwnerDjinnCounts {
   struct {
     u8 owned[4];
@@ -34,6 +42,8 @@ union OwnerDjinnCounts {
   u8 slots[8];
 };
 
+/// A view of struct BattleUnit's Djinn: the flags and counts of those held
+/// and set.
 struct OwnerDjinnState {
   u8 unk000[0xf8];
   union OwnerDjinnFlags flags;

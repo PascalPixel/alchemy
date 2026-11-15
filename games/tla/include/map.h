@@ -83,6 +83,9 @@ struct MapWork {
   s16 zoomStep;
 };
 
+/// A view of the map work as the screen transitions read it: the display
+/// control bits, the window edges and interrupt lines of a transition, and
+/// the map's resources.
 struct MapViewWork {
   u32 unk000[5]; ///< map work fields no window view names
   u16 dispcnt;   ///< display control bits ORed into DISPCNT

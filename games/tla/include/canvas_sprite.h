@@ -28,6 +28,9 @@
 #define CANVAS_UPLOAD_AND_FADE3 5
 #define CANVAS_UPLOAD_TO_BG 11
 
+/// A field Psynergy's canvas sprite: its effect sprite, the frame it is on and
+/// how long it has drawn, and where, how large, at what angle and depth it is
+/// drawn.
 struct CanvasSpriteWork {
   struct EffectSprite sprite;
   u8 unk28[0x78];

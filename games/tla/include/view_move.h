@@ -17,6 +17,8 @@ struct Actor;
 #define VIEW_MOVE_X 1
 #define VIEW_MOVE_Z 2
 
+/// A view move's work: where the view and the map's view bounds stood when
+/// the move began, which edges it lies beside, and the actors it carries.
 struct ViewMoveWork {
   s32 x; ///< the view centre's position when the move began
   s32 y;

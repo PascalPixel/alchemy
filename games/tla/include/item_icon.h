@@ -26,13 +26,6 @@ struct IconSprite {
   struct IconAttr attr;
 };
 
-struct IconWork {
-  u8 unk000[0xc14];
-  struct IconSprite sprites[ICON_COUNT];
-  u16 resources[ICON_COUNT];
-  s8 active;
-};
-
 s32 VramCache_FreeEntry(u32 entry);
 s32 VramCache_FindFreeEntry(void);
 void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);

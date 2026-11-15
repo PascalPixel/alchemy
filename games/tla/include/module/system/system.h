@@ -61,6 +61,8 @@ struct SerialCommandWork {
   u16 state;
 };
 
+/// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its
+/// constant 1 in.
 struct SerialHalfword {
   u16 v;
 };

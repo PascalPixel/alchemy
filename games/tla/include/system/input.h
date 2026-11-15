@@ -8,6 +8,9 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The keypad state the VBlank interrupt keeps (gInput): the keys held, newly
+/// pressed and repeating, the D-pad direction kept, and the repeat timer
+/// (Input_UpdateKeyRepeatAndDirection).
 struct InputState {
   // volatile: the VBlank handler sets it while the code it interrupts reads
   // it, so it is no device.

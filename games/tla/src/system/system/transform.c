@@ -6,6 +6,7 @@
 #include "fixed_math.h"
 #include "system/projection.h"
 
+/// A point in view space, and where Render_ProjectPoint puts it on the screen.
 struct ProjectedPoint {
   s32 x;
   s32 y;

@@ -33,6 +33,9 @@ STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 /// The main font, from character code 32: its glyphs in code order.
 extern const struct FontGlyph gFont_Glyphs[];
 
+/// The glyph transfer's work, the block of heap slot HEAP_SLOT_GLYPH_TRANSFER:
+/// the glyphs drawn one byte a pixel, the 4bpp tiles made from them, the size
+/// drawn and the encoded text read.
 typedef struct {
   u8 input[0x400];
   u8 tiles[0x200];

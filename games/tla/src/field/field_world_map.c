@@ -367,12 +367,6 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->windowPending = 0;
 }
 
-/* VIEW(world_map): variable gCellPictures as extern u8 gCellPictures[]; f0298c0
- * has extern u32 gCellPictures[]; tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/field/field_world_map.c:386:
- * `gMapBlocks__world_map' undeclared (first use in this function). */
-extern u8 gMapBlocks__world_map[] __asm__("gCellPictures");
-
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   u32 cellPictureIndex = *(u16 *)cellBytes;
@@ -383,68 +377,49 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   *(u16 *)(screenTile + 64) = *cellPictureTiles;
 }
 
-/// Draws world map tile row tileRow (two screen rows) into the BG map at
-/// 0x06004000, from the 32 by 32 cell grid in gCellPictures.
+/// Draws world map tileRow into the BG map: 32 cells, then 32 more a screen
+/// block on.
 void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
-  u8 *cellBytes;
+  u8 *sourceCell;
   u8 *screenTile;
-  u32 column;
+  u32 cellsCopied;
 
-  cellBytes = gMapBlocks__world_map + ((((s32)tileRow / 2) & 31) << 7);
-  {
-    /* FAKEMATCH(pin): the BG map address held in r5. */
-    register u32 screenBase asm("r5") = 0x06004000;
-
-    /* FAKEMATCH(barrier): the empty asm. */
-    __asm__ volatile("" : "+l"(screenBase));
-    screenTile = (u8 *)(((tileRow & 62) << 6) + screenBase);
-  }
-  column = 0;
+  sourceCell = Ram_MapBlocks + ((((s32)tileRow / 2) & 31) << 7);
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
+  cellsCopied = 0;
   do {
-    WorldMap_CopyCellTiles(cellBytes, screenTile);
-    column++;
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
     screenTile += 2;
-    cellBytes += 4;
-  } while (column <= 31);
+    sourceCell += 4;
+  } while (cellsCopied <= 31);
 
-  {
-    /* FAKEMATCH(pin): the step to the next half's screen row held in r2. */
-    register u32 screenStep asm("r2") = 0xfc0;
-
-    /* FAKEMATCH(barrier): the empty asm holding the pin above. */
-    __asm__("" : "+l"(screenStep));
-    screenTile += screenStep;
-  }
-  cellBytes += 0xf80;
-  column = 0;
+  screenTile += 4032;
+  sourceCell += 3968;
+  cellsCopied = 0;
   do {
-    WorldMap_CopyCellTiles(cellBytes, screenTile);
-    column++;
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
     screenTile += 2;
-    cellBytes += 4;
-  } while (column <= 31);
+    sourceCell += 4;
+  } while (cellsCopied <= 31);
 }
 
-/// Draws world map tile column tileColumn (two screen columns) into the BG map
-/// at 0x06004000.
+/// Draws world map tileColumn into the BG map: 64 cells down.
 void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
-  u8 *cellBytes;
+  u8 *sourceCell;
   u8 *screenTile;
-  u32 row;
-  /* FAKEMATCH(pin): the BG map address held in r5. */
-  register u32 screenBase asm("r5") = 0x06004000;
+  u32 cellsCopied;
 
-  cellBytes = gMapBlocks__world_map + ((((s32)tileColumn / 2) & 31) << 2);
-  /* FAKEMATCH(barrier): the empty asm. */
-  __asm__ volatile("" : "+l"(screenBase));
-  screenTile = (u8 *)((tileColumn & 62) + screenBase);
-  row = 0;
+  sourceCell = Ram_MapBlocks + ((((s32)tileColumn / 2) & 31) << 2);
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
+  cellsCopied = 0;
   do {
-    WorldMap_CopyCellTiles(cellBytes, screenTile);
-    row++;
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
     screenTile += 128;
-    cellBytes += 128;
-  } while (row <= 63);
+    sourceCell += 128;
+  } while (cellsCopied <= 63);
 }
 
 void WorldMap_BuildScanlineTable__resource_slot(

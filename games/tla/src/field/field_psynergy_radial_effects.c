@@ -1163,18 +1163,13 @@ void FieldPsynergy_Avoid(void) {
       Sound_PlayFar(SE_NOTE_MID);
     wait(1);
   }
-  {
-    /* FAKEMATCH(temporary): the flags restored through a pointer of their own.
-     */
-    u8 *restore = &group->flags;
-
-    *restore = flags;
-  }
+  group->flags = flags;
   group->dirty = 1;
-  entry->param = 0;
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
+  {
+    u32 cleared = 0;
+
+    entry->param = cleared;
+  }
   wait(1);
 
   VramCache_FreeEntry(scene->arcTileSlot);

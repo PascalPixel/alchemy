@@ -20,20 +20,14 @@ void FieldMotes_Start(void) {
   u8 *tiles;
   u32 i;
   u32 size;
-  volatile u32 zero;
-  volatile u16 *reg;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6. */
-  register s32 clear asm("r6");
 
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  // size is reused for the fill's zero; a zero of its own differs.
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
-  zero = size;
-  Dma_Set((void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
+  Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
@@ -50,8 +44,7 @@ void FieldMotes_Start(void) {
     s32 z;
 
     p = (u32)mote;
-    clear = 0;
-    *(s32 *)p = clear;
+    *(s32 *)p = 0;
     p += sizeof(s32);
     pos = view->origin;
     *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
@@ -65,21 +58,9 @@ void FieldMotes_Start(void) {
     mote->timer = (i & 15) + 1;
     mote++;
   }
-  /* FAKEMATCH(dead): the blend writes in a once-only block keep the task
-   * routine's address ahead of the call's other argument. */
-  do {
-    /* FAKEMATCH(temporary): the values through v and the registers through one
-     * stepped pointer. */
-    s32 v;
-    v = 0x3f00;
-    reg = &REG_BLDCNT;
-    *reg = v;
-    v = 0x1008;
-    reg++;
-    *reg = v;
-    reg++;
-    *reg = clear;
-  } while (0);
+  Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
+  Io_Write16(0, &REG_BLDY);
   Task_Add(FieldMotes_Update, TASK_PASS_VBLANK);
 }
 
@@ -91,21 +72,19 @@ void FieldMotes_Start(void) {
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
-  struct WeatherWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  struct GroundParticle *particle = work->particles;
-  volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of work.
-   */
-  register u32 zero asm("r1");
+  struct WeatherWork *work;
+  struct GroundParticle *particle;
   u8 *tiles;
   u32 i;
+  u32 size;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6. */
-  register s32 clear asm("r6");
 
-  zero = 0;
-  Dma_Fill32Cell(fill, zero, work, sizeof(struct WeatherWork));
+  size = sizeof(struct WeatherWork);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
+  particle = work->particles;
+  // size, done with once the work is allocated, carries the fill's 0.
+  size = 0;
+  Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_StreakTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
@@ -122,8 +101,7 @@ void Weather_StartRain(s32 withCue) {
     s32 z;
 
     p = (u32)particle;
-    clear = 0;
-    *(s32 *)p = clear;
+    *(s32 *)p = 0;
     p += sizeof(s32);
     focus = view->origin;
     *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
@@ -138,7 +116,7 @@ void Weather_StartRain(s32 withCue) {
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
-  Io_Write16(clear, &REG_BLDY);
+  Io_Write16(0, &REG_BLDY);
   Task_Add(Weather_UpdateRain, TASK_PASS_VBLANK);
   if (withCue != 0)
     Scene_QueueMusic(SE_KIRIN);

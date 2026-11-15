@@ -612,12 +612,7 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
-        {
-          /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + FACING_STEP;
-
-          object->facing = angle;
-        }
+        object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }

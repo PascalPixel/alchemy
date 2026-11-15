@@ -132,7 +132,7 @@ s32 VramCache_FreeEntry(u32 resourceIndex) {
 s32 VramCache_ReleaseVram(u32 resourceIndex) {
   u16 *entry = (u16 *)&gVramCacheEntries[resourceIndex];
 
-  if (resourceIndex > 95)
+  if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (*entry > 16) {
     s32 value;
@@ -169,7 +169,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   }
 
   if (offset != -1) {
-    dst = (void *)(0x06010000 + offset);
+    dst = (void *)(OBJ_VRAM0 + offset);
     entry->size = size;
     entry->offset = offset;
     if (src != 0) {

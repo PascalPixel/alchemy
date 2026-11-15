@@ -119,10 +119,10 @@ enum SoundDriverLimit {
 
 /// The four CGB channels, numbered as the hardware's NR registers are.
 enum CgbChannelId {
-  CGB_CHANNEL_SQUARE_1 = 1, ///< a square wave with a sweep (NR10 to NR14)
-  CGB_CHANNEL_SQUARE_2 = 2, ///< a square wave (NR21 to NR24)
-  CGB_CHANNEL_WAVE = 3,     ///< a pattern from wave RAM (NR30 to NR34)
-  CGB_CHANNEL_NOISE = 4     ///< noise (NR41 to NR44)
+  CGB_CHANNEL_SWEEP_SQUARE = 1, ///< a square wave with a sweep (NR10 to NR14)
+  CGB_CHANNEL_SQUARE = 2,       ///< a square wave (NR21 to NR24)
+  CGB_CHANNEL_WAVE = 3,         ///< a pattern from wave RAM (NR30 to NR34)
+  CGB_CHANNEL_NOISE = 4         ///< noise (NR41 to NR44)
 };
 
 enum SoundModulationTarget {
@@ -144,8 +144,8 @@ struct ToneData {
   u8 kind;
   u8 baseKey; ///< Key a rhythm entry plays every note at.
   u8 length;  ///< CGB sound length (NRx1); 0 plays until released.
-  /// CGB_CHANNEL_SQUARE_1's sweep (NR10) when bit 7 is clear and bits 6..4 are
-  /// not; else no sweep.
+  /// CGB_CHANNEL_SWEEP_SQUARE's sweep (NR10) when bit 7 is clear and bits 6..4
+  /// are not; else no sweep.
   u8 panOrSweep;
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
   /// rhythm or split voice its voice table.
@@ -268,7 +268,7 @@ struct CgbChannel {
   u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
   u8 modified;     ///< CgbChannelModify: what to write to the channel.
   u8 length;       ///< The voice's length.
-  u8 sweep;        ///< CGB_CHANNEL_SQUARE_1's NR10 sweep; 8 when none.
+  u8 sweep;        ///< CGB_CHANNEL_SWEEP_SQUARE's NR10 sweep; 8 when none.
   /// Tone frequency from MidiKeyToCgbFreq (2048 added), or
   /// CGB_CHANNEL_NOISE's NR43 value.
   u32 frequency;

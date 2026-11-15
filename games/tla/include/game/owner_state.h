@@ -74,11 +74,13 @@ enum ClassSeries {
   CLASS_SERIES_SEER,
   CLASS_SERIES_PILGRIM,
   CLASS_SERIES_HERMIT,
-  CLASS_SERIES_FLAME_USER = 13, ///< Jenna's, where the others are Guards
-  CLASS_SERIES_MARINER,         ///< Piers's, where the others are Water Seers
-  CLASS_SERIES_PIERROT,         ///< with the Mysterious Card equipped
-  CLASS_SERIES_TAMER,           ///< with the Trainer's Whip equipped
-  CLASS_SERIES_DARK_MAGE        ///< with the Tomegathericon equipped
+  /// Class 0, "NPC", an enemy's (CLASS_NONE).
+  CLASS_SERIES_NPC = 12,
+  CLASS_SERIES_FLAME_USER, ///< Jenna's, where the others are Guards
+  CLASS_SERIES_MARINER,    ///< Piers's, where the others are Water Seers
+  CLASS_SERIES_PIERROT,    ///< with the Mysterious Card equipped
+  CLASS_SERIES_TAMER,      ///< with the Trainer's Whip equipped
+  CLASS_SERIES_DARK_MAGE   ///< with the Tomegathericon equipped
 };
 
 // The caps on a unit's level and stats (Unit_Calculate).

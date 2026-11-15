@@ -12,6 +12,11 @@ void Oam_ResetFrame(void) {
   Iwram_ClearWordsEntry(gOamBucketMasks, 32);
 }
 
+enum {
+  OBJ_AFFINE_MATRIX_COUNT = 32, ///< the OAM's rotation-scaling matrices
+  RENDER_DEPTH_SLOT_COUNT = 256 ///< depth slots a sprite is linked into
+};
+
 /// Takes the next of the 32 sprite affine matrices and fills it with the
 /// rotation and scale of source; returns its index, or 31 when all are taken.
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
@@ -26,8 +31,8 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   angle = source->angle;
   yScale = (s16)source->scaleY;
   index = gOamMatrixCount;
-  if (index > 31)
-    return 31;
+  if (index >= OBJ_AFFINE_MATRIX_COUNT)
+    return OBJ_AFFINE_MATRIX_COUNT - 1;
 
   matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
@@ -96,8 +101,8 @@ void Oam_AddSpriteAtDepth(void *entry, s32 slot) {
   void **head;
   s32 bit;
 
-  if (slot > 255)
-    slot = 255;
+  if (slot >= RENDER_DEPTH_SLOT_COUNT)
+    slot = RENDER_DEPTH_SLOT_COUNT - 1;
   if (slot < 0)
     slot = 0;
   mask = &gOamBucketMasks[(u32)slot >> 3];

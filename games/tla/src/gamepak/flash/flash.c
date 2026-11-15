@@ -4,9 +4,9 @@
 /// programming are each chip's own: sst.c, atmel.c and
 /// program_flash_sector.c.
 
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 #include "types.h"
 
 typedef u8 (*FlashByteRead)(u8 *address);
@@ -60,7 +60,7 @@ s32 IdentifyFlash(void) {
   u16 id;
   const struct FlashSetupInfo *const *chip;
 
-  REG_WAITCNT = (REG_WAITCNT & ~3) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~3) | WAITCNT_SRAM_SLOWEST;
   id = ReadFlashId();
   chip = gFlash_Chips;
   missing = 1;
@@ -219,7 +219,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 halfwordsRemaining;
   FlashReadCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   sourceCode = (u16 *)ReadFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
@@ -264,7 +264,7 @@ s32 Flash_VerifySector(u16 sector, u8 *source) {
   u16 halfwordsRemaining;
   FlashVerifyCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   sourceCode = (u16 *)VerifyFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;

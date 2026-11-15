@@ -10,7 +10,7 @@
 const struct ClassDefinition gClass_DefinitionTable[] = {
     // NPC
     {
-        .series = 12,
+        .series = CLASS_SERIES_NPC,
         .hp = 10,
         .pp = 10,
         .atk = 10,
@@ -20,7 +20,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Squire
     {
-        .series = 1,
+        .series = CLASS_SERIES_SQUIRE,
         .required = {5},
         .hp = 11,
         .pp = 8,
@@ -48,7 +48,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Knight
     {
-        .series = 1,
+        .series = CLASS_SERIES_SQUIRE,
         .required = {7},
         .hp = 13,
         .pp = 9,
@@ -76,7 +76,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Gallant
     {
-        .series = 1,
+        .series = CLASS_SERIES_SQUIRE,
         .required = {9},
         .hp = 15,
         .pp = 10,
@@ -105,7 +105,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Lord
     {
-        .series = 1,
+        .series = CLASS_SERIES_SQUIRE,
         .required = {11},
         .hp = 17,
         .pp = 11,
@@ -134,7 +134,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Slayer
     {
-        .series = 1,
+        .series = CLASS_SERIES_SQUIRE,
         .required = {13},
         .hp = 19,
         .pp = 12,
@@ -171,7 +171,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Guard
     {
-        .series = 2,
+        .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 5},
         .hp = 11,
         .pp = 8,
@@ -196,7 +196,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Soldier
     {
-        .series = 2,
+        .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 7},
         .hp = 13,
         .pp = 9,
@@ -221,7 +221,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Warrior
     {
-        .series = 2,
+        .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 9},
         .hp = 15,
         .pp = 10,
@@ -250,7 +250,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Champion
     {
-        .series = 2,
+        .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 11},
         .hp = 17,
         .pp = 11,
@@ -279,7 +279,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Hero
     {
-        .series = 2,
+        .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 13},
         .hp = 19,
         .pp = 12,
@@ -318,7 +318,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Wind Seer
     {
-        .series = 7,
+        .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 5},
         .hp = 8,
         .pp = 14,
@@ -347,7 +347,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Magician
     {
-        .series = 7,
+        .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 7},
         .hp = 9,
         .pp = 15,
@@ -376,7 +376,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Mage
     {
-        .series = 7,
+        .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 9},
         .hp = 11,
         .pp = 16,
@@ -405,7 +405,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Magister
     {
-        .series = 7,
+        .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 11},
         .hp = 13,
         .pp = 17,
@@ -434,7 +434,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Sorcerer
     {
-        .series = 7,
+        .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 13},
         .hp = 15,
         .pp = 18,
@@ -473,7 +473,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Water Seer
     {
-        .series = 6,
+        .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 5},
         .hp = 9,
         .pp = 13,
@@ -501,7 +501,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Scribe
     {
-        .series = 6,
+        .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 7},
         .hp = 10,
         .pp = 14,
@@ -529,7 +529,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Cleric
     {
-        .series = 6,
+        .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 9},
         .hp = 12,
         .pp = 15,
@@ -557,7 +557,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Paragon
     {
-        .series = 6,
+        .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 11},
         .hp = 14,
         .pp = 16,
@@ -585,7 +585,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Angel
     {
-        .series = 6,
+        .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 13},
         .hp = 16,
         .pp = 17,
@@ -623,7 +623,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Swordsman
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {5},
         .hp = 10,
         .pp = 9,
@@ -650,7 +650,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Defender
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {5, 2},
         .hp = 12,
         .pp = 10,
@@ -678,7 +678,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Cavalier
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {5, 4},
         .hp = 14,
         .pp = 11,
@@ -706,7 +706,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Guardian
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {6, 6},
         .hp = 17,
         .pp = 13,
@@ -734,7 +734,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Protector
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {7, 7},
         .hp = 19,
         .pp = 14,
@@ -772,7 +772,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Swordsman
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 0, 5},
         .hp = 10,
         .pp = 9,
@@ -800,7 +800,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Defender
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 2, 5},
         .hp = 12,
         .pp = 10,
@@ -829,7 +829,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Cavalier
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 4, 5},
         .hp = 14,
         .pp = 11,
@@ -858,7 +858,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Luminier
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 6, 6},
         .hp = 17,
         .pp = 13,
@@ -887,7 +887,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Radiant
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 7, 7},
         .hp = 19,
         .pp = 14,
@@ -926,7 +926,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Dragoon
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {3, 3, 3},
         .hp = 16,
         .pp = 13,
@@ -956,7 +956,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Templar
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {4, 4, 4},
         .hp = 18,
         .pp = 14,
@@ -986,7 +986,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Paladin
     {
-        .series = 3,
+        .series = CLASS_SERIES_SWORDSMAN,
         .required = {4, 5, 4},
         .hp = 20,
         .pp = 15,
@@ -1030,7 +1030,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Apprentice
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {5},
         .hp = 10,
         .pp = 12,
@@ -1060,7 +1060,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Illusionist
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {5, 0, 0, 2},
         .hp = 12,
         .pp = 13,
@@ -1090,7 +1090,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Enchanter
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {5, 0, 0, 4},
         .hp = 14,
         .pp = 14,
@@ -1120,7 +1120,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Conjurer
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {6, 0, 0, 6},
         .hp = 17,
         .pp = 16,
@@ -1150,7 +1150,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // War Adept
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {7, 0, 0, 7},
         .hp = 19,
         .pp = 17,
@@ -1190,7 +1190,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Page
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5},
         .hp = 10,
         .pp = 12,
@@ -1220,7 +1220,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Illusionist
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5, 2},
         .hp = 12,
         .pp = 13,
@@ -1250,7 +1250,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Enchanter
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5, 4},
         .hp = 14,
         .pp = 14,
@@ -1280,7 +1280,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Conjurer
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 6, 6},
         .hp = 17,
         .pp = 16,
@@ -1310,7 +1310,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // War Adept
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 7, 7},
         .hp = 19,
         .pp = 17,
@@ -1350,7 +1350,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Ninja
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {3, 0, 3, 3},
         .hp = 16,
         .pp = 14,
@@ -1380,7 +1380,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Disciple
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {4, 0, 4, 4},
         .hp = 18,
         .pp = 15,
@@ -1410,7 +1410,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Master
     {
-        .series = 5,
+        .series = CLASS_SERIES_APPRENTICE,
         .required = {4, 0, 4, 5},
         .hp = 20,
         .pp = 16,
@@ -1454,7 +1454,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Seer
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {0, 5},
         .hp = 9,
         .pp = 13,
@@ -1484,7 +1484,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Diviner
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {2, 5},
         .hp = 11,
         .pp = 14,
@@ -1514,7 +1514,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Shaman
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {4, 5},
         .hp = 12,
         .pp = 15,
@@ -1544,7 +1544,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Druid
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {6, 6},
         .hp = 15,
         .pp = 17,
@@ -1574,7 +1574,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Oracle
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {7, 7},
         .hp = 17,
         .pp = 18,
@@ -1614,7 +1614,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Seer
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {0, 0, 0, 5},
         .hp = 9,
         .pp = 13,
@@ -1643,7 +1643,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Diviner
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {2, 0, 0, 5},
         .hp = 11,
         .pp = 14,
@@ -1672,7 +1672,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Shaman
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {4, 0, 0, 5},
         .hp = 12,
         .pp = 15,
@@ -1701,7 +1701,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Druid
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {6, 0, 0, 6},
         .hp = 15,
         .pp = 17,
@@ -1730,7 +1730,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Oracle
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {7, 0, 0, 7},
         .hp = 17,
         .pp = 18,
@@ -1769,7 +1769,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Medium
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {3, 3, 0, 3},
         .hp = 13,
         .pp = 17,
@@ -1798,7 +1798,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Conjurer
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {4, 4, 0, 4},
         .hp = 15,
         .pp = 18,
@@ -1827,7 +1827,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Dark Mage
     {
-        .series = 8,
+        .series = CLASS_SERIES_SEER,
         .required = {5, 4, 0, 4},
         .hp = 17,
         .pp = 19,
@@ -1870,7 +1870,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Pilgrim
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5},
         .hp = 9,
         .pp = 12,
@@ -1899,7 +1899,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Wanderer
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5, 2},
         .hp = 11,
         .pp = 13,
@@ -1928,7 +1928,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Ascetic
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5, 4},
         .hp = 12,
         .pp = 14,
@@ -1957,7 +1957,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Water Monk
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 6, 6},
         .hp = 15,
         .pp = 16,
@@ -1986,7 +1986,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Guru
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 7, 7},
         .hp = 17,
         .pp = 17,
@@ -2025,7 +2025,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Pilgrim
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 0, 5},
         .hp = 9,
         .pp = 12,
@@ -2053,7 +2053,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Wanderer
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 2, 5},
         .hp = 11,
         .pp = 13,
@@ -2081,7 +2081,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Ascetic
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 4, 5},
         .hp = 12,
         .pp = 14,
@@ -2109,7 +2109,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Fire Monk
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 6, 6},
         .hp = 15,
         .pp = 16,
@@ -2137,7 +2137,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Guru
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 7, 7},
         .hp = 17,
         .pp = 17,
@@ -2175,7 +2175,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Ranger
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 3, 3, 3},
         .hp = 13,
         .pp = 16,
@@ -2204,7 +2204,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Bard
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 4, 4, 4},
         .hp = 15,
         .pp = 17,
@@ -2233,7 +2233,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Warlock
     {
-        .series = 9,
+        .series = CLASS_SERIES_PILGRIM,
         .required = {0, 4, 5, 4},
         .hp = 17,
         .pp = 18,
@@ -2276,7 +2276,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Brute
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {1, 0, 1},
         .hp = 10,
         .pp = 7,
@@ -2306,7 +2306,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Ruffian
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {2, 0, 2},
         .hp = 12,
         .pp = 8,
@@ -2336,7 +2336,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Savage
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {4, 0, 4},
         .hp = 14,
         .pp = 9,
@@ -2366,7 +2366,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Barbarian
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {5, 0, 5},
         .hp = 16,
         .pp = 10,
@@ -2396,7 +2396,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Berserker
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {6, 0, 6},
         .hp = 18,
         .pp = 11,
@@ -2426,7 +2426,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Chaos Lord
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {7, 0, 7},
         .hp = 20,
         .pp = 12,
@@ -2464,7 +2464,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Samurai
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {4, 0, 4, 3},
         .hp = 19,
         .pp = 13,
@@ -2494,7 +2494,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Ronin
     {
-        .series = 4,
+        .series = CLASS_SERIES_BRUTE,
         .required = {5, 0, 5, 4},
         .hp = 21,
         .pp = 14,
@@ -2540,7 +2540,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Hermit
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 1, 0, 1},
         .hp = 8,
         .pp = 14,
@@ -2569,7 +2569,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Elder
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 2, 0, 2},
         .hp = 9,
         .pp = 15,
@@ -2598,7 +2598,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Scholar
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 4, 0, 4},
         .hp = 11,
         .pp = 16,
@@ -2627,7 +2627,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Savant
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 5, 0, 5},
         .hp = 13,
         .pp = 17,
@@ -2656,7 +2656,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Sage
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 6, 0, 6},
         .hp = 15,
         .pp = 18,
@@ -2685,7 +2685,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Wizard
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {0, 7, 0, 7},
         .hp = 17,
         .pp = 19,
@@ -2722,7 +2722,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // White Mage
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {3, 4, 0, 4},
         .hp = 15,
         .pp = 18,
@@ -2751,7 +2751,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Pure Mage
     {
-        .series = 10,
+        .series = CLASS_SERIES_HERMIT,
         .required = {4, 5, 0, 5},
         .hp = 17,
         .pp = 19,
@@ -2796,7 +2796,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Flame User
     {
-        .series = 13,
+        .series = CLASS_SERIES_FLAME_USER,
         .required = {0, 0, 5},
         .hp = 10,
         .pp = 12,
@@ -2824,7 +2824,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Witch
     {
-        .series = 13,
+        .series = CLASS_SERIES_FLAME_USER,
         .required = {0, 0, 7},
         .hp = 11,
         .pp = 13,
@@ -2852,7 +2852,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Hex
     {
-        .series = 13,
+        .series = CLASS_SERIES_FLAME_USER,
         .required = {0, 0, 9},
         .hp = 13,
         .pp = 14,
@@ -2880,7 +2880,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Fire Master
     {
-        .series = 13,
+        .series = CLASS_SERIES_FLAME_USER,
         .required = {0, 0, 11},
         .hp = 15,
         .pp = 15,
@@ -2908,7 +2908,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Justice
     {
-        .series = 13,
+        .series = CLASS_SERIES_FLAME_USER,
         .required = {0, 0, 13},
         .hp = 17,
         .pp = 16,
@@ -2946,7 +2946,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Mariner
     {
-        .series = 14,
+        .series = CLASS_SERIES_MARINER,
         .required = {0, 5},
         .hp = 11,
         .pp = 9,
@@ -2972,7 +2972,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Privateer
     {
-        .series = 14,
+        .series = CLASS_SERIES_MARINER,
         .required = {0, 7},
         .hp = 13,
         .pp = 10,
@@ -2999,7 +2999,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Commander
     {
-        .series = 14,
+        .series = CLASS_SERIES_MARINER,
         .required = {0, 9},
         .hp = 15,
         .pp = 11,
@@ -3026,7 +3026,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Captain
     {
-        .series = 14,
+        .series = CLASS_SERIES_MARINER,
         .required = {0, 11},
         .hp = 17,
         .pp = 12,
@@ -3053,7 +3053,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Admiral
     {
-        .series = 14,
+        .series = CLASS_SERIES_MARINER,
         .required = {0, 13},
         .hp = 19,
         .pp = 13,
@@ -3090,7 +3090,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Pierrot
     {
-        .series = 15,
+        .series = CLASS_SERIES_PIERROT,
         .hp = 10,
         .pp = 8,
         .atk = 10,
@@ -3117,7 +3117,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Harlequin
     {
-        .series = 15,
+        .series = CLASS_SERIES_PIERROT,
         .required = {1, 1, 1, 1},
         .hp = 13,
         .pp = 10,
@@ -3145,7 +3145,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Punchinello
     {
-        .series = 15,
+        .series = CLASS_SERIES_PIERROT,
         .required = {2, 2, 2, 2},
         .hp = 16,
         .pp = 11,
@@ -3173,7 +3173,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Acrobat
     {
-        .series = 15,
+        .series = CLASS_SERIES_PIERROT,
         .required = {3, 3, 3, 3},
         .hp = 19,
         .pp = 12,
@@ -3213,7 +3213,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Tamer
     {
-        .series = 16,
+        .series = CLASS_SERIES_TAMER,
         .hp = 10,
         .pp = 7,
         .atk = 11,
@@ -3241,7 +3241,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Trainer
     {
-        .series = 16,
+        .series = CLASS_SERIES_TAMER,
         .required = {1, 1, 1, 1},
         .hp = 13,
         .pp = 9,
@@ -3270,7 +3270,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Beastkeeper
     {
-        .series = 16,
+        .series = CLASS_SERIES_TAMER,
         .required = {2, 2, 2, 2},
         .hp = 16,
         .pp = 10,
@@ -3299,7 +3299,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Beast Lord
     {
-        .series = 16,
+        .series = CLASS_SERIES_TAMER,
         .required = {3, 3, 3, 3},
         .hp = 19,
         .pp = 11,
@@ -3340,7 +3340,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     // Dark Mage
     {
-        .series = 17,
+        .series = CLASS_SERIES_DARK_MAGE,
         .hp = 8,
         .pp = 14,
         .atk = 8,
@@ -3367,7 +3367,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Crypt Lord
     {
-        .series = 17,
+        .series = CLASS_SERIES_DARK_MAGE,
         .required = {1, 1, 1, 1},
         .hp = 10,
         .pp = 16,
@@ -3395,7 +3395,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Necrolyte
     {
-        .series = 17,
+        .series = CLASS_SERIES_DARK_MAGE,
         .required = {2, 2, 2, 2},
         .hp = 13,
         .pp = 17,
@@ -3423,7 +3423,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Necromage
     {
-        .series = 17,
+        .series = CLASS_SERIES_DARK_MAGE,
         .required = {3, 3, 3, 3},
         .hp = 16,
         .pp = 19,

@@ -193,9 +193,9 @@ enum DisplayControl {
 #define EWRAM_END 0x02040000
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
-#define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
+#define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
-#define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
+#define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 /// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
@@ -350,10 +350,12 @@ enum KeyMask {
 #define REG_IE (*(volatile u16 *)0x04000200) ///< the interrupts enabled
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
-/// WAITCNT's SRAM wait (bits 1 and 0) of 8 cycles, as pret names it: the wait
-/// the flash routines read the chip with; programming and erasing use the
-/// chip's wait[0], then restore it.
-#define WAITCNT_SRAM_8 0x0003
+/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles, pret's
+/// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
+/// programming and erasing use the chip's wait[0], then restore it.
+#define WAITCNT_SRAM_SLOWEST 0x0003
+/// WAITCNT's SRAM wait bits, as pret names them.
+#define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 
 // KEYCNT values: the interrupt fires when all the listed keys are held at once.
@@ -375,6 +377,9 @@ enum KeyMask {
 /// The screen's size in pixels.
 #define DISPLAY_WIDTH 240
 #define DISPLAY_HEIGHT 160
+/// The screen's size in 8-pixel tiles.
+#define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
+#define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
@@ -386,6 +391,10 @@ enum KeyMask {
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
+/// Tiles in a row of a screen block, whose map is 32 tiles square.
+#define BG_SCREEN_WIDTH 32
+/// A screen block entry's 16-colour palette, in its top four bits.
+#define BG_TILE_PALETTE(n) ((n) << 12)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
 /// tile.
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)

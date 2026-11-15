@@ -281,10 +281,10 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
 
 /// Returns 1 for the revive effects, which only work on a downed unit.
 s32 Battle_IsReviveEffect(s32 effectId) {
-  // Effect 73 is Balm's and Spark's.
   if (effectId == ABILITY_EFFECT_REVIVE ||
       effectId == ABILITY_EFFECT_REVIVE_HALF ||
-      effectId == ABILITY_EFFECT_REVIVE_80 || effectId == 73) {
+      effectId == ABILITY_EFFECT_REVIVE_80 ||
+      effectId == ABILITY_EFFECT_REVIVE_60) {
     return 1;
   }
   return 0;
@@ -318,9 +318,9 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   u8 *sleep;
 
   // Raiden's Wrath works only on dragons, the Trident only on sea creatures.
-  if (effectId == 90)
+  if (effectId == ABILITY_EFFECT_SLAY_DRAGON)
     return Enemy_IsDragon(unit->enemyId);
-  if (effectId == 91)
+  if (effectId == ABILITY_EFFECT_SLAY_SEA_CREATURE)
     return Enemy_IsSeaCreature(unit->enemyId);
 
   if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0) {
@@ -398,9 +398,9 @@ restore_checked:
 
   if (effectId == ABILITY_EFFECT_SEAL_2_TURNS)
     attempts = 3;
-  if (effectId == 80)
+  if (effectId == ABILITY_EFFECT_CURSE_THREE_ROLLS)
     attempts = 3;
-  if (effectId == 85)
+  if (effectId == ABILITY_EFFECT_STUN_THREE_ROLLS)
     attempts = 3;
 
   for (attempt = 0; attempt < attempts; attempt++) {

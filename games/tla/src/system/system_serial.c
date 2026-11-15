@@ -283,7 +283,7 @@ void Serial_PrepareSendPacket(void *payload) {
     u32 v;
 
     pkt = sr->sendBuffer[0];
-    for (i = 0; i <= 13; i++) {
+    for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
       v = *pkt;
       pkt++;
       sum += v;
@@ -492,7 +492,7 @@ void Serial_WaitForSend(void) {
     do {
       wait(1);
       count++;
-    } while (count <= 0x927bf && gSerialSendSource != 0);
+    } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && gSerialSendSource != 0);
   }
 }
 
@@ -504,7 +504,8 @@ void Serial_WaitForReceive(void) {
     do {
       wait(1);
       count++;
-    } while (count <= 0x927bf && gSerialReceiveDestination != 0);
+    } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES &&
+             gSerialReceiveDestination != 0);
   }
 }
 

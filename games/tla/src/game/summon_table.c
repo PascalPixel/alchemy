@@ -17,147 +17,147 @@ const u8 gSummon_OrderList[SUMMON_COUNT] = {
 const struct SummonDefinition gSummon_DefinitionTable[] = {
     // Venus
     {
-        .nameMessageId = 380,
+        .nameMessageId = ABILITY_VENUS,
         .djinnRequired = {1},
     },
     // Mercury
     {
-        .nameMessageId = 388,
+        .nameMessageId = ABILITY_MERCURY,
         .djinnRequired = {0, 1},
     },
     // Mars
     {
-        .nameMessageId = 396,
+        .nameMessageId = ABILITY_MARS,
         .djinnRequired = {0, 0, 1},
     },
     // Jupiter
     {
-        .nameMessageId = 406,
+        .nameMessageId = ABILITY_JUPITER,
         .djinnRequired = {0, 0, 0, 1},
     },
     // Ramses
     {
-        .nameMessageId = 381,
+        .nameMessageId = ABILITY_RAMSES,
         .djinnRequired = {2},
     },
     // Nereid
     {
-        .nameMessageId = 389,
+        .nameMessageId = ABILITY_NEREID,
         .djinnRequired = {0, 2},
     },
     // Kirin
     {
-        .nameMessageId = 397,
+        .nameMessageId = ABILITY_KIRIN,
         .djinnRequired = {0, 0, 2},
     },
     // Atalanta
     {
-        .nameMessageId = 407,
+        .nameMessageId = ABILITY_ATALANTA,
         .djinnRequired = {0, 0, 0, 2},
     },
     // Cybele
     {
-        .nameMessageId = 382,
+        .nameMessageId = ABILITY_CYBELE,
         .djinnRequired = {3},
     },
     // Neptune
     {
-        .nameMessageId = 390,
+        .nameMessageId = ABILITY_NEPTUNE,
         .djinnRequired = {0, 3},
     },
     // Tiamat
     {
-        .nameMessageId = 398,
+        .nameMessageId = ABILITY_TIAMAT,
         .djinnRequired = {0, 0, 3},
     },
     // Procne
     {
-        .nameMessageId = 408,
+        .nameMessageId = ABILITY_PROCNE,
         .djinnRequired = {0, 0, 0, 3},
     },
     // Judgment
     {
-        .nameMessageId = 383,
+        .nameMessageId = ABILITY_JUDGMENT,
         .djinnRequired = {4},
     },
     // Boreas
     {
-        .nameMessageId = 391,
+        .nameMessageId = ABILITY_BOREAS,
         .djinnRequired = {0, 4},
     },
     // Meteor
     {
-        .nameMessageId = 399,
+        .nameMessageId = ABILITY_METEOR,
         .djinnRequired = {0, 0, 4},
     },
     // Thor
     {
-        .nameMessageId = 409,
+        .nameMessageId = ABILITY_THOR,
         .djinnRequired = {0, 0, 0, 4},
     },
     // Zagan
     {
-        .nameMessageId = 384,
+        .nameMessageId = ABILITY_ZAGAN,
         .djinnRequired = {1, 0, 1},
     },
     // Megaera
     {
-        .nameMessageId = 400,
+        .nameMessageId = ABILITY_MEGAERA,
         .djinnRequired = {0, 0, 1, 1},
     },
     // Flora
     {
-        .nameMessageId = 410,
+        .nameMessageId = ABILITY_FLORA,
         .djinnRequired = {1, 0, 0, 2},
     },
     // Moloch
     {
-        .nameMessageId = 392,
+        .nameMessageId = ABILITY_MOLOCH,
         .djinnRequired = {0, 2, 0, 1},
     },
     // Ulysses
     {
-        .nameMessageId = 401,
+        .nameMessageId = ABILITY_ULYSSES,
         .djinnRequired = {0, 2, 2},
     },
     // Haures
     {
-        .nameMessageId = 385,
+        .nameMessageId = ABILITY_HAURES,
         .djinnRequired = {3, 0, 2},
     },
     // Eclipse
     {
-        .nameMessageId = 411,
+        .nameMessageId = ABILITY_ECLIPSE,
         .djinnRequired = {0, 2, 0, 3},
     },
     // Coatlicue
     {
-        .nameMessageId = 393,
+        .nameMessageId = ABILITY_COATLICUE,
         .djinnRequired = {0, 3, 0, 3},
     },
     // Daedalus
     {
-        .nameMessageId = 402,
+        .nameMessageId = ABILITY_DAEDALUS,
         .djinnRequired = {3, 0, 4},
     },
     // Azul
     {
-        .nameMessageId = 394,
+        .nameMessageId = ABILITY_AZUL,
         .djinnRequired = {3, 4},
     },
     // Catastrophe
     {
-        .nameMessageId = 412,
+        .nameMessageId = ABILITY_CATASTROPHE,
         .djinnRequired = {0, 0, 3, 5},
     },
     // Charon
     {
-        .nameMessageId = 386,
+        .nameMessageId = ABILITY_CHARON,
         .djinnRequired = {8, 0, 0, 2},
     },
     // Iris
     {
-        .nameMessageId = 404,
+        .nameMessageId = ABILITY_IRIS,
         .djinnRequired = {0, 4, 9},
     },
 };

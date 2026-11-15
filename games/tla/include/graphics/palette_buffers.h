@@ -17,10 +17,10 @@ struct TitlePaletteFade {
   u16 delta[0x600];  ///< added to each current channel each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][512];
-  u8 page;        ///< the packed page queued this frame
-  s8 duration;    ///< frames; 0 when the colours are not moving
-  u8 step;        ///< frames
-  u8 padding3003; ///< never named
+  u8 page;     ///< the packed page queued this frame
+  s8 duration; ///< frames; 0 when the colours are not moving
+  u8 step;     ///< frames
+  u8 padding;  ///< never named
 };
 
 STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 0x3004);
@@ -44,10 +44,10 @@ struct PaletteFade {
   u16 delta[0x540];  ///< added to each current channel each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][0x1c0];
-  u8 page;        ///< the packed page queued this frame
-  s8 duration;    ///< frames; 0 when the colours are not moving
-  s8 step;        ///< frames
-  u8 padding2a03; ///< never named
+  u8 page;     ///< the packed page queued this frame
+  s8 duration; ///< frames; 0 when the colours are not moving
+  s8 step;     ///< frames
+  u8 padding;  ///< never named
 };
 
 STATIC_ASSERT(sizeof(struct PaletteFade) == 0x2a04);
@@ -70,7 +70,7 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_MUTED = 0x10004,
   PALETTE_TRANSFORM_PALE = 0x10005,
   PALETTE_TRANSFORM_RED = 0x10006,
-  PALETTE_TRANSFORM_WARM2 = 0x10007,
+  PALETTE_TRANSFORM_WARM_DARK = 0x10007,
   PALETTE_TRANSFORM_FLAGS = 0x100000,
   PALETTE_TRANSFORM_TINT = 0x200000,
   PALETTE_TRANSFORM_BLEND = 0x400000,

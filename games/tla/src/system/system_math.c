@@ -36,7 +36,7 @@ s32 ArcTan2(s32 x, s32 y) {
   if (x == 0) {
     result = 0;
   } else if (y == 0) {
-    result = 0x4000;
+    result = TRIG_TURN / 4;
   } else {
     ratio = y;
     if (ratio < 0)
@@ -46,7 +46,7 @@ s32 ArcTan2(s32 x, s32 y) {
       value = -value;
 
     ratio = Iwram_UnsignedDivide(value << 8, ratio);
-    result = 0x4000;
+    result = TRIG_TURN / 4;
     if (ratio <= 0xFB6A) {
       table = gMath_ArcTanTable;
       result = 0;
@@ -106,7 +106,7 @@ s32 ArcTan2(s32 x, s32 y) {
   }
 
   if (y < 0)
-    result = 0x8000 - result;
+    result = TRIG_TURN / 2 - result;
   if (x < 0)
     result = -result;
 

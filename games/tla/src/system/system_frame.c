@@ -104,6 +104,9 @@ static __inline__ void Bios_Stop(void) {
   __asm__ volatile("swi 3");
 }
 
+/// Frames the debug CPU-load display holds a peak.
+enum { CPU_LOAD_PEAK_FRAMES = 30 };
+
 /// The game's frame loop: runs `frames` frames and returns.
 void wait(s32 frames) {
   u32 i;
@@ -117,7 +120,7 @@ void wait(s32 frames) {
     Task_RunPass(TASK_PASS_VBLANK);
     gTasksRunning = 0;
     if (gOamCopyEnabled) {
-      Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, 0x400));
+      Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, OAM_SIZE));
     } else {
       gOamUsage.used = 0;
       gOamUsage.limit = 256;
@@ -125,8 +128,8 @@ void wait(s32 frames) {
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       line = *(u16 *)&REG_VCOUNT;
-      if (line >= 160)
-        line -= 160;
+      if (line >= DISPLAY_HEIGHT)
+        line -= DISPLAY_HEIGHT;
       else
         line += 68;
       line += (gFrameVBlanks - 1) << 8;
@@ -136,7 +139,7 @@ void wait(s32 frames) {
         gCpuLoadTimer--;
       if (gCpuLoadPeak < line) {
         gCpuLoadPeak = line;
-        gCpuLoadTimer = 30;
+        gCpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
       }
     }
     if (gSleepDisabled == 0) {
@@ -234,12 +237,12 @@ void wait(s32 frames) {
   }
 }
 
-/// Restarts the key repeat delay, so held keys wait the full delay again.
-void Input_ResetKeyRepeat(void) { gInput.repeatTimer = 19; }
-
 /// Frames a key is held before it first repeats, and between later repeats.
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT 6
+
+/// Restarts the key repeat delay, so held keys wait the full delay again.
+void Input_ResetKeyRepeat(void) { gInput.repeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
 /// Runs once a frame after VBlank, as The Broken Seal's twin does. When the
 /// repeat timer has run out, the held keys repeat into gInput.repeat.
@@ -345,8 +348,8 @@ void System_VBlankHandler(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
 
-    dma0[5] &= ~0x3a00;
-    dma0[5] &= ~0x8000;
+    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma0[5] &= ~DMA_ENABLE;
     dma0[5];
   }
   if (gSerialExchangeActive != 0) {
@@ -372,7 +375,7 @@ void System_VBlankHandler(void) {
   }
   Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
 
-  keys = REG_KEYINPUT ^ 0x3ff;
+  keys = REG_KEYINPUT ^ KEYS_MASK;
   {
     // volatile: the code this interrupt broke into reads the same state.
     volatile struct InputState *input = &gInput;
@@ -382,7 +385,7 @@ void System_VBlankHandler(void) {
     input->pendingPressed |= pressed;
     input->held = keys;
     if (keys == 0) {
-      input->repeatTimer = 19;
+      input->repeatTimer = INPUT_KEY_REPEAT_FIRST;
       input->repeat = keys;
     } else if (input->held & (input->previousVblankHeld ^ 0xffff)) {
       input->repeatTimer = -1;

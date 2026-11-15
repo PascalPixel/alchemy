@@ -1186,7 +1186,8 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(object, mode);
-  Actor_SetMoveTarget(object, (toX << 20) + px(8), 0, z = (toZ << 20) + px(8));
+  Actor_SetMoveTarget(object, FIELD_CELL_CENTER(toX), 0,
+                      z = FIELD_CELL_CENTER(toZ));
   Event_Wait(6);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
@@ -2940,8 +2941,8 @@ void TrialRoad_DrawFountains(void) {
   rise = -0x20000;
   map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
 
   for (i = 0; i < 16; i++, mover++) {
@@ -3416,7 +3417,7 @@ void TrialRoad_MoveRival(void) {
     x = leader->x.fixed;
     z = leader->z.fixed;
     if ((u32)(z - 0x1000000) > 0x1300000)
-      x = 0x2100000 - (x & 0xffff0000);
+      x = 0x2100000 - (x & FIELD_PIXEL_MASK);
     if (gMainRoutineWork.entrance & 1)
       x += 0x1300000;
     else

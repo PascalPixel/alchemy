@@ -1108,8 +1108,9 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Actor_WalkBy(ACTOR_WAITING_RUFFIAN, 26, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
-  FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 99);
-  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 98);
+  FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
+                                       ENTRANCE_AFTER_BATTLE);
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, ENTRANCE_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();
@@ -1260,6 +1261,9 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Event_End();
 }
 
+/// The blast column's stage once it has burnt out.
+#define BLAST_FINISHED 999
+
 /// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
 /// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
 /// blast's effect actor.
@@ -1272,7 +1276,7 @@ struct BlastColumnWork {
   s32 x;
   s32 y;
   s32 z;
-  s16 stage;
+  s16 stage; ///< BLAST_FINISHED once the column has burnt out
   s16 timer;
   u16 tileTop;
   u16 tile;
@@ -1376,7 +1380,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     if (*timer == 30) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       if (work->timer == 30) {
-        work->stage = 999;
+        work->stage = BLAST_FINISHED;
         work->timer = -1;
       }
     }
@@ -1469,10 +1473,10 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
   Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
-  if (work->stage != 999) {
+  if (work->stage != BLAST_FINISHED) {
   wait:
     System_Wait(1);
-    if (work->stage != 999)
+    if (work->stage != BLAST_FINISHED)
       goto wait;
   }
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);

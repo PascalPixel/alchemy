@@ -2642,7 +2642,7 @@ void YampiDesert_DrawRisingSand(void) {
 
   viewX = view[0];
   viewX &= 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
   for (i = 15; i >= 0; i--, entry++) {
     if (entry->id == 0 || entry->height == 0)

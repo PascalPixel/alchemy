@@ -521,7 +521,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(Q16_ONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     YampiDesertCave_ArriveByTeleport();
 }
@@ -600,7 +600,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
 
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(Q16_ONE, 2);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -608,7 +608,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   Teleport_PlayWhirl();
   wait(40);
   YampiDesertCave_StopMarkGlow();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(Q16_ONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -923,12 +923,12 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_VALUKAR, 2);
   Event_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(Q16_ONE, 0);
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(Q16_ONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);

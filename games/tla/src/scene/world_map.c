@@ -1686,7 +1686,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(RGB_WHITE, 0);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(Q16_ONE, 0);
   PaletteFade_Interpolate(60);
   Task_AddFrame(WorldMap_SpawnCollapseDust, TASK_PASS_VBLANK);
   MapGrid_SetShake(5, 5, 1);

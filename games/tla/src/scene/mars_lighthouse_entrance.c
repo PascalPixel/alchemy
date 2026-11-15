@@ -84,6 +84,17 @@
 #define FLAG_HIDDEN_CIRCLE_SHEET_SHOWN FLAG_SCENE_TEMP_32
 #define FLAG_DRAGON_FACE_AWAKE FLAG_SCENE_TEMP_34
 
+/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
+/// low four bits, and which flame it sends, or none.
+enum FlameThrowerFlags {
+  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
+  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
+  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
+  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
+  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
+  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
+};
+
 /// The first hall (Fugue's room): two ice cones, the dead end Grind cracks
 /// (unseen, sprite 489) and Fugue.
 enum MarsLighthouseEntranceFugueActorId {
@@ -207,7 +218,7 @@ extern struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[];
 extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 
 s32 MarsLighthouseEntrance_LightDragonFace(void) {
-  Ride_SetEntryState(0, 65);
+  Ride_SetEntryState(0, FLAME_THROWER_DRY | 1);
   return 0;
 }
 
@@ -881,7 +892,7 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(ACTOR_DRAGON_FACE,
                   gMarsLighthouseEntrance_DragonFaceGoesLeft);
-  Ride_SetEntryState(0, 3);
+  Ride_SetEntryState(0, FLAME_FORWARD | 3);
   Flag_Set(FLAG_DRAGON_FACE_AWAKE);
 }
 
@@ -994,12 +1005,12 @@ void MarsLighthouseEntrance_PulseDragonFire(void) {
 
   if (gMarsLighthouseEntrance_DragonFireTimer < 60) {
     if (*state == 0) {
-      Ride_SetEntryState(0, 3);
+      Ride_SetEntryState(0, FLAME_FORWARD | 3);
       *state = 1;
     }
   } else {
     if (((struct HalfwordField *)state)->value == 1) {
-      Ride_SetEntryState(0, 67);
+      Ride_SetEntryState(0, FLAME_THROWER_DRY | 3);
       *state = 0;
     }
   }
@@ -1219,7 +1230,7 @@ s32 Scene_Initialize(void) {
       if (entrance == 11) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
-        Ride_SetEntryState(0, 3);
+        Ride_SetEntryState(0, FLAME_FORWARD | 3);
         Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_VBLANK);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
@@ -1448,75 +1459,72 @@ void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
 
 typedef struct Actor Actor;
 
+/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;
-  s16 timer;
-  u16 flags;
-  s16 unk_6;
-  Actor *actor;
-  s32 unk_c;
+  s16 timer; ///< frames to its next puff
+  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
+  /// Puffs even off screen, and its flames keep their sprites.
+  s16 offScreen;
+  struct Actor *actor;
+  s32 reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
+/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
+/// sets stopped, which calls back once.
 typedef struct State {
-  u8 pad0[6];
-  s16 unk_6;
-  s16 unk_8;
-  u8 pada[4];
-  s16 unk_e;
-  void (*callback)();
+  u8 unusedBeforeStopped[6];
+  s16 stopped;
+  s16 wasStopped;
+  u8 unusedAfterWasStopped[4];
+  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
+  void (*onStopped)();
   Entry entries[4];
 } State;
 
-typedef struct Position {
-  s32 x;
-  s32 z;
-} Position;
-
-typedef struct Camera {
-  u8 pad0[228];
-  Position position;
-} Camera;
-
-typedef struct IwramGlobals {
-  u8 pad0[32];
-  Camera *camera;
-  u8 pad24[108 - 36];
+/// The heap slots as FlameThrowers_Puff reads them: the field work through a
+/// union, which keeps its read after the stores before it.
+typedef struct HeapSlotsView {
+  u8 unusedBeforeMapGrid[32];
+  struct MapWork *mapGrid;
+  u8 unusedBeforeFieldWork[108 - 36];
   union {
     s32 word;
     void *pointer;
-  } unk_6c;
-} IwramGlobals;
+  } fieldWork;
+} HeapSlotsView;
 
-#define IWRAM ((IwramGlobals *)Ram_HeapSlots)
-
-/// Draws the beam's targets, firing each in turn.
+/// Each frame, every flame thrower in view sends its flame: forward, landing
+/// forward or back, back, or a spark, by its flags, every ninth frame. They
+/// pause while a menu is open, or a Psynergy is used unless the ride work runs
+/// them through it; reaching a stop calls the stop's callback once.
 void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
-  Camera *camera;
-  Position *position;
+  struct MapWork *map;
+  s32 *view;
   s32 cameraX, cameraZ;
   s32 v;
   s32 i;
 
   state = (State *)RIDE_WORK;
-  camera = IWRAM->camera;
+  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
   entry = state->entries;
-  position = &camera->position;
-  cameraX = position->x;
-  cameraX &= 0xffff0000;
-  cameraZ = position->z & 0xffff0000;
-  saved[1] = (*(s32 **)camera)[1];
-  saved[0] = IWRAM->unk_6c.word;
-  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
-    state->callback();
-  v = (u16)state->unk_6;
-  state->unk_8 = v;
-  state->unk_6 = 0;
+  view = &map->viewX;
+  cameraX = view[0];
+  cameraX &= FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
+  saved[1] = map->origin[1];
+  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
+  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
+    state->onStopped();
+  v = (u16)state->stopped;
+  state->wasStopped = v;
+  state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
-    Actor *actor;
-    s32 flag, x, y, unk6, value, dx, dz;
+    struct Actor *actor;
+    s32 flag, x, y, offScreen, value, dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1525,21 +1533,21 @@ void FlameThrowers_Puff(void) {
     if (actor == 0)
       continue;
     flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (*(s16 *)(saved[0] + 358) != 0)
+    if (((struct FieldWork *)saved[0])->psynergy != 0)
       flag |= 1;
     mark = &actor->paused;
     *mark = flag;
-    if (state->unk_e != 0)
+    if (state->runsDuringPsynergy != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
     dz = actor->z.fixed;
     dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
-    unk6 = entry->unk_6;
+    offScreen = entry->offScreen;
     x = dx >> 16;
     y = (y >> 16) - 8;
-    if (unk6 == 0) {
+    if (offScreen == 0) {
       if ((u32)(x + 7) > 334)
         continue;
       if (y <= -48)
@@ -1549,22 +1557,24 @@ void FlameThrowers_Puff(void) {
     }
     y = (u16)entry->timer;
     if (entry->timer <= 0) {
-      y = entry->flags & 240;
+      y = entry->flags & 0xf0;
       switch (y) {
-      case 128:
-        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
+      case FLAME_SPARK:
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
         break;
-      case 48:
-        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_BACKWARD:
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
-      case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_BACKWARD:
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
+                                  offScreen);
         break;
-      case 16:
-        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_FORWARD:
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
+                                 offScreen);
         break;
-      case 0:
-        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_FORWARD:
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
       }
       value = 8;
@@ -1574,7 +1584,6 @@ void FlameThrowers_Puff(void) {
     entry->timer = value;
   }
 }
-#undef IWRAM
 
 #undef Actor_HoldDuringEvent
 void Ride_Create(void) {
@@ -2695,8 +2704,8 @@ s16 gMarsLighthouseEntrance_FugueIceCones[] = {
 };
 
 u16 gMarsLighthouseEntrance_LapisBeamTargets[] = {
-    ACTOR_LAPIS_FLAME_THROWER_A, 3, ACTOR_LAPIS_FLAME_THROWER_B, 3,
-    ACTOR_LAPIS_FLAME_THROWER_C, 3, ACTOR_LAPIS_FLAME_THROWER_D, 3,
+    ACTOR_LAPIS_FLAME_THROWER_A, FLAME_FORWARD | 3, ACTOR_LAPIS_FLAME_THROWER_B, FLAME_FORWARD | 3,
+    ACTOR_LAPIS_FLAME_THROWER_C, FLAME_FORWARD | 3, ACTOR_LAPIS_FLAME_THROWER_D, FLAME_FORWARD | 3,
     0,
 };
 
@@ -2711,7 +2720,7 @@ s16 gMarsLighthouseEntrance_LapisIceCones[] = {
 };
 
 u16 gMarsLighthouseEntrance_BalmBeamTargets[] = {
-    ACTOR_BALM_FLAME_THROWER, 3, 0,
+    ACTOR_BALM_FLAME_THROWER, FLAME_FORWARD | 3, 0,
 };
 
 u16 gMarsLighthouseEntrance_BalmBeamStops[] = {
@@ -2728,7 +2737,7 @@ s16 gMarsLighthouseEntrance_BalmIceCones[] = {
 };
 
 u16 gMarsLighthouseEntrance_ValkyrieUpperBeamTargets[] = {
-    ACTOR_UPPER_FLAME_THROWER, 3, 0,
+    ACTOR_UPPER_FLAME_THROWER, FLAME_FORWARD | 3, 0,
 };
 
 u16 gMarsLighthouseEntrance_ValkyrieUpperBeamStops[] = {
@@ -2736,7 +2745,7 @@ u16 gMarsLighthouseEntrance_ValkyrieUpperBeamStops[] = {
 };
 
 u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[] = {
-    ACTOR_DRAGON_FACE, 67, 0,
+    ACTOR_DRAGON_FACE, FLAME_THROWER_DRY | 3, 0,
 };
 
 u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[] = {

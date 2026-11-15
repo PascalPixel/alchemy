@@ -70,6 +70,17 @@
 /// Begone!"
 #define FLAG_TOLD_TO_BEGONE 0xa2f
 
+/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
+/// low four bits, and which flame it sends, or none.
+enum FlameThrowerFlags {
+  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
+  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
+  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
+  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
+  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
+  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
+};
+
 /// The beacon ledge (M6) is reached from each tower by its own entrance.
 enum {
   ENTRANCE_FROM_VENUS_TOWER = 1,
@@ -1362,80 +1373,72 @@ void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value,
 
 typedef struct Actor Actor;
 
+/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;
-  s16 timer;
-  u16 flags;
-  s16 unk_6;
-  Actor *actor;
-  s32 unk_c;
+  s16 timer; ///< frames to its next puff
+  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
+  /// Puffs even off screen, and its flames keep their sprites.
+  s16 offScreen;
+  struct Actor *actor;
+  s32 reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
+/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
+/// sets stopped, which calls back once.
 typedef struct State {
-  u8 pad0[6];
-  s16 unk_6;
-  s16 unk_8;
-  u8 pada[4];
-  s16 unk_e;
-  void (*callback)();
+  u8 unusedBeforeStopped[6];
+  s16 stopped;
+  s16 wasStopped;
+  u8 unusedAfterWasStopped[4];
+  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
+  void (*onStopped)();
   Entry entries[4];
 } State;
 
-void Ride_SpawnForward();
-void Ride_SpawnBackward();
-void Ride_SpawnLandingForward();
-void Ride_SpawnLandingBackward();
-extern u8 gInventorySnapshot[];
-
-typedef struct Position {
-  s32 x;
-  s32 z;
-} Position;
-
-typedef struct Camera {
-  u8 pad0[228];
-  Position position;
-} Camera;
-
-typedef struct IwramGlobals {
-  u8 pad0[32];
-  Camera *camera;
-  u8 pad24[108 - 36];
+/// The heap slots as FlameThrowers_Puff reads them: the field work through a
+/// union, which keeps its read after the stores before it.
+typedef struct HeapSlotsView {
+  u8 unusedBeforeMapGrid[32];
+  struct MapWork *mapGrid;
+  u8 unusedBeforeFieldWork[108 - 36];
   union {
     s32 word;
     void *pointer;
-  } unk_6c;
-} IwramGlobals;
+  } fieldWork;
+} HeapSlotsView;
 
-#define IWRAM ((IwramGlobals *)Ram_HeapSlots)
-
+/// Each frame, every flame thrower in view sends its flame: forward, landing
+/// forward or back, back, or a spark, by its flags, every ninth frame. They
+/// pause while a menu is open, or a Psynergy is used unless the ride work runs
+/// them through it; reaching a stop calls the stop's callback once.
 void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
-  Camera *camera;
-  Position *position;
+  struct MapWork *map;
+  s32 *view;
   s32 cameraX, cameraZ;
   s32 v;
   s32 i;
 
   state = (State *)RIDE_WORK;
-  camera = IWRAM->camera;
+  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
   entry = state->entries;
-  position = &camera->position;
-  cameraX = position->x;
-  cameraX &= 0xffff0000;
-  cameraZ = position->z & 0xffff0000;
-  saved[1] = (*(s32 **)camera)[1];
-  saved[0] = IWRAM->unk_6c.word;
-  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
-    state->callback();
-  v = (u16)state->unk_6;
-  state->unk_8 = v;
-  state->unk_6 = 0;
+  view = &map->viewX;
+  cameraX = view[0];
+  cameraX &= FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
+  saved[1] = map->origin[1];
+  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
+  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
+    state->onStopped();
+  v = (u16)state->stopped;
+  state->wasStopped = v;
+  state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
-    Actor *actor;
-    s32 flag, x, y, unk6, value, dx, dz;
+    struct Actor *actor;
+    s32 flag, x, y, offScreen, value, dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1444,21 +1447,21 @@ void FlameThrowers_Puff(void) {
     if (actor == 0)
       continue;
     flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (*(s16 *)(saved[0] + 358) != 0)
+    if (((struct FieldWork *)saved[0])->psynergy != 0)
       flag |= 1;
     mark = &actor->paused;
     *mark = flag;
-    if (state->unk_e != 0)
+    if (state->runsDuringPsynergy != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
     dz = actor->z.fixed;
     dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
-    unk6 = entry->unk_6;
+    offScreen = entry->offScreen;
     x = dx >> 16;
     y = (y >> 16) - 8;
-    if (unk6 == 0) {
+    if (offScreen == 0) {
       if ((u32)(x + 7) > 334)
         continue;
       if (y <= -48)
@@ -1468,22 +1471,24 @@ void FlameThrowers_Puff(void) {
     }
     y = (u16)entry->timer;
     if (entry->timer <= 0) {
-      y = entry->flags & 240;
+      y = entry->flags & 0xf0;
       switch (y) {
-      case 128:
-        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
+      case FLAME_SPARK:
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
         break;
-      case 48:
-        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_BACKWARD:
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
-      case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_BACKWARD:
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
+                                  offScreen);
         break;
-      case 16:
-        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_FORWARD:
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
+                                 offScreen);
         break;
-      case 0:
-        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_FORWARD:
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
       }
       value = 8;
@@ -1493,7 +1498,6 @@ void FlameThrowers_Puff(void) {
     entry->timer = value;
   }
 }
-#undef IWRAM
 
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);

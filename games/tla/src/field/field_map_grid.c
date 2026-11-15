@@ -177,7 +177,7 @@ s32 MapGrid_LoadMap(s32 index) {
   work->enabled[0] = sceneHeader->priority[0];
   work->enabled[1] = sceneHeader->priority[1];
   work->enabled[2] = sceneHeader->priority[2];
-  work->unk101 = 2;
+  work->basePriority = 2;
   if (work->maxX == 0)
     work->maxX = 0x8000000;
   if (work->maxY == 0)

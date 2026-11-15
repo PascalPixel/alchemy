@@ -26,9 +26,9 @@ struct FadeActor {
   s32 x;
   s32 y;
   s32 z;
-  u16 unk14;
-  s16 floor;
-  u8 unusedAfterFloor[10]; ///< no code names it
+  u16 groundHeightFraction; ///< Actor.groundHeight's fraction
+  s16 floor;                ///< its whole pixels
+  u8 unusedAfterFloor[10];  ///< no code names it
   u8 terrainId;
 };
 

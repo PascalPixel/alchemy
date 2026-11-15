@@ -13,10 +13,10 @@ gWorldMap_CursorDirectionAngles:
 @ whose variant does, unless it is -1), FlagEntries_GetValue returns an entry's
 @ value by its flag; WorldPicture_StepToPlace, WorldPicture_UpdateMarkers and WorldPicture_Show read
 @ them too. A zero flag ends the list.
-	.macro flag_entry flag:req, value:req, unk_02:req, unk_04:req, unk_06:req, unk_08:req, unk_0a:req, id:req, variant:req, unk_10:req, unk_12:req
+	.macro flag_entry flag:req, value:req, sprite:req, x:req, z:req, facing:req, shown_flag:req, id:req, variant:req, scene:req, entrance:req
 	.byte \flag, \value
-	.2byte \unk_02, \unk_04, \unk_06, \unk_08, \unk_0a
-	.2byte \id, \variant, \unk_10, \unk_12
+	.2byte \sprite, \x, \z, \facing, \shown_flag
+	.2byte \id, \variant, \scene, \entrance
 	.endm
 	.global gFlagEntries
 gFlagEntries:

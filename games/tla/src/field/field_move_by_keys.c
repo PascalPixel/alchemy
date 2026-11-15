@@ -734,13 +734,13 @@ counted:
       effect->motionFlags = 0;
       Sound_PlayFar(SE_SAND_MOVE);
       if (sprite != NULL) {
-        struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
+        struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
 
         Sprite_StartAnimation(sprite, 1);
         sprite->flags = 0;
         // DEAD: overwritten by the next line.
         sprite->priority = 2;
-        sprite->priority = work->unkd4a & 3;
+        sprite->priority = work->trailPriority & 3;
       }
       *wakeTimer = 5;
     }
@@ -913,7 +913,7 @@ update_object:
       rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gActor_WakeScript);
       ripple->priorityFlags = 8;
-      ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
+      ripple->wakeFrames = 100;
       ripple->motionFlags = collision;
       if (rippleSprite != 0) {
         Sprite_StartAnimation(rippleSprite, 1);

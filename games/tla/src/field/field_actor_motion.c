@@ -60,7 +60,7 @@ struct MotionObject {
   s32 targetZ;
   s32 bounce;
   s32 gravity;
-  s32 unk4c;
+  s32 riseBaseY;
   void *animation;
   u8 animationKind;
   u8 motionFlags;

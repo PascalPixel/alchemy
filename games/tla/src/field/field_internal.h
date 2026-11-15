@@ -164,24 +164,19 @@ struct MapScrollWork {
   s32 viewX, viewY;
   s32 minX, minY, maxX, maxY;
   u8 unusedAfterUnusedAfterFlags[5]; ///< no code names it
-  u8 unk101;
-  u8 unusedB[2]; ///< no code names it
+  u8 basePriority;                   ///< as MapWork.basePriority
+  u8 unusedB[2];                     ///< no code names it
   u8 enabled[3];
   u8 unusedAfterEnabled; ///< no code names it
   struct MapLayerScroll layers[3];
 };
 
-struct Unk_ClimbEventWork {
+/// FieldWork as the sand trail reads its priority (FieldWork.unkd4a).
+struct SandTrailWork {
   u8 unused[0xd4a]; ///< no code names it
   /* FAKEMATCH(signature): read as the low byte of a halfword. */
-  u16 unkd4a : 8;
-  u16 unkd4b : 8;
-};
-
-struct Unk0802a124Actor {
-  u8 unused[0x62]; ///< no code names it
-  u8 unk62;
-  u8 unk63;
+  u16 trailPriority : 8;
+  u16 unusedHigh : 8; ///< no code names it
 };
 
 /// A map layer as its renderers read it: its scroll, then the window over

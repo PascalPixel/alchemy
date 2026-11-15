@@ -39,7 +39,7 @@ struct ScanlineRow {
   s32 depth;
   s32 offsetX;
   s32 offsetY;
-  s32 unk10;
+  s32 unusedAfterOffsetY; ///< no code names it
 };
 
 struct SpriteViewerLayer {
@@ -53,7 +53,7 @@ struct SpriteViewerLayer {
 struct ViewerSprite {
   u8 unused[0x1a]; ///< no code names it
   u8 flags;
-  u8 unk1b[0x1d];
+  u8 unusedAfterFlags[0x1d]; ///< no code names it
 };
 
 struct ProbeShape {
@@ -64,15 +64,6 @@ struct ProbeShape {
 struct ProbeObjects {
   u8 unused[40]; ///< no code names it
   struct ProbeShape *shape;
-};
-
-struct BattleCells {
-  u8 *actors;
-  u8 *unk04;
-  u8 *unk08;
-  u8 *unk0c;
-  u8 *unk10;
-  u8 *work;
 };
 
 struct Vec2 {

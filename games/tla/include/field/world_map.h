@@ -44,12 +44,17 @@ STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 /// flag.
 struct FlagEntry {
   u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0a;
+  u8 value; ///< its markers: low nibble, high nibble on the World Picture
+  /// The actor the World Map places there (WorldMap_UpdatePlacedActors): its
+  /// sprite, place in pixels and facing, and the flag it is shown by (-1
+  /// always; bit 12 set: shown while the rest is set, else while clear).
+  ///@{
+  s16 sprite;
+  s16 x;
+  s16 z;
+  u16 facing;
+  s16 shownFlag;
+  ///@}
   s16 id;
   s16 variant;  ///< -1 matches any
   s16 scene;    ///< where choosing it leads

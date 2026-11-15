@@ -145,10 +145,10 @@ void Rope_Update(void) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
 
       if (target != -1) {
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < ROPE_SLOT_COUNT; i++)
           if (work->slots[i].first == target || work->slots[i].second == target)
             break;
-        if (i < 8 &&
+        if (i < ROPE_SLOT_COUNT &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = FIELD_RAISED_TRIGGER_ROPE_ON;
       }
@@ -178,7 +178,7 @@ struct RopeNode *Rope_AllocNode(void) {
   struct RopeNode *node = work->nodes;
   s32 index;
 
-  for (index = 0; index <= 127; index++) {
+  for (index = 0; index < ROPE_NODE_COUNT; index++) {
     if (node->kind == 0)
       return node;
     node++;
@@ -438,11 +438,11 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
       Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
-                 y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+                 y + px(8), z, Trig_Sin(gRope_LashPhase) << 2);
       slot->swinging = 0;
       wait(1);
       Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
-                  y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+                  y + px(8), z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
       Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
                  to->x.fixed, to->y.fixed + px(8), to->z.fixed,
@@ -497,7 +497,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       node = nodes[i];
       node->slot = index + 1;
       if (i == segments) {
-        ex = Iwram_MulQ16(Trig_Sin((frame << 14) / i), 0x80000);
+        ex = Iwram_MulQ16(Trig_Sin((frame << 14) / i), px(8));
 
         node->x = x + dx * frame / 2 / i + Iwram_MulQ16(ex, cosine);
         lastX = node->x;
@@ -778,7 +778,7 @@ void Tightrope_Draw(void) {
   s32 originY = map->origin[1];
   struct AffineTransform transform;
 
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < ROPE_SLOT_COUNT; i++) {
     u32 angle = work->slots[i].direction;
     struct TightropeNode *node = work->slots[i].head;
     s32 affine;
@@ -856,11 +856,11 @@ void Tightrope_Update(void) {
       s32 target = Field_FindNearbyTalkTarget(party->leaderActorId);
 
       if (target != -1) {
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < ROPE_SLOT_COUNT; i++) {
           if (work->slots[i].first == target || work->slots[i].second == target)
             break;
         }
-        if (i < 8 &&
+        if (i < ROPE_SLOT_COUNT &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = FIELD_RAISED_TRIGGER_TIGHTROPE_ON;
       }
@@ -891,7 +891,7 @@ struct TightropeNode *Tightrope_AllocNode(void) {
   struct TightropeNode *node = work->nodes;
   s32 index;
 
-  for (index = 0; index <= 127; index++) {
+  for (index = 0; index < ROPE_NODE_COUNT; index++) {
     if (node->kind == 0)
       return node;
     node++;
@@ -1123,7 +1123,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         s32 offsetX;
         s32 offsetY;
 
-        height = Iwram_MulQ16(Trig_Sin((frame << 14) / i), 0x80000);
+        height = Iwram_MulQ16(Trig_Sin((frame << 14) / i), px(8));
         offsetX = Iwram_MulQ16(height, cosine);
         lastX = node->x = x + dx * frame / 2 / i + offsetX;
         offsetY = Iwram_MulQ16(height, sine);
@@ -1363,7 +1363,7 @@ void HangingVine_Draw(void) {
   struct AffineTransform transform;
   struct HangingVineLink *link;
 
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < ROPE_SLOT_COUNT; i++) {
     for (link = work->slots[i].root; link != NULL; link = link->next) {
       s32 x = link->x;
       s32 y = link->y;
@@ -1490,7 +1490,7 @@ struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
   /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
-  for (index = 0; index <= 7; index++) {
+  for (index = 0; index < ROPE_SLOT_COUNT; index++) {
     if (work->slots[index].root == NULL) {
       found = &work->slots[index];
       break;
@@ -1508,7 +1508,7 @@ struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
   /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
-  for (index = 0; index <= 7; index++) {
+  for (index = 0; index < ROPE_SLOT_COUNT; index++) {
     if (work->slots[index].id == id) {
       found = &work->slots[index];
       break;
@@ -1523,7 +1523,7 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
   struct HangingVineLink *link = work->links;
   s32 index;
 
-  for (index = 0; index <= 127; index++) {
+  for (index = 0; index < ROPE_NODE_COUNT; index++) {
     if (link->kind == 0)
       return link;
     link++;
@@ -1747,7 +1747,7 @@ void HangingVine_Swing(s32 id) {
   leader->speedLimit = Q16_ONE * 3;
   leader->acceleration = Q16_ONE * 2;
   leader->velocityY = Q16_ONE * 4;
-  leader->motionFlags &= 0x7e;
+  leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlagsFar(leader, 0);
   wait(5);
   Actor_SelectAnimationFar(leader, 16);
@@ -1804,7 +1804,7 @@ void HangingVine_Place(s32 id, s32 force) {
   if (object != NULL) {
     if (object->motionFlags == 0) {
       zero = 0;
-      object->z.fixed += 0xfff00000;
+      object->z.fixed += -px(16);
       y = object->y.fixed;
       object->y.fixed = y + px(64);
       HangingVine_Hang(id, zero);

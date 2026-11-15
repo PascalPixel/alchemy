@@ -34,8 +34,8 @@ struct HangingVineSlot {
 /// eight vine slots and up to 128 links.
 struct HangingVineWork {
   s32 vramEntry; ///< the links' picture
-  struct HangingVineSlot slots[8];
-  struct HangingVineLink links[128];
+  struct HangingVineSlot slots[ROPE_SLOT_COUNT];
+  struct HangingVineLink links[ROPE_NODE_COUNT];
 };
 
 #define HANGING_VINE_WORK ((struct HangingVineWork *)Ram_HeapSlots->hangingVine)

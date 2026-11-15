@@ -386,14 +386,19 @@ struct TightropeSlot {
   struct TightropeNode *head;
 };
 
+/// The ropes', tightropes' and hanging vines' works each keep eight slots,
+/// each a chain of nodes from one pool of 128.
+#define ROPE_SLOT_COUNT 8
+#define ROPE_NODE_COUNT 128
+
 /// The tightropes' work, heap slot 160.
 struct TightropeWork {
   struct Actor
       *recoilFrom; ///< the posts Tightrope_Untie gives Tightrope_Recoil
   struct Actor *recoilTo;
   s32 vramEntry; ///< the nodes' picture
-  struct TightropeSlot slots[8];
-  struct TightropeNode nodes[128];
+  struct TightropeSlot slots[ROPE_SLOT_COUNT];
+  struct TightropeNode nodes[ROPE_NODE_COUNT];
 };
 
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
@@ -535,8 +540,8 @@ struct RopeWork {
   struct Actor *recoilFrom; ///< the posts Rope_Untie gives Rope_Recoil
   struct Actor *recoilTo;
   s32 vramEntry; ///< the nodes' picture
-  struct RopeSlot slots[8];
-  struct RopeNode nodes[128];
+  struct RopeSlot slots[ROPE_SLOT_COUNT];
+  struct RopeNode nodes[ROPE_NODE_COUNT];
 };
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)

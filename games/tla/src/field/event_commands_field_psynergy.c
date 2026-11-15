@@ -45,7 +45,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 
 /// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
 /// on a Cyclone cell, water or raised ground, and then on sand, or where
-/// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
+/// attribute bit 1 is set (clear, when FieldWork.sceneAttributeLow is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -75,8 +75,8 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer) {
 }
 
 /// Whether the leader can move as sand on the cell at (x, z): layer 2's
-/// collision code 232, or on the world map collision 5 or 6; the event work's
-/// byte 0xd37 turns the answer round.
+/// collision code 232, or on the world map collision 5 or 6;
+/// FieldWork.sceneAttributeHigh turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 column = x;

@@ -134,7 +134,7 @@ const s32 gWorldMap_KeyYaws[16] = {
 };
 // clang-format on
 
-/// Set the work byte at 0x63 to 15 and lower it by one every 5 frames, then
+/// Set the actor's riseEnabled to 15 and lower it by one every 5 frames, then
 /// clear the horizontal scale and release the object.
 const s32 gActor_WakeScript[] = {
     SC_SET(SW_RISE_ENABLED, 15),

@@ -65,11 +65,11 @@ void FieldMotes_Start(void) {
 
 #undef Decompress_ByteLz
 
-/// Starts Weather_UpdateRain's particles: allocates and clears heap slot 0x74,
-/// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
-/// words and places it on the ground at the map's focus with a timer of
-/// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-/// update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
+/// Starts Weather_UpdateRain's particles: allocates and clears
+/// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
+/// particles' sprite words and places it on the ground at the map's focus with
+/// a timer of (i & 11) + 1, turns on alpha blending of all layers at 16/16,
+/// schedules the update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct WeatherWork *work;
   struct GroundParticle *particle;

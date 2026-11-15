@@ -466,9 +466,9 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_SCALE
 
 /// Draws the world map picture on BG1, scrolled to the cursor in gWorldMapWork
-/// (resource 36, or 35 at the origin when the halfword at 0x640 is set): the
-/// palette, then 21 rows of 31 tiles from the decoded rows, wrapping the 24-row
-/// buffer and the 32-column screen.
+/// (resource 36, or 35 at the origin when gWorldMapWork's origin flag is set):
+/// the palette, then 21 rows of 31 tiles from the decoded rows, wrapping the
+/// 24-row buffer and the 32-column screen.
 void WorldMapPicture_Draw(void) {
   struct WorldMapWork *work = &gWorldMapWork;
   u8 *buffer;

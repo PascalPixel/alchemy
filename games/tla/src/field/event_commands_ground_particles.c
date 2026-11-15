@@ -149,8 +149,8 @@ void RisingParticles_Start(void) {
   Task_Add(RisingParticles_Update, priority);
 }
 
-/// The Broken Seal's routine with 64 motes in the heap slot 0x74
-/// workspace, started by FieldMotes_Start.
+/// The Broken Seal's routine with 64 motes in HEAP_SLOT_WEATHER, started by
+/// FieldMotes_Start.
 void FieldMotes_Update(void) {
   struct WeatherWork *work = Ram_HeapSlots->weather;
   struct MapWork *map = Ram_HeapSlots->mapGrid;

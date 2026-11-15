@@ -347,8 +347,8 @@ struct SparkleBurstWork {
 };
 
 /// The burst of 64 sparkles that FieldPsynergy_UpdateRing's effect ends
-/// with: once the event work asks for it, it plays sound 167, fills the tiles
-/// at 0x06002000, reloads the window graphics, loads the sparkle picture
+/// with: once the event work asks for it, it plays sound 167, clears screen
+/// block 4, reloads the window graphics, loads the sparkle picture
 /// (FieldEffect_SparkleFade) and scatters the sparkles around the current
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.

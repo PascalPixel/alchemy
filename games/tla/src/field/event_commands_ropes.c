@@ -45,7 +45,7 @@ void Rope_Initialize(void) {
   Heap_Release(buffer);
 }
 
-/// The heap slot 0x9c work's per-frame callback (Rope_Initialize schedules it).
+/// The ropes' per-frame drawing (Rope_Initialize schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
 /// of neighbouring nodes in the slot's chain, 4 pixels up, turned along the
 /// pair and given the slot's priority, culled to the screen and sorted into the

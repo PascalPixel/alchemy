@@ -27,12 +27,12 @@
 #include "field/actor_view.h"
 #include "system/frame.h"
 
-/// The 96-particle burst's task (heap slot 0x5c work, started by
-/// ParticleBurst_Start). Each particle whose delay counter is between 0 and 63
-/// shows the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along
-/// its heading, then turns by its spin, rises by its speed and spins eight
-/// units faster; every counter advances. The work's flash flag is set on frame
-/// 30 only, and the burst stops being active on frame 112.
+/// The 96-particle burst's task (ParticleBurstWork in HEAP_SLOT_BATTLE_EFFECT,
+/// started by ParticleBurst_Start). Each particle whose delay counter is
+/// between 0 and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48
+/// pixels out along its heading, then turns by its spin, rises by its speed and
+/// spins eight units faster; every counter advances. The work's flash flag is
+/// set on frame 30 only, and the burst stops being active on frame 112.
 void ParticleBurst_Update(void) {
   struct ParticleBurstWork *work;
   struct BurstParticle *particle;

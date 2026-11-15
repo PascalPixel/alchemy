@@ -234,7 +234,7 @@ SECTIONS
         "*/games/tla/src/field/flag_entries.o"(.rodata)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/games/tla/src/field/actor_placement.o"(.rodata)
-        "*/games/tla/src/field/scene_items.o"(.rodata)
+        "*/games/tla/src/field/scene_items.o"(.data)
         "*/games/tla/src/field/screen_transition_shapes.o"(.data)
         "*/games/tla/src/field/actor_scripts.o"(.rodata)
         "*/games/tla/src/field/field_effect_particles.o"(.rodata)

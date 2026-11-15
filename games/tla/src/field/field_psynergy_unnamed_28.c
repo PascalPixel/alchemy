@@ -86,8 +86,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       } while (0);
       color = blue | green | red;
 
-      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
-      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
+      ((u16 *)&BG_PLTT_COLOR(15, 0))[i] = color;
+      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = color;
     }
     if (++i < 16)
       goto cycle;

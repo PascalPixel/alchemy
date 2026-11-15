@@ -692,7 +692,7 @@ void ShopTest_SelectItem(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
           DMA_COPY_HALFWORDS(1), REG_DMA3);

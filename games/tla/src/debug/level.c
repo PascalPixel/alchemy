@@ -264,7 +264,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
   // over its text background.
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
           DMA_COPY_HALFWORDS(1), REG_DMA3);

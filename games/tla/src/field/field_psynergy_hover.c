@@ -50,7 +50,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-#define OBJ_PALETTE_14 ((u16 *)(OBJ_PLTT + 14 * 16))
+#define OBJ_PALETTE_14 ((u16 *)&OBJ_PLTT_COLOR(14, 0))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.

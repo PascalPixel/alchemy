@@ -222,7 +222,7 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
-  palette = (u16 *)(OBJ_PLTT + 14 * 16);
+  palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;

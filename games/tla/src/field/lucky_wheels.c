@@ -1326,7 +1326,7 @@ void LuckyWheels_Run(void) {
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
             (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
-    *(u16 *)(BG_PLTT + 4 * 16) = 0x2f8b;
+    *(u16 *)&BG_PLTT_COLOR(4, 0) = 0x2f8b;
     *(u16 *)(BG_PLTT + 65) = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)OBJ_PLTT, DMA_COPY_WORDS(120), REG_DMA3);

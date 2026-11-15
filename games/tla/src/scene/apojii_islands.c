@@ -895,8 +895,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
     inner:
       value = cell->collisionCode;
       if (value != 0 && value >= base && value < base + 4) {
-        entry->x = ((u16)x << 20) + left + 0x80000;
-        entry->z = ((u16)z << 20) + top + 0x80000;
+        entry->x = ((u16)x << 20) + left + px(8);
+        entry->z = ((u16)z << 20) + top + px(8);
         entry->rest = b << 19;
         entry->y = a << 19;
         entry->kind = value - base;
@@ -911,12 +911,12 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
           terrain[(u16)x + ((u16)z << 7)] = 120;
         }
       }
-      x = ((x << 16) + 0x10000) >> 16;
+      x = (px(x) + px(1)) >> 16;
       cell++;
       if ((u16)x < width)
         goto inner;
     }
-    z = ((z << 16) + 0x10000) >> 16;
+    z = (px(z) + px(1)) >> 16;
     if ((u16)z < height)
       goto outer;
   }
@@ -958,7 +958,7 @@ loop:
   *(u32 *)size = 0xb400;
   p->posX = 0;
   p->posZ = 0;
-  p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
+  p->posY = px(Map_GetTerrainHeight(0, 0, 0));
   p->timer = (i & 15) + 1;
   i++;
   p++;

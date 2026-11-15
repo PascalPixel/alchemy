@@ -489,8 +489,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
         dx &= r;
       }
       dy = Random16() & 31;
-      FieldEffect_Spawn(((x + left * 16) << 16) + ((dx - 8) << 16),
-                        (y + dy) << 16, z << 16, 0, 0, 0x100, 0x80001, &params);
+      FieldEffect_Spawn(px(x + left * 16) + px(dx - 8), (y + dy) << 16, px(z),
+                        0, 0, 0x100, 0x80001, &params);
     }
     FieldEvent_Wait(frames);
     z += 2;
@@ -740,7 +740,7 @@ void AnkohlRuins_DrawSand(void) {
         x -= work->level;
         y += work->level;
         if (work->level > 0x100000)
-          x = -0x100000;
+          x = -px(16);
         break;
       case 1:
         x -= work->level;
@@ -754,13 +754,13 @@ void AnkohlRuins_DrawSand(void) {
         x += work->level;
         y += work->level;
         if (work->level > 0x100000)
-          x = -0x100000;
+          x = -px(16);
         break;
       case 4:
         if (work->level < 0x100000)
           y += work->level;
         else
-          x = -0x100000;
+          x = -px(16);
         break;
       }
       x -= viewX;
@@ -914,7 +914,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
+    cells += leader->x.fixed / px(16) + ((leader->z.fixed / px(16)) << 7);
     if (cells->collisionCode == 232) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
@@ -996,7 +996,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
+    cells += leader->x.fixed / px(16) + ((leader->z.fixed / px(16)) << 7);
     if (cells->collisionCode == 232) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
@@ -1291,9 +1291,9 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = 673;
-    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
-                      0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x.fixed + px(dx - 8),
+                      object->y.fixed + px(dy - 8), object->z.fixed, 0, 0x8000,
+                      phase, 0x100000, &params);
   }
 }
 

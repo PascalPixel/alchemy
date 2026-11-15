@@ -241,9 +241,9 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
     EasternAlhafra_PlaceClearedDebris();
   }
   if (mode == 2)
-    Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 2);
+    Rocks_Spawn(px(498), px(16), px(412), 2);
   if (mode == 3)
-    Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 30);
+    Rocks_Spawn(px(498), px(16), px(412), 30);
   if (id == 0x3e7)
     EasternAlhafra_EndFallingRocks();
 }
@@ -2473,8 +2473,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
   height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x.fixed + (a << 16);
-  z = actor->z.fixed + (b << 16);
+  x = actor->x.fixed + px(a);
+  z = actor->z.fixed + px(b);
   b = *(s32 *)(map + 0x148) >> 20;
   x >>= 20;
   z >>= 20;
@@ -2515,8 +2515,8 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     height =
         (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
     offset = gPushLeaderSteps[direction];
-    dx = offset & 0xffff0000;
-    dz = offset << 16;
+    dx = offset & FIELD_PIXEL_MASK;
+    dz = px(offset);
     push->unk14 = 0;
     steps = 0;
     layer = &actor->layer;
@@ -2525,9 +2525,9 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     push->z = actor->z.fixed + dz;
     cell.y = actor->y.fixed;
     for (;;) {
-      cell.z = push->z + (gPushFootprints[kind][1] << 16);
+      cell.z = push->z + px(gPushFootprints[kind][1]);
       for (j = 0; j < height; j++) {
-        cell.x = push->x + (gPushFootprints[kind][0] << 16);
+        cell.x = push->x + px(gPushFootprints[kind][0]);
         for (i = 0; i < width; i++) {
           /* FAKEMATCH(wrapper): the call through PushTarget_CheckCollision. */
           if (PushTarget_CheckCollision(actor, &cell) == 2)
@@ -2593,8 +2593,8 @@ void PushTarget_Push(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed + (gPushFootprints[footprint][0] << 16));
-  cell[2] = FIELD_CELL(object->z.fixed + (gPushFootprints[footprint][1] << 16));
+  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2624,8 +2624,8 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             (gPushLeaderSteps[direction] << 16) >> 31,
-                             (gPushLeaderSteps[direction] << 16) >> 17);
+                             px(gPushLeaderSteps[direction]) >> 31,
+                             px(gPushLeaderSteps[direction]) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -2639,8 +2639,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints[footprint][0] << 16);
-  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x = target.x + px(gPushFootprints[footprint][0]);
+  target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -2649,8 +2649,8 @@ void PushTarget_Push(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = FIELD_CELL(from[0] + (gPushFootprints[footprint][0] << 16));
-  cell[2] = FIELD_CELL(from[2] + (gPushFootprints[footprint][1] << 16));
+  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

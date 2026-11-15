@@ -172,8 +172,8 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
 }
 
 void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->groundHeight = Map_GetTerrainHeight(
-           0, object->x.fixed, object->z.fixed)) >= -0x200000)
+  if ((object->groundHeight = Map_GetTerrainHeight(0, object->x.fixed,
+                                                   object->z.fixed)) >= -px(32))
     Actor_SetSpriteFlags(object, 1);
   else
     Actor_SetSpriteFlags(object, 0);
@@ -238,9 +238,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTargetFixed(object, (object->x.fixed & 0xfff00000) + px(8),
-                                object->y.fixed,
-                                (object->z.fixed & 0xfff00000) + px(8));
+  FieldActor_SetMoveTargetFixed(
+      object, (object->x.fixed & FIELD_CELL_MASK) + px(8), object->y.fixed,
+      (object->z.fixed & FIELD_CELL_MASK) + px(8));
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;
@@ -260,7 +260,7 @@ next:
     object->acceleration = px(1) / 16;
     object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);
-    Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, object->z.fixed);
+    Actor_SetMoveTarget(object, object->x.fixed, -px(8), object->z.fixed);
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random16() * 4 >> 16) + 3);
@@ -276,7 +276,7 @@ lower:
     {
       s32 z = object->z.fixed - shift;
 
-      Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, z);
+      Actor_SetMoveTarget(object, object->x.fixed, -px(8), z);
     }
   }
   if (++i <= 14)
@@ -287,7 +287,7 @@ lower:
 land:
   {
     object = Actor_GetById(i);
-    object->z.fixed = (object->z.fixed & 0xfff00000) + 0x80000;
+    object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(8);
     object->motionFlags = 3;
     object->update = 0;
   }
@@ -388,7 +388,7 @@ void LightSprites_Draw(void) {
 
     if (actor != 0 && actor->x.fixed != 0) {
       s32 ox = actor->x.fixed - viewX;
-      s32 y = actor->y.fixed - viewY + 0x80000;
+      s32 y = actor->y.fixed - viewY + px(8);
       s32 z = actor->z.fixed - viewZ - viewY;
       s32 oy = z - y;
       s32 depth = ((y + z) >> 16) + 58;

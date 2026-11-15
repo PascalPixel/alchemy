@@ -1062,17 +1062,17 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   angle = &orbiter->angle;
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == 0x20000)
+  if (orbiter->radius == px(2))
     return 1;
   AquaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= 0x40000;
+  orbiter->radius -= px(4);
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
   FieldVector_AddPolarOffsetFixed(orbiter->radius, *angle, &orbiter->x);
   AquaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= 0x40000;
+  orbiter->radius -= px(4);
   return 1;
 }
 
@@ -1212,9 +1212,9 @@ tail:
   wait(16);
   i = 2;
 column:
-  riser = FieldActor_Create(672, second->x.fixed,
-                            second->y.fixed + i * 0x10000 - 0x80000,
-                            second->z.fixed);
+  riser =
+      FieldActor_Create(672, second->x.fixed,
+                        second->y.fixed + i * px(1) - px(8), second->z.fixed);
   riser->timer = Random16();
   riser->userValue = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
@@ -2147,8 +2147,8 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
         u32 kind = cell->collisionCode;
 
         if (kind != 0 && kind >= first && kind < first + 8) {
-          spout->x = ((u16)column << 20) + originX + 0x80000;
-          spout->z = ((u16)row << 20) + originZ + 0x80000;
+          spout->x = ((u16)column << 20) + originX + px(8);
+          spout->z = ((u16)row << 20) + originZ + px(8);
           spout->base = baseLevel << 19;
           spout->height = level << 19;
           spout->kind = kind - first;
@@ -2409,8 +2409,8 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
 #include "shared/actor_start_scripted.h"
 
 void Vent_Puff(s32 *position, s32 base) {
-  struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
-                                             position[2] - 0x20000);
+  struct Actor *object =
+      Import_ActorCreate_(0x11d, position[0], position[1], position[2] - px(2));
   s32 angle;
 
   if (object != 0) {
@@ -2461,7 +2461,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       outlet->state = 0;
       outlet->x = x << 16;
       outlet->z = z << 16;
-      outlet->y = Map_GetTerrainHeight(0, x << 16, (z << 16) + 0x100000);
+      outlet->y = Map_GetTerrainHeight(0, x << 16, (z << 16) + px(16));
       outlet->level = level << 16;
       outlet->index = i++;
       spots += 2;

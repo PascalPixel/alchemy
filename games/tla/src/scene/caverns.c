@@ -281,13 +281,13 @@ void Caverns_StartMovingAngaraBlock(void) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
-    Vector_AddPolarOffset(0x100000, angle, position);
+    Vector_AddPolarOffset(px(16), angle, position);
     if (*ids == 0xffff)
       goto search_done;
   search:
     object = Actor_GetById(*ids);
     if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-        position[1] / 0x10000 == object->y.fixed / 0x10000 &&
+        position[1] / px(1) == object->y.fixed / 0x10000 &&
         position[2] >> 20 == FIELD_CELL(object->z.fixed))
       goto search_done;
     ids++;
@@ -434,7 +434,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
     // The velocity array is reused for the position under the object.
     {
       velocity[0] = object->x.fixed;
-      velocity[1] = object->y.fixed - (16 << 16);
+      velocity[1] = object->y.fixed - px(16);
       velocity[2] = object->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
@@ -552,7 +552,7 @@ void Caverns_JumpEastAcrossGap(void) {
   s32 x;
 
   x = leader->x.fixed;
-  x += 0x200000;
+  x += px(32);
   SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);
   Caverns_JumpAcross(leader, (s16 *)position);
 }

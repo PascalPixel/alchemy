@@ -649,7 +649,7 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16() + 0x20000;
+  radius = Random16() + px(2);
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -668,7 +668,7 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
 
 void Contigo_RaiseMotes(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object = Actor_Spawn(308, 0x02c20000, 52428, 0x740000);
+    struct Actor *object = Actor_Spawn(308, px(706), 52428, px(116));
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
@@ -1189,7 +1189,7 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
-                      velocity[0], velocity[1] + 0x1999, velocity[2], 0x20000,
+                      velocity[0], velocity[1] + 0x1999, velocity[2], px(2),
                       &options);
   }
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
@@ -2621,7 +2621,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
         position.x = object->x.fixed;
-        position.y = object->y.fixed + (work->unka0[i] << 16);
+        position.y = object->y.fixed + px(work->unka0[i]);
         position.z = object->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;

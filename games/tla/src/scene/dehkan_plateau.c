@@ -664,7 +664,7 @@ void DehkanPlateau_StepOnCrack(void) {
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y.fixed,
                                   cellZ << 19);
   Event_Wait(4);
-  FieldCamera_GetActor()->y.fixed += -px(8);
+  FieldCamera_GetActor()->y.fixed -= px(8);
   next = record + 1;
   if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
@@ -981,7 +981,7 @@ void DehkanPlateau_JoltCamera(void) {
   struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
-  object->y.fixed += -px(8);
+  object->y.fixed -= px(8);
   wait(1);
   for (i = 0; i <= 7; i++) {
     object->y.fixed += px(1);
@@ -1191,7 +1191,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
     s32 y;
 
     /* FAKEMATCH(temporary): the form kept. */
-    y = leader->y.fixed - ((((Random16() * 7) << 1) >> 16) << 16);
+    y = leader->y.fixed - px(((Random16() * 7) << 1) >> 16);
     object = ((struct Actor *)Import_ActorCreate(
         285, (i << 17) + leader->x.fixed - Q16_ONE * 8, y - Q16_ONE * 2,
         leader->z.fixed));
@@ -1677,7 +1677,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   DehkanPlateau_InitializeRopes();
   Rope_Place(0, 520, ACTOR_ROOM3_ROPE_LOW_POST, ACTOR_ROOM3_ROPE_HIGH_POST);
   Actor_PlaceBlocks(gDehkanPlateau_Room3MovablePillars);
-  if (Actor_GetById(ACTOR_ROOM3_PILLAR)->y.fixed > (s32)0xfff80000)
+  if (Actor_GetById(ACTOR_ROOM3_PILLAR)->y.fixed > (s32)-px(8))
     Actor_SetSpritePriority(ACTOR_ROOM3_PILLAR, 1);
   else
     Actor_SetSpritePriority(ACTOR_ROOM3_PILLAR, 2);

@@ -226,7 +226,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(13);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
-  object->y.fixed = 22 << 16;
+  object->y.fixed = px(22);
   Actor_Jump(ACTOR_RIME, 11, 0);
   object->scaleY = Q16_ONE / 2;
   object->scaleX = Q16_ONE / 2;

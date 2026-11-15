@@ -674,8 +674,8 @@ void AquaRock_RideStreamUp(void) {
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    carried->z.fixed += -px(2);
-    leader->z.fixed += -px(2);
+    carried->z.fixed -= px(2);
+    leader->z.fixed -= px(2);
   } else
     AquaRock_FlowWithStream();
 }
@@ -1308,9 +1308,9 @@ void AquaRock_ArriveFromPassage(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
-    Actor_SetHorizontalPositionWithTerrain(
-        *owner, leader->x.part[0].pixel << 16,
-        (leader->z.part[0].pixel << 16) - px(16));
+    Actor_SetHorizontalPositionWithTerrain(*owner, px(leader->x.part[0].pixel),
+                                           px(leader->z.part[0].pixel) -
+                                               px(16));
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
@@ -1354,7 +1354,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     entry = &work->bubbles[work->next];
-    entry->x = source->x.fixed + Random16() * 3 * 16 - (24 << 16);
+    entry->x = source->x.fixed + Random16() * 3 * 16 - px(24);
     entry->y = source->y.fixed;
     entry->z = source->z.fixed;
     entry->age = 0;
@@ -1367,7 +1367,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
       // screenX holds the ground's height here, before its own value.
       screenX = Map_GetTerrainHeight(0, entry->x, entry->z);
       if (screenX > entry->y)
-        entry->y += 2 << 16;
+        entry->y += px(2);
       else
         entry->z -= 2 << 16;
       if (FIELD_CELL(entry->y) == 23)
@@ -1418,7 +1418,7 @@ void AquaRock_DrawFallingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     bubble = &work->bubbles[work->next];
-    bubble->x = source->x.fixed + Random16() * 3 * 8 - 0xc0000;
+    bubble->x = source->x.fixed + Random16() * 3 * 8 - px(12);
     bubble->y = source->y.fixed;
     bubble->z = source->z.fixed;
     bubble->age = 0;
@@ -1529,7 +1529,7 @@ loop:
   *(u32 *)size = 0xb400;
   p->posX = 0;
   p->posZ = 0;
-  p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
+  p->posY = px(Map_GetTerrainHeight(0, 0, 0));
   p->timer = (i & 15) + 1;
   i++;
   p++;

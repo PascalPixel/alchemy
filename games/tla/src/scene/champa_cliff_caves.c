@@ -965,7 +965,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
     object->gravity = 0x4000;
     object->motionFlags = 2;
-    object->groundHeight = 0xfc190000;
+    object->groundHeight = -px(999);
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(ACTOR_SALAMANDER, 1);
@@ -1666,7 +1666,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   if (mode == 1) {
     sprite->scaleX = Q16_ONE * 2;
     sprite->scaleY = Q16_ONE * 2;
-    sprite->z = z + 0xa0000;
+    sprite->z = z + px(10);
   }
   Sound_Play(SE_CRASH);
   for (i = 0; i <= 71; i++) {
@@ -1949,7 +1949,7 @@ void ChampaCliffCaves_UpdateForgeFire(void) {
   s32 time;
 
   position[0] = FIELD_AT(work, s32, 4096);
-  position[1] = FIELD_AT(work, s32, 4100) - 0x200000;
+  position[1] = FIELD_AT(work, s32, 4100) - px(32);
   state = 0;
   time = 0;
   position[2] = FIELD_AT(work, s32, 4104);

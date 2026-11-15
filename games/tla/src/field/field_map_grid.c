@@ -854,16 +854,13 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         u32 n;
         u32 column;
         u32 scaled;
-        u32 mask;
+        u32 merged;
 
-        cellPictureId = MAPGRID_CELL_PICTURE_ID_MASK;
-        mask = 0x7ff;
-        /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff. */
-        __asm__("" : "+r"(mask));
-        cellPictureId = cell & cellPictureId;
-        mask &= cell;
-        mask |= *dst & 0xfffff800;
-        *dst = mask;
+        cellPictureId = cell & MAPGRID_CELL_PICTURE_ID_MASK;
+        // The cell takes the low 11 bits of the source and keeps its own above.
+        merged = cell & 0x7ff;
+        merged |= *dst & 0xfffff800;
+        *dst = merged;
         dst++;
         view = views;
         column = x & (MAPGRID_SCREEN_CELLS - 1);

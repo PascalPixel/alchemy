@@ -1,3 +1,4 @@
+#include "battle/weapon_kind.h"
 /// @file
 /// The battle object: a battle from its opening transition to its spoils.
 ///

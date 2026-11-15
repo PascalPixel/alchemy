@@ -126,23 +126,6 @@ UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
   }
 }
 
-// gBattleUnit_WeaponKinds: a weapon's item id with its kind above it.
-#define WEAPON_ITEM_MASK 0x1ff
-#define WEAPON_KIND_SHIFT 9
-
-/// The kinds of weapon a party member's attack shows, by the rows of
-/// item_table.c gBattleUnit_WeaponKinds lists for each.
-enum BattleWeaponKind {
-  WEAPON_KIND_LONG_SWORD,  ///< Long Sword to Muramasa
-  WEAPON_KIND_LIGHT_BLADE, ///< Machete to Bandit's Sword
-  WEAPON_KIND_AXE,         ///< Battle Axe to Demon Axe
-  WEAPON_KIND_MACE,        ///< Mace to Wicked Mace
-  /// Wooden Stick to Shaman's Rod, but the two ankhs among them.
-  WEAPON_KIND_STAFF,
-  WEAPON_KIND_ANKH, ///< the Blessed Ankh and Angelic Ankh
-  WEAPON_KIND_NONE  ///< an item the list lacks
-};
-
 /// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
 /// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {

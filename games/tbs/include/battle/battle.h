@@ -24,7 +24,7 @@ extern u8 gPlayerActorId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
-extern u16 gBattleUnit_WeaponKinds[];
+extern const u16 gBattleUnit_WeaponKinds[];
 
 struct SpriteAnimation;
 struct Sprite;
@@ -154,7 +154,7 @@ void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the
-/// gBattleKnockback_* tables in knockback_tables.s. Each is named by how far
+/// gBattleKnockback_* tables in knockback_tables.c. Each is named by how far
 /// and how high it sends the unit, as percent of its spot's distance from the
 /// centre and its hop in pixels a frame; all but KNOCKBACK_HURL accelerate by
 /// 1 pixel a frame to at most 4.

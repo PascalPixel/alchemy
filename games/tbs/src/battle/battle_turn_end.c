@@ -232,11 +232,6 @@ s32 DjinnRecovery_CountDownTwenty(void) {
 /// the battle.
 void Battle_ReservedNoOpF674(void) {}
 
-/// The order the two sides take their turn-end effects in.
-struct BattleSideOrder {
-  s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
-};
-
 /// Ends a turn: sets recovered Djinn, then gives each unit its regeneration and
 /// counts down its stat changes and statuses, showing each that ends.
 UNREAD_RESULT Battle_ProcessTurnEnd(void) {

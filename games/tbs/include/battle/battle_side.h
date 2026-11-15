@@ -27,6 +27,11 @@ enum BattleSideMask {
   BATTLE_SIDE_MASK_BOTH = BATTLE_SIDE_MASK_PARTY | BATTLE_SIDE_MASK_ENEMIES
 };
 
+/// The order the two sides take their turn-end effects in.
+struct BattleSideOrder {
+  s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
+};
+
 /// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
 /// party's and the link opponent's.
 #define DJINN_RECOVERY_PARTY 0

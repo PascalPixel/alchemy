@@ -4,7 +4,7 @@
 /// prompt, and the palette fades they share.
 ///
 /// One object, as The Broken Seal's title_intro.c is. Its logo frames and
-/// palettes are the data objects logo.c and title_intro_tables.s.
+/// palettes are the data objects logo.c and title_intro_tables.c.
 
 #include "types.h"
 #include "sounds.h"

@@ -174,7 +174,7 @@ s32 Party_AdjustCoins(s32 amount) {
   struct MainRoutineWork *work;
 
   work = &gMainRoutineWork;
-  value = work->coins;
+  value = work->holdings.coins;
   value += amount;
   if (value > 999999) {
     value = 999999;
@@ -182,7 +182,7 @@ s32 Party_AdjustCoins(s32 amount) {
   if (value < 0) {
     value = 0;
   }
-  work->coins = value;
+  work->holdings.coins = value;
   return value;
 }
 
@@ -203,8 +203,8 @@ s32 Party_AdjustCoins(s32 amount) {
     return value;                                                              \
   }
 
-PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
-PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
+PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, holdings.shopCredit, 999999)
+PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, holdings.shopGifts, 28)
 
 /// Writes the summons the party can call to output, in menu order, ending with
 /// SUMMON_END, and returns how many.

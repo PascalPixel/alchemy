@@ -1118,7 +1118,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
 /// Writes the party's coins and the "Coins" label into window: the info
 /// window of the Item and Psynergy screens' party member choice.
 void Menu_DrawCoins(struct Window *window) {
-  Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, window, 8, 0);
+  Text_DrawNumberAtOffsetFar(gMainRoutineWork.holdings.coins, 7, window, 8, 0);
   Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
   // Only the Japanese editions draw a vertical divider at tile column 12.
 #if LANGUAGE == LANGUAGE_JAPANESE

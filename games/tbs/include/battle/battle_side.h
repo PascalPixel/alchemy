@@ -66,13 +66,13 @@ struct DjinnRecoveryList {
 };
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gMainRoutineWork from its byte 12, the enemies' over
+/// party's gMainRoutineWork.holdings, the enemies' over
 /// battle unit FIRST_ENEMY_UNIT + 3.
 struct DjinnRecoveryTable {
   /// The summons the party can call, bit n for summon n; nonzero offers the
   /// Summon command (BattleSummon_UpdateAvailability).
   u32 summonMask;
-  /// In the party's table, gMainRoutineWork.coins; not named here.
+  /// In the party's table, gMainRoutineWork.holdings.coins; not named here.
   u32 partyCoins;
   struct DjinnRecoveryList list;
 };

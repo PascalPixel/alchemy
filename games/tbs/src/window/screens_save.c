@@ -194,7 +194,7 @@ u32 Save_BuildFileSummary(void) {
   summary->area =
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
   summary->classId = leader->classId;
-  summary->coins = gMainRoutineWork.coins;
+  summary->coins = gMainRoutineWork.holdings.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);

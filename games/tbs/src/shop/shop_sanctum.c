@@ -250,7 +250,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      if (donation > gMainRoutineWork.coins) {
+      if (donation > gMainRoutineWork.holdings.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;

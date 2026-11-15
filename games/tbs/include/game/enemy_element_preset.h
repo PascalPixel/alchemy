@@ -19,4 +19,8 @@ struct EnemyElementPreset {
   struct BattleElementStats stats[4];
 };
 
+/// How many rows gEnemy_ElementPresetTable has; an enemy's preset past them
+/// reads as row 0.
+#define ENEMY_ELEMENT_PRESET_COUNT 44
+
 #endif

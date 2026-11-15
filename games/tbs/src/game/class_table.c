@@ -9,7 +9,7 @@
 const struct ClassDefinition gClass_DefinitionTable[] = {
     // NPC
     {
-        .series = 12,
+        .series = CLASS_SERIES_NPC,
         .hp = 10,
         .pp = 10,
         .atk = 10,
@@ -2683,7 +2683,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {5},
         .hp = 8,
         .pp = 6,
@@ -2693,7 +2693,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .luck = 10,
     },
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 8,
         .pp = 6,
@@ -2704,7 +2704,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Flame User
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 10,
         .pp = 12,

@@ -130,7 +130,7 @@ loaded:
     dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
     Decompress_TaggedLz(source, work);
   }
-  Dma_Set(work, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
+  Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
   screen[0] = pos[0];
   screen[1] = pos[1];
   screen[2] = pos[2];

@@ -71,6 +71,12 @@ struct DiceWork {
   struct DiceParticle particles[4];
 };
 
+/// Attribute 2's 16-colour palette above its tile number, and a sprite's x in
+/// the attr01 word of an OAM entry, whose attribute 1 is its high half: as
+/// The Broken Seal's io_reg.h writes them, for the field's minigames.
+#define OBJ_PALETTE(n) ((n) << 12)
+#define OBJ_X(x) ((x) << 16)
+
 /// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
 struct DiceOam {
   volatile u32 attr01;

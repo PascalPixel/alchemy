@@ -37,6 +37,23 @@
 #include "system/task.h"
 #include "system/transform.h"
 
+// Where SuperLuckyDice_Run puts each picture in OBJ VRAM, as 16-colour tiles
+// (the dice, 256-colour, fill the first DICE_SHADOW_TILE + 8).
+#define DICE_SHADOW_TILE 144      ///< the nineteenth dice frame, the shadow
+#define SMALL_DOUBLE_UP_TILES 152 ///< "Double Up", for the rounds won
+#define FINAL_GAME_TILES 168      ///< "Final Game", in 16 by 16 cells
+#define GAME_TILES (FINAL_GAME_TILES + 20) ///< its "Game", the sixth cell on
+#define ORANGE_DIGIT_TILES 200 ///< 0 to 9, 16 by 32, the round's number
+#define TIMES_SIGN_TILES 280   ///< the times sign, then "or"
+#define OR_TILES (TIMES_SIGN_TILES + 4)
+#define DOUBLE_UP_TILES 292     ///< the large "Double Up" choice
+#define CASH_OUT_TILES 372      ///< "Cash Out"
+#define HIGHER_TILES 512        ///< "Higher", in a double-up round
+#define RESULT_BANNER_TILES 512 ///< "You Win" to "Perfect", over Higher
+#define LOWER_TILES 560         ///< "Lower"
+#define GREEN_DIGIT_TILES 640   ///< 0 to 9, 32 by 32, the total
+#define PINK_DIGIT_TILES 816    ///< 0 to 9, 16 by 16
+
 s32 SuperLuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   SuperLuckyDice_Run();
@@ -168,8 +185,9 @@ s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
     else if (!started && i != digits - 1)
       continue;
     work->obj[sprite].attr01 =
-        (((x + i * 10 + 522) & 0x1ff) << 16) | ((y + 256) & 255) | 0x40000000;
-    work->obj[sprite].attr2 = (digit * 4 + 816) | (palette << 12);
+        OBJ_X((x + i * 10 + 522) & 0x1ff) | ((y + 256) & 255) | OBJ_SIZE_16X16;
+    work->obj[sprite].attr2 =
+        (digit * 4 + PINK_DIGIT_TILES) | OBJ_PALETTE(palette);
     sprite++;
   }
   return sprite;
@@ -198,8 +216,9 @@ s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
     else if (!started)
       continue;
     work->obj[sprite].attr01 =
-        (((x + i * 22 + 512) & 0x1ff) << 16) | ((y + 256) & 255) | 0x80000000;
-    work->obj[sprite].attr2 = (digit * 16 + 640) | (palette << 12);
+        OBJ_X((x + i * 22 + 512) & 0x1ff) | ((y + 256) & 255) | OBJ_SIZE_32X32;
+    work->obj[sprite].attr2 =
+        (digit * 16 + GREEN_DIGIT_TILES) | OBJ_PALETTE(palette);
     sprite++;
   }
   return sprite;
@@ -353,15 +372,15 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #endif
 
 #if LANGUAGE == LANGUAGE_GERMAN
-#define ROUND_DIGIT_WORD 0x80748000
+#define ROUND_DIGIT_WORD (OBJ_X(116) | OBJ_SIZE_16X32)
 #elif LANGUAGE == LANGUAGE_SPANISH
-#define ROUND_DIGIT_WORD 0x80488000
+#define ROUND_DIGIT_WORD (OBJ_X(72) | OBJ_SIZE_16X32)
 #elif LANGUAGE == LANGUAGE_FRENCH
-#define ROUND_DIGIT_WORD 0x80708000
+#define ROUND_DIGIT_WORD (OBJ_X(112) | OBJ_SIZE_16X32)
 #elif LANGUAGE == LANGUAGE_ITALIAN
-#define ROUND_DIGIT_WORD 0x80488000
+#define ROUND_DIGIT_WORD (OBJ_X(72) | OBJ_SIZE_16X32)
 #else
-#define ROUND_DIGIT_WORD 0x80508000
+#define ROUND_DIGIT_WORD (OBJ_X(80) | OBJ_SIZE_16X32)
 #endif
 
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -484,47 +503,43 @@ void SuperLuckyDice_Run(void) {
   }
 
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsDomePicture);
-  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-          REG_DMA3);
-  Dma_Set(resourceAddress, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
-          REG_DMA3);
+  Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
+  Dma_Set(resourceAddress, bgPalette, DMA_COPY_WORDS(112), REG_DMA3);
   resourceAddress += 0x1c0;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_Data087);
-  Dma_Set(resourceAddress, spritePalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x30,
-          REG_DMA3);
+  Dma_Set(resourceAddress, spritePalette, DMA_COPY_WORDS(48), REG_DMA3);
   resourceAddress += 128;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x4c0,
-          REG_DMA3);
+  Dma_Set(cellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(1216), REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsSmallDoubleUpBanner);
   Dma_Set(resourceAddress, spritePalette + 112, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06011300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-          REG_DMA3);
+  Dma_Set(cellBuffer,
+          (void *)(OBJ_VRAM0 + SMALL_DOUBLE_UP_TILES * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(128), REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsFinalGameBanner);
   Dma_Set(resourceAddress, spritePalette + 96, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06011500,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
+  Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + FINAL_GAME_TILES * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(256), REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsOrangeDigits);
   Dma_Set(resourceAddress, spritePalette + 128, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06011900,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
+  Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + ORANGE_DIGIT_TILES * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(640), REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsTimesSign);
   Dma_Set(resourceAddress, spritePalette + 144, DMA_COPY_WORDS(8), REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06012300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x60,
-          REG_DMA3);
+  Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + TIMES_SIGN_TILES * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(96), REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
   Dma_Set(resourceAddress, spritePalette + 160, DMA_COPY_WORDS(8), REG_DMA3);
   {
@@ -551,8 +566,8 @@ void SuperLuckyDice_Run(void) {
           REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06016600,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x140, REG_DMA3);
+  Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + PINK_DIGIT_TILES * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(320), REG_DMA3);
   SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
   SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
@@ -755,20 +770,20 @@ void SuperLuckyDice_Run(void) {
         SuperLuckyDice_BrightenColors(
             spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), 0x8000, 16);
+            spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), Q16_ONE / 2, 16);
         SuperLuckyDice_BrightenColors(
             spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), Q16_ONE / 2, 16);
       } else {
         SuperLuckyDice_BrightenColors(
             spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), 0x8000, 16);
+            spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), Q16_ONE / 2, 16);
         SuperLuckyDice_BrightenColors(
             spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), Q16_ONE / 2, 16);
       }
     } else if (state == SUPER_LUCKY_DICE_ROLL) {
       struct DiceParticle *die;
@@ -1073,12 +1088,12 @@ void SuperLuckyDice_Run(void) {
         SuperLuckyDice_BrightenColors(
             spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), Q16_ONE / 2, 16);
       } else {
         SuperLuckyDice_BrightenColors(
             spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
         SuperLuckyDice_ScaleRgb555Buffer(
-            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), Q16_ONE / 2, 16);
       }
     }
 
@@ -1093,8 +1108,8 @@ void SuperLuckyDice_Run(void) {
                 REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06014000,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
+        Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + HIGHER_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(384), REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsLowerBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 13 * 16),
@@ -1103,8 +1118,8 @@ void SuperLuckyDice_Run(void) {
                 REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06014600,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
+        Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + LOWER_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(384), REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
         {
@@ -1164,16 +1179,18 @@ void SuperLuckyDice_Run(void) {
                 DMA_COPY_WORDS(8), REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06014000,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
+        Dma_Set(cellBuffer,
+                (void *)(OBJ_VRAM0 + RESULT_BANNER_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(1024), REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsGreenDigits);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 12 * 16),
                 DMA_COPY_WORDS(8), REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06015000,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x500, REG_DMA3);
+        Dma_Set(cellBuffer,
+                (void *)(OBJ_VRAM0 + GREEN_DIGIT_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(1280), REG_DMA3);
       } else if (paletteRequest == 5) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsDoubleUpBanner);
@@ -1183,8 +1200,9 @@ void SuperLuckyDice_Run(void) {
                 REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06012480,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
+        Dma_Set(cellBuffer,
+                (void *)(OBJ_VRAM0 + DOUBLE_UP_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(640), REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsCashOutBanner);
         Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 15 * 16),
@@ -1193,8 +1211,9 @@ void SuperLuckyDice_Run(void) {
                 REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
-        Dma_Set(cellBuffer, (void *)0x06012e80,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
+        Dma_Set(cellBuffer,
+                (void *)(OBJ_VRAM0 + CASH_OUT_TILES * TILE_SIZE_4BPP),
+                DMA_COPY_WORDS(640), REG_DMA3);
       }
       paletteRequest = -1;
     }
@@ -1206,42 +1225,47 @@ void SuperLuckyDice_Run(void) {
 
       for (index = 0; index != 4; index++) {
         sprites->oam[spriteCount].attr01 =
-            (((0x200 + index * 16) & 0x1ff) << 16) | 0x40000002;
-        sprites->oam[spriteCount].attr2 = (152 + index * 4) | 0x7000;
+            OBJ_X((0x200 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+        sprites->oam[spriteCount].attr2 =
+            (SMALL_DOUBLE_UP_TILES + index * 4) | OBJ_PALETTE(7);
         spriteCount++;
       }
       if (round == 5) {
         for (index = 0; index != 5; index++) {
           sprites->oam[spriteCount].attr01 =
-              (((584 + index * 16) & 0x1ff) << 16) | 0x40000002;
-          sprites->oam[spriteCount].attr2 = (168 + index * 4) | 0x6000;
+              OBJ_X((584 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+          sprites->oam[spriteCount].attr2 =
+              (FINAL_GAME_TILES + index * 4) | OBJ_PALETTE(6);
           spriteCount++;
         }
       } else {
         for (index = 0; index != 3; index++) {
           sprites->oam[spriteCount].attr01 =
-              (((ROUND_BANNER_X + index * 16) & 0x1ff) << 16) | 0x40000002;
-          sprites->oam[spriteCount].attr2 = (188 + index * 4) | 0x6000;
+              OBJ_X((ROUND_BANNER_X + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+          sprites->oam[spriteCount].attr2 =
+              (GAME_TILES + index * 4) | OBJ_PALETTE(6);
           spriteCount++;
         }
         sprites->oam[spriteCount].attr01 = ROUND_DIGIT_WORD;
-        sprites->oam[spriteCount].attr2 = (round * 8 + 200) | 0x8000;
+        sprites->oam[spriteCount].attr2 =
+            (round * 8 + ORANGE_DIGIT_TILES) | OBJ_PALETTE(8);
         spriteCount++;
 #if LANGUAGE == LANGUAGE_SPANISH
         if (round == 1) {
-          sprites->oam[spriteCount].attr01 = 0x80508000;
-          sprites->oam[spriteCount].attr2 = 200 | 0x8000;
+          sprites->oam[spriteCount].attr01 = OBJ_X(80) | OBJ_SIZE_16X32;
+          sprites->oam[spriteCount].attr2 = ORANGE_DIGIT_TILES | OBJ_PALETTE(8);
         } else {
-          sprites->oam[spriteCount].attr01 = 0x80548000;
-          sprites->oam[spriteCount].attr2 = 200 | 0x8000;
+          sprites->oam[spriteCount].attr01 = OBJ_X(84) | OBJ_SIZE_16X32;
+          sprites->oam[spriteCount].attr2 = ORANGE_DIGIT_TILES | OBJ_PALETTE(8);
         }
         spriteCount++;
 #endif
       }
       for (index = 0; index != 2; index++) {
         sprites->oam[spriteCount].attr01 =
-            (((576 + index * 16) & 0x1ff) << 16) | 0x40000018;
-        sprites->oam[spriteCount].attr2 = (284 + index * 4) | 0x9000;
+            OBJ_X((576 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 24;
+        sprites->oam[spriteCount].attr2 =
+            (OR_TILES + index * 4) | OBJ_PALETTE(9);
         spriteCount++;
       }
       if (multiplier <= 9)
@@ -1255,8 +1279,8 @@ void SuperLuckyDice_Run(void) {
       else
         multiplierDigits = 5;
       sprites->oam[spriteCount].attr01 =
-          (((560 - multiplierDigits * 10) & 0x1ff) << 16) | 0x40000018;
-      sprites->oam[spriteCount].attr2 = 0x9118;
+          OBJ_X((560 - multiplierDigits * 10) & 0x1ff) | OBJ_SIZE_16X16 | 24;
+      sprites->oam[spriteCount].attr2 = TIMES_SIGN_TILES | OBJ_PALETTE(9);
       spriteCount++;
       spriteCount =
           SuperLuckyDice_DrawNumber(spriteCount, 48, 20, multiplier, 10, 5);
@@ -1291,8 +1315,9 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000034;
-        sprites->oam[spriteCount].attr2 = 0xc000 | (512 + index * 16);
+            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 52;
+        sprites->oam[spriteCount].attr2 =
+            OBJ_PALETTE(12) | (HIGHER_TILES + index * 16);
         spriteCount++;
         column = 64;
         if (timer > 0 && lower == 0)
@@ -1300,8 +1325,9 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x8000005c;
-        sprites->oam[spriteCount].attr2 = (560 + index * 16) | 0xd000;
+            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 92;
+        sprites->oam[spriteCount].attr2 =
+            (LOWER_TILES + index * 16) | OBJ_PALETTE(13);
         spriteCount++;
       }
     }
@@ -1317,8 +1343,9 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000034;
-        sprites->oam[spriteCount].attr2 = (292 + index * 16) | 0xe000;
+            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 52;
+        sprites->oam[spriteCount].attr2 =
+            (DOUBLE_UP_TILES + index * 16) | OBJ_PALETTE(14);
         spriteCount++;
         column = 64;
         if (timer > 0 && cashOut == 0)
@@ -1326,8 +1353,9 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000054;
-        sprites->oam[spriteCount].attr2 = (372 + index * 16) | 0xf000;
+            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 84;
+        sprites->oam[spriteCount].attr2 =
+            (CASH_OUT_TILES + index * 16) | OBJ_PALETTE(15);
         spriteCount++;
       }
     }
@@ -1387,13 +1415,16 @@ void SuperLuckyDice_Run(void) {
           doubled *= 2;
           bannerY = doubled - 344;
         }
-        sprites->oam[spriteCount].attr01 = (((bannerX + 512) & 0x1ff) << 16) |
-                                           ((bannerY + 256) & 255) | 0xc0000000;
-        sprites->oam[spriteCount].attr2 = 0xd200;
+        sprites->oam[spriteCount].attr01 = OBJ_X((bannerX + 512) & 0x1ff) |
+                                           ((bannerY + 256) & 255) |
+                                           OBJ_SIZE_64X64;
+        sprites->oam[spriteCount].attr2 = RESULT_BANNER_TILES | OBJ_PALETTE(13);
         spriteCount++;
-        sprites->oam[spriteCount].attr01 = (((bannerX + 576) & 0x1ff) << 16) |
-                                           ((bannerY + 256) & 255) | 0xc0000000;
-        sprites->oam[spriteCount].attr2 = 0xd240;
+        sprites->oam[spriteCount].attr01 = OBJ_X((bannerX + 576) & 0x1ff) |
+                                           ((bannerY + 256) & 255) |
+                                           OBJ_SIZE_64X64;
+        sprites->oam[spriteCount].attr2 =
+            (RESULT_BANNER_TILES + 64) | OBJ_PALETTE(13);
         spriteCount++;
       }
     }
@@ -1423,14 +1454,14 @@ void SuperLuckyDice_Run(void) {
         screen[2] = DICE_NEAREST_DEPTH;
       if (screen[2] > DICE_FARTHEST_DEPTH)
         screen[2] = DICE_FARTHEST_DEPTH;
-      spriteDepth[drawOrder[index]] = screen[2] - 0x15e;
+      spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
       x = screen[0] - 0xc00 / (spriteDepth[drawOrder[index]] / 4 + 64);
       y = screen[1] - 0x800 / (spriteDepth[drawOrder[index]] / 4 + 64);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
-            ((drawOrder[index] << 25) | (((x + 632) & 0x1ff) << 16) |
+            ((drawOrder[index] << 25) | OBJ_X((x + 632) & 0x1ff) |
              ((y + 348) & 255)) |
-            0x40002300;
+            OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
             (gSuperLuckyDice_FaceTiles[die->variant / DICE_ROLL_PER_TILE]
              << 3) |
@@ -1456,22 +1487,24 @@ void SuperLuckyDice_Run(void) {
           screen[2] = DICE_NEAREST_DEPTH;
         if (screen[2] > DICE_FARTHEST_DEPTH)
           screen[2] = DICE_FARTHEST_DEPTH;
-        spriteDepth[4 + index] = screen[2] - 0x15e;
+        spriteDepth[4 + index] = screen[2] - DICE_NEAREST_DEPTH;
         spriteDepth[4 + index] += (s16)(die->y >> 16);
         half = spriteDepth[4 + index] / 2 + 128;
         x = screen[0] - 0x1800 / half;
         y = screen[1] - 0xc00 / half;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
-              (((index + 4) << 25) | (((x + 632) & 0x1ff) << 16)) |
-              ((y + 348) & 255) | 0x40002300;
-          sprites->oam[spriteCount].attr2 = 0x890;
+              (((index + 4) << 25) | OBJ_X((x + 632) & 0x1ff)) |
+              ((y + 348) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
+              OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+          sprites->oam[spriteCount].attr2 = DICE_SHADOW_TILE | OBJ_PRIORITY(2);
           spriteCount++;
         }
       }
     }
     for (; spriteCount != OAM_SIZE / sizeof(struct DiceOam); spriteCount++) {
-      sprites->oam[spriteCount].attr01 = 0x40f02000;
+      sprites->oam[spriteCount].attr01 =
+          OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;
     }
     for (index = 0; index != 8; index++) {
@@ -1490,8 +1523,7 @@ void SuperLuckyDice_Run(void) {
       sprites->oam[index * 4 + 2].attr2 |= affineC << 16;
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
-    Dma_Set(sprites->oam, (void *)OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
-            REG_DMA3);
+    Dma_Set(sprites->oam, (void *)OAM, DMA_COPY_WORDS(256), REG_DMA3);
     wait(1);
     frame++;
   }

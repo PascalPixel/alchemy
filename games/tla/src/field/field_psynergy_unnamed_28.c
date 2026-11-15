@@ -203,8 +203,7 @@ void FieldPsynergy_Unnamed28(void) {
     Iwram_FillWordsEntry(picture, 0x2000, 0);
 
     wait(1);
-    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
     {
       s32 control;
 
@@ -304,8 +303,7 @@ void FieldPsynergy_Unnamed28(void) {
 
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);
-    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
     {
       s32 heading;

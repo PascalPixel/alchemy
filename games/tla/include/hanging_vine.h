@@ -30,6 +30,8 @@ struct HangingVineSlot {
       *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
+/// The hanging vine's work (Ram_HeapSlots->hangingVine): the links' picture,
+/// eight vine slots and up to 128 links.
 struct HangingVineWork {
   s32 vramEntry; ///< the links' picture
   struct HangingVineSlot slots[8];

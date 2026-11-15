@@ -174,6 +174,8 @@ s32 PartyInventory_Add(s32 itemId) {
   return -1;
 }
 
+/// Returns the first party member with room for `itemId`, found by giving it
+/// and taking it back, or -1.
 s32 PartyInventory_FindRoom(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -283,6 +285,7 @@ s32 Inventory_FindEquipped(s32 unitId, s32 type) {
   return index;
 }
 
+/// Returns the definition of the unit's equipped item of `type`, or NULL.
 struct ItemDefinition *
 Inventory_GetEquippedDefinition(struct OwnerInventoryState *inv, s32 type) {
   s32 slot;
@@ -361,6 +364,8 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
   return removed_slot;
 }
 
+/// Returns whether the item in `slot` may be taken off: 0 yes, 1 it is equipped
+/// and cannot be unequipped, 8 the slot is empty.
 s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 raw = inv->inventory[slot];

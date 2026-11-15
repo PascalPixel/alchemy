@@ -154,8 +154,8 @@ s32 Party_ListMembers(s16 *unitIds) {
   return count;
 }
 
-/// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
-/// the new total.
+/// Adds `amount` to the party's coins, kept between 0 and COINS_MAX, and
+/// returns the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct MainRoutineWork *work;
@@ -163,8 +163,8 @@ s32 Party_AdjustCoins(s32 amount) {
   work = &gMainRoutineWork;
   value = work->coins;
   value += amount;
-  if (value > 999999) {
-    value = 999999;
+  if (value > COINS_MAX) {
+    value = COINS_MAX;
   }
   if (value < 0) {
     value = 0;
@@ -173,31 +173,25 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
-s32 Party_AdjustShopCredit(s32 amount) {
-  s32 value;
+/// Each adds amount to a counter, kept between 0 and max, and returns the new
+/// value: the shop credit and the Game Tickets given.
+#define PARTY_DEFINE_ADJUST(name, field, max)                                  \
+  s32 name(s32 amount) {                                                       \
+    s32 value;                                                                 \
+    struct MainRoutineWork *progress = &gMainRoutineWork;                      \
+                                                                               \
+    value = progress->field;                                                   \
+    value += amount;                                                           \
+    if (value > max)                                                           \
+      value = max;                                                             \
+    if (value < 0)                                                             \
+      value = 0;                                                               \
+    progress->field = value;                                                   \
+    return value;                                                              \
+  }
 
-  value = gMainRoutineWork.shopCredit;
-  value += amount;
-  if (value > 0xf423f)
-    value = 0xf423f;
-  if (value < 0)
-    value = 0;
-  gMainRoutineWork.shopCredit = value;
-  return value;
-}
-
-s32 Party_AdjustShopGifts(s32 amount) {
-  s32 value;
-
-  value = gMainRoutineWork.shopGifts;
-  value += amount;
-  if (value > 28)
-    value = 28;
-  if (value < 0)
-    value = 0;
-  gMainRoutineWork.shopGifts = value;
-  return value;
-}
+PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, COINS_MAX)
+PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 /// Lists the summons, in the game's order, whose bit is set in the state's
 /// first word, ends the list with 32 and returns how many it listed.

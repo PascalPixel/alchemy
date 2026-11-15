@@ -14,22 +14,17 @@
 #include "system/iwram_call.h"
 #include "system/system.h"
 
-/// An empty function in the sound driver.
-// As ☀️'s UnusedDummyFunc (games/tbs/src/sound/audio.c).
+/// An empty function in the sound code; nothing calls it.
 void UnusedDummyFunc2(void) {}
 
 void Sound_LoadReverbCode(s32 preset);
 
-/// The three cues the test starts with: the object's .rodata, which the
-/// object list places after DummyFunc.
-// As ☀️'s sound.c has its .rodata in the sound tail.
+/// The three cues the test starts with.
 static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 
 /// Runs the sound test's three cue selectors and five mixer presets forever,
 /// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2
 /// and the commands 0, 78 and 390.
-// As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
-/// Runs the sound test's three sound selectors and five reverb codes forever.
 void SoundTest_Run(void) {
   struct SoundTestCues cues;
   s32 preset;
@@ -104,6 +99,8 @@ void Sound_UpdateCommandMask(u32 command) {
 /// a fade, else the last music.
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
+/// Returns sound `sound`'s bit in gSoundFlags, one bit for each of 1024 sound
+/// ids.
 s32 SoundFlag_Test(s32 sound) {
   s32 mask;
   u8 *bytes;
@@ -116,6 +113,7 @@ s32 SoundFlag_Test(s32 sound) {
   return (u32)(-value | value) >> 31;
 }
 
+/// Sets sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Set(s32 sound) {
   s32 mask;
   s32 bits;
@@ -128,6 +126,7 @@ void SoundFlag_Set(s32 sound) {
   bytes[sound] = (u8)(bytes[sound] | mask);
 }
 
+/// Clears sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Clear(s32 sound) {
   s32 mask;
   s32 bits;

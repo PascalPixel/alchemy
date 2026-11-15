@@ -46,6 +46,9 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 
 #include "sound_driver_symbols.h"
 
+/// Waits for the next VBlank; outside the sound test it first runs the music
+/// ramps and the sound driver's VBlank update, rendering the mix itself when
+/// the driver does not.
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
   u8 *sound;
@@ -81,6 +84,8 @@ void System_WaitForFrameInterrupt(void) {
 #define SLEEP_IDLE_FRAMES 10800
 #define RGB_WHITE 0x7fff
 
+/// Restarts the cartridge: marks gCartridgeResetMarker, stops direct sound and
+/// jumps to the cartridge's start with interrupts off.
 static __inline__ void System_Reset(void) {
   /* FAKEMATCH(pin): entry held in r4, where the restart's bx takes it. */
   register u32 entry __asm__("r4");
@@ -92,6 +97,8 @@ static __inline__ void System_Reset(void) {
   __asm__ volatile("bx %0" : : "r"(entry));
 }
 
+/// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
+/// Stop call): the sleep that L and R end.
 static __inline__ void Bios_Stop(void) {
   CAMELOT_ASM("BIOS Stop has no C instruction.")
   __asm__ volatile("swi 3");
@@ -317,6 +324,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
+/// Copies 16 bytes from `source` to `destination` with one four-register load
+/// and store.
 static __inline__ void Copy16Bytes(const void *source,
                                    volatile void *destination) {
   register const void *src __asm__("r0") = source;
@@ -420,6 +429,7 @@ s32 Sound_LoadReverbCode(s32 preset) {
   return 0;
 }
 
+/// Empty routines.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
 UNUSED void Sound_ReservedNoOpB(void) {}

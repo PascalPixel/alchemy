@@ -16,6 +16,8 @@ void Decompress_Halfwords(const void *source, void *destination) {
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
+/// Decompresses the tagged LZ data at `source` to `destination` with a heap
+/// copy of its ARM decoder, and returns what the decoder returns.
 s32 Decompress_TaggedLz(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
@@ -26,6 +28,7 @@ s32 Decompress_TaggedLz(const void *source, void *destination) {
   return result;
 }
 
+/// As Decompress_TaggedLz, with the decoder of Resource_Decode2Code.
 s32 Resource_DecodeType2(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
@@ -36,6 +39,7 @@ s32 Resource_DecodeType2(const void *source, void *destination) {
   return result;
 }
 
+/// As Decompress_TaggedLz, with the byte LZ decoder.
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;

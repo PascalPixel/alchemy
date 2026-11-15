@@ -515,16 +515,21 @@ const s16 gElement_PowerResistCurve[5][2] = {
     {200, 256}, {100, 128}, {0, 0}, {-100, -128}, {-200, -256},
 };
 
-/// The classes Battle_IsEffect90Class looks for.
-const u16 gBattle_Effect90Classes[47] = {
+/// The dragons, by enemy id: the Hydras, Serpents, Dinos, Dragons, Lizards,
+/// Chimeras and the Doom Dragon. Raiden's Wrath (the Cloud Brand's unleash)
+/// takes effect only on these (Enemy_IsDragon).
+const u16 gEnemy_DragonIds[DRAGON_ENEMY_COUNT] = {
     88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,  99,
     100, 143, 144, 145, 149, 150, 151, 176, 177, 178, 185, 186,
     187, 191, 192, 193, 194, 195, 196, 299, 300, 301, 323, 324,
     325, 357, 369, 370, 371, 372, 373, 374, 375, 376, 377,
 };
 
-/// The classes Battle_IsEffect91Class looks for.
-const u16 gBattle_Effect91Classes[29] = {
+/// The sea creatures, by enemy id: the Cuttles, Jellies, Hydras, Poseidon,
+/// the shells and urchins, the Mermen, the sea Dragons, the Seabirds, the
+/// Lizard Men and the Kraken. The Trident's use takes effect only on these
+/// (Enemy_IsSeaCreature).
+const u16 gEnemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT] = {
     84,  85,  86,  87,  88,  89,  90,  101, 102, 103, 167, 168, 169, 170, 171,
     172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 330, 331, 332, 348,
 };

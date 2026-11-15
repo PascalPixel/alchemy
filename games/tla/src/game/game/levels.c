@@ -23,6 +23,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
+/// Returns the first party member who knows Psynergy `action`, or -1.
 s32 Party_FindOwnerWithAction(s32 action) {
   s16 owners[10];
   s32 count = Party_ListMembers(owners);
@@ -293,6 +294,7 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   return -1;
 }
 
+/// The compiler library's unsigned division, which Unit_LevelUp calls by name.
 u32 __udivsi3(u32 numerator, u32 denominator);
 
 /// Raises a character one level (up to 99), adding to each base stat the
@@ -301,8 +303,6 @@ u32 __udivsi3(u32 numerator, u32 denominator);
 /// part. Writes the unit's level, base stats and, if short, its experience,
 /// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
 /// returned.
-/// Raises a character one level, up to 99, each base stat growing along its
-/// curve with a random part. Returns gains.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
   struct LevelUpWork *work;

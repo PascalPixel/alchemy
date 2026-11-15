@@ -102,6 +102,8 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   return (void *)cached_address;
 }
 
+/// Fills the free space of both heaps, from each pool's next address to its
+/// end, with `value`.
 void Heap_FillFreeWords(u32 value) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 address;

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "sound/sound_driver_types.h"
 
+/// The three sounds the sound test's selectors start on.
 struct SoundTestCues {
   s32 cue[3];
 };

@@ -359,7 +359,6 @@ struct SceneRegion;
 
 /// The table a scene overlay starts with (gOverlayArea): a veneer word and an
 /// entry point for each of its tables.
-// As ☀️'s.
 struct SceneEntries {
   u32 initializeVeneer;
   s32 (*initialize)(void);

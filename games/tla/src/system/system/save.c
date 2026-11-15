@@ -105,8 +105,6 @@ s32 Save_InitializeWork(void) {
 /// of the 15 sectors. The last free sector only goes to a part that already has
 /// a copy, so replacing a save always has room. Returns 15 when there is no
 /// sector to use.
-// As ☀️'s Save_SelectWriteSector.
-/// Picks the free sector to write part `mode` to, at random.
 u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[15];
   s32 count;
@@ -390,6 +388,8 @@ s32 Save_LoadFileSummaries(void) {
   return count;
 }
 
+/// Reads part 3's summary into the save work's extra summary, with four bytes
+/// from its next sector; returns 1, or 0 when part 3 has no copy.
 s32 Save_LoadExtraSummary(void) {
   struct SaveWorkspace *work;
   struct SaveSummary *summary;

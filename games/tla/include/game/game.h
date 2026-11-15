@@ -97,8 +97,11 @@ s32 Djinn_CanSet(s32 owner, s32 index, s32 bit);
 
 struct BattleElementStats;
 
-extern const u16 gBattle_Effect90Classes[47];
-extern const u16 gBattle_Effect91Classes[29];
+/// How many enemies gEnemy_DragonIds and gEnemy_SeaCreatureIds list.
+#define DRAGON_ENEMY_COUNT 47
+#define SEA_CREATURE_ENEMY_COUNT 29
+extern const u16 gEnemy_DragonIds[DRAGON_ENEMY_COUNT];
+extern const u16 gEnemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT];
 extern const struct AbilityDefinition gAbilityDefinitions[];
 extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 extern const struct EnemyDefinition gEnemy_Definitions[];

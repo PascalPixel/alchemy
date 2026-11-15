@@ -9,6 +9,7 @@
 #define ICON_COUNT 15 ///< Number of carried items.
 #define ICON_NONE 96  ///< No resource.
 
+/// An icon sprite's OAM attributes, as OAM lays them out.
 struct IconAttr {
   u8 y;
   u8 attr0High;
@@ -19,6 +20,7 @@ struct IconAttr {
   u16 unk06;
 };
 
+/// An icon's sprite: its link in the sprite list and its OAM attributes.
 struct IconSprite {
   u32 link;
   struct IconAttr attr;

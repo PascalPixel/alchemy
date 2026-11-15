@@ -433,6 +433,7 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
+/// Returns the unit's PP over its maximum PP, in 16.16; 0 with no maximum.
 static __inline__ s32 Owner_GetPpRatio(s32 owner) {
   struct BattleUnit *unit = Unit_Get(owner);
 
@@ -648,8 +649,10 @@ void MainRoutineWork_InitializeDefaults(void) {
   }
 }
 
+/// Makes Jenna the leader.
 void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = JENNA; }
 
+/// Makes Felix the leader, with Jenna and Sheba out of the party.
 void Party_SetLeaderFelix(void) {
   gMainRoutineWork.leaderActorId = FELIX;
   Party_AddMember(FELIX);
@@ -808,6 +811,8 @@ void Party_BalanceDjinn(void) {
   }
 }
 
+/// Returns flag `flag` of flag bytes laid out as gGameFlagBytes: another save's
+/// flags, as DataTransfer_Apply reads them.
 s32 FlagBits_Test(u8 *bytes, s32 flag) {
   s32 bit;
   u32 index;

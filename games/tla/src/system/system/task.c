@@ -297,6 +297,8 @@ void Task_RunPass(s32 pass) {
   }
 }
 
+/// Returns how many tasks run in pass `pass` (TASK_PASS_FRAME or
+/// TASK_PASS_VBLANK).
 s32 Task_CountInPass(s32 pass) {
   u32 cursor;
   struct Task *task;
@@ -324,6 +326,8 @@ s32 Task_CountInPass(s32 pass) {
   return pass;
 }
 
+/// Runs pass `pass`'s tasks in table order, up to the first task of the VBlank
+/// pass.
 void Task_RunPassBeforeVBlankTasks(s32 pass) {
   struct Task *task = gTasks;
   s32 remaining;
@@ -336,7 +340,7 @@ void Task_RunPassBeforeVBlankTasks(s32 pass) {
       if (--remaining == 0)
         return;
       task++;
-      if (TASK_STATE_HIGH(task) == 4)
+      if (TASK_STATE_HIGH(task) == TASK_PASS_VBLANK >> 8)
         return;
       if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;

@@ -233,21 +233,23 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   return -fixedChance;
 }
 
-s32 Battle_IsEffect90Class(s32 classId) {
+/// Returns 1 when enemy `enemyId` is one of gEnemy_DragonIds.
+s32 Enemy_IsDragon(s32 enemyId) {
   u32 i;
 
-  for (i = 0; i < 47; i++) {
-    if (classId == gBattle_Effect90Classes[i])
+  for (i = 0; i < DRAGON_ENEMY_COUNT; i++) {
+    if (enemyId == gEnemy_DragonIds[i])
       return 1;
   }
   return 0;
 }
 
-s32 Battle_IsEffect91Class(s32 classId) {
+/// Returns 1 when enemy `enemyId` is one of gEnemy_SeaCreatureIds.
+s32 Enemy_IsSeaCreature(s32 enemyId) {
   u32 i;
 
-  for (i = 0; i < 29; i++) {
-    if (classId == gBattle_Effect91Classes[i])
+  for (i = 0; i < SEA_CREATURE_ENEMY_COUNT; i++) {
+    if (enemyId == gEnemy_SeaCreatureIds[i])
       return 1;
   }
   return 0;
@@ -290,21 +292,17 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 }
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
-/// when there is nothing for it to do; the chance is the base rate, plus three
-/// times the caster's lead over the target in the element, less half the
-/// target's luck, plus 25 against a weakness, times `successScale` percent.
-/// Effects 90 and 91 are decided by the target's enemy id; a target with 40
-/// luck or more shrugs off effects 18, 19, 26 to 28, 34, 80 and 82, and a
-/// character 82; effects 80 and 85 get three tries as 67 does.
-// As The Broken Seal's function of the same name, with effects 90 and 91 added.
-/// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do. The chance is the base rate, plus three
 /// times the caster's lead over the target in the element's level less half
 /// the target's luck (so every two points of luck take off three), plus
 /// 25 against a weakness, times `successScale` percent. A base rate of 0 or
 /// less counts as its magnitude, still scaled but skipping the levels, luck
 /// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
-/// time in 100. Luff gets three tries.
+/// time in 100. Luff (ABILITY_EFFECT_SEAL_2_TURNS) and effects 80 and 85 get
+/// three tries. Raiden's Wrath (effect 90) and the Trident (91) take hold only
+/// on a dragon or a sea creature; a target with 40 Luck or more shrugs off
+/// poison, haunting, instant death, the curse, Leave One HP and effects 80 and
+/// 82, and a character effect 82 too.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   u8 *state = Unit_Get(target);
@@ -320,10 +318,11 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   u8 *stun;
   u8 *sleep;
 
+  // Raiden's Wrath works only on dragons, the Trident only on sea creatures.
   if (effectId == 90)
-    return Battle_IsEffect90Class(unit->enemyId);
+    return Enemy_IsDragon(unit->enemyId);
   if (effectId == 91)
-    return Battle_IsEffect91Class(unit->enemyId);
+    return Enemy_IsSeaCreature(unit->enemyId);
 
   if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0) {
     return 0;

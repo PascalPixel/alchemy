@@ -13,6 +13,9 @@ struct BlendScriptState {
   u16 paused;
 };
 
+/// One of a map's 16 tile animations (TilesetAnim_StartAll): the start of its
+/// script, where it is, the frames left before its next step, and whether it
+/// is paused.
 struct MapAnimation {
   const u16 *start;
   const u16 *cursor;
@@ -20,6 +23,8 @@ struct MapAnimation {
   u16 paused;
 };
 
+/// One cell of a map layer: its cell picture and flags, its collision
+/// code and a second attribute byte.
 struct MapCell {
   u16 cellPictureAndFlags;
   u8 collisionCode;
@@ -43,6 +48,9 @@ struct MapLayer {
   u8 *terrainIds;
 };
 
+/// The map grid's work (heap slot HEAP_SLOT_MAP_GRID): the point the view
+/// follows, the screen shake, the tile animations and blend script, and the
+/// view.
 struct MapWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels.
   s32 *origin;

@@ -237,10 +237,14 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return standbyCount;
 }
 
+/// Returns the first halfword of the definition of Djinni `index` of element
+/// `group`.
 u16 Djinn_GetDefinitionHeader(u32 group, u32 index) {
   return *Djinn_GetDefinition(group, index);
 }
 
+/// Returns how many Djinn of element `index` the unit holds, or of every
+/// element for -1.
 s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
   struct OwnerDjinnState *state;
   s32 result;
@@ -280,6 +284,8 @@ s32 Party_SumDjinnCounts(s32 element) {
   return djinnCount;
 }
 
+/// Counts the Djinn recovery down, then sets every Djinni each party member
+/// holds and can set, taking it off the recovery list.
 void Djinn_ActivateOfferedForParty(void) {
   u16 owners[16];
   s32 count = Party_ListMembers((s16 *)owners);

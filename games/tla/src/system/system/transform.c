@@ -21,6 +21,7 @@ struct ProjectedPoint {
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + TRIG_TURN / 4)
 
+/// An empty routine.
 void Render_EmptyHook(void) {}
 
 /// Allocates the matrix-save storage and sets the current matrix to identity.
@@ -438,10 +439,14 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   projection[2] = farDepth;
 }
 
+/// Transforms `vector` by gTransform into `result`.
 static inline void Render_TransformVector(const void *vector, s32 *result) {
   Iwram_TransformVectorEntry(vector, result);
 }
 
+/// Transforms `point` by gTransform and projects it onto the screen into
+/// `screen`, returning the scale at its depth; a point outside the near and far
+/// depths keeps its view coordinates and returns 0.
 s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   struct ProjectedPoint view;
   struct Projection *projection;

@@ -19,6 +19,8 @@ enum {
 #include "sounds.h"
 #include "actor.h"
 
+/// Hands `command` to the serial work (heap slot HEAP_SLOT_SAVE) and starts it
+/// from the beginning; does nothing without the work.
 void Serial_QueueCommand(u32 command) {
   struct SerialCommandWork *work = Ram_HeapSlots->saveWork;
 
@@ -482,6 +484,7 @@ s32 Serial_StartReceive(void *destination) {
   return 0;
 }
 
+/// Waits a frame at a time until the queued send is done, or 600,000 frames.
 void Serial_WaitForSend(void) {
   u32 count = 0;
 
@@ -493,6 +496,7 @@ void Serial_WaitForSend(void) {
   }
 }
 
+/// Waits a frame at a time until the queued receive is done, or 600,000 frames.
 void Serial_WaitForReceive(void) {
   u32 count = 0;
 
@@ -533,6 +537,8 @@ s32 Serial_GetActiveTransfers(void) {
   return flags;
 }
 
+/// Clears the serial transfer for a link battle with interrupts off: nothing to
+/// send or receive, no flags, and status 0x80.
 void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;

@@ -16,6 +16,8 @@ enum VramBlockLimits {
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 
+/// A sprite slot of the VRAM cache: the size of its block and where the block
+/// starts in sprite VRAM.
 struct VramBlockCacheEntry {
   u16 size;
   u16 offset;

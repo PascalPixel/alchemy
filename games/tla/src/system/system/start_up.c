@@ -86,6 +86,7 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
+/// Empty routines.
 void RuntimeDispatch_ReservedNoOpA(void) {}
 
 void RuntimeDispatch_ReservedNoOpB(void) {}
@@ -108,6 +109,7 @@ void System_CopyBuildStamp(void) {
   gBuildStamp[3] = 0;
 }
 
+/// An empty routine.
 void Resource_ReservedNoOp(s32 count) {}
 
 /// Returns the ROM address of resource `index` from the resource directory.

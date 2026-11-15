@@ -46,10 +46,14 @@ enum GameStart {
   GAME_START_DEBUG_TITLE = 4             ///< SCENE_TITLE from entrance 8
 };
 
+/// The four backgrounds' scroll registers as words, horizontal and vertical
+/// together.
 struct BgScrollRegs {
   u32 words[4];
 };
 
+/// The serial transfer's command, as Serial_QueueCommand hands it to the save
+/// work: the command, how far it has got and its state.
 struct SerialCommandWork {
   u8 unk0000[0x313c];
   u32 command;

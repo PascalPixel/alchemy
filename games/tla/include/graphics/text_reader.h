@@ -5,6 +5,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A place in a Huffman-coded message: the symbol decoded last, which picks
+/// the tree for the next, the message's next word and the bits left of it.
 struct TextReader {
   u32 previousCode;
   const u32 *words;

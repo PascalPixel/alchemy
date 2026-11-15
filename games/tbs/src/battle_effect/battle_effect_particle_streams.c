@@ -34,7 +34,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
 
-  for (i = 0; i != 63; i++) {
+  for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
     s32 blue = RGB_BLUE(*color);
     s32 green = RGB_GREEN(*color);
     s32 red = RGB_RED(*color);
@@ -78,8 +78,10 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
   BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
 }
 
-/// The burst's embers, 512 in PARTICLES after its 128 flashes.
-#define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
+/// The burst's flashes in PARTICLES, then its embers.
+#define PARTICLE_STREAMS_FLASHES 128
+#define PARTICLE_STREAMS_EMBER_COUNT 512
+#define PARTICLE_STREAMS_EMBERS (&PARTICLES[PARTICLE_STREAMS_FLASHES])
 
 /// The mote pictures in the blast sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
@@ -193,7 +195,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                BGCNT_SCREEN_BASE(31);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  for (i = 0; i != 63; i++) {
+  for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
     s32 red = (Random16() & 15) + 16;
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
@@ -337,7 +339,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         CLAMP(green, 0, RGB_LEVEL_MAX);
         *line++ = RGB(green >> 1, green, blue);
       }
-      for (; i != 160; i++)
+      for (; i != DISPLAY_HEIGHT; i++)
         *line++ = 0;
       if (direction == 1)
         x = frame / 4;
@@ -462,7 +464,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     mote->x = Random16() & 127;
     mote->y = (Random16() & 127) + 127;
   }
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != PARTICLE_STREAMS_FLASHES; i++) {
     struct Particle *flash = &PARTICLES[i];
 
     SET_POSITION(flash, 0, 0, 0);
@@ -470,7 +472,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                  (Random16() & 255) << 11, ((Random16() & 255) - 127) << 12);
     flash->variant = 0;
   }
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != PARTICLE_STREAMS_EMBER_COUNT; i++) {
     struct Particle *ember = &PARTICLE_STREAMS_EMBERS[i];
 
     SET_POSITION(ember, 0, 0, 0);

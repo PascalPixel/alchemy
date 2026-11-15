@@ -314,7 +314,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Projection_ScaledUnit(work->args->targets[0], &targetPos);
   Projection_ScaledUnit(work->args->user, &casterPos);
   BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   casterActor = GetBattleObjectSlotFar(work->args->user)->actor;
 

@@ -254,7 +254,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 72) {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 

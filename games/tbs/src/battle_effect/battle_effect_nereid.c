@@ -14,8 +14,8 @@
 /// Wrapping columns of water; gNereid_Columns has a fourth row that nothing
 /// draws.
 #define NEREID_COLUMNS 3
-#define NEREID_DROPS 1024          ///< drops of spray in PARTICLES
-#define NEREID_COLUMN_PICTURE 1764 ///< the column of water in the sheet
+#define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
+#define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
 
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away.

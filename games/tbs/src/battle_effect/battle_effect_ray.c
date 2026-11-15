@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-#define RAY_SPARK_COUNT 1024 ///< sparks in PARTICLES
+#define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 
 #define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
 #define RAY_COUNT 4       ///< bolts

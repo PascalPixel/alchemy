@@ -9,9 +9,9 @@
 // more.
 
 #define VOLCANO_FRAMES 96
-#define VOLCANO_ERUPTION 200    ///< sparks thrown as a pillar starts
-#define VOLCANO_TRICKLE 4       ///< and each frame after
-#define VOLCANO_SPARK_POOL 1024 ///< sparks in PARTICLES
+#define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4    ///< and each frame after
+#define VOLCANO_SPARK_POOL PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 /// The flame on odd frames, then on even frames, after the 34x104 column.
 #define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
 #define VOLCANO_FLAME_PICTURE_EVEN                                             \

@@ -8,9 +8,10 @@
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star effect, after the swirl.
 #define HELM_SPLITTER_STAR_PICTURES 16000
-#define HELM_SPLITTER_CLEARED_SLOTS 1024 ///< PARTICLES slots freed first
-#define HELM_SPLITTER_SPARKS 16          ///< sparks scattered by the strike
-#define HELM_SPLITTER_SPARK_SLOTS 128    ///< spark slots moved and drawn
+#define HELM_SPLITTER_CLEARED_SLOTS                                            \
+  PARTICLE_POOL_COUNT                 ///< PARTICLES slots freed first
+#define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
+#define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn
 
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground.

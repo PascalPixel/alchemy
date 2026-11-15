@@ -109,7 +109,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   duration = gGrowth_ColumnCounts[work->args->variant] * 4 + 56;
 
-  for (i = 0; i != 1024; i++)
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++)
     PARTICLES[i].variant = -1;
 
   for (i = 0; i != 16; i++) {
@@ -366,7 +366,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   frameCount = gGrowth_Counts[work->args->variant] * 8 + 56;
 
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PARTICLES[i].variant = -1;
   }
 

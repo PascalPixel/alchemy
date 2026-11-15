@@ -126,7 +126,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // Each target's shell starts at the user.
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   height = px(4);
   EFFECT_FOR_EACH_TARGET(k, work->args) {

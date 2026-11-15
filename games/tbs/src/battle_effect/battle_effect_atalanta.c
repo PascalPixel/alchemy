@@ -198,7 +198,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     point[1] = 0;
     point[2] = 0;
     if (frame == 48) {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
     // The shafts appear one after another.

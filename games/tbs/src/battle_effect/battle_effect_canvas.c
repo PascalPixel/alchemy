@@ -311,7 +311,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
                               BATTLE_BACKGROUND_FADE_RESTORE);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,

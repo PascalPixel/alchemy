@@ -328,7 +328,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   camera = gBattleCamera;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
@@ -819,7 +819,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   // Setup, as for the element pillar.
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
@@ -993,7 +993,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   switch (element) {

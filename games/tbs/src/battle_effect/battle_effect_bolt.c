@@ -47,7 +47,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  for (j = 0; j != 1024; j++)
+  for (j = 0; j != PARTICLE_POOL_COUNT; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -137,7 +137,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
     }
 
     // Sparks fall, bounce and shrink as they die.
-    for (j = 0; j != 1024; j++) {
+    for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
       struct Particle *spark = &PARTICLES[j];
 
       if (spark->variant > 0) {

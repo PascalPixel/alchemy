@@ -7,7 +7,8 @@
 // The lightning pillars throw their sparks into one pool in PARTICLES, as
 // Volcano's fire pillars do, and the sparks bounce off the ground.
 
-#define PLASMA_SPARK_COUNT 1024 ///< sparks in PARTICLES, shared by every pillar
+#define PLASMA_SPARK_COUNT                                                     \
+  PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
 
 #define PLASMA_SPACING 8 ///< frames between pillars
 /// The second picture in the sheet, after the first 48x112 one.

@@ -103,7 +103,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PARTICLES[i].variant = -1;
   }
   for (i = 0; i != 32; i++) {
@@ -205,7 +205,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     if (frame == 76) {
-      for (i = 0; i != 1024; i++) {
+      for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
         // A second spray.
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
@@ -220,7 +220,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     if (frame == 152) {
       Irq_SetHandler(IRQ_VCOUNT, 96, BattleEffect_SetBg2AffineScaleHalf);
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 
@@ -382,7 +382,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // The spray falls.
     if (frame > 27) {
       DrawRectangle draw = blit[1];
-      for (i = 0; i != 1024; i++) {
+      for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
           EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
@@ -415,7 +415,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PARTICLES[i].variant = 0;
   }
   for (i = 0; i != 16; i++) {
@@ -463,7 +463,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           if (column->variant <= 7) {
             work->shakeFrames = 4;
           }
-          for (j = 0; j != 1024; j++) {
+          for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
             if (PARTICLES[j].variant == 0) {
               s32 r = (Random16() & 0x3ff) + 32;
               s32 a;
@@ -489,7 +489,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_LEAP);
       }
     }
-    for (i = 0; i != 1024; i++) {
+    for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
       if (PARTICLES[i].variant > 0) {
         s32 x;
         s32 y;

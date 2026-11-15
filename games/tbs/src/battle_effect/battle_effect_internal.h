@@ -142,6 +142,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define BATTLE_PROJECTION_CENTER_Y 120
 #define SUMMON_PROJECTION_CENTER_Y (BATTLE_PROJECTION_CENTER_Y * 2)
 
+/// The frames the battle background darkens behind an effect's canvas
+/// (work->fadeFrames, Palette_StepFadeTransfer).
+#define BACKGROUND_DARKEN_FRAMES 24
+
 /// A sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.
 #define SHEET_PALETTE_COLORS 64

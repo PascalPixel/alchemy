@@ -31,7 +31,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
     element -= DJINNI_ENTRANCE_LONG;
@@ -309,7 +309,7 @@ void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_BLIZZARD);
 }
 
-#define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
+#define PROJECTILE_VOLLEY_PARTICLE_COUNT PARTICLE_POOL_COUNT
 
 /// The bytes of a gProjectileVolley_Modes row.
 enum VolleyField {

@@ -345,7 +345,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     scrollX = 64 - screenPosition.x;
     gBgScroll[1].x = scrollX;
     gBgScroll[1].y = 80;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);

@@ -60,7 +60,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
 
   // The lights fly off the user in every direction.
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
     struct Actor *src = GetBattleObjectSlotFar(work->args->user)->actor;
     s32 height = BattleUnit_GetEffectHeightFar(work->args->user);

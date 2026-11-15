@@ -87,8 +87,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   }
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
-  work->fadeFrames = 24;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));

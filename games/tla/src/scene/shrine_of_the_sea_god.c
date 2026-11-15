@@ -387,7 +387,7 @@ void ShrineOfTheSeaGod_FightBreath(void) {
       GameFlag_Set(FLAG_BREATH_TRAPPED_EAST);
     else if (*state == 5)
       GameFlag_Set(FLAG_BREATH_TRAPPED_WEST);
-    Field_RequestDjinnBattle(14, 67);
+    Field_RequestDjinnBattle(ACTOR_BREATH, DJINNI_BREATH);
   }
 }
 
@@ -2395,9 +2395,10 @@ s32 Scene_PrepareMap(void) {
   if (GameFlag_Get(FLAG_FIGHTING_BREATH)) {
     if (gMainRoutineWork.sequenceResult == 1) {
       if (GameFlag_Get(FLAG_BREATH_TRAPPED_EAST))
-        ShrineOfTheSeaGod_ObjPlaceAt(14, px(360), px(216), 0);
+        ShrineOfTheSeaGod_ObjPlaceAt(ACTOR_BREATH, px(360), px(216), 0);
       else if (GameFlag_Get(FLAG_BREATH_TRAPPED_WEST)) {
-        ShrineOfTheSeaGod_ObjPlaceTurn(14, px(328), px(216), FACING_WEST);
+        ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(328), px(216),
+                                       FACING_WEST);
       }
     }
     GameFlag_Clear(FLAG_FIGHTING_BREATH);

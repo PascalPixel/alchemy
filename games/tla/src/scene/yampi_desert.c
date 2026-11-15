@@ -247,6 +247,10 @@ enum YampiDesertScorpionPitActorId {
   ACTOR_ROCK_PIT_MARKER
 };
 
+/// The room's first treasure, numbered from 64 by its item table: the hint in
+/// the rocks, the medal's spot, the pit's find.
+enum { ACTOR_HIDDEN_TREASURE = 64 };
+
 /// The Blow Mace chest's room's actors after its stake
 /// (SceneId_YampiDesertBlowMaceChest): the seven its sand slide shows and
 /// hides.
@@ -989,7 +993,8 @@ loop_3:
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 216, 184);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, angle, 0);
-  Actor_FaceDirectionAndRefreshById(21, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
+                                    FACING_EAST);
   FieldEvent_Wait(20);
   YampiDesert_ScorpionUsesScoop();
   Sound_Play(SE_WHOOSH);
@@ -1066,12 +1071,12 @@ s32 YampiDesert_CellCenter(s32 cell) { return cell * 16 + 8; }
 /// Reveal shows the hint in the rocks of the Trainer's Whip chest's room.
 void YampiDesert_RevealRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(ACTOR_HIDDEN_TREASURE);
   s32 column = leader->x.fixed >> 20;
   s32 row = leader->z.fixed >> 20;
 
   if (object != NULL)
-    Actor_SetPosition(64, 616, 444);
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 616, 444);
   MapGrid_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
   MapGrid_CopyCellAttributes(82, 82, 5, 6, 15, 40);
   MapGrid_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
@@ -1110,8 +1115,8 @@ void YampiDesert_HideRockHint(void) {
   s32 column = leader->x.fixed >> 20;
   s32 row = leader->z.fixed >> 20;
 
-  if (Actor_GetById(64) != NULL)
-    Actor_SetPosition(64, 0, 0);
+  if (Actor_GetById(ACTOR_HIDDEN_TREASURE) != NULL)
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
   MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
   MapGrid_CopyCellAttributes(82, 89, 5, 6, 15, 40);
   MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
@@ -1130,12 +1135,12 @@ void YampiDesert_HideRockHint(void) {
 
 /// Reveal shows the hidden spot of the medal spot's room.
 void YampiDesert_RevealMedalSpot(void) {
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(ACTOR_HIDDEN_TREASURE);
   struct Actor *leader;
 
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-    Actor_SetPosition(64, 288, 240);
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 288, 240);
     if ((leader->x.fixed + px(8)) >> 20 == (object->x.fixed + px(8)) >> 20 &&
         (leader->z.fixed + px(8)) >> 20 == (object->z.fixed + px(8)) >> 20)
       Actor_SetPosition(gMainRoutineWork.leaderActorId, 288, 256);
@@ -1144,8 +1149,8 @@ void YampiDesert_RevealMedalSpot(void) {
 
 /// As Reveal fades, the medal spot's room's hidden spot is covered again.
 void YampiDesert_HideMedalSpot(void) {
-  if (Actor_GetById(64))
-    Actor_SetPosition(64, 0, 0);
+  if (Actor_GetById(ACTOR_HIDDEN_TREASURE))
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
 }
 
 /// Opens the sand pit over the ladder in the oasis.
@@ -2055,8 +2060,8 @@ void Scene_RunUnlessFlag(void) {
 
 /// Hides the Trainer's Whip chest's room's sand slide actors.
 void YampiDesert_SetUpTrainersWhipChestSlideActors(void) {
-  Actor_Hide(11);
-  Actor_Hide(12);
+  Actor_Hide(ACTOR_WHIP_CHEST_ROOM_FIRST_SLIDE);
+  Actor_Hide(ACTOR_WHIP_CHEST_ROOM_SECOND_SLIDE);
   Scene_RunUnlessFlag();
 }
 
@@ -2394,7 +2399,7 @@ void YampiDesert_SetUpKingScorpion(void) {
 void YampiDesert_SetUpTreasurePit(void) {
   FieldEffect_StartBlankOverlay(0);
   if (GameFlag_Get(FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP) == 0)
-    Actor_SetWideSprite(64, 0);
+    Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
 }
 
 /// Stores a halfword.
@@ -2408,7 +2413,7 @@ static inline void Scene_StoreU16(u16 *field, s32 value) {
 /// the Japanese edition), it sets gMainRoutineWork's pair at 0x260 to the room
 /// whose flag is set.
 void YampiDesert_SetUpTrainersWhipChest(void) {
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(ACTOR_HIDDEN_TREASURE);
   s32 scene;
 
   Scene_QueueMusic(SE_KIRIN);
@@ -2416,7 +2421,7 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
   YampiDesert_PlaceRope(0, FLAG_YAMPI_DESERT_ROPE_TIED, ACTOR_ROPE_POLE,
                         ACTOR_ROPE_OTHER_POLE);
   if (object != NULL)
-    Actor_SetPosition(64, 0, 0);
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
   object = Actor_GetById(ACTOR_SIGNPOST);
   object->scaleX = 0xb333;
   object->scaleY = 0xb333;
@@ -2449,8 +2454,8 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
 
 /// Sets up the medal spot's room, and the way in it was entered by.
 void YampiDesert_SetUpMedalSpot(void) {
-  if (Actor_GetById(64) != 0)
-    Actor_SetPosition(64, 0, 0);
+  if (Actor_GetById(ACTOR_HIDDEN_TREASURE) != 0)
+    Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
   if (gMainRoutineWork.entrance == 2) {
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST);
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST);

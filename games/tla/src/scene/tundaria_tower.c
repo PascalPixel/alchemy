@@ -935,7 +935,7 @@ s32 Scene_Initialize(void) {
         } else if (!GameFlag_Get(FLAG_FIGHTING_REFLUX)) {
           MapCell_SetAttributes(0, 26, 33, 0xff00);
         }
-        Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
+        Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
       }
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
           gMainRoutineWork.entrance == 7)
@@ -1275,7 +1275,8 @@ test:
     goto loop;
 }
 
-void TundariaTower_SetPillarMode3(s32 id) {
+/// Keeps the pillar's sprite cached and stops it.
+void TundariaTower_FreezePillar(s32 id) {
   Actor_GetById(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
 }
@@ -1300,9 +1301,9 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   wait(1);
-  TundariaTower_SetPillarMode3(8);
-  TundariaTower_SetPillarMode3(9);
-  TundariaTower_SetPillarMode3(10);
+  TundariaTower_FreezePillar(8);
+  TundariaTower_FreezePillar(9);
+  TundariaTower_FreezePillar(10);
   Actor_SetAnimationById(9, 0);
   wait(1);
   Actor_SetPosition(8, 0, 0);

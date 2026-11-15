@@ -183,6 +183,9 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
 
 /// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
 /// back; stage 4 is the four beams meeting over Mt. Aleph.
+/// The staff credits' one placed actor: the beacon atop Mars Lighthouse.
+enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
+
 void StaffCredit_ShowBeacon(s32 stage) {
   struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   s32 palette;
@@ -193,14 +196,14 @@ void StaffCredit_ShowBeacon(s32 stage) {
   s32 i;
   s32 frame;
 
-  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(ACTOR_BEACON, 0, 0);
   gStaffCredit_BlendSteady = 0;
   wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
-  Actor_SetSpriteFlags(Actor_GetById(8), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEACON), 0);
   if (stage == 4)
     palette = 0;
   gBgScroll[0].y = 0;
@@ -312,19 +315,20 @@ void StaffCredit_ShowBeacon(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetPositionFixed(8, (top << 16) + x0, (left << 16) + z);
+        Actor_SetPositionFixed(ACTOR_BEACON, (top << 16) + x0,
+                               (left << 16) + z);
       }
-      Actor_SetBlendMode(Actor_GetById(8), 1);
-      Actor_SetAnimation(8, 0);
-      Actor_GetById(8)->scaleX = zero;
-      Actor_GetById(8)->scaleY = zero;
+      Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
+      Actor_SetAnimation(ACTOR_BEACON, 0);
+      Actor_GetById(ACTOR_BEACON)->scaleX = zero;
+      Actor_GetById(ACTOR_BEACON)->scaleY = zero;
       if (frame > 22) {
         s32 scale = (frame << 10) - 0x5400;
 
         if (scale > 0x10000)
           scale = 0x10000;
-        Actor_GetById(8)->scaleX = scale;
-        Actor_GetById(8)->scaleY = scale;
+        Actor_GetById(ACTOR_BEACON)->scaleX = scale;
+        Actor_GetById(ACTOR_BEACON)->scaleY = scale;
       }
       if (frame <= 31) {
         s32 step = frame / 4;

@@ -815,6 +815,7 @@ SECTIONS
         "*/games/tla/src/graphics/battle_effects/battle_effects.o"(.rodata.d)
         "*/games/tla/src/graphics/battle_effects/rock_wall.o"(.rodata)
         "*/games/tla/src/graphics/battle_effects/battle_effects.o"(.rodata.e)
+        "*/games/tla/src/graphics/battle_effects/paths.o"(.rodata)
         "*/games/tla/src/map/world/blocks.o"(.rodata)
         "*/games/tla/src/map/default/default.o"(.rodata)
         "*/games/tla/src/graphics/world_map/palette_a.o"(.rodata)

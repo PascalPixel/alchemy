@@ -50,14 +50,15 @@ const u8 gText_ColourPens[16] = {
 };
 // clang-format on
 
-/// The party status's divider columns, in tiles from the window's left: one
-/// list from index 0 and one from index 6, each ending at -1.
+/// The party status's divider columns, in tiles: the Djinn column's line
+/// first, then the members', ending at -1; Window_DrawColumnBorders reads from
+/// index 0 or 1 to that end. A second list follows, which it never reaches.
 const s8 gWindow_PartyColumnOffsets[] = {
     0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1,
 };
 
 #if TLA_PATCH_4 || !TLA_PATCH_3
-/// Unused: six bytes after the columns' lists, which no list reaches; the
+/// Unused: six bytes after the columns' lists, which nothing reads; the
 /// French edition drops them.
 const u8 gWindow_UnusedPartyColumnBytes[] = {
 #if TLA_PATCH_4

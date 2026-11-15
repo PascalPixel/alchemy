@@ -1846,7 +1846,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
   position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
   position[2] = object->z.fixed;
-  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, 0x8000,
+  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, px(1) / 2,
                     frame, 0x130000, &options);
 }
 
@@ -1961,7 +1961,7 @@ spiral:
   spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
-  spark->riseBaseY = 0x7a0000;
+  spark->riseBaseY = px(122);
   spark->watchedActor = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
   FieldActor_SetSpriteColor(spark, 10);
@@ -1988,9 +1988,9 @@ tail:
   wait(16);
   i = 2;
 column:
-  riser = FieldActor_Create(672, second->x.fixed,
-                            second->y.fixed + i * 0x10000 - 0x80000,
-                            second->z.fixed);
+  riser =
+      FieldActor_Create(672, second->x.fixed,
+                        second->y.fixed + i * px(1) - px(8), second->z.fixed);
   riser->timer = Random16();
   riser->userValue = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
@@ -2784,7 +2784,7 @@ void MagmaRockInside_SetActorCellShape(s32 level, s32 layer, s32 owner) {
 
   height += level;
 
-  shape += object->x.fixed / 0x100000 + object->z.fixed / 0x100000 * 128;
+  shape += object->x.fixed / px(16) + object->z.fixed / px(16) * 128;
   *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }
 
@@ -2834,7 +2834,7 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       FieldVector_AddPolarOffsetFixed((Random16() << 3) + 0x80000, angle,
                                       rock->position);
       rock->velocity[0] = 0;
-      rock->velocity[1] = 0x50000;
+      rock->velocity[1] = px(5);
       rock->velocity[2] = 0;
       FieldVector_AddPolarOffsetFixed((Random16() << 1) + 0x20000, angle,
                                       rock->velocity);

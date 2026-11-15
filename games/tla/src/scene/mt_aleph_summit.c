@@ -13,6 +13,7 @@ enum MtAlephSummitActorId {
 #include "../field/field_effect_move.c"
 
 #include "system/task.h"
+#include "graphics/palette_buffers.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -650,10 +651,10 @@ s32 Scene_Initialize(void) {
     MapGrid_SetShake(16, 16, 1);
     i = 0;
   L10:
-    PaletteFade_ApplyTarget(0x10005, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
     PaletteFade_Interpolate(1);
     FieldEvent_Wait(2);
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(1);
     FieldEvent_Wait(2);
     i++;
@@ -772,7 +773,7 @@ s32 Scene_Initialize(void) {
     if (j == 47)
       Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
     if (j == 64) {
-      PaletteFade_ApplyTarget(0x7fff, 0);
+      PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
       PaletteFade_Interpolate(64);
     }
     FIELD(slots, 332) -= 0x10000;
@@ -787,11 +788,11 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_BANE_ESCAPE);
     FieldEvent_Wait(120);
     FieldTask_Remove(MtAlephSummit_PulseColors);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_Interpolate(1);
     System_Wait(1);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-    PaletteFade_ApplyTarget(0, 0);
+    PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_Interpolate(120);
     System_Wait(300);
     Event_SetDestination(SCENE_EPILOGUE, 1);

@@ -730,7 +730,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         if (object->z.fixed > leader->z.fixed)
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
-          object->y.fixed += 0xffffe000;
+          object->y.fixed -= px(1) / 8;
           wait(1);
         }
         Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 3);
@@ -766,7 +766,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         if (object->z.fixed > leader->z.fixed)
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
-          object->y.fixed += 0xffffe000;
+          object->y.fixed -= px(1) / 8;
           wait(1);
         }
         Actor_SetAnimation(ACTOR_LEFT_PILLAR, 3);
@@ -839,7 +839,7 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     Event_Wait(20);                                                            \
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);                                       \
     for (i = 0; i <= 63; i++) {                                                \
-      object->y.fixed += 0x4000;                                               \
+      object->y.fixed += px(1) / 4;                                            \
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(n1, 2);                                            \
@@ -869,10 +869,10 @@ void LemurianShip_ParchHold(void) {
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
   Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x.fixed,
-                         leader->z.fixed + 0xfed00000);
+                         leader->z.fixed - px(304));
   object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
   Actor_SetPositionFixed(FIELD_TREASURE_ACTOR, object->x.fixed,
-                         object->z.fixed + 0xfed00000);
+                         object->z.fixed - px(304));
   FieldActor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 0);
   wait(10);
@@ -1274,7 +1274,7 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
         ((struct Actor *)Actor_GetById(ACTOR_TWO_JELLY_ROOM_PUDDLE_B)), px(104),
         px(-32), px(536));
     ((struct Actor *)Actor_GetById(ACTOR_TWO_JELLY_ROOM_PUDDLE_B))
-        ->groundHeight = 0xffe00000;
+        ->groundHeight = -px(32);
     Actor_SetSpritePriority(ACTOR_TWO_JELLY_ROOM_PUDDLE_B, 1);
     wait(1);
   }
@@ -1591,7 +1591,7 @@ void LemurianShip_SetUpHold(void) {
     Actor_SetPositionAndResetMotion(
         ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), px(136), px(-32),
         px(392));
-    object->groundHeight = 0xfff00000;
+    object->groundHeight = -px(16);
     Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 1);
@@ -1608,7 +1608,7 @@ void LemurianShip_SetUpHold(void) {
         ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
 
     Actor_SetPositionFixed(FIELD_TREASURE_ACTOR, marker->x.fixed,
-                           marker->z.fixed + 0xfed00000);
+                           marker->z.fixed - px(304));
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
@@ -1660,7 +1660,7 @@ void LemurianShip_SetUpPillarRoom(void) {
     MapGrid_CopyCellsTo(29, 68, 29, 69, 1, 1);
     MapGrid_CopyCellAttributes(35, 0, 1, 1, 29, 9);
     object->motionFlags = 0;
-    object->y.fixed = 0xfff00000;
+    object->y.fixed = -px(16);
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, 3);
     Event_SetFlag(FLAG_LEFT_PILLAR_FULL);
     Actor_SetPosition(ACTOR_LEFT_PILLAR_PUDDLE, 472, 152);

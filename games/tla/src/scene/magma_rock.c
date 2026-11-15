@@ -1197,7 +1197,7 @@ first:
   }
   offset[1] = (Random16() & 15) << 16;
   FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                    leader->z.fixed, 0, 0x13333, 0, 0xb0000, opt);
+                    leader->z.fixed, 0, 0x13333, 0, px(11), opt);
   wait(5);
   i++;
   if (i != 8)
@@ -1216,7 +1216,7 @@ second:
     offset[0] = ((Random16() & 15) << 16) - 0x80000;
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                      leader->z.fixed, 0, 0x13333, phase, 0xb0000, opt);
+                      leader->z.fixed, 0, 0x13333, phase, px(11), opt);
   }
   wait(1);
   if (leader->velocityY != 0) {

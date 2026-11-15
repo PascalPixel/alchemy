@@ -304,9 +304,9 @@ void SeaOfTime_RideCurrent(void) {
     else
       *pos -= 0x8000;
     if (object->z.fixed < center.z)
-      object->z.fixed += 0x8000;
+      object->z.fixed += px(1) / 2;
     else
-      object->z.fixed -= 0x8000;
+      object->z.fixed -= px(1) / 2;
   }
   if (SeaOfTime_GetCellCode(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
     turn[0] = SeaOfTime_Cos(-0x200);
@@ -444,12 +444,12 @@ void SeaOfTime_FollowChannel(void) {
         z0 = pos[1];
         if (flip) {
           FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -0x8000, 0,
-                            0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -px(1) / 2,
+                            0, 0, 0xb0000, &spark);
         } else {
           FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], 0x8000, 0,
-                            0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], px(1) / 2,
+                            0, 0, 0xb0000, &spark);
         }
       }
       wait(1);
@@ -733,7 +733,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
       sides[1] += actor->z.fixed;
       sides[2] += actor->x.fixed;
       sides[3] += actor->z.fixed;
-      velocity = 0x8000;
+      velocity = px(1) / 2;
       if (sides[1] != actor->z.fixed) {
         sides[1] -= 0xc0000;
         sides[3] -= 0xc0000;

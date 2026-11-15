@@ -809,7 +809,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         }
       }
     } else {
-      toss->velocity.y -= 0x4000;
+      toss->velocity.y -= px(1) / 4;
     }
   }
 
@@ -1066,7 +1066,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
     rec++;
   } while (i != 4);
 
-  ride->trail[0].x = 0xffe20000;
+  ride->trail[0].x = -px(30);
   ride->trail[0].y = 0;
   ride->trail[0].z = px(100);
   ride->velocity.x = 0;

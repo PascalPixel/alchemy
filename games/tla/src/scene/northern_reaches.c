@@ -3,6 +3,7 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "flags.h"
 #include "system/io_reg.h"
@@ -303,7 +304,7 @@ growBall:
   Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
   t66 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t66, s32, 436) = 100;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   t70 = (s32)Ram_HeapSlots->fieldWork;

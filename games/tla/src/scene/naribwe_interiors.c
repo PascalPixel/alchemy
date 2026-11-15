@@ -5,6 +5,8 @@
 /// for the path to follow.
 
 #include "flags.h"
+#include "graphics/palette_buffers.h"
+#include "system/io_reg.h"
 #include "sprite_ids.h"
 #include "window/message_argument.h"
 #include "shared/tables.h"
@@ -310,9 +312,9 @@ ask:
 read:
   FieldEvent_SetMessageId(message + 4);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   FieldEvent_Wait(30);
-  PaletteFade_ApplyTarget(0x40250d, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
   Event_PlaySound(MUS_KIBOMBO);
@@ -332,7 +334,7 @@ read:
   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5);
   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 0);
   Event_PlaySound(MUS_KIBOMBO);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(30);
   Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 672, 104);
   Event_PlaySound(SE_CLATTER);

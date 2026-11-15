@@ -11,6 +11,7 @@
 /// farewell at the south gate before the credits.
 #include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
+#include "graphics/palette_buffers.h"
 #include "resource_ids.h"
 #include "field/sprite.h"
 #include "field/actor_script.h"
@@ -1269,7 +1270,7 @@ void Actor_Release(struct RisingObject *object);
 
 void Prox_RisePuff(struct RisingObject *object) {
   object->x += object->drift << 8;
-  object->y += 0x8000;
+  object->y += px(1) / 2;
   object->scaleX += 0x51e;
   object->scaleY += 0x51e;
   object->drift += 2;
@@ -2352,7 +2353,7 @@ void Prox_SayFarewell(void) {
     TilesetAnim_Pause(6);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(40);
-    PaletteFade_ApplyTarget(0x10009, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_DIM_GRAY, PALETTES_ALL);
     PaletteFade_Interpolate(120);
     System_Wait(120);
     // Waits up to 120 frames, or until a key is held.
@@ -2366,7 +2367,7 @@ void Prox_SayFarewell(void) {
       if (gInput.held == 0)
         goto next_wait;
     }
-    PaletteFade_ApplyTarget(0, 0);
+    PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_Interpolate(16);
     System_Wait(16);
     Event_SetFlag(FLAG_SAID_FAREWELL);

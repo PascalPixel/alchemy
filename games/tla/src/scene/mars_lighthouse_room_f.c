@@ -1554,7 +1554,7 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -1724,9 +1724,9 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-void Ride_SpawnSpark(s32 *position, s32 speed) {
-  struct Actor *object = Import_ActorCreate_(285, position[0], position[1],
-                                             position[2] + 0xfffe0000);
+void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Import_ActorCreate_(285, position[0], position[1], position[2] - px(2));
   s32 spin;
 
   if (object != NULL) {
@@ -1741,18 +1741,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed) {
   }
 }
 
-/* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1629:
- * structure has no member named `flag5b'. */
-typedef struct Actor__s242c {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1772,14 +1761,6 @@ typedef struct State {
   void (*callback)();
   Entry entries[4];
 } State;
-
-/* VIEW(s242c): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; tried as the definition's void
- * Ride_SpawnSpark(s32 *position, s32 speed), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1662: too many arguments to
- * function `Ride_SpawnSpark'. */
-extern void Ride_SpawnSpark__s242c() __asm__("Ride_SpawnSpark");
 
 typedef struct Position {
   s32 x;
@@ -1840,17 +1821,17 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
+    dx = actor->x.fixed;
+    dz = actor->z.fixed;
     dx -= cameraX;
     /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
      */
     asm("" : : "r"(dx));
-    y = actor->y;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1869,19 +1850,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s242c(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -2448,7 +2429,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
       work2->stepTrigger = other->unk0a + 2;
@@ -2948,7 +2929,7 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;

@@ -15,6 +15,7 @@
 /// party leaves.
 
 #include "flags.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "item_ids.h"
 #include "field/field_sequence_event.h"
@@ -398,7 +399,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
     object =
         FieldActor_Create(0x2a0, anchor->x.fixed + px(8),
-                          anchor->y.fixed + offset + 0x80000, anchor->z.fixed);
+                          anchor->y.fixed + offset + px(8), anchor->z.fixed);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
@@ -595,8 +596,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   MarsLighthouseAerie_StopLookingAround(ACTOR_KRADEN);
   MarsLighthouseAerie_StopLookingAround(ACTOR_IVAN);
   MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 504, 292);
@@ -855,11 +856,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(ACTOR_WISE_ONE, 6);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_SWIRL);
-  PaletteFade_ApplyTarget(0x10005, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
   FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
@@ -1068,10 +1069,10 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   actor->update = (void (*)(void))MarsLighthouseAerie_FlickerWhite;
   Actor_SetScript(ACTOR_WISE_ONE, (s32)gMarsLighthouseAerie_VoiceFadeScript);
-  PaletteFade_ApplyTarget(0x10001, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   PaletteFade_Interpolate(20);
   System_Wait(20);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(40);
   System_Wait(40);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -1094,55 +1095,55 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetPositionAndResetMotion(actor, px(512), px(48), px(280));
   System_Wait(1);
   *motionFlags = 0;
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(20);
   dispcnt = (u16 *)&REG_DISPCNT;
   Event_PlaySound(MUS_039);
   Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
                          (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
   *dispcnt = *dispcnt & 0xf9ff;
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Actor_SetSpeedAndAcceleration(ACTOR_DOOM_DRAGON, 3.2, 0.2);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 544, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 464, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 576, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Actor_SetSpeed(ACTOR_DOOM_DRAGON, 6.4);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 508, 208, 288);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   *dispcnt |= 0x600;
@@ -1156,19 +1157,19 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetPosition(ACTOR_IVAN, 528, 328);
   Actor_SetPosition(ACTOR_MIA, 544, 328);
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(40);
   System_Wait(40);
-  actor->gravity = 0x4000;
+  actor->gravity = px(1) / 4;
   *motionFlags = 3;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
@@ -1281,8 +1282,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   facing = FACING_NORTH;
   Actor_SetPositionAndFacing(leaderId, px(504), px(320), facing);
   System_Wait(1);
-  PaletteFade_ApplySource(0, 0);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_MOTHER)), 15);
   FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_FATHER)), 15);
@@ -1298,8 +1299,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   FieldEvent_Wait(80);
@@ -1358,7 +1359,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   father->update = (void (*)(void))MarsLighthouseAerie_Throb;
   kyle->update = (void (*)(void))MarsLighthouseAerie_Throb;
   FieldEvent_Wait(20);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(40);
   System_Wait(80);
   FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieWhoAreThey);
@@ -1554,7 +1555,7 @@ L_0200a47a:
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MarsLighthouseAerie_EndRisingRings(Actor_Get(ACTOR_PIERS_STAND_IN));
@@ -1918,11 +1919,11 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   case 0:
     Event_PlaySound(SE_SHIMMER);
     MapGrid_SetShake(6, 6, 1);
-    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
     PaletteFade_Interpolate(8);
     break;
   case 8:
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(8);
     break;
   case 16:
@@ -1940,14 +1941,15 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   case 25:
     gMarsLighthouseAerie_BeaconFireFrame--;
     if (anchor->y.fixed > 0) {
-      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
+                              PALETTES_ALL);
       PaletteFade_Interpolate(16);
       gMarsLighthouseAerie_BeaconFireFrame++;
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
       spawn = 1;
-      anchor->y.fixed += 0x24000;
+      anchor->y.fixed += px(9) / 4;
     }
     break;
   case 26:
@@ -1958,7 +1960,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
-      anchor->y.fixed += 0x24000;
+      anchor->y.fixed += px(9) / 4;
       spawn = 1;
     }
     break;
@@ -2149,16 +2151,16 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamWidenScript);
   Event_PlaySound(SE_CRASH);
   MapGrid_SetShake(6, 6, 1);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
   System_Wait(20);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(24);
   System_Wait(60);
   Event_PlaySound(SE_RUMBLE);
   Event_SetFlag(FLAG_BEACON_BROKE_THROUGH);
-  A(((s32)Actor_Get(ACTOR_BEAM_BOTTOM)))->y = 0xffc80000;
-  A(((s32)Actor_Get(ACTOR_BEAM_LOWER)))->y = 0xffe80000;
+  A(((s32)Actor_Get(ACTOR_BEAM_BOTTOM)))->y = -px(56);
+  A(((s32)Actor_Get(ACTOR_BEAM_LOWER)))->y = -px(24);
   FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_BEAM_MIDDLE)), 7);
   piece = (s32)Actor_Get(ACTOR_BEAM_MIDDLE);
   A(piece)->scaleY = 0xffff0000;
@@ -2200,7 +2202,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetSpritePriority((OWNER), 1);
   System_Wait(1);
   MapGrid_SetShake(4, 4, 1);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gMarsLighthouseAerie_BeamNarrowScript);
   Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamNarrowScript);
@@ -2209,11 +2211,11 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_SetScript(ACTOR_BEAM_TOP, gMarsLighthouseAerie_BeamNarrowScript);
   System_Wait(120);
   MapGrid_SetShake(3, 3, 1);
-  PaletteFade_ApplyTarget(0x203210, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MapGrid_SetShake(1, 1, 1);
@@ -2326,7 +2328,7 @@ L_0200bcea:
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_PlaySound(SE_ASCEND);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   System_Wait(20);
   FieldEvent_SetExitRequest(3);
@@ -2436,7 +2438,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_HAMA), 15);
   Actor_SetPosition(ACTOR_HAMA, 512, 360);
   System_Wait(1);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "Have you not learned? One's actions do not always reveal one's true..."
   Event_ShowMessage(ACTOR_HAMA, 0);
@@ -2533,7 +2535,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirectionAndWait(*leader, FACING_EAST);
   FieldEvent_AskYesNoWithActorAnimation(*leader, 0);
   Actor_WaitForAnimationChange(*leader);
-  PaletteFade_ApplyTarget(0x10004, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_RUMBLE);
@@ -2656,7 +2658,7 @@ L_0200c66c:
   ((struct Actor *)Actor_Get(ACTOR_BEACON_GLOW))->priorityFlags &= 253;
   Event_PlaySound(SE_SPIN);
   MapGrid_SetShake(3, 3, 1);
-  PaletteFade_ApplyTarget(0x203210, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(40);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
@@ -2704,11 +2706,11 @@ L_0200c66c:
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_SPIN);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   System_Wait(240);
   REG_DISPCNT = 0;
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(8);
   System_Wait(8);
   FieldEvent_SetExitRequest(4);
@@ -2937,7 +2939,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
@@ -3016,8 +3018,8 @@ void Teleport_ArriveWhirling(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3025,7 +3027,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {

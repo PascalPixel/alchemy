@@ -504,7 +504,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;

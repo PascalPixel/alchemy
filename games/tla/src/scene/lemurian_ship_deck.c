@@ -5,6 +5,7 @@
 /// and sets out for Madra (Room2).
 
 #include "battle/battle.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -826,13 +827,13 @@ void LemurianShipDeck_ReturnToShip(void) {
   Event_PlaySound(SE_SHIMMER);
   func = LemurianShipDeck_EmitSparkle;
   Task_Add(func, TASK_PASS_VBLANK);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
-  PaletteFade_ApplyTarget(0x10006, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_RED, PALETTES_BG);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
@@ -841,7 +842,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   if (handle != 0)
     Actor_Release(handle);
   FieldEvent_Wait(20);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);

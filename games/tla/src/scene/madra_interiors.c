@@ -874,7 +874,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_WalkTo(ACTOR_MUSHROOM_COOK, 410, 109);
   object = Actor_Get(ACTOR_FELIX);
   if (object->z.fixed > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object->x.fixed / 0x10000, 95);
+    Actor_WalkToAndWait(ACTOR_FELIX, object->x.fixed / Q16_ONE, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_WaitForMoveById(ACTOR_MUSHROOM_COOK);
@@ -973,7 +973,7 @@ void MadraInteriors_GiveLaughingFungus(void) {
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(ACTOR_FELIX);
   if (object0->z.fixed > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object0->x.fixed / 0x10000, 95);
+    Actor_WalkToAndWait(ACTOR_FELIX, object0->x.fixed / Q16_ONE, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsOhMy);

@@ -13,6 +13,7 @@
 /// aerie.
 
 #include "system/task.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -394,7 +395,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_WARP);
@@ -415,7 +416,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
   work = Ram_HeapSlots->fieldWork;
   work->psynergy = 0;
   FieldEvent_Wait(30);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   FieldEvent_Wait(10);
@@ -714,8 +715,8 @@ s32 Scene_Initialize(void) {
         FieldCamera_MoveTo(224, 64, 216, 1);
         FieldCamera_WaitForArrival();
         FieldEvent_Wait(20);
-        PaletteFade_ApplySource(0x10000, 0);
-        PaletteFade_ApplyTarget(0x10003, 0);
+        PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+        PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
         entrance = 0x500021e;
@@ -723,7 +724,7 @@ s32 Scene_Initialize(void) {
         System_Wait(1);
         EventMessage_ShowCentered(
             (s32)MsgMarsLighthouseRoomMYouHaveProvenYourWorth, 0, 4);
-        PaletteFade_ApplyTarget(0x10000, 0);
+        PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
         FieldCamera_SetSpeed(1);
@@ -887,7 +888,7 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -907,7 +908,7 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -927,7 +928,7 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -947,7 +948,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -1017,7 +1018,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       FieldCamera_MoveTo(224, 64, 216, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
-      PaletteFade_ApplySource(0x10000, 0);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_SetTarget(0x10003, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
@@ -1045,7 +1046,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_MoveTo(224, 64, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
-    PaletteFade_ApplySource(0x10000, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_SetTarget(0x10003, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
@@ -1100,7 +1101,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
@@ -1197,8 +1198,8 @@ void Teleport_ArriveWhirling(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1206,7 +1207,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {
@@ -1313,11 +1314,11 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   s32 height;
 
   if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
-                                    : b->x.fixed - a->x.fixed) < 0xc0000) {
+                                    : b->x.fixed - a->x.fixed) < px(12)) {
     height = a->y.fixed - b->y.fixed;
     if (height > 0 && height < 0x100000) {
       if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
-                                        : b->z.fixed - a->z.fixed) < 0x80000)
+                                        : b->z.fixed - a->z.fixed) < px(8))
         return 1;
     }
   }
@@ -1353,9 +1354,10 @@ void Ride_UpdateDrift(struct Actor *object) {
 
 #include "shared/actor_setup_scripted.h"
 
-void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value) {
-  struct Actor *object = FieldActor_Create(285, position->x, position->y,
-                                           position->z + 0xfffe0000);
+void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value,
+                     s32 mode) {
+  struct Actor *object =
+      FieldActor_Create(285, position->x, position->y, position->z - px(2));
   s32 angle;
 
   if (object != 0) {
@@ -1372,16 +1374,7 @@ void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value) {
   }
 }
 
-/* VIEW(s1f94): tag struct Actor as struct Actor__s1f94; actor.h has another
- * definition; not tried: struct Actor__s1f94 was not found. */
-typedef struct Actor__s1f94 {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1406,10 +1399,6 @@ void Ride_SpawnForward();
 void Ride_SpawnBackward();
 void Ride_SpawnLandingForward();
 void Ride_SpawnLandingBackward();
-/* VIEW(s1f94): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; not tried: Ride_SpawnSpark's declaration
- * holds a FAKEMATCH tag. */
-extern void Ride_SpawnSpark__s1f94() __asm__("Ride_SpawnSpark");
 extern u8 gInventorySnapshot[];
 
 typedef struct Position {
@@ -1471,17 +1460,17 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
+    dx = actor->x.fixed;
+    dz = actor->z.fixed;
     dx -= cameraX;
     /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
      */
     asm("" : : "r"(dx));
-    y = actor->y;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1500,19 +1489,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s1f94(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -1911,7 +1900,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
       work2->stepTrigger = other->unk0a + 2;

@@ -20,6 +20,7 @@
 /// it; cracked floors (room 7) drop the leader to the floor below.
 
 #include "flags.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "scene/ride.h"
 #include "field/event_inline.h"
@@ -290,7 +291,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
     options.targetScaleX = options.targetScaleY = 0x8000;
     options.rotation = (Random16() & 15) << 12;
     FieldEffect_Spawn(object->x.fixed,
-                      object->y.fixed - index * 3 * 0x10000 + 0x100000,
+                      object->y.fixed - index * 3 * px(1) + px(16),
                       object->z.fixed, ((Random16() & 15) - 8) << 13, 0, 0,
                       0x5a0000, &options);
     object->scaleY -= 0x1f00;
@@ -442,7 +443,7 @@ void MarsLighthouseEntrance_TeleportFromRoom3(void) {
 void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
     Event_PlaySound(SE_574);
-    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
     MapGrid_CopyCellPictureCellsRect_(47, 94, 10, 6, 47, 100);
     Map_CopyCellAttributeRect_(110, 40, 12, 4, 46, 40);
@@ -452,7 +453,7 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     MarsLighthouseEntrance_ScatterIceChips(18);
   if (frame == 276) {
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_Interpolate(20);
   }
 }
@@ -506,7 +507,7 @@ void MarsLighthouseEntrance_CrackRoom3IceSheet(void) {
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
       Event_PlaySound(SE_574);                                                 \
-      PaletteFade_ApplyTarget(0x10000, 0);                                     \
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);                \
       PaletteFade_Interpolate(60);                                             \
       MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
       MapGrid_CopyCellAttributes(n5, n6, 8, n7, n1, n6);                       \
@@ -516,7 +517,7 @@ void MarsLighthouseEntrance_CrackRoom3IceSheet(void) {
     if (frame > 96 && frame < 272 && frame % 30 == 0)                          \
       MarsLighthouseEntrance_ScatterIceChips(n8);                              \
     if (frame == 276) {                                                        \
-      PaletteFade_ApplyTarget(0x7fff, 0);                                      \
+      PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);                  \
       PaletteFade_Interpolate(20);                                             \
     }                                                                          \
   }
@@ -1024,7 +1025,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 void Actor_HoldDuringEvent(void);
 
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *object) {
-  if (ABS(object->x.fixed - object->watchedActor->x.fixed) > 0x200000)
+  if (ABS(object->x.fixed - object->watchedActor->x.fixed) > px(32))
     return;
   object->timer = 0;
   object->update = (void (*)(void))MarsLighthouseEntrance_FlingIceCone;
@@ -1399,9 +1400,9 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 #include "shared/actor_setup_scripted_for.h"
 
 /// Spawns a spark thrown up at `speed`.
-void Ride_SpawnSpark(s32 *position, s32 speed) {
-  struct Actor *object = Import_ActorCreate_(285, position[0], position[1],
-                                             position[2] + 0xfffe0000);
+void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Import_ActorCreate_(285, position[0], position[1], position[2] - px(2));
   s32 spin;
 
   if (object != NULL) {
@@ -1416,18 +1417,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed) {
   }
 }
 
-/* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/shared/beam_draw_targets.h:39:
- * structure has no member named `flag5b'. */
-typedef struct Actor__s20ec {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1447,13 +1437,6 @@ typedef struct State {
   void (*callback)();
   Entry entries[4];
 } State;
-
-/* VIEW(s20ec): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; tried as the definition's void
- * Ride_SpawnSpark(s32 *position, s32 speed), it does not compile in tla-ja:
- * games/tla/src/scene/shared/beam_draw_targets.h:68: too many arguments to
- * function `Ride_SpawnSpark'. */
-extern void Ride_SpawnSpark__s20ec() __asm__("Ride_SpawnSpark");
 
 typedef struct Position {
   s32 x;
@@ -1515,17 +1498,17 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
+    dx = actor->x.fixed;
+    dz = actor->z.fixed;
     dx -= cameraX;
     /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
      */
     asm("" : : "r"(dx));
-    y = actor->y;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1544,19 +1527,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s20ec(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -1989,7 +1972,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
       work2->stepTrigger = other->unk0a + 2;
@@ -2396,7 +2379,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
@@ -2477,8 +2460,8 @@ void Teleport_ArriveWhirling(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2486,7 +2469,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {

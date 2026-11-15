@@ -39,7 +39,8 @@ void String_FormatDecimal(s32 value) {
   }
   gNumberTextBuffer[11] = 0;
   for (i = 10; value != 0; i--) {
-    q = Math_UnsignedMulHigh(value, 0x1999999a);
+    // The high word of value times 2^32 / 10, rounded up, is value / 10.
+    q = Math_UnsignedMulHigh(value, 0xffffffffU / 10 + 1);
     value -= q * 10;
     gNumberTextBuffer[i] = value + '0';
     value = q;
@@ -64,7 +65,7 @@ void DebugText_PrintBlanks(u32 count) {
 
   if (gDebugTextEnabled != 0) {
     for (i = 0; i < count; i++)
-      *dst++ = 0xf000;
+      *dst++ = BG_TILE_PALETTE(15);
     gDebugTextCursor = dst;
   }
 }
@@ -72,31 +73,28 @@ void DebugText_PrintBlanks(u32 count) {
 /// Prints the string `src` (at most 32 characters) at the debug text cursor,
 /// wrapping from the end of the screen to its start, when debug text is on; the
 /// cursor moves past it.
-void DebugText_Print(const u8 *src) {
+void DebugText_Print(const u8 *text) {
   if (gDebugTextEnabled != 0) {
-    u32 addr = ((u32)&gDebugTextCursor);
-    u32 c = *src;
-    u16 *dst = *(u16 **)addr;
-    u32 cnt = 0;
-    src++;
+    u16 *cursor = gDebugTextCursor;
+    u32 c = *text;
+    u32 count = 0;
 
+    text++;
     if (c != 0) {
-      u32 mask;
+      u32 palette = BG_TILE_PALETTE(15);
 
-      addr = 0x06002500;
-      mask = 0xf000;
+      // The end of the 32 by 20 entry screen wraps to its start.
       do {
-        *dst++ = c | mask;
-        if (dst == (u16 *)addr)
-          dst = (u16 *)BG_SCREEN_BLOCK(4);
-        cnt++;
-        if (cnt > 31)
+        *cursor++ = c | palette;
+        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) +
+                              BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2))
+          cursor = (u16 *)BG_SCREEN_BLOCK(4);
+        if (++count > 31)
           break;
-        c = *src++;
+        c = *text++;
       } while (c != 0);
-      addr = ((u32)&gDebugTextCursor);
     }
-    *(u16 **)addr = dst;
+    gDebugTextCursor = cursor;
   }
 }
 
@@ -105,26 +103,18 @@ void DebugText_Print(const u8 *src) {
 
 /// Hexadecimal, digits places (1-8, or 8 if out of range).
 void DebugText_PrintHex(u32 value, s32 digits) {
-  s32 n;
-
-  n = digits;
-  if ((n - 1) > 7U) {
-    n = 8;
-  }
+  if (digits < 1 || digits > 8)
+    digits = 8;
   String_FormatHex(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+  DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - digits));
 }
 
 /// Signed decimal, digits places (1-10, or 10 if out of range).
 void DebugText_PrintDecimal(s32 value, s32 digits) {
-  s32 n;
-
-  n = digits;
-  if ((n - 1) > 9U) {
-    n = 10;
-  }
+  if (digits < 1 || digits > 10)
+    digits = 10;
   String_FormatDecimal(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+  DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - digits));
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
@@ -140,36 +130,17 @@ void DebugText_Clear(void) {
 /// palettes.
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          (void *)BG_CHAR_BLOCK(0), 0x84000800, REG_DMA3);
+          (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  {
-    volatile u16 *pal;
-    s32 color;
-
-    color = 0x4180;
-    pal = (volatile u16 *)(BG_PLTT + 244);
-    *pal = color;
-    color = 0x3960;
-    pal++;
-    *pal = color;
-    color = 0x3140;
-    pal++;
-    *pal = color;
-    color = 0x2920;
-    pal++;
-    *pal = color;
-    color = 0x49a0;
-    pal++;
-    *pal = color;
-    color = 0x51c0;
-    pal++;
-    *pal = color;
-    color = 0x59e0;
-    pal++;
-    *pal = color;
-  }
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }

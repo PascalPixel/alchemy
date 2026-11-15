@@ -75,30 +75,33 @@ void Transform_ResetMatrix(void) {
   Transform_ResetCurrent();
 }
 
-/// Applies rotations around the X, Y and Z axes.
-/// ang: the three axis angles.
-void Transform_ApplyRotation(s32 *ang) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 m[12];
+/// Rotates gTransform by `angles` about the X, Y and Z axes.
+void Transform_ApplyRotation(s32 *angles) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 matrix[TRANSFORM_WORDS];
 
-  sx = Trig_Sin(ang[0]);
+  sinX = Trig_Sin(angles[0]);
 
-  cx = COS(ang[0]);
-  sy = Trig_Sin(ang[1]);
-  cy = COS(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = COS(ang[2]);
-  SET_VECTOR(m, Iwram_MulQ16(cy, cz), Iwram_MulQ16(cy, sz), -sy);
-  m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
-  m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
-  m[5] = Iwram_MulQ16(sx, cy);
-  m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
-  m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
-  m[8] = Iwram_MulQ16(cx, cy);
-  m[9] = 0;
-  m[10] = 0;
-  m[11] = 0;
-  Iwram_TransformMatrix(m);
+  cosX = COS(angles[0]);
+  sinY = Trig_Sin(angles[1]);
+  cosY = COS(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = COS(angles[2]);
+  SET_VECTOR(matrix, Iwram_MulQ16(cosY, cosZ), Iwram_MulQ16(cosY, sinZ), -sinY);
+  matrix[3] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) - Iwram_MulQ16(cosX, sinZ);
+  matrix[4] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) + Iwram_MulQ16(cosX, cosZ);
+  matrix[5] = Iwram_MulQ16(sinX, cosY);
+  matrix[6] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) + Iwram_MulQ16(sinX, sinZ);
+  matrix[7] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
+  matrix[8] = Iwram_MulQ16(cosX, cosY);
+  matrix[TRANSFORM_TRANSLATION_X] = 0;
+  matrix[TRANSFORM_TRANSLATION_Y] = 0;
+  matrix[TRANSFORM_TRANSLATION_Z] = 0;
+  Iwram_TransformMatrix(matrix);
 }
 
 /// The identity store of transform.h's Transform_SetIdentity in ⚓️'s order,
@@ -117,197 +120,206 @@ static __inline__ void Render_SetIdentity(void *matrix) {
 }
 
 /// Applies a rotation about the X axis.
-void Transform_ApplyPitch(s32 ang) {
-  s32 m[12];
-  s32 sin, cos;
+void Transform_ApplyPitch(s32 angle) {
+  s32 matrix[TRANSFORM_WORDS];
+  s32 sine, cosine;
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  cos = COS(ang);
-  m[4] = cos;
-  m[8] = cos;
-  sin = Trig_Sin(ang);
-  m[5] = sin;
-  m[7] = -sin;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  cosine = COS(angle);
+  matrix[4] = cosine;
+  matrix[8] = cosine;
+  sine = Trig_Sin(angle);
+  matrix[5] = sine;
+  matrix[7] = -sine;
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Applies a rotation about the Y axis.
-void Transform_ApplyYaw(s32 ang) {
-  s32 m[12];
-  s32 sin, cos;
+void Transform_ApplyYaw(s32 angle) {
+  s32 matrix[TRANSFORM_WORDS];
+  s32 sine, cosine;
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  cos = COS(ang);
-  m[0] = cos;
-  m[8] = cos;
-  sin = Trig_Sin(ang);
-  m[2] = -sin;
-  m[6] = sin;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  cosine = COS(angle);
+  matrix[0] = cosine;
+  matrix[8] = cosine;
+  sine = Trig_Sin(angle);
+  matrix[2] = -sine;
+  matrix[6] = sine;
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Makes the current matrix a rotation about the Y axis.
-void Transform_SetYaw(s32 ang) {
-  s32 *m = gTransform;
-  s32 sin, cos;
+void Transform_SetYaw(s32 angle) {
+  s32 *matrix = gTransform;
+  s32 sine, cosine;
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  cos = COS(ang);
-  m[0] = cos;
-  m[8] = cos;
-  sin = Trig_Sin(ang);
-  m[2] = -sin;
-  m[6] = sin;
+  Render_SetIdentity(matrix);
+  cosine = COS(angle);
+  matrix[0] = cosine;
+  matrix[8] = cosine;
+  sine = Trig_Sin(angle);
+  matrix[2] = -sine;
+  matrix[6] = sine;
 }
 
 /// Applies a rotation about the Z axis.
-void Transform_ApplyRoll(s32 ang) {
-  s32 m[12];
-  s32 sin, cos;
+void Transform_ApplyRoll(s32 angle) {
+  s32 matrix[TRANSFORM_WORDS];
+  s32 sine, cosine;
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  cos = COS(ang);
-  m[0] = cos;
-  m[4] = cos;
-  sin = Trig_Sin(ang);
-  m[1] = sin;
-  m[3] = -sin;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  cosine = COS(angle);
+  matrix[0] = cosine;
+  matrix[4] = cosine;
+  sine = Trig_Sin(angle);
+  matrix[1] = sine;
+  matrix[3] = -sine;
+  Iwram_TransformMatrix(matrix);
 }
 
-/// Applies a translation by pos, X, Y and Z in Q16.
-void Transform_ApplyPosition(const s32 *pos) {
-  s32 m[12];
+/// Applies a translation by position, X, Y and Z in Q16.
+void Transform_ApplyPosition(const s32 *position) {
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Applies a translation by x, y and z in Q16.
 void Transform_ApplyTranslation(s32 x, s32 y, s32 z) {
-  s32 m[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  m[9] = x;
-  m[10] = y;
-  m[11] = z;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  matrix[TRANSFORM_TRANSLATION_X] = x;
+  matrix[TRANSFORM_TRANSLATION_Y] = y;
+  matrix[TRANSFORM_TRANSLATION_Z] = z;
+  Iwram_TransformMatrix(matrix);
 }
 
-/// Sets the current matrix's translation to pos.
-void Transform_SetPosition(const s32 *pos) {
-  gTransform[9] = pos[0];
-  gTransform[10] = pos[1];
-  gTransform[11] = pos[2];
+/// Sets the current matrix's translation to position.
+void Transform_SetPosition(const s32 *position) {
+  gTransform[TRANSFORM_TRANSLATION_X] = position[0];
+  gTransform[TRANSFORM_TRANSLATION_Y] = position[1];
+  gTransform[TRANSFORM_TRANSLATION_Z] = position[2];
 }
 
 /// Applies a scale by scale's X, Y and Z factors in Q16.
 void Transform_ApplyScale(const s32 *scale) {
-  s32 m[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  m[0] = scale[0];
-  m[4] = scale[1];
-  m[8] = scale[2];
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  matrix[0] = scale[0];
+  matrix[4] = scale[1];
+  matrix[8] = scale[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Applies a scale by x, y and z in Q16.
 void Transform_ApplyAxisScale(s32 x, s32 y, s32 z) {
-  s32 m[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  m[0] = x;
-  m[4] = y;
-  m[8] = z;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  matrix[0] = x;
+  matrix[4] = y;
+  matrix[8] = z;
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Applies the same scale on all three axes.
 void Transform_ApplyUniformScale(s32 scale) {
-  s32 m[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(m);
-  m[0] = scale;
-  m[4] = scale;
-  m[8] = scale;
-  Iwram_TransformMatrix(m);
+  Render_SetIdentity(matrix);
+  matrix[0] = scale;
+  matrix[4] = scale;
+  matrix[8] = scale;
+  Iwram_TransformMatrix(matrix);
 }
 /// Rotates gTransform by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
-void Transform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 m[12];
+void Transform_ApplyRotationTranslation(s32 *angles, s32 *position) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 matrix[TRANSFORM_WORDS];
 
-  sx = Trig_Sin(ang[0]);
+  sinX = Trig_Sin(angles[0]);
 
-  cx = COS(ang[0]);
-  sy = Trig_Sin(ang[1]);
-  cy = COS(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = COS(ang[2]);
-  SET_VECTOR(m, Iwram_MulQ16(cy, cz), Iwram_MulQ16(cy, sz), -sy);
-  m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
-  m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
-  m[5] = Iwram_MulQ16(sx, cy);
-  m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
-  m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
-  m[8] = Iwram_MulQ16(cx, cy);
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  cosX = COS(angles[0]);
+  sinY = Trig_Sin(angles[1]);
+  cosY = COS(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = COS(angles[2]);
+  SET_VECTOR(matrix, Iwram_MulQ16(cosY, cosZ), Iwram_MulQ16(cosY, sinZ), -sinY);
+  matrix[3] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) - Iwram_MulQ16(cosX, sinZ);
+  matrix[4] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) + Iwram_MulQ16(cosX, cosZ);
+  matrix[5] = Iwram_MulQ16(sinX, cosY);
+  matrix[6] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) + Iwram_MulQ16(sinX, sinZ);
+  matrix[7] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
+  matrix[8] = Iwram_MulQ16(cosX, cosY);
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Applies rotation, scaling by row and translation together.
 /// scale: scale factors for rows 1-3 of the rotation matrix.
-void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 s;
-  s32 m[12];
+void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 axisScale;
+  s32 matrix[TRANSFORM_WORDS];
 
-  sx = Trig_Sin(ang[0]);
+  sinX = Trig_Sin(angles[0]);
   {
     s32 quarter;
 
-    quarter = 0x4000;
-    cx = Trig_Sin(ang[0] + quarter);
+    quarter = TRIG_TURN / 4;
+    cosX = Trig_Sin(angles[0] + quarter);
   }
-  sy = Trig_Sin(ang[1]);
-  cy = COS(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = COS(ang[2]);
-  s = scale[0];
-  SET_VECTOR(m, Iwram_MulQ16(s, Iwram_MulQ16(cy, cz)),
-             Iwram_MulQ16(s, Iwram_MulQ16(cy, sz)), Iwram_MulQ16(s, -sy));
-  s = scale[1];
-  m[3] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) -
-                             Iwram_MulQ16(cx, sz));
-  m[4] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) +
-                             Iwram_MulQ16(cx, cz));
-  m[5] = Iwram_MulQ16(s, Iwram_MulQ16(sx, cy));
-  s = scale[2];
-  m[6] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) +
-                             Iwram_MulQ16(sx, sz));
-  m[7] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) -
-                             Iwram_MulQ16(sx, cz));
-  m[8] = Iwram_MulQ16(s, Iwram_MulQ16(cx, cy));
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  sinY = Trig_Sin(angles[1]);
+  cosY = COS(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = COS(angles[2]);
+  axisScale = scale[0];
+  SET_VECTOR(matrix, Iwram_MulQ16(axisScale, Iwram_MulQ16(cosY, cosZ)),
+             Iwram_MulQ16(axisScale, Iwram_MulQ16(cosY, sinZ)),
+             Iwram_MulQ16(axisScale, -sinY));
+  axisScale = scale[1];
+  matrix[3] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) -
+                                  Iwram_MulQ16(cosX, sinZ));
+  matrix[4] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) +
+                                  Iwram_MulQ16(cosX, cosZ));
+  matrix[5] = Iwram_MulQ16(axisScale, Iwram_MulQ16(sinX, cosY));
+  axisScale = scale[2];
+  matrix[6] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) +
+                                  Iwram_MulQ16(sinX, sinZ));
+  matrix[7] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) -
+                                  Iwram_MulQ16(sinX, cosZ));
+  matrix[8] = Iwram_MulQ16(axisScale, Iwram_MulQ16(cosX, cosY));
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 /// Square root of a 16.16 fixed-point value, in 16.16. The square root of
@@ -366,7 +378,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   } while (0);
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
-  w = 0x10000 - mul(dy, dy);
+  w = Q16_ONE - mul(dy, dy);
   scale = Q16_ONE;
   if (w > 0)
     scale = divide(num, FixedSqrt(w)) << 1;
@@ -390,15 +402,15 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   out[0] = ux;
   out[3] = zero;
   out[6] = uz;
-  out[9] = -dot(ex, ux, ez, uz, zero, zero);
+  out[TRANSFORM_TRANSLATION_X] = -dot(ex, ux, ez, uz, zero, zero);
   out[1] = vx;
   out[4] = vy;
   out[7] = vz;
-  out[10] = -dot(ex, vx, ey, vy, ez, vz);
+  out[TRANSFORM_TRANSLATION_Y] = -dot(ex, vx, ey, vy, ez, vz);
   out[2] = dx;
   out[5] = dy;
   out[8] = dz;
-  out[11] = -dot(ex, dx, ey, dy, ez, dz);
+  out[TRANSFORM_TRANSLATION_Z] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
 /// Makes the camera at `eye` looking at `target` the whole of gTransform.
@@ -408,7 +420,7 @@ void Transform_SetLookAt(s32 *eye, s32 *target) {
 
 /// Multiplies the camera at `eye` looking at `target` into gTransform.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
-  s32 work[12];
+  s32 work[TRANSFORM_WORDS];
 
   Transform_BuildLookAt(eye, target, work);
   Iwram_TransformMatrix(work);
@@ -425,7 +437,8 @@ void Projection_SetFieldOfView(s32 fieldOfView, s32 nearDepth, s32 farDepth) {
   halfAngle = fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
   // The cosine, as the sine a quarter turn on: 80 * cos / sin.
-  focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + TRIG_TURN / 4) * 80);
+  focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + TRIG_TURN / 4) *
+                                      (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
   gProjection.focal = focal;
   gProjection.far = farDepth;
@@ -466,10 +479,10 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 
       scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
     } else {
-      scale = 0x151eb;
+      scale = Q16_ONE * 33 / 25; // 1.32
     }
-    x = projection->centerX + Iwram_MulQ16(view.x, scale) / (Q16_ONE);
-    y = projection->centerY - Iwram_MulQ16(view.y, scale) / (Q16_ONE);
+    x = projection->centerX + Iwram_MulQ16(view.x, scale) / Q16_ONE;
+    y = projection->centerY - Iwram_MulQ16(view.y, scale) / Q16_ONE;
     screen->x = x;
     screen->y = y;
     return scale;

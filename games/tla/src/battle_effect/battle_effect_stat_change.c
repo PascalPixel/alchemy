@@ -310,11 +310,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
       s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
-      // The mode is the prelude, 1 here: BLITTER_MAX.
-      LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
+      LOAD_BLITTER(draw[0], flags ^ flipX, BLITTER_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags ^ flipX2, additive);
-      // Read through the slot's address, which folds to one constant.
-      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -351,8 +349,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          /* FAKEMATCH(barrier): an empty asm through mode. */
-          __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, additive);
           {
@@ -417,9 +413,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           frame < member * 8 + 76) {
         s32 cel;
 
-        /* FAKEMATCH(dead): a once-only block. */
-        do {
-        } while (0);
         cel = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
 
         LOAD_BLITTER(draw[0], flags, BLITTER_MAX);

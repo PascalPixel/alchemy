@@ -401,22 +401,26 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
            i != BATTLE_BACKGROUND_COLORS; i++, color++) {
         s32 entry = *color;
         s32 red;
-        u16 green;
+        s32 green;
         s32 blue;
 
         red = max & entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
+        /* LEFTOVER(template): green, taken and clamped as Coatlicue's and
+         * Judgment's palette loops take all three channels, and left out of
+         * the colour here. */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
-        // DEAD: both channels are already at most 31; the ROM keeps both
+        // DEAD: red and blue are already at most 31; the ROM keeps both
         // compares.
         if (red > RGB_LEVEL_MAX) {
           red = RGB_LEVEL_MAX;
         }
+        if (green > RGB_LEVEL_MAX) {
+          green = RGB_LEVEL_MAX;
+        }
         if (blue > RGB_LEVEL_MAX) {
           blue = RGB_LEVEL_MAX;
         }
-        green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
         *color = RGB(blue, red, red);
       }
       BattleEffect_BuildRepeatingTilemap();

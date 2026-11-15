@@ -161,7 +161,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       s32 offset;
 
       offset = gBattleEffect_PuffArcPictures[cell];
-      /* FAKEMATCH(dead): width, read from the puff table and never used. */
+      /* LEFTOVER(template): width, read from the puff table as Haures and
+       * Ulysses read it to draw with, and unused here. */
       width = gBattleEffect_PuffArcPictureWidths[cell];
       draw[0](canvas, &work->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
               56 - gBattleEffect_PuffArcPictureWidths[cell] / 2,

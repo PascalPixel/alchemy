@@ -107,15 +107,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
+        /* LEFTOVER(template): green, taken and clamped as Coatlicue's and
+         * Judgment's palette loops take all three channels, and left out of
+         * the colour here. */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
-
-        if (red > RGB_LEVEL_MAX)
-          red = RGB_LEVEL_MAX;
-        if (blue > RGB_LEVEL_MAX)
-          blue = RGB_LEVEL_MAX;
+        red = red > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : red;
         green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
+        blue = blue > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : blue;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;

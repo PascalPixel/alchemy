@@ -33,6 +33,18 @@ struct MapAnimation {
 /// The bytes between one layer's BG map and the next, from screen block 5.
 #define MAPGRID_LAYER_SCREEN_BYTES 2048
 
+/// A layout's three layers, by what they hold, as The Broken Seal's. Most
+/// layouts give them priorities 3, 2 and 1.
+enum MapGridLayerIndex {
+  MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
+  MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
+  MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
+};
+
+/// A cell's collision code that blocks whatever the heights, as The Broken
+/// Seal's CELL_BEHAVIOR_WALL.
+#define CELL_BEHAVIOR_WALL 255
+
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.
 struct MapCell {

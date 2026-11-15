@@ -1105,7 +1105,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
-  if (cells[2] == 255)
+  if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
@@ -1145,7 +1145,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
-  if (cells[2] == 255)
+  if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
@@ -1185,7 +1185,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
-  if (cells[2] == 255)
+  if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
@@ -1199,16 +1199,16 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 /// the overhead layer is a wall (cell behavior 255), else 0; also 0 before the
 /// map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
-  s32 x = position[0] / 65536;
+  s32 x = position[0] / Q16_ONE;
   s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) >> 16;
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
 
   if (map == NULL)
     return 0;
-  cell = *(u8 **)(map + 0x1a8);
-  cell += (x / 16 + (z / 16) * 128) * 4;
-  return (cell[2] != 255) - 1;
+  cell = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
+  cell += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
+  return (cell->collisionCode != CELL_BEHAVIOR_WALL) - 1;
 }
 
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock

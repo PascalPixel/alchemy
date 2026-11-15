@@ -542,7 +542,7 @@ s32 Field_ClimbDown(void) {
       goto failure;
     cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
     south = cell + 128;
-    if (south->collisionCode == 255)
+    if (south->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) <=
         MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ + 16)))
@@ -633,7 +633,7 @@ s32 Field_ClimbUp(void) {
       goto failure;
     cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
     north = cell - 128;
-    if (north->collisionCode == 255)
+    if (north->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) >=
         MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ - 16)))

@@ -275,7 +275,8 @@ void FieldPsynergy_Scoop(void) {
       break;
     }
   }
-  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) == 255)
+  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) ==
+      CELL_BEHAVIOR_WALL)
     failed = 4;
   if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x) ==
       -1)

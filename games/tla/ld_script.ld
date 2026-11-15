@@ -293,7 +293,7 @@ SECTIONS
         "*/games/tla/src/battle_effect/blitter_fragments.o"(.text)
         "*/games/tla/src/battle_effect/blitter_color_fragments.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/patch_template.o"(.text .rodata .data .padding)
-        "*/games/tla/src/battle_effect/effect_bits.o"(.rodata)
+        "*/games/tla/src/battle_effect/blitter_operands.o"(.rodata)
         "*/games/tla/src/battle_effect/effect_table.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081a0000);
         "*/games/tla/src/gamepak/far_call/credits.o"(.text)

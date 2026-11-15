@@ -1733,7 +1733,7 @@ extern u8 gIris_TileBuffer[];
 extern const struct Scale gIris_UnitScale;
 extern const u32 BattleEffect_PatchTemplateCode[];
 extern const u32 BattleEffect_Mask[];
-extern const u16 Data_081973f0[];
+extern const u16 gBattleEffect_BitOperands[];
 extern const u32 BattleEffect_CopyReverse[];
 extern const u32 BattleEffect_CopyForward[];
 extern const u32 BattleEffect_Copy8Reverse[];

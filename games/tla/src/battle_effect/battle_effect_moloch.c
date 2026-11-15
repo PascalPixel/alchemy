@@ -2714,13 +2714,13 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     }
     PUT(src[6]);
     PUT(src[7]);
-    PUT(src[8] + Data_081973f0[widthShift]);
+    PUT(src[8] + gBattleEffect_BitOperands[widthShift]);
     if ((flags & 4) != 0) {
       PUT(src[9]);
     } else {
       PUT(src[10]);
     }
-    PUT(src[11] + Data_081973f0[widthShift]);
+    PUT(src[11] + gBattleEffect_BitOperands[widthShift]);
   }
   src += 12;
 
@@ -2896,7 +2896,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   COPY(2);
   {
-    const u32 *end = (const u32 *)Data_081973f0;
+    const u32 *end = (const u32 *)gBattleEffect_BitOperands;
 
     return src == end;
   }

@@ -13,6 +13,7 @@
 #include "macros.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
+#include "field/actor_script.h"
 #include "field/battle_music.h"
 #include "field/encounter_zone.h"
 #include "field/event.h"

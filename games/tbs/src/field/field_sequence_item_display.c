@@ -32,12 +32,12 @@ void TreasureSpot_MoveLeaderAway(void) {
     x = leader->x.fixed;
     z = leader->z.fixed;
     for (;;) {
-      cellX = marker->column << 20;
+      cellX = marker->column * px(MAPGRID_CELL_PIXELS);
       dx = x - cellX - px(8);
-      cellZ = marker->row << 20;
+      cellZ = marker->row * px(MAPGRID_CELL_PIXELS);
       dz = z - cellZ - px(8);
-      if ((dx >= -0xfffff && dx <= 0xfffff) &&
-          (dz >= -0xfffff && dz <= 0xfffff)) {
+      if ((dx > -px(MAPGRID_CELL_PIXELS) && dx < px(MAPGRID_CELL_PIXELS)) &&
+          (dz > -px(MAPGRID_CELL_PIXELS) && dz < px(MAPGRID_CELL_PIXELS))) {
         leader->x.fixed = cellX + px(8);
         leader->z.fixed = cellZ + px(8);
         Vector_AddPolarOffset(px(20), (u16)ArcTan2(dz, dx),
@@ -350,11 +350,11 @@ void FieldEffect_SpawnRevealMarkers(void) {
   leaderRow = FIELD_CELL(actor->z.fixed);
   if (markerData != 0) {
     while (column = *markerData++, row = *markerData++,
-           column != 0xff || row != 0xff) {
+           column != TREASURE_SPOT_LIST_END || row != TREASURE_SPOT_LIST_END) {
       id = *markerData++;
       if (TreasureSpot_GetActor(id) != NULL)
         continue;
-      if (id < 100 || id > 239)
+      if (id < TREASURE_SPOT_FIRST_ID || id > TREASURE_SPOT_LAST_ID)
         continue;
       if (leaderColumn - column >= 0) {
         if (leaderColumn - column > 8)
@@ -380,8 +380,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
             if (entry->condition != -1 &&
                 GameFlag_GetFar(entry->condition) == 0) {
               // actor now holds the spawned marker.
-              actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + px(8), 0,
-                                      (row << 20) + px(8));
+              actor = Actor_CreateFar(SPRITE_BLANK,
+                                      column * px(MAPGRID_CELL_PIXELS) + px(8),
+                                      0, row * px(MAPGRID_CELL_PIXELS) + px(8));
               if (actor != 0) {
                 Actor_StartScriptFar(actor, gFieldEffect_MarkerParticleScript);
                 Actor_SetSpriteFlagsFar(actor, 0);

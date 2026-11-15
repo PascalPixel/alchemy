@@ -4,6 +4,10 @@
 
 #include "event_commands_internal.h"
 
+/// The hue circle, in whole degrees and in degrees as 16.16.
+#define HUE_DEGREES 360
+#define HUE_CIRCLE (HUE_DEGREES << 16)
+
 /// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
@@ -30,7 +34,7 @@ void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(struct MindReadWork));
   FieldPsynergy_FadeToCastColor();
   Dma_Fill32(0, work, 664);
-  work->hue = ((u32)(gFrameCount << 1) % (u32)360);
+  work->hue = ((u32)(gFrameCount << 1) % (u32)HUE_DEGREES);
   FieldEffect_AdvanceHueCycle();
   // PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
   PaletteFade_SetTarget(
@@ -181,11 +185,11 @@ void FieldEffect_AdvanceHueCycle(void) {
 
   work->hue += 4;
 
-  *pr &= 0x1f;
-  *pg &= 0x1f;
-  *pb &= 0x1f;
+  *pr &= RGB_LEVEL_MAX;
+  *pg &= RGB_LEVEL_MAX;
+  *pb &= RGB_LEVEL_MAX;
 
-  if (work->hue >= 360) {
+  if (work->hue >= HUE_DEGREES) {
     work->hue = 0;
   }
 }
@@ -193,21 +197,24 @@ void FieldEffect_AdvanceHueCycle(void) {
 /// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
 /// (16.16).
 void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
-  *r = FieldEffect_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
-  *g = FieldEffect_HueChannelRamp(hue, 0, 31 << 16);
-  *b = FieldEffect_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
+  *r = FieldEffect_HueChannelRamp(hue + HUE_CIRCLE / 3, 0,
+                                  Q16_ONE * RGB_LEVEL_MAX);
+  *g = FieldEffect_HueChannelRamp(hue, 0, Q16_ONE * RGB_LEVEL_MAX);
+  *b = FieldEffect_HueChannelRamp(hue - HUE_CIRCLE / 3, 0,
+                                  Q16_ONE * RGB_LEVEL_MAX);
 }
 
 /// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
 /// high from 60 to 180, falling from 180 to 240, low elsewhere.
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
-  angle = FixedPoint_Remainder(angle, 360 << 16);
-  if (angle < 60 << 16)
-    return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, angle));
-  if (angle >= 60 << 16 && angle < 180 << 16)
+  angle = FixedPoint_Remainder(angle, HUE_CIRCLE);
+  if (angle < HUE_CIRCLE / 6)
+    return Iwram_RatioMulQ14(HUE_CIRCLE / 6, Iwram_MulQ16(high, angle));
+  if (angle >= HUE_CIRCLE / 6 && angle < HUE_CIRCLE / 2)
     return high;
-  if (angle >= 180 << 16 && angle < 240 << 16)
-    return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, (240 << 16) - angle));
+  if (angle >= HUE_CIRCLE / 2 && angle < HUE_CIRCLE * 2 / 3)
+    return Iwram_RatioMulQ14(HUE_CIRCLE / 6,
+                             Iwram_MulQ16(high, HUE_CIRCLE * 2 / 3 - angle));
   return low;
 }
 
@@ -290,3 +297,6 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 }
 
 #undef MIND_READ_GREY
+
+#undef HUE_DEGREES
+#undef HUE_CIRCLE

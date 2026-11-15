@@ -169,13 +169,13 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     // The distance in whole pixels, rounded toward 0.
     dx = candidate->x.fixed - source->x.fixed;
     if (dx < 0)
-      dx += 0xffff;
-    dx >>= 16;
+      dx += Q16_ONE - 1;
+    dx = FIELD_PIXEL(dx);
 
     dz = candidate->z.fixed - source->z.fixed;
     if (dz < 0)
-      dz += 0xffff;
-    pixelZ = dz >> 16;
+      dz += Q16_ONE - 1;
+    pixelZ = FIELD_PIXEL(dz);
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
     if ((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
@@ -237,7 +237,7 @@ void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     replacement = palette - 1;
     if (palette == 0)

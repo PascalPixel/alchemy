@@ -22,10 +22,10 @@ struct MapGridCell;
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
   struct Actor *actor; ///< the actor placed for it
-  u8 id;               ///< the subject of its trigger, 100 to 239
-  u8 unused;           ///< cleared with the slot
-  u8 column;           ///< its 16-pixel cell
-  u8 row;              ///< its 16-pixel cell
+  u8 id;     ///< the subject of its trigger (TREASURE_SPOT_FIRST_ID on)
+  u8 unused; ///< cleared with the slot
+  u8 column; ///< its 16-pixel cell
+  u8 row;    ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct TreasureSpot) == 8);
@@ -49,6 +49,10 @@ enum FieldRaisedTrigger {
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field
 /// sequence, the event commands and the scene overlays all reach it through
 /// gFieldWork.
+/// How long a map's screen transition takes, in frames, unless an event or
+/// scene sets another length.
+#define MAP_TRANSITION_FRAMES 16
+
 struct FieldWork {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.
@@ -100,7 +104,8 @@ struct FieldWork {
   s32 transition; ///< SCENE_TRANSITION(style, variant); (1, 0) on entry
   u16 unused;
   u16 transitionActive; ///< set once the opening transition has started
-  s32 transitionFrames; ///< frames; 16 on entry and at each event
+  s32 transitionFrames; ///< frames; MAP_TRANSITION_FRAMES on entry and at each
+                        ///< event
   s32 fastForward;      ///< debug: skip timed event waits and actor messages
   u8 unusedAfterFastForward[8];
   s16 message; ///< the next message, advanced as each window opens

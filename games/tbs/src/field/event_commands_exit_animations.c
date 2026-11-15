@@ -26,7 +26,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / Q16_ONE;
   *position = z / Q16_ONE;
-  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     *position -=
         Resource_GetMetadataRecordFar(actor->sprite->entries[0]->animationId)
             ->boxX;

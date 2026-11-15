@@ -74,7 +74,7 @@ void ActorSystem_PlaceSprites(void) {
     // An actor at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
     if (actor->x.fixed != 0 || actor->z.fixed != 0) {
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_NONE)
         continue;
       // This camera places single sprites only; groups are left.
@@ -101,7 +101,7 @@ void ActorSystem_PlaceSprites(void) {
         // row holds 128 of them.
         tile = &((struct ActorCameraTile *)grid->layers[actor->layer]
                      .cells)[(FIELD_CELL(actor->x.fixed)) +
-                             (FIELD_CELL(actor->z.fixed) << 7)];
+                             FIELD_CELL(actor->z.fixed) * MAPGRID_SIZE];
         if (actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
@@ -146,7 +146,7 @@ void ActorSystem_PlaceSprites(void) {
         }
       }
     } else {
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_ONE) {
         sprite = actor->sprite;
         if (actor->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
@@ -196,7 +196,8 @@ void ActorSystem_ProjectSprites(void) {
   // The camera's heading over the ground, from the eye's offset from the
   // target in whole pixels; each sprite's facing is drawn relative to it, so
   // a sprite keeps its world heading as the camera turns.
-  angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
+  angle = (s16)ArcTan2(FIELD_PIXEL(eye->x - target->x),
+                       FIELD_PIXEL(eye->z - target->z));
   system->used = 0;
   Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn
@@ -217,7 +218,7 @@ void ActorSystem_ProjectSprites(void) {
     for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
       if (actor->script == 0)
         continue;
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       switch (kind) {
       case ACTOR_SPRITE_ONE:
         position = &actor->x.fixed;

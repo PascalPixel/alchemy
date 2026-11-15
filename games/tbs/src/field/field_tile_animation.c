@@ -8,8 +8,11 @@
 // would stand (TilesetAnim_Update and TilesetAnim_StartAll).
 #define TILESET_ANIM_LOOP 0xffff        ///< back to the start of the script
 #define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
-#define TILESET_ANIM_JUMP 0xfe00   ///< low byte: the halfword pair to jump to
-#define TILESET_ANIM_STOP 0xff     ///< TILESET_ANIM_JUMP's low byte to stop
+#define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
+#define TILESET_ANIM_STOP 0xff   ///< TILESET_ANIM_JUMP's low byte to stop
+/// A layout with wide tiles animates 64-byte (256-colour) tiles in char block
+/// 2; others animate 16-colour ones in char block 1.
+#define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
@@ -72,22 +75,28 @@ void TilesetAnim_Update(void) {
       // for 64-byte tiles) is read from RAM, at the start of gMapGridAnimTiles.
       if (gridState->wideTiles == 0) {
         if (sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
-          Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * 32,
-                  BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  DMA_COPY_WORDS(tileCount * 8), REG_DMA3);
+          Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * TILE_SIZE_4BPP,
+                  BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
+                  DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)), REG_DMA3);
         else
-          Dma_Set(BG_CHAR_BLOCK(1) + sourceTileOrOpcode * 32,
-                  BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  DMA_COPY_WORDS(tileCount * 8), REG_DMA3);
+          Dma_Set(BG_CHAR_BLOCK(1) + sourceTileOrOpcode * TILE_SIZE_4BPP,
+                  BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
+                  DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)), REG_DMA3);
       } else {
         if (sourceTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
-          Dma_Set(Ram_CellPictures + sourceTileOrOpcode * 64,
-                  BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  DMA_COPY_WORDS(tileCount * 16), REG_DMA3);
+          Dma_Set(
+              Ram_CellPictures +
+                  sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+              BG_CHAR_BLOCK(2) + destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+              DMA_COPY_WORDS(tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+              REG_DMA3);
         else
-          Dma_Set(BG_CHAR_BLOCK(2) + sourceTileOrOpcode * 64,
-                  BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  DMA_COPY_WORDS(tileCount * 16), REG_DMA3);
+          Dma_Set(
+              BG_CHAR_BLOCK(2) +
+                  sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+              BG_CHAR_BLOCK(2) + destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+              DMA_COPY_WORDS(tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+              REG_DMA3);
       }
       // A copy with a wait of 0 lets the next command run at once.
       (gridState->animations + channelIndex)->cursor += 4;
@@ -380,6 +389,7 @@ void PaletteCycle_Step(void) {
 #undef BLEND_SCRIPT_LOOP
 #undef BLEND_SCRIPT_OPCODE_MASK
 #undef BLEND_SCRIPT_JUMP
+#undef TILESET_ANIM_WIDE_TILE_BYTES
 #undef BLEND_SCRIPT_STOP
 #undef BLEND_SCRIPT_BLDCNT_MASK
 #undef BLEND_SCRIPT_BLDCNT

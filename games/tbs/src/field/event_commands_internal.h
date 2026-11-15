@@ -53,6 +53,10 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 /// A Djinni battle's event without DJINN_NO_HOP.
 #define DJINN_PENDING_BATTLE_EVENT_MASK 0x7ff
 
+/// The trailing copies of a moving Djinni or Force's hand are drawn a little
+/// smaller than what they follow.
+#define AFTERIMAGE_SCALE (Q16_ONE * 15 / 16)
+
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
 static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {

@@ -77,12 +77,12 @@ struct SceneEntrance {
   s16 y;            ///< pixels
   s16 z;            ///< pixels
   u16 facing;       ///< 1/65536 turns (enum Facing)
-  s16 unused1;      ///< 0 in every table; not read
-  s16 cameraLeft;   ///< pixels
-  s16 cameraTop;    ///< pixels
-  s16 cameraRight;  ///< pixels
-  s16 cameraBottom; ///< pixels
-  s16 unused2;      ///< 0 in every table; not read
+  s16 unusedAfterFacing; ///< 0 in every table; not read
+  s16 cameraLeft;        ///< pixels
+  s16 cameraTop;         ///< pixels
+  s16 cameraRight;       ///< pixels
+  s16 cameraBottom;      ///< pixels
+  s16 unusedAfterCamera; ///< 0 in every table; not read
 };
 
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
@@ -217,6 +217,13 @@ STATIC_ASSERT(sizeof(struct Trigger) == 12);
 /// field Psynergy, as Mind Read on someone who notices it does, and an
 /// examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+
+/// Trigger.subject for an item or Psynergy trigger: bits 15 to 12 the leader's
+/// facing (an angle's top four bits), heeded only with bit 11 set, and bits 7
+/// to 0 the actor id or cell behavior it answers.
+#define TRIGGER_SUBJECT_FACING 0xf000
+#define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
+#define TRIGGER_SUBJECT_TARGET 0xff
 
 /// Trigger.kind's low four bits: what the trigger answers.
 enum TriggerKind {

@@ -15,11 +15,12 @@ struct BurstParticleVector {
 /// copies them; the notes give the AnimationSpritePart fields, some under
 /// other names here.
 struct BurstParticleVisual {
-  u8 reserved00[5];
+  u8 link[4];
+  u8 y;
   u8 flagsALow : 5; ///< affine, objectMode and mosaic
   u8 fullColor : 1;
   u8 flagsAHigh : 2; ///< shape
-  u8 reserved06;
+  u8 xLow;
   u8 flagsBLow : 6;  ///< x's top bit and affineIndex
   u8 flagsBHigh : 2; ///< size
   union {

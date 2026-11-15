@@ -52,7 +52,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
 /// OAM attributes and its bookkeeping; the notes give the Sprite
 /// fields at the same offsets.
 struct SpriteArcOamView {
-  u8 pad00[4];
+  struct Sprite *link;
   u16 y : 8; ///< screen pixels
   u16 affine : 1;
   u16 doubleSize : 1;
@@ -68,15 +68,23 @@ struct SpriteArcOamView {
   u16 tile : 10; ///< first sprite tile in VRAM
   u16 priority : 2;
   u16 palette : 4;
-  u8 pad0a[18];
+  u8 attr3[2];
+  struct AnimationSpritePart shadow;
+  s32 scale;
   u8 slot; ///< VRAM cache entry holding its tiles
   /// retainCacheEntry: set, releasing the arc leaves the Psynergy's spark tiles
   /// (effectWork->tileSlot), which it borrows, loaded.
   u8 active : 1;
   u8 displayFlags : 7;
-  u8 pad1e[8];
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
   u8 flags; ///< bit 0 draws its shadow; the arcs clear it
-  u8 pad27;
+  u8 count;
   struct SpriteAnimation *child; ///< entries[0], its first layer
 };
 

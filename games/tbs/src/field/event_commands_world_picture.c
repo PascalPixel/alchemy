@@ -45,9 +45,9 @@ struct WorldPictureWork {
   u16 cursorVramBlock;            ///< owns the cursor picture's tiles
   struct FieldCoordinate cursorX; ///< screen column, 16.16 pixels
   struct FieldCoordinate cursorY; ///< screen row, 16.16 pixels
-  u8 padding0c[6];                ///< not read by this screen
+  u8 unreadAfterCursor[6];        ///< not read by this screen
   s16 namedMarker;           ///< actor whose name is drawn; -1 clears the name
-  u8 padding14[4];           ///< not read by this screen
+  u8 unreadAfterName[4];     ///< not read by this screen
   s32 cursorSpeed;           ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
   /// The visible areas' markers packed from the start, then the frame round
@@ -122,7 +122,7 @@ void WorldPicture_Initialize(void) {
     work->cursorX.fixed = px(WORLD_MAP_SCREEN_WIDTH) / 2;
     work->cursorY.fixed = px(WORLD_MAP_SCREEN_HEIGHT) / 2;
   } else {
-    work->cursorX.fixed = px(((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    work->cursorX.fixed = px(FIELD_PIXEL(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
                              WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
     work->cursorY.fixed =
         px((actor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT) /
@@ -223,14 +223,14 @@ void WorldPicture_UpdateMarkers(void) {
       return;
 #endif
     if (areaActor != NULL) {
-      cursorX = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+      cursorX = FIELD_PIXEL(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
       cursorY = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
     // The d-pad: faster the longer it is held.
-    angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
+    angle = gWorldMap_CursorDirectionAngles[DPAD_INDEX(gKeysHeld)];
     if (angle != 0xffff) {
       position.x = work->cursorX.fixed;
       position.y = 0;
@@ -290,7 +290,7 @@ void WorldPicture_UpdateMarkers(void) {
       continue;
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
-    x = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    x = FIELD_PIXEL(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
     y = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;

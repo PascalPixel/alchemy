@@ -302,26 +302,30 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridCell *cell;
   u8 *heightBytes;
 
-  x >>= 16;
-  y >>= 16;
+  x = FIELD_PIXEL(x);
+  y = FIELD_PIXEL(y);
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
   // Cells are 16 pixels, 128 to a row.
-  cell += x / 16 + (y / 16 << 7);
+  cell += x / MAPGRID_CELL_PIXELS + (y / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: read the kind byte before passing the remaining samples.
 #ifdef UBFIX
   {
-    u32 kind = *heightBytes++ & 15;
+    u32 kind = *heightBytes++ & MAPGRID_SHAPE_KIND_MASK;
 
-    return gMapGrid_TerrainHeightFunctions[kind](heightBytes, x & 15, y & 15);
+    return gMapGrid_TerrainHeightFunctions[kind](heightBytes,
+                                                 x & (MAPGRID_CELL_PIXELS - 1),
+                                                 y & (MAPGRID_CELL_PIXELS - 1));
   }
 #else
-  return gMapGrid_TerrainHeightFunctions[*heightBytes++ & 15](heightBytes,
-                                                              x & 15, y & 15);
+  return gMapGrid_TerrainHeightFunctions[*heightBytes++ &
+                                         MAPGRID_SHAPE_KIND_MASK](
+      heightBytes, x & (MAPGRID_CELL_PIXELS - 1),
+      y & (MAPGRID_CELL_PIXELS - 1));
 #endif
 }
 
@@ -334,18 +338,19 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   s32 cellY;
   u32 heightAttributeIndex;
 
-  x >>= 16;
-  y >>= 16;
+  x = FIELD_PIXEL(x);
+  y = FIELD_PIXEL(y);
   cells = (struct MapGridCell *)gMapGridCellBuffer;
   if (gridState != 0) {
     cells = gridState->layers[layer & 3].cells;
   }
-  cellX = x / 16;
-  cellY = y / 16;
-  cells += cellX + (cellY << 7);
+  cellX = x / MAPGRID_CELL_PIXELS;
+  cellY = y / MAPGRID_CELL_PIXELS;
+  cells += cellX + cellY * MAPGRID_SIZE;
   // The kind byte of the cell's four-byte shape.
   heightAttributeIndex = cells->shape;
-  return *(Ram_MapGridShapes + heightAttributeIndex * 4) & 15;
+  return *(Ram_MapGridShapes + heightAttributeIndex * 4) &
+         MAPGRID_SHAPE_KIND_MASK;
 }
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
@@ -355,14 +360,14 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapGridCell *cell;
 
   gridState = gMapGridWork[0];
-  x >>= 20;
-  y >>= 20;
+  x = FIELD_CELL(x);
+  y = FIELD_CELL(y);
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapGridCell *)gMapGridCellBuffer;
   if (gridState != NULL) {
     cell = gridState->layers[layer & 3].cells;
   }
-  cell += x + (y << 7);
+  cell += x + y * MAPGRID_SIZE;
   return cell->behavior;
 }
 
@@ -371,13 +376,13 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
 void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
 
-  x >>= 20;
-  y >>= 20;
+  x = FIELD_CELL(x);
+  y = FIELD_CELL(y);
   // Without the map work there is no layer to write to.
   if (gridState != NULL) {
     struct MapGridCell *cell = gridState->layers[layer & 3].cells;
 
-    cell += x + (y << 7);
+    cell += x + y * MAPGRID_SIZE;
     cell->behavior = behavior;
   }
 }
@@ -385,10 +390,10 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
 /// Unused: returns the top two bits of the cell picture halfword of the cell at
 /// pixel (x, y).
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
-  s32 cellX = x / 16;
-  s32 cellY = y / 16;
+  s32 cellX = x / MAPGRID_CELL_PIXELS;
+  s32 cellY = y / MAPGRID_CELL_PIXELS;
   struct MapGridCell *cell =
-      (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * 128);
+      (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * MAPGRID_SIZE);
 
   // The high byte of the cell picture halfword; its top two bits are flags.
   return ((u8 *)&cell->cellPictureAndFlags)[1] >> 6;
@@ -418,7 +423,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     cell = gridState->layers[actor->layer].cells;
   else
     cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
-  cell += pixelX / 16 + (pixelZ / 16 << 7);
+  cell += pixelX / MAPGRID_CELL_PIXELS +
+          (pixelZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
   // A wall blocks whatever the heights.
   if (cell->behavior == CELL_BEHAVIOR_WALL)
     return COLLISION_IMPASSABLE;
@@ -426,14 +432,17 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   // UB: read the kind byte before passing the remaining samples.
 #ifdef UBFIX
   {
-    u32 kind = *heightBytes++ & 15;
+    u32 kind = *heightBytes++ & MAPGRID_SHAPE_KIND_MASK;
 
     targetGround = gMapGrid_TerrainHeightFunctions[kind](
-        heightBytes, pixelX & 15, pixelZ & 15);
+        heightBytes, pixelX & (MAPGRID_CELL_PIXELS - 1),
+        pixelZ & (MAPGRID_CELL_PIXELS - 1));
   }
 #else
-  targetGround = gMapGrid_TerrainHeightFunctions[*heightBytes++ & 15](
-      heightBytes, pixelX & 15, pixelZ & 15);
+  targetGround =
+      gMapGrid_TerrainHeightFunctions[*heightBytes++ & MAPGRID_SHAPE_KIND_MASK](
+          heightBytes, pixelX & (MAPGRID_CELL_PIXELS - 1),
+          pixelZ & (MAPGRID_CELL_PIXELS - 1));
 #endif
   // Up to 8 pixels up or 12 down is a step the actor can take.
   stepHeight = targetGround - actor->groundHeight;
@@ -455,17 +464,17 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
 
-  pixelX = position->x / 65536;
+  pixelX = position->x / Q16_ONE;
   // The point on the ground below the position.
-  pixelY = (position->y - position->height) / 65536;
+  pixelY = (position->y - position->height) / Q16_ONE;
   gridState = gMapGridWork[0];
   if (gridState == NULL)
     return 0;
   // Always the overhead layer, the one on BG1.
   cell = gridState->layers[MAPGRID_LAYER_OVERHEAD].cells;
-  cellX = pixelX / 16;
-  cellY = pixelY / 16;
-  cell += cellX + cellY * 128;
+  cellX = pixelX / MAPGRID_CELL_PIXELS;
+  cellY = pixelY / MAPGRID_CELL_PIXELS;
+  cell += cellX + cellY * MAPGRID_SIZE;
   // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
   return (cell->behavior != CELL_BEHAVIOR_WALL) - 1;
 }

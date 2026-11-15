@@ -40,9 +40,9 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   extra = 0;
   portraitTop = 0;
   margin = 4;
-  flags = actorId & 0xf000;
+  flags = actorId & SPEAKER_FLAGS;
   message = work->message;
-  actorId &= 0xfff;
+  actorId &= SPEAKER_ACTOR_MASK;
   x = 0;
   actor = Actor_Lookup(actorId);
   work->speaker = actorId;
@@ -86,8 +86,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     // Place the message above or below the speaker, or mid-screen when the
     // speaker is not on screen.
     if (!found) {
-      left = 15;
-      top = 10;
+      left = SCREEN_COLUMNS / 2;
+      top = SCREEN_ROWS / 2;
     } else {
       left = 0;
       top = 0;
@@ -112,20 +112,20 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         column = 0;
     } else if (flags & SPEAKER_PORTRAIT_RIGHT) {
       column += 2;
-      if (column + margin > 29)
-        column = 29 - margin;
-    } else if (column <= 15) {
+      if (column + margin > SCREEN_COLUMNS - 1)
+        column = SCREEN_COLUMNS - 1 - margin;
+    } else if (column <= SCREEN_COLUMNS / 2) {
       column = column - margin - 2;
       if (column < 0)
         column = x + 2;
     } else {
       column += 2;
-      if (column + margin > 29)
+      if (column + margin > SCREEN_COLUMNS - 1)
         column = x - margin - 2;
     }
 
     // A speaker with a portrait: put the portrait's 5 rows just above or
-    // below the message, within the screen's rows 0 to 19, and grow the
+    // below the message, within the screen's rows, and grow the
     // message to the portrait's height.
 #if TBS_PATCH_1
     found = Portrait_GetForSpeakerFar(sprite);
@@ -139,7 +139,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > 19)
+      else if (portraitTop + 5 > SCREEN_ROWS - 1)
         portraitTop = top - 5;
       if (top < portraitTop) {
         s32 lines = height;
@@ -170,7 +170,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > 19)
+      else if (portraitTop + 5 > SCREEN_ROWS - 1)
         portraitTop = top - 5;
     }
     if (top < y) {
@@ -184,8 +184,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #endif
     if (column < 0)
       column = 0;
-    else if (column + margin > 29)
-      column = 29 - margin;
+    else if (column + margin > SCREEN_COLUMNS - 1)
+      column = SCREEN_COLUMNS - 1 - margin;
 
     // Open the message and the portrait, and wait until the text is typed out.
     if (win->mindRead != 0) {
@@ -234,7 +234,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_GetSpriteById(actorId);
   if (actorId <= 7) {
-    member = actorId & 0x0fff;
+    member = actorId & SPEAKER_ACTOR_MASK;
 
     if (Scene_FindActorPlacement(member) == 0) {
       sprite = member;
@@ -308,7 +308,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 #endif
   struct FieldWork *state = gFieldWork;
 
-  speaker &= 0xfff;
+  speaker &= SPEAKER_ACTOR_MASK;
 #ifdef UBFIX
   // Only the actor slots hold actor pointers;
   // Actor_Lookup's legacy range also exposes the event fields after
@@ -367,15 +367,15 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 
 /// Unused: reached only through a bare veneer in field_sequence.s; forwards its
 /// arguments to Event_ShowMessageAtPosition.
-void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
+void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x,
                                         s32 y) {
-  Event_ShowMessageAtPosition(unused0, unused1, x, y);
+  Event_ShowMessageAtPosition(unusedA, unusedB, x, y);
 }
 
 /// Unused: reached only through a bare veneer in field_sequence.s. It would
 /// open the event's message at (x, y), wait for it and advance the message
 /// index; its units are as unknown as Event_ShowSpeakerMessage's.
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
+void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 windowY = y;
   s32 windowX = x;
@@ -468,3 +468,6 @@ void Message_SetVoiceFromActor(s32 actorId) {
     state->voiceCountdown = rate;
   }
 }
+
+#undef SCREEN_COLUMNS
+#undef SCREEN_ROWS

@@ -95,15 +95,16 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
     fixedX = position.vector.x;
     if (fixedX < 0)
-      fixedX += 0xfffff;
+      fixedX += px(MAPGRID_CELL_PIXELS) - 1;
     {
-      u32 tileX = fixedX >> 20;
+      u32 tileX = FIELD_CELL(fixedX);
 
       fixedZ = position.vector.z;
       if (fixedZ < 0)
-        fixedZ += 0xfffff;
+        fixedZ += px(MAPGRID_CELL_PIXELS) - 1;
 
-      tile = (u8 *)((u32)tile + ((tileX + ((fixedZ >> 20) << 7)) << 2));
+      tile = (u8 *)((u32)tile +
+                    ((tileX + FIELD_CELL(fixedZ) * MAPGRID_SIZE) << 2));
     }
   }
 
@@ -244,9 +245,9 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       stepDistance /= 2;
     accumulatedDistance = work->walkingDistance + stepDistance;
     work->walkingDistance = accumulatedDistance;
-    if (accumulatedDistance > 0xffff) {
+    if (accumulatedDistance >= Q16_ONE) {
       amount = accumulatedDistance / Q16_ONE;
-      work->walkingDistance = accumulatedDistance & 0xffff;
+      work->walkingDistance = accumulatedDistance & (Q16_ONE - 1);
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(SE_DJINNI_SET);

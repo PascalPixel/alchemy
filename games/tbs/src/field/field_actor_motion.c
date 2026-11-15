@@ -144,9 +144,9 @@ void Actor_UpdateAllThumb(void) {
       // capped at the speed limit, or brake when there is none.
       if (actor->motionFlags == 0) {
         if (actor->targetX != TARGET_UNSET) {
-          dx = (actor->targetX - x) / 65536;
-          dy = (actor->targetY - y) / 65536;
-          dz = (actor->targetZ - z) / 65536;
+          dx = (actor->targetX - x) / Q16_ONE;
+          dy = (actor->targetY - y) / Q16_ONE;
+          dz = (actor->targetZ - z) / Q16_ONE;
           distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dy) +
                                 Actor_Square(dz));
           if (distance == 0) {
@@ -197,8 +197,8 @@ void Actor_UpdateAllThumb(void) {
       } else {
         // On the ground: steer in the XZ plane the same way.
         if (actor->targetX != TARGET_UNSET) {
-          dx = (actor->targetX - x) / 65536;
-          dz = (actor->targetZ - z) / 65536;
+          dx = (actor->targetX - x) / Q16_ONE;
+          dz = (actor->targetZ - z) / Q16_ONE;
           distance = px(Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)));
           // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
           // further away the squares would overflow.
@@ -514,8 +514,8 @@ void Actor_UpdateAllMotion(void) {
       // Steer in the XZ plane as Actor_UpdateAllThumb does on the ground,
       // or brake; this loop has no free flight, ground following or floating.
       if (actor->targetX != TARGET_UNSET) {
-        dx = (actor->targetX - x) / 65536;
-        dz = (actor->targetZ - z) / 65536;
+        dx = (actor->targetX - x) / Q16_ONE;
+        dz = (actor->targetZ - z) / Q16_ONE;
         distance = px(Iwram_Sqrt(dx * dx + dz * dz));
         // Under 256 pixels, measure again in 16.16: the root of a 16.16
         // square is 8.8, and << 8 makes it 16.16 again.

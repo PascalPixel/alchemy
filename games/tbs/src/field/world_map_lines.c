@@ -22,7 +22,7 @@ struct FarCallVeneer {
 
 /// A System table entry whose two-argument target this routine calls, the
 /// arctangent.
-struct FarCallAtan2Veneer {
+struct FarCallArcTanVeneer {
   u32 stub;
   s32 (*target)(s32 x, s32 y);
 };
@@ -37,16 +37,16 @@ struct FarCallTrigVeneer {
 /// The start of the System bank's far-call table, as far as Trig_Cos.
 struct FarCallSystemTable {
   struct FarCallVeneer preceding[8];
-  struct FarCallAtan2Veneer atan2;
+  struct FarCallArcTanVeneer arcTan2;
   struct FarCallVeneer squareRoots[2];
   struct FarCallTrigVeneer sin;
   struct FarCallTrigVeneer cos;
 };
 
 STATIC_ASSERT(sizeof(struct FarCallVeneer) == 8);
-STATIC_ASSERT(sizeof(struct FarCallAtan2Veneer) == 8);
+STATIC_ASSERT(sizeof(struct FarCallArcTanVeneer) == 8);
 STATIC_ASSERT(sizeof(struct FarCallTrigVeneer) == 8);
-STATIC_ASSERT(offsetof(struct FarCallSystemTable, atan2) == 64);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, arcTan2) == 64);
 STATIC_ASSERT(offsetof(struct FarCallSystemTable, sin) == 88);
 STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 
@@ -98,7 +98,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     angle =
-        (u16)FarCall_RuntimeTable.atan2.target(targetDeltaX >> 4, depth >> 4);
+        (u16)FarCall_RuntimeTable.arcTan2.target(targetDeltaX >> 4, depth >> 4);
   }
   // The texture origin: the target at half scale.
   originX = MulQ16(target->x, Q16_ONE / 2);

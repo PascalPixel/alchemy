@@ -80,7 +80,7 @@ void FieldPsynergy_Force(void) {
       projectile->scaleX = scale;
       wait(1);
       scale = projectile->scaleX;
-    } while (scale <= 0xffff);
+    } while (scale < Q16_ONE);
   }
   wait(3);
 
@@ -90,8 +90,8 @@ void FieldPsynergy_Force(void) {
     copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
                                    projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
-      copy->scaleY = Q16_ONE * 15 / 16;
-      copy->scaleX = Q16_ONE * 15 / 16;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
       copy->facing = effectWork->angle;
       copy->speedLimit = px(4);
       copy->acceleration = px(4);

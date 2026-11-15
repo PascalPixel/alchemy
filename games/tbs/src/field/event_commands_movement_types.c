@@ -29,12 +29,12 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
     // Whole pixels, rounded toward zero as a division by Q16_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
-      deltaX += 0xffff;
-    pixelsX = deltaX >> 16;
+      deltaX += Q16_ONE - 1;
+    pixelsX = FIELD_PIXEL(deltaX);
     deltaZ = target->z.fixed - actor->z.fixed;
     if (deltaZ < 0)
-      deltaZ += 0xffff;
-    pixelsZ = deltaZ >> 16;
+      deltaZ += Q16_ONE - 1;
+    pixelsZ = FIELD_PIXEL(deltaZ);
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {

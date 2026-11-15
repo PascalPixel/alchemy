@@ -113,14 +113,11 @@ enum {
   ACTOR_WEST_FIREBALL_ROLL = 20
 };
 
+/// The ride work seen from one flame thrower's entry: the work's header, then
+/// the entry, as the getters below index it.
 struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
+  u8 beforeEntries[20];
+  struct RideEntry entry;
 };
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -1565,11 +1562,11 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
 }
 
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a;
 }
 
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a = value;
 }
 
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1583,7 +1580,7 @@ void Ride_SetEntryCount(s32 index, s16 value) {
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.b;
 }
 
 #include "shared/ride_set_slot.h"
@@ -1713,11 +1710,13 @@ struct SpriteView {
   void *record;
 };
 
+/// The ride work as the crumbs read it: the VRAM block of the flame Ride_Create
+/// makes, whose sprite the crumbs share, and that flame.
 struct Work {
-  u8 unk00[12];
+  u8 beforeVramBlock[12];
   u16 vramBlock;
-  u8 unk0e[98];
-  struct Actor *owner;
+  u8 beforeFlame[98];
+  struct Actor *flame;
 };
 
 extern u32 gMarsLighthouseStarRoom_CrumbScript[];
@@ -1729,7 +1728,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
   struct Work *work = WORK;
   s32 i;
 
-  if (work->owner == NULL)
+  if (work->flame == NULL)
     return;
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
@@ -1772,7 +1771,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       object->acceleration = 0;
       object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
-      source = work->owner->sprite;
+      source = work->flame->sprite;
       VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;

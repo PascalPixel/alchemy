@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define KIRIN_CHARGE_FRAMES 96 ///< frames of the charge and the wall of fire
+#define KIRIN_SWEEP_FRAMES 120 ///< frames of Kirin's bound through the hoop
+
 #define KIRIN_BLOB_BYTES PICTURE_BYTES(FIRE_BLOB)
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
@@ -85,7 +88,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
 
   // The sweep: Kirin bounds in over the forest (A or B ends it).
-  for (frame = 0; frame != 120; frame++) {
+  for (frame = 0; frame != KIRIN_SWEEP_FRAMES; frame++) {
     wave = 0;
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);
@@ -260,7 +263,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                  BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-    for (frame = 0; frame != 96; frame++) {
+    for (frame = 0; frame != KIRIN_CHARGE_FRAMES; frame++) {
       if (frame <= 23) {
         struct SpriteScale chargeScaleCopy = chargeScale;
         s32 ang;

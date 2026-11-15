@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define RAY_FRAMES 64 ///< frames of the bolts' approach
+
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 
 #define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
@@ -68,7 +70,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != RAY_FRAMES; frame++) {
     if (frame == 20)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // The bolts, over the first 16 frames.

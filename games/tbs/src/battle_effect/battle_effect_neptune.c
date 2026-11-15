@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define NEPTUNE_COLUMN_FRAMES 144 ///< frames of the columns of water
+
 /// Sets BG2's horizontal scale back to one texel a pixel above the stretched
 /// lines.
 void BattleEffect_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
@@ -432,7 +434,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  for (frame = 0; frame != 144; frame++) {
+  for (frame = 0; frame != NEPTUNE_COLUMN_FRAMES; frame++) {
     if (frame == 96) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

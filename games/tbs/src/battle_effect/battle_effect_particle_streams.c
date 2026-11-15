@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
+
 /// The particle streams' modes (BattleEffect_RunParticleStreams).
 enum ParticleStreamsMode {
   PARTICLE_STREAMS_METEOR,     ///< one spawned sprite falls
@@ -482,7 +484,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-  for (frame = 0; frame != 54; frame++) {
+  for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
     s32 size = (frame + 464) << 8;
     struct BattleCamera *camera = gBattleCamera;
     s32 elapsed = frame - 16;

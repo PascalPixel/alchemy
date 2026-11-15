@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define GROUND_FRAMES 96 ///< frames of Ground
+#define HAIL_FRAMES 64   ///< frames of Hail
+
 #define HAIL_CHIP_PICTURES                                                     \
   PICTURE_BYTES(WATER_WAVE) ///< the ice chips, after the wave
 /// PortalSheet's portal.
@@ -54,7 +57,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     PARTICLES[i].variant = (Random16() & 0xf) + 32;
   }
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != HAIL_FRAMES; frame++) {
     if (frame > 47)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
@@ -200,7 +203,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       portal->velocityX = -portal->velocityX;
     portal->variant = 1;
   }
-  for (frame = 0; frame != 96; frame++) {
+  for (frame = 0; frame != GROUND_FRAMES; frame++) {
     if (frame > 16)
       BattleEffect_StepPaletteToResource(RESOURCE_PORTAL_SHEET);
     // The Djinni circles above the user, then rises away.

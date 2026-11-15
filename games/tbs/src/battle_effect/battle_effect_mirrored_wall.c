@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define MIRRORED_WALL_FRAMES 48 ///< frames of the wall
+
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
@@ -108,7 +110,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     work->shakeFrames = 32;
   }
 
-  for (frame = 0; frame != 48; frame++) {
+  for (frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,

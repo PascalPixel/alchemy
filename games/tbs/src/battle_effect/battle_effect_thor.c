@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define THOR_OPENING_FRAMES 170 ///< frames of the ring, triangle and beam
+#define THOR_STORM_FRAMES 192   ///< frames of the pillar, Thor and his bolts
+
 /// The sparks; the glint pictures that draw the crackles of lightning come
 /// before them.
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 3160))
@@ -143,7 +146,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
 
   // First part (A or B skips it): the ring, the triangle and the beam.
-  for (frame = 0; frame != 170; frame++) {
+  for (frame = 0; frame != THOR_OPENING_FRAMES; frame++) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
@@ -354,7 +357,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     Sound_PlayFar(SE_CRASH);
 
-    for (frame = 0; frame != 192; frame++) {
+    for (frame = 0; frame != THOR_STORM_FRAMES; frame++) {
       s32 stormFrame;
       if (frame == 20) {
         Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_B,

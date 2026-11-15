@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define PROCNE_FRAMES 400 ///< frames of Procne
+
 /// The whirlwind sheet: three whirlwind pictures, then the dust.
 #define PROCNE_DUST (3 * (48 * 64))
 #define PROCNE_COMETS 13824
@@ -105,7 +107,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     point->velocityX = 0;
     point->variant = Random16() & 63;
   }
-  for (frame = 0; frame != 400; frame++) {
+  for (frame = 0; frame != PROCNE_FRAMES; frame++) {
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
       if (frame <= 159)
         frame = 160;

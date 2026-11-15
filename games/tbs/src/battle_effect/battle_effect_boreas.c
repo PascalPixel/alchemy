@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define BOREAS_OPENING_FRAMES 288 ///< frames of the crystals, block and spray
+#define BOREAS_TORRENT_FRAMES 146 ///< frames of the torrent
+
 /// The first part's particles in PARTICLES: the crystals of the mass, the
 /// shards that fly from it in two batches, and the flecks of spray, with a
 /// sparkle trailing each after them.
@@ -122,7 +125,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_RUMBLE);
 
   // First half: the crystals, the big ice block and the spray.
-  for (frame = 0; frame != 288; frame++) {
+  for (frame = 0; frame != BOREAS_OPENING_FRAMES; frame++) {
     count = 16;
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16) {
       break;
@@ -374,7 +377,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -i / 2;
   }
 
-  for (frame = 0; frame != 146; frame++) {
+  for (frame = 0; frame != BOREAS_TORRENT_FRAMES; frame++) {
     count = 0;
     if (frame == 96) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

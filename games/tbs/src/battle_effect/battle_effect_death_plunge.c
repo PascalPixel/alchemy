@@ -5,6 +5,8 @@
 
 #include "battle_effect_internal.h"
 
+#define ELEMENT_BURST_FRAMES 56 ///< frames of the element burst
+
 // The element runners, the streaks and the shattering opening are reached from
 // the battle through far calls, not the handler table, and take their own work,
 // canvas and sheet.
@@ -858,7 +860,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Sound_PlayFar(SE_SPIN);
 
-  for (frame = 0; frame != 56; frame++) {
+  for (frame = 0; frame != ELEMENT_BURST_FRAMES; frame++) {
     Projection_ScaledUnit(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)

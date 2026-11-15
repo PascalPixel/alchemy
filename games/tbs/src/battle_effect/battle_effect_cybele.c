@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define CYBELE_FRAMES 366 ///< frames of Cybele's whole run
+
 #define CYBELE_BLAST_PICTURES                                                  \
   5760                        ///< the blast pictures, after the yellow ring
 #define CYBELE_VINES 16       ///< vines, from work->particles[0]
@@ -118,7 +120,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   height = -px(64);
   speed = 0;
-  for (frame = 0; frame != 366; frame++) {
+  for (frame = 0; frame != CYBELE_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
     // A or B skips the vines straight to the drop.

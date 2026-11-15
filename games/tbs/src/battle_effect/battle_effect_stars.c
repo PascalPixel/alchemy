@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define SHINING_STAR_FRAMES 128 ///< frames of Shining Star
+#define ASTRAL_BLAST_FRAMES 60  ///< frames of Astral Blast
+
 // Astral Blast flies three five-pointed stars at the target; Shining Star drops
 // eight that bounce near it. Each outline's ten corners are projected onto the
 // canvas and each edge stamped with motes.
@@ -75,7 +78,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   }
 
   trails = PARTICLES;
-  for (frame = 0; frame != 60; frame++) {
+  for (frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
     if (frame <= 47) {
       struct BattleCamera *view = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
       s32 speed;
@@ -236,7 +239,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   /* LEFTOVER(template): size holds 2. */
   size = 2;
   trails = PARTICLES;
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     // The stars run through the colours of the rainbow.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);

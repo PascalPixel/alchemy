@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define GAIA_FRAMES 192 ///< frames of Gaia
+
 #define GAIA_ROCKS 11 ///< rock sprites tumbling up through the wall
 #define GAIA_DUST 256 ///< dust in PARTICLES
 
@@ -161,7 +163,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   // The screen shakes throughout.
   work->shakeFrames = 250;
-  for (frame = 0; frame != 192; frame++) {
+  for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)

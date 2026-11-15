@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define ATALANTA_FALL_FRAMES 88 ///< frames of the shafts' fall
+
 #define ATALANTA_SHAFTS 16      ///< shafts of light that gather over the field
 #define ATALANTA_TRAIL_MOTES 24 ///< motes in each gathering shaft's trail
 #define ATALANTA_FALLING_SHAFTS 24 ///< shafts that rain down on the targets
@@ -304,7 +306,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     shaft->variant = -1;
   }
   // The shafts rain down on the targets.
-  for (frame = 0; frame != 88; frame++) {
+  for (frame = 0; frame != ATALANTA_FALL_FRAMES; frame++) {
     for (i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
       struct Particle *shaft = &work->particles[i];
 

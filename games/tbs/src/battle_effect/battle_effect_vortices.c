@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define WHIRLWIND_FRAMES 80 ///< frames of the tornadoes
+
 /// The vortex's three halves, then the bubble picture.
 #define FROTH_VORTEX_HALF_WIDTH 16
 #define FROTH_VORTEX_HALF_HEIGHT 64
@@ -198,7 +200,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != WHIRLWIND_FRAMES; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);

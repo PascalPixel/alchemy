@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define FLARE_FRAMES 80 ///< frames of the flare
+
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
 /// Nine flames rise one after another along half an ellipse.
@@ -60,7 +62,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != FLARE_FRAMES; frame++) {
     if (frame == 24) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }

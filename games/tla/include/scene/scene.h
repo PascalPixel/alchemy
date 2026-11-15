@@ -221,11 +221,6 @@ struct TalkActor {
   u8 unk63; ///< Func_020006d0 reads it
 };
 
-struct ContigoEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 /* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
 struct ListedActor {
   u16 id;

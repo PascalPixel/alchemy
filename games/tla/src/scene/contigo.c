@@ -111,7 +111,7 @@ enum ContigoGeoglyphActorId {
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-struct ContigoObject;
+struct Actor;
 
 void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
@@ -355,16 +355,6 @@ void Contigo_TeleportIn(void) {
 
 #include "../field/field_effect_move.c"
 
-/* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
- * another; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:839: redefinition of `struct
- * TalkActor'. */
-#define TalkActor TalkActor__contigo
-/* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
- * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/contigo.c:2108: redefinition
- * of `struct ContigoEventWork'. */
-#define ContigoEventWork ContigoEventWork__contigo
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -719,8 +709,8 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(0x204084, 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_BABY)), 2);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
+                                   2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
@@ -752,8 +742,8 @@ void Contigo_BabyThinks(void) {
       goto shrink;
     Actor_Release(effect);
   }
-  BattleEffect_SetObjectUpdateMode(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_BABY)), 0);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
+                                   0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   PaletteFade_SetTarget(0x10000, 1);
@@ -988,24 +978,14 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_End();
 }
 
-/// The bytes of an actor this handler uses. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
-struct TalkActor {
-  u8 unk00[6];
-  u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63; ///< Contigo_FaceTalker reads it
-};
-
 void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_GetById(ACTOR_WANDERER));
-  s16 angle = object->angle;
+  struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
+  s16 angle = object->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->blockMarked = 1;
   if (work->psynergy == 0) {
     Actor_FaceActorById(ACTOR_WANDERER, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
@@ -1024,27 +1004,20 @@ void Contigo_TalkToWanderer(void) {
   }
   Event_ShowMessageAndWait(ACTOR_WANDERER, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->unk63 = 0;
+    object->facing = angle;
+  object->blockMarked = 0;
   Event_End();
 }
 
-struct ContigoObject {
-  u8 unk00[6];
-  u16 angle;
-  u8 unk08[0x5b];
-  u8 unk63;
-};
-
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ContigoObject *object =
-      ((struct ContigoObject *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
-  s16 angle = object->angle;
+  struct Actor *object =
+      ((struct Actor *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
+  s16 angle = object->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->blockMarked = 1;
   if (event->psynergy == 0) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineWork.leaderActorId,
                         0);
@@ -1060,8 +1033,8 @@ void Contigo_TalkAboutTheShip(void) {
   }
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
-    object->angle = angle;
-  object->unk63 = 0;
+    object->facing = angle;
+  object->blockMarked = 0;
   Event_End();
 }
 
@@ -1502,14 +1475,14 @@ extern const u8 gContigo_SparkleWork[];
 
 /// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
-  struct ContigoObject *object;
+  struct Actor *object;
   s32 answer;
   /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
    * and copied to r0 in each branch. */
   register s32 owner __asm__("r5");
   s32 angle;
 
-  object = ((struct ContigoObject *)Actor_GetById(ACTOR_HAMA));
+  object = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1757,7 +1730,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_SILENCE);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(ACTOR_HAMA)), 15);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 15);
   angle = FACING_NORTH_NORTHWEST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, px(160), px(466),
                                                  angle);
@@ -1771,7 +1744,7 @@ void Contigo_TheReunion(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMA);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMA);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMA);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(ACTOR_HAMA)), 0);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
@@ -2398,11 +2371,6 @@ void Contigo_InitializeGeoglyph(void) {
   }
 }
 
-struct ContigoEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 void Contigo_InitializeShops(void) {
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
@@ -2465,14 +2433,14 @@ void Contigo_InitializeLuckyDice(void) {
   Contigo_ShrinkActor(17);
   Contigo_ShrinkActor(19);
   Contigo_ShrinkActor(20);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_HOST)),
+                       1);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_GUIDE)),
+                       2);
   Actor_SetSpriteColor(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_LUCKY_DICE_HOST)), 1);
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
   Actor_SetSpriteColor(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_LUCKY_DICE_GUIDE)), 2);
-  Actor_SetSpriteColor(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
-  Actor_SetSpriteColor(
-      ((struct ContigoObject *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
   if (!Event_GetFlag(0x9e5))
     return;
   GameFlag_Clear(0x9e5);
@@ -2567,22 +2535,13 @@ void Contigo_InitializeLuckyDice(void) {
 // The sparkle's update: raises two pairs of sprites over the object, each pair
 // starting when its counter is cleared, until both counters pass 31.
 
-struct SparkleSprite {
-  u8 unk00[12];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
+/// The sparkle over an object: its two pairs of sprites, how far each pair has
+/// risen (from 0 to 31; 999 before it starts) and the pair to start next.
 struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unka0[2];
+  struct EffectSprite sprites[4];
+  s16 heights[2];
   s16 vramEntry;
-  s16 unka6;
+  s16 nextPair;
   struct Actor *object;
 };
 
@@ -2602,7 +2561,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
-  struct SparkleSprite *sprite;
+  struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
@@ -2610,11 +2569,11 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   if (object->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Sound_Play(SE_598);
-      work->unka0[work->unka6] = 0;
-      work->unka6 ^= 1;
+      work->heights[work->nextPair] = 0;
+      work->nextPair ^= 1;
     }
   } else if (object->riseCounter == 1) {
-    if (work->unka0[0] > 31 && work->unka0[1] > 31) {
+    if (work->heights[0] > 31 && work->heights[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
@@ -2623,32 +2582,32 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Trig_Sin(work->unka0[i] << 10);
-    if (work->unka0[i] >= 0) {
-      if (work->unka0[i] <= 31) {
+    sine = Trig_Sin(work->heights[i] << 10);
+    if (work->heights[i] >= 0) {
+      if (work->heights[i] <= 31) {
         position.x = object->x.fixed;
-        position.y = object->y.fixed + px(work->unka0[i]);
+        position.y = object->y.fixed + px(work->heights[i]);
         position.z = object->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;
         z = position.z;
         sprite = &work->sprites[i * 2];
         for (j = 0; j < 2; j++) {
-          sprite->unk0c = x;
-          sprite->unk10 = z;
-          sprite->unk14 = sine;
-          sprite->unk18 = sine;
+          sprite->x = x;
+          sprite->y = z;
+          sprite->scaleX = sine;
+          sprite->scaleY = sine;
           if (j == 0) {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->unk10 -= 0x10000;
-            sprite->unk18 = -sprite->unk18;
+            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->y -= px(1);
+            sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
           sprite++;
         }
-        work->unka0[i]++;
+        work->heights[i]++;
       }
     }
   }
@@ -2661,52 +2620,19 @@ void Contigo_RaiseSparkle(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-// The sparkle's setup, Contigo_StopSparkle, which sets byte 0x62 of an object,
-// and the overlay's data.
-
-/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
- * contigo.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2410: structure has no member named `blend'. */
-struct SparkleSprite__s3e54 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 blend : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x1e];
-};
-
-/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2402:
- * incompatible types in assignment. */
-struct SparkleWork__s3e54 {
-  struct SparkleSprite__s3e54 sprites[4];
-  u16 unka0;
-  u16 unka2;
-  s16 vramEntry;
-  u16 unka6;
-  struct Actor *object;
-};
-
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Contigo_RaiseSparkle.
-void Contigo_StartSparkle(struct Actor *object,
-                          struct SparkleWork__s3e54 *work) {
-  struct SparkleSprite__s3e54 *sprite;
+void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
+  struct EffectSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
 
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, gContigo_SparkleTiles);
-  work->unka6 = 0;
-  work->unka0 = 999;
-  work->unka2 = 999;
+  work->nextPair = 0;
+  work->heights[0] = 999;
+  work->heights[1] = 999;
   work->object = object;
   object->riseCounter = 0;
   object->blockMarked = 0;
@@ -2716,26 +2642,16 @@ void Contigo_StartSparkle(struct Actor *object,
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
-      sprite->blend = 0;
-      sprite->palette = 0;
-      sprite->priority = BattleEffect_GetObjectPriority(object);
+      sprite->oam.palette256 = 0;
+      sprite->oam.palette = 0;
+      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite++;
     }
   }
 }
 
-/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
- * contigo.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2434: structure has no member named `unk62'. */
-struct ContigoObject__s3e54 {
-  u8 unk00[0x62];
-  u8 unk62;
-};
-
-void Contigo_StopSparkle(struct ContigoObject__s3e54 *object) {
-  object->unk62 = 1;
-}
+/// Ends the sparkle: its update finishes once both pairs have risen.
+void Contigo_StopSparkle(struct Actor *object) { object->riseCounter = 1; }
 
 // clang-format off
 s32 gContigo_SparkleTiles[] = {
@@ -3387,5 +3303,3 @@ struct Trigger gContigo_LuckyDiceTriggers[] = {
 #undef MSG_FIRST_PRIZE
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
-#undef ContigoEventWork
-#undef TalkActor

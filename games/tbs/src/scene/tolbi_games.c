@@ -918,7 +918,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
 /// speed and colours.
 static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 facing, s32 colorVariant,
-                                           s32 childValue) {
+                                           s32 animationSpeed) {
   struct Actor *actor = Actor_Get(actorId);
   struct Sprite *sprite;
   u32 count;
@@ -930,7 +930,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     actor->facing = facing;
     actor->motionFlags = 0;
     actor->sprite->flags = 0;
-    Actor_SetAnimationSpeed(actor, childValue);
+    Actor_SetAnimationSpeed(actor, animationSpeed);
   }
   // BUG: actor is read even when Actor_Get found none.
   sprite = actor->sprite;

@@ -19,7 +19,7 @@ typedef struct OrbitingMapActorSprite {
   u8 fullColor : 1;        ///< the Nut's scenes clear it
   u8 shape : 2;            ///< the scenes leave it
   ///@}
-  u8 attribute1[2];
+  u8 attr1[2];
   u8 tileLow; ///< attribute 2's low byte
   /// Sprite's attribute 2 high byte.
   /// bits: 7..4 palette | 3..2 priority | 1..0 tile bits 9..8
@@ -28,7 +28,7 @@ typedef struct OrbitingMapActorSprite {
   u8 priority : 2;      ///< the Nut's scenes set 1
   u8 paletteNumber : 4; ///< the Nut's scenes set 0
   ///@}
-  u8 attribute3[2];
+  u8 attr3[2];
   u8 shadow[12]; ///< Sprite's shadow part
   u8 scale[4];
   /// Sprite's slot: the VRAM cache entry the Nut's icon is loaded

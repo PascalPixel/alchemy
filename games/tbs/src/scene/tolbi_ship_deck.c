@@ -80,6 +80,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/actor_pulse.h"
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
@@ -1167,13 +1168,11 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
   if (flag != 0) {
     Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 264, 702);
     Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
-    Actor_Get(ACTOR_KALAY_CREW_MEMBER)->timer =
-        Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_CREW_MEMBER)->timer = SQUASH_AND_STRETCH_PAUSE();
     Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
-    Actor_Get(ACTOR_KALAY_TOUR_GUIDE)->timer =
-        Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_TOUR_GUIDE)->timer = SQUASH_AND_STRETCH_PAUSE();
     Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);

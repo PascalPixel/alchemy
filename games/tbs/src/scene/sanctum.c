@@ -178,6 +178,9 @@ static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
 static void Sanctum_UpdateHealerAfterimage(struct Actor *actor);
 static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
+
+/// How far each sparkle circling the healer goes around him in a frame.
+#define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
@@ -786,18 +789,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Sound_Play(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(16);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(96);
     Event_Wait(32);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
@@ -858,9 +861,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Sound_Play(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
@@ -875,13 +878,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_StartRepeatedMotion(ACTOR_WEST_HEALER, 1);
     Actor_StartRepeatedMotion(ACTOR_EAST_HEALER, 1);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(128);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     Event_Wait(30);

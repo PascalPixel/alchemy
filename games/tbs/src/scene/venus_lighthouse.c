@@ -1590,7 +1590,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
             (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
         options.startScaleY =
             (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
-        options.spin = (Random_Below(4096)) + 0xf800;
+        options.spin = FIELD_EFFECT_RANDOM_SPIN();
         FieldEffect_Spawn(dustX, 0, px(528), 0, -px((gFrameCount & 1) * 3), 0,
                           EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                               EFFECT_USE_SPIN,
@@ -2080,7 +2080,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
               (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
           options.startScaleY =
               (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
-          options.spin = (Random_Below(4096)) + 0xf800;
+          options.spin = FIELD_EFFECT_RANDOM_SPIN();
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -2145,7 +2145,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
               (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
           options.startScaleY =
               (Random_Below(3)) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
-          options.spin = (Random_Below(4096)) + 0xf800;
+          options.spin = FIELD_EFFECT_RANDOM_SPIN();
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -2944,7 +2944,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   collision = FieldActor_CheckMovementCollision(actor, &nextPosition);
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
-    options.spin = (Random_Below(4096)) + 0xf800;
+    options.spin = FIELD_EFFECT_RANDOM_SPIN();
     particleX = actor->x.fixed + px(Random_Below(12)) - px(6);
     FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
@@ -3010,7 +3010,7 @@ static inline void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX = (Random_Below(2)) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->startScaleY = (Random_Below(2)) * (Q16_ONE * 3 / 10) + 0x17ffc;
-  options->spin = (Random_Below(4096)) + 0xf800;
+  options->spin = FIELD_EFFECT_RANDOM_SPIN();
 }
 
 /// Animates the two tile waves VenusLighthouse_StepOnWallSwitch sets off in
@@ -3077,7 +3077,7 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
 
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
-  options.spin = (Random_Below(4096)) + 0xf800;
+  options.spin = FIELD_EFFECT_RANDOM_SPIN();
   if ((gFrameCount & 3) == 0) {
     if ((Random_Below(2)) != 0) {
       FieldEffect_Spawn(px(x + (Random_Below(2) << 4)), 0, z << 19, 0, 0,

@@ -567,7 +567,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   if (sparkFrame == 0) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
-    options.spin = (Random_Below(4096)) + 0xf800;
+    options.spin = FIELD_EFFECT_RANDOM_SPIN();
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |

@@ -67,6 +67,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/actor_pulse.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
@@ -507,7 +508,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_DORA);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       table = gValePrologue_SquashAndStretchScript;
       actor->userValue = 1;
       Actor_SetScript(ACTOR_DORA, table);
@@ -518,7 +519,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_JENNA_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
     }
@@ -528,7 +529,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_GARET_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
     }
@@ -538,7 +539,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
@@ -565,7 +566,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_KYLE);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     table = gValePrologue_SquashAndStretchScript;
     Actor_SetScript(ACTOR_KYLE, table);
@@ -576,7 +577,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_FATHER);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     Actor_SetScript(ACTOR_JENNAS_FATHER, table);
     Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1214);
@@ -586,7 +587,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     Actor_SetScript(ACTOR_JENNAS_MOTHER, table);
     Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
@@ -1518,7 +1519,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     pulseScript = gValePrologue_SquashAndStretchScript;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -1532,7 +1533,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_FATHER);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_FATHER, pulseScript);
   }
@@ -1543,7 +1544,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
@@ -1783,11 +1784,11 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = Actor_Get(ACTOR_KYLE);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   villager = Actor_Get(ACTOR_JENNAS_FATHER);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   villager = Actor_Get(ACTOR_JENNAS_MOTHER);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   script = gValePrologue_SquashAndStretchScript;
   Actor_SetScript(ACTOR_KYLE, script);
   Actor_SetScript(ACTOR_JENNAS_FATHER, script);
@@ -1910,7 +1911,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
     struct Actor *villager;
     s32 pulseDelay;
     villager = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     pulseScript = gValePrologue_SquashAndStretchScript;
     villager->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -2314,7 +2315,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   actor = Actor_Get(ACTOR_DORA);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   departureActions = gValePrologue_SquashAndStretchScript;
   actor->userValue = 1;
   Actor_SetScript(ACTOR_DORA, departureActions);
@@ -2322,20 +2323,20 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_JENNA_CHILD);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 2;
   Actor_SetScript(ACTOR_JENNA_CHILD, departureActions);
   Actor_SetPosition(ACTOR_GARET_CHILD, 152, 1285);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_GARET_CHILD);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 3;
   Actor_SetScript(ACTOR_GARET_CHILD, departureActions);
   Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 180, 1311);
   actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 4;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
   Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);

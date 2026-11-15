@@ -7,21 +7,24 @@
 #include "edition.h"
 
 union FieldObject;
+struct Actor;
 
 /// An effect object that moves and draws one sprite: its position, scale,
 /// velocity and target, and its per-frame update. It is one of the object
 /// slots the field's FieldActor also describes.
 struct MotionObject {
-  u8 unk00[0x06]; ///< not named by TLA code through this view
-  u16 angle;      ///< 1/65536 turns
-  s32 x;          ///< 16.16 fixed-point pixels
-  s32 y;          ///< 16.16 fixed-point pixels
-  s32 z;          ///< 16.16 fixed-point pixels
-  u8 unk14[0x04]; ///< FieldActor's terrainHeight, the ground's y
-  s32 scaleX;     ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;     ///< 16.16 fixed point, 0x10000 full size
-  u16 height;     ///< not named by TLA code through this view
-  u8 unk22[0x02]; ///< not named by TLA code through this view
+  const s32 *script; ///< the object script it runs; null when it is free
+  s16 scriptCursor;  ///< the script cursor, in words
+  u16 angle;         ///< 1/65536 turns
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  s32 groundHeight;  ///< 16.16 fixed-point pixels
+  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
+  u16 height;        ///< not named by TLA code through this view
+  u8 layer;          ///< the map layer its ground height is read from
+  u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
   s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
@@ -37,17 +40,24 @@ struct MotionObject {
   /// Gravity: taken from velocityY each frame above the ground with
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame.
   s32 verticalMotionStrength;
-  u8 unk4c[0x04]; ///< not named by TLA code through this view
-  void *records;  ///< one sprite, or a table of them (recordStorageKind)
+  s32 riseBaseY;
+  void *records; ///< one sprite, or a table of them (recordStorageKind)
   /// bits: 3..0 how records holds the sprites
   u8 recordStorageKind;
   /// bits: 1 falls under gravity and bounces | 0 follows the terrain
   u8 motionFlags;
-  u8 unk56[0x02];    ///< not named by TLA code through this view
-  u8 snapToTarget;   ///< nonzero: lands exactly on the target
-  u8 unk59;          ///< FieldActor's collisionFlags
+  u8 arrivalAxis;
+  u8 conditionResult; ///< the object script's last flag test
+  u8 snapToTarget;    ///< nonzero: lands exactly on the target
+  u8 collisionFlags;
   u8 autoFaceMotion; ///< bit 0 turns the object to face where it moves
-  u8 unk5b[0x11];    ///< not named by TLA code through this view
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount; ///< the object script's loop count
+  s16 wait;       ///< the object script's wait, in frames
+  void *callback;
+  s32 timer;
+  struct Actor *watchedActor;
   void (*update)(union FieldObject *object);
 };
 

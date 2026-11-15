@@ -118,14 +118,10 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 5,
         .def = 2,
     },
-    // Earth18
-    [DJINNI_18] = {
-        .abilityId = ABILITY_EARTH18,
-    },
-    // Earth19
-    [DJINNI_19] = {
-        .abilityId = ABILITY_EARTH19,
-    },
+    // The spares after each element's eighteenth Djinni, which hold only their
+    // abilities; the text names both after the element ("Earth18").
+    [DJINNI_CRYSTAL + 1] = {.abilityId = ABILITY_CRYSTAL + 1},
+    [DJINNI_CRYSTAL + 2] = {.abilityId = ABILITY_CRYSTAL + 2},
     [DJINNI_FIZZ] = {
         .abilityId = ABILITY_FIZZ,
         .hp = 9,
@@ -139,7 +135,7 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .luck = 1,
     },
     [DJINNI_MIST] = {
-        .abilityId = ABILITY_322,
+        .abilityId = ABILITY_MIST_DJINNI,
         .hp = 11,
         .atk = 4,
     },
@@ -230,14 +226,9 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .hp = 12,
         .atk = 3,
     },
-    // Water18
-    [DJINNI_38] = {
-        .abilityId = ABILITY_WATER18,
-    },
-    // Water19
-    [DJINNI_39] = {
-        .abilityId = ABILITY_WATER19,
-    },
+    // The spares "Water18" and "Water19".
+    [DJINNI_SERAC + 1] = {.abilityId = ABILITY_SERAC + 1},
+    [DJINNI_SERAC + 2] = {.abilityId = ABILITY_SERAC + 2},
     [DJINNI_FORGE] = {
         .abilityId = ABILITY_FORGE,
         .hp = 10,
@@ -346,14 +337,9 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 4,
         .def = 2,
     },
-    // Fire18
-    [DJINNI_58] = {
-        .abilityId = ABILITY_FIRE18,
-    },
-    // Fire19
-    [DJINNI_59] = {
-        .abilityId = ABILITY_FIRE19,
-    },
+    // The spares "Fire18" and "Fire19".
+    [DJINNI_FUGUE + 1] = {.abilityId = ABILITY_FUGUE + 1},
+    [DJINNI_FUGUE + 2] = {.abilityId = ABILITY_FUGUE + 2},
     [DJINNI_GUST] = {
         .abilityId = ABILITY_GUST,
         .hp = 9,
@@ -457,18 +443,13 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 6,
     },
     [DJINNI_GALE] = {
-        .abilityId = ABILITY_377,
+        .abilityId = ABILITY_GALE_DJINNI,
         .hp = 10,
         .agi = 5,
         .luck = 3,
     },
-    // Wind18
-    [DJINNI_78] = {
-        .abilityId = ABILITY_WIND18,
-    },
-    // Wind19
-    [DJINNI_79] = {
-        .abilityId = ABILITY_WIND19,
-    },
+    // The spares "Wind18" and "Wind19".
+    [DJINNI_GALE + 1] = {.abilityId = ABILITY_GALE_DJINNI + 1},
+    [DJINNI_GALE + 2] = {.abilityId = ABILITY_GALE_DJINNI + 2},
 };
 // clang-format on

@@ -461,6 +461,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMadra_TriggersBeforeRaid;
 }
 
+/// Gives the hole the Champa dug the cells of solid ground.
 void Madra_SealHoleCells(void) {
   MapGrid_CopyCellAttributes(109, 14, 3, 3, 45, 14);
 }
@@ -551,6 +552,8 @@ void Madra_AskAboutIceShaft(s32 actor) {
 /// boat, or, once Briggs is caught, whether Felix is the one who beat him.
 // XXX: the boy's lines are shown at the first placed actor, not at him; a
 // render of the talk would show whose window it is.
+/// The Briggs fan asks the leader whether he is the one who beat up Briggs, and
+/// later about the Dehkan Plateau.
 void Madra_AskAboutBriggs(void) {
   s32 msg;
 
@@ -590,6 +593,7 @@ void Madra_AskAboutBriggs(void) {
   Event_End();
 }
 
+/// Mind Read on the Briggs fan.
 void Madra_MindReadBriggsFan(void) {
   s32 msg, x, z;
 
@@ -1721,8 +1725,12 @@ void Madra_MeetKarst(void) {
 }
 #undef SET_MODE
 
+/// Stepping past the gate once the party has been let in: the inspection is not
+/// run again.
 void Madra_SkipGateInspection(void) { GameFlag_Set(0x910); }
 
+/// Stepping past the gate guards once they have questioned the party after the
+/// raid.
 void Madra_SkipRaidQuestioning(void) {
   GameFlag_Set(FLAG_MADRA_RAID_QUESTIONING_DONE);
 }
@@ -1817,6 +1825,7 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
+/// The town until the party returns with Piers (enum MadraActorId).
 struct ActorPlacement gMadra_Placements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1849,6 +1858,8 @@ struct ActorPlacement gMadra_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The town once the party returns with Piers (enum MadraActorId, then
+/// MadraOnReturnActorId).
 struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 150, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1895,6 +1906,7 @@ s16 gMadra_CavernHomeDoorOpening[] = {
 };
 // clang-format on
 
+/// The town's doors that open with a cell animation as the party walks through.
 struct MadraPlacement gMadra_Doors[] = {
     {gMadra_CavernHomeDoorOpening, 20, 3},
     {gMadra_DoorOpening, 13, 23},
@@ -1908,6 +1920,7 @@ struct MadraPlacement gMadra_Doors[] = {
     {gMadra_CavernHomeDoorOpening, 17, 3},
 };
 
+/// The town's doors, gate, talk and Mind Read before the Kibombo raid.
 struct Trigger gMadra_TriggersBeforeRaid[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
@@ -2036,6 +2049,8 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The town's doors, gate, talk and Mind Read once the Kibombo have raided
+/// Madra.
 struct Trigger gMadra_TriggersAfterRaid[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
@@ -2153,6 +2168,8 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The town's doors, talk and Mind Read once the party returns with Piers, and
+/// Karst's visit.
 struct Trigger gMadra_TriggersOnReturn[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},

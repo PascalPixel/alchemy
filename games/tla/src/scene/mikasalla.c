@@ -278,6 +278,8 @@ void Mikasalla_ClimbDownLadder(void) {
   Event_End();
 }
 
+/// Stepping onto a ladder top facing east: the leader steps up and across onto
+/// the rungs and climbs down.
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -286,6 +288,8 @@ void Mikasalla_StepOntoLadderFacingEast(void) {
   Mikasalla_ClimbDownLadder();
 }
 
+/// Stepping onto a ladder top facing west: the leader steps up and across onto
+/// the rungs and climbs down.
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -309,6 +313,8 @@ void Mikasalla_TurnAndClimbDownLadder(void) {
   Mikasalla_ClimbDownLadder();
 }
 
+/// Stepping onto a ladder top facing north: the leader steps onto the rungs
+/// from whichever side of the cell he stands and climbs down.
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].pixel;
 
@@ -325,6 +331,8 @@ void Mikasalla_StepOntoLadderFacingNorth(void) {
   Mikasalla_ClimbDownLadder();
 }
 
+/// Stepping onto a ladder top straight ahead: the leader steps onto the rungs
+/// and climbs down.
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -353,6 +361,8 @@ s16 gMikasalla_WideDoorOpening[] = {
     2, 6, -1, 0,
 };
 
+/// The village's doors that open with a cell animation as the party walks
+/// through.
 struct WarpEntry__mikasalla gMikasalla_Doors[] = {
     {(s32)gMikasalla_DoorOpening, 84, 29},
     {(s32)gMikasalla_DoorOpening, 77, 34},
@@ -366,6 +376,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tunnels' exit regions (Scene_GetExitRegions): two boxes, each with the
+/// exit it leads to.
 s16 gMikasalla_TunnelRegions[] = {
     68, 28, 404, 76, 36, 412, -1, 1,
     244, 28, 100, 252, 36, 108, -1, 2,
@@ -488,6 +500,7 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_END,                                                                  
   };
 
+/// The sheep's script: it wanders its pen.
 s32 gMikasalla_SheepPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_SET(SW_ACCEL, 0x3333),                                                
@@ -581,6 +594,7 @@ s32 gMikasalla_SheepPaces[] = {
       SC_END,                                                                  
   };
 
+/// The village (enum MikasallaActorId).
 struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -596,12 +610,14 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tunnels under the village (Mikasalla2).
 struct ActorPlacement gMikasalla_TunnelPlacements[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
+/// The village's doors, talk, Mind Read, the ladders, and Spark.
 struct Trigger gMikasalla_VillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
@@ -645,6 +661,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
 };
 // clang-format on
 
+/// The tunnels' exits and the ladders.
 struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},

@@ -379,6 +379,7 @@ u32 gMikasallaInteriors_ExplorersWidowPaces[] = {
       SC_END,                                                                  
   };
 
+/// The climber's wife's script: she paces her house.
 u32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_SET(SW_ACCEL, 0x1999),                                                
@@ -421,6 +422,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Mikasalla's houses and inn (enum MikasallaInteriorsActorId).
 struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -436,6 +438,7 @@ struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The three sanctums (enum MikasallaInteriorsSanctumActorId).
 struct ActorPlacement gMikasallaInteriors_SanctumPlacements[] = {
     ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 147, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 466, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -449,6 +452,7 @@ struct ActorPlacement gMikasallaInteriors_SanctumPlacements[] = {
 // clang-format on
 
 // clang-format off
+/// The houses' and inn's talk and Mind Read, Galahad, and what is cooking.
 struct Trigger gMikasallaInteriors_InnTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -486,6 +490,7 @@ struct Trigger gMikasallaInteriors_InnTriggers[] = {
 };
 // clang-format on
 
+/// The three sanctums' healers, the islanders and the counters' Mind Read.
 struct Trigger gMikasallaInteriors_SanctumTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

@@ -126,7 +126,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
 }
 
 /// Returns the Djinn tutorial's message on giving a Djinni: the second set's
-/// while flag 0x175 is set.
+/// while FLAG_ALREADY_KNOWS_DJINN is set.
 s32 Djinn_GetGiveTutorialMessage(void) {
   if (GameFlag_Get(FLAG_ALREADY_KNOWS_DJINN))
     return (s32)MsgDjinnGiveTutorialB;
@@ -135,18 +135,29 @@ s32 Djinn_GetGiveTutorialMessage(void) {
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-// Builds twelve two-tile patterns as the 24 BG tiles from tile 788, the ones
-// Window_DrawThreeTileColumn draws: each tile filled with colour 4, then rows
-// 1 to 7 marked by XOR with gMenu_BarPatternRows. The first set grows its
-// pattern with the row, the second skips row 1. It is declared to return s32
-// but returns no value, and its caller reads none.
+#define RANGE_PATTERN_SET_COUNT 2
+#define RANGE_PATTERN_COUNT 6
+#define RANGE_PATTERN_PAIR_BYTES (2 * TILE_SIZE_4BPP)
+/// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
+/// draws as tilemap entries.
+#define RANGE_ICON_FIRST_TILE 788
+
+// Builds twelve two-tile patterns as the 24 BG tiles from
+// RANGE_ICON_FIRST_TILE, the ones Window_DrawThreeTileColumn draws: each tile
+// filled with colour 4, then rows 1 to 7 marked by XOR with
+// gMenu_BarPatternRows. The first set grows its pattern with the row, the
+// second skips row 1. It is declared to return s32 but returns no value, and
+// its caller reads none.
 s32 Menu_BuildLocalizedPatternTiles(void) {
   s32 set;
   s32 n;
 
-  for (set = 0; set < 2; set++) {
-    for (n = 0; n < 6; n++) {
-      u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
+  for (set = 0; set < RANGE_PATTERN_SET_COUNT; set++) {
+    for (n = 0; n < RANGE_PATTERN_COUNT; n++) {
+      u32 *tile =
+          (u32 *)(set * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_BYTES) +
+                  n * RANGE_PATTERN_PAIR_BYTES + (u32)BG_CHAR_BLOCK(0) +
+                  RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
       s32 x;
 
       Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
@@ -179,11 +190,12 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
                                s32 unused) {
 #endif
   s32 tile_offset = pattern * 2;
-  s32 tile = tile_offset + 0xF315;
+  s32 tile = tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
   Window_SetTilemapEntry((struct Window *)window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntry((struct Window *)window, tile_offset + 0xF314, x + 1,
-                         y, 0);
+  Window_SetTilemapEntry((struct Window *)window,
+                         tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE),
+                         x + 1, y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);
 }
 
@@ -251,11 +263,15 @@ void Link_DrawPageArrows(s32 offset) {
     phase = 1;
   }
   phase = phase + 1;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gRomShiftedTilePair,
-                                (u32 *)offset, -phase);
-  Graphics_MergeShiftedTileRows((u32 *)0x06000240,
-                                (u32 *)(gRomShiftedTilePair + 32),
-                                (u32 *)(offset + 32), phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
+      (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) *
+                  TILE_SIZE_4BPP),
+      (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
 }
 
 /// Link_DrawPageArrows with both arrows merged into the one tile at VRAM

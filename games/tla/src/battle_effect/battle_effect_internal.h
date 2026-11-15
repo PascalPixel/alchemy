@@ -437,6 +437,10 @@ enum RedCrescentPicture {
 /// Each half of RuneSheet's rune, the second drawn mirrored.
 #define RUNE_HALF_WIDTH 24
 #define RUNE_HALF_HEIGHT 48
+/// The 64x64 texture Flash Force and Void Beam build: the rune's two halves
+/// side by side, the second mirrored, eight pixels in from the top left.
+#define RUNE_TEXTURE_SIZE 64
+#define RUNE_TEXTURE_RUNE (8 * RUNE_TEXTURE_SIZE + 8)
 
 /// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
 /// and its kind), and the one picture of the small sheets.

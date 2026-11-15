@@ -310,7 +310,7 @@ extern const struct Scale gMegaera_UnitScale;
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define MEGAERA_FLASH_BURST_PICTURES 0x3800
 /// Where LightningBoltSheet is decoded in the effect's pictures.
-#define MEGAERA_LIGHTNING_BOLT_PICTURES 0xc56
+#define MEGAERA_LIGHTNING_BOLT_PICTURES GLINT_SET_BYTES
 /// Where SparkleDots is decoded in the effect's pictures.
 #define MEGAERA_SPARKLE_DOTS_PICTURES 0x2e16
 
@@ -606,8 +606,11 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           }
           if (frame >= start + 10 && frame < start + 18) {
             blitters[0](canvas,
-                        (PICTURES + 0xc56) + (((frame + i) / 4) & 3) * 2880,
-                        column - 12, 0, 24, 112);
+                        (PICTURES + MEGAERA_LIGHTNING_BOLT_PICTURES) +
+                            (((frame + i) / 4) & 3) *
+                                LIGHTNING_BOLT_PICTURE_BYTES,
+                        column - LIGHTNING_BOLT_WIDTH / 2, 0,
+                        LIGHTNING_BOLT_WIDTH, 112);
           }
           if (frame >= start + 10) {
             for (j = 0; j != 2;) {
@@ -677,6 +680,12 @@ struct StripQuad;
 #define VOID_BEAM_COMET_B_PICTURES 0x1000
 /// Where RuneSheet is decoded in the effect's pictures.
 #define VOID_BEAM_RUNE_PICTURES 0x1000
+/// The beam's body, a 32x32 gradient built after EmberStreakSheet, and
+/// CometSheetB's comet, its head.
+#define VOID_BEAM_BODY 0x1a20
+#define VOID_BEAM_BODY_SIZE 32
+#define VOID_BEAM_COMET_WIDTH 32
+#define VOID_BEAM_COMET_HEIGHT 36
 
 /// A hexagon of motes is traced, side by side, around the caster while a
 /// ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
@@ -716,7 +725,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // The motes, one shade dimmer.
-  for (i = 0; i != 770; i++) {
+  for (i = 0; i != MOTE_SET_BYTES; i++) {
     s32 pixel = sprites[i];
 
     if (pixel != 0) {
@@ -729,15 +738,18 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
                              buffer + VOID_BEAM_RUNE_PICTURES, 1, 0);
-  Iwram_ClearWordsEntry(buffer, 0x1000);
+  Iwram_ClearWordsEntry(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
 
   // The beam's head: the rune, mirrored to 48 columns.
-  for (i = 0; i != 48; i++) {
+  for (i = 0; i != RUNE_HALF_HEIGHT; i++) {
     s32 j;
 
-    for (j = 0; j != 24; j++) {
-      buffer[0x208 + i * 64 + j] = buffer[0x1000 + i * 24 + j];
-      buffer[0x208 + i * 64 + 47 - j] = buffer[0x1000 + i * 24 + j];
+    for (j = 0; j != RUNE_HALF_WIDTH; j++) {
+      buffer[RUNE_TEXTURE_RUNE + i * RUNE_TEXTURE_SIZE + j] =
+          buffer[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
+      buffer[RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
+             i * RUNE_TEXTURE_SIZE - j] =
+          buffer[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
     }
   }
   Iwram_CopyWords((void *)BG_PLTT,
@@ -745,12 +757,12 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
                   SHEET_PALETTE_BYTES);
 
   // The beam's body: a 32-line gradient.
-  row = work->sheet + 0x1a20;
-  for (i = 0; i != 32; i++) {
-    s32 shade = Q_16_16_TO_INT(Trig_Sin(i << 9) * 63);
+  row = work->sheet + VOID_BEAM_BODY;
+  for (i = 0; i != VOID_BEAM_BODY_SIZE; i++) {
+    s32 shade = Q_16_16_TO_INT(Trig_Sin(i << 9) * CANVAS_LEVEL_BRIGHTEST);
     s32 j;
 
-    for (j = 0; j != 32; j++) {
+    for (j = 0; j != VOID_BEAM_BODY_SIZE; j++) {
       *row++ = shade;
     }
   }
@@ -887,14 +899,17 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
             segment.x -= 32;
           }
           if (i > 0) {
-            draw[0](canvas, work->sheet + 0x1a20, segment.x, segment.y - 32, 32,
-                    32);
-            draw[1](canvas, work->sheet + 0x1a20, segment.x, segment.y, 32, 32);
+            draw[0](canvas, work->sheet + VOID_BEAM_BODY, segment.x,
+                    segment.y - VOID_BEAM_BODY_SIZE, VOID_BEAM_BODY_SIZE,
+                    VOID_BEAM_BODY_SIZE);
+            draw[1](canvas, work->sheet + VOID_BEAM_BODY, segment.x, segment.y,
+                    VOID_BEAM_BODY_SIZE, VOID_BEAM_BODY_SIZE);
           } else if (frame <= 81) {
             draw[0](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
-                    segment.y - 36, 32, 36);
+                    segment.y - VOID_BEAM_COMET_HEIGHT, VOID_BEAM_COMET_WIDTH,
+                    VOID_BEAM_COMET_HEIGHT);
             draw[1](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
-                    segment.y, 32, 36);
+                    segment.y, VOID_BEAM_COMET_WIDTH, VOID_BEAM_COMET_HEIGHT);
           }
         }
         row = work->sheet + 0x1a20;

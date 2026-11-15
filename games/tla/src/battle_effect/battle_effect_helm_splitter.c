@@ -183,9 +183,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
-/// The pillar sheet's cell is 24 x 39; the faded copies follow it.
-#define PILLAR_CELL_SIZE 936
-
 // Returns the fixed IWRAM word copy entry, so the call loads its address before
 // its arguments.
 static inline s32 (*Iwram_GetCopyWords(void))(void *destination,

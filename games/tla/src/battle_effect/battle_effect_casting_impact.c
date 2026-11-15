@@ -236,10 +236,6 @@ enum CastingImpact {
 #define STUN_BOLT_TEXTURE_HEIGHT 128
 #define STUN_BOLT_TEXTURES GLINT_SET_BYTES
 #define STUN_BOLT_PICTURES 4
-/// Flash Force's 64x64 texture: RuneSheet's two halves side by side, eight
-/// pixels in from the top left.
-#define FLASH_FORCE_TEXTURE_SIZE 64
-#define FLASH_FORCE_RUNE (8 * FLASH_FORCE_TEXTURE_SIZE + 8)
 /// Hammersphere's ball: a 48x48 shaded circle mirrored into a 48x96 picture.
 #define HAMMERSPHERE_BALL 0x800
 #define HAMMERSPHERE_BALL_WIDTH 48
@@ -426,14 +422,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
 
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
                                buffer + CASTING_IMPACT_RUNE_PICTURES, 1, 0);
-    Iwram_ClearWords(buffer,
-                     FLASH_FORCE_TEXTURE_SIZE * FLASH_FORCE_TEXTURE_SIZE);
+    Iwram_ClearWords(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
     for (i = 0; i != RUNE_HALF_HEIGHT; i++) {
       for (k = 0; k != RUNE_HALF_WIDTH; k++) {
-        buffer[FLASH_FORCE_RUNE + i * FLASH_FORCE_TEXTURE_SIZE + k] =
+        buffer[RUNE_TEXTURE_RUNE + i * RUNE_TEXTURE_SIZE + k] =
             buffer[CASTING_IMPACT_RUNE_PICTURES + i * RUNE_HALF_WIDTH + k];
-        buffer[FLASH_FORCE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
-               i * FLASH_FORCE_TEXTURE_SIZE - k] =
+        buffer[RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
+               i * RUNE_TEXTURE_SIZE - k] =
             buffer[CASTING_IMPACT_RUNE_PICTURES + i * RUNE_HALF_WIDTH + k];
       }
     }

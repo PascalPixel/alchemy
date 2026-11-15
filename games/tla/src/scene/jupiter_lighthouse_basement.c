@@ -54,6 +54,13 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
@@ -129,7 +136,7 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
     JupiterLighthouse_MadPlantLeaps(SPRITE_MAD_PLANT, 424, 488);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
   }
 }
@@ -198,10 +205,6 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
   if (object->userValue == 0)
     JupiterLighthouse_RestartSpark(object);
   object->userValue--;
-  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block. */
-  do {
-  } while (0);
   object->x.fixed +=
       Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
   object->y.fixed += object->speedLimit;
@@ -259,8 +262,8 @@ s32 Scene_Initialize(void) {
       Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   }
   if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2) {
-    REG_BLDALPHA = 0x1008;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDALPHA = BLEND_ALPHA(8, 16);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     JupiterLighthouse_SpawnSparks();
   }
   return 0;

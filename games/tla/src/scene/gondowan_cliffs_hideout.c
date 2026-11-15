@@ -19,6 +19,7 @@
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "field/actor_script.h"
+#include "sprite_ids.h"
 
 /// The hideout's placed actors: two not yet understood, then the four
 /// Kibombo warriors, named for what each says when spoken to.
@@ -60,14 +61,8 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     FieldCamera_FollowActor(8, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
-    {
-      s32 half = 129;
-      s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
-
-      /* FAKEMATCH(barrier): an empty asm on half and id. */
-      asm("" : "+l"(half), "+l"(id));
-      FieldEffect_SetAttached(id, half << 1);
-    }
+    Actor_SetAttachedEffect(ACTOR_WARRIOR_FROM_KIBOMBO,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_Jump(ACTOR_WARRIOR_FROM_KIBOMBO, 4, 15);
     // "We've been found!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_FROM_KIBOMBO, 0);
@@ -124,7 +119,7 @@ u32 gSceneExits[] = {
 // clang-format off
 struct ActorPlacement gPlacementsWithWarriors[] = {
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
     {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
     {83, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 0, 2},
@@ -136,7 +131,7 @@ struct ActorPlacement gPlacementsWithWarriors[] = {
 // clang-format off
 struct ActorPlacement gPlacementsWithoutWarriors[] = {
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

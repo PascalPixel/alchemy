@@ -41,6 +41,7 @@
 #include "field/event_inline.h"
 #include "field/call.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/dma.h"
 #include "field/map_grid.h"
 #include "shared/tables.h"
@@ -52,6 +53,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
+#include "sprite_ids.h"
 
 /// Set once the leader has been walked back from the edge of the map by
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
@@ -803,12 +805,7 @@ void Idejima_ResetWaves(void) {
 void Idejima_ScrollWaves(void) {
   s16 *line = gIdejima_WaveLines[(s16)(gIdejima_WaveBuffer ^ 1)];
 
-  s32 offset = line[0];
-
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
-  REG_BG3VOFS = offset;
+  Io_Write16(line[0], &REG_BG3VOFS);
   Dma_Set(line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           REG_DMA0);
 }
@@ -1854,13 +1851,13 @@ u32 gIdejimaExits[] = {
 };
 
 struct ActorPlacement gIdejimaPlacements[] = {
-    ACTOR_PLACEMENT(56, -1, MOVEMENT_TYPE_STAND, 0, 0, 0, 0x4000, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, -1, MOVEMENT_TYPE_STAND, 0, 0, 0, 0x4000, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, -1, MOVEMENT_TYPE_STAND, 0, 0, 0, 0, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0x15a, -1, 7, 256, 0, 200, 0x8000, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(57, -1, MOVEMENT_TYPE_STAND, 0, 0, 0, 0x4000, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0x1e9, -1, 7, 0, 0, 0, 0x4000, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(-1, 0, 0, 0, 0, 0, 0, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(0x15a, CONDITION_ALWAYS, 7, 256, 0, 200, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(0x1e9, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 // clang-format on
 

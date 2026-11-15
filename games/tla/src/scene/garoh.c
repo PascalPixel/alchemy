@@ -26,17 +26,16 @@ void Actor_PlaceBlocks(const void *data);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 
-void Garoh_RaiseBlock(s32 id, struct Actor *object);
-void Garoh_RaiseFirstBlockOnCell(void);
-void Garoh_RaiseSecondBlockOnCell(void);
-void Garoh_CheckThirdBlock(void);
-void Garoh_RaiseFourthBlockOnCell(void);
+void Garoh_RaisePillar(s32 id, struct Actor *object);
+void Garoh_RaiseFirstPillarOnCell(void);
+void Garoh_RaiseSecondPillarOnCell(void);
+void Garoh_CheckThirdPillar(void);
+void Garoh_RaiseFourthPillarOnCell(void);
 void Garoh_PuffAround(s32 id);
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 #include "field/field.h"
 #include "field/event_commands.h"
-#include "scene/garoh.h"
 #include "scene/scene.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -67,9 +66,43 @@ void Garoh_PuffAround(s32 id);
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
+struct SpawnObject;
+extern struct ActorPlacement gGaroh_VillageDayActorPlacements[];
+extern struct Trigger gGaroh_BlocksTriggers[];
+void Garoh_WerewolvesRevealThemselves(void);
+void Garoh_MahaTellsTheLegend(void);
+void Garoh_InitializeVillage(void);
+void Garoh_InitializeBlocks(void);
+extern u32 gGaroh_WerewolfLookAroundScript[];
+s32 Garoh_MetWerewolves();
+void Garoh_OpenDoorAndEnter(void);
+void Garoh_WerewolfPeersFromCrevice(void);
+void Garoh_EnterCrevice(void);
+void Garoh_MeetInTheCave(void);
+void Garoh_PlaceFirstPillar(void);
+void Garoh_PlaceSecondPillar(void);
+void Garoh_PlaceThirdPillar(void);
+void Garoh_PlaceFourthPillar(void);
+void Garoh_PlacePushedPillar(void);
+void Garoh_RevealTunnelPassage(void);
+void Garoh_HideSanctuaryCrevice(void);
+void Garoh_RestoreBlocksDark(void);
+void Garoh_HideTunnelPassage(void);
+void Garoh_HideCavePassage(void);
+void Garoh_CrossBlocksWestThreshold(void);
+void Garoh_CrossBlocksEastThreshold(void);
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_LongScript[];
+extern s32 gGaroh_ShrunkenSpriteScript[];
+extern s16 gGaroh_DoorFrames[];
+extern s16 gGaroh_WideDoorFrames[];
+extern s16 gGaroh_TallDoorFrames[];
+void Garoh_LashRope(void);
+extern u16 gGaroh_WaveLines[];
+
 /// The village's people by night and by day (SceneId_Garoh), numbering the
-/// rows of gGaroh_Room1Placements and gGaroh_Room1DayPlacements: the five who
-/// go hooded by night show their faces by day.
+/// rows of gGaroh_VillageActorPlacements and gGaroh_VillageDayActorPlacements:
+/// the five who go hooded by night show their faces by day.
 enum GarohVillageActorId {
   /// By night he asks whether the party has seen a werewolf; by day he has
   /// heard from Maha that the party is special.
@@ -92,14 +125,28 @@ enum GarohVillageActorId {
 
 /// The werewolf's path and the cave beneath the village
 /// (SceneId_GarohHypnosSwordChest and SceneId_GarohWerewolfCave), numbering the
-/// rows of gGaroh_Room5Placements; GarohHypnosSwordChest places the werewolf
-/// and Kraden on the same rows.
+/// rows of gGaroh_WerewolfCaveActorPlacements; GarohHypnosSwordChest places the
+/// werewolf and Kraden on the same rows.
 enum GarohWerewolfActorId {
   ACTOR_WEREWOLF = ACTOR_FIRST_PLACED,
   ACTOR_KRADEN,
   ACTOR_MAHA,
   ACTOR_CAVE_CREVICE,
-  ACTOR_ETHER
+  ACTOR_ETHER,
+  /// The cave's fires, shrunk to wall lamps; the first two burn behind the
+  /// party.
+  ACTOR_FIRE_A = ACTOR_FIRST_PLACED + 5,
+  ACTOR_FIRE_B
+};
+
+/// The stone pillars on the way up to the village (SceneId_GarohBlocks),
+/// numbering the rows of gGaroh_BlocksActorPlacements: Move or a push takes
+/// each onto the cell where it rises.
+enum GarohBlocksActorId {
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_PILLAR,
+  ACTOR_THIRD_PILLAR,
+  ACTOR_FOURTH_PILLAR
 };
 
 /// Story flags of the werewolves' secret, in the order the party meets them.
@@ -115,10 +162,13 @@ enum GarohWerewolfActorId {
 #define FLAG_LITTLE_WEREWOLF_THANKED FLAG_AREA_TEMP_01
 #define FLAG_IN_DARK_CAVE FLAG_AREA_TEMP_18
 /// Room 3: the blocks raised on their cells, and the rope Lashed.
-#define FLAG_FIRST_BLOCK_RAISED FLAG_SCENE_TEMP_01
-#define FLAG_SECOND_BLOCK_RAISED FLAG_SCENE_TEMP_02
+#define FLAG_FIRST_PILLAR_RAISED FLAG_SCENE_TEMP_01
+#define FLAG_SECOND_PILLAR_RAISED FLAG_SCENE_TEMP_02
 #define FLAG_ROPE_LASHED FLAG_SCENE_TEMP_03
-#define FLAG_FOURTH_BLOCK_RAISED FLAG_SCENE_TEMP_04
+#define FLAG_FOURTH_PILLAR_RAISED FLAG_SCENE_TEMP_04
+/// The thresholds of the way up, crossed since the party came in.
+#define FLAG_CROSSED_WEST_THRESHOLD FLAG_SCENE_TEMP_10
+#define FLAG_CROSSED_EAST_THRESHOLD FLAG_SCENE_TEMP_11
 
 /// By day room 2's second layer scrolls with the first.
 void Garoh_MatchLayerScroll(void) {
@@ -134,7 +184,7 @@ void Garoh_MatchLayerScroll(void) {
 
 /// By night room 2's second layer ripples: each line is offset by two sines of
 /// the frame count, handed to an HBlank DMA.
-void Garoh_WaveRoom2Layer(void) {
+void Garoh_WaveHypnosSwordChestLayer(void) {
   s32 x;
   // Trig_Sin is an 8-byte far-call veneer: its target address is the word
   // after its first instruction.
@@ -182,23 +232,23 @@ void Garoh_WaveRoom2Layer(void) {
   }
 }
 
-extern u16 gGaroh_Room2DayColors[];
-extern u16 gGaroh_Room2NightColors[];
+extern u16 gGaroh_HypnosSwordChestDayColors[];
+extern u16 gGaroh_HypnosSwordChestNightColors[];
 
 /// Build BG palette 1 colors 8-15 from the table.
-#define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
+#define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count)              \
   void name(void) {                                                            \
     struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
-    const u8 *table = (const u8 *)data1;                                       \
+    const u8 *table = (const u8 *)components;                                  \
     u32 i = 0;                                                                 \
-    u16 *dst = &buffers->palette[n1];                                          \
+    u16 *dst = &buffers->palette[first];                                       \
     s32 blue = 4;                                                              \
     s32 red = 0;                                                               \
     volatile u16 *color;                                                       \
     s32 green;                                                                 \
                                                                                \
   loop:                                                                        \
-    color = BG_PLTT + n1 + i;                                                  \
+    color = BG_PLTT + first + i;                                               \
     green = blue - 2;                                                          \
     *color = *(const u16 *)(table + blue) << 10 |                              \
              *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red); \
@@ -206,16 +256,16 @@ extern u16 gGaroh_Room2NightColors[];
     i++;                                                                       \
     blue += 6;                                                                 \
     red += 6;                                                                  \
-    if (i < n2)                                                                \
+    if (i < count)                                                             \
       goto loop;                                                               \
   }
 
-DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadRoom2DayColors, gGaroh_Room2DayColors, 24,
-                          8)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestDayColors,
+                          gGaroh_HypnosSwordChestDayColors, 24, 8)
 
 // Build BG palette 6 colors 1-9 from the table.
-DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadRoom2NightColors, gGaroh_Room2NightColors,
-                          97, 9)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestNightColors,
+                          gGaroh_HypnosSwordChestNightColors, 97, 9)
 
 s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -228,12 +278,12 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gGaroh_Placements[];
-extern struct ActorPlacement gGaroh_Room1Placements[];
-extern struct ActorPlacement gGaroh_Room3Placements[];
-extern struct ActorPlacement gGaroh_Room4Placements[];
-extern struct ActorPlacement gGaroh_Room2Placements[];
-extern struct ActorPlacement gGaroh_Room5Placements[];
+extern struct ActorPlacement gGaroh_ActorPlacements[];
+extern struct ActorPlacement gGaroh_VillageActorPlacements[];
+extern struct ActorPlacement gGaroh_BlocksActorPlacements[];
+extern struct ActorPlacement gGaroh_TunnelsActorPlacements[];
+extern struct ActorPlacement gGaroh_HypnosSwordChestActorPlacements[];
+extern struct ActorPlacement gGaroh_WerewolfCaveActorPlacements[];
 
 extern struct MapGridCellAnimation gGaroh_Doors[];
 
@@ -243,18 +293,18 @@ const void *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-      return gGaroh_Room1DayPlacements;
-    return gGaroh_Room1Placements;
+      return gGaroh_VillageDayActorPlacements;
+    return gGaroh_VillageActorPlacements;
   }
   if (scene == SCENE_GAROH_HYPNOS_SWORD_CHEST)
-    return gGaroh_Room2Placements;
+    return gGaroh_HypnosSwordChestActorPlacements;
   if (scene == SCENE_GAROH_BLOCKS)
-    return gGaroh_Room3Placements;
+    return gGaroh_BlocksActorPlacements;
   if (scene == SCENE_GAROH_4)
-    return gGaroh_Room4Placements;
+    return gGaroh_TunnelsActorPlacements;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
-    return gGaroh_Room5Placements;
-  return gGaroh_Placements;
+    return gGaroh_WerewolfCaveActorPlacements;
+  return gGaroh_ActorPlacements;
 }
 
 /// Stepping into a door: every placed actor stops, the door opens and the
@@ -267,16 +317,15 @@ void Garoh_OpenDoorAndEnter(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 8;
-loop:
-  {
-    struct Actor *object = Actor_Get(i);
+  do {
+    {
+      struct Actor *object = Actor_Get(i);
 
-    if (object != NULL)
-      object->motionFlags = 0;
-  }
-  i++;
-  if ((u32)i <= 63)
-    goto loop;
+      if (object != NULL)
+        object->motionFlags = 0;
+    }
+    i++;
+  } while ((u32)i <= 63);
   index = work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -390,7 +439,7 @@ void Garoh_HowlForDog(s32 actor) {
 void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_Stop(13);
+  FieldActor_Stop(ACTOR_LITTLE_WEREWOLF);
   Actor_SetAnimation(ACTOR_LITTLE_WEREWOLF, 1);
   FieldEvent_Wait(10);
   Actor_FaceActor(ACTOR_LITTLE_WEREWOLF, ACTOR_FELIX, 0);
@@ -425,7 +474,7 @@ void Garoh_LittleWerewolfThanks(void) {
   }
   FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 10);
   Event_SetFlag(FLAG_LITTLE_WEREWOLF_THANKED);
-  Actor_SetScript(13, 2);
+  Actor_SetScript(ACTOR_LITTLE_WEREWOLF, 2);
   Event_End();
 }
 
@@ -478,7 +527,7 @@ void Garoh_WerewolfPeersFromCrevice(void) {
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA_AT_THE_CREVICE, 0, 10);
     FieldActor_ShowEmote(ACTOR_MAHA_AT_THE_CREVICE,
                          EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Actor_Get(ACTOR_MAHA_AT_THE_CREVICE)->steeringFlags &= ~1;
+    Actor_Get(ACTOR_MAHA_AT_THE_CREVICE)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_MAHA_AT_THE_CREVICE, facing, 0);
     FieldEvent_Wait(30);
     Garoh_OpenCrevice(ACTOR_SANCTUARY_CREVICE);
@@ -496,11 +545,11 @@ void Garoh_WerewolfPeersFromCrevice(void) {
 }
 
 extern struct Trigger gGaroh_Triggers[];
-extern struct Trigger gGaroh_Room1Triggers[];
-extern struct Trigger gGaroh_Room1DayTriggers[];
-extern struct Trigger gGaroh_Room2Triggers[];
-extern struct Trigger gGaroh_Room4Triggers[];
-extern struct Trigger gGaroh_Room5Triggers[];
+extern struct Trigger gGaroh_VillageTriggers[];
+extern struct Trigger gGaroh_VillageDayTriggers[];
+extern struct Trigger gGaroh_HypnosSwordChestTriggers[];
+extern struct Trigger gGaroh_TunnelsTriggers[];
+extern struct Trigger gGaroh_WerewolfCaveTriggers[];
 
 extern s32 gGaroh_HowlCounter;
 
@@ -533,17 +582,17 @@ const void *Scene_GetTriggers(void) {
 
   if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-      return gGaroh_Room1DayTriggers;
-    return gGaroh_Room1Triggers;
+      return gGaroh_VillageDayTriggers;
+    return gGaroh_VillageTriggers;
   }
   if (scene == SCENE_GAROH_HYPNOS_SWORD_CHEST)
-    return gGaroh_Room2Triggers;
+    return gGaroh_HypnosSwordChestTriggers;
   if (scene == SCENE_GAROH_BLOCKS)
-    return gGaroh_Room3Triggers;
+    return gGaroh_BlocksTriggers;
   if (scene == SCENE_GAROH_4)
-    return gGaroh_Room4Triggers;
+    return gGaroh_TunnelsTriggers;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
-    return gGaroh_Room5Triggers;
+    return gGaroh_WerewolfCaveTriggers;
   return gGaroh_Triggers;
 }
 
@@ -556,7 +605,7 @@ void Garoh_HowlAtNight(void) {
   }
 }
 
-void Garoh_InitializeRoom2(void);
+void Garoh_InitializeHypnosSwordChest(void);
 
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
@@ -564,8 +613,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_GAROH_4) {
     gFieldWork->transition = 0x204;
   } else if (gMainRoutineWork.next == SCENE_GAROH_WEREWOLF_CAVE) {
-    FieldActor_SetSpritePriority(13, 1);
-    FieldActor_SetSpritePriority(14, 1);
+    FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
+    FieldActor_SetSpritePriority(ACTOR_FIRE_B, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
       s32 angle = FACING_SOUTH;
 
@@ -586,11 +635,11 @@ s32 Scene_Initialize(void) {
     gFieldWork->transition = 0;
     if (gMainRoutineWork.next == SCENE_GAROH) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
-      Garoh_InitializeRoom1();
+      Garoh_InitializeVillage();
     } else if (gMainRoutineWork.next == SCENE_GAROH_HYPNOS_SWORD_CHEST) {
-      Garoh_InitializeRoom2();
+      Garoh_InitializeHypnosSwordChest();
     } else if (gMainRoutineWork.next == SCENE_GAROH_BLOCKS) {
-      Garoh_InitializeRoom3();
+      Garoh_InitializeBlocks();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
         gMainRoutineWork.restartScene = SCENE_GAROH_INTERIORS_SANCTUM;
         gMainRoutineWork.restartEntrance = 2;
@@ -603,7 +652,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: night colours, or by day the cells of the opened crevice.
-void Garoh_InitializeRoom1(void) {
+void Garoh_InitializeVillage(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   gFieldWork->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
@@ -642,7 +691,7 @@ void Garoh_InitializeRoom1(void) {
   }
 }
 
-void Garoh_InitializeRoom2(void) {
+void Garoh_InitializeHypnosSwordChest(void) {
 
   Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   Tightrope_Initialize();
@@ -656,24 +705,24 @@ void Garoh_InitializeRoom2(void) {
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
-    Garoh_LoadRoom2NightColors();
+    Garoh_LoadHypnosSwordChestNightColors();
     PaletteFade_ApplyTarget(0x10000, 1);
-    Task_AddFrame((s32)Garoh_WaveRoom2Layer, TASK_PASS_FRAME);
+    Task_AddFrame((s32)Garoh_WaveHypnosSwordChestLayer, TASK_PASS_FRAME);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
     MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
-    Garoh_LoadRoom2DayColors();
+    Garoh_LoadHypnosSwordChestDayColors();
     PaletteFade_ApplyTarget(0x10000, 1);
     Garoh_MatchLayerScroll();
   }
 }
 
-extern s16 gGaroh_Room3Blocks[];
+extern s16 gGaroh_Pillars[];
 
 /// The cave west of the village: the blocks Move, Lash and push place, darker
 /// the deeper the party goes.
-void Garoh_InitializeRoom3(void) {
+void Garoh_InitializeBlocks(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
@@ -681,19 +730,17 @@ void Garoh_InitializeRoom3(void) {
     else
       PaletteFade_ApplyTarget(0x10007, 1);
   }
-  Actor_PlaceBlocks(gGaroh_Room3Blocks);
+  Actor_PlaceBlocks(gGaroh_Pillars);
   PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
 }
 
-void Garoh_LiftRoom3Block(void) { Actor_LiftTargetBlock(gGaroh_Room3Blocks); }
+void Garoh_LiftPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
-void Garoh_LiftRoom3BlockByLash(void) {
-  Actor_LiftTargetBlock(gGaroh_Room3Blocks);
-}
+void Garoh_LiftPushedPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
 /// A block left on its cell rises with a whoosh and a ring of dust.
-void Garoh_RaiseBlock(s32 id, struct Actor *object) {
+void Garoh_RaisePillar(s32 id, struct Actor *object) {
   s32 i;
   s32 saved;
 
@@ -707,69 +754,69 @@ void Garoh_RaiseBlock(s32 id, struct Actor *object) {
   Garoh_PuffAround(saved);
 }
 
-#define DEFINE_GAROH_TRIGGER_AT_CELL(name, n1, n2, n3, n4)                     \
+#define DEFINE_GAROH_TRIGGER_AT_CELL(name, actorId, flag, cellX, cellZ)        \
   void name(void) {                                                            \
-    struct Actor *object = Actor_Get(n1);                                      \
+    struct Actor *object = Actor_Get(actorId);                                 \
     s32 x = object->x.fixed >> 20;                                             \
     s32 raw;                                                                   \
     s32 z;                                                                     \
                                                                                \
     raw = object->z.fixed;                                                     \
     z = raw >> 20;                                                             \
-    if (!Flag_IsSet(n2) && x == n3 && z == n4) {                               \
-      Garoh_RaiseBlock(n1, object);                                            \
-      Flag_Set(n2);                                                            \
+    if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
+      Garoh_RaisePillar(actorId, object);                                      \
+      Flag_Set(flag);                                                          \
     }                                                                          \
   }
 
-DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseFirstBlockOnCell, 8,
-                             FLAG_FIRST_BLOCK_RAISED, 10, 29)
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseFirstPillarOnCell, ACTOR_FIRST_PILLAR,
+                             FLAG_FIRST_PILLAR_RAISED, 10, 29)
 
-DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondBlockOnCell, 9,
-                             FLAG_SECOND_BLOCK_RAISED, 15, 28)
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondPillarOnCell, ACTOR_SECOND_PILLAR,
+                             FLAG_SECOND_PILLAR_RAISED, 15, 28)
 
-void Garoh_CheckThirdBlock(void) {
-  Actor_Get(10);
+void Garoh_CheckThirdPillar(void) {
+  Actor_Get(ACTOR_THIRD_PILLAR);
   Flag_IsSet(FLAG_ROPE_LASHED);
 }
 
-void Garoh_RaiseFourthBlockOnCell(void) {
-  struct Actor *object = Actor_Get(11);
+void Garoh_RaiseFourthPillarOnCell(void) {
+  struct Actor *object = Actor_Get(ACTOR_FOURTH_PILLAR);
   s32 x = object->x.fixed >> 20;
   s32 z = object->z.fixed >> 20;
 
-  if (!Flag_IsSet(FLAG_FOURTH_BLOCK_RAISED) && x == 15 && z == 25) {
-    Garoh_RaiseBlock(11, object);
-    Flag_Set(FLAG_FOURTH_BLOCK_RAISED);
+  if (!Flag_IsSet(FLAG_FOURTH_PILLAR_RAISED) && x == 15 && z == 25) {
+    Garoh_RaisePillar(ACTOR_FOURTH_PILLAR, object);
+    Flag_Set(FLAG_FOURTH_PILLAR_RAISED);
   }
 }
 
-void Garoh_PlaceFirstBlock(void) {
+void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFirstBlockOnCell();
+  Garoh_RaiseFirstPillarOnCell();
 }
 
-void Garoh_PlaceSecondBlock(void) {
+void Garoh_PlaceSecondPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseSecondBlockOnCell();
+  Garoh_RaiseSecondPillarOnCell();
 }
 
-void Garoh_PlaceThirdBlock(void) {
+void Garoh_PlaceThirdPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_CheckThirdBlock();
+  Garoh_CheckThirdPillar();
 }
 
-void Garoh_PlaceFourthBlock(void) {
+void Garoh_PlaceFourthPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFourthBlockOnCell();
+  Garoh_RaiseFourthPillarOnCell();
 }
 
-void Garoh_PlaceBlockByLash(void) {
+void Garoh_PlacePushedPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFirstBlockOnCell();
-  Garoh_RaiseSecondBlockOnCell();
-  Garoh_CheckThirdBlock();
-  Garoh_RaiseFourthBlockOnCell();
+  Garoh_RaiseFirstPillarOnCell();
+  Garoh_RaiseSecondPillarOnCell();
+  Garoh_CheckThirdPillar();
+  Garoh_RaiseFourthPillarOnCell();
 }
 
 void Garoh_RevealSanctuaryCrevice(void) {
@@ -777,7 +824,7 @@ void Garoh_RevealSanctuaryCrevice(void) {
   MapGrid_CopyCellAttributes(34, 9, 1, 1, 22, 11);
 }
 
-void Garoh_RevealRoom4Passage(void) {
+void Garoh_RevealTunnelPassage(void) {
   MapGrid_CopyCellsTo(25, 47, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(25, 47, 1, 1, 11, 33);
 }
@@ -795,7 +842,7 @@ void Garoh_HideSanctuaryCrevice(void) {
 
 s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
-void Garoh_RestoreRoom3Dark(void) {
+void Garoh_RestoreBlocksDark(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
       PaletteFade_ApplyTarget(0x10003, 1);
@@ -805,7 +852,7 @@ void Garoh_RestoreRoom3Dark(void) {
   }
 }
 
-void Garoh_HideRoom4Passage(void) {
+void Garoh_HideTunnelPassage(void) {
   MapGrid_CopyCellsTo(8, 30, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 11, 33);
 }
@@ -818,11 +865,11 @@ void Garoh_HideCavePassage(void) {
 
 /// Crossing room 3's first threshold darkens or lightens the cave by the way
 /// the party came in.
-void Garoh_CrossRoom3West(void) {
+void Garoh_CrossBlocksWestThreshold(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_SCENE_TEMP_10);
+    Flag_Set(FLAG_CROSSED_WEST_THRESHOLD);
     if (gMainRoutineWork.entrance == 1) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
@@ -838,11 +885,11 @@ void Garoh_CrossRoom3West(void) {
   }
 }
 
-void Garoh_CrossRoom3East(void) {
+void Garoh_CrossBlocksEastThreshold(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_SCENE_TEMP_11);
+    Flag_Set(FLAG_CROSSED_EAST_THRESHOLD);
     if (gMainRoutineWork.entrance == 2) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
@@ -883,20 +930,19 @@ void Garoh_PuffAround(s32 objectId) {
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
   angleStep = FACING_EAST;
-burst:
-  angle = angleStep << 12;
-  vec.x = Trig_Cos(angle);
-  vec.y = 0;
-  z = Math_Sin(angle);
-  x = vec.x;
-  vec.z = z;
-  x += x / 3;
-  vec.x = x;
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y,
-                    z, 0x01000001, &params);
-  angleStep += 2;
-  if (angleStep <= 16)
-    goto burst;
+  do {
+    angle = angleStep << 12;
+    vec.x = Trig_Cos(angle);
+    vec.y = 0;
+    z = Math_Sin(angle);
+    x = vec.x;
+    vec.z = z;
+    x += x / 3;
+    vec.x = x;
+    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
+                      vec.y, z, 0x01000001, &params);
+    angleStep += 2;
+  } while (angleStep <= 16);
 }
 
 extern u32 gGaroh_PuffScript[];
@@ -914,7 +960,10 @@ s32 Garoh_MetWerewolves(void) {
 }
 
 /// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
-void Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
+void Garoh_SpawnPuff(x, y, z, rotation, timer) s32 x, y, z;
+s16 rotation;
+s32 timer;
+{
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
@@ -928,43 +977,32 @@ void Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     __asm__ volatile("");
     object->unk5e = timer;
     sprite->nextFrame = 0;
-    sprite->rotation = value;
+    sprite->rotation = rotation;
   }
 }
 
 #include "text/msg_ids.h"
 
-// The fourth argument is passed unextended (0xf000), where spawn.c's
-// definition takes an s16: the callers saw an int parameter.
-/* VIEW(push): routine Garoh_SpawnPuff as void Garoh_SpawnPuff(s32 x, s32 y, s32
- * z, s32 value, s32 timer); the definition has void Garoh_SpawnPuff(s32 x, s32
- * y, s32 z, s16 value, s32 timer); tried as the definition's void
- * Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
- * already declares, Garoh_PuffFrom moves: 4 of 43 instructions in tla-ja
- * (garoh.c). */
-extern void Garoh_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 value,
-                                   s32 timer) __asm__("Garoh_SpawnPuff");
-
 /// Two puffs rise from an actor's head.
 void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Garoh_SpawnPuff__puffs(object->x.fixed + px(8), object->y.fixed + px(28),
-                         object->z.fixed, 0x1000, 20);
+  Garoh_SpawnPuff(object->x.fixed + px(8), object->y.fixed + px(28),
+                  object->z.fixed, 0x1000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Garoh_SpawnPuff__puffs(object->x.fixed - px(8), object->y.fixed + px(28),
-                         object->z.fixed, 0xf000, 20);
+  Garoh_SpawnPuff(object->x.fixed - px(8), object->y.fixed + px(28),
+                  object->z.fixed, 0xf000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
 
-#define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
+#define DEFINE_GAROH_PLAY_EFFECT(name, phase, fromX)                           \
   void name(s32 actor) {                                                       \
     FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);                            \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
-    FieldPsynergy_RunHandler(n1);                                              \
-    MapGrid_CopyCellsLayered(n2, 5, 3, 3, 19, 5);                              \
+    FieldPsynergy_RunHandler(phase);                                           \
+    MapGrid_CopyCellsLayered(fromX, 5, 3, 3, 19, 5);                           \
     BattleEffect_StopMainActor();                                              \
     FieldPsynergy_End();                                                       \
   }
@@ -973,24 +1011,36 @@ DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCaveCrevice, 1, 44)
 
 DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCaveCrevice, 3, 39)
 
-#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
+/// Plays an animation, then waits the given frames.
+#define Actor_AnimateThenWait(id, animation, frames)                           \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                              \
+    Actor_SetAnimation(id, animation);                                         \
     FieldEvent_Wait(frames);                                                   \
   } while (0)
-#define FOLLOW_LEADER(id)                                                      \
-  {                                                                            \
-    struct Actor *leader_;                                                     \
-                                                                               \
-    Actor_SetSpeed(id, 1.2);                                                   \
-    Actor_SetAnimation(id, 2);                                                 \
-    leader_ = Actor_Get(gMainRoutineWork.leaderActorId);                       \
-    if (leader_ != NULL)                                                       \
-      Actor_SetDestination(id, *(s16 *)((u8 *)leader_ + 10),                   \
-                           *(s16 *)((u8 *)leader_ + 18));                      \
-    FieldActor_WaitForMoveById(id);                                            \
-    Actor_SetPosition(id, 0, 0);                                               \
+/// Sends an actor walking to where the leader stands, if there is a leader.
+static inline void Scene_WalkTowardLeader(s32 actorId) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+
+  if (leader != NULL) {
+    Actor_SetDestination(actorId, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
+}
+
+/// An actor walks into the leader and is taken off the map, as the party
+/// closes up into one walking sprite at the end of an event.
+static inline void Scene_WalkIntoLeader(s32 actorId) {
+  struct Actor *leader;
+
+  Actor_SetAnimation(actorId, ANIM_WALK);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (leader != NULL) {
+    Actor_SetDestination(actorId, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
+  }
+  FieldActor_WaitForMoveById(actorId);
+  Actor_SetPosition(actorId, 0, 0);
+}
 
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
@@ -999,7 +1049,7 @@ static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
 /// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
 /// back into the village.
 void Garoh_WerewolfProwls(void) {
-  struct Actor *bird;
+  struct Actor *werewolf;
   s32 i;
   s32 position[3];
   s32 *pos;
@@ -1044,7 +1094,7 @@ void Garoh_WerewolfProwls(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     FieldActor_StartRepeatedMotion(ACTOR_PIERS, 2);
   FieldActor_StartRepeatedMotion(ACTOR_SHEBA, 2);
-  FieldActor_StartRepeatedMotion(9, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(20);
@@ -1055,62 +1105,56 @@ void Garoh_WerewolfProwls(void) {
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(144, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
-  bird = Actor_Get(ACTOR_WEREWOLF);
+  werewolf = Actor_Get(ACTOR_WEREWOLF);
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
   i = 0;
-loop1:
-  {
+  do {
     s32 r;
     s32 wave;
 
-    wave = Math_Sin(i << 13);
+    wave = Math_Sin(i * (TRIG_TURN / 8));
     pos = position;
-    pos[0] = Garoh_PathStep(0x680000, 0x580000, i) - wave * 12;
-    wave = Math_Sin(i << 13);
-    position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
+    pos[0] = Garoh_PathStep(px(104), px(88), i) - wave * 12;
+    wave = Math_Sin(i * (TRIG_TURN / 8));
+    position[2] = Garoh_PathStep(px(32), px(120), i) - wave * 7;
     position[1] = 0;
     r = ((Random16() * 10) >> 16) + 4;
-    Actor_SetSpeedFixed(8, r * 0x1999, r * 0xccc);
-    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / 0x10000,
-                        position[2] / 0x10000);
+    Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
+    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
+                        position[2] / px(1));
     i++;
-    if (i <= 7)
-      goto loop1;
-  }
+  } while (i <= 7);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
-  Actor_SetScript(8, gGaroh_WerewolfLookAroundScript);
+  Actor_SetScript(ACTOR_WEREWOLF, gGaroh_WerewolfLookAroundScript);
   gFieldWork->message--;
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  FieldActor_Stop(8);
+  FieldActor_Stop(ACTOR_WEREWOLF);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_WEREWOLF, 1);
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
-  x = bird->x.fixed;
-  z = bird->z.fixed;
-  toX = 0x800000;
-  toZ = 0xb80000;
+  x = werewolf->x.fixed;
+  z = werewolf->z.fixed;
+  toX = px(128);
+  toZ = px(184);
   i = 0;
-loop2:
-  {
+  do {
     s32 r;
     s32 wave;
 
-    wave = Math_Sin(i << 13);
+    wave = Math_Sin(i * (TRIG_TURN / 8));
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = ((Random16() * 10) >> 16) + 4;
-    Actor_SetSpeedFixed(8, r * 0x1999, r * 0xccc);
-    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / 0x10000,
-                        position[2] / 0x10000);
+    Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
+    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
+                        position[2] / px(1));
     i++;
-    if (i <= 7)
-      goto loop2;
-  }
+  } while (i <= 7);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
@@ -1124,17 +1168,17 @@ loop2:
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.6);
-  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= 254;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 128, 148);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= 1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_WEREWOLF, 2.5);
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 0, 4);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_StartRepeatedMotion(8, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_WEREWOLF, 3);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -1155,7 +1199,7 @@ loop2:
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -1183,7 +1227,7 @@ loop2:
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
@@ -1192,7 +1236,7 @@ loop2:
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1202,11 +1246,11 @@ loop2:
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_KRADEN, -8, -8);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1220,14 +1264,14 @@ loop2:
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(30);
@@ -1260,15 +1304,15 @@ loop2:
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   FieldEvent_Wait(25);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(8);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(8);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
-  FieldActor_StartRepeatedMotion(9, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -1279,10 +1323,10 @@ loop2:
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 0.4);
-  Actor_Get(ACTOR_KRADEN)->steeringFlags &= 254;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -16);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1299,7 +1343,7 @@ loop2:
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(35);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -1332,9 +1376,9 @@ loop2:
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  ACTOR_MODE_THEN_WAIT(9, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
@@ -1350,13 +1394,17 @@ loop2:
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(5, 3, 20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(30);
-  FOLLOW_LEADER(9);
-  FOLLOW_LEADER(5);
-  FOLLOW_LEADER(6);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Scene_WalkIntoLeader(ACTOR_KRADEN);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
+  Scene_WalkIntoLeader(ACTOR_SHEBA);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
-    FOLLOW_LEADER(7);
+    Actor_SetSpeed(ACTOR_PIERS, 1.2);
+    Scene_WalkIntoLeader(ACTOR_PIERS);
   }
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
@@ -1365,11 +1413,6 @@ loop2:
 /// Through the crevice: "Look! It's that werewolf!", the little werewolf, which
 /// runs deeper in.
 void Garoh_FollowWerewolfIntoCave(void) {
-  s32 v5;
-  struct Actor *object;
-  s32 t3;
-  s32 b1;
-
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1386,7 +1429,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldActor_StartRepeatedMotion(9, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
@@ -1417,14 +1460,10 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.6);
-  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= 254;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 296, 712);
   FieldEvent_Wait(1);
-  object = Actor_Get(ACTOR_WEREWOLF);
-  /* FAKEMATCH(temporary): a local holding the constant 1. */
-  b1 = 1;
-  b1 |= object->steeringFlags;
-  object->steeringFlags = b1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(15);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(25);
@@ -1448,9 +1487,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 144, 712);
   Actor_SetPosition(ACTOR_WEREWOLF, 0, 0);
   FieldEvent_Wait(30);
-  v5 = ((s32)&gMainRoutineWork);
-  v5 = (v5 + 0x214);
-  EventCamera_FollowActor(*(s32 *)(v5), 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1466,20 +1503,11 @@ void Garoh_FollowWerewolfIntoCave(void) {
   FieldEvent_Wait(20);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  t3 = ((s32)Actor_Get(*(s32 *)(v5)));
-  if (t3 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
-  }
+  Scene_WalkTowardLeader(ACTOR_KRADEN);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
@@ -1488,19 +1516,6 @@ void Garoh_FollowWerewolfIntoCave(void) {
 /// "Where could that werewolf have gone?" The werewolves surround the party and
 /// Maha speaks with it.
 void Garoh_WerewolvesRevealThemselves(void) {
-  s32 v5;
-  s32 t3;
-  s32 t12;
-  s32 t13;
-  s32 t14;
-  s32 t20;
-  s32 t21;
-  s32 t22;
-  s32 t24;
-  s32 b1;
-  s32 p1;
-  s32 p2;
-
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1530,18 +1545,12 @@ void Garoh_WerewolvesRevealThemselves(void) {
   // "Where could that werewolf have gone?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
-  {
-    s32 a0 = 9;
-    s32 a1 = FACING_SOUTHEAST;
-    /* FAKEMATCH(barrier): an empty asm on a0 and a1. */
-    __asm__("" : "+l"(a0), "+l"(a1));
-    Actor_FaceDirection(a0, a1, 0);
-  }
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldCamera_MoveToActorById(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1.5);
   // "Do you think we lost him somewhere?"
-  Event_OpenMessage(9, 0);
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -1596,13 +1605,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(25);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = 5;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1614,8 +1617,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
-  t3 = Actor_Get(ACTOR_CAVE_CREVICE);
-  Actor_SetSpriteFlags(t3, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
   Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1644,7 +1646,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  FieldActor_StartRepeatedMotion(9, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   FieldActor_StartRepeatedMotion(ACTOR_SHEBA, 2);
   FieldActor_StartRepeatedMotion(ACTOR_JENNA, 2);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
@@ -1652,17 +1654,11 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  FieldActor_StartRepeatedMotion(8, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_WEREWOLF, 3);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -1674,13 +1670,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 23);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1691,22 +1681,11 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
-  Event_OpenMessage(10, 0);
+  Event_OpenMessage(ACTOR_MAHA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(40);
-    {
-      s32 a0 = 10;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldActor_SetAnimation(a0, 4);
-    }
-    FieldEvent_Wait(33);
-    {
-      s32 a0 = 10;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldEvent_ShowMessageThenWait(a0, 0, 0);
-    }
+    Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+    FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
@@ -1720,13 +1699,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1740,13 +1713,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1757,14 +1724,8 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
-  Call2(FieldMessage_ShowAtActor, 10, 0);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  Call2(FieldMessage_ShowAtActor, ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
@@ -1780,13 +1741,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
-    {
-      s32 a0 = 5;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldActor_SetAnimation(a0, 3);
-    }
-    FieldEvent_Wait(20);
+    Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
     FieldEvent_Wait(20);
     gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1808,13 +1763,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1832,13 +1781,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
@@ -1862,26 +1805,14 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -1897,31 +1828,17 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 8, 0);
   FieldActor_Jump(ACTOR_WEREWOLF, 4, 0);
-  t12 = Actor_Get(ACTOR_MAHA);
-  v5 = 254;
-  *(u8 *)((t12 + 90)) = (v5 & *(u8 *)((t12 + 90)));
+  Actor_Get(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_MAHA, -8, 0);
-  t13 = Actor_Get(ACTOR_WEREWOLF);
-  v5 = (v5 & *(u8 *)((t13 + 90)));
-  *(u8 *)((t13 + 90)) = v5;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 16, 0);
   FieldEvent_Wait(1);
-  t14 = Actor_Get(ACTOR_WEREWOLF);
-  /* FAKEMATCH(temporary): a local holding the constant 1. */
-  b1 = 1;
-  b1 |= *(u8 *)((t14 + 90));
-  *(u8 *)((t14 + 90)) = b1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldActor_SetAnimation(ACTOR_WEREWOLF, 5);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_WEREWOLF, 1.3);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
@@ -1930,90 +1847,42 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(30);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  {
-    s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(15);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  {
-    s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  FieldEvent_Wait(20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(35);
-  {
-    s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 8);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, 8);
@@ -2030,10 +1899,10 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 0, 48);
   FieldEvent_Wait(20);
   FieldActor_Stop(ACTOR_FELIX);
-  FieldActor_Stop(9);
+  FieldActor_Stop(ACTOR_KRADEN);
   FieldActor_Stop(ACTOR_JENNA);
   FieldActor_Stop(ACTOR_SHEBA);
-  FieldActor_Stop(10);
+  FieldActor_Stop(ACTOR_MAHA);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     FieldActor_Stop(ACTOR_PIERS);
   }
@@ -2049,13 +1918,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   }
   FieldEvent_Wait(30);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
@@ -2067,26 +1930,14 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
@@ -2094,13 +1945,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
@@ -2108,13 +1953,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -2131,52 +1970,31 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   FieldActor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  p1 = (s32)&gMainRoutineWork;
-  v5 = (p1 + 0x214);
-  t20 = Actor_Get(*(s32 *)(v5));
-  if (t20 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)(t20 + 10), *(s16 *)(t20 + 18));
-  }
+  Scene_WalkTowardLeader(ACTOR_KRADEN);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   FieldActor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  t21 = Actor_Get(*(s32 *)(v5));
-  if (t21 != 0) {
-    Actor_SetDestination(ACTOR_JENNA, *(s16 *)(t21 + 10), *(s16 *)(t21 + 18));
-  }
+  Scene_WalkTowardLeader(ACTOR_JENNA);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   FieldActor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  t22 = Actor_Get(*(s32 *)(v5));
-  if (t22 != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, *(s16 *)(t22 + 10), *(s16 *)(t22 + 18));
-  }
+  Scene_WalkTowardLeader(ACTOR_SHEBA);
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     FieldActor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    t24 = Actor_Get(*(s32 *)(v5));
-    if (t24 != 0) {
-      Actor_SetDestination(ACTOR_PIERS, *(s16 *)(t24 + 10), *(s16 *)(t24 + 18));
-    }
+    Scene_WalkTowardLeader(ACTOR_PIERS);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
   }
-  p2 = (s32)&gMainRoutineWork;
-  EventCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Garoh_MetWerewolves();
   FieldEvent_SetExitRequest(11);
   Event_End();
@@ -2194,24 +2012,10 @@ s32 __divsi3();
 /// By day: "Ah, you came... I've been waiting for you." Maha tells of the
 /// werewolves' legend and Mt. Aleph.
 void Garoh_MahaTellsTheLegend(void) {
-  s32 v5;
-  s32 v6;
-  s32 v7;
-  s32 v8;
-  struct Actor *t2;
-  struct Actor *t15;
-  struct Actor *t16;
-  s32 t17;
-  struct Actor *t18;
-  struct Actor *t22;
-  struct Actor *t23;
-  struct Actor *t27;
-  struct Actor *t28;
-  struct Actor *t29;
-  struct Actor *t31;
-  s32 b1;
-  s32 p1;
-  s32 p2;
+  s32 frames;
+  s32 total;
+  struct Actor *ether;
+  struct Sprite *sprite;
 
   Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
@@ -2236,8 +2040,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
-  t2 = Actor_Get(ACTOR_CAVE_CREVICE);
-  Actor_SetSpriteFlags(t2, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
   Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
@@ -2260,19 +2063,17 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldCamera_MoveTo(328, CAMERA_KEEP, 184, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   // "I've been waiting for you."
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200ba8c;
-  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  goto L_0200ba8c;
-L_0200ba8c:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  }
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
@@ -2285,31 +2086,31 @@ L_0200ba8c:;
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
@@ -2317,34 +2118,34 @@ L_0200ba8c:;
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(35);
   Actor_WalkByAndWait(ACTOR_MAHA, -8, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(25);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 45);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 4, -12);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
@@ -2352,7 +2153,7 @@ L_0200ba8c:;
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 4, -12);
   FieldEvent_Wait(10);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
@@ -2360,9 +2161,9 @@ L_0200ba8c:;
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
@@ -2380,34 +2181,32 @@ L_0200ba8c:;
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200bf32;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-L_0200bf32:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  }
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200bf6a;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
-L_0200bf6a:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -2418,47 +2217,47 @@ L_0200bf6a:;
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(15);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(30);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(5, 3, 20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(25);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  FieldActor_StartRepeatedMotion(10, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -2475,10 +2274,9 @@ L_0200bf6a:;
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c216;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-L_0200c216:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
+  }
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_KRADEN, 16, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -2491,12 +2289,11 @@ L_0200c216:;
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 16);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c2bc;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
-L_0200c2bc:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  }
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -2514,25 +2311,24 @@ L_0200c2bc:;
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Event_OpenMessage(6, 0);
+  Event_OpenMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c400;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-L_0200c400:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  }
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(25);
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
@@ -2544,10 +2340,9 @@ L_0200c400:;
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c484;
-  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-L_0200c484:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  }
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -2557,13 +2352,13 @@ L_0200c484:;
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(6, 4, 33);
+  Actor_AnimateThenWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
@@ -2573,20 +2368,19 @@ L_0200c484:;
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MAHA, 3);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c596;
-  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-L_0200c596:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  }
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  FieldActor_StartRepeatedMotion(10, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(9, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -2599,20 +2393,19 @@ L_0200c596:;
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  v5 = 0;
-  FieldEvent_ShowTwoMessagesAndWait(10, 9, 2, 9, 5, 9, 17, 14, 20, 9, v5);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200c694;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
-L_0200c694:;
-  FieldActor_StartRepeatedMotion(10, 3);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MAHA, 9, 2, 9, 5, 9, 17, 14, 20, 9,
+                                    0);
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  }
+  FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  FieldActor_StartRepeatedMotion(9, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -2622,10 +2415,10 @@ L_0200c694:;
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(6, 3, 20);
+  Actor_AnimateThenWait(ACTOR_SHEBA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -2636,7 +2429,7 @@ L_0200c694:;
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(ACTOR_KRADEN, -18, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -2647,16 +2440,16 @@ L_0200c694:;
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(5, 3, 20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
     Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
     FieldEvent_Wait(20);
-    ACTOR_MODE_THEN_WAIT(10, 3, 20);
+    Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
     FieldEvent_Wait(20);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     FieldEvent_Wait(20);
@@ -2668,7 +2461,7 @@ L_0200c694:;
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
@@ -2677,12 +2470,12 @@ L_0200c694:;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(30);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(25);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(40);
@@ -2691,7 +2484,7 @@ L_0200c694:;
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   FieldEvent_Wait(20);
-  FieldActor_StartRepeatedMotion(10, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -2699,25 +2492,16 @@ L_0200c694:;
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, -16, 0);
   FieldEvent_Wait(10);
-  {
-    s32 a1 = -16;
-    s32 a2 = 0;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_WalkByAndWait(ACTOR_MAHA, a1, a2);
-  }
+  Actor_WalkByAndWait(ACTOR_MAHA, -16, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
-  {
-    s32 a0 = 10;
-    Actor_FaceDirection(a0, FACING_EAST, 0);
-  }
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_StartRepeatedMotion(10, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
@@ -2732,43 +2516,27 @@ L_0200c694:;
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(5);
-  t15 = Actor_Get(ACTOR_ETHER);
-  v5 = t15;
-  v8 = *(s32 *)(v5 + 80);
-  *(s32 *)(v8 + 12) = 0x6666;
+  ether = Actor_Get(ACTOR_ETHER);
+  sprite = ether->sprite;
+  sprite->scale = Q16_ONE * 2 / 5;
   FieldActor_SetSpritePriority(ACTOR_ETHER, 1);
-  t16 = Actor_Get(ACTOR_ETHER);
-  Actor_SetSpriteFlags(t16, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 0);
   Actor_SetPosition(ACTOR_ETHER, 328, 160);
   FieldActor_Jump(ACTOR_ETHER, 9, 0);
-  v7 = 0;
-  v6 = 20;
-L_0200caf6:;
-  t17 = Math_Divide(v7, 20);
-  *(s32 *)(v8 + 12) = (t17 + 0x6666);
-  {
-    s32 angle = *(u16 *)(v5 + 6);
-    /* FAKEMATCH(barrier): the native starts the 0x1000 step before it loads the
-     * angle. */
-    __asm__("" : "+l"(angle));
-    *(u16 *)(v5 + 6) = angle + 0x1000;
-  }
-  System_Wait(1);
-  v6 = (v6 - 1);
-  v7 = (v7 + 0x9999);
-  if (v6 >= 0)
-    goto L_0200caf6;
-  FIELD_AT(v5, u16, 6) = 0x4000;
-  {
-    s32 a2 = 8;
-    s32 a1 = 0;
-
-    Actor_WalkByAndWait(ACTOR_ETHER, a1, a2);
-  }
-  t18 = Actor_Get(ACTOR_ETHER);
-  Actor_SetSpriteFlags(t18, 1);
+  total = 0;
+  frames = 20;
+  do {
+    sprite->scale = Math_Divide(total, 20) + Q16_ONE * 2 / 5;
+    ether->facing += FACING_STEP;
+    System_Wait(1);
+    frames--;
+    total += Q16_ONE * 3 / 5;
+  } while (frames >= 0);
+  ether->facing = FACING_SOUTH;
+  Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 1);
   FieldEvent_Wait(5);
   Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
   FieldEvent_Wait(5);
@@ -2788,18 +2556,13 @@ L_0200caf6:;
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  {
-    s32 a1 = 0;
-
-    Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 10, a1);
-  }
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200cc42;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-L_0200cc42:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  }
   FieldEvent_Wait(20);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
@@ -2808,44 +2571,33 @@ L_0200cc42:;
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message = (gFieldWork->message + 1);
-    {
-      s32 a0 = 0x200a;
-      FieldEvent_ShowMessageThenWait(a0, 0, 0);
-    }
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200ccdc;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
-L_0200ccdc:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  }
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_SetSpeed(ACTOR_MAHA, 2.4);
-  t22 = Actor_Get(ACTOR_MAHA);
-  *(u8 *)(((u8 *)t22 + 90)) = (254 & *(u8 *)(((u8 *)t22 + 90)));
+  Actor_Get(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 0, 8);
   Actor_WalkByAndWait(ACTOR_MAHA, 0, -8);
   FieldEvent_Wait(1);
-  t23 = Actor_Get(ACTOR_MAHA);
-  /* FAKEMATCH(temporary): the value is ORed into the register that holds the
-   * constant. */
-  b1 = 1;
-  b1 |= *(u8 *)(((u8 *)t23 + 90));
-  *(u8 *)(((u8 *)t23 + 90)) = b1;
+  Actor_Get(ACTOR_MAHA)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(1);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200cda2;
-  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-L_0200cda2:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  }
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Djinn_JoinParty(12, DJINNI_ETHER / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_ETHER));
@@ -2860,7 +2612,7 @@ L_0200cda2:;
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  ACTOR_MODE_THEN_WAIT(5, 3, 20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
@@ -2868,37 +2620,24 @@ L_0200cda2:;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 4, 33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-  ACTOR_MODE_THEN_WAIT(9, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  {
-    s32 a1 = 0x108;
-    s32 a2 = 30;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_ShowEmote(ACTOR_JENNA, a1, a2);
-  }
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 0);
-  {
-    s32 a1 = 0x3000;
-    s32 a2 = 0;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_FaceDirection(ACTOR_MAHA, a1, a2);
-  }
+  Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200cf2a;
-  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-L_0200cf2a:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  }
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
@@ -2911,74 +2650,32 @@ L_0200cf2a:;
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200cfbc;
-  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-L_0200cfbc:;
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  }
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  ACTOR_MODE_THEN_WAIT(4, 3, 20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  p1 = (s32)&gMainRoutineWork;
-  v5 = (p1 + 0x214);
-  t27 = Actor_Get(*(s32 *)(v5));
-  if (t27 == 0)
-    goto L_0200d016;
-  Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)t27 + 10),
-                       *(s16 *)((u8 *)t27 + 18));
-L_0200d016:;
-  FieldActor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_KRADEN);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
-  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  t28 = Actor_Get(*(s32 *)(v5));
-  if (t28 == 0)
-    goto L_0200d054;
-  Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)t28 + 10),
-                       *(s16 *)((u8 *)t28 + 18));
-L_0200d054:;
-  FieldActor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
-  Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  t29 = Actor_Get(*(s32 *)(v5));
-  if (t29 == 0)
-    goto L_0200d092;
-  Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)t29 + 10),
-                       *(s16 *)((u8 *)t29 + 18));
-L_0200d092:;
-  FieldActor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-  if (!Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
-    goto L_0200d0fa;
-  Actor_SetSpeed(ACTOR_PIERS, 1.2);
-  Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  t31 = Actor_Get(*(s32 *)(v5));
-  if (t31 == 0)
-    goto L_0200d0ea;
-  goto L_0200d0dc;
-L_0200d0dc:;
-  Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)t31 + 10),
-                       *(s16 *)((u8 *)t31 + 18));
-L_0200d0ea:;
-  FieldActor_WaitForMoveById(ACTOR_PIERS);
-  Actor_SetPosition(ACTOR_PIERS, 0, 0);
-L_0200d0fa:;
-  p2 = (s32)&gMainRoutineWork;
-  {
-    s32 a0 = *(s32 *)((p2 + 0x214));
-    EventCamera_FollowActor(a0, 1);
+  Scene_WalkIntoLeader(ACTOR_SHEBA);
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
+    Actor_SetSpeed(ACTOR_PIERS, 1.2);
+    Scene_WalkIntoLeader(ACTOR_PIERS);
   }
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }
 
 void Garoh_LittleWerewolfThanks(void);
-void Garoh_LiftRoom3Block(void);
-void Garoh_LiftRoom3BlockByLash(void);
+void Garoh_LiftPillar(void);
+void Garoh_LiftPushedPillar(void);
 void Garoh_RevealSanctuaryCrevice(void);
 void Garoh_RevealCavePassage(void);
 
@@ -3006,8 +2703,9 @@ u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
-s16 gGaroh_Room3Blocks[] = {
-    8, 9, 10, 11, -1, 0,
+s16 gGaroh_Pillars[] = {
+    ACTOR_FIRST_PILLAR, ACTOR_SECOND_PILLAR, ACTOR_THIRD_PILLAR,
+    ACTOR_FOURTH_PILLAR, -1, 0,
 };
 
 u32 gGaroh_WerewolfLookAroundScript[] = {
@@ -3022,14 +2720,14 @@ u32 gGaroh_WerewolfLookAroundScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 gGaroh_Room2NightColors[] = {
+u16 gGaroh_HypnosSwordChestNightColors[] = {
     31, 31, 31, 29, 29, 30, 27, 28,
     29, 25, 27, 28, 23, 25, 27, 21,
     24, 26, 15, 18, 19, 10, 12, 13,
     5, 6, 6,
 };
 
-u16 gGaroh_Room2DayColors[] = {
+u16 gGaroh_HypnosSwordChestDayColors[] = {
     24, 28, 30, 19, 24, 27, 15, 20,
     25, 11, 16, 23, 7, 12, 21, 3,
     8, 19, 27, 27, 27, 16, 24, 29,
@@ -3102,11 +2800,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gGaroh_Placements[] = {
+struct ActorPlacement gGaroh_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_Room1Placements[] = {
+struct ActorPlacement gGaroh_VillageActorPlacements[] = {
     ACTOR_PLACEMENT(131, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 400, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(131, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(131, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 304, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3125,81 +2823,73 @@ struct ActorPlacement gGaroh_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gGaroh_Room1DayPlacements[] = {
-    192, -1, 1, 0, 0, 232, 0, 0,
-    0, 400, 0, 1, 190, -1, 1, 0,
-    0, 416, 0, 0, 0, 424, 0x4000, 1,
-    185, -1, 1, 0, 0, 192, 0, 0,
-    0, 304, 0, 1, 196, -1, 1, 0,
-    0, 280, 0, 0, 0, 344, 0x8000, 1,
-    188, -1, 1, 0, 0, 368, 0, 0,
-    0, 312, 0x4000, 1, 191, -1, 2, 0,
-    0, 384, 0, 0, 0, 232, 0x4000, 1,
-    304, -1, 1, 0, 0, 312, 0, 0,
-    0, 232, 0xc000, 2, 304, -1, 1, 0,
-    0, 408, 0, 0, 0, 232, 0xc000, 258,
-    304, -1, 1, 0, 0, 184, 0, 0,
-    0, 232, 0xc000, 2, 304, -1, 1, 0,
-    0, 88, 0, 0, 0, 312, 0xc000, 2,
-    304, -1, 1, 0, 0, 152, 0, 0,
-    0, 280, 0xc000, 2, 304, -1, 1, 0,
-    0, 264, 0, 0, 0, 248, 0xc000, 2,
-    304, -1, 1, 0, 0, 408, 0, 0,
-    0, 296, 0xc000, 2, 304, -1, 1, 0,
-    0, 296, 0, 0, 0, 408, 0xc000, 258,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
-};
-
-struct ActorPlacement gGaroh_Room3Placements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gGaroh_VillageDayActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 400, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 304, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 344, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 384, 0, 232, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 408, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_Room4Placements[] = {
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gGaroh_BlocksActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_Room2Placements[] = {
+struct ActorPlacement gGaroh_TunnelsActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gGaroh_HypnosSwordChestActorPlacements[] = {
     ACTOR_PLACEMENT(22, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_Room5Placements[] = {
+struct ActorPlacement gGaroh_WerewolfCaveActorPlacements[] = {
     ACTOR_PLACEMENT(22, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(42, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_ETHER), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
@@ -3234,7 +2924,7 @@ struct Trigger gGaroh_Triggers[] = {
 };
 // clang-format on
 
-struct Trigger gGaroh_Room1Triggers[] = {
+struct Trigger gGaroh_VillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
@@ -3279,7 +2969,7 @@ struct Trigger gGaroh_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaroh_Room1DayTriggers[] = {
+struct Trigger gGaroh_VillageDayTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
@@ -3327,7 +3017,7 @@ struct Trigger gGaroh_Room1DayTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaroh_Room2Triggers[] = {
+struct Trigger gGaroh_HypnosSwordChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3338,25 +3028,39 @@ struct Trigger gGaroh_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gGaroh_Room3Triggers[] = {
-    1,          (s32)0xffff0001, 1,
-    1,          (s32)0xffff0002, 2,
-    2,          0x2100014,       (s32)Garoh_CrossRoom3West,
-    2,          0x2110015,       (s32)Garoh_CrossRoom3East,
-    0x10008c15, 0x2010008,       (s32)Garoh_LiftRoom3Block,
-    0x8c15,     0x2010008,       (s32)Garoh_PlaceFirstBlock,
-    0x10008c15, 0x2020009,       (s32)Garoh_LiftRoom3Block,
-    0x8c15,     0x2020009,       (s32)Garoh_PlaceSecondBlock,
-    0x10008c15, 0x203000a,       (s32)Garoh_LiftRoom3Block,
-    0x8c15,     0x203000a,       (s32)Garoh_PlaceThirdBlock,
-    0x10008c15, 0x204000b,       (s32)Garoh_LiftRoom3Block,
-    0x8c15,     0x204000b,       (s32)Garoh_PlaceFourthBlock,
-    8,          0x2010000,       (s32)Garoh_LiftRoom3BlockByLash,
-    9,          0x2010000,       (s32)Garoh_PlaceBlockByLash,
-    0x40009085, -0x10000,        (s32)Garoh_RestoreRoom3Dark,
+// No end row: the room reads on into the tunnels' table, whose exits and
+// Reveal answer here too.
+struct Trigger gGaroh_BlocksTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 20, FLAG_CROSSED_WEST_THRESHOLD,
+     EVENT(Garoh_CrossBlocksWestThreshold)},
+    {TRIGGER_STEP, 21, FLAG_CROSSED_EAST_THRESHOLD,
+     EVENT(Garoh_CrossBlocksEastThreshold)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR,
+     FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_PlaceFirstPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR,
+     FLAG_SECOND_PILLAR_RAISED, EVENT(Garoh_PlaceSecondPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_THIRD_PILLAR, FLAG_ROPE_LASHED, EVENT(Garoh_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_ROPE_LASHED,
+     EVENT(Garoh_PlaceThirdPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_FOURTH_PILLAR, FLAG_FOURTH_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_PILLAR,
+     FLAG_FOURTH_PILLAR_RAISED, EVENT(Garoh_PlaceFourthPillar)},
+    {TRIGGER_PUSH, 0, FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_LiftPushedPillar)},
+    {TRIGGER_PUSHED, 0, FLAG_FIRST_PILLAR_RAISED,
+     EVENT(Garoh_PlacePushedPillar)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Garoh_RestoreBlocksDark)},
 };
 
-struct Trigger gGaroh_Room4Triggers[] = {
+struct Trigger gGaroh_TunnelsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -3369,13 +3073,13 @@ struct Trigger gGaroh_Room4Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 11, CONDITION_ALWAYS, 11},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Garoh_RevealRoom4Passage)},
+     CONDITION_ALWAYS, EVENT(Garoh_RevealTunnelPassage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Garoh_HideRoom4Passage)},
+     CONDITION_ALWAYS, EVENT(Garoh_HideTunnelPassage)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaroh_Room5Triggers[] = {
+struct Trigger gGaroh_WerewolfCaveTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3403,6 +3107,5 @@ s32 gGaroh_HowlCounter = 0;
 u32 gGaroh_PuffScript[] = {
     SC_RELEASE,
 };
-#undef ACTOR_MODE_THEN_WAIT
-#undef FOLLOW_LEADER
+#undef Actor_AnimateThenWait
 #undef FIELD_AT

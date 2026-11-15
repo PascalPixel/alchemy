@@ -115,7 +115,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void MapGrid_SetAttributeBAt(s32 actor);
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 extern s32 gJupiterLighthouse_GlowPosition[3];
 extern const u8 gJupiterLighthouse_GlowSprite[];
 void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
@@ -174,7 +174,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     target[2] = 144 << 18;
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
@@ -237,7 +237,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     target[2] = 144 << 18;
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
@@ -277,14 +277,13 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   leader->scaleX = Q16_ONE * 3 / 8;
   leader->scaleY = Q16_ONE * 3 / 8;
   i = 19;
-spin:
-  leader->facing += 0x2000;
-  leader->scaleX += 0x800;
-  leader->scaleY = leader->scaleX;
-  System_Wait(1);
-  i--;
-  if (i >= 0)
-    goto spin;
+  do {
+    leader->facing += 0x2000;
+    leader->scaleX += 0x800;
+    leader->scaleY = leader->scaleX;
+    System_Wait(1);
+    i--;
+  } while (i >= 0);
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
@@ -353,12 +352,6 @@ void JupiterLighthouse_PushEnergyBlock(s32 a0, s32 a1) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                             s32 destX, s32 destY) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
-  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, destX, destY);
-}
-
 /// The energy path block lands with a thump once pushed off its ledge; landed
 /// in the gap at cell (20, 39), it stays there and the path beyond it lights
 /// up in three steps.
@@ -395,7 +388,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     MapGrid_CopyCellsLayered(92, 40, 1, 1, 84, 40);
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
-    CopyCells(92, 41, 1, 1, 84, 41);
+    MapGrid_CopyCellsLayered(92, 41, 1, 1, 84, 41);
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
@@ -564,15 +557,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 }
 
 void MapGrid_SetCellHeight();
-/* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
- * MapGrid_SetAttributeBAt(); scene/scene.h has void
- * MapGrid_SetAttributeBAt(s32 actor); tried as the definition's u8
- * MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:535: too many arguments to
- * function `MapGrid_SetAttributeBAt'. */
-extern void
-MapGrid_SetAttributeBAt__room_2() __asm__("MapGrid_SetAttributeBAt");
 
 void Actor_RaiseFromCell(s32 id) {
   struct Actor *object;
@@ -588,7 +572,7 @@ void Actor_RaiseFromCell(s32 id) {
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
                         (height >> 19) + 6);
-  MapGrid_SetAttributeBAt__room_2(object->x.fixed, object->z.fixed, 0, 128);
+  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -797,11 +781,11 @@ u32 gSceneExits[] = {
   };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 104, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 104, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 600, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 600, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 728, FACING_SOUTHWEST, TALK_FACING_KEEP, 1),

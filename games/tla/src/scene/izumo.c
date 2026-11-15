@@ -36,6 +36,7 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
+#include "sprite_ids.h"
 
 /// Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
@@ -79,7 +80,7 @@ extern u8 MsgTheMisalignedStone[];
 
 struct Actor *Actor_GetById(u32 objectId);
 void FieldEvent_Wait(s32 frames);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
@@ -91,7 +92,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
-void Actor_ShowEmoteById(s32 id, s32 a, s32 b);
+s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
@@ -115,7 +116,6 @@ void Izumo_FinishMovingStone(void) {
   s32 x = actor->x.fixed >> 20;
   s32 z = actor->z.fixed >> 20;
 
-  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines. */
   Actor_PlaceMovedBlock();
   Sound_Play(SE_WATER);
   if (x == 20 && z == 9) {
@@ -274,17 +274,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIzumo_Triggers;
 }
 
-static inline s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH(wrapper): the flag test forwarded through the inline. */
-  return GameFlag_Get(flag);
-}
-
 /// The ring of stones: one line after the flag is set, otherwise the full talk
 /// and its answer.
 void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
+  if (Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgCanYouImagine);
     // "Can you imagine what it must be like to have the power to move..."
     Event_ShowMessageAndWait(actor, 0);
@@ -308,7 +303,7 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
 void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
+  if (Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgButItS);
     // "But it's a festival! Why do I have to keep guarding the stone circle?"
     Event_ShowMessageAndWait(actor, 0);
@@ -388,8 +383,6 @@ void Izumo_RotateWaterColors(void) {
 }
 
 void Izumo_StopThePartyToThankThem(void) {
-  /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
-   * with function types they do not have. */
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -399,8 +392,8 @@ void Izumo_StopThePartyToThankThem(void) {
   // "Felix, wait!"
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
-  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.leaderActorId, 256,
-         30);
+  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
         px(216));
   Actor_WalkToById(32, 200, 248);
@@ -414,15 +407,15 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(30);
   // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(32, 0);
-  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.leaderActorId, 261,
-         60);
+  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+                      EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "And then I thought of something."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetAnimationById(32, 3);
   FieldEvent_Wait(15);
   // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
+  FieldMessage_ShowAtActor(32, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       1) {
     FieldEvent_Wait(90);
@@ -498,9 +491,7 @@ void Izumo_OfferATokenOfGratitude(void) {
     Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
-    /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
-     * value. */
-    ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
+    FieldMessage_ShowAtActor(32, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         0) {
       Izumo_TellTheCloudBrandLegend();
@@ -816,12 +807,12 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gIzumo_ActorPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 488, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 488, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -839,12 +830,12 @@ struct ActorPlacement gIzumo_ActorPlacements[] = {
 
 // clang-format off
 struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 488, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),

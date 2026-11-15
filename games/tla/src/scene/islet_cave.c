@@ -19,7 +19,6 @@
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
-#include "scene/garoh.h"
 #include "scene/scene.h"
 #include "system/task.h"
 #include "field/actor.h"
@@ -35,6 +34,13 @@
 #include "stddef.h"
 #include "shared/tables.h"
 #include "field/actor_script.h"
+
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
 
 void IsletCave_TeleportIn(void);
 
@@ -229,13 +235,19 @@ void IsletCave_TeleportIn(void) {
 
 #include "text/msg_ids.h"
 
+/// Meld, the Djinni waiting in this room.
+enum { ACTOR_MELD = 15 };
+
 void IsletCave_FightMeld(void) {
-  Field_RequestDjinnBattle(15, DJINNI_MELD);
+  Field_RequestDjinnBattle(ACTOR_MELD, DJINNI_MELD);
   return;
 }
 
+/// Serac, the Djinni waiting in this room.
+enum { ACTOR_SERAC = 9 };
+
 void IsletCave_FightSerac(void) {
-  Field_RequestDjinnBattle(9, DJINNI_SERAC);
+  Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
   return;
 }
 
@@ -338,9 +350,13 @@ void IsletCave_DimPalette(s32 scale) {
     color = *source++;
     mask = ~0x3ff;
     value = (color >> 10) & 31;
-    value <<= 10;
-    /* FAKEMATCH(dead): blue masked like the other two channels, clearing
-     * nothing. */
+#ifdef BUGFIX
+    value *= scale;
+#else
+    // BUG: blue is multiplied by the full scale, 0x400, not by scale, so it
+    // never dims.
+    value *= 0x400;
+#endif
     value &= mask;
     if (value > 0x7c00)
       value = 0x7c00;
@@ -613,137 +629,110 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogEast, 8, 32,
-                                  GameFlag_Clear, 0x280)
+/// The logs floating in the cave's water, in the order the party rides them.
+enum {
+  ACTOR_FIRST_LOG = 8,
+  ACTOR_SECOND_LOG = 9,
+  ACTOR_THIRD_LOG = 10,
+  ACTOR_FOURTH_LOG = 11,
+  ACTOR_FIFTH_LOG = 12,
+  ACTOR_SIXTH_LOG = 13,
+  ACTOR_SEVENTH_LOG = 14
+};
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, 8, -32,
-                                  GameFlag_Set, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogEast, ACTOR_FIRST_LOG,
+                                  32, GameFlag_Clear, FLAG_SCENE_TEMP_80)
+
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, ACTOR_FIRST_LOG,
+                                  -32, GameFlag_Set, FLAG_SCENE_TEMP_80)
 
 void IsletCave_RideSecondLogEast(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+  s32 fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
+  s32 fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
 
-  object0 = Actor_GetById(9);
-  value1 = object0->x.fixed;
-  object2 = Actor_GetById(9);
-  value3 = object2->z.fixed;
-  IsletCave_RideLog(9, 112, 0);
-  IsletCave_RideLog(9, 96, 0);
+  IsletCave_RideLog(ACTOR_SECOND_LOG, 112, 0);
+  IsletCave_RideLog(ACTOR_SECOND_LOG, 96, 0);
   wait(2);
-  object4 = Actor_GetById(9);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x.fixed >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
+  Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,
+                            Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20,
+                            (fromZ >> 20) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
   GameFlag_Clear(FLAG_SCENE_TEMP_81);
-  return;
 }
 
 void IsletCave_RideSecondLogWest(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+  s32 fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
+  s32 fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
 
-  object0 = Actor_GetById(9);
-  value1 = object0->x.fixed;
-  object2 = Actor_GetById(9);
-  value3 = object2->z.fixed;
-  IsletCave_RideLog(9, -112, 0);
-  IsletCave_RideLog(9, -96, 0);
+  IsletCave_RideLog(ACTOR_SECOND_LOG, -112, 0);
+  IsletCave_RideLog(ACTOR_SECOND_LOG, -96, 0);
   wait(2);
-  object4 = Actor_GetById(9);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x.fixed >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
+  Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,
+                            Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20,
+                            (fromZ >> 20) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
   GameFlag_Set(FLAG_SCENE_TEMP_81);
-  return;
 }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogEast, 10, 80,
-                                  GameFlag_Set, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogEast, ACTOR_THIRD_LOG,
+                                  80, GameFlag_Set, FLAG_SCENE_TEMP_82)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, 10, -80,
-                                  GameFlag_Clear, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, ACTOR_THIRD_LOG,
+                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_82)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogEast, 11, 80,
-                                  GameFlag_Clear, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogEast, ACTOR_FOURTH_LOG,
+                                  80, GameFlag_Clear, FLAG_SCENE_TEMP_83)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogWest, 11, -80,
-                                  GameFlag_Clear, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogWest, ACTOR_FOURTH_LOG,
+                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_83)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogEast, 12, 80,
-                                  GameFlag_Set, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogEast, ACTOR_FIFTH_LOG,
+                                  80, GameFlag_Set, FLAG_SCENE_TEMP_84)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogWest, 12, -80,
-                                  GameFlag_Clear, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogWest, ACTOR_FIFTH_LOG,
+                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_84)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogEast, 13, 80,
-                                  GameFlag_Clear, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogEast, ACTOR_SIXTH_LOG,
+                                  80, GameFlag_Clear, FLAG_SCENE_TEMP_85)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, 13, -80,
-                                  GameFlag_Set, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, ACTOR_SIXTH_LOG,
+                                  -80, GameFlag_Set, FLAG_SCENE_TEMP_85)
 
 void IsletCave_RideSeventhLogNorth(void) {
-  struct Actor *object0;
-  s32 value1;
-  s32 v5;
-  struct Actor *object2;
-  s32 v6;
-  s32 v8;
-  struct Actor *object3;
+  s32 fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
+  s32 column = fromX;
+  s32 step = 112;
+  s32 fromRow = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
 
-  object0 = Actor_GetById(14);
-  value1 = object0->x.fixed;
-  v5 = value1;
-  object2 = Actor_GetById(14);
-  v6 = 112;
-  v8 = object2->z.fixed;
-  v6 = -v6;
-  v8 = (v8 >> 20);
-  IsletCave_RideLog(14, 0, v6);
-  IsletCave_RideLog(14, 0, v6);
-  IsletCave_RideLog(14, 0, -128);
+  step = -step;
+  fromRow >>= 20;
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
   wait(2);
-  object3 = Actor_GetById(14);
-  v5 = (v5 >> 20);
-  v5 = (v5 - 1);
-  MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z.fixed >> 20));
-  Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v8);
+  column = (column >> 20) - 1;
+  MapGrid_CopyCellAttributes(column, fromRow, 3, 1, column,
+                             Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20);
+  Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
   GameFlag_Set(FLAG_SCENE_TEMP_86);
-  return;
 }
 
 void IsletCave_RideSeventhLogSouth(void) {
-  struct Actor *object0;
-  s32 value1;
-  s32 v5;
-  struct Actor *object2;
-  s32 value3;
-  s32 v6;
-  struct Actor *object4;
+  s32 fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
+  s32 column = fromX;
+  s32 fromZ = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
+  s32 fromRow = fromZ;
 
-  object0 = Actor_GetById(14);
-  value1 = object0->x.fixed;
-  v5 = value1;
-  object2 = Actor_GetById(14);
-  value3 = object2->z.fixed;
-  v6 = value3;
-  IsletCave_RideLog(14, 0, 112);
-  IsletCave_RideLog(14, 0, 112);
-  IsletCave_RideLog(14, 0, 128);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 112);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 112);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 128);
   wait(2);
-  object4 = Actor_GetById(14);
-  v5 = (v5 >> 20);
-  v5 = (v5 - 1);
-  v6 = (v6 >> 20);
-  MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z.fixed >> 20));
-  Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v6);
+  column = (column >> 20) - 1;
+  fromRow >>= 20;
+  MapGrid_CopyCellAttributes(column, fromRow, 3, 1, column,
+                             Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20);
+  Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
   GameFlag_Clear(FLAG_SCENE_TEMP_86);
-  return;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -778,12 +767,8 @@ void IsletCave_SentinelAwaits(void) {
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  cue = 0x67;
-  /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second. */
-  __asm__ volatile("" : "+r"(cue));
-  Field_RequestBattleFromEncounterTable(cue, 2);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+  Field_RequestBattleFromEncounterTable(0x67, 2);
   Event_End();
 }
 
@@ -878,33 +863,33 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gIsletCave_Placements[] = {
     ACTOR_PLACEMENT(170, 0x9cf, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIsletCave_Room1Placements[] = {
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 872, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 776, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 872, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(297, CONDITION_ALWAYS, 7, 824, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 872, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 872, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 824, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MELD), MOVEMENT_TYPE_STAND, 824, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIsletCave_Room2Placements[] = {
-    ACTOR_PLACEMENT(252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SERAC), MOVEMENT_TYPE_STAND, 336, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };

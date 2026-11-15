@@ -38,18 +38,18 @@ void GabombaStatue_HopAcrossNorthOrSouth(void);
 
 void GabombaStatue_HearTheOffering(void);
 
-void GabombaStatue_StepIntoRoom1Hole(void);
+void GabombaStatue_StepIntoBoneArmletChestHole(void);
 
-void GabombaStatue_StepIntoRoom2Hole(void);
+void GabombaStatue_StepIntoElixirChestHole(void);
 
-void GabombaStatue_StepIntoFirstRoom3Hole(void);
+void GabombaStatue_StepIntoFirstSteelHole(void);
 
-void GabombaStatue_StepIntoThirdRoom3Hole(void);
-void GabombaStatue_StepIntoFirstRoom4Hole(void);
+void GabombaStatue_StepIntoThirdSteelHole(void);
+void GabombaStatue_StepIntoFirstTurntableHole(void);
 
-void GabombaStatue_StepIntoSecondRoom4Hole(void);
+void GabombaStatue_StepIntoSecondTurntableHole(void);
 
-void GabombaStatue_StepIntoRoom5Hole(void);
+void GabombaStatue_StepIntoCogsHole(void);
 
 void GabombaStatue_JumpDownHole(void);
 
@@ -70,15 +70,15 @@ extern u32 gGabombaStatue_KradenPointsScript[];
 extern s32 gGabombaStatue_StepBackScript[];
 extern s32 gGabombaStatue_GirlsStepBackScript[];
 
-extern u32 gGabombaStatue_Room2GuardScript[];
+extern u32 gGabombaStatue_ElixirChestGuardScript[];
 
 extern u32 gGabombaStatue_JennaWatchesScript[];
 extern u32 gGabombaStatue_ShebaWatchesScript[];
 
 void GabombaStatue_RestartClock(void);
 
-void GabombaStatue_DimRoom1Actors(void);
-void GabombaStatue_DimRoom2Actors(void);
+void GabombaStatue_DimBoneArmletChestActors(void);
+void GabombaStatue_DimElixirChestActors(void);
 
 s32 GabombaStatue_GetPuzzleSeed(void);
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
@@ -90,12 +90,12 @@ extern u32 gGabombaStatue_LookAtChannelScript[];
 
 void GabombaStatue_DrawCogCells(void);
 
-void GabombaStatue_InitializeRoom1(void);
-void GabombaStatue_InitializeRoom2(void);
-void GabombaStatue_InitializeRoom3(void);
-void GabombaStatue_InitializeRoom5(void);
-void GabombaStatue_InitializeRoom6(void);
-void GabombaStatue_InitializeRoom7(void);
+void GabombaStatue_InitializeBoneArmletChest(void);
+void GabombaStatue_InitializeElixirChest(void);
+void GabombaStatue_InitializeSteel(void);
+void GabombaStatue_InitializeCogs(void);
+void GabombaStatue_InitializeArrows(void);
+void GabombaStatue_InitializePinion(void);
 void GabombaStatue_StartClock();
 void GabombaStatue_ResetClock();
 s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c,

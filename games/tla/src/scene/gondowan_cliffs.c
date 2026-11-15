@@ -53,8 +53,19 @@ extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
 #include "shared/tile_sprite_reset.h"
 
+/// The cliffs' actors by their rows: the two puddles Frost freezes, the dog,
+/// Kindle the Mars Djinni, and Kraden (Jenna's and Sheba's rows take their own
+/// numbers).
+enum {
+  ACTOR_FIRST_PUDDLE = 12,
+  ACTOR_SECOND_PUDDLE = 13,
+  ACTOR_DOG = 16,
+  ACTOR_KINDLE = 21,
+  ACTOR_KRADEN = 22
+};
+
 void GondowanCliffs_FightKindle(void) {
-  Field_RequestDjinnBattle(21, DJINNI_KINDLE);
+  Field_RequestDjinnBattle(ACTOR_KINDLE, DJINNI_KINDLE);
 }
 
 const u8 *Scene_GetEntrances(void) {
@@ -241,7 +252,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
 
 /// Marks a pillar moved: it stops and its cell moves.
 void GondowanCliffs_FreezeFirstPuddle(void) {
-  struct Actor *object = Actor_Get(12);
+  struct Actor *object = Actor_Get(ACTOR_FIRST_PUDDLE);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
@@ -250,7 +261,7 @@ void GondowanCliffs_FreezeFirstPuddle(void) {
 }
 
 void GondowanCliffs_FreezeSecondPuddle(void) {
-  struct Actor *object = Actor_Get(13);
+  struct Actor *object = Actor_Get(ACTOR_SECOND_PUDDLE);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
@@ -295,11 +306,11 @@ void GondowanCliffs_TalkToDog(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_FaceEachOther(16, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceEachOther(ACTOR_DOG, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgRrruffRrruff2);
     // "Rrruff! Rrruff!"
-    Event_ShowMessage(16, 0);
-    Actor_FaceDirection(16, FACING_WEST, 0);
+    Event_ShowMessage(ACTOR_DOG, 0);
+    Actor_FaceDirection(ACTOR_DOG, FACING_WEST, 0);
     Event_End();
   }
 }
@@ -362,13 +373,13 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
-  FieldActor_WatchAndSetScript(22, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(22, gMainRoutineWork.leaderActorId);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
-  FieldActor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   // "Felix! Where do you intend to go? We should try to help Piers..."
-  Event_ShowMessage(22, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 10);
   FieldActor_Jump(ACTOR_JENNA, 6, 15);
   FieldActor_Jump(ACTOR_JENNA, 6, 23);
@@ -382,16 +393,16 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
-  Event_ShowMessage(22, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
-  Actor_SetPosition(22, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 568, 480);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 552, 488);
@@ -774,24 +785,24 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1560, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1624, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(273, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(5, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(6, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(56, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassActorPlacements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gGondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)gGondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 304, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),

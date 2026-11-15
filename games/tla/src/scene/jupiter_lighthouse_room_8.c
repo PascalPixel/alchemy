@@ -313,11 +313,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   s32 toZ;
 
   if ((u16)shape != gPushKinds[(u16)i]) {
-  next:
-    j = (u16)((i << 16) + 0x10000 >> 16);
-    i = j;
-    if (j <= 5 && (u16)shape != gPushKinds[j])
-      goto next;
+    do {
+      j = (u16)((i << 16) + 0x10000 >> 16);
+      i = j;
+    } while (j <= 5 && (u16)shape != gPushKinds[j]);
   }
   j = (u16)i;
   if (j == 6)
@@ -461,12 +460,12 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;
-  next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 == gPushKinds[i])
-      return;
-    i++;
-    if (i <= 5)
-      goto next;
+    do {
+      if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
+          gPushKinds[i])
+        return;
+      i++;
+    } while (i <= 5);
     FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
                                          object->y.fixed, object->z.fixed);
   }
@@ -711,11 +710,11 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(340, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 203, 0, 904, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

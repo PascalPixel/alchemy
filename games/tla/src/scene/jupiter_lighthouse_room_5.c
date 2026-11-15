@@ -211,12 +211,6 @@ void Orb_Update(struct Actor *self) {
 
 void Actor_StartScript(struct OrbitEffect *object, const void *script);
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
-                                                    s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline. */
-  return ((struct OrbitEffect *)Import_ActorCreate(type, x, y, z));
-}
-
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
@@ -233,18 +227,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -261,22 +255,8 @@ void Orbs_SpawnRising(void) {
   }
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseStep as this
- * part declared it; the joined file has another; tried as the definition's
- * extern u32 gJupiterLighthouse_PulseStep[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:199:
- * `gJupiterLighthouse_PulseStep' undeclared (first use in this function). */
-extern s32 gJupiterLighthouse_PulseStep__room_5 __asm__(
-    "gJupiterLighthouse_PulseStep");
-#define gJupiterLighthouse_PulseStep gJupiterLighthouse_PulseStep__room_5
-/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseOn as this
- * part declared it; the joined file has another; tried as the definition's
- * extern u32 gJupiterLighthouse_PulseOn[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:197:
- * `gJupiterLighthouse_PulseOn' undeclared (first use in this function). */
-extern s32
-    gJupiterLighthouse_PulseOn__room_5 __asm__("gJupiterLighthouse_PulseOn");
-#define gJupiterLighthouse_PulseOn gJupiterLighthouse_PulseOn__room_5
+extern s32 gJupiterLighthouse_PulseStep;
+extern s32 gJupiterLighthouse_PulseOn;
 
 void JupiterLighthouse_AddSparks();
 
@@ -426,15 +406,7 @@ struct SparkWork {
   s16 resource;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
- * part declared it; the joined file has another; tried as the definition's
- * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/shared/palette_cycle_set_pauses_in_events.h:3:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
-    "gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents                                            \
-  gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
+extern s32 gPaletteCyclePausesInEvents;
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -922,26 +894,22 @@ void JupiterLighthouse_AddSparks(s32 count) {
   s32 angle;
   s32 i;
   s32 radius;
-  u64 cosine;
   s32 speed;
 
   if (count > 0) {
     i = count;
-  next:
-    spark = &work->sparks[work->next];
-    angle = ((Random16() * 3) >> 2) + 0x6000;
-    radius = 0x400000;
-    speed = ((Random16() << 4) >> 16) + 16;
-    /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary. */
-    cosine = Trig_Cos(angle);
-    spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
-    spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
-    spark->duration = speed;
-    spark->age = 0;
-    work->next++;
-    work->next %= 96;
-    if (--i != 0)
-      goto next;
+    do {
+      spark = &work->sparks[work->next];
+      angle = ((Random16() * 3) >> 2) + 0x6000;
+      radius = 0x400000;
+      speed = ((Random16() << 4) >> 16) + 16;
+      spark->dx = Iwram_MulQ16(Trig_Cos(angle), radius) >> 16;
+      spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
+      spark->duration = speed;
+      spark->age = 0;
+      work->next++;
+      work->next %= 96;
+    } while (--i != 0);
   }
 }
 
@@ -1024,9 +992,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect_move.c"
 
 #undef EVENT_WORK
-#undef gJupiterLighthouse_PulseStep
-#undef gJupiterLighthouse_PulseOn
-#undef gPaletteCyclePausesInEvents
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1195,24 +1160,24 @@ u32 gSceneExits[] = {
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 608, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 608, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 552, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 600, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 552, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 664, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 552, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 600, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 552, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 664, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 328, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
@@ -1229,13 +1194,9 @@ u32 gOrbScript[] = {
       SC_RELEASE,                                                                 
   };
 
-u32 gJupiterLighthouse_PulseStep[] = {
-    0,
-};
+s32 gJupiterLighthouse_PulseStep = 0;
 
-u32 gJupiterLighthouse_PulseOn[] = {
-    1,
-};
+s32 gJupiterLighthouse_PulseOn = 1;
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
@@ -1271,9 +1232,7 @@ struct Trigger gSceneEvents[] = {
 
 s32 gPaletteCycleFrame = -1;
 
-u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gJupiterLighthouse_OrbScript[] = {
     SC_ANIMATION(5),

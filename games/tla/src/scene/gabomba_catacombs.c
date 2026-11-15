@@ -29,6 +29,13 @@
 #include "fixed_math.h"
 #include "field/event_commands.h"
 
+/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
+/// main_routine_work.h does.
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
@@ -63,18 +70,18 @@ struct GabombaCatacombsFollower {
 };
 
 extern u32 gFieldEffect_MediumScript[];
-extern u32 gGabombaCatacombs_Room1Regions[];
+extern u32 gGabombaCatacombs_TeleportersExitRegions[];
 extern struct ActorPlacement gGabombaCatacombs_Placements[];
-extern struct ActorPlacement gGabombaCatacombs_Room1Placements[];
-extern struct ActorPlacement gGabombaCatacombs_Room2Placements[];
-extern struct ActorPlacement gGabombaCatacombs_Room3Placements[];
-extern struct ActorPlacement gGabombaCatacombs_Room4Placements[];
-extern struct ActorPlacement gGabombaCatacombs_Room5Placements[];
-extern struct Trigger gGabombaCatacombs_Room1Triggers[];
-extern struct Trigger gGabombaCatacombs_Room2Triggers[];
-extern struct Trigger gGabombaCatacombs_Room3Triggers[];
-extern struct Trigger gGabombaCatacombs_Room4Triggers[];
-extern struct Trigger gGabombaCatacombs_Room5Triggers[];
+extern struct ActorPlacement gGabombaCatacombs_TeleportersActorPlacements[];
+extern struct ActorPlacement gGabombaCatacombs_MudActorPlacements[];
+extern struct ActorPlacement gGabombaCatacombs_HiddenWallActorPlacements[];
+extern struct ActorPlacement gGabombaCatacombs_TomegathericonActorPlacements[];
+extern struct ActorPlacement gGabombaCatacombs_StreamActorPlacements[];
+extern struct Trigger gGabombaCatacombs_TeleportersTriggers[];
+extern struct Trigger gGabombaCatacombs_MudTriggers[];
+extern struct Trigger gGabombaCatacombs_HiddenWallTriggers[];
+extern struct Trigger gGabombaCatacombs_TomegathericonTriggers[];
+extern struct Trigger gGabombaCatacombs_StreamTriggers[];
 
 void Actor_DepartInRing(s32 id);
 
@@ -88,31 +95,34 @@ void Actor_DepartInRing(s32 id);
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
+/// Mud, the Djinni waiting in this room.
+enum { ACTOR_MUD = 8 };
+
 void GabombaCatacombs_FightMud(void) {
-  Field_RequestDjinnBattle(8, DJINNI_MUD);
+  Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
 
-void GabombaCatacombs_ClearRoom1Bushes(void) {
+void GabombaCatacombs_ClearTeleportersBushes(void) {
   GabombaCatacombs_ClearBushes(7, 63, 1, 16, 16, 57, 63);
 }
 
-void GabombaCatacombs_ClearRoom3Bushes(void) {
+void GabombaCatacombs_ClearHiddenWallBushes(void) {
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
 }
 
-void GabombaCatacombs_ClearRoom3SmallBushes(void) {
+void GabombaCatacombs_ClearHiddenWallSmallBushes(void) {
   GabombaCatacombs_ClearBushes(7, 22, 0, 3, 3, 56, 58);
 }
 
-void GabombaCatacombs_ClearRoom5Bushes(void) {
+void GabombaCatacombs_ClearStreamBushes(void) {
   GabombaCatacombs_ClearBushes(44, 25, 0, 4, 3, 66, 57);
 }
 
-void GabombaCatacombs_ClearRoom5WideBushes(void) {
+void GabombaCatacombs_ClearStreamWideBushes(void) {
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
 }
 
-void GabombaCatacombs_ClearRoom5SmallBushes(void) {
+void GabombaCatacombs_ClearStreamSmallBushes(void) {
   GabombaCatacombs_ClearBushes(21, 9, 0, 2, 2, 57, 52);
 }
 
@@ -201,7 +211,7 @@ DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
 DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
     GabombaCatacombs_UncoverSeventhPuddle, 5, 13, 5, 52, 14, 104, 248, 6, 15)
 
-void GabombaCatacombs_UncoverRoom5Puddle(void) {
+void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
@@ -218,7 +228,7 @@ void GabombaCatacombs_UncoverRoom5Puddle(void) {
   }
 }
 
-void GabombaCatacombs_ClearRoom4Bushes(void) {
+void GabombaCatacombs_ClearTomegathericonBushes(void) {
   GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
 }
 
@@ -228,7 +238,7 @@ void GabombaCatacombs_UncoverMadPlant(void) {
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
     GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 0);
   }
 }
@@ -274,8 +284,8 @@ DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSixthPuddle, 13,
 DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSeventhPuddle, 14,
                                    0x206, 0, 4, 6, 15)
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeRoom5Puddle, 8, 0x200,
-                                   15, 18, 17, 18)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeStreamPuddle, 8,
+                                   0x200, 15, 18, 17, 18)
 
 /// Moves the leader and camera along z by dz when nothing is in the way.
 void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
@@ -461,7 +471,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-    return (const struct SceneRegion *)gGabombaCatacombs_Room1Regions;
+    return (const struct SceneRegion *)gGabombaCatacombs_TeleportersExitRegions;
   return 0;
 }
 
@@ -471,29 +481,33 @@ extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-    return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
+    return (const struct ActorPlacement *)
+        gGabombaCatacombs_TeleportersActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
-    return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
+    return (const struct ActorPlacement *)gGabombaCatacombs_MudActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
-    return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
+    return (const struct ActorPlacement *)
+        gGabombaCatacombs_HiddenWallActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
-    return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
+    return (const struct ActorPlacement *)
+        gGabombaCatacombs_TomegathericonActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
-    return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
+    return (
+        const struct ActorPlacement *)gGabombaCatacombs_StreamActorPlacements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-    return gGabombaCatacombs_Room1Triggers;
+    return gGabombaCatacombs_TeleportersTriggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
-    return gGabombaCatacombs_Room2Triggers;
+    return gGabombaCatacombs_MudTriggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
-    return gGabombaCatacombs_Room3Triggers;
+    return gGabombaCatacombs_HiddenWallTriggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
-    return gGabombaCatacombs_Room4Triggers;
+    return gGabombaCatacombs_TomegathericonTriggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
-    return gGabombaCatacombs_Room5Triggers;
+    return gGabombaCatacombs_StreamTriggers;
   return gGabombaCatacombs_Triggers;
 }
 
@@ -578,7 +592,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gGabombaCatacombs_Room1Regions[] = {
+u32 gGabombaCatacombs_TeleportersExitRegions[] = {
     0x2e0184, 0x18c0114, 0x11c0036, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -608,16 +622,16 @@ struct ActorPlacement gGabombaCatacombs_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaCatacombs_Room1Placements[] = {
+struct ActorPlacement gGabombaCatacombs_TeleportersActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaCatacombs_Room2Placements[] = {
+struct ActorPlacement gGabombaCatacombs_MudActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MUD), MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaCatacombs_Room3Placements[] = {                                             
+struct ActorPlacement gGabombaCatacombs_HiddenWallActorPlacements[] = {                                             
       {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
       {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
       {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
@@ -628,16 +642,16 @@ struct ActorPlacement gGabombaCatacombs_Room3Placements[] = {
       {SCENE_TABLE_END},                                                       
   };
 
-struct ActorPlacement gGabombaCatacombs_Room4Placements[] = {
+struct ActorPlacement gGabombaCatacombs_TomegathericonActorPlacements[] = {
     ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaCatacombs_Room5Placements[] = {
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gGabombaCatacombs_StreamActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -646,10 +660,10 @@ struct Trigger gGabombaCatacombs_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaCatacombs_Room1Triggers[] = {
+struct Trigger gGabombaCatacombs_TeleportersTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom1Bushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTeleportersBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstTeleporter)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44,
@@ -659,7 +673,7 @@ struct Trigger gGabombaCatacombs_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaCatacombs_Room2Triggers[] = {
+struct Trigger gGabombaCatacombs_MudTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
@@ -667,7 +681,7 @@ struct Trigger gGabombaCatacombs_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaCatacombs_Room3Triggers[] = {
+struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
@@ -675,9 +689,9 @@ struct Trigger gGabombaCatacombs_Room3Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_HideWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom3Bushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearHiddenWallBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom3SmallBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearHiddenWallSmallBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
@@ -711,30 +725,30 @@ struct Trigger gGabombaCatacombs_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaCatacombs_Room4Triggers[] = {
+struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 40, 0x9ce, EVENT(GabombaCatacombs_GabombaBestowsPower)},
     {TRIGGER_TALK, 8, 0xf93, EVENT(GabombaCatacombs_TalkToStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom4Bushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTomegathericonBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaCatacombs_Room5Triggers[] = {
+struct Trigger gGabombaCatacombs_StreamTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom5Bushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom5WideBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamWideBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearRoom5SmallBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamSmallBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverRoom5Puddle)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverStreamPuddle)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(GabombaCatacombs_WadeStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_00,
-     EVENT(GabombaCatacombs_FreezeRoom5Puddle)},
+     EVENT(GabombaCatacombs_FreezeStreamPuddle)},
     {TRIGGER_TABLE_END},
 };

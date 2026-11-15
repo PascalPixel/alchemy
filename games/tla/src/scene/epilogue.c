@@ -32,6 +32,7 @@
 #include "system/main_routine_work.h"
 #include "system/input.h"
 #include "system/ram_buffer.h"
+#include "system/io_write.h"
 
 struct EpilogueSprite;
 
@@ -153,14 +154,10 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
   window = Message_OpenWindow(gEpilogueMessage, x, y,
                               (Speaker_GetVoice(message) << 16) | 4);
   if (!wide) {
-    /* FAKEMATCH(temporary): the name window held in a temporary until after the
-     * stores. */
-    struct EpilogueWindow *opened = Portrait_OpenWindow(message, 0, left, line);
-
+    name = Portrait_OpenWindow(message, 0, left, line);
     gEpilogueNameShown = 1;
     gEpilogueNameX = left << 3;
     gEpilogueNameY = line << 3;
-    name = opened;
   }
   if (mode == 2) {
     window->unk0e++;
@@ -252,7 +249,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   u8 *eventMode;
   s32 saved;
-  s32 zero, one, value;
+  s32 zero, one;
   s32 count;
   void *p;
   u8 *actor;
@@ -410,23 +407,17 @@ L_02008692:
   count = 0;
   if (gInput.pressed != 0)
     goto L_0200871e;
-L_02008704:
-  System_Wait(1);
-  count++;
-  if (count > 10799)
-    goto L_0200871e;
-  if (gInput.pressed == 0)
-    goto L_02008704;
+  do {
+    System_Wait(1);
+    count++;
+    if (count > 10799)
+      goto L_0200871e;
+  } while (gInput.pressed == 0);
 L_0200871e:
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  value = 0;
-  /* FAKEMATCH(dead): the store in a once-only block. */
-  do {
-    REG_BLDCNT = value;
-  } while (0);
-  value = 0x1040;
-  REG_DISPCNT = value;
+  Io_Write16(0, &REG_BLDCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Window_LoadGraphics();
   DebugText_Clear();
   gOamCopyEnabled = 1;

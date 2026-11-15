@@ -1986,22 +1986,7 @@ extern s32 gMagmaRockInside_SparkScript[];
 extern s32 gMagmaRockInside_BlazeWatcherScript[];
 extern s32 gMagmaRockInside_OrbitScript[];
 extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeWatcherReturnScript
- * as const u8 gMagmaRockInside_BlazeWatcherReturnScript[];
- * scene/magma_rock_inside/s46e8 has
- * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
- * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
- * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {; tried as the definition's extern s32
- * gMagmaRockInside_BlazeWatcherReturnScript[], it does not compile in tla-ja
- * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1993:
- * `gMagmaRockInside_BlazeWatcherReturnScript' undeclared (first use in this
- * function). */
-extern const u8
-    gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside[] __asm__(
-        "gMagmaRockInside_BlazeWatcherReturnScript");
-#define gMagmaRockInside_BlazeWatcherReturnScript                              \
-  gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside
+extern s32 gMagmaRockInside_BlazeWatcherReturnScript[];
 
 void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   struct Actor *first = Actor_GetById(a);
@@ -2370,7 +2355,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
-#undef gMagmaRockInside_BlazeWatcherReturnScript
 // Magma Rock's inside: its crumbling pillars and traps.
 
 void Tightrope_Initialize(void);
@@ -3772,7 +3756,6 @@ struct Trigger gMagmaRockInside_BlazeTabletTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-#undef gMagmaRockInside_BlazeWatcherReturnScript
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE

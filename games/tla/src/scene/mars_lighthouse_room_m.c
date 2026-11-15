@@ -208,13 +208,16 @@ s32 MarsLighthouseRoomM_SetUpStatue(struct Actor *object) {
 }
 
 /// Shows a flame on its torch, 14 pixels up, in its element's animation.
-void MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
+s32 MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
   object->y.fixed = px(14);
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, value);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 #ifndef TLA_MARS_LIGHTHOUSE_ROOM_M_H
@@ -750,14 +753,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/* VIEW(s0b64): routine MarsLighthouseRoomM_ShowFlame as s32
- * MarsLighthouseRoomM_ShowFlame(); the definition has void
- * MarsLighthouseRoomM_ShowFlame(s32 id, s32 value); tried as the definition's
- * void MarsLighthouseRoomM_ShowFlame(void), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:667: conflicting types for
- * `MarsLighthouseRoomM_ShowFlame'. */
-extern s32
-MarsLighthouseRoomM_ShowFlame__s0b64() __asm__("MarsLighthouseRoomM_ShowFlame");
 void Weather_StartRain(s32 a);
 
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -782,30 +777,26 @@ s32 Scene_PrepareMap(void) {
     switch (entrance) {
     case ENTRANCE_FROM_VENUS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
-                                           FLAME_ANIMATION_VENUS);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_VENUS);
       TilesetAnim_Resume(4);
       TilesetAnim_Resume(5);
       break;
     case ENTRANCE_FROM_MERCURY_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_BGR);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
-                                           FLAME_ANIMATION_MERCURY);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MERCURY);
       TilesetAnim_Resume(6);
       TilesetAnim_Resume(7);
       break;
     case ENTRANCE_FROM_MARS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH),
                                 SPRITE_COLOR_NORMAL);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
-                                           FLAME_ANIMATION_MARS);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MARS);
       TilesetAnim_Resume(0);
       TilesetAnim_Resume(1);
       break;
     case ENTRANCE_FROM_JUPITER_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GBR);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
-                                           FLAME_ANIMATION_JUPITER);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_JUPITER);
       TilesetAnim_Resume(2);
       TilesetAnim_Resume(3);
       break;
@@ -828,14 +819,12 @@ s32 Scene_PrepareMap(void) {
 
         FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallFlames, priority);
       }
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_VENUS_FLAME,
-                                           FLAME_ANIMATION_VENUS);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_MERCURY_FLAME,
-                                           FLAME_ANIMATION_MERCURY);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_MARS_FLAME,
-                                           FLAME_ANIMATION_MARS);
-      MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_JUPITER_FLAME,
-                                           FLAME_ANIMATION_JUPITER);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_VENUS_FLAME, FLAME_ANIMATION_VENUS);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_MERCURY_FLAME,
+                                    FLAME_ANIMATION_MERCURY);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_MARS_FLAME, FLAME_ANIMATION_MARS);
+      MarsLighthouseRoomM_ShowFlame(ACTOR_JUPITER_FLAME,
+                                    FLAME_ANIMATION_JUPITER);
       if (!Event_GetFlag(FLAG_VENUS_FLAME_LIT))
         Actor_SetPosition(ACTOR_VENUS_FLAME, 0, 0);
       if (!Event_GetFlag(FLAG_MERCURY_FLAME_LIT))

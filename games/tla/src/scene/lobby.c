@@ -123,7 +123,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   } else {
     Event_ClearFlag(FLAG_AREA_TEMP_03);
   }
-  /* FAKEMATCH(dead): a once-only loop, which places the test after the body. */
+  // At most one pass: a match returns 1, anything else breaks out.
   while (id >= 0 && Event_GetFlag(FLAG_AREA_TEMP_03)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 

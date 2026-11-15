@@ -525,11 +525,8 @@ u32 BuildStamp_GetTime(void) {
 /// DMA 3's enable bit in its count and control word, which the hardware
 /// clears when the transfer is done.
 #define DMA3_BUSY (DMA_ENABLE << 16)
-/// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
-/// << 16.
-#define START_DMA(source_, destination_, control_)                             \
-  Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
+/// Waits until the DMA channel's transfer is done.
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA3_BUSY) != 0) {
   }
@@ -551,15 +548,14 @@ void MainRoutineWork_InitializeDefaults(void) {
   s32 i;
   s32 j;
 
-  zero = 0;
-  START_DMA(&zero, &gMainRoutineWork,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
-  zero = 0;
+  // Clear the state up to the characters, the scene state with its snapshots,
+  // and the flags.
+  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
 #if TLA_PATCH_1
-  START_DMA(&zero, gSceneLocalState,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, 1992 * 4);
   WaitDma(DMA3);
 #else
+  zero = 0;
   {
     /* FAKEMATCH(pin): the channel kept in r3 through the transfer and copied
      * from there for the wait. */
@@ -575,13 +571,10 @@ void MainRoutineWork_InitializeDefaults(void) {
     }
   }
 #endif
-  zero = 0;
-  START_DMA(&zero, gGameFlagBytes,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
+  Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   gSceneLocalState[4] = 0xff;
-  zero = 0;
-  START_DMA(&zero, gCharacterUnits,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
+  Dma_Fill32Cell(zero, 0, gCharacterUnits,
+                 (PIERS + 1) * sizeof(struct BattleUnit));
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;
   gMainRoutineWork.bKeys = KEY_B;
@@ -1224,7 +1217,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
   return state->pp;
 }
 
-#undef STAT_DIFF
+#undef UNIT_STAT_DIFF
+#undef SCALE_EFFECT
 #undef DMA3
 #undef DMA3_BUSY
-#undef START_DMA

@@ -11,8 +11,8 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
   entry = 0;
-  if (group <= 3 && index <= 19) {
-    entry = group * 20 + index;
+  if (group < ELEMENT_COUNT && index < DJINN_PER_ELEMENT) {
+    entry = group * DJINN_PER_ELEMENT + index;
   }
   return (const u16 *)&gDjinn_DefinitionTable[entry];
 }
@@ -295,8 +295,8 @@ void Djinn_ActivateOfferedForParty(void) {
 
   DjinnRecovery_CountDownTwentyFar();
   for (i = 0; i < count; i++) {
-    for (element = 0; element <= 3; element++) {
-      for (djinn = 0; djinn <= 19; djinn++) {
+    for (element = 0; element < ELEMENT_COUNT; element++) {
+      for (djinn = 0; djinn < DJINN_PER_ELEMENT; djinn++) {
         if (Djinn_CanSet(owners[i], element, djinn)) {
           Djinn_Set(owners[i], element, djinn);
           DjinnRecovery_Remove(owners[i], element, djinn);

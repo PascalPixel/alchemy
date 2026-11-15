@@ -6,6 +6,7 @@
 #include "battle/battle_unit.h"
 #include "owner_state.h"
 #include "system/ram_buffer.h"
+#include "game/game_flags.h"
 
 /// Returns the unit of unitId: ISAAC to PIERS the characters, the six from
 /// FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
@@ -13,13 +14,14 @@ void *Unit_Get(s32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
 
-  if ((u32)owner < 8) {
+  if ((u32)owner <= PIERS) {
     states = gCharacterUnits;
     unit = &states[owner];
     return unit;
   }
-  if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->enemyUnits) != NULL) {
-    unit = &states[owner - 0x80];
+  if ((u32)owner - FIRST_ENEMY_UNIT < 6 &&
+      (states = Ram_HeapSlots->enemyUnits) != NULL) {
+    unit = &states[owner - FIRST_ENEMY_UNIT];
     return unit;
   }
   return NULL;
@@ -44,7 +46,7 @@ s32 GameFlag_Set(s32 flag) {
   bit = flag & 7;
   bytes = gGameFlagBytes;
   mask = 1 << bit;
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   bytes[flag] |= mask;
   return flag;
 }
@@ -58,7 +60,7 @@ void GameFlag_Clear(s32 flag) {
   bit = flag & 7;
   bytes = gGameFlagBytes;
   mask = 1 << bit;
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   bytes[flag] &= ~mask;
 }
 
@@ -71,7 +73,7 @@ u32 GameFlag_Toggle(s32 flag) {
 
   mask = 1 << (7 & flag);
   bytes = gGameFlagBytes;
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   bytes[flag] ^= mask;
   value = bytes[flag] & mask;
   return (u32)((0 - value) | value) >> 31;
@@ -79,7 +81,7 @@ u32 GameFlag_Toggle(s32 flag) {
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags.
 u8 GameFlag_GetByte(s32 flag) {
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   return gGameFlagBytes[flag];
 }
 
@@ -96,7 +98,7 @@ u32 GameFlag_SetByte(u32 flag, u8 value) {
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   if (bytes[flag] < 255)
     bytes[flag]++;
   return bytes[flag];
@@ -106,7 +108,7 @@ u8 GameFlag_IncrementByte(s32 flag) {
 u8 GameFlag_DecrementByte(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   if (bytes[flag] != 0)
     bytes[flag]--;
   return bytes[flag];
@@ -134,6 +136,6 @@ void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 mask = fieldMask << shift;
   u8 *bytes = gGameFlagBytes;
 
-  flag = ((u32)flag << 20) >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
 }

@@ -330,26 +330,24 @@ void Window_MarkVisibleTextTiles(void) {
 }
 
 /// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
-/// to 639), and with alt set lets text tiles take that range too; the first
-/// range's tiles keep their state.
-void Text_UseExtraTiles(s32 alt) {
+/// to 639), and with allowAlternateTiles set lets text tiles take that range
+/// too; the first range's tiles keep their state. The flag, once read, holds
+/// the zero the tiles are cleared with.
+void Text_UseExtraTiles(s32 allowAlternateTiles) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 i;
-  s32 fill;
   u8 *p;
 
-  if (alt) {
+  if (allowAlternateTiles) {
     work->extraTextTiles = 1;
     for (i = TEXT_TILES; i < 2 * TEXT_TILES; i++)
       work->textTileState[i] = 0;
   } else {
     work->extraTextTiles = 0;
-    /* FAKEMATCH(temporary): the zero kept in a local; as a literal the
-     * store takes another register. */
-    fill = 0;
+    allowAlternateTiles = 0;
     p = work->textTileState + TEXT_TILES;
     for (i = 0; i < TEXT_TILES; i++)
-      *p++ = fill;
+      *p++ = allowAlternateTiles;
   }
 }
 

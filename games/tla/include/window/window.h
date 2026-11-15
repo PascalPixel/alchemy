@@ -415,7 +415,7 @@ s32 Save_ScanFileSummaries(void);
 
 extern s32 gKeyState;
 
-void Text_UseExtraTiles(s32 alt);
+void Text_UseExtraTiles(s32 allowAlternateTiles);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);

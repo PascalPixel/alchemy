@@ -67,11 +67,6 @@ struct ActorCameraPoint {
   s32 z; ///< 16.16 fixed-point pixels
 };
 
-struct MapPriorityWork {
-  u8 unused[0x101]; ///< no code names it
-  s8 basePriority;
-};
-
 /// The start of the 3D camera's work (heap slot cameraWork), as the fixed
 /// camera reads it: the eye and target it looks from and at, or the points
 /// that stand in for them.

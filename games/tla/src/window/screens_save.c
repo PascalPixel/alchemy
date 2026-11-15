@@ -143,14 +143,7 @@ s32 Save_WritePartMasked(s32 partId, void *buffer) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
-  do {
-    volatile u32 *saved = &ime;
-    volatile u16 *imeReg = &REG_IME;
-
-    *saved = *imeReg;
-    *imeReg = (u16)(u32)imeReg;
-  } while (0);
+  IRQ_LOCK(ime);
   ie = REG_IE;
   Io_Write16(0, &REG_IE);
   DMA_STOP(0);
@@ -177,14 +170,7 @@ s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
-  do {
-    volatile u32 *saved = &ime;
-    volatile u16 *imeReg = &REG_IME;
-
-    *saved = *imeReg;
-    *imeReg = (u16)(u32)imeReg;
-  } while (0);
+  IRQ_LOCK(ime);
   ie = REG_IE;
   Io_Write16(0, &REG_IE);
   DMA_STOP(0);

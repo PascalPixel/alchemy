@@ -2056,7 +2056,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_SET_ANIMATION
 #undef KNOCK_BACK_CELL_ATTRIBUTE
 #undef KNOCK_BACK_CHECK_COLLISION
-#undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
 #undef Position

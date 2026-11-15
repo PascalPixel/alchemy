@@ -654,7 +654,6 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 /// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
-#define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
 #define CELL_PRIORITY(cells, x, z)                                             \
   (((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)] << 16) >> 30)
@@ -747,9 +746,7 @@ void ActorSystem_PlaceSprites(void) {
           leftPriority = 0;
           middlePriority = 0;
           if (!(*priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)) {
-            /* FAKEMATCH(temporary): the base priority read through a
-             * function-scope pointer. */
-            basePriority = &BASE_PRIORITY(map);
+            basePriority = &map->basePriority;
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
@@ -764,7 +761,7 @@ void ActorSystem_PlaceSprites(void) {
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
-                priority = BASE_PRIORITY(map) + 1;
+                priority = map->basePriority + 1;
             }
             probeX += toFIXED(13);
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
@@ -780,7 +777,7 @@ void ActorSystem_PlaceSprites(void) {
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
-                priority = BASE_PRIORITY(map) + 1;
+                priority = map->basePriority + 1;
             }
             probeX -= toFIXED(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
@@ -794,7 +791,7 @@ void ActorSystem_PlaceSprites(void) {
             if (rise > height)
               height = rise;
             if (height > objectHeight)
-              priority = BASE_PRIORITY(map) + 1;
+              priority = map->basePriority + 1;
           } else {
             if (object->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))

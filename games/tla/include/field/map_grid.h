@@ -110,7 +110,7 @@ struct MapWork {
   /// suspended nor resumed.
   s8 animationActive;
   /// The sprites' base priority; the scrolling camera draws one above it.
-  u8 basePriority;
+  s8 basePriority;
   u8 unusedAfterBasePriority[2];
   /// Each layer's BG priority, written into its BGCNT; zero hides the layer.
   u8 enabled[3];

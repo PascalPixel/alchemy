@@ -513,14 +513,6 @@ struct MarsLighthouseBeam {
   } stops[4];
 };
 
-struct Work020023c4 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[0x68 - 6];
-  s16 unk68;
-  s16 unk6a;
-};
-
 struct MarsLighthouseRoomFAnimation {
   u8 unk00[0x10];
   u8 value10;

@@ -706,7 +706,6 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
   u32 frame = gFrameCount;
   s32 dz;
   s32 vz;
-  s32 z;
 
   if ((frame & 3) != 0)
     return;
@@ -717,11 +716,10 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
     Actor_PlaySoundInView(object, SE_WHOOSH);
   dz = Random16() & 15;
   vz = ((Random16() & 31) - 16) << 12;
-  /* FAKEMATCH(temporary): z read into its own local. */
-  z = object->z.fixed;
   FieldEffect_Spawn(
-      object->x.fixed, object->y.fixed, z + ((dz - 8) << 15), 0, 0, vz,
-      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, &options);
+      object->x.fixed, object->y.fixed, object->z.fixed + ((dz - 8) << 15), 0,
+      0, vz, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
+      &options);
 }
 
 /// Flashes an actor in colour 10 on the frames its mask picks.

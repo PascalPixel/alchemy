@@ -11,7 +11,7 @@
 // Typed as an event that returns a value, though it returns none.
 s32 KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
-  struct Work020023c4 *work;
+  struct FlameHitWork *work;
   struct Vector3 position;
 
   if (main->movementMode == 0) {
@@ -24,7 +24,7 @@ s32 KNOCK_BACK(void) {
     ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-10, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
-    work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
+    work = RIDE_WORK;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = KNOCK_BACK_BLINK;
@@ -35,26 +35,13 @@ s32 KNOCK_BACK(void) {
                                     actor->z.fixed) == 7) {
         s32 i;
 
-        /* FAKEMATCH(temporary): velocityX stored through a union. */
-        ((union {
-           s32 value;
-           u16 half;
-         } *)&actor->velocityX)
-            ->value = work->unk68 << 17;
-        actor->velocityZ = work->unk6a << 17;
+        actor->velocityX = (s16)work->direction.x << 17;
+        actor->velocityZ = (s16)work->direction.z << 17;
         actor->acceleration = FIXED_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + (work->unk68 << 19);
+          position.x = actor->x.fixed + ((s16)work->direction.x << 19);
           position.y = actor->y.fixed;
-#if TLA_PATCH_1
-          position.z = actor->z.fixed + (work->unk6a << 19);
-#else
-          // A once-only block: its start holds position's first two stores
-          // ahead of the work read.
-          do {
-            position.z = actor->z.fixed + (work->unk6a << 19);
-          } while (0);
-#endif
+          position.z = actor->z.fixed + ((s16)work->direction.z << 19);
           if (KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -72,22 +59,13 @@ s32 KNOCK_BACK(void) {
         s32 x, z, off;
         s32 i;
 #else
-        s32 x, z, off, oldZ;
+        s32 x, z, off;
 #endif
 
-        position.x = actor->x.fixed + (work->unk68 << 19);
+        position.x = actor->x.fixed + ((s16)work->direction.x << 19);
         position.y = actor->y.fixed;
-#if TLA_PATCH_1
-        position.z = actor->z.fixed + (work->unk6a << 19);
+        position.z = actor->z.fixed + ((s16)work->direction.z << 19);
         result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
-#else
-        // A once-only block, as in the loop above, with the call inside so
-        // the call reuses position's address.
-        do {
-          position.z = actor->z.fixed + (work->unk6a << 19);
-          result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
-        } while (0);
-#endif
         if (result > 0)
           break;
         if (result < 0) {
@@ -108,20 +86,9 @@ s32 KNOCK_BACK(void) {
             goto done;
           }
         }
-        do {
-          x = actor->x.fixed += work->unk68 << 17;
-        } while (0);
-        z = actor->z.fixed + (work->unk6a << 17);
-#else
-        x = actor->x.fixed += work->unk68 << 17;
-        // The old z read in a once-only block, whose end keeps the read
-        // between x's store and the work read.
-        /* FAKEMATCH(temporary): oldZ carries the z read out of the block. */
-        do {
-          oldZ = actor->z.fixed;
-        } while (0);
-        z = oldZ + (work->unk6a << 17);
 #endif
+        x = actor->x.fixed += (s16)work->direction.x << 17;
+        z = actor->z.fixed + ((s16)work->direction.z << 17);
         actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > FIXED_ONE)
@@ -135,7 +102,7 @@ s32 KNOCK_BACK(void) {
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
         actor->z.fixed = z - off;
-        work->unk04 = 0;
+        work->active = 0;
         System_Wait(1);
       }
     }
@@ -150,5 +117,5 @@ s32 KNOCK_BACK(void) {
 #ifdef UBFIX
   if (main->renderMode == 0)
 #endif
-    work->unk04 = 0;
+    work->active = 0;
 }

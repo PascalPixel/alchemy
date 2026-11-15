@@ -597,24 +597,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         q->velocityY = 0;
         q->variant = (Random16() & 15) + 16;
       }
-      {
-        const u16 *sizeOffsets = gBattleEffect_MotePictures;
-        for (i = 0; i != 512; i++) {
-          p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
-          if (p->variant >= 0) {
-            s32 n = (p->variant >> 3) + 1;
-            /* FAKEMATCH(temporary): the table read at a byte offset held in
-             * off; as sizeOffsets[n - 1], 49 of 2159 instructions differ in
-             * tla-en.
-             */
-            s32 off = n * 2 - 2;
+      for (i = 0; i != 512; i++) {
+        p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
+        if (p->variant >= 0) {
+          s32 n = (p->variant >> 3) + 1;
 
-            blit[0](
-                canvas, sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
-                (FIXEDtoINT(p->x)) - n / 2, (FIXEDtoINT(p->y)) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
-            p->variant--;
-          }
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                  (FIXEDtoINT(p->x)) - n / 2, (FIXEDtoINT(p->y)) - n, n, n * 2);
+          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
+          p->variant--;
         }
       }
       model = Render_AllocateModelList(1);

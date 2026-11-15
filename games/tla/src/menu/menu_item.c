@@ -999,9 +999,6 @@ s32 ItemMenu_CountItems(s32 owner);
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 selection = menu->sideIndex[0];
-  /* FAKEMATCH(temporary): the first owner's byte offset, taken before the
-   * count. */
-  s32 firstOffset = selection * 2;
   s32 count;
   s32 redraw;
   s32 result;
@@ -1015,7 +1012,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   result = 0;
   sortMode = 0;
   showEquipment = 0;
-  owner = Unit_Get(*(u16 *)(firstOffset + (s32)ownerIds));
+  owner = Unit_Get(ownerIds[selection]);
 
   if (Window_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10, redraw))
     Menu_SpawnIconEntries(menu, menu->itemWindow);

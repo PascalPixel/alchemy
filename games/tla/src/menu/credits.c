@@ -62,7 +62,7 @@ extern s16 gEndingPicture_Row;   ///< the row the scroll is heading for
 extern s16 gEndingPicture_Speed; ///< the most rows a frame moves
 extern u8 *gEndingPicture_Map;   ///< the picture's map
 /// The 24 sprites of the picture's border strips.
-extern struct QueuedSprite *gEndingPicture_Strips;
+extern void *gEndingPicture_Strips;
 ///@}
 
 void Credits_InitCrawlSprites(void);
@@ -1114,15 +1114,12 @@ void EndingPicture_DrawStrips(void) {
 /// Credits_InitCrawlSprites writes its strips.
 void EndingPicture_InitStrips(void) {
   s32 slot = VramCache_FindFreeEntry();
-  struct QueuedSprite *entries;
   u32 *words;
   s32 tile;
   u32 i;
 
-  /* FAKEMATCH(temporary): the allocation kept in entries. */
-  entries = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
-                            sizeof(struct QueuedSprite));
-  gEndingPicture_Strips = entries;
+  gEndingPicture_Strips = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
+                                          sizeof(struct QueuedSprite));
   tile = VramCache_Load(slot, 0x200, 0);
   Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP),
              0x200);

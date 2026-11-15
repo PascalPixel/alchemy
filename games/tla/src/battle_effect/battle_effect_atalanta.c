@@ -68,6 +68,8 @@ enum SlashSheetPicture {
 
 #define ATALANTA_PIECES 11
 
+#define ATALANTA_FRAMES 88
+
 /// Under a violet sky Atalanta flies across the screen while sixteen shafts of
 /// light gather trails of motes, flash and fly off; then shafts rain down
 /// diagonally on the targets and burst in light, hitting each target as they
@@ -326,7 +328,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     shaft->variant = -1;
   }
-  for (frame = 0; frame != 88; frame++) {
+  for (frame = 0; frame != ATALANTA_FRAMES; frame++) {
     for (i = 0; i != 24; i++) {
       struct Particle *shaft = &work->particles[i];
 

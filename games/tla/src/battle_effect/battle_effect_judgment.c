@@ -10,6 +10,8 @@
 /// Where OverlayImageA is decoded in the effect's pictures.
 #define JUDGMENT_OVERLAY_A_PICTURES 0x6000
 
+#define JUDGMENT_FRAMES 336
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -92,7 +94,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 0) {
       struct Particle *p = work->particles;
 
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         p->x = (Random16() & 15) + 72;
         p->velocityX = Random16() & TRIG_ANGLE_MASK;
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
@@ -128,7 +130,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     {
       struct Particle *p = work->particles;
 
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size;
 
         if (frame > i / 4 + 80 && p->x > 0) {
@@ -175,7 +177,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom -= 0x4000;
     }
     if (frame > 32) {
-      zoom = zoom * 60 / 64;
+      zoom = zoom * 60 / DAMPING_SCALE;
     }
     if (frame == 144) {
       zoom = -0x80000;
@@ -381,7 +383,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Iwram_FillWordsEntry(work->sheet, 0x3840, 0);
 
   // The strike: the beam, the shockwave rings and the debris.
-  for (frame = 0; frame != 336; frame++) {
+  for (frame = 0; frame != JUDGMENT_FRAMES; frame++) {
     if (frame == 66) {
       Sound_PlayFar(SE_BANE_ESCAPE);
     }

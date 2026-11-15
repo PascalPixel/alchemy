@@ -20,6 +20,8 @@
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
+#define TRIPLE_CHOMP_FRAMES 50
+
 /// Triple Chomp's effect: the caster lunges, three bites close on the target.
 void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
@@ -58,7 +60,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        SHEET_PALETTE_BYTES);
 
-  for (frame = 0; frame != 50; frame++) {
+  for (frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {
     if (frame == 0) {
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;

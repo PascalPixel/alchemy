@@ -5,6 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#define DRAGON_CLOUD_FRAMES 150
+
 /// A flame leaves the user along a stored path with a fading trail behind it,
 /// strikes the first target and bursts into embers and flashes.
 ///
@@ -114,7 +116,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
 
-  for (frame = 0; frame != 150; frame++) {
+  for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 83) {

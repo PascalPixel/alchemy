@@ -178,8 +178,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       scale = gNeptune_UnitScale;
       if (frame <= 83) {
         if (frame > 48)
-          serpentVX = serpentVX * 60 / 64;
-        serpentVY = serpentVY * 60 / 64;
+          serpentVX = serpentVX * 60 / DAMPING_SCALE;
+        serpentVY = serpentVY * 60 / DAMPING_SCALE;
         if (serpentY > px(132))
           serpentVY -= px(1) / 8;
         else
@@ -189,14 +189,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       } else if (frame <= 170) {
         if (frame <= 107)
           serpentVX += px(1) / 8;
-        serpentVX = serpentVX * 60 / 64;
+        serpentVX = serpentVX * 60 / DAMPING_SCALE;
         serpentX += serpentVX;
         if (frame <= 117) {
           if (serpentY > px(138))
             serpentVY -= px(1) / 8;
           else
             serpentVY += px(1) / 8;
-          serpentVY = serpentVY * 56 / 64;
+          serpentVY = serpentVY * 56 / DAMPING_SCALE;
           serpentY += serpentVY;
         }
       }
@@ -252,7 +252,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     // The breath: a ring of sparks streams from the mouth.
     if (frame == 222) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         spark = &work->particles[i];
         spark->x = (Random16() & 15) - 8;
         spark->y = (Random16() & 15) - 8;

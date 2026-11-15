@@ -5,6 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#define DEATH_PLUNGE_FRAMES 96
+
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
 ///
@@ -78,7 +80,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   user->speedLimit = px(8);
   wait(20);
 
-  for (frame = 0; frame != 96; frame++) {
+  for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // Frame 0: both leap. Frame 11: both turn upside down.

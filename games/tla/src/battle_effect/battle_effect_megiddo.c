@@ -25,6 +25,8 @@ struct RenderModel__megiddo {
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define MEGIDDO_DUST_BLOB_PICTURES 0x2400
 
+#define MEGIDDO_FRAMES 188
+
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
 ///
@@ -113,7 +115,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   caster[13] = 0;
   caster[18] = 0;
 
-  for (frame = 0; frame != 188; frame++) {
+  for (frame = 0; frame != MEGIDDO_FRAMES; frame++) {
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
@@ -449,7 +451,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         p->x = Random16() & 127;
         p->y = Random16() & 127;
       }
@@ -458,7 +460,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       s32 off = (frame * 2 - 16) & 127;
 
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         if (p->variant >= 0) {
           s32 size = 1;
           s32 mx = p->x;
@@ -483,7 +485,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
       if (frame == 143) {
         p = work->particles;
-        for (i = 0; i != 64; i++, p++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
           SET_POSITION(p, Random16() & 127, Random16() % 192 - 64,
                        Random16() & 127);
         }
@@ -491,7 +493,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_ApplyPitch(n * 384 - TRIG_TURN * 3 / 16);
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
@@ -521,7 +523,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s = (t << 14) + 0x4000;
           model->shade = shade;
           Transform_Reset();

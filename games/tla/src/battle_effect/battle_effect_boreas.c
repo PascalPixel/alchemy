@@ -333,7 +333,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].x = px((Random16() & 127) + 64);
     work->particles[i].z = -px(16);
     work->particles[i].y = px(-(Random16() & 127) - 64);
@@ -379,7 +379,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
     if (frame == 72) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].x = px(BOREAS_POINT_X(i & 15) - 56);
         work->particles[i].y = px(BOREAS_POINT_Y(i & 15));
         work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
@@ -416,7 +416,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     // Crystals rain down.
     if (frame <= 71) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         draw(canvas, work->sheet, Q_16_16_UPPER_HALF(work->particles[i].x) - 12,
              Q_16_16_UPPER_HALF(work->particles[i].y) - 24, 24, 48);
         work->particles[i].x += work->particles[i].velocityX;

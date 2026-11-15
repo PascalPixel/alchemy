@@ -41,7 +41,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *seed = &work->particles[i];
 
     seed->x = Random16() & TRIG_ANGLE_MASK;

@@ -34,6 +34,8 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 /// Where BlastSheet is decoded in the effect's pictures.
 #define CYBELE_BLAST_PICTURES 0x1680
 
+#define CYBELE_FRAMES 366
+
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
 /// vines grow out of the ground, lifting the targets while sparks flash around
 /// them; then the picture greys and dissolves pixel by pixel, and the targets
@@ -130,7 +132,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   height = -px(64);
   speed = 0;
-  for (frame = 0; frame != 366; frame++) {
+  for (frame = 0; frame != CYBELE_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // A or B skips the vines to the drop.

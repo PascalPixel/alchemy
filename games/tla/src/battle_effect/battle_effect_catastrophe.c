@@ -856,7 +856,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame > 589) {
             shade = shade - frame * 2 + 1180;
           }
-          if (shade > -64) {
+          if (shade > MODEL_SHADE_INVISIBLE) {
             model->shade = shade;
             texture.pixels = Data_02012000;
             Transform_Reset();
@@ -886,7 +886,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       if (frame > 611) {
         shade = shade - frame * 8 + 4896;
       }
-      if (shade > -64) {
+      if (shade > MODEL_SHADE_INVISIBLE) {
         model->shade = shade;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->kind = 7;
@@ -1178,7 +1178,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                   aerialShade = (start - frame) * 8 + 256;
                 }
               }
-              if (aerialShade > -64) {
+              if (aerialShade > MODEL_SHADE_INVISIBLE) {
                 aerialModel->shade = aerialShade;
                 aerialModel->mesh = gBattleEffect_LargeSquareMesh;
                 aerialModel->kind = 6;
@@ -1470,7 +1470,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           slideStep = -0x100000;
         }
         if (frame > 31) {
-          slideStep = slideStep * 48 / 64;
+          slideStep = slideStep * 48 / DAMPING_SCALE;
         }
         slide += slideStep;
         sweepTexture.logWidth = 6;

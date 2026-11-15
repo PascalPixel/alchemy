@@ -356,7 +356,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           shade = -20;
         }
       }
-      if (shade < -64) {
+      if (shade < MODEL_SHADE_INVISIBLE) {
         shade = -64;
       }
       if (mode == WATER_COLUMN_LETHE_ALBION ||
@@ -451,7 +451,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               shade = (8 - t) * 8;
             }
             model->shade = shade;
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               Transform_Reset();
               Transform_ApplyTranslation(px(apos.x / 2 - 64), px(apos.y - 64),
                                          0);
@@ -516,7 +516,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (shade > -20) {
           shade = -20;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           model->shade = shade;
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           gProjection.centerX = 60;

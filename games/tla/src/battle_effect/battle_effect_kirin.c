@@ -71,7 +71,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   view->active = 1;
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *fire = &work->particles[i];
 
     fire->x = (Random16() & 31) + 16;
@@ -181,7 +181,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                Q_16_16_UPPER_HALF(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
-          fire->velocityY = fire->velocityY * 48 / 64;
+          fire->velocityY = fire->velocityY * 48 / DAMPING_SCALE;
         } else {
           fire->variant--;
         }

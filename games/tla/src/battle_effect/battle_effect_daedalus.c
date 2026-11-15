@@ -777,8 +777,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->x += p->velocityX;
           p->y += p->velocityY;
           p->velocityY += px(1) / 8;
-          p->velocityX = p->velocityX * 48 / 64;
-          p->velocityY = p->velocityY * 63 / 64;
+          p->velocityX = p->velocityX * 48 / DAMPING_SCALE;
+          p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
           work->sprites[38]->rotation += 0x200;
         }
         shipPlace.x = p->x - swayX + camera + px(120);
@@ -872,8 +872,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             p->y += p->velocityY;
           }
           if (p->variant > 7) {
-            p->velocityX = p->velocityX * 63 / 64;
-            p->velocityY = p->velocityY * 63 / 64 + 0x8c8;
+            p->velocityX = p->velocityX * 63 / DAMPING_SCALE;
+            p->velocityY = p->velocityY * 63 / DAMPING_SCALE + 0x8c8;
           }
           if (p->variant < 80)
             p->velocityY += 0x200;
@@ -987,7 +987,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           n = (frame - gDaedalus_RingStarts[j]) / 2;
           *ringX += work->particles[30].velocityX;
           work->particles[30].velocityX =
-              work->particles[30].velocityX * 48 / 64;
+              work->particles[30].velocityX * 48 / DAMPING_SCALE;
           if (n <= 5) {
             for (i = 0; i != 32; i++) {
               s32 v;
@@ -1070,8 +1070,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->x += p->velocityX;
           p->y += p->velocityY;
           p->velocityY += px(1) / 8;
-          p->velocityX = p->velocityX * 60 / 64;
-          p->velocityY = p->velocityY * 63 / 64;
+          p->velocityX = p->velocityX * 60 / DAMPING_SCALE;
+          p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
         }
         for (i = 0; i != 4; i++) {
           shipPlace.x = ((i & 1) << 21) + p->x + camera + px(128);
@@ -1093,8 +1093,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->x += p->velocityX;
           p->y += p->velocityY;
           p->velocityY += px(1) / 8;
-          p->velocityX = p->velocityX * 48 / 64;
-          p->velocityY = p->velocityY * 63 / 64;
+          p->velocityX = p->velocityX * 48 / DAMPING_SCALE;
+          p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
           work->sprites[31]->rotation += 0x100;
         }
         shipPlace.x = swayX + p->x + camera + px(184);

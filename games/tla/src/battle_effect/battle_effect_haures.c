@@ -24,6 +24,8 @@ extern const u16 gHaures_FeatherPoints[][2];
 static __inline__ void PLACE(s32 x, s32 y) {
   Transform_ApplyTranslation(px(x), px(y), 0);
 }
+#define HAURES_FRAMES 92
+
 /// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
 /// a violet glow and a rune flashes; the demon rears in a burning cave, then
 /// charges through the foes in streaks of fire that end in a white flash.
@@ -436,8 +438,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             velocity.x += px(1) / 8;
             velocity.y += -px(1) / 4;
           }
-          velocity.x = velocity.x * 60 / 64;
-          velocity.y = velocity.y * 60 / 64;
+          velocity.x = velocity.x * 60 / DAMPING_SCALE;
+          velocity.y = velocity.y * 60 / DAMPING_SCALE;
           req.x = px(1);
           req.y = px(1);
           for (i = 0; i != 2; i++) {
@@ -769,7 +771,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
-  for (frame = 0; frame != 92; frame++) {
+  for (frame = 0; frame != HAURES_FRAMES; frame++) {
     struct RenderModel *model;
     void *verts;
 

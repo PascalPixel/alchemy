@@ -177,7 +177,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       REG_WIN1H = WIN_RANGE(0, 240);
     }
     backgroundX -= speed;
-    speed = speed * 52 / 64;
+    speed = speed * 52 / DAMPING_SCALE;
 
     raised = 0;
     if (frame > 105) {
@@ -401,7 +401,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       reaperY -= 0x4aaaa;
     }
     reaperX -= speed;
-    speed = speed * 60 / 64;
+    speed = speed * 60 / DAMPING_SCALE;
     x = Q_16_16_TO_INT(reaperX);
     if (x > 120) {
       shift = x - 120;
@@ -994,9 +994,9 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
             star->velocityX += dx;
             star->velocityY += dy;
             star->velocityZ += dz;
-            star->velocityX = star->velocityX * 62 / 64;
-            star->velocityY = star->velocityY * 62 / 64;
-            star->velocityZ = star->velocityZ * 62 / 64;
+            star->velocityX = star->velocityX * 62 / DAMPING_SCALE;
+            star->velocityY = star->velocityY * 62 / DAMPING_SCALE;
+            star->velocityZ = star->velocityZ * 62 / DAMPING_SCALE;
             if ((dx >= -2047 && dx <= 2047) && (dz >= -2047 && dz <= 2047))
               star->variant = -1;
           }
@@ -1341,7 +1341,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       for (i = 0; i != 384; i++) {
         EFFECT_STEPS[i].variant = -1;
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
       grid.x = px(88);
@@ -2114,7 +2114,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           washShade = (16 - d) << 3;
         }
         washModel->shade = washShade;
-        if (washShade > -64) {
+        if (washShade > MODEL_SHADE_INVISIBLE) {
           Transform_Reset();
           Transform_ApplyTranslation(0, px(112 - lift), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);

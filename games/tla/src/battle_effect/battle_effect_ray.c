@@ -14,6 +14,8 @@
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
 
+#define RAY_FRAMES 64
+
 /// Four bolts close in, turning towards the centre and scattering sparks from
 /// their roots.
 ///
@@ -88,7 +90,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != RAY_FRAMES; frame++) {
     if (frame == 20)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     if (frame < 16) {

@@ -533,6 +533,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
+#define DJINN_HEAL_FRAMES 98
+
 /// A Djinni rides a swarm of sparks from the user to the first target, then
 /// hovers over the targets while sparkles gather on each in turn.
 void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
@@ -593,7 +595,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   delta[1] = (target[1] - position[1]) / 40;
   delta[2] = (target[2] - position[2]) / 40;
 
-  for (frame = 0; frame != 98; frame++) {
+  for (frame = 0; frame != DJINN_HEAL_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 8)

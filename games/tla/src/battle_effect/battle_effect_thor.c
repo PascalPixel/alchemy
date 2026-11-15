@@ -501,8 +501,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         if (frame > 31) {
           formationX += formationSpeedX;
           formationY += formationSpeedY;
-          formationSpeedX = formationSpeedX * 60 / 64;
-          formationSpeedY = formationSpeedY * 60 / 64;
+          formationSpeedX = formationSpeedX * 60 / DAMPING_SCALE;
+          formationSpeedY = formationSpeedY * 60 / DAMPING_SCALE;
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
                                            formationY);

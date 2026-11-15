@@ -16,6 +16,8 @@
 #define PANEL_F 0x4b00
 #define PANEL_G 0x58d2
 
+#define CONDEMN_FRAMES 104
+
 /// A shimmering image circles in, fading out and in as it closes on the first
 /// target, then splits into its panels with a white flash, and the target is
 /// thrown back while the screen shakes.
@@ -68,7 +70,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     curve[0] = 0x700000;
   curve[1] = -0x200000;
 
-  for (frame = 0; frame != 104; frame++) {
+  for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
     s32 screenY;

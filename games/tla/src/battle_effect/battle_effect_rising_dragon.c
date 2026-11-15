@@ -97,7 +97,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         arcs[1] = 0;
         arcs[2] = 0;
         arcs[3] = 0;
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           work->particles[i].variant = -1;
         }
       }
@@ -140,7 +140,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         mote = &work->particles[i];
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;

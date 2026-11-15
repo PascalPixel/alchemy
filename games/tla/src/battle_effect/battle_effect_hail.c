@@ -14,6 +14,8 @@
 /// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
 #define HAIL_MERCURY_DJINN_SMALL_PICTURES 0x65c0
 
+#define HAIL_FRAMES 64
+
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen.
 ///
@@ -61,7 +63,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     CHIPS[i].variant = (Random16() & 0xf) + 32;
   }
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != HAIL_FRAMES; frame++) {
     // The last sixteen frames fade the layer out.
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
@@ -171,6 +173,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
 #define GROUND_VENUS_DJINN_SMALL_PICTURES 0x65c0
 
+#define GROUND_FRAMES 96
+
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
 ///
@@ -227,7 +231,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       rock->variant = 1;
     }
 
-    for (frame = 0; frame != 96; frame++) {
+    for (frame = 0; frame != GROUND_FRAMES; frame++) {
       // The background takes on the portal's colours from frame 17.
       if (frame > 16)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
@@ -336,9 +340,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             rock->velocityY += (px(20) - rock->y) >> 8;
             rock->velocityZ += (target->z - rock->z) >> 8;
             if (frame < i * 2 + 85) {
-              rock->velocityX = rock->velocityX * 60 / 64;
-              rock->velocityY = rock->velocityY * 60 / 64;
-              rock->velocityZ = rock->velocityZ * 60 / 64;
+              rock->velocityX = rock->velocityX * 60 / DAMPING_SCALE;
+              rock->velocityY = rock->velocityY * 60 / DAMPING_SCALE;
+              rock->velocityZ = rock->velocityZ * 60 / DAMPING_SCALE;
             }
             if (rock->y < px(20)) {
               work->shakeFrames = 8;

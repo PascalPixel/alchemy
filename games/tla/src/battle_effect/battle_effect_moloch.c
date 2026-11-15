@@ -258,7 +258,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           shade = (start - frame) * 8 + 56;
           if (shade > 0)
             shade = 0;
-          if (shade <= -64)
+          if (shade <= MODEL_SHADE_INVISIBLE)
             continue;
           model->shade = shade;
           Transform_Reset();

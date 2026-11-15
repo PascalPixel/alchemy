@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define HELM_SPLITTER_FRAMES 70
+
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground.
 ///
@@ -64,7 +66,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   // The caster dashes at the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(7));
 
-  for (frame = 0; frame != 70; frame++) {
+  for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
     if (args->variant == EFFECT_VARIANT_BASIC) {
       EffectPosition_ProjectBattler(args->user, &position);

@@ -462,7 +462,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
             s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
 
-            distance = distance * 48 / 64;
+            distance = distance * 48 / DAMPING_SCALE;
             if (distance != 0) {
               s32 size;
 

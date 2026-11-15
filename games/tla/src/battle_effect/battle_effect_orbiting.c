@@ -9,6 +9,8 @@
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
 
+#define SWIRLING_STARS_FRAMES 160
+
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
@@ -39,7 +41,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
-  for (frame = 0; frame != 160; frame++) {
+  for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     s32 *camera;
 
     // The stars turn about a point 80 pixels in front of the camera.
@@ -103,6 +105,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 
 #define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
 
+#define TARGET_BURSTS_FRAMES 96
+
 /// Target bursts: on each target in turn a burst flares while puffs of smoke
 /// scatter around it.
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
@@ -152,7 +156,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != 96; frame++) {
+  for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
     s32 *camera;
 

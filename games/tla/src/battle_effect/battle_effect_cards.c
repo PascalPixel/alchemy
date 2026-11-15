@@ -277,7 +277,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step->variant = 0;
         }
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
@@ -312,7 +312,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         sheep->velocityY = ((Random16() & mask) - 64) << 11;
         sheep->variant = mode;
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
           draw[0](canvas,

@@ -80,7 +80,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
     if (frame == 0) {
       arc.head = 0;
       arc.tail = 0;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = 24;
       }
     }
@@ -192,7 +192,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       if (frame > 33) {
         shade = (34 - frame) * 8;
       }
-      if (shade > -64) {
+      if (shade > MODEL_SHADE_INVISIBLE) {
         model = Render_AllocateModelList(1);
         model->kind = 6;
         model->texture = &texture;

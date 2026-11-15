@@ -13,6 +13,8 @@ struct StripQuad;
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define BOLT_TRAIL_TORNADO_PICTURES 0x800
 
+#define BOLT_TRAIL_FRAMES 50
+
 /// The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
 /// light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 /// target, trailed by 40 spinning bolts, and grows; when it arrives the
@@ -90,7 +92,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     frames = 40;
   }
 
-  for (frame = 0; frame != 50; frame++) {
+  for (frame = 0; frame != BOLT_TRAIL_FRAMES; frame++) {
     ball = work->particles;
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->user, &source);
@@ -233,7 +235,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
           if ((Q_16_16_TO_INT(dot->y)) > 111) {
-            dot->velocityY = -dot->velocityY * 48 / 64;
+            dot->velocityY = -dot->velocityY * 48 / DAMPING_SCALE;
           }
           dot->variant--;
         }
@@ -307,6 +309,8 @@ extern const struct Scale gMegaera_UnitScale;
 /// Where SparkleDots is decoded in the effect's pictures.
 #define MEGAERA_SPARKLE_DOTS_PICTURES 0x2e16
 
+#define MEGAERA_FRAMES 170
+
 /// Two bolts of lightning fall at frames 0 and 16, each with a burst of
 /// sparks; a whirl of flame turns over the field from 64 while smoke rises,
 /// and at 108 Megaera (eleven objects) swoops in across the targets in a
@@ -347,7 +351,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots,
                              pictures + MEGAERA_SPARKLE_DOTS_PICTURES, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].variant = -1;
   }
   for (i = 0, p = &work->particles[24]; i != 16; i++, p++) {
@@ -371,7 +375,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
 
-  for (frame = 0; frame != 170; frame++) {
+  for (frame = 0; frame != MEGAERA_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 10) {
       if (frame > 107) {
         goto skipped;
@@ -402,8 +406,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     if (frame > 107) {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 59 / 64;
-      velocity.y = velocity.y * 59 / 64;
+      velocity.x = velocity.x * 59 / DAMPING_SCALE;
+      velocity.y = velocity.y * 59 / DAMPING_SCALE;
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MEGAERA, position.x,
                                          position.y);
       if (frame == 108) {

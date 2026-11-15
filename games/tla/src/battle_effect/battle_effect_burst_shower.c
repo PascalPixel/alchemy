@@ -716,7 +716,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       }
 
       // Draw and move the shots in flight.
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *shot = &work->particles[i];
         s32 age = shot->variant;
         s32 cel;

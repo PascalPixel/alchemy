@@ -193,6 +193,9 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
+/// The number of elements of an array, as The Broken Seal's macros.h has it.
+#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
+
 /// The whole pixels of a 16.16 value.
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 
@@ -274,6 +277,11 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_BACKGROUND_HEIGHT 120
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
+
+/// A model's shade (RenderModel.shade) is added to each of its pixels' canvas
+/// levels: at this or below, nothing of the model is left to draw, and the
+/// effects skip it.
+#define MODEL_SHADE_INVISIBLE (-64)
 
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \

@@ -550,6 +550,8 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
+#define DRAGON_FIRE_FRAMES 208
+
 /// Streaks rain down and splash, sparks and grains rise from where the
 /// formation stands, flashes burst at frame 128, then the screen whitens and
 /// the canvas fades away. For Tiamat a formation of eight drops in at frame 40
@@ -649,7 +651,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
     }
 
-    for (frame = 0; frame != 208; frame++) {
+    for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
         if (mode == DRAGON_FIRE_TIAMAT) {
           Sprite_StartAnimationFar(work->sprites[0], 8);

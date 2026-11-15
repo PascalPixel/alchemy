@@ -265,7 +265,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
     target = BattleObject_GetFar(args->targets[k])->object;
     EffectPosition_ProjectBattler(args->targets[k], &ground);
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
       struct Particle *step = &work->particles[i];
 
       SET_POSITION(step, px(ground.x / 2), px(80), 0);
@@ -579,7 +579,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
       // Wisps of smoke rise and spread for 24 frames.
       if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *step = &work->particles[i];
 
           if (step->variant >= 0 && step->variant <= 23) {
@@ -599,7 +599,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
       // Flashes rise twice as fast, 32x64.
       if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *step = &work->particles[i];
 
           if (step->variant >= 0 && step->variant <= 23) {
@@ -718,6 +718,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+#define BLADE_RAIN_FRAMES 120
+
 /// Sixteen swords fall slanting in on the first target, one every 4 frames, and
 /// stick in the ground.
 void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
@@ -756,7 +758,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
   // Daggers start in columns 16 to 111; the further from the middle, the
   // faster they drift towards it (in steps of 2 pixels a frame).
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 column;
 
     dagger = &work->particles[i];
@@ -783,7 +785,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   }
   Sound_PlayFar(SE_POWER_UP);
 
-  for (frame = 0; frame != 120; frame++) {
+  for (frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
     if (frame <= 16) {
       REG_BLDALPHA = BLEND_ALPHA(frame, BLEND_WEIGHT_MAX);
       if (frame == 16)
@@ -847,6 +849,8 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
+
+#define ELEMENT_PILLAR_FRAMES 56
 
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it.
@@ -913,7 +917,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     args->variant = 4;
   Sound_PlayFar(SE_POWER_UP);
 
-  for (frame = 0; frame != 56; frame++) {
+  for (frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
     EffectPosition_ProjectBattler(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)

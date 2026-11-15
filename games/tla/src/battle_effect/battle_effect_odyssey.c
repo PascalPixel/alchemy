@@ -333,7 +333,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         if (shade > 0)
           shade = 0;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
@@ -380,7 +380,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         if (shade > 0)
           shade = 0;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;

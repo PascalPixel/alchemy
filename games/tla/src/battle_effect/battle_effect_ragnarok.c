@@ -520,8 +520,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
             dust->velocityY += -32768;
           else
             dust->velocityY += gTitanBlade_DustGravity[i & 3];
-          dust->velocityX = dust->velocityX * 62 / 64;
-          dust->velocityY = dust->velocityY * 62 / 64;
+          dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+          dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
           if (dust->velocityY > 0 && Q_16_16_UPPER_HALF(dust->y) > 108)
             dust->variant = -1;

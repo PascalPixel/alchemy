@@ -507,8 +507,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame > 177) {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 63 / 64;
-      velocity.y = velocity.y * 63 / 64;
+      velocity.x = velocity.x * 63 / DAMPING_SCALE;
+      velocity.y = velocity.y * 63 / DAMPING_SCALE;
     } else if (frame > 149) {
       if (position.y > 0x37ffff) {
         velocity.x = 0;
@@ -519,13 +519,13 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     } else if (frame <= 59) {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 58 / 64;
-      velocity.y = velocity.y * 62 / 64;
+      velocity.x = velocity.x * 58 / DAMPING_SCALE;
+      velocity.y = velocity.y * 62 / DAMPING_SCALE;
     } else {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 58 / 64;
-      velocity.y = velocity.y * 61 / 64;
+      velocity.x = velocity.x * 58 / DAMPING_SCALE;
+      velocity.y = velocity.y * 61 / DAMPING_SCALE;
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
       blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
@@ -571,7 +571,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         model->shade = shade;

@@ -13,6 +13,8 @@
 
 #define ACTOR(id) ((struct Actor *)BattleObject_GetFar(id)->object)
 
+#define ASTRAL_BLAST_FRAMES 60
+
 /// Three pink stars of light fly from above the user at the first target,
 /// growing and spinning, while the camera swings round; each knocks the target
 /// back.
@@ -79,7 +81,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   }
 
   ring = (struct Particle *)gMapGridCellBuffer;
-  for (frame = 0; frame != 60; frame++) {
+  for (frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
       struct BattleCamera *view = (struct BattleCamera *)camera;
@@ -199,6 +201,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 #define DOT_SIZE 2
 #define GROUND_Y 0x1dffff
 
+#define SHINING_STAR_FRAMES 128
+
 /// Eight rings of stars fly from the caster to the target, one every eight
 /// frames and spinning as they go; each bounces where it meets the ground,
 /// shaking the screen and flashing the targets.
@@ -254,7 +258,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   size = DOT_SIZE;
   ring = (struct Particle *)gMapGridCellBuffer;
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

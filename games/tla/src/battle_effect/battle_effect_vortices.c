@@ -109,9 +109,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
         if (frame < i * 2 + 85) {
-          point->velocityX = point->velocityX * 60 / 64;
-          point->velocityY = point->velocityY * 60 / 64;
-          point->velocityZ = point->velocityZ * 60 / 64;
+          point->velocityX = point->velocityX * 60 / DAMPING_SCALE;
+          point->velocityY = point->velocityY * 60 / DAMPING_SCALE;
+          point->velocityZ = point->velocityZ * 60 / DAMPING_SCALE;
         }
         if (point->y < 0) {
           landed[i] = 1;

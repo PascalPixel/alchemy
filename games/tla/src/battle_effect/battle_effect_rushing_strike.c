@@ -252,6 +252,8 @@ struct CornerRow {
 /// Where ClawSlashSheet is decoded in the effect's pictures.
 #define RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES 0x4000
 
+#define RISING_DRAGON_ENEMY_FRAMES 186
+
 /// The dragon bursts up under the target and carries it into the sky: the
 /// backdrop changes to a red haze scrolling past as the target is lifted,
 /// swaying, then is dropped back to the field at frame 166 and lands at 179.
@@ -320,12 +322,12 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(strip, 4, 32, 32);
 
-  for (frame = 0; frame != 186; frame++) {
+  for (frame = 0; frame != RISING_DRAGON_ENEMY_FRAMES; frame++) {
     if (frame == 0) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
       for (i = 0; i != 128; i++) {

@@ -5,6 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#define NIRVANA_FRAMES 80
+
 /// A mote leaves the first target and is drawn as a ring of 24 sparks
 /// turning about it while it is pulled back to the user.
 void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
@@ -41,7 +43,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != NIRVANA_FRAMES; frame++) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
     s32 userHalf = BattleUnit_GetEffectHeightFar(args->user) / 2;
 
@@ -116,6 +118,8 @@ static inline s16 *Fixed_Halves(s32 *value) {
 
 #define ROCKS 21
 
+#define STONE_JUSTICE_FRAMES 107
+
 /// Stone Justice: 21 boulders rise in a column beside the user and tumble
 /// across the screen into the target, while the battle background slides
 /// with them.
@@ -160,7 +164,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   user = BattleObject_GetFar(args->user)->object;
   Actor_SetAnimationSpeedFar(user, 48);
 
-  for (frame = 0; frame != 107; frame++) {
+  for (frame = 0; frame != STONE_JUSTICE_FRAMES; frame++) {
     EffectPosition_ProjectScaledBattler(args->user, &userPosition);
     EffectPosition_ProjectScaledBattler(args->targets[0], &targetPosition);
     if (frame == 0)
@@ -196,7 +200,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       else
         scroll -= scrollSpeed;
       scrollSpeed += 0x8000;
-      scrollSpeed = scrollSpeed * 60 / 64;
+      scrollSpeed = scrollSpeed * 60 / DAMPING_SCALE;
     }
     scrollX = Q_16_16_TO_INT(scroll);
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
@@ -283,6 +287,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 // frame, stands at 80 pixels (drawn with max blitters) and sinks from
 // frame 80; the target is thrown up at frame 10 and comes down at frame
 // 80.
+#define SOUL_SHATTER_FRAMES 106
+
 /// Soul Shatter: two mirrored halves of a column and sixteen sparks, in an
 /// effect in which the target is thrown up and 32 motes of its
 /// soul drift back into the user.
@@ -316,7 +322,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   position.x /= 2;
   work->shakeFrames = 8;
 
-  for (frame = 0; frame != 106; frame++) {
+  for (frame = 0; frame != SOUL_SHATTER_FRAMES; frame++) {
     // Frame 0: sparks leave the column's foot upward, and the motes start
     // at the target, 52 pixels up, in every direction.
     if (frame == 0) {
@@ -516,6 +522,8 @@ struct ProjectedPoint {
 /// Where MercuryDjinnSheet is decoded in the effect's pictures.
 #define SERAC_MERCURY_DJINN_PICTURES 0x4000
 
+#define SERAC_FRAMES 88
+
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
 /// first frame) grows up around the target in rings of mist while the
@@ -587,7 +595,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(1);
     REG_BG2X = 0;
 
-    for (frame = 0; frame != 88; frame++) {
+    for (frame = 0; frame != SERAC_FRAMES; frame++) {
       if (frame == 0) {
         camera->yaw = savedYaw;
         for (row = 0; row != 8; row++) {
@@ -796,7 +804,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       if (frame > 63) {
         if (frame == 64) {
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-          for (i = 0; i != 64; i++) {
+          for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
             struct Particle *p = &work->particles[i];
             s32 angle = (i & 7) << 13;
             s32 ring;
@@ -819,7 +827,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
-          for (i = 0; i != 64; i++) {
+          for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
             struct Particle *p = &work->particles[i];
             s32 angle = (frame + i) << 10;
 
@@ -906,7 +914,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             if (shade > 0) {
               shade = 0;
             }
-            if (shade <= -64) {
+            if (shade <= MODEL_SHADE_INVISIBLE) {
               continue;
             }
             Transform_Push();

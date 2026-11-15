@@ -12,6 +12,8 @@
 #define CRYSTAL_OFFSET 0x480
 #define CRYSTAL_ORIGIN (CRYSTAL_OFFSET + 8 * 64 + 8)
 
+#define DJINNI_SIGN_FRAMES 48
+
 /// Rime and Haze: the Djinni rises swaying through the canvas over the
 /// party while its sign turns in the air: for Rime a crystal that spins in
 /// two mirrored copies and shrinks, for Haze sixteen stars that bloom and
@@ -87,7 +89,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                         BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
-  for (frame = 0; frame != 48; frame++) {
+  for (frame = 0; frame != DJINNI_SIGN_FRAMES; frame++) {
     // Frame 0: Haze's stars take random places about the centre, one more
     // every two frames.
     if (frame == 0) {

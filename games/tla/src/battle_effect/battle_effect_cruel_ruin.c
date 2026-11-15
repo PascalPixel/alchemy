@@ -37,6 +37,8 @@ union BattleBackgroundId__f13eb70 {
 
 // The target's picture shatters, for the scenes.
 
+#define SHATTERING_OPENING_FRAMES 128
+
 /// The screen turns white and the picture breaks into 33 pieces that fly apart
 /// and fall, while a grey disc grows over it and the battle background's
 /// colours return.
@@ -151,7 +153,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
     if (frame == 2)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 3)
@@ -386,6 +388,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
 // Light gathering on the user and bursting, for the scenes.
 
+#define ELEMENT_BURST_FRAMES 56
+
 /// Sparks in an element's colours flare at four corners around a unit and motes
 /// spiral in, then a burst of light plays over it.
 void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
@@ -440,7 +444,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   // A mote's x is its angle and y its distance from the user; its variant
   // counts down its life.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
@@ -451,7 +455,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Sound_PlayFar(SE_SPIN);
 
-  for (frame = 0; frame != 56; frame++) {
+  for (frame = 0; frame != ELEMENT_BURST_FRAMES; frame++) {
     EffectPosition_ProjectScaledBattler(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
@@ -484,7 +488,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
     // The motes close in 2 pixels a frame.
     if (frame >= 0) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant >= 0 && mote->y > 0) {
@@ -1050,7 +1054,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Transform_ApplyTranslation(-px(4), -px(44), 0);
             Transform_ApplyAxisScale(sc, sc / 3, sc >> 1);
             Transform_ApplyRoll(t);
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
               Render_DrawModelList(model);
             }

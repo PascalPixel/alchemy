@@ -686,6 +686,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
 #define FLAMES 32
 
+#define RADIANT_FIRE_FRAMES 66
+
 /// Radiant Fire: eight bursts of fire bloom one after another around the
 /// target, each a shaded disc that swells and shrinks under a spinning
 /// square of flame, with a white flash of the canvas as the first lands.
@@ -746,7 +748,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
     size += 2;
   }
 
-  for (frame = 0; frame != 66; frame++) {
+  for (frame = 0; frame != RADIANT_FIRE_FRAMES; frame++) {
     // Frame 0: each burst takes a random place on a ring about the target
     // that widens with its number, 48 pixels up, and is projected to the
     // screen; it waits 4 frames more than the one before it.
@@ -866,6 +868,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 #define SPLASH_OFFSET 0x3200
 #define SPLASH_SIZE (24 * 48)
 
+#define HURRICANE_FRAMES 68
+
 /// Hurricane: driving rain slants down over the target, each drop bursting
 /// into a splash where it lands, while the target is struck eight times; the
 /// user rushes in at frame 32. The canvas then hands over to the summon
@@ -924,7 +928,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
                              work->sheet + SPLASH_OFFSET, 1, 0);
   REG_BG2PA = Q_8_8(1);
 
-  for (frame = 0; frame != 68; frame++) {
+  for (frame = 0; frame != HURRICANE_FRAMES; frame++) {
     // Frame 0: the streaks wait above the screen, drifting with the wind.
     if (frame == 0) {
       Sound_PlayFar(SE_170);

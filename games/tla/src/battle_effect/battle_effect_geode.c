@@ -13,6 +13,8 @@ struct MeshTriangle;
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
 #define GEODE_VENUS_DJINN_SMALL_PICTURES 0x65c0
 
+#define GEODE_FRAMES 74
+
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
 /// palette fades, the Djinni flies across to it, and at frame 48 the dome
@@ -110,7 +112,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(caster, 48);
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
-  for (frame = 0; frame != 74; frame++) {
+  for (frame = 0; frame != GEODE_FRAMES; frame++) {
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
 
@@ -334,7 +336,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         rings->shade = shade;

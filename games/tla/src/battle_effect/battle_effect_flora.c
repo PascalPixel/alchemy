@@ -470,8 +470,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];
-          w->vx[i] = w->vx[i] * 63 / 64;
-          w->vy[i] = w->vy[i] * 63 / 64;
+          w->vx[i] = w->vx[i] * 63 / DAMPING_SCALE;
+          w->vy[i] = w->vy[i] * 63 / DAMPING_SCALE;
           if ((u32)(w->vx[i] + 0xffff) <= 0x1fffe &&
               (u32)(w->vy[i] + 0xffff) <= 0x1fffe) {
             w->x[i] = px(256);

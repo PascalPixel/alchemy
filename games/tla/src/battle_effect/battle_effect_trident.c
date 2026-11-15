@@ -16,6 +16,8 @@ struct StripQuad;
 
 extern const struct Scale gTrident_UnitScale;
 
+#define TRIDENT_FRAMES 104
+
 /// Poseidon (four objects) rises behind the targets as rings of foam
 /// spread across the water; seven spinning tridents fly in from frame 18,
 /// spray bursts up around them, and at 64 the waters strike every target.
@@ -108,7 +110,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   BattleEffect_GetTargetsMidpoint(center);
   centerX = center[0] / 2;
 
-  for (frame = 0; frame != 104; frame++) {
+  for (frame = 0; frame != TRIDENT_FRAMES; frame++) {
     if (frame == 0) {
       Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
                            SHEET_PALETTE_BYTES);
@@ -261,7 +263,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         model->shade = shade;
@@ -676,7 +678,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
             if (shade > 0)
               shade = 0;
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               s32 scale;
 
               start = frame - start;
@@ -719,7 +721,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
             if (shade > 0)
               shade = 0;
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               s32 scale;
               s32 scroll;
 

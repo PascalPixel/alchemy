@@ -38,6 +38,8 @@ struct AzulObject {
       (place)[2] = 0xa00000;                                                   \
   } while (0)
 
+#define AZUL_FRAMES 228
+
 /// Azul: water and bubbles rush over the foes, the winged serpent swims in
 /// from the right and closes them in a great sphere of water, and the sphere
 /// bursts over the field in a wave of foam.
@@ -130,7 +132,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   mapCells = gMapGridCellBuffer;
   planes = gData_02014000;
   stripEnd = 0x3a08;
-  for (frame = 0; frame != 228; frame++) {
+  for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       EFFECT_PRESENT_CANVAS(work);
@@ -374,8 +376,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
       place[3] = 0;
       place[1] = px(255);
-      vel.x = vel.x * 56 / 64;
-      vel.y = vel.y * 56 / 64;
+      vel.x = vel.x * 56 / DAMPING_SCALE;
+      vel.y = vel.y * 56 / DAMPING_SCALE;
       if (frame <= 137) {
         pos.x = (Trig_Sin(frame << 9) << 4) + base.x;
         x = pos.x;
@@ -468,7 +470,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != args->targetCount; i++) {
         s32 *actor = BattleObject_GetFar(args->targets[i])->object;
 
-        actor[10] = actor[10] * 60 / 64;
+        actor[10] = actor[10] * 60 / DAMPING_SCALE;
       }
     }
     if (t <= 43) {
@@ -621,7 +623,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           scratchTexture.pixels = gData_02014000;
           scratchTexture.logWidth = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;

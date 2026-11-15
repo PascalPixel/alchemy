@@ -113,7 +113,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   target = BattleObject_GetFar(args->targets[0])->object;
 
   // 64 sparks start on the ground around the caster, flying outward.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *spark = &work->particles[i];
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
@@ -255,9 +255,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
             spark->velocityX += pullX;
             spark->velocityY += pullY;
             spark->velocityZ += pullZ;
-            spark->velocityX = spark->velocityX * 62 / 64;
-            spark->velocityY = spark->velocityY * 62 / 64;
-            spark->velocityZ = spark->velocityZ * 62 / 64;
+            spark->velocityX = spark->velocityX * 62 / DAMPING_SCALE;
+            spark->velocityY = spark->velocityY * 62 / DAMPING_SCALE;
+            spark->velocityZ = spark->velocityZ * 62 / DAMPING_SCALE;
             if ((pullX > -2048 && pullX < 2048) &&
                 (pullZ > -2048 && pullZ < 2048))
               spark->variant = -1;
@@ -284,7 +284,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
 
     // At frame 64 it bursts into 64 motes that fall away.
     if (frame == 64) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
@@ -297,7 +297,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
       }
     }
     if (frame > 63) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant >= 0) {

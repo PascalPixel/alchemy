@@ -183,8 +183,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           velY += 0x400;
         }
         if (frame <= 205) {
-          velX = velX * 54 / 64;
-          velY = velY * 54 / 64;
+          velX = velX * 54 / DAMPING_SCALE;
+          velY = velY * 54 / DAMPING_SCALE;
         }
       } else {
         if (velY < 0) {

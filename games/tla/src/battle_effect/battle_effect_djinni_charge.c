@@ -156,9 +156,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             work->particles[63].y += work->particles[63].velocityY >> 10;
             work->particles[63].z += work->particles[63].velocityZ >> 10;
           }
-          work->particles[63].x = work->particles[63].x * 56 / 64;
-          work->particles[63].y = work->particles[63].y * 56 / 64;
-          work->particles[63].z = work->particles[63].z * 56 / 64;
+          work->particles[63].x = work->particles[63].x * 56 / DAMPING_SCALE;
+          work->particles[63].y = work->particles[63].y * 56 / DAMPING_SCALE;
+          work->particles[63].z = work->particles[63].z * 56 / DAMPING_SCALE;
           if (frame == 31) {
             Sound_PlayFar(SE_ITEM_BREAK);
           }

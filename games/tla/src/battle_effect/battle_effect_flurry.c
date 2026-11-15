@@ -236,7 +236,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     mote->variant = -1;
   }
   // The smoke puffs start at the target's feet, one a frame.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *puff = &work->particles[i];
 
     SET_POSITION(puff, px(targetPos.x / 2), px(88), 0);

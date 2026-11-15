@@ -36,6 +36,8 @@ struct RenderModel__meteor_blow {
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
 
+#define METEOR_BLOW_FRAMES 50
+
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
@@ -220,7 +222,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     if (frame == 117) {
       work->frame = 45;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
       scale = Q16_ONE;
@@ -443,7 +445,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.
-  for (frame = 0; frame != 50; frame++) {
+  for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
     struct RenderModel__meteor_blow *model;
     s32 angle;
     s32 back;
@@ -533,7 +535,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         if (shade > -16) {
           shade = -16;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 + 42768;
 
           model->shade = shade;
@@ -565,7 +567,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 s = (frame - start) * gMeteorBlow_RingGrowth[i] * 1500 + 0x4180;
 
           model->shade = shade;

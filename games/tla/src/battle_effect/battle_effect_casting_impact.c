@@ -1664,7 +1664,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         drawFuncs.draw[0] = BLITTER;
         scrollA += scrollB;
         if (frame > 6)
-          scrollB = scrollB * 48 / 64;
+          scrollB = scrollB * 48 / DAMPING_SCALE;
         REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 28;
         if (t >= 0 && t < 16)
@@ -1721,7 +1721,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 5)
           scrollA += 0x200000;
         if (frame > 6)
-          scrollB = scrollB * 48 / 64;
+          scrollB = scrollB * 48 / DAMPING_SCALE;
         REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 29;
         if (t >= 0 && t < 16)
@@ -1779,7 +1779,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 t;
         scrollA += scrollB;
         if (frame > 6)
-          scrollB = scrollB * 48 / 64;
+          scrollB = scrollB * 48 / DAMPING_SCALE;
         REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         if (frame == 0)
           REG_BLDALPHA = BLEND_ALPHA(16, 8);
@@ -2329,7 +2329,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 }
               }
               p->y += p->velocityY;
-              p->velocityY = p->velocityY * 62 / 64;
+              p->velocityY = p->velocityY * 62 / DAMPING_SCALE;
             }
           }
         }

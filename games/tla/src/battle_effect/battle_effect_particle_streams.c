@@ -146,8 +146,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
-        velocity.x = velocity.x * 58 / 64;
-        velocity.y = velocity.y * 56 / 64;
+        velocity.x = velocity.x * 58 / DAMPING_SCALE;
+        velocity.y = velocity.y * 56 / DAMPING_SCALE;
         if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
@@ -250,8 +250,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             ember->velocityY += -(px(1) / 2);
           else
             ember->velocityY += gNereidCopy_Gravity[k & 3];
-          ember->velocityX = ember->velocityX * 62 / 64;
-          ember->velocityY = ember->velocityY * 62 / 64;
+          ember->velocityX = ember->velocityX * 62 / DAMPING_SCALE;
+          ember->velocityY = ember->velocityY * 62 / DAMPING_SCALE;
           ember->variant++;
           if (ember->velocityY > 0 && Q_16_16_UPPER_HALF(ember->y) > 104)
             ember->variant = -1;
@@ -363,6 +363,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 #define SHARD_E 0x59d8
 
+#define IMPACT_BURST_FRAMES 72
+
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
@@ -427,7 +429,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     cells[i].variant = (Random16() & 15) + 20;
   }
 
-  for (frame = 0; frame != 72; frame++) {
+  for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
       Sound_PlayFar(SE_CAST);
     if (frame == 32)
@@ -1139,7 +1141,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
 
     // The motes rise.
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
       struct Particle *mote = &work->particles[i];
       u32 rise = i & 7;
       s32 size = rise + 3;

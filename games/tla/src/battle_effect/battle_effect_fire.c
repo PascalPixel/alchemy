@@ -118,9 +118,9 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
         if (frame < start + 85) {
-          ember->velocityX = vx * 60 / 64;
-          ember->velocityY = vy * 60 / 64;
-          ember->velocityZ = vz * 60 / 64;
+          ember->velocityX = vx * 60 / DAMPING_SCALE;
+          ember->velocityY = vy * 60 / DAMPING_SCALE;
+          ember->velocityZ = vz * 60 / DAMPING_SCALE;
         }
 
         // Below the ground it lands: it keeps its screen position for the

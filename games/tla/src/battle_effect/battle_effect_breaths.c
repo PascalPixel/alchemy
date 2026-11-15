@@ -466,6 +466,8 @@ void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
 
+#define CRESCENT_SLASH_FRAMES 32
+
 /// The crescent slash of Human Hunt (mode 0) and Echo Cut (kind 390,
 /// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
 /// in five steps of three frames: the star crescent, a blank frame, the two
@@ -518,7 +520,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(4));
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != CRESCENT_SLASH_FRAMES; frame++) {
     if (frame == 0)
       EffectPosition_ProjectBattler(args->targets[0],
                                     (struct ScreenPoint *)position);

@@ -69,6 +69,8 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
 
 #define SPARK_COUNT 64
 
+#define ATTACK_SLASH_FRAMES 32
+
 /// A plain attack: a slash or streak sweeps from the user over its first
 /// target, a yellow orb flashes over the target and sparks fly off.
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
@@ -199,7 +201,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != ATTACK_SLASH_FRAMES; frame++) {
     // The battle resumes: hit cue 134 for a flagged summon entry, else 133.
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->enemyId))

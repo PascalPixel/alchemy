@@ -547,7 +547,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             shade = p->variant * 8 - 64;
           if (p->variant > 31) {
             shade = (32 - p->variant) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -583,7 +583,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 63) {
             shade = (64 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -692,7 +692,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             if (t > 7)
               shade = (8 - t) * 8;
             model->shade = shade;
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               Transform_Reset();
               Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 64), 0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -837,7 +837,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           scale /= 2;
         if (frame > 15)
           shade = (16 - frame) * 8;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           model->shade = shade;
           texture.logWidth = 7;
           texture.logHeight = 7;
@@ -898,7 +898,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 23) {
             shade = (24 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -947,7 +947,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 23) {
             shade = (24 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -1187,7 +1187,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Render_DrawModelList(model);
       }
       if (frame == 0) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *p = &work->particles[i];
 
           Random16();
@@ -1198,7 +1198,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         LOAD_BG_PALETTE(ResourceId_BlastSheet);
       }
       if (frame <= 15) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *p = &work->particles[i];
 
           for (j = 0; j != 3; j++) {

@@ -177,8 +177,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         spark->variant = life - 1;
         x = spark->x += spark->z;
         y = spark->y += spark->velocityY;
-        spark->z = spark->z * 60 / 64;
-        spark->velocityY = spark->velocityY * 60 / 64 - 16;
+        spark->z = spark->z * 60 / DAMPING_SCALE;
+        spark->velocityY = spark->velocityY * 60 / DAMPING_SCALE - 16;
         py = y / 256;
         if (py > 120) {
           spark->velocityY = -spark->velocityY / 2;

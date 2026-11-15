@@ -156,6 +156,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define PLUME_EDGE_FLASH_BURST_PICTURES 0x2000
 
+#define PLUME_EDGE_FRAMES 80
+
 /// Plume Edge: the user dashes at the target, which a fan of white flashes
 /// throws back; a pillar of light scrolls up through it for half a second and
 /// then bursts into 256 sparks with a white flash of the whole canvas.
@@ -202,7 +204,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
 
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != PLUME_EDGE_FRAMES; frame++) {
     EffectPosition_ProjectBattler(args->targets[0], &position);
 
     // Frame 0: 64 flashes fan out upward from the target, one more each
@@ -505,7 +507,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
 
     if (frame == 0) {
       camera->yaw = savedYaw;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
     }
@@ -702,7 +704,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           shade = (8 - t) * 4;
         }
         model->shade = shade;
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         Transform_Reset();
@@ -939,7 +941,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       }
     } else if (frame > 27) {
       shade = (28 - frame) * 8;
-      if (shade < -64) {
+      if (shade < MODEL_SHADE_INVISIBLE) {
         shade = -64;
       }
     }
@@ -1063,7 +1065,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   for (frame = 0; frame != DIAMOND_BERG_FRAMES; frame++) {
     if (frame == 0) {
       top = -104;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
     }
@@ -1210,7 +1212,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         model->shade = shade;
@@ -1245,7 +1247,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           shade = (4 - t) * 16;
         }
         model->shade = shade;
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         Transform_Reset();

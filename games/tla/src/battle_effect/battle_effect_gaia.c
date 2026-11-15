@@ -13,6 +13,8 @@
 /// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
+#define GAIA_FRAMES 192
+
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
@@ -165,7 +167,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   work->shakeFrames = 250;
 
-  for (frame = 0; frame != 192; frame++) {
+  for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)

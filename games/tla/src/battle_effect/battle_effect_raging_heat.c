@@ -68,7 +68,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
     if (frame == 0) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = 24;
       }
       for (i = 0; i != 256; i++) {
@@ -216,7 +216,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           model->shade = shade;
           texture.pixels = TEXTURE_PIXELS;
         }
-        if (scale > 0 && shade > -64) {
+        if (scale > 0 && shade > MODEL_SHADE_INVISIBLE) {
           Transform_ApplyUniformScale(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
@@ -336,8 +336,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       ring->y += ring->velocityY;
       ring->velocityX += ring->z;
       ring->velocityY += ring->velocityZ;
-      ring->velocityX = ring->velocityX * 48 / 64;
-      ring->velocityY = ring->velocityY * 48 / 64;
+      ring->velocityX = ring->velocityX * 48 / DAMPING_SCALE;
+      ring->velocityY = ring->velocityY * 48 / DAMPING_SCALE;
     }
 
     // The flames: each one's place on the ring turned into the canvas, the

@@ -256,8 +256,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
                 (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
-            (u32)(PassBuffer(Ram_MapCellBuffer) + i * OBJ_32X32_8BPP_BYTES),
-            DMA_COPY_WORDS(0x100));
+            (u32)(cells + i * OBJ_32X32_8BPP_BYTES), DMA_COPY_WORDS(0x100));
       }
     }
 

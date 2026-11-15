@@ -12,6 +12,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "field/field.h"
+#include "graphics/palette_buffers.h"
 #include "system/main_routine_work.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -126,7 +127,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     IsletCave_TeleportIn();
 }
@@ -206,8 +207,8 @@ void IsletCave_TeleportIn(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_SetTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -215,7 +216,7 @@ void IsletCave_TeleportIn(void) {
   Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -312,7 +313,7 @@ void IsletCave_FinishTeleport(void) {
   Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
 
@@ -738,12 +739,12 @@ void IsletCave_SentinelAwaits(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_SENTINEL, 2);
   Event_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);

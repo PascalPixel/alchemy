@@ -11,6 +11,7 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -341,8 +342,8 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), 0);
   PaletteFade_Interpolate(60);
   System_Wait(60);
   Event_PlaySound(SE_CLATTER);
@@ -372,7 +373,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldActor_WaitForScriptEndById(ACTOR_UPPER_BEAM);
   Actor_GetById(ACTOR_LOWER_BEAM)->scaleX = 0;
   Actor_GetById(ACTOR_UPPER_BEAM)->scaleX = 0;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(30);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(30);
@@ -410,14 +411,14 @@ void JupiterLighthouse_HearTheVoice(void) {
     Event_SetFlag(FLAG_VOICE_HEARD);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    PaletteFade_ApplySource(0x10000, 0);
-    PaletteFade_ApplyTarget(0x10003, 1);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     PaletteFade_Interpolate(30);
     Event_WaitTransitionFrames();
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_STAND);
     FieldEvent_Wait(30);
     FieldMessage_ShowCentered((s32)MsgFieldShowAnemosPower, 0, -2);
-    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
     PaletteFade_Interpolate(30);
     Event_End();
   }

@@ -305,7 +305,7 @@ void AnemosInnerSanctum_TeleportIn(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();

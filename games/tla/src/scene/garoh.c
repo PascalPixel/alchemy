@@ -660,9 +660,9 @@ void Garoh_InitializeVillage(void) {
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
     Event_SetFlag(FLAG_GAROH_NIGHT);
-    PaletteFade_ApplyTarget(0x10007, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
     if (Event_GetFlag(FLAG_AREA_TEMP_11))
-      PaletteFade_ApplyTarget(0x10003, 2);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 2);
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
@@ -672,7 +672,7 @@ void Garoh_InitializeVillage(void) {
       *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = 0x7fff;
       *(u16 *)(palette + 60) = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);
     }
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   } else {
     MapGrid_CopyCellsTo(10, 32, 10, 10, 1, 1);
     MapGrid_CopyCellsTo(12, 32, 25, 22, 1, 1);
@@ -700,22 +700,22 @@ void Garoh_InitializeHypnosSwordChest(void) {
   Tightrope_Place(0, 10, 11);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
     if (gMainRoutineWork.entrance == 12) {
-      PaletteFade_ApplyTarget(0x2048c9, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(9, 6, 18), 1);
     } else {
-      PaletteFade_ApplyTarget(0x10007, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
     }
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
     Garoh_LoadHypnosSwordChestNightColors();
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Task_AddFrame((s32)Garoh_WaveHypnosSwordChestLayer, TASK_PASS_FRAME);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
     MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
     Garoh_LoadHypnosSwordChestDayColors();
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Garoh_MatchLayerScroll();
   }
 }
@@ -728,9 +728,9 @@ void Garoh_InitializeBlocks(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
-      PaletteFade_ApplyTarget(0x10003, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     else
-      PaletteFade_ApplyTarget(0x10007, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
   }
   Actor_PlaceBlocks(gGaroh_Pillars);
   PaletteFade_Interpolate(1);
@@ -847,9 +847,9 @@ s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 void Garoh_RestoreBlocksDark(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
-      PaletteFade_ApplyTarget(0x10003, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     else
-      PaletteFade_ApplyTarget(0x10007, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
     PaletteFade_Interpolate(16);
   }
 }
@@ -873,11 +873,11 @@ void Garoh_CrossBlocksWestThreshold(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_WEST_THRESHOLD);
     if (gMainRoutineWork.entrance == 1) {
-      PaletteFade_ApplyTarget(0x10003, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_IN_DARK_CAVE);
     } else {
-      PaletteFade_ApplyTarget(0x10000, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       Flag_Clear(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_IN_DARK_CAVE);
     }
@@ -893,11 +893,11 @@ void Garoh_CrossBlocksEastThreshold(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_EAST_THRESHOLD);
     if (gMainRoutineWork.entrance == 2) {
-      PaletteFade_ApplyTarget(0x10003, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_IN_DARK_CAVE);
     } else {
-      PaletteFade_ApplyTarget(0x10007, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_IN_DARK_CAVE);
     }

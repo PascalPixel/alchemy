@@ -22,6 +22,7 @@
 #include "field/map_grid.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
@@ -588,7 +589,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_SetTarget(0x202108, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
   PaletteFade_ApplyTarget(Q16_ONE, 2);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
@@ -909,7 +910,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Actor_StartRepeatedMotion(ACTOR_VALUKAR, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(Q16_ONE, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);

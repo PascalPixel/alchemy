@@ -10,6 +10,7 @@
 #include "field/field_work.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
+#include "graphics/palette_buffers.h"
 #include "system/bg_scroll.h"
 
 /// Parch cast on a target: runs FieldPsynergy_Parch.
@@ -329,7 +330,7 @@ loaded:
       case 1:
         if (timer == 40) {
           fade = 0;
-          PaletteFade_SetTarget(0x7fff, 0);
+          PaletteFade_SetTarget(RGB_WHITE, 0);
           PaletteFade_StartInterpolation(100);
         }
         spawn = 2;

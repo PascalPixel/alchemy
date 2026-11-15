@@ -18,6 +18,7 @@
 #include "field/map_grid.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
@@ -440,7 +441,7 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldActor_StartRepeatedMotion(ACTOR_WATER_GUARDIAN, 2);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(Q16_ONE, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgIAmTheGuardian, 0, 6);

@@ -12,6 +12,7 @@
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
 #include "types.h"
+#include "graphics/palette_buffers.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -376,8 +377,8 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x403108, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
   PaletteFade_StartInterpolation(60);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);

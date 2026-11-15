@@ -7,6 +7,7 @@
 #include "event_commands_internal.h"
 #include "sounds.h"
 
+#include "graphics/palette_buffers.h"
 #include "system/io_reg.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -714,7 +715,7 @@ void FieldPsynergy_Reveal(void) {
   transition->centreX = caster->x.fixed;
   transition->centreY = caster->z.fixed - caster->y.fixed;
   PaletteFade_SetSource(Q16_ONE, 0);
-  PaletteFade_SetTarget(0x10001, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
   event->revealActive = 0;
   wait(1);

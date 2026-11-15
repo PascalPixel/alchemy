@@ -404,7 +404,7 @@ void Contigo_TeleportIn(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_SetTarget(0x202108, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
@@ -778,7 +778,7 @@ void Contigo_BabyThinks(void) {
     FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
   Actor_SetAnimationById(ACTOR_BABY, 3);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(0x204084, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),

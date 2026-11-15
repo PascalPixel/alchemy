@@ -12,6 +12,7 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -261,11 +262,11 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
   case 0:
     Event_PlayCue(220);
     MapGrid_SetShake(6, 6, 1);
-    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24), 1);
     PaletteFade_Interpolate(8);
     break;
   case 8:
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     PaletteFade_Interpolate(8);
     break;
   case 16:
@@ -283,7 +284,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
   case 25:
     gJupiterLighthouse_BeaconStage--;
     if (*(s32 *)&center->y.fixed > 0) {
-      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), 0);
       PaletteFade_Interpolate(16);
       gJupiterLighthouse_BeaconStage++;
     } else {
@@ -296,7 +297,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
   case 26:
     gJupiterLighthouse_BeaconStage--;
     if (*(volatile s32 *)&center->y.fixed > (160 << 14)) {
-      PaletteFade_ApplyTarget(0x10000, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
       PaletteFade_Interpolate(40);
       gJupiterLighthouse_BeaconStage++;
     } else {
@@ -493,8 +494,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_WalkToAndWait(ACTOR_FELIX, 512, 294);
       Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
       FieldEvent_Wait(20);
-      PaletteFade_ApplySource(0x10000, 0);
-      PaletteFade_ApplyTarget(0x10003, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
       PartyInventory_Remove(ITEM_MYTHRIL_BAG_B);
@@ -588,7 +589,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->timer = 0;
       }
       FieldEvent_Wait(40);
-      PaletteFade_ApplyTarget(0x10000, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
       PaletteFade_Interpolate(20);
       System_Wait(20);
       Actor_WalkBy(ACTOR_FELIX, 0, -16);
@@ -653,7 +654,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_SetPosition(ACTOR_LID_B, 0, 0);
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(6, 6, 1);
-      PaletteFade_ApplyTarget(0x4063ff, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), 0);
       PaletteFade_Interpolate(16);
       System_Wait(16);
       Event_PlaySound(MUS_BEACON_LIT);

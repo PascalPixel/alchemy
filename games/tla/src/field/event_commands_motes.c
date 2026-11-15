@@ -287,8 +287,8 @@ void Weather_StartLightning(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
-  PaletteFade_Build(0x10003, (u16 *)buffers, (u16 *)work, 1);
-  PaletteFade_Build(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
+  PaletteFade_Build(PALETTE_TINT_WARM, (u16 *)buffers, (u16 *)work, 1);
+  PaletteFade_Build(PALETTE_TINT_PALE, (u16 *)buffers, (u16 *)work->to, 1);
   PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
   PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;

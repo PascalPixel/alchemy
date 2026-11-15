@@ -35,6 +35,7 @@ enum {
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -144,15 +145,15 @@ void GabombaStatueChamber_StatueSpeaks(void) {
   struct FieldWork *work;
 
   Actor_SetAnimationById(ACTOR_STATUE, 2);
-  PaletteFade_ApplySource(0x10000, 2);
-  PaletteFade_SetTarget(0x10003, 2);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   work = Ram_HeapSlots->fieldWork;
   FieldMessage_ShowCentered((s16)work->message++, 0, 2);
-  PaletteFade_SetTarget(0x10000, 2);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetAnimationById(ACTOR_STATUE, 1);
@@ -178,10 +179,10 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Sound_Play(SE_POWER_UP);
   Actor_SetAnimationById(ACTOR_STATUE, 3);
-  PaletteFade_ApplySource(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_SetSource(0x10000, 1);
-  PaletteFade_SetTarget(0x403108, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
   PaletteFade_StartInterpolation(40);
   wait(40);
   Sound_Play(SE_GABOMBA_VOICE);
@@ -283,8 +284,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 20);
   Actor_SetAnimationById(ACTOR_STATUE, 3);
-  PaletteFade_ApplySource(0x10000, 2);
-  PaletteFade_SetTarget(0x10003, 2);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 2);
   {
     volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
 
@@ -295,7 +296,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   }
   FieldMessage_ShowCentered((s16)(((struct FieldWork *)EVENT_WORK)->message)++,
                             0, 2);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetAnimationById(ACTOR_STATUE, 1);
@@ -351,18 +352,18 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_SetAnimationById(ACTOR_STATUE, 3);
   Actor_SetSpriteColor(((s32)Actor_GetById(13)), 7);
   Actor_SetPosition(13, 424, 104);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
   GabombaStatueChamber_OpenTheLap();
   Actor_SetPosition(13, 0, 0);
   Event_Wait(1);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_SetTarget(0x403108, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
   PaletteFade_StartInterpolation(60);
   wait(60);
   GabombaStatueChamber_StatueSpeaks();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(20);
   wait(20);
   gGabombaStatueChamber_ShownItem->motionFlags = 3;
@@ -440,7 +441,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   ((struct FieldWork *)EVENT_WORK)->transitionFrames = 10;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   ((struct FieldWork *)EVENT_WORK)->transitionFrames = 1;
   PaletteFade_StartInterpolation(1);
   ActorSystem_SuspendProjectionAndShowSprites();
@@ -743,7 +744,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
                                        px(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
-  PaletteFade_SetTarget(0x10002, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_SEPIA, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetAnimationById(ACTOR_DRUM_A, 2);
@@ -776,7 +777,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   wait(1);
   Actor_SetPosition(13, 0, 0);
   Event_Wait(20);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
   Scene_PlayMusic();

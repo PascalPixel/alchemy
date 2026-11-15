@@ -27,6 +27,7 @@
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -847,7 +848,7 @@ void Idejima_UseDriftPalette(void) {
   for (i = 0; i < 64; i++)
     *to++ = *from++;
   palette->colors[0] = 0;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
 }
 
 void DriftScene_Prepare(void) {

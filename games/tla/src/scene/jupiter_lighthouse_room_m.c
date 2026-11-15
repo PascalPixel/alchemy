@@ -11,6 +11,7 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -252,12 +253,12 @@ void JupiterLighthouse_FlashSky(void) {
   gBgScroll[0].x = -104;
   gBgScroll[0].y = 16;
   System_Wait(30);
-  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, 0);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   PaletteFade_ApplySource(RGB_WHITE, 0);
-  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   Event_PlaySound(SE_CLATTER);
@@ -275,8 +276,8 @@ void JupiterLighthouse_FlashSky(void) {
   MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
   MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
   FieldMapGrid_SetCellBehavior(px(1040), px(160), 2, 236);
-  PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_WARM, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(60);
   Window_LoadGraphics();
   DebugText_Clear();
@@ -341,8 +342,8 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     }
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 248);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
-    PaletteFade_ApplySource(0x10000, 0);
-    PaletteFade_ApplyTarget(0x10003, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 0);
     PaletteFade_Interpolate(60);
     FieldEvent_Wait(50);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,

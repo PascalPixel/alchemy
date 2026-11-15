@@ -23,6 +23,7 @@
 #include "field/sprite.h"
 #include "game/game.h"
 #include "game/owner_state.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
@@ -1813,7 +1814,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
   Actor_SetScript(ACTOR_DRIFTING_IDEJIMA, gWorldMap_IdejimaDriftScript);
   Task_AddFrame(WorldMap_SpawnIdejimaWake, TASK_PASS_VBLANK);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
   FieldEvent_Wait(120);

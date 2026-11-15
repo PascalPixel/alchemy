@@ -9,6 +9,7 @@
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
+#include "graphics/palette_buffers.h"
 #include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -2389,7 +2390,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2405,7 +2406,7 @@ void Kibombo_StatueFlashes(void) {
   FieldCamera_MoveTo(584, CAMERA_KEEP, 248, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_TaskAdd(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
@@ -2414,13 +2415,13 @@ void Kibombo_StatueFlashes(void) {
   wait(1);
 
   Sound_Play(SE_POWER_UP);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 536, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
@@ -2654,7 +2655,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST);
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   PaletteFade_SetTarget(0, 0);
   gFieldWork->transition = effect;
   Event_FinishScreenTransition();
@@ -2953,7 +2954,7 @@ void Kibombo_CeremonyEnds(void) {
   wait(1);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(0x10002, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_SEPIA, 0);
   gFieldWork->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2969,7 +2970,7 @@ void Kibombo_CeremonyEnds(void) {
   Event_Wait(40);
   Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, ANIM_NOD);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(40);
   wait(60);
   Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);

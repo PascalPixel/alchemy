@@ -119,6 +119,7 @@ enum {
   RAISED_CONE_CHIMES = 200,
   RAISED_OFFERING_HEARD = 201
 };
+#include "graphics/palette_buffers.h"
 #include "system/io_reg.h"
 #include "field/field.h"
 #include "types.h"
@@ -888,7 +889,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
@@ -896,7 +897,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
   GabombaStatue_ReleaseCharges();
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Event_PlaySound(SE_PSYNERGY_START);
@@ -1680,7 +1681,7 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_WalkTo(ACTOR_SHEBA, 444, 272);
   Actor_WalkTo(ACTOR_JENNA, 468, 272);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(80);
   System_Wait(80);
@@ -1713,13 +1714,13 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
   GabombaStatue_ReleaseCharges();
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -2035,7 +2036,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                     0);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);

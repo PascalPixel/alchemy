@@ -15,6 +15,7 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
+#include "graphics/palette_buffers.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -1089,8 +1090,8 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
                                   a->z.part[0].pixel << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = px(1) / 5;
@@ -1178,14 +1179,14 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(SE_FLASH);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixSettleScript);
@@ -2274,10 +2275,10 @@ s32 Scene_Initialize(void) {
         height = 19;
         MapGrid_CopyCellPictureCellsRect(85, 76, 5, 2, width, height);
         Sound_Play(SE_CRUMBLE);
-        PaletteFade_SetTarget(0x7fff, 0);
+        PaletteFade_SetTarget(RGB_WHITE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
-        PaletteFade_SetTarget(0x10000, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         Event_Wait(60);
@@ -2479,7 +2480,7 @@ s32 Scene_Initialize(void) {
       PaletteFade_SetTarget(scale, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
-      PaletteFade_SetTarget(0x7fff, 0);
+      PaletteFade_SetTarget(RGB_WHITE, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(60);
       Actor_SetAnimationById(ACTOR_SERPENT, 4);

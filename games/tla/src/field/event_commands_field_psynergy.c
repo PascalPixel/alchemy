@@ -372,7 +372,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   if (*(s8 *)(state + 0xca4) == 0)
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
-  PaletteFade_SetTarget(0x200000 | color, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, 1);
   GameFlag_Set(0x108);
   PaletteFade_StartInterpolation(frames);
 }
@@ -385,7 +385,7 @@ void Field_StartPaletteTransition(s32 frames) {
 
   PaletteFade_SetTarget(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    PaletteFade_SetTarget(0x10001, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   else
     PaletteFade_SetTarget(colors, 1);
   GameFlag_Clear(0x108);

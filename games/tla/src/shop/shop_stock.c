@@ -129,15 +129,15 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
   s32 count;
+  u32 item;
 
   count = 0;
   if (gShop_StockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
     dst = output;
     src = gShop_StockTable[stockRow];
     do {
-      /* FAKEMATCH(volatile): the row's halfword read through a volatile
-       * pointer. */
-      *dst = *(const volatile s16 *)src;
+      item = (u16)*src;
+      *dst = item;
       count++;
       src++;
       dst++;

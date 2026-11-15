@@ -25,7 +25,7 @@ void String_FormatHex(u32 value) {
   }
 }
 
-/// Writes `number` to the number buffer as eleven characters: spaces, a sign (a
+/// Writes `value` to the number buffer as eleven characters: spaces, a sign (a
 /// space or '-') and its decimal digits, right-aligned.
 void String_FormatDecimal(s32 value) {
   s32 negative;
@@ -56,8 +56,8 @@ void String_FormatDecimal(s32 value) {
     gNumberTextBuffer[i] = ' ';
 }
 
-/// Writes `count` blank characters (tile 0 in WINDOW_PALETTE) at the debug text
-/// cursor and moves it on.
+/// Writes `count` blank characters (tile 0 in palette 15, the window palette)
+/// at the debug text cursor and moves it on.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 i;
@@ -69,7 +69,7 @@ void DebugText_PrintBlanks(u32 count) {
   }
 }
 
-/// Prints the string `text` (at most 32 characters) at the debug text cursor,
+/// Prints the string `src` (at most 32 characters) at the debug text cursor,
 /// wrapping from the end of the screen to its start, when debug text is on; the
 /// cursor moves past it.
 void DebugText_Print(const u8 *src) {
@@ -135,7 +135,7 @@ void DebugText_Clear(void) {
 }
 
 /// Loads the window font and border tiles into BG character block 0, the window
-/// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
+/// palette into palette 15 with its gradient colours, and the basic sprite
 /// palettes.
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),

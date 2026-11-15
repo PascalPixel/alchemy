@@ -254,8 +254,7 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   return 0;
 }
 
-/// Invalidates the current copy of part `partId`. Called when the file list
-/// erases a file.
+/// Invalidates the current copy of part `partId`. Nothing calls it.
 u32 Save_DeletePart(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   s32 index;

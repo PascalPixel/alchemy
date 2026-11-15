@@ -4,9 +4,8 @@
 
 #include "../system_internal.h"
 
-/// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
-/// every heap slot) and sets the pools' next addresses to gIwramHeap and
-/// gEwramHeap.
+/// Empties the heap: clears the heap slots (both pool pointers and every slot)
+/// and sets the pools' next addresses to gIwramHeap and gEwramHeap.
 void Heap_Initialize(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
@@ -15,8 +14,8 @@ void Heap_Initialize(void) {
   Ram_HeapSlots->nextEwram = gEwramHeap;
 }
 
-/// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
-/// (0x03007800), the same end the allocators test.
+/// Returns the IWRAM bytes left to allocate, up to the sound mixer's
+/// workspace (IwramSoundMixWorkspace).
 s32 Heap_GetRemainingIwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 

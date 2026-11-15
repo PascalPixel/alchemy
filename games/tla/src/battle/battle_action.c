@@ -171,7 +171,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             actor->defendLevel = DEFEND_NORMAL;
           return ACTION_REPORTED;
         }
-        if (ability->effect != 75)
+        if (ability->effect != ABILITY_EFFECT_DAZZLE)
           break;
         range = 11;
       }
@@ -619,10 +619,10 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY ||
-        ability->effect == 89) {
+        ability->effect == ABILITY_EFFECT_VENGEANCE) {
       s32 index;
 
-      if (ability->effect == 89) {
+      if (ability->effect == ABILITY_EFFECT_VENGEANCE) {
         s32 roll = Battle_RandomFar() & 255;
 
         if (roll <= 178) {
@@ -681,7 +681,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           plan->targetCritical[index] = CRITICAL_STRONG;
       }
     } else if (abilityId == ABILITY_ANNIHILATION ||
-               abilityId == ABILITY_WHORL || ability->effect == 82) {
+               abilityId == ABILITY_WHORL ||
+               ability->effect == ABILITY_EFFECT_BLOW_AWAY) {
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++) {
@@ -734,7 +735,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if (Battle_IsReviveEffectFar(ability->effect))
       plan->battleEffect |= EFFECT_ON_DOWNED;
     if ((abilityId == ABILITY_ANNIHILATION || abilityId == ABILITY_WHORL ||
-         ability->effect == 82) &&
+         ability->effect == ABILITY_EFFECT_BLOW_AWAY) &&
         plan->targetHit[0] != 0)
       plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
   }

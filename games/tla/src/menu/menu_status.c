@@ -396,7 +396,9 @@ s32 PartyMemberChooser_RunRearrange(void) {
     if (redraw) {
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
-      if (GameFlag_Get(55))
+      // The Djinn list opens once Echo, the first Djinni the party meets, has
+      // joined.
+      if (GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO)))
         Text_DrawMessageAsTilesFar(MsgDjinnListHelp, menu->selectorWindow, 0,
                                    16);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, menu->selectorWindow, 0,
@@ -445,7 +447,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
-    } else if ((KEYS_PRESSED & KEY_SELECT) && GameFlag_Get(55)) {
+    } else if ((KEYS_PRESSED & KEY_SELECT) &&
+               GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO))) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {

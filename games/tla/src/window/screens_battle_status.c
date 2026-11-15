@@ -743,7 +743,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                     64 + j * 16);
             Text_SetColor(TEXT_COLOR_WHITE);
             work->textPalette = WINDOW_PALETTE;
-            if (ability->element != 4)
+            if (ability->element != ELEMENT_NONE)
               Window_SetTilemapEntry(statusWindow,
                                      ELEMENT_ICON_TILE + ability->element, 15,
                                      j * 2 + 8, tileFlags);

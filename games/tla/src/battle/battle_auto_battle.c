@@ -422,11 +422,14 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
-  BattleEffect_RunFromTableFar(&work);
+  /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
+   * and RunPsynergyCast make under their test of the kind, which is 0 here, as
+   * in The Broken Seal. */
+  if (work.kind)
+    BattleEffect_RunByIdRangeFar(&work);
+  else
+    BattleEffect_RunFromTableFar(&work);
   Actor_SelectAnimationFar((struct Actor *)object, POSE_STANDING);
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
   for (i = 0; i != work.count; i++)
     BattleMotion_ReturnToSpot(work.actors[i]);
   BattleMotion_ReturnToSpot(work.actor);

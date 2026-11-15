@@ -376,8 +376,8 @@ static void Xian_TalkToWaterCarrier(void) {
   carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrierCellZ = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed);
   Actor_SetPositionFixed(ACTOR_SPILLED_WATER,
-                         (FIELD_CELL(carrierX) << 20) + px(8),
-                         (carrierCellZ << 20) + px(8));
+                         FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
+                         FIELD_CELL_CENTER(carrierCellZ));
   carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierColumnX),
@@ -584,8 +584,8 @@ static void Xian_JumpOverSpilledWater(void) {
       leader->velocityY = px(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition.x >> 16,
-                          landingPosition.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(landingPosition.x),
+                          FIELD_PIXEL(landingPosition.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;

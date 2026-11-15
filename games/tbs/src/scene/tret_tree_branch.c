@@ -263,8 +263,8 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
            ->layers[MAPGRID_LAYER_GROUND];
   s32 horizontalOffset;
 
-  sSplitLine = 192 - (s16)(layer->y >> 16);
-  sHofsAtOrAfterSplit = horizontalOffset = (s16)(layer->x >> 16);
+  sSplitLine = 192 - (s16)(FIELD_PIXEL(layer->y));
+  sHofsAtOrAfterSplit = horizontalOffset = (s16)(FIELD_PIXEL(layer->x));
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }
 

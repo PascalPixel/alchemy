@@ -586,8 +586,8 @@ static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
     return -2;
   }
   actor = Actor_Get(ACTOR_LOG_AREA_STONE_A);
-  x >>= 20;
-  z >>= 20;
+  x = FIELD_CELL(x);
+  z = FIELD_CELL(z);
   if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z) {
     return -1;
   }
@@ -984,7 +984,7 @@ s32 Scene_Initialize(void) {
     column = 19;
   }
   actor = Actor_Get(ACTOR_STONE);
-  actor->x.fixed = (column << 20) + (px(8));
+  actor->x.fixed = FIELD_CELL_CENTER(column);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);

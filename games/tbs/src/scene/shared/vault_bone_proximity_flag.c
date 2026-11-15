@@ -18,7 +18,7 @@ static void Vault_UpdateBoneProximityFlag(void) {
   column = FIELD_CELL(fixedX);
   row = leaderAgain->z.fixed;
   column -= 34;
-  row >>= 20;
+  row = FIELD_CELL(row);
 
   if (column >= 0 && column <= 1 && row > 40 && row <= 42) {
     GameFlag_Set(FLAG_VAULT_LEADER_BESIDE_BONE);

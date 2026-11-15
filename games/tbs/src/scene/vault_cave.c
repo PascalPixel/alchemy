@@ -298,7 +298,7 @@ static void VaultCave_PushPillarAhead(void) {
   s32 row;
 
   column = (leader->x.part[0].pixel +
-            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+            (FIELD_PIXEL(gVaultCave_DirectionSteps[direction]))) >>
            4;
   row = (leader->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
         4;
@@ -319,7 +319,7 @@ static void VaultCave_PushPillarAhead(void) {
     }
   }
   column = (pillar->x.part[0].pixel +
-            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+            (FIELD_PIXEL(gVaultCave_DirectionSteps[direction]))) >>
            4;
   row = (pillar->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
         4;

@@ -688,7 +688,7 @@ s32 Scene_Initialize(void) {
     x = 25;
   }
   actor = Actor_Get(ACTOR_ROCK_B);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);

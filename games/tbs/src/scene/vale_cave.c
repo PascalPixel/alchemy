@@ -684,8 +684,8 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
     Actor_SetSpritePriority(actorId, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = (column << 20) + px(8);
-    actor->z.fixed = (row << 20) + px(8);
+    actor->x.fixed = FIELD_CELL_CENTER(column);
+    actor->z.fixed = FIELD_CELL_CENTER(row);
   }
 }
 

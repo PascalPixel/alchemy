@@ -717,7 +717,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((actor->velocityY >> 16) == 0)
+    if ((FIELD_PIXEL(actor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);

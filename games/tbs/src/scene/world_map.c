@@ -1520,7 +1520,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
+    Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIELD_PIXEL(x), FIELD_PIXEL(z));
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1639,7 +1639,7 @@ static void WorldMap_MeetFlint(void) {
     if (Event_AskYesNoWithActorAnimation(0, 0) != 1) {
       // "Well, then, I guess I'll start from the beginning, OK?"
       Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-      Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
+      Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIELD_PIXEL(x), FIELD_PIXEL(z));
       WorldMap_ShowDjinnTutorial();
       WorldMap_Unfreeze();
       return;

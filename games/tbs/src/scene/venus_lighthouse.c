@@ -915,7 +915,8 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
       leader->velocityY = px(4);
       leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16, landing.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(landing.x),
+                          FIELD_PIXEL(landing.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;

@@ -277,10 +277,10 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
-    coordinate >>= 20;
+    coordinate = FIELD_CELL(coordinate);
     probe->position.z = coordinate;
   }
-  probe->position.x >>= 20;
+  probe->position.x = FIELD_CELL(probe->position.x);
   *layerOriginX = FIELD_CELL(grid->layers[1].offsetX);
   *layerOriginZ = FIELD_CELL(grid->layers[1].offsetY);
   return 1;
@@ -429,7 +429,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
                                    (row << 20) + actor->z.fixed);
     top /= px(16);
     if (level < top) {
-      x = (FIELD_CELL(actor->x.fixed) << 20) + px(8);
+      x = FIELD_CELL_CENTER(FIELD_CELL(actor->x.fixed));
       if (far == 0) {
         row += 2;
         z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + px(2);
@@ -563,8 +563,8 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       leader->velocityY = px(4);
       leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
-                          destination.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(destination.x),
+                          FIELD_PIXEL(destination.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;

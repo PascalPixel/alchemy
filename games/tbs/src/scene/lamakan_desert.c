@@ -524,8 +524,8 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 /// The distance in whole pixels from a position (x, height, z) to an oasis
 /// (x, z), walking both a coordinate at a time.
 static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
-  s32 dx = (*oasis++ - *position++) >> 16;
-  s32 dz = (*oasis - position[1]) >> 16;
+  s32 dx = FIELD_PIXEL(*oasis++ - *position++);
+  s32 dz = FIELD_PIXEL(*oasis - position[1]);
   s32 squaredDeltaZ = dz * dz;
   s32 squaredDeltaX = dx * dx;
 

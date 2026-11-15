@@ -958,7 +958,7 @@ s32 Scene_Initialize(void) {
     x = 73;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -967,7 +967,7 @@ s32 Scene_Initialize(void) {
     x = 76;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -976,7 +976,7 @@ s32 Scene_Initialize(void) {
     x = 79;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);

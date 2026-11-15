@@ -1063,8 +1063,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (TOLBI_SPRING_CENTER_X - toss->trail[0].x) >> 16;
-            s32 deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 16;
+            s32 deltaX = FIELD_PIXEL(TOLBI_SPRING_CENTER_X - toss->trail[0].x);
+            s32 deltaZ = FIELD_PIXEL(TOLBI_SPRING_CENTER_Z - toss->trail[0].z);
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             // Classify squared pixel distance into the five prize rings.
@@ -1277,8 +1277,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       s32 deltaZ;
       s32 distanceSquared;
 
-      deltaX = (obstacle->position.x - toss->trail[0].x) >> 16;
-      deltaZ = (obstacle->position.z - toss->trail[0].z) >> 16;
+      deltaX = FIELD_PIXEL(obstacle->position.x - toss->trail[0].x);
+      deltaZ = FIELD_PIXEL(obstacle->position.z - toss->trail[0].z);
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
       if (distanceSquared <= 119 && toss->attractionFrames > 30) {
         s32 speed;

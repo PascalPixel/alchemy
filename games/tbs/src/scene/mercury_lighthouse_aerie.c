@@ -386,7 +386,8 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     actor->velocityY = px(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16, position.z >> 16);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(position.x),
+                        FIELD_PIXEL(position.z));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;

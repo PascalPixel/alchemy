@@ -1454,7 +1454,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   column = Actor_Get(ACTOR_DOOR_STATUE)->x.fixed;
   if (column < 0)
     column += px(16) - 1;
-  column >>= 20;
+  column = FIELD_CELL(column);
   Event_Start();
   if (column == 51) {
     // Mia turns: "Did you do that?"

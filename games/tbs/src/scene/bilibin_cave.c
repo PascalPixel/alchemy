@@ -530,7 +530,7 @@ static void BilibinCave_PushTorch(void) {
   heading = FACING_INDEX(leader->facing);
 
   nextCellX = (leader->x.part[0].pixel +
-               (gPushedActor_DirectionSteps[heading] >> 16)) >>
+               (FIELD_PIXEL(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
       (leader->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>
@@ -540,7 +540,7 @@ static void BilibinCave_PushTorch(void) {
     return;
 
   nextCellX = (target->x.part[0].pixel +
-               (gPushedActor_DirectionSteps[heading] >> 16)) >>
+               (FIELD_PIXEL(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
       (target->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>

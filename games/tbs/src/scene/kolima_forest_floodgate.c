@@ -467,9 +467,9 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   for (; entry->sprite != -1; entry++) {
     if (entry->vertical == 0) {
       x = (entry->x << 20) + px(32);
-      z = (entry->z << 20) + px(8);
+      z = FIELD_CELL_CENTER(entry->z);
     } else {
-      x = (entry->x << 20) + px(8);
+      x = FIELD_CELL_CENTER(entry->x);
       z = (entry->z << 20) + px(32);
     }
     actor = FieldActor_Create(entry->sprite, x, 0, z);

@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define DJINN_HEAL_SPARKS 512 ///< sparks in PARTICLES, 64 for each target
+#define DJINN_HEAL_SPARKS_PER_TARGET 64
+
 #define DJINN_HEAL_SWIRL_FRAMES 98
 #define DJINN_HEAL_SWIRL_MOTES 32 ///< motes swirled in
 
@@ -127,7 +130,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
   // The healing.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_HEAL_SPARKS; i++) {
     struct Particle *spark = &PARTICLES[i];
     SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
                  ((Random16() & 0x7f) + 64) << 15,
@@ -166,8 +169,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
-        for (i = 0; i != 64; i++) {
-          struct Particle *spark = &PARTICLES[member * 64 + i];
+        for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
+          struct Particle *spark =
+              &PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];
 
           if (frame > start + i / 2) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);

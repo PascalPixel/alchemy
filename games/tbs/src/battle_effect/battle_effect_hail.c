@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define HAIL_CHIPS 64 ///< ice chips in PARTICLES
+
 #define GROUND_FRAMES 96 ///< frames of Ground
 #define HAIL_FRAMES 64   ///< frames of Hail
 
@@ -42,7 +44,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   Projection_Unit(work->args->targets[0], &origin);
 
   // The chips burst up from just above the first target.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != HAIL_CHIPS; i++) {
     s32 angle;
     s32 speed;
 
@@ -89,7 +91,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     }
 
     // The chips fly up, odd ones mirrored.
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != HAIL_CHIPS; i++) {
       chip = &PARTICLES[i];
       if (frame >= i / 4 + 4) {
         s32 picture;

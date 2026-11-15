@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define HEALING_SPARKS 512 ///< sparks in PARTICLES
+
 // Healing sparkles come in seven modes of one runner, the wrappers naming the
 // mode of each effect. Each mote keeps its place relative to its target, so the
 // swirl is one turn of the whole group.
@@ -162,7 +164,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Scatter the motes around each target's centre.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -172,7 +174,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_WISH) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -182,7 +184,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
@@ -194,7 +196,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE_POISON) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -204,7 +206,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 72;
   } else {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,

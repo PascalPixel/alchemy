@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define GROWTH_DUST 512 ///< puffs of dust in PARTICLES
+
 // Growing columns and thorns spring up one after another, each shaking the
 // screen and throwing up dust from its root, and the targets react a few frames
 // later.
@@ -200,7 +202,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
         // Dust puffs from the root.
         if ((frame == reactFrame) || (frame == (start + 8))) {
-          for (n = 0; n != 512; n++) {
+          for (n = 0; n != GROWTH_DUST; n++) {
             struct Particle *dust = &PARTICLES[n];
 
             if (dust->variant == -1) {
@@ -215,7 +217,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Dust, over the columns.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != GROWTH_DUST; i++) {
       puff = &PARTICLES[i];
       puffAge = puff->variant;
       if (puffAge >= 0) {

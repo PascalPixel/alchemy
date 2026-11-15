@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
+
 /// The motes (CrescentMoonSheet), then the Djinni.
 #define DJINN_BEAMS_MOTE_PICTURES 10000
 #define DJINN_BEAMS_MOTE_WIDTH 24
@@ -66,7 +68,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     PARTICLES[i].x = 0;
     PARTICLES[i].y = px(80);
     PARTICLES[i].z = (Random16() | -32) << 14;

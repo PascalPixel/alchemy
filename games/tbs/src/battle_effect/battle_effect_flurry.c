@@ -4,6 +4,10 @@
 
 #include "battle_effect_internal.h"
 
+#define FLURRY_WAITING_MOTES                                                   \
+  768                          ///< motes in PARTICLES, waiting above the target
+#define FLURRY_DRAWN_MOTES 512 ///< of which the strikes draw
+
 /// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
 /// effect's variant (enum EffectVariant) says.
 #define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
@@ -154,7 +158,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   // Motes wait above the target until their strike releases them.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0; i != 768; i++) {
+  for (i = 0; i != FLURRY_WAITING_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 
     SET_POSITION(mote, target->x.fixed, target->y.fixed + px(25),
@@ -260,7 +264,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != FLURRY_DRAWN_MOTES; i++) {
       struct Particle *mote = &PARTICLES[i];
 
       s32 size = mote->variant;

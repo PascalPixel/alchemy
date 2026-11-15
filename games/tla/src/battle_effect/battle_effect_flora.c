@@ -989,15 +989,6 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/* VIEW(ability_effects): tag struct FxSlot as struct FxSlot__ability_effects;
- * battle_effect/battle_effect.h has another definition; not tried:
- * struct FxSlot__ability_effects was not found. */
-struct FxSlot {
-  void *object;
-  u8 unk04[0x26];
-  u8 hidden;
-};
-
 /// A sprite record as Flora sets its priority.
 struct FxRecord {
   u8 unk00[9];
@@ -1007,14 +998,14 @@ struct FxRecord {
 };
 
 /// Sets the OBJ priority of every motion record of the battle object, unless
-/// its slot is hidden.
+/// the object is fading out.
 void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
-  struct FxSlot *slot = BattleObject_GetFar(objectId);
+  struct BattleObject *slot = BattleObject_GetFar(objectId);
   struct FxRecord *record;
   s32 i;
 
   for (i = 0; (record = GetMotionRecordFar(slot->object, i)) != NULL; i++) {
-    if (slot->hidden == 0)
+    if (slot->fading == 0)
       record->priority = priority;
   }
 }

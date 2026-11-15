@@ -1345,17 +1345,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
 #undef BLITTER
 
-/* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_daedalus.c:1719: structure has no
- * member named `x'. */
-struct PlacementSource__f17e698 {
-  s32 x;
-  s32 y;
-};
-extern const struct PlacementSource__f17e698
-    gDaedalusAlt_SummonScale; // the summon's placement source
+/// The summon's placement source.
+extern const struct Scale gDaedalusAlt_SummonScale;
 /// The sparks, after the map cells.
 #define STRIKE_SPARKS ((struct Particle *)gData_02014000)
 
@@ -1383,7 +1374,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];
-  struct PlacementSource__f17e698 source;
+  struct Scale source;
   s32 frame;
   s32 i;
   s32 j;

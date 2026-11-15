@@ -24,12 +24,6 @@ struct StripVertex {
   s8 z;
   s8 unk3;
 };
-/* VIEW(f178710): variable gMapGridCellBuffer as extern struct StripVertex
- * gMapGridCellBuffer[2][66]; f175f74 has extern u8 gMapGridCellBuffer[]; tried
- * as the rest of the object declares it, BattleEffect_RunRisingDragon moves: 93
- * of 882 instructions in tla-ja. */
-extern struct StripVertex
-    gMapCellBuffer__f178710[2][66] __asm__("gMapGridCellBuffer");
 
 /// One dragon (two at a higher level: effect->variant + 1) of smoke rises
 /// from the caster and arcs onto the target, each a scrolling textured strip
@@ -156,7 +150,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       }
 
       if (frame > 15) {
-        struct StripVertex *strip0 = gMapCellBuffer__f178710[0];
+        struct StripVertex *strip0 = (struct StripVertex *)gMapGridCellBuffer;
         s32 scale = 20768;
         const u8 *stripMesh = Data_02012000;
 

@@ -746,24 +746,6 @@ void BattleEffect_ReservedNoOpB(void) {}
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// One model for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
- * battle_effect.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_canvas.c:992: structure has no
- * member named `depthBias'. */
-struct ModelDraw__f14153c {
-  s32 kind;
-  s32 next;
-  const void *model;
-  void *corners;
-  struct ModelTexture *texture;
-  s32 depthBias;
-  u8 unk18;
-  u8 shade;
-  u8 unk1a[2];
-};
-
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
 /// shakes, flashes burst upward and four crystals grow out of the ground one
@@ -910,7 +892,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     if (frame >= 0) {
       s32 cx = center.x / 2 << 16;
       s32 cy = px(center.y);
-      struct ModelDraw__f14153c *model;
+      struct RenderModel *model;
       void *corners;
       s32 bias;
 
@@ -945,13 +927,13 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       bias = 0;
-      model->depthBias = bias;
+      model->shade = bias;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
       model->texture = &texture;
-      model->model = gBattleEffect_SmallSquareMesh;
-      model->corners = corners;
+      model->mesh = gBattleEffect_SmallSquareMesh;
+      model->vertices = corners;
 
       // The rings rise for 24 frames, spinning and swelling.
       for (i = 0; i != 16; i++) {
@@ -979,16 +961,16 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
       // The four crystals grow out of the ground from frame 48 on.
       model->texture = &texture;
-      model->corners = corners;
+      model->vertices = corners;
       texture.logWidth = 6;
       texture.pixels = Data_02012000;
       model->kind = 7;
       texture.logHeight = 6;
-      model->model = gBattleEffect_RingMesh;
+      model->mesh = gBattleEffect_RingMesh;
       for (i = 0; i != 4; i++) {
         s32 start = gFormChange_WaveStarts[i] + 48;
 
-        model->shade = (frame * 8 + i * 32) & 127;
+        model->scrollV = (frame * 8 + i * 32) & 127;
         if (frame > start) {
           bias = (start - frame) * 8 + 56;
           if (bias > -16)
@@ -997,7 +979,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
             s32 growth =
                 (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
 
-            model->depthBias = bias;
+            model->shade = bias;
             Transform_Reset();
             Transform_ApplyTranslation(px(center.x / 2 - 60), px(32), 0);
             Transform_ApplyAxisScale(

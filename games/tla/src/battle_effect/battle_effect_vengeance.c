@@ -580,12 +580,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Purgatory.
-/* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_vengeance.c:881: structure has no
- * member named `size'. */
-/// Abilities: Purgatory.
 void BattleEffect_RunPurgatory(struct BattleEffectParams *args) {
   BattleEffect_RunGeyser(args, GEYSER_PURGATORY);
 }
@@ -605,13 +599,6 @@ void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
 #define GEYSER_PEAK_FRAME 20 ///< the result phase starts
 #define DROP_COUNT 512       ///< drops in the map cell buffer, used in a ring
 
-// A texture: log2 of its width and height in the first word, then its
-// pixels.
-struct Texture__f1811d4 {
-  u32 size;
-  void *pixels;
-};
-
 /// Copies a palette over the background's 256 colours.
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
@@ -628,7 +615,7 @@ static inline void CopyPalette(const void *palette) {
 /// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
 /// back and the result phase starts.
 void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
-  struct Texture__f1811d4 texture;
+  struct ModelTexture texture;
   DrawRectangle draw[2];
   struct ScreenPoint midpoint;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
@@ -777,8 +764,8 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       if (frame < GEYSER_DRAW_FRAMES) {
         vertices = Heap_AllocEwram(512);
         column = Render_AllocateModelList(1);
-        texture.size = (texture.size & ~0xff) | 5;
-        texture.size = (texture.size & ~0xff00) | 5 << 8;
+        texture.logWidth = 5;
+        texture.logHeight = 5;
         texture.pixels = work->sheet;
         column->scrollU = (frame << 2) & 31;
         column->scrollV = (frame << 1) & 31;

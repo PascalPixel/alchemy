@@ -378,18 +378,3 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define SCENE_FRAMES 244  ///< act one; A or B ends it after frame 16
 #define PILLAR_FRAMES 144 ///< act two
 #define RESULTS_FRAME 96
-
-/* VIEW(ability_effects): tag struct SpriteObject as struct
- * SpriteObject__ability_effects; battle_effect/cybele has another definition;
- * not tried: struct SpriteObject__ability_effects was not found. */
-struct SpriteObject {
-  u16 unk00;
-  u16 unk02;
-  u16 unk04;
-  u16 unk06;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[6];
-  u8 slot;
-};

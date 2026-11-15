@@ -15,36 +15,12 @@
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Sprite_StartAnimationFar");
 
-/* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_spider_web.c:27: structure has no
- * member named `kind'. */
-struct EffectSprite__f15b3b0 {
-  u8 unk00[0x0c];
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 otherFlags : 7;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  u8 offsetX;
-  u8 offsetY;
-  u8 lastNoAndDirty[2];
-  u8 flags;
-  u8 count;
-  u8 shadow[0x0c];
-  struct SpriteAnimation *entry;
-  u8 moreEntries[0x0c];
-};
-
 /// Takes the first free effect sprite of the 64 with a new animation entry.
 /// Its callers also pass the sprite's OAM shape and mode, which it leaves for
 /// the caller to set.
 void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
-  struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->sprites;
-  struct EffectSprite__f15b3b0 *found = NULL;
+  struct Sprite *sprite = Ram_HeapSlots->sprites;
+  struct Sprite *found = NULL;
   s32 i = 0;
 
   while (i <= 63) {
@@ -55,7 +31,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
     i++;
     sprite++;
   }
-  sprite->entry = AnimationObject_AllocateEmpty();
+  sprite->entries[0] = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->height = height;
   sprite->scale = 0x10000;

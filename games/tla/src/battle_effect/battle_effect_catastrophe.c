@@ -14,7 +14,7 @@ struct MeshVertex {
 
 /// The VRAM address of an effect sprite's tiles.
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gVramCacheEntries[((struct SpriteObject *)(obj))->slot].offset)
+  (0x06010000 + gVramCacheEntries[((struct Sprite *)(obj))->slot].offset)
 
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
@@ -47,7 +47,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s32 j;
   struct Particle *p;
   struct Particle *q;
-  struct SpriteObject *obj;
+  struct Sprite *obj;
   struct ModelTexture aerialTexture;
   s16 list[14];
   s32 place[4];
@@ -131,7 +131,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
-      obj->priority = 2;
+      obj->image.priority = 2;
       work->sprites[i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
     }
@@ -163,7 +163,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xc000);
-      obj->priority = 1;
+      obj->image.priority = 1;
       work->sprites[34 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }
@@ -178,7 +178,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xd000);
-      obj->priority = 1;
+      obj->image.priority = 1;
       work->sprites[39 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }
@@ -193,7 +193,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     cells = work->sheet;
     for (i = 0; i != 6; cells += 512, i++) {
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xe000);
-      obj->priority = 1;
+      obj->image.priority = 1;
       work->sprites[44 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }

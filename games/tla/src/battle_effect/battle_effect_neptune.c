@@ -74,10 +74,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     sheet += 0x200;
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct SpriteObject *object =
+      struct Sprite *object =
           EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
-      object->priority = 1;
+      object->image.priority = 1;
       work->sprites[i] = object;
       Iwram_CopyWords(
           (void *)(0x06010000 + gVramCacheEntries[object->slot].offset),

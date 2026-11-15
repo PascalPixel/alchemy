@@ -17,7 +17,7 @@ static void Colosso_PushActorAhead(void) {
   leaderId = gMainRoutineWork.leaderActorId;
   leader = Actor_Get(leaderId);
 
-  direction = leader->facing >> 12;
+  direction = FACING_INDEX(leader->facing);
 
   step = gPushedActor_DirectionSteps[direction];
   position.x = leader->x.fixed + (step & 0xffff0000);
@@ -96,7 +96,7 @@ void *Colosso_FindActorAhead(void) {
 
   record = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  facing = (record->facing + TRIG_TURN / 8) & 0xc000;
+  facing = FACING_NEAREST_CARDINAL(record->facing);
 
   position.x = (record->x.fixed & FIELD_CELL_MASK) + px(8);
   position.y = record->y.fixed;

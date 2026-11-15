@@ -178,6 +178,9 @@ static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
 static void Sanctum_UpdateHealerAfterimage(struct Actor *actor);
 static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
+
+/// How far each sparkle circling the healer goes around him in a frame.
+#define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
@@ -487,9 +490,9 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteWork = gPaletteFadeWork;
   // Colour 15 of the BG palette fades to white rather than sepia: its blue,
   // green and red channels, target[3 * 15] to target[3 * 15 + 2], at 31.
-  paletteWork->target[45] = 31 << 10;
-  paletteWork->target[46] = 31 << 10;
-  paletteWork->target[47] = 31 << 10;
+  paletteWork->target[45] = RGB_LEVEL_MAX << 10;
+  paletteWork->target[46] = RGB_LEVEL_MAX << 10;
+  paletteWork->target[47] = RGB_LEVEL_MAX << 10;
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
@@ -786,18 +789,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Sound_Play(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(16);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(96);
     Event_Wait(32);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
@@ -858,9 +861,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Sound_Play(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
@@ -875,13 +878,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_StartRepeatedMotion(ACTOR_WEST_HEALER, 1);
     Actor_StartRepeatedMotion(ACTOR_EAST_HEALER, 1);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
     Event_Wait(128);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     Event_Wait(30);
@@ -1884,7 +1887,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct Actor *icon;
   struct Sprite *sprite;
-  u8 *transferBuffer;
+  GlyphTransfer *glyph;
   u32 frame;
 
   icon = FieldActor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
@@ -1900,10 +1903,9 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
       sprite->image.palette = 0;
       icon->velocityY = px(2);
       icon->gravity = px(1) / 4;
-      transferBuffer =
-          HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Icon_DrawItem(item);
-      VramCache_Load(sprite->slot, 128, transferBuffer + 1024);
+      VramCache_Load(sprite->slot, 128, glyph->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       for (frame = 0; frame < 60; frame++) {
         if (icon->velocityY >= -255 && icon->velocityY <= 255)
@@ -1956,11 +1958,11 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
-  x = actor->x.fixed + (randomOffset << 16);
+  x = actor->x.fixed + px(randomOffset);
   x -= px(10);
-  spark = FieldActor_Create(
-      SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
-      actor->z.fixed);
+  spark = FieldActor_Create(SPRITE_GLINT, x,
+                            actor->y.fixed + px(Random_Next() & 15) - px(8),
+                            actor->z.fixed);
   if (spark == NULL)
     return;
   sprite = spark->sprite;

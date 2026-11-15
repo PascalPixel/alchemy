@@ -68,6 +68,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -276,12 +277,12 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
-    coordinate >>= 20;
+    coordinate = FIELD_CELL(coordinate);
     probe->position.z = coordinate;
   }
-  probe->position.x >>= 20;
-  *layerOriginX = grid->layers[1].offsetX >> 20;
-  *layerOriginZ = grid->layers[1].offsetY >> 20;
+  probe->position.x = FIELD_CELL(probe->position.x);
+  *layerOriginX = FIELD_CELL(grid->layers[1].offsetX);
+  *layerOriginZ = FIELD_CELL(grid->layers[1].offsetY);
   return 1;
 }
 
@@ -428,7 +429,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
                                    (row << 20) + actor->z.fixed);
     top /= px(16);
     if (level < top) {
-      x = (FIELD_CELL(actor->x.fixed) << 20) + px(8);
+      x = FIELD_CELL_CENTER(FIELD_CELL(actor->x.fixed));
       if (far == 0) {
         row += 2;
         z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + px(2);
@@ -494,7 +495,7 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   cycleFrame = gFrameCount & 3;
   if (cycleFrame == 0) {
-    options.palette = 10;
+    options.palette = SPRITE_COLOR_RED_TINT;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     x = leader->x.fixed + px(Random_Below(17) - 8);
@@ -521,7 +522,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
-  jumpDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  jumpDirection = FACING_NEAREST_CARDINAL(leader->facing);
 #endif
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
@@ -532,7 +533,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(16), jumpDirection, &destination);
 #else
-  jumpDirection = leader->facing >> 12;
+  jumpDirection = FACING_INDEX(leader->facing);
   Actor_StepFrom(&destination, leader,
                  gPushedActor_DirectionSteps[jumpDirection]);
 #endif
@@ -562,8 +563,8 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       leader->velocityY = px(4);
       leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
-                          destination.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(destination.x),
+                          FIELD_PIXEL(destination.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;
@@ -1176,7 +1177,7 @@ static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   puddle = Actor_Get(ACTOR_THIRD_PUDDLE);
   effects = gFieldEffectWork;
   if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
-      puddle->z.fixed >> 20 == FIELD_CELL(leader->z.fixed)) {
+      FIELD_CELL(puddle->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
     effects[53] = 1;
   } else {
@@ -1215,7 +1216,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
 
-  options.palette = 10;
+  options.palette = SPRITE_COLOR_RED_TINT;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 8 * Q16_ONE / 5;
@@ -1249,13 +1250,13 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   if (phase != 0)
     RETURN_UNREAD(0);
 
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
 
-  x = actor->x.fixed + (((Random_Below(17)) - 8) << 16);
-  y = actor->y.fixed + ((Random_Below(17)) << 16);
-  z = actor->z.fixed + (((Random_Below(17)) - 8) << 16);
+  x = actor->x.fixed + px(Random_Below(17) - 8);
+  y = actor->y.fixed + px(Random_Below(17));
+  z = actor->z.fixed + px(Random_Below(17) - 8);
   scale = Math_Divide(px(Random_Below(5)) + px(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,

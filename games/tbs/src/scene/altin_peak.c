@@ -128,7 +128,7 @@
 u16 gAltinPeak_FlickerTimer BSS_DATA;
 s32 gAltinPeak_SprayDirection BSS_DATA;
 s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
-u8 gAltinPeak_Unk_14[16] BSS_DATA;
+u8 gAltinPeak_UnusedAfterSprayOrigin[16] BSS_DATA;
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 s16 gAltinPeak_PaletteHold BSS_DATA;
 /// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.
@@ -1776,11 +1776,11 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
     spray->x.fixed +=
-        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)px(Random_Below(2) - 1) >> 1);
     break;
   case FACING_WEST:
     spray->x.fixed -=
-        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)px(Random_Below(2) - 1) >> 1);
     break;
   }
   if (spray->timer <= 3) {
@@ -1846,8 +1846,8 @@ static void AltinPeak_SpawnDebris(void) {
   s32 scale;
 
   if (gFrameCount % 3 == 0) {
-    debris = FieldActor_Create(
-        SPRITE_ROCK, ((Random_Below(48)) << 16) + px(765), -px(64), px(608));
+    debris = FieldActor_Create(SPRITE_ROCK, px(Random_Below(48)) + px(765),
+                               -px(64), px(608));
     if (debris != NULL) {
       if (gFrameCount % 9 == 0) {
         if (Random_Below(2) != 0)
@@ -1866,7 +1866,7 @@ static void AltinPeak_SpawnDebris(void) {
       debris->sprite->image.priority = 1;
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
-      SET_VELOCITY(debris, ((Random_Below(6)) - 3) << 16, px(8),
+      SET_VELOCITY(debris, px(Random_Below(6) - 3), px(8),
                    (Random_Below(1536)) - 768);
     }
   }

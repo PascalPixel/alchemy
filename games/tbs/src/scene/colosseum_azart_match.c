@@ -84,6 +84,7 @@
 #include "scene/colosso_occupant.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -123,7 +124,7 @@ s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
 s16 *gColosso_LetteringScript BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
 s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
-u8 gColosseumAzartMatch_Unk_5a[6] BSS_DATA;
+u8 gColosseumAzartMatch_UnusedAfterBlendDuration[6] BSS_DATA;
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
 s32 gColosso_PointerOam[3] BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
@@ -387,17 +388,17 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   actor = Actor_Get(actorId);
   Event_Start();
   {
-    x = ((leader->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
-    z = ((leader->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
+    x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+    z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
 
     leader->speedLimit = px(1);
     leader->acceleration = px(1) / 2;
     FieldActor_SetMoveTargetFixed(leader, x, leader->y.fixed, z);
   }
-  Actor_SelectAnimation(leader, 27);
+  Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
   {
-    x = ((actor->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
-    z = ((actor->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
+    x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+    z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
 
     actor->speedLimit = px(1);
     actor->acceleration = px(1) / 2;
@@ -687,7 +688,7 @@ s32 Scene_Initialize(void) {
     x = 25;
   }
   actor = Actor_Get(ACTOR_ROCK_B);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);

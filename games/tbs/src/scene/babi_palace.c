@@ -72,6 +72,7 @@
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
@@ -331,7 +332,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   s32 facingOrMessage;
 
   roundedFacing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & 0xc000;
+      FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
@@ -693,7 +694,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   u16 facing;
 
   roundedFacing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & -0x4000;
+      FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);
@@ -2595,7 +2596,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  u8 *buf;
+  GlyphTransfer *glyph;
   s32 set;
 
   BabiPalace_CloseDoors();
@@ -2626,11 +2627,10 @@ s32 Scene_Initialize(void) {
         sprite->count = set;
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
-        // The icon is drawn 1,024 bytes into the glyph buffer, as the 128 bytes
-        // of a 16 by 16 sprite.
-        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        // The icon's tiles are the 128 bytes of a 16 by 16 sprite.
+        glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
         Item_LoadIcon(ITEM_CLOAK_BALL);
-        Vram_Load(sprite->slot, 128, buf + 1024);
+        Vram_Load(sprite->slot, 128, glyph->tiles);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       if (gMainRoutineWork.entrance ==

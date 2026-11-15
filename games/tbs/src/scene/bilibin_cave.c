@@ -90,6 +90,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
@@ -526,10 +527,10 @@ static void BilibinCave_PushTorch(void) {
   struct FieldPosition destination;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  heading = leader->facing >> 12;
+  heading = FACING_INDEX(leader->facing);
 
   nextCellX = (leader->x.part[0].pixel +
-               (gPushedActor_DirectionSteps[heading] >> 16)) >>
+               (FIELD_PIXEL(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
       (leader->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>
@@ -539,7 +540,7 @@ static void BilibinCave_PushTorch(void) {
     return;
 
   nextCellX = (target->x.part[0].pixel +
-               (gPushedActor_DirectionSteps[heading] >> 16)) >>
+               (FIELD_PIXEL(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
       (target->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>

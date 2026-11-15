@@ -75,6 +75,7 @@
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -88,15 +89,22 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+/// The heat gauge's picture, 36 tiles in two columns of 18; its tile buffer
+/// holds two, the bar and then the frame laid over it.
+#define HEAT_GAUGE_TILE_BYTES (36 * TILE_SIZE_4BPP)
+/// The heat gauge's levels: the party's steps scaled from 0 to
+/// HEAT_GAUGE_LEVELS by the area's hazard limit.
+#define HEAT_GAUGE_LEVELS 120
+
 /// The VRAM cache entry holding the gauge's tiles.
 s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
-u8 gLamakanDesert_Unk_2[14] BSS_DATA;
+u8 gLamakanDesert_UnusedAfterGaugeSlot[14] BSS_DATA;
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
 struct MenuSprite gHeatGauge_Sprites[5] BSS_DATA;
-u8 gLamakanDesert_Unk_4c[20] BSS_DATA;
+u8 gLamakanDesert_UnusedAfterGaugeSprites[20] BSS_DATA;
 /// The gauge's decoded tiles, which each frame's drawing starts from.
-u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
+u8 gHeatGauge_TileBuffer[2 * HEAT_GAUGE_TILE_BYTES] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
 s16 gHeatGauge_Held BSS_DATA;
 
@@ -232,7 +240,7 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   }
   params.startScaleX = 4 * Q16_ONE / 5;
   params.startScaleY = 4 * Q16_ONE / 5;
-  params.spin = (Random_Below(4096)) + 0xf800;
+  params.spin = FIELD_EFFECT_RANDOM_SPIN();
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
@@ -516,8 +524,8 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 /// The distance in whole pixels from a position (x, height, z) to an oasis
 /// (x, z), walking both a coordinate at a time.
 static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
-  s32 dx = (*oasis++ - *position++) >> 16;
-  s32 dz = (*oasis - position[1]) >> 16;
+  s32 dx = FIELD_PIXEL(*oasis++ - *position++);
+  s32 dz = FIELD_PIXEL(*oasis - position[1]);
   s32 squaredDeltaZ = dz * dz;
   s32 squaredDeltaX = dx * dx;
 
@@ -687,10 +695,10 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = Q16_ONE / 2;
     params.startScaleY = Q16_ONE / 2;
     dx = 0;
-    params.spin = (Random_Below(4096)) + 0xf800;
+    params.spin = FIELD_EFFECT_RANDOM_SPIN();
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = px(2) - px(((z >> 20) & 1) * 5);
+      dx = px(2) - px((FIELD_CELL(z) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }
@@ -707,7 +715,7 @@ static void HeatGauge_CountStep(void) {
     gFrameCount;
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;
-    params.spin = (Random_Below(4096)) + 0xf800;
+    params.spin = FIELD_EFFECT_RANDOM_SPIN();
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
                       (Random_Below(5)) * (px(1) / 10), phase,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
@@ -764,7 +772,7 @@ static void LamakanDesert_FallIntoPit(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // The leader turns his back on the pit.
   Actor_Get(ACTOR_PARTY_LEADER)->facing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2) & -0x1000;
+      FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
@@ -813,8 +821,8 @@ static void LamakanDesert_SlideDownDune(void) {
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
-    params.spin = (Random_Below(4096)) + 0xf800;
-    x = actor->x.fixed + ((Random_Below(12)) << 16) - px(6);
+    params.spin = FIELD_EFFECT_RANDOM_SPIN();
+    x = actor->x.fixed + px(Random_Below(12)) - px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
                       (Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
@@ -1003,7 +1011,7 @@ static void HeatGauge_Draw(void) {
   } else if (gHeatGaugeSlide <= 1) {
     if (++gHeatGaugeSlide == 1) {
       Dma_Set(gHeatGauge_Palette, (void *)&OBJ_PLTT_COLOR(14, 0),
-              (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
+              DMA_COPY_HALFWORDS(16), REG_DMA3);
     }
   }
   slide = gHeatGaugeSlide;
@@ -1025,31 +1033,30 @@ static void HeatGauge_Draw(void) {
     }
   }
 
-  buffer = Heap_Alloc(2304);
-  Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
-          REG_DMA3);
+  buffer = Heap_Alloc(sizeof(gHeatGauge_TileBuffer));
+  Dma_Set(gHeatGauge_Palette, buffer, DMA_COPY_HALFWORDS(16), REG_DMA3);
   colors = (s16 *)buffer + 6;
   color = colors;
   for (i = 6; i < 12; i++) {
     u16 value = *color;
 
-    red = value & 31;
-    green = (value >> 5) & 31;
-    blue = ((value >> 10) & 31) - 20;
+    red = RGB_RED(value);
+    green = RGB_GREEN(value);
+    blue = RGB_BLUE(value) - 20;
     level = gHeatGaugeLevel;
     red += level / 3;
     blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
-      green += level * 64 / 120 - 32;
+      green += level * 64 / HEAT_GAUGE_LEVELS - 32;
     }
-    if (red > 31) {
-      red = 31;
+    if (red > RGB_LEVEL_MAX) {
+      red = RGB_LEVEL_MAX;
     }
-    if (green > 31) {
-      green = 31;
+    if (green > RGB_LEVEL_MAX) {
+      green = RGB_LEVEL_MAX;
     }
-    if (blue > 31) {
-      blue = 31;
+    if (blue > RGB_LEVEL_MAX) {
+      blue = RGB_LEVEL_MAX;
     }
     *color++ = RGB(red, green, blue);
   }
@@ -1059,10 +1066,10 @@ static void HeatGauge_Draw(void) {
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
 
-  gHeatGaugeLevel =
-      gMainRoutineWork.hazardSteps * 120 / gMainRoutineWork.hazardLimit;
-  if (gHeatGaugeLevel > 118) {
-    gHeatGaugeFlash = 119;
+  gHeatGaugeLevel = gMainRoutineWork.hazardSteps * HEAT_GAUGE_LEVELS /
+                    gMainRoutineWork.hazardLimit;
+  if (gHeatGaugeLevel >= HEAT_GAUGE_LEVELS - 1) {
+    gHeatGaugeFlash = HEAT_GAUGE_LEVELS - 1;
   }
   if (gHeatGaugeFlash != 0) {
     gHeatGaugeLevel = gHeatGaugeFlash;
@@ -1074,11 +1081,12 @@ static void HeatGauge_Draw(void) {
 
   // The gauge's tiles, two 8-pixel columns of 4-bit pixels: fill the bar from
   // its top down to the heat level, then close it with the top's first row.
-  Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
-  if (gHeatGaugeFlash <= 118) {
+  Dma_Set(gHeatGauge_TileBuffer, buffer,
+          DMA_COPY_WORDS(sizeof(gHeatGauge_TileBuffer) / 4), REG_DMA3);
+  if (gHeatGaugeFlash < HEAT_GAUGE_LEVELS - 1) {
     pixels = (u32 *)buffer + 20;
     {
-      u32 fill = 0xeeeeeeee;
+      u32 fill = PIXELS_4BPP(14);
 
       for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
         pixels[8] = fill;
@@ -1093,8 +1101,8 @@ static void HeatGauge_Draw(void) {
   }
   // Lay the frame's opaque pixels over the bar.
   bar = buffer;
-  frame = buffer + 1152;
-  for (i = 0; i < 1152; i++) {
+  frame = buffer + HEAT_GAUGE_TILE_BYTES;
+  for (i = 0; i < HEAT_GAUGE_TILE_BYTES; i++) {
     u8 pixel = *frame++;
 
     if (pixel != 0) {
@@ -1102,7 +1110,7 @@ static void HeatGauge_Draw(void) {
     }
     bar++;
   }
-  VramCache_Load(gHeatGauge_VramSlot, 1152, buffer);
+  VramCache_Load(gHeatGauge_VramSlot, HEAT_GAUGE_TILE_BYTES, buffer);
 
   // Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
   // gauge's foot.
@@ -1130,7 +1138,7 @@ static void HeatGauge_Draw(void) {
 void HeatGauge_Start(void) {
   FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   gHeatGauge_VramSlot = VramCache_FindFreeEntry();
-  VramCache_Load(gHeatGauge_VramSlot, 1152, 0);
+  VramCache_Load(gHeatGauge_VramSlot, HEAT_GAUGE_TILE_BYTES, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);

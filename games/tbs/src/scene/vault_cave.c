@@ -88,6 +88,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_step.h"
+#include "scene/facing_nearest.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/io_write_queue.h"
@@ -267,7 +268,8 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   struct FieldWork *work = gFieldWork;
   u32 actorSlot;
 
-  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
+  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= ACTOR_LAST_ID;
+       actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
     // UB: map creation leaves unused actor slots NULL.
@@ -287,7 +289,7 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
 /// blocks it.
 static void VaultCave_PushPillarAhead(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 direction = leader->facing >> 12;
+  s32 direction = FACING_INDEX(leader->facing);
   struct Actor *pillar;
   struct Actor *beyond;
   struct FieldPosition destination;
@@ -296,7 +298,7 @@ static void VaultCave_PushPillarAhead(void) {
   s32 row;
 
   column = (leader->x.part[0].pixel +
-            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+            (FIELD_PIXEL(gVaultCave_DirectionSteps[direction]))) >>
            4;
   row = (leader->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
         4;
@@ -317,7 +319,7 @@ static void VaultCave_PushPillarAhead(void) {
     }
   }
   column = (pillar->x.part[0].pixel +
-            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+            (FIELD_PIXEL(gVaultCave_DirectionSteps[direction]))) >>
            4;
   row = (pillar->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
         4;

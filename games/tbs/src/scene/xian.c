@@ -70,6 +70,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -178,7 +179,7 @@ static void Xian_SpawnTrainingParticles(void) {
     struct EffectOptions options;
 
     options.priority = 1;
-    options.palette = 9;
+    options.palette = SPRITE_COLOR_BLUE_TINT;
     options.type = SPRITE_GIRL_IN_PINK;
     options.script = gXian_TrainingParticleScript;
     FieldEffect_Spawn(student->x.fixed, student->y.fixed,
@@ -215,10 +216,10 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
   if (Actor_Distance(target, actor) < distanceLimit || forceTracking != 0) {
     u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
                         target->x.fixed - actor->x.fixed);
-    s32 previousHeading = (angle - FACING_STEP) & 0xf000;
-    s32 nextHeading = (angle + FACING_STEP) & 0xf000;
-    s32 targetHeading = angle & 0xf000;
-    s32 currentHeading = actor->facing & 0xf000;
+    s32 previousHeading = FACING_SIXTEENTH(angle - FACING_STEP);
+    s32 nextHeading = FACING_SIXTEENTH(angle + FACING_STEP);
+    s32 targetHeading = FACING_SIXTEENTH(angle);
+    s32 currentHeading = FACING_SIXTEENTH(actor->facing);
 
     if (targetHeading == currentHeading || nextHeading == currentHeading ||
         previousHeading == currentHeading || forceTracking != 0) {
@@ -250,7 +251,7 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FIELD_CELL(leader->x.fixed) >= 17 && FIELD_CELL(leader->x.fixed) <= 18 &&
-      FIELD_CELL(leader->z.fixed) == 14 && updated->x.fixed >> 20 <= 19 &&
+      FIELD_CELL(leader->z.fixed) == 14 && FIELD_CELL(updated->x.fixed) <= 19 &&
       updated->velocityX <= 0) {
     if (leader->x.fixed <= updated->x.fixed) {
       updated->riseCounter++;
@@ -374,11 +375,12 @@ static void Xian_TalkToWaterCarrier(void) {
   puddle->scaleY = 3 * Q16_ONE / 10;
   carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrierCellZ = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed);
-  Actor_SetPositionFixed(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + px(8),
-                         (carrierCellZ << 20) + px(8));
+  Actor_SetPositionFixed(ACTOR_SPILLED_WATER,
+                         FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
+                         FIELD_CELL_CENTER(carrierCellZ));
   carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  MapGrid_CopyCellAttributes(16, 16, 1, 1, carrierColumnX >> 20,
+  MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierColumnX),
                              FIELD_CELL(carrier->z.fixed));
   Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -446,7 +448,7 @@ static void Xian_FreezeSpilledWater(void) {
   Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = 0;
   puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
-  MapGrid_CopyCellAttributes(3, 17, 1, 1, (puddleX >> 20),
+  MapGrid_CopyCellAttributes(3, 17, 1, 1, FIELD_CELL(puddleX),
                              (FIELD_CELL(puddle->z.fixed)));
   Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   GameFlag_Set(FLAG_XIAN_SPILLED_WATER_FROZEN);
@@ -566,10 +568,10 @@ static void Xian_JumpOverSpilledWater(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) != 0) {
-    landingPosition.x = (leader->x.fixed & -0x100000) + px(8);
+    landingPosition.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     landingPosition.y = leader->y.fixed;
-    landingPosition.z = (leader->z.fixed & -0x100000) + px(8);
-    FieldVector_AddPolarOffset(32, (leader->facing + TRIG_TURN / 8) & 0xc000,
+    landingPosition.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+    FieldVector_AddPolarOffset(32, FACING_NEAREST_CARDINAL(leader->facing),
                                &landingPosition);
     if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {
       Event_Start();
@@ -582,8 +584,8 @@ static void Xian_JumpOverSpilledWater(void) {
       leader->velocityY = px(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition.x >> 16,
-                          landingPosition.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(landingPosition.x),
+                          FIELD_PIXEL(landingPosition.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;
@@ -764,7 +766,7 @@ s32 Scene_Initialize(void) {
     {
       s32 puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
 
-      MapGrid_CopyCellAttributeRect(3, 17, 1, 1, puddleX >> 20,
+      MapGrid_CopyCellAttributeRect(3, 17, 1, 1, FIELD_CELL(puddleX),
                                     Actor_Get(ACTOR_SPILLED_WATER)->z.fixed >>
                                         20);
     }

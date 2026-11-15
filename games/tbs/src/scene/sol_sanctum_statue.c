@@ -699,7 +699,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   s32 scrollX;
   u32 column;
 
-  if (screenY >= -16 && screenY <= 159) {
+  if (screenY >= -16 && screenY < DISPLAY_HEIGHT) {
     scrollX = ((gSolSanctumStatue_ScrollPhase >> 10) - cameraX) |
               -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
@@ -1015,7 +1015,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   if (statue != NULL) {
     statueZ = statue->z.fixed;
     Event_Start();
-    if ((statueZ >> 20) == 8) {
+    if (FIELD_CELL(statueZ) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
         s32 halfCell = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19;
 

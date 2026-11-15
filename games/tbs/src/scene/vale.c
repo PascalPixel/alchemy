@@ -109,6 +109,7 @@
 #include "scene/actor_polar_target.h"
 #include "scene/catch_nut.h"
 #include "scene/event_psynergy.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "scene/world_map_attached_effects.h"
@@ -2907,9 +2908,9 @@ static void Vale_CycleThirdBoardPalette(void) {
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
 static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
-  s32 dx = (*first++ - *second++) >> 16;
-  s32 dy = (*first++ - *second++) >> 16;
-  s32 dz = (*first - *second) >> 16;
+  s32 dx = FIELD_PIXEL(*first++ - *second++);
+  s32 dy = FIELD_PIXEL(*first++ - *second++);
+  s32 dz = FIELD_PIXEL(*first - *second);
 
   return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }
@@ -2939,10 +2940,10 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
       force != 0) {
     angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                          target->x.fixed - actor->x.fixed);
-    left = (angle - FACING_STEP) & 0xf000;
-    right = (angle + FACING_STEP) & 0xf000;
-    angle &= 0xf000;
-    dir = actor->facing & 0xf000;
+    left = FACING_SIXTEENTH(angle - FACING_STEP);
+    right = FACING_SIXTEENTH(angle + FACING_STEP);
+    angle = FACING_SIXTEENTH(angle);
+    dir = FACING_SIXTEENTH(actor->facing);
     if (angle == dir || right == dir || left == dir || force != 0) {
       actor->paused = 1;
       Actor_SelectAnimation(actor, ANIM_STAND);

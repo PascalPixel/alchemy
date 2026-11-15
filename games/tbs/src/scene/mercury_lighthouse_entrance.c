@@ -99,6 +99,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/mercury_lighthouse.h"
@@ -478,9 +479,9 @@ s32 Scene_Initialize(void) {
     Event_Wait(24);
     // Scatter seventeen effects around the leader before the landing.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     for (sparkIndex = 0; sparkIndex <= 16; sparkIndex++) {
-      angle = sparkIndex << 12;
+      angle = sparkIndex * FACING_STEP;
       SET_VECTOR(velocity, Trig_Cos(angle), 0, Trig_Sin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;

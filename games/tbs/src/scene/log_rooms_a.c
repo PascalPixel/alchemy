@@ -88,6 +88,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/vault_item_icon.h"
 #include "sound/sound.h"
@@ -629,8 +630,8 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Event_ShowMessage(ACTOR_SUSPECTED_LEADER, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
   // Pushed from the north he runs on along his route, from the south back.
-  facing = suspect->facing & 0xf000;
-  if (facing >= TRIG_TURN * 5 / 16 && facing <= TRIG_TURN * 11 / 16) {
+  facing = FACING_SIXTEENTH(suspect->facing);
+  if (facing >= FACING_SOUTH_SOUTHWEST && facing <= FACING_NORTH_NORTHWEST) {
     if (suspect->timer <= 2) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
                       gLogRoomsA_StepActions[suspect->timer]);
@@ -679,7 +680,7 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   s32 routePair;
 
   actor = Actor_Get(ACTOR_SUSPECTED_THIEF);
-  facing = actor->facing & 0xf000;
+  facing = FACING_SIXTEENTH(actor->facing);
   routePair = actor->timer >> 1;
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
@@ -3003,8 +3004,8 @@ static s32 LogRoomsA_IsWithinHalfCellOfStop(s32 x, s32 z, s32 id) {
     targetZ = actor->z.fixed;
   }
 
-  targetX = (targetX - x) >> 16;
-  targetZ = (targetZ - z) >> 16;
+  targetX = FIELD_PIXEL(targetX - x);
+  targetZ = FIELD_PIXEL(targetZ - z);
   if (targetX * targetX + targetZ * targetZ <= 64)
     return 1;
   return 0;
@@ -3023,8 +3024,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   az = actor->targetZ;
   if (az == ACTOR_NO_TARGET)
     az = actor->z.fixed;
-  ax = (ax - x) >> 16;
-  az = (az - z) >> 16;
+  ax = FIELD_PIXEL(ax - x);
+  az = FIELD_PIXEL(az - z);
   if (ax * ax + az * az <= 16 * 16)
     return 1;
   return 0;
@@ -3322,7 +3323,7 @@ s32 gLogRoomsA_FirstThiefEntryScript[] = {
     SC_MOVE(800, 0, 400),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(20),
     SC_END,
 };
@@ -3334,7 +3335,7 @@ s32 gLogRoomsA_SecondThiefEntryScript[] = {
     SC_MOVE(776, 0, 416),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(20),
     SC_END,
 };

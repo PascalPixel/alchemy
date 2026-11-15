@@ -66,10 +66,10 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
-u8 gSolSanctumEruption_Unk_0[8] BSS_DATA;
+u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
 s32 gEmberState[16] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
-u8 gSolSanctumEruption_Unk_4c[12] BSS_DATA;
+u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
 struct Actor *gArcEffects[12] BSS_DATA;
 s32 gArcEffectTimers[10] BSS_DATA;
 s32 gEmberMask BSS_DATA;
@@ -469,7 +469,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->steeringFlags = 254 & actor->steeringFlags;
+  actor->steeringFlags = (u8)~ACTOR_FACES_MOTION & actor->steeringFlags;
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 348);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Actor_Jump(ACTOR_JENNA, 4, 0);
@@ -652,7 +652,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
     spun = Actor_Get(crystalIndex + 16);
     sprite = spun->sprite;
-    angle = crystalIndex << 12;
+    angle = crystalIndex * FACING_STEP;
     sprite->rotation = angle - TRIG_TURN / 4;
     offsetX = Iwram_MulQ16(Trig_Cos(angle), px(256));
     offsetZ = Iwram_MulQ16(Trig_Sin(angle), px(256));
@@ -754,17 +754,15 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->sprite->image.priority = 1;
       Actor_SelectAnimation(ember, 2);
       Actor_StartScript(ember, gEruption_EmberScript);
-      ember->x.fixed = Iwram_MulQ16(Trig_Cos((u16)angle),
-                                    ((Random_Below(256)) << 16) + px(256)) +
-                       px(325);
+      ember->x.fixed =
+          Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Below(256)) + px(256)) +
+          px(325);
       ember->y.fixed = 0;
-      ember->z.fixed = Iwram_MulQ16(Trig_Sin((u16)angle),
-                                    ((Random_Below(256)) << 16) + px(256)) +
-                       px(302);
-      x = Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Random_Next() & 63) << 16) + px(8));
-      z = Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Random_Next() & 63) << 16) + px(8));
+      ember->z.fixed =
+          Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Below(256)) + px(256)) +
+          px(302);
+      x = Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Next() & 63) + px(8));
+      z = Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Next() & 63) + px(8));
       FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
@@ -827,7 +825,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct Sprite *garetSprite;
   struct Actor *star;
   struct Sprite *starSprite;
-  u8 *iconPixels;
+  GlyphTransfer *glyph;
   u8 crystalIndex;
   u32 frame;
   s32 flickerDelay;
@@ -1256,8 +1254,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   star = FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
                            starOrigin->y.fixed + px(36), starOrigin->z.fixed);
   if (star != NULL) {
-    iconPixels =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1265,7 +1262,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.palette = 0;
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
-    VramCache_Load(starSprite->slot, 128, iconPixels + 1024);
+    VramCache_Load(starSprite->slot, 128, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);

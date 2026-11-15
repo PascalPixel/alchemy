@@ -833,8 +833,8 @@ s32 Scene_Initialize(void) {
 
 /// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette, DMA_COPY_WORDS(112),
+          REG_DMA3);
 }
 
 /// Tints background colours 16 to 78 every thirty-two frames, leaving
@@ -1107,14 +1107,14 @@ static void TreeRooms_RunLandingDustEvent(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
-    velocity.x = Trig_Cos(particleIndex << 12);
+    velocity.x = Trig_Cos(particleIndex * FACING_STEP);
     velocity.y = 0;
-    velocityZ = Trig_Sin(particleIndex << 12);
+    velocityZ = Trig_Sin(particleIndex * FACING_STEP);
     velocityX = velocity.x;
     velocity.z = velocityZ;
     velocityX += velocityX / 2;

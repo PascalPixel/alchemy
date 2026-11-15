@@ -168,8 +168,8 @@ static void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = VramCache_FindFreeEntry();
   FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                            decodedSprites);
-  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8),
+          REG_DMA3);
   Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprites + 32);
 #endif
   dma3 = REG_DMA3;
@@ -326,7 +326,7 @@ static void Title_LoadBackground(void) {
     bgScroll->x = 0;
     bgScroll++;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }

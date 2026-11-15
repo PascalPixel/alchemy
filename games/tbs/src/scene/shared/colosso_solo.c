@@ -30,21 +30,24 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y =
         FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET));
 
-    Actor_SetPositionFixed(ACTOR_GARET, (x << 20) + px(8), (y << 20) + px(8));
+    Actor_SetPositionFixed(ACTOR_GARET, FIELD_CELL_CENTER(x),
+                           FIELD_CELL_CENTER(y));
   }
   {
     s32 x =
         FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(IVAN));
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN));
 
-    Actor_SetPositionFixed(ACTOR_IVAN, (x << 20) + px(8), (y << 20) + px(8));
+    Actor_SetPositionFixed(ACTOR_IVAN, FIELD_CELL_CENTER(x),
+                           FIELD_CELL_CENTER(y));
   }
   {
     s32 x =
         FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(MIA));
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA));
 
-    Actor_SetPositionFixed(ACTOR_MIA, (x << 20) + px(8), (y << 20) + px(8));
+    Actor_SetPositionFixed(ACTOR_MIA, FIELD_CELL_CENTER(x),
+                           FIELD_CELL_CENTER(y));
   }
 }
 

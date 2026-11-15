@@ -12,10 +12,10 @@ s32 Vault_StopIfFacingNear(struct Actor *actor, struct Actor *target, s32 range,
   if (Actor_Distance(target, actor) < range || force != 0) {
     u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                              target->x.fixed - actor->x.fixed);
-    u32 left = (angle - FACING_STEP) & 0xf000;
-    u32 right = (angle + FACING_STEP) & 0xf000;
-    u32 forward = angle & 0xf000;
-    u32 facing = actor->facing & 0xf000;
+    u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
+    u32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+    u32 forward = FACING_SIXTEENTH(angle);
+    u32 facing = FACING_SIXTEENTH(actor->facing);
     if (forward == facing || right == facing || left == facing || force != 0) {
       actor->paused = 1;
       Actor_SelectAnimation(actor, ANIM_STAND);

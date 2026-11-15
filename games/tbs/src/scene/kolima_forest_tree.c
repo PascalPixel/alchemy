@@ -144,7 +144,7 @@ s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
 s32 gKolimaForestTreeSparkFrame BSS_DATA;
 s32 gKolimaForestTreePlaySparkSound BSS_DATA;
 s32 gKolimaForestTreePaletteFrame BSS_DATA;
-u8 gKolimaForestTree_Unk_0[8] BSS_DATA;
+u8 gKolimaForestTree_UnusedAfterPaletteFrame[8] BSS_DATA;
 /// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
 /// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA;

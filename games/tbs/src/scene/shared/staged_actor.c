@@ -42,9 +42,9 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
     if (actor == NULL)
       continue;
 #endif
-    if ((position->x >> 20) == FIELD_CELL(actor->x.fixed) &&
+    if (FIELD_CELL(position->x) == FIELD_CELL(actor->x.fixed) &&
         (position->y / px(1)) == (actor->y.fixed / px(1)) &&
-        (position->z >> 20) == FIELD_CELL(actor->z.fixed)) {
+        FIELD_CELL(position->z) == FIELD_CELL(actor->z.fixed)) {
       return actor;
     }
   }
@@ -64,7 +64,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   s32 rate;
 
   lead = Actor_GetById(ACTOR_PARTY_LEADER);
-  dir = lead->facing >> 12;
+  dir = FACING_INDEX(lead->facing);
   Actor_StepFrom(&dst, lead, gPushedActor_DirectionSteps[dir]);
   next = PushedActor_FindAtTile(&dst, lead);
   if (next == NULL)
@@ -125,7 +125,7 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   u32 dir;
   struct Actor *target;
 
-  dir = actor->facing >> 12;
+  dir = FACING_INDEX(actor->facing);
   Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   target = PushedActor_FindAtTile(&probe, actor);
   if (target != NULL) {
@@ -166,7 +166,7 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
   struct Actor **list;
   u32 i, j;
 
-  *direction = player->facing >> 12;
+  *direction = FACING_INDEX(player->facing);
   list = work->actors + ACTOR_FIRST_PLACED;
   for (i = ACTOR_FIRST_PLACED;
        i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
@@ -181,10 +181,10 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
       if (kind == gPushedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;
-        x = ((player->x.fixed >> 16) +
-             (gPushedActor_DirectionSteps[*direction] >> 16)) >>
+        x = ((FIELD_PIXEL(player->x.fixed)) +
+             (FIELD_PIXEL(gPushedActor_DirectionSteps[*direction]))) >>
             4;
-        z = ((player->z.fixed >> 16) +
+        z = ((FIELD_PIXEL(player->z.fixed)) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
         left = (actor->x.part[0].pixel +
@@ -329,7 +329,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 #else
   workspace = (void *)((u32 *)gMapGridWork)[0];
 #endif
-  direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
+  direction = FACING_INDEX(Actor_GetById(ACTOR_PARTY_LEADER)->facing);
   actor = Actor_GetById(probe.actorSlot);
   {
     s32 extentA = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
@@ -359,8 +359,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   tilePosition.z =
       actor->z.fixed +
       px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
-  tilePosition.x >>= 20;
-  tilePosition.z >>= 20;
+  tilePosition.x = FIELD_CELL(tilePosition.x);
+  tilePosition.z = FIELD_CELL(tilePosition.z);
 
   PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent,
@@ -429,11 +429,11 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
           px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
       probe.position.z +=
           px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
-      probe.position.x >>= 20;
-      probe.position.z >>= 20;
+      probe.position.x = FIELD_CELL(probe.position.x);
+      probe.position.z = FIELD_CELL(probe.position.z);
     }
-    horizontalOrigin = workspace->layers[1].offsetX >> 20;
-    verticalOrigin = workspace->layers[1].offsetY >> 20;
+    horizontalOrigin = FIELD_CELL(workspace->layers[1].offsetX);
+    verticalOrigin = FIELD_CELL(workspace->layers[1].offsetY);
 
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
@@ -450,8 +450,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
           px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
       originalPosition.z +=
           px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
-      originalPosition.x >>= 20;
-      originalPosition.z >>= 20;
+      originalPosition.x = FIELD_CELL(originalPosition.x);
+      originalPosition.z = FIELD_CELL(originalPosition.z);
     }
     horizontalOrigin += originalPosition.x;
     verticalOrigin += originalPosition.z;
@@ -514,10 +514,10 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
   width = (x0 + x1) >> 4;
   probe.position.x += px(gPushedActor_FootprintBounds[offset]);
   probe.position.z += px(gPushedActor_FootprintBounds[offset + 1]);
-  probe.position.x >>= 20;
-  probe.position.z >>= 20;
-  idx = grid->layers[1].offsetX >> 20;
-  dstZ = grid->layers[1].offsetY >> 20;
+  probe.position.x = FIELD_CELL(probe.position.x);
+  probe.position.z = FIELD_CELL(probe.position.z);
+  idx = FIELD_CELL(grid->layers[1].offsetX);
+  dstZ = FIELD_CELL(grid->layers[1].offsetY);
   MapGrid_CopyCellAttributeRect(probe.position.x, probe.position.z, width,
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);

@@ -73,6 +73,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -460,7 +461,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (stepIndex = 0; stepIndex < 17; stepIndex++) {
-    angle = stepIndex << 12;
+    angle = stepIndex * FACING_STEP;
     particleVelocity.x = Trig_Cos(angle);
     particleVelocity.y = 0;
     particleVelocity.z = Trig_Sin(angle);

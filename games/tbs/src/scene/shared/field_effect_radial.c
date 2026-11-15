@@ -15,10 +15,10 @@ static void FieldEffect_SpawnNineRadialEffects(s32 actorId) {
 
   actor = Actor_GetById(actorId);
   params.priority = 1;
-  params.palette = 7;
+  params.palette = SPRITE_COLOR_WHITE;
   params.update = FieldEffect_AdvanceMotion;
   for (i = 0; i <= 16; i += 2) {
-    v = i << 12;
+    v = i * FACING_STEP;
     vec.x = Trig_Cos(v);
     vec.y = 0;
     z = Trig_Sin(v);

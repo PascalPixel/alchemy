@@ -263,7 +263,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  leader->facing = gFrameCount << 12;
+  leader->facing = gFrameCount * FACING_STEP;
 
   remainingFrames =
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
@@ -567,7 +567,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   if (sparkFrame == 0) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
-    options.spin = (Random_Below(4096)) + 0xf800;
+    options.spin = FIELD_EFFECT_RANDOM_SPIN();
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
@@ -686,7 +686,7 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   if (brightnessFrame > 31)
     brightnessFrame = 64 - brightnessFrame;
   grey = (brightnessFrame >> 1) + 7;
-  grey |= (grey << 10) | (grey << 5);
+  grey = RGB(grey, grey, grey);
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)grey << 16) >> 16;
 }
 
@@ -852,7 +852,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     sprite = actor->sprite;
     part = sprite->entries[0];
     if (part != NULL) {
-      part->colorMode = 10;
+      part->colorMode = SPRITE_COLOR_RED_TINT;
     }
     sprite->dirty = 1;
     sprite->flags = 0;

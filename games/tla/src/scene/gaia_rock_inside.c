@@ -351,9 +351,8 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #endif
 
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * scene/scene.h has void Event_End(void); two events return its value,
- * which the bytes need; not tried: Event_End's bound declaration was not found.
- */
+ * scene/scene.h has void Event_End(void); two events return its value, which
+ * the bytes need; not tried: Event_End's bound declaration was not found. */
 extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // The Japanese edition has no form of this function here.

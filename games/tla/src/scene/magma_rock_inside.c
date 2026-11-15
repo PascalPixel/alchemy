@@ -1734,9 +1734,9 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 }
 
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
- * Orbiter__magma_rock_inside; scene/scene.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
+ * Orbiter__magma_rock_inside; scene/scene.h has another definition; tried with
+ * the definition the rest of the object has, it does not compile in tla-ja
+ * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
  * structure has no member named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];

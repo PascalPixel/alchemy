@@ -2866,8 +2866,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count) {
 }
 
 /* VIEW(summon_effects): tag struct Texture as struct Texture__summon_effects;
- * battle_effect/battle_effect.h has another definition; not tried:
- * struct Texture__summon_effects was not found. */
+ * battle_effect/battle_effect.h has another definition; not tried: struct
+ * Texture__summon_effects was not found. */
 struct Texture {
   u8 logWidth;
   u8 logHeight;

@@ -1499,8 +1499,8 @@ void Ride_SetMode(s16 value) {
 }
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
- * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition;
- * not tried: struct MarsLighthouseBeam__ride_handle was not found. */
+ * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition; not
+ * tried: struct MarsLighthouseBeam__ride_handle was not found. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
   u16 unk0a;

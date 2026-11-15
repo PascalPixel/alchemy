@@ -844,9 +844,9 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/* VIEW(s0ff4): tag union Position as union Position__s0ff4;
- * scene/scene.h has struct Position; tried with the definition the rest
- * of the object has, it does not compile in tla-ja (magma_rock.c):
+/* VIEW(s0ff4): tag union Position as union Position__s0ff4; scene/scene.h has
+ * struct Position; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja (magma_rock.c):
  * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4

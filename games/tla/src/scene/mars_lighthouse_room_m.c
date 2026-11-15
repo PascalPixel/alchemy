@@ -1774,8 +1774,8 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
+ * scene/scene.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_m.c:1669: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708

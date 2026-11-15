@@ -1616,9 +1616,9 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
  * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
  * #include "field/field_sequence_event.h" #include "field.h" #include
  * "item_icon.h" #include "field/field.h" #include
- * "scene/mars_lighthouse_entrance.h" #include "system/system.h"
- * #include "scene_ids.h" void Party_TakeFallDamage(); tried as the definition's
- * void Actor_Blink(struct Actor *object), it does not compile in tla-ja:
+ * "scene/mars_lighthouse_entrance.h" #include "system/system.h" #include
+ * "scene_ids.h" void Party_TakeFallDamage(); tried as the definition's void
+ * Actor_Blink(struct Actor *object), it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1457: conflicting types for
  * `Actor_Blink'. */
 void Actor_Blink__s263c(void) __asm__("Actor_Blink");

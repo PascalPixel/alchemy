@@ -3103,8 +3103,8 @@ struct SparkleWork__s53e4 {
 };
 
 /* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
- * BattleEffect_GetObjectPriority(struct Actor *object); scene/scene.h
- * has void BattleEffect_GetObjectPriority(void); tried as the definition's s32
+ * BattleEffect_GetObjectPriority(struct Actor *object); scene/scene.h has void
+ * BattleEffect_GetObjectPriority(void); tried as the definition's s32
  * BattleEffect_GetObjectPriority(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_aerie.c:3002: too many arguments to

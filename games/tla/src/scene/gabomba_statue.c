@@ -226,8 +226,8 @@ s32 GabombaStatue_FlashCog(struct Actor *actor) {
 }
 
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
+ * scene/scene.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
  * games/tla/src/scene/gabomba_statue.c:216: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
@@ -2302,8 +2302,8 @@ void GabombaStatue_ClearGrid(void) {
  * s32 z, s32 direction); tried as the definition's u8
  * GabombaStatue_GetPiece(s32 x, s32 z, s32 direction), which the object already
  * declares, it does not compile in tla-ja (make modern):
- * games/tla/include/field/field.h:1125:42: note: expected 'struct Actor
- * *' but argument is of type 'struct FieldEffect *'. */
+ * games/tla/include/field/field.h:1125:42: note: expected 'struct Actor *' but
+ * argument is of type 'struct FieldEffect *'. */
 extern s32
 GabombaStatue_GetPiece__path(s32 col, s32 row,
                              s32 turn) __asm__("GabombaStatue_GetPiece");

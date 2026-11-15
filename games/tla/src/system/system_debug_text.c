@@ -6,6 +6,7 @@
 #include "system/mul_q16.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
+#include "window/window.h"
 
 /// Writes `value` as eight hexadecimal digits to the number buffer.
 void String_FormatHex(u32 value) {
@@ -65,7 +66,7 @@ void DebugText_PrintBlanks(u32 count) {
 
   if (gDebugTextEnabled != 0) {
     for (i = 0; i < count; i++)
-      *dst++ = BG_TILE_PALETTE(15);
+      *dst++ = BG_TILE_PALETTE(WINDOW_PALETTE);
     gDebugTextCursor = dst;
   }
 }
@@ -81,7 +82,7 @@ void DebugText_Print(const u8 *text) {
 
     text++;
     if (c != 0) {
-      u32 palette = BG_TILE_PALETTE(15);
+      u32 palette = BG_TILE_PALETTE(WINDOW_PALETTE);
 
       // The end of the 32 by 20 entry screen wraps to its start.
       do {
@@ -131,16 +132,17 @@ void DebugText_Clear(void) {
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-  Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((const void *)gWindow_Palette,
+          (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
-  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
-  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
-  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
-  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
-  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
-  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(WINDOW_PALETTE, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(WINDOW_PALETTE, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(WINDOW_PALETTE, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(WINDOW_PALETTE, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(WINDOW_PALETTE, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }

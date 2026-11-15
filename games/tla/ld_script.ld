@@ -257,7 +257,7 @@ SECTIONS
         "*/games/tla/src/battle/color_scale_loader.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/battle.o"(.text)
         "*/games/tla/src/battle/battle_tables.o"(.rodata)
-        "*/games/tla/src/graphics/ui/page_arrow_2.o"(.rodata)
+        "*/games/tla/src/graphics/ui/battle_message_arrow.o"(.rodata)
         "*/games/tla/src/battle/battle_tables.o"(.rodata.a)
         . = ABSOLUTE(ROM_SHIFT + 0x08138000);
         "*/games/tla/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)

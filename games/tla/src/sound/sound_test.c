@@ -171,6 +171,6 @@ void Sound_SetFixedSampleFreq(u32 mode) {
     ;
   while (*vcount != 159)
     ;
-  control = 0x80;
+  control = TIMER_ENABLE;
   REG_TM0CNT_H = control;
 }

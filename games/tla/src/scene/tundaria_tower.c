@@ -1808,7 +1808,7 @@ struct ActorPlacement gTundariaTowerIceSlideActorPlacements[] = {
 };
 
 struct ActorPlacement gTundariaTowerRefluxActorPlacements[] = {
-    ACTOR_PLACEMENT(245, FLAG_DJINNI(DJINNI_REFLUX), 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_REFLUX), 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

@@ -2536,9 +2536,12 @@ turn_next:
   return state->count;
 }
 
-extern u8 gGabombaStatue_PathDirections[], gGabombaStatue_PathXs[],
-    gGabombaStatue_PathZs[], gGabombaStatue_PathKinds[],
-    gGabombaStatue_PathTried[], gGabombaStatue_PathFlags[];
+u8 gGabombaStatue_PathDirections[32] BSS_DATA;
+u8 gGabombaStatue_PathXs[32] BSS_DATA;
+u8 gGabombaStatue_PathZs[32] BSS_DATA;
+u8 gGabombaStatue_PathKinds[32] BSS_DATA;
+u8 gGabombaStatue_PathTried[32] BSS_DATA;
+u8 gGabombaStatue_PathFlags[32] BSS_DATA;
 extern s8 gGabombaStatue_PathSteps[];
 extern u8 gGabombaStatue_PieceJoins[];
 /// Lays a random path of `length` cells across the Gabomba Statue grid

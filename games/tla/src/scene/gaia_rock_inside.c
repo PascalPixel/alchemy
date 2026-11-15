@@ -9,6 +9,7 @@
 /// the rock's tablet and learns Sand (GaiaRockInside_ReadSandTablet).
 
 #include "types.h"
+#include "macros.h"
 #include "item_ids.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
@@ -230,9 +231,11 @@ extern u32 gGaiaRockInside_LeaderStepsBackScript[];
 extern s32 gGaiaRockInside_AltarShakesScript[];
 extern s32 gGaiaRockInside_AltarDropsScript[];
 
-extern s32 gGaiaRockInside_SavedSusaX;
-extern s32 gGaiaRockInside_SavedSusaZ;
-extern s32 gGaiaRockInside_SavedSusaFrame;
+struct Actor gGaiaRockInside_SavedSusa BSS_DATA;
+s32 gGaiaRockInside_SavedSusaX BSS_DATA;
+s32 gGaiaRockInside_SavedSusaZ BSS_DATA;
+s32 gGaiaRockInside_SavedSusaFrame BSS_DATA;
+s32 gGaiaRockInside_SavedSusaAnimation BSS_DATA;
 
 extern s32 gGaiaRockInside_CaskThrownScript[];
 extern s32 gGaiaRockInside_CaskEmptiesScript[];
@@ -824,9 +827,6 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_ShowMessage(ACTOR_SUSA, 0);
   Event_End();
 }
-
-extern struct Actor gGaiaRockInside_SavedSusa;
-extern s32 gGaiaRockInside_SavedSusaAnimation;
 
 void GaiaRockInside_SaveSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);

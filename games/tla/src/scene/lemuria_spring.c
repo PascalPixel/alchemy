@@ -17,6 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
@@ -97,12 +98,12 @@ void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 s32 Party_RestoreHpPp();
 s32 Class_GetSeries();
 
-extern struct SpringTossMotion gLemuriaSpring_Toss;
-extern struct SpringObstacle gLemuriaSpring_Obstacles[];
-extern s32 gLemuriaSpring_TossDone;
-extern s32 gLemuriaSpring_TossResult;
-extern s32 gLemuriaSpring_TossFrame;
-extern s32 gLemuriaSpring_TossChoice;
+struct SpringTossMotion gLemuriaSpring_Toss BSS_DATA ALIGNED(16);
+s32 gLemuriaSpring_TossChoice BSS_DATA;
+struct SpringObstacle gLemuriaSpring_Obstacles[4] BSS_DATA ALIGNED(16);
+s32 gLemuriaSpring_TossFrame BSS_DATA;
+s32 gLemuriaSpring_TossDone BSS_DATA;
+s32 gLemuriaSpring_TossResult BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

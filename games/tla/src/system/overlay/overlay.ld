@@ -226,7 +226,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/gabomba_statue.o"(.bss)
+        "*/games/tla/src/scene/gabomba_statue.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x672
@@ -305,7 +305,7 @@ SCENE(izumo_ruins)
 #elif OVERLAY == 0x680
 SCENE(gaia_rock)
 #elif OVERLAY == 0x681
-SCENE_WITH_BSS(gaia_rock_inside)
+SCENE(gaia_rock_inside)
 #elif OVERLAY == 0x682
 SCENE(champa)
 #elif OVERLAY == 0x683
@@ -357,11 +357,11 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x68e
-SCENE_WITH_BSS(lemuria_spring)
+SCENE(lemuria_spring)
 #elif OVERLAY == 0x68f
 SCENE(tundaria_tower)
 #elif OVERLAY == 0x690
-SCENE_WITH_BSS(settlements)
+SCENE(settlements)
 #elif OVERLAY == 0x691
 SCENE(magma_rock)
 #elif OVERLAY == 0x692
@@ -724,7 +724,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/anemos_inner_sanctum_entrance.o"(.bss)
+        "*/games/tla/src/scene/anemos_inner_sanctum_entrance.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b2
@@ -742,7 +742,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/epilogue.o"(.bss)
+        "*/games/tla/src/scene/epilogue.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b4

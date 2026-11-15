@@ -15,6 +15,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "system/frame.h"
 #include "window/item_icon.h"
@@ -38,14 +39,16 @@
 
 s32 EndingPicture_LowerTopStrip();
 
-extern s32 gEpilogueMessage; ///< the next line to show
+/// The panel's VRAM cache entry.
+s32 gEpilogueNamePanelEntry BSS_DATA ALIGNED(16);
+u8 gEpilogue_UnusedAfterNamePanelEntry[268] BSS_DATA;
+struct EffectSprite gEpilogueNamePanel BSS_DATA;
+s32 gEpilogueMessage BSS_DATA;       ///< the next line to show
+s16 gEpilogueNameY BSS_DATA;         ///< the name's line, in pixels
+s32 gEpilogueNamePanelTile BSS_DATA; ///< the panel's first tile
 /// Nonzero while a speaker's name is shown on the green panel.
-extern s8 gEpilogueNameShown;
-extern s16 gEpilogueNameX; ///< the name's left edge, in pixels
-extern s16 gEpilogueNameY; ///< the name's line, in pixels
-extern struct EffectSprite gEpilogueNamePanel;
-extern s32 gEpilogueNamePanelEntry; ///< the panel's VRAM cache entry
-extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
+s8 gEpilogueNameShown BSS_DATA;
+s16 gEpilogueNameX BSS_DATA ALIGNED(4); ///< the name's left edge, in pixels
 
 extern const u16 gEpilogueNamePanelPalette[];
 

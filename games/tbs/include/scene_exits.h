@@ -1108,17 +1108,17 @@ enum {
   // behavior (TreeRooms_StepOnCocoon) and lying straight below it, one room
   // down.
   /// The second floor's nine cocoons drop into the entrance room. They are
-  /// numbered row by row from the north, west to east within a row.
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1 = 21,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2 = 22,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3 = 23,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4 = 24,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5 = 25,
+  /// lettered A to I row by row from the north, west to east within a row.
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A = 21,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B = 22,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C = 23,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D = 24,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E = 25,
   /// Lands one cell east of its cocoon.
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6 = 26,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7 = 27,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8 = 28,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9 = 29,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F = 26,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G = 27,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H = 28,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I = 29,
   /// The third floor's two cocoons drop onto the second floor. The cocoon
   /// drawn on the southwest web has no step trigger.
   TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON = 31,

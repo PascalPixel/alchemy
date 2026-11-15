@@ -250,12 +250,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     view->busy = 0;
     view->mode = 1;
     REG_DISPCNT = DISPCNT_MODE_1;
-    {
-      u32 v = 0x33333333;
-      /* FAKEMATCH(barrier): an empty asm on v. */
-      __asm__("" : "=r"(v) : "0"(v));
-      Iwram_FillWordsEntry((void *)BG_SCREEN_BLOCK(10), 32, v);
-    }
+    IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(10), 32, 0x33333333);
     IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
     REG_BG1CNT =
         BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);

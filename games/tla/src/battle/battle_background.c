@@ -128,10 +128,7 @@ void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
 
-  /* FAKEMATCH(dead): an empty once-only loop after the work's load. */
-  do {
-  } while (0);
-  Iwram_FillWordsEntry(block, 0x2a0, 0);
+  IWRAM_FILL_WORDS(block, 0x2a0, 0);
   work->mode = 0;
 }
 

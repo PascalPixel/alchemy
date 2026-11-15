@@ -60,15 +60,6 @@ void WindowSprite_InitializeFreeList(void) {
   work->freeOutputs.tailLink = &next->next;
 }
 
-typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
-
-/// Fills size bytes at dst with value through fill.
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
-                                u32 value) {
-  /* FAKEMATCH(wrapper): the fill called through this inline. */
-  return fill(dst, size, value);
-}
-
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every window sprite and starts the two per-frame tasks, the tilemap upload
@@ -82,8 +73,8 @@ void WindowSystem_InitField(void) {
   work->dirty = 1;
   work->glyphResource = 99;
   work->textPalette = WINDOW_PALETTE;
-  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
-            WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
+  Iwram_FillWords(work->tilemap, sizeof(work->tilemap),
+                  WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);

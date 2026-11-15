@@ -182,17 +182,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_LIST:
       wait(1);
       Unit_Get(menu->memberIds[0]);
-      step = PSYNERGY_STEP_MEMBER;
-      if (menu->psynergyCount != 0) {
-        {
-          struct PsynergyMenuWork *savedWork = menu;
-
-          /* FAKEMATCH(dead): menu cleared and restored under a false test. */
-          if (done)
-            menu = NULL;
-          if (done)
-            menu = savedWork;
-        }
+      if (menu->psynergyCount == 0) {
+        step = PSYNERGY_STEP_MEMBER;
+      } else {
         switch (menu->mode) {
         case PSYNERGY_MODE_USE:
           ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseAbility);
@@ -273,30 +265,14 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
-        u32 entry = menu->sideAction[0];
-        u32 mask;
-
-        mask = PSYNERGY_ABILITY_MASK;
-        mask &= entry;
-        action = Ability_Get(mask);
+        action = Ability_Get(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         Unit_AddPpFar(menu->memberIds[0], -action->ppCost);
       }
       Unit_CalculateFar(menu->memberIds[0]);
       if (useResult != -1) {
-        void *window;
-        s32 target = menu->memberIds[1];
-
-        /* FAKEMATCH(temporary): the target read before the window. */
-        window = menu->statusWindow;
-        StatusPanel_Draw(window, target, 0, STATUS_PANEL_EXPERIENCE);
-        {
-          u32 entry = menu->sideAction[0];
-          u32 mask;
-
-          mask = PSYNERGY_ABILITY_MASK;
-          mask &= entry;
-          Ability_PlayUseAnimation(mask);
-        }
+        StatusPanel_Draw(menu->statusWindow, menu->memberIds[1], 0,
+                         STATUS_PANEL_EXPERIENCE);
+        Ability_PlayUseAnimation(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, 0, -1);
       } else {
@@ -331,24 +307,19 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
   return useResult;
 }
 
-/// How the selected psynergy is used: 0 acts at once, 1 picks a target,
-/// 2 cannot be used here.
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
 /// the menu closes (the scene has an event for its field Psynergy,
 /// fieldPsynergy, and what the leader faces), 2 on the whole party (range
 /// 0xff), 1 on one chosen party member when its target mode is 2, and 0
 /// otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct PsynergyMenuWork *menu;
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH(pin): the action fixed to r3. */
-  register u32 action asm("r3");
 
-  menu = Ram_HeapSlots->menuWork;
-  action = menu->sideAction[0];
-  psynergy = Ability_Get(0x3fff & action);
+  psynergy = Ability_Get(
+      PSYNERGY_ABILITY_MASK &
+      ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->sideAction[0]);
   if (Scene_HasPsynergyTriggerFar(psynergy->fieldEffect) != 0)
     return 0;
   ret = 2;

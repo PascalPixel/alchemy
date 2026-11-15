@@ -2687,16 +2687,12 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 window;
   s32 slot;
   s32 member;
-  s32 size;
 
   slot = menu->selectedSlots[1];
   member = menu->sideMember[1];
   ItemMenu_DrawEquipPreview(member, slot, 0, member);
-  /* FAKEMATCH(temporary): the unit size held in size for the allocation and
-   * both copies. */
-  size = 332;
-  saved = Heap_Alloc(size);
-  Iwram_CopyWordsEntry(saved, unit, size);
+  saved = Heap_Alloc(BATTLE_UNIT_SIZE);
+  Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
   window = menu->questionWindow;
   if ((u32)(Inventory_EquipFar(menu->sideMember[1], menu->selectedSlots[1]) +
             2) <= 1) {
@@ -2740,7 +2736,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   if (GameFlag_Get(FLAG_MENU_START_PRESSED))
     selection = 1;
   if (selection == 1)
-    Iwram_CopyWordsEntry(unit, saved, size);
+    Iwram_CopyWords(unit, saved, BATTLE_UNIT_SIZE);
   Heap_Release(saved);
   Unit_RefreshPsynergyFar(menu->sideMember[1]);
   Unit_CalculateFar(menu->sideMember[1]);

@@ -63,6 +63,17 @@ struct DjinnDefinition {
 
 STATIC_ASSERT(sizeof(struct DjinnDefinition) == 12);
 
+/// EnemyDefinition.targetStrategy: a single-target attacker favours the
+/// target with the most HP left, the most maximum HP, or no one. The same
+/// column steers the action choice: with any strategy but
+/// TARGET_STRATEGY_MOST_HP an enemy skips Psynergy it lacks the PP for, and
+/// with TARGET_STRATEGY_RANDOM any Psynergy while sealed.
+enum EnemyTargetStrategy {
+  TARGET_STRATEGY_MOST_HP = 0,
+  TARGET_STRATEGY_MOST_MAX_HP = 1,
+  TARGET_STRATEGY_RANDOM = 2
+};
+
 /// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
 /// place in the enemy's eight actions. The first three roll against
 /// gBattleAI_ActionWeights; the next two remember the place in the unit's

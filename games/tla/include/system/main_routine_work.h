@@ -53,9 +53,11 @@ struct MainRoutineWork {
   u8 djinnRecovery[0x124];
   s32 shopCredit; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
   s8 shopGifts;   ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
-  /// Not named by ⚓️ code; a new game sets its first 15 bytes as ☀️'s
-  /// prizeWeights (three each of 4, 8, 16, 32 and 64).
-  u8 unk13d[0xa3];
+  /// The weights of the spring game's 15 prizes, as ☀️'s prizeWeights: three
+  /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
+  /// prize's weight each time it is won.
+  u8 unk13d[15];
+  u8 unk14c[0x94]; ///< not named by ⚓️ code
   s16 next;
   s16 entrance;
   u16 restartScene;    ///< where a defeat returns to without a defeat point
@@ -160,10 +162,14 @@ struct MainRoutineWork {
   u8 countedAnswers;
   /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
-  s32 savedX;      ///< the world map leader's x, kept on leaving
-  s32 savedZ;      ///< the world map leader's z, kept on leaving
-  s32 unk280;      ///< cleared with savedX; not read by name in ⚓️
-  u8 unk284[0x38]; ///< not named by ⚓️ code
+  s32 savedX;   ///< the world map leader's x, kept on leaving
+  s32 savedZ;   ///< the world map leader's z, kept on leaving
+  s32 unk280;   ///< cleared with savedX; not read by name in ⚓️
+  u8 unk284[8]; ///< not named by ⚓️ code
+  /// The Broken Seal's coins, kept from the data transfer (DataTransfer_Apply)
+  /// until Isaac's party joins and Party_AddIsaacsParty adds them.
+  s32 transferredCoins;
+  u8 unk290[0x2c]; ///< not named by ⚓️ code
   u16 forgeItem;   ///< the item left at the forge (Forge_SetItem)
   /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
   /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.

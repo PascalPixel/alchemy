@@ -4,44 +4,50 @@
 
 #include "../game_internal.h"
 
+/// The battle's multipliers are 256ths: this one keeps an amount as it is.
+#define BATTLE_MULTIPLIER_ONE 256
+
 /// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
 /// a point, the difference held to -200 to 200, its effect half with halve.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
-  s32 min;
-  s32 max;
-  s32 n;
-  s32 i;
-  s32 value;
-  s32 dx;
-  s32 dy;
+  s32 minimumDifference;
+  s32 maximumDifference;
+  s32 pointCount;
+  s32 pointIndex;
+  s32 multiplier;
+  s32 differenceSpan;
+  s32 multiplierSpan;
 
-  max = gElement_PowerResistCurve[0][0];
-  min = gElement_PowerResistCurve[4][0];
-  n = 5;
-  if (input > max)
-    input = max;
-  else if (input < min)
-    input = min;
-  for (i = 0; i < n; i++) {
-    if (input > gElement_PowerResistCurve[i][0])
+  maximumDifference = gElement_PowerResistCurve[0][0];
+  minimumDifference = gElement_PowerResistCurve[4][0];
+  pointCount = 5;
+  if (input > maximumDifference)
+    input = maximumDifference;
+  else if (input < minimumDifference)
+    input = minimumDifference;
+  for (pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+    if (input > gElement_PowerResistCurve[pointIndex][0])
       break;
   }
-  if (i == n) {
-    value = gElement_PowerResistCurve[i - 1][1];
+  if (pointIndex == pointCount) {
+    multiplier = gElement_PowerResistCurve[pointIndex - 1][1];
   } else {
-    dx = gElement_PowerResistCurve[i - 1][0] - gElement_PowerResistCurve[i][0];
-    dy = gElement_PowerResistCurve[i - 1][1] - gElement_PowerResistCurve[i][1];
-    value = (input - gElement_PowerResistCurve[i][0]) * dy / dx +
-            gElement_PowerResistCurve[i][1];
+    differenceSpan = gElement_PowerResistCurve[pointIndex - 1][0] -
+                     gElement_PowerResistCurve[pointIndex][0];
+    multiplierSpan = gElement_PowerResistCurve[pointIndex - 1][1] -
+                     gElement_PowerResistCurve[pointIndex][1];
+    multiplier = (input - gElement_PowerResistCurve[pointIndex][0]) *
+                     multiplierSpan / differenceSpan +
+                 gElement_PowerResistCurve[pointIndex][1];
   }
   switch (halve) {
   case 0:
     break;
   case 1:
-    value /= 2;
+    multiplier /= 2;
     break;
   }
-  return value + 0x100;
+  return multiplier + BATTLE_MULTIPLIER_ONE;
 }
 
 /// The battle's linear congruential random number generator. Returns bits 8
@@ -49,7 +55,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 u32 Battle_Random(void) {
   s32 seed;
 
-  seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
+  seed = (gBattleRandomSeed * 1103515245) + 12345;
   gBattleRandomSeed = seed;
   return (u32)(seed << 8) >> 16;
 }
@@ -149,10 +155,10 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
 
-  if (owner->classId == 0) {
+  if (owner->classId == CLASS_NONE) {
     return 1;
   }
-  item = Inventory_GetEquippedDefinition(owner, 1);
+  item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
   if (item == NULL) {
     return 1;
   }
@@ -170,63 +176,61 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
 
 /// A rate for the effect id: 20 to 75 for the ids listed, otherwise a
 /// negative value (-60, -90 and -70 for three ids, -100 by default).
-s32 Battle_GetEffectBaseSuccessRate(s32 effect_id) {
-  s32 battle_result;
-  u32 entry_index;
+s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
+  s32 fixedChance;
 
-  entry_index = effect_id - 8;
-  switch (entry_index) {
-  case 4:
-  case 5:
+  switch (effectId) {
+  case ABILITY_EFFECT_DEFENSE_DOWN_2:
+  case ABILITY_EFFECT_DEFENSE_DOWN:
     return 70;
-  case 8:
-  case 9:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN:
     return 75;
-  case 14:
+  case ABILITY_EFFECT_CHARM:
     return 30;
-  case 16:
+  case ABILITY_EFFECT_SLEEP:
     return 45;
-  case 10:
-  case 11:
-  case 17:
+  case ABILITY_EFFECT_POISON:
+  case ABILITY_EFFECT_DEADLY_POISON:
+  case ABILITY_EFFECT_SEAL:
     return 55;
-  case 18:
+  case ABILITY_EFFECT_HAUNT:
     return 25;
-  case 19:
+  case ABILITY_EFFECT_INSTANT_DEATH:
     return 20;
-  case 12:
-  case 23:
+  case ABILITY_EFFECT_DELUSION:
+  case ABILITY_EFFECT_DRAIN_HP:
     return 65;
-  case 13:
-  case 26:
+  case ABILITY_EFFECT_CONFUSION:
+  case ABILITY_EFFECT_LEAVE_ONE_HP:
     return 35;
-  case 48:
-    battle_result = 60;
+  case ABILITY_EFFECT_REVIVE_HALF:
+    fixedChance = 60;
     break;
-  case 49:
-    battle_result = 90;
+  case ABILITY_EFFECT_REVIVE_80:
+    fixedChance = 90;
     break;
-  case 65:
-    battle_result = 70;
+  case 73:
+    fixedChance = 70;
     break;
-  case 0:
-  case 1:
-  case 20:
-  case 24:
-  case 72:
+  case ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN:
+  case ABILITY_EFFECT_CURSE:
+  case ABILITY_EFFECT_DRAIN_PP:
+  case 80:
     return 60;
-  case 27:
-  case 75:
+  case ABILITY_EFFECT_HALVE_DEFENSE:
+  case 83:
     return 50;
-  case 15:
-  case 74:
-  case 77:
+  case ABILITY_EFFECT_STUN:
+  case 82:
+  case 85:
     return 40;
   default:
-    battle_result = 100;
+    fixedChance = 100;
     break;
   }
-  return 0 - battle_result;
+  return -fixedChance;
 }
 
 s32 Battle_IsEffect90Class(s32 classId) {
@@ -274,11 +278,12 @@ s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
   return 0;
 }
 
-/// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on a
-/// downed unit.
-s32 Battle_IsReviveEffect(s32 effect_id) {
-  if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39) ||
-      (effect_id == 0x49)) {
+/// Returns 1 for the revive effects, which only work on a downed unit.
+s32 Battle_IsReviveEffect(s32 effectId) {
+  // Effect 73 is Balm's and Spark's.
+  if (effectId == ABILITY_EFFECT_REVIVE ||
+      effectId == ABILITY_EFFECT_REVIVE_HALF ||
+      effectId == ABILITY_EFFECT_REVIVE_80 || effectId == 73) {
     return 1;
   }
   return 0;
@@ -324,54 +329,56 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
     return 0;
   }
 
-  if (effectId == 3 && unit->poison == 0) {
+  if (effectId == ABILITY_EFFECT_CURE_POISON && unit->poison == 0) {
     return 0;
   }
 
-  goto action4_check;
-action4_tail:
+  // Restore needs a delusion, confusion or charm, or failing those a stun,
+  // sleep, seal or curse, tested in that order.
+  goto check_restore;
+check_restore_others:
   if (unit->stun == 0 && unit->sleep == 0 &&
       state[(u32)&((struct BattleUnit *)0)->psySeal] == 0 &&
       unit->grimReaper == 0) {
     return 0;
   }
-  goto action4_done;
-action4_check:
-  if (effectId == 4) {
+  goto restore_checked;
+check_restore:
+  if (effectId == ABILITY_EFFECT_RESTORE) {
     if (unit->delusion == 0 &&
         state[(u32)&((struct BattleUnit *)0)->confusion] == 0 &&
         unit->charm == 0) {
-      goto action4_tail;
+      goto check_restore_others;
     }
   }
 
-action4_done:
+restore_checked:
   poison = &unit->poison;
   delusion = &unit->delusion;
   confusion = (u8 *)&unit->confusion;
   charm = &unit->charm;
   stun = &unit->stun;
   sleep = &unit->sleep;
-  if (effectId == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 &&
-      *charm == 0 && *stun == 0 && *sleep == 0 && unit->psySeal == 0 &&
-      unit->grimReaper == 0 &&
+  if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
+      *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
+      unit->psySeal == 0 && unit->grimReaper == 0 &&
       state[(u32)&((struct BattleUnit *)0)->haunt] == 0) {
     return 0;
   }
 
-  if (effectId == 0x1C && unit->grimReaper == 1) {
+  if (effectId == ABILITY_EFFECT_CURSE && unit->grimReaper == 1) {
     return 0;
   }
 
   luck = &unit->luck;
   if (*luck >= 40) {
     switch (effectId) {
-    case 18:
-    case 19:
-    case 26:
-    case 27:
-    case 28:
-    case 34:
+    case ABILITY_EFFECT_POISON:
+    case ABILITY_EFFECT_DEADLY_POISON:
+    case ABILITY_EFFECT_HAUNT:
+    case ABILITY_EFFECT_INSTANT_DEATH:
+    case ABILITY_EFFECT_CURSE:
+    case ABILITY_EFFECT_LEAVE_ONE_HP:
     case 80:
     case 82:
       return 0;
@@ -393,7 +400,7 @@ action4_done:
     score = -score;
   }
 
-  if (effectId == 67)
+  if (effectId == ABILITY_EFFECT_SEAL_2_TURNS)
     attempts = 3;
   if (effectId == 80)
     attempts = 3;

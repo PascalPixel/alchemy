@@ -604,7 +604,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
   Unit_LearnPsynergy(IVAN, ABILITY_REVEAL);
   gMainRoutineWork.coins = 200;
-  *(u32 *)&gMainRoutineWork.unk284[8] = 0;
+  gMainRoutineWork.transferredCoins = 0;
   gMainRoutineWork.forgeItem = 0;
   gMainRoutineWork.countedAnswers = 0;
   gMainRoutineWork.messageSpeed = 1;
@@ -863,7 +863,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     GameFlag_Set(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
 
   state = &gMainRoutineWork;
-  *(s32 *)&state->unk284[8] = party->coins;
+  state->transferredCoins = party->coins;
   if (byPassword == 0) {
     state->windowHue = party->windowHue;
     state->windowBrightness = party->windowBrightness;
@@ -1000,7 +1000,7 @@ void Party_AddIsaacsParty(void) {
   Party_GiveItemIfMissing(ITEM_LIFTING_GEM, GARET);
   Party_GiveItemIfMissing(ITEM_CARRY_STONE, ISAAC);
   Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
-  gMainRoutineWork.coins += *(s32 *)&gMainRoutineWork.unk284[8];
+  gMainRoutineWork.coins += gMainRoutineWork.transferredCoins;
 #if TLA_PATCH_4
   if ((u32)gMainRoutineWork.coins > COINS_MAX)
     gMainRoutineWork.coins = COINS_MAX;

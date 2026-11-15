@@ -403,34 +403,30 @@ void FieldPsynergy_FadeToCastColor(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   s32 tint;
   s32 animation;
-  s32 raw;
 
   tint = gFrameCount & 7;
-  raw = *(u16 *)&scene->fieldPsynergy;
-  /* FAKEMATCH(barrier): raw passed through an empty asm. */
-  asm("" : "+r"(raw));
   animation = scene->fieldPsynergy;
-  if (animation == 18)
+  if (animation == FIELD_PSYNERGY_POUND)
     tint = 0;
-  if (animation == 26)
+  if (animation == FIELD_PSYNERGY_BLAZE)
     tint = 2;
-  if (animation == 23)
+  if (animation == FIELD_PSYNERGY_SAND)
     tint = 7;
-  if (animation == 25)
+  if (animation == FIELD_PSYNERGY_CYCLONE)
     tint = 0;
-  if (animation == 20)
+  if (animation == FIELD_PSYNERGY_SCOOP)
     tint = 5;
-  if (animation == 29)
+  if (animation == FIELD_PSYNERGY_UNNAMED_29)
     tint = 0;
-  if (animation == 22)
+  if (animation == FIELD_PSYNERGY_PARCH)
     tint = 7;
-  if (animation == 19)
+  if (animation == FIELD_PSYNERGY_TREMOR)
     tint = 6;
-  if (animation == 27)
+  if (animation == FIELD_PSYNERGY_GRIND)
     tint = 0;
-  if (animation == 21)
+  if (animation == FIELD_PSYNERGY_BURST)
     tint = 7;
-  if ((s16)raw == 30)
+  if (scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
     tint = 6;
 
   if (GameFlag_Get(FLAG_TINT_FIRST + 0))

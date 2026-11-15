@@ -635,8 +635,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       SET_ACTOR_POSITION(camera, x, y, z);
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
-      /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
-       * twin. */
+      /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
+       * for the distance. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -713,7 +713,8 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
       SET_ACTOR_POSITION(camera, x, y, z);
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
-      /* FAKEMATCH(dead): dy computed and overwritten below. */
+      /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
+       * for the distance. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));

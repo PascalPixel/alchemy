@@ -150,20 +150,16 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 
 /// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
 void WorldMap_PresentStillPicture(void) {
-  s32 control;
-  volatile u32 *dma;
-
-  control = 0xa80b;
-  REG_BG3CNT = control;
-  control = 0xaa0f;
-  REG_BG2CNT = control;
-  control = 0x682;
-  REG_BG1CNT = control;
-  dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma. */
-  __asm__ volatile("" : "+l"(dma));
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+             &REG_BG1CNT);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
-          DMA_COPY_WORDS(0xa000 / 4), dma);
+          DMA_COPY_WORDS(0xa000 / 4), REG_DMA3);
 }
 
 /// Freezes the world map's perspective view as a still picture on BG1: decodes
@@ -201,20 +197,15 @@ void WorldMap_StartStillPicture(void) {
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void WorldMap_ShowBg1FromBuffer(void) {
-  s32 control;
-  volatile u32 *dma;
-
-  control = 0xa80a;
-  REG_BG3CNT = control;
-  control = 0xaa0e;
-  REG_BG2CNT = control;
-  control = 0x501;
-  REG_BG1CNT = control;
-  dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma. */
-  __asm__ volatile("" : "+l"(dma));
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
-          dma);
+          REG_DMA3);
 }
 
 /// Reloads the world map area's palette and tiles after the still picture, puts
@@ -577,30 +568,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   }
   if (perspective->tint > 0) {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
-    {
-      struct IoWriteQueue *q = &gIoWriteQueue;
-      u32 saved;
-      s32 count;
-
-      IRQ_LOCK(saved);
-      count = q->count;
-      if (count <= 31) {
-        u32 *entry;
-        /* FAKEMATCH(temporary): the entry's byte offset held in offset and
-         * scaled after the count store. */
-        s32 offset = count * 3;
-
-        q->count = count + 1;
-        offset *= sizeof(u32);
-        /* FAKEMATCH(barrier): an empty asm. */
-        asm("");
-        entry = (u32 *)((u8 *)q->entries + offset);
-        *entry++ = (u16)perspective->tint;
-        *entry++ = 0x4000054;
-        *entry = 0x20000;
-      }
-      IRQ_UNLOCK(saved);
-    }
+    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)perspective->tint, 0x20000);
   } else {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3fce, 0x20000);
     IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-perspective->tint, 0x20000);
@@ -755,19 +723,13 @@ s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
 /// is 1, sample 0 in the corners.
 s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
-  s32 end;
-  s32 weight;
-  u8 *table;
 
-  start = samples[0];
-  end = samples[1];
-  table = gTerrain_LerpWeightTable;
-  /* FAKEMATCH(barrier): an empty asm reading the table's address. */
-  __asm__("" : : "r"(table));
-  position += row * CURVE_FULL_STEPS;
-  weight = table[position];
-  start <<= CURVE_VALUE_SHIFT;
-  return start + (((end << CURVE_VALUE_SHIFT) - start) * weight);
+  start = samples[0] << CURVE_VALUE_SHIFT;
+  // The weight is 0 or 1, so the result is one sample or the other, never
+  // between.
+  return start +
+         (((samples[1] << CURVE_VALUE_SHIFT) - start) *
+          gTerrain_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
 }
 
 /// The height of a step across x at position (0 to 15 of the cell):

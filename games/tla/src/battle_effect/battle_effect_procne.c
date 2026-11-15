@@ -25,8 +25,8 @@ enum DragonFireMode {
 #define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
 #define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
 #define COMET_SHEET 0x3600      ///< the violet comets
-#define COMETS 9
-#define FORMATION_RESOURCE 646
+/// Procne's nine sprites, placed on a grid by gProcne_GridX and _GridY.
+#define PROCNE_SPRITES 9
 
 /// Procne appears in the violet sky, and the targets it lifted drop.
 #define PROCNE_ARRIVAL_FRAME 160
@@ -265,7 +265,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                     (s32)&ResourceId_VioletSkyBackdrop, 8);
         BattleEffect_SelectLivingTargets(work->args);
-        BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
+        BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
                                    work->sheet + COMET_SHEET, 1, 1);
 
@@ -324,7 +324,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
-        } while (index != COMETS);
+        } while (index != PROCNE_SPRITES);
 
         if (frame > 255) {
           s32 threshold;
@@ -535,7 +535,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     do {
       Sprite_DestroyFar(work->sprites[index]);
       index++;
-    } while (index != COMETS);
+    } while (index != PROCNE_SPRITES);
 
     EFFECT_FINISH_CANVAS();
   }
@@ -551,10 +551,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 
-#undef FORMATION_RESOURCE
-
 #define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
-#define FORMATION_RESOURCE 647
 
 #define DRAGON_FIRE_FRAMES 208
 
@@ -667,7 +664,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (mode == DRAGON_FIRE_TIAMAT) {
       BattleEffect_SelectLivingTargets(work->args);
       wait(1);
-      BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
+      BattleEffect_SpawnObjects(8, SPRITE_TIAMAT, 2);
     }
 
     for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {

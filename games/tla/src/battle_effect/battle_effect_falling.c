@@ -10,6 +10,8 @@
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
+enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
+
 // Shards of ice fall in a slanting column onto the targets' side. Each one
 // flies down at 8 pixels a frame until it reaches the ground line, then
 // flashes every target, shakes the screen and shatters: fourteen frames of
@@ -60,7 +62,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     s32 y;
     s32 slant;
 
-    for (i = 0, y = -128, slant = -16; i != 32; y -= 64, i++, slant -= 8) {
+    for (i = 0, y = -128, slant = -16; i != FALLING_SHARD_COUNT;
+         y -= 64, i++, slant -= 8) {
       s32 x;
 
       shard = &work->particles[i];
@@ -74,8 +77,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
       shard->y = y;
     }
   }
-  for (i = 0; i != 32; i++)
-    work->particles[32 + i].variant = -1;
+  for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
+    work->particles[FALLING_SHARD_COUNT + i].variant = -1;
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
@@ -170,8 +173,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
               ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
-          for (k = 0; k != 32; k++) {
-            puff = &work->particles[32 + k];
+          for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
+            puff = &work->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
               puff->variant = 18;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
@@ -187,8 +190,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
     // Each puff counts down from 18 through its nine pictures, two frames
     // apiece, centred on its point.
-    for (i = 0; i != 32; i++) {
-      puff = &work->particles[32 + i];
+    for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
+      puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;

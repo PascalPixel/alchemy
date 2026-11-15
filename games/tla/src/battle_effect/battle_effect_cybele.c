@@ -24,8 +24,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define FORMATION_THORN_VINES 645 ///< eight objects
-
 /// Runs the impact burst at (x, y) in a formation.
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
@@ -83,7 +81,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   // picture is erased: eight shuffled runs of 0..127.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
+  BattleEffect_SpawnObjects(8, SPRITE_CYBELE, 1);
 
   order = Ram_MapCellBuffer;
   for (i = 0; i != 1024; i++)
@@ -541,8 +539,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
-
-#define FORMATION_ICE_BLOCKS 643 ///< nine objects in a 3x3 block
 
 /// Rocks, spray and puffs live in the map cell buffer; the spray's trails
 /// follow the first 128 particles.

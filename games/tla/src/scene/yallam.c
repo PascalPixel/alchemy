@@ -186,36 +186,28 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
+  struct Actor *target;
+  u16 *flags;
   s32 force = 0;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x.fixed,
                                              &object->x.fixed) <= 11) {
-    u8 *state = &object->paused;
-    /* FAKEMATCH(temporary): the call's argument copied before the barrier
-     * below. */
-    struct Actor *arg = object;
-
-    /* FAKEMATCH(barrier): the state's address and the argument are both formed
-     * before the state is stored. */
-    asm("" : : "l"(arg), "l"(state));
-    *state = force;
-    Actor_SelectAnimation(arg, 2);
-  } else {
-    struct Actor *target;
-    u16 *flags = (u16 *)&object->timer;
-
-    if (*flags & 1)
-      target = Actor_Get(ACTOR_GAME_CHILD);
-    else
-      target = Actor_Get(ACTOR_CIRCLES_CHILD);
-    if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
-      leader = Actor_Get(gMainRoutineWork.leaderActorId);
-      if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
-        force = 1;
-      Yallam_FaceIfNear(object, leader, 24, force);
-    }
+    object->paused = 0;
+    Actor_SelectAnimation(object, 2);
+    return 0;
+  }
+  flags = (u16 *)&object->timer;
+  if (*flags & 1)
+    target = Actor_Get(ACTOR_GAME_CHILD);
+  else
+    target = Actor_Get(ACTOR_CIRCLES_CHILD);
+  if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
+      force = 1;
+    Yallam_FaceIfNear(object, leader, 24, force);
   }
   return 0;
 }

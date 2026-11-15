@@ -1677,24 +1677,42 @@ power_end:
       s32 maxu;
       s32 maxv;
       s32 heal;
+#ifndef UBFIX
       u16 *pt;
+#endif
 
-      /* FAKEMATCH(temporary): a pointer walked down from hp to hpMax reads each
-       * stat twice. */
+      // UB: a pointer walks from hp down past it to hpMax, reading each stat
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
+#ifdef UBFIX
+      old = (u16)target->hp;
+      heal = target->hp;
+#else
       pt = (u16 *)&target->hp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
+#endif
       if (ability->effect == ABILITY_EFFECT_HEAL_HP_40) {
         s32 m;
 
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        m = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         m = *(s16 *)(pt + 1);
+#endif
         heal += m * 2 / 5;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_70) {
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        maxv = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 7 / 10;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_50) {
         maxu = (u16)target->hpMax;
@@ -1702,9 +1720,14 @@ power_end:
         /* FAKEMATCH(barrier): an empty asm on maxu. */
         asm("" : "+r"(maxu));
       } else {
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        maxv = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         if (ability->effect == ABILITY_EFFECT_HEAL_HP_60) {
           s32 p = maxv * 60;
           heal += p / 100;
@@ -1737,26 +1760,44 @@ power_end:
       s32 maxv;
       s32 heal;
       s32 maxu;
+#ifndef UBFIX
       u16 *pt;
+#endif
 
-      /* FAKEMATCH(temporary): a pointer walked down from pp to ppMax reads each
-       * stat twice. */
+      // UB: a pointer walks from pp down past it to ppMax, reading each stat
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
+#ifdef UBFIX
+      old = (u16)target->pp;
+      heal = target->pp;
+#else
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
+#endif
       if (ability->effect == ABILITY_EFFECT_HEAL_PP_10) {
         maxv = target->ppMax;
         maxu = (u16)target->ppMax;
         heal += (s16)maxv / 10;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_PP_30) {
+#ifdef UBFIX
+        maxu = (u16)target->ppMax;
+        maxv = target->ppMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 3 / 10;
       } else {
+#ifdef UBFIX
+        maxu = (u16)target->ppMax;
+        maxv = target->ppMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 7 / 100;
       }
       if (heal > (s16)maxu)

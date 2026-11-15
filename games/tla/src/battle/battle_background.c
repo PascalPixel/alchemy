@@ -864,7 +864,6 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   struct Ring *ring;
   s32 i;
   u8 *data;
-  s32 zero;
 
   ((s32 *)Ram_HeapSlots->battleBackground)[2] = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
@@ -923,17 +922,15 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
-  /* FAKEMATCH(dead): a once-only block. */
-  do {
-    zero = 0;
-    REG_BG2X = zero;
-    REG_BG2Y = zero;
-  } while (0);
+  Io_Write32(0, &REG_BG2X);
+  Io_Write32(0, &REG_BG2Y);
   Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  /* FAKEMATCH(dead): a never-taken five-argument call. */
+  /* LEFTOVER(frame): the twin's five-argument BattleEffect_BuildBlitterFar,
+   * never taken here: of the 8 bytes the ROM's frame reserves (sub sp, #8),
+   * no instruction addresses sp+0 to sp+3, the call's fifth argument. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);

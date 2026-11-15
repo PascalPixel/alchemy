@@ -30,37 +30,45 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-struct YallamInteriorsObject {
-  u8 unk00[6];
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 height;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[3];
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  u8 unk2c[0x18];
-  s32 field44;
-  s32 field48;
-  u8 unk4c[4];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-  u8 unk5a[2];
-  u8 field5c;
-  u8 unk5d[5];
-  u8 timer;
-  u8 unk63;
-  s16 field64;
-  s16 field66;
-  s32 field68;
-  void *update;
+/// The inn's actors (SceneId_YallamInteriorsInn), numbering the rows of
+/// gYallamInteriorsInnPlacements; Sunshine's house is beside it.
+enum YallamInteriorsInnActorId {
+  /// "Yepp had three different songs he used to sing."
+  ACTOR_YEPP_SONGS_VILLAGER = ACTOR_FIRST_PLACED,
+  /// "Do you like children's songs?" (YallamInteriors_AskLikeChildrensSongs)
+  ACTOR_CHILDRENS_SONGS_VILLAGER,
+  /// "It's been really dry the past few months."
+  ACTOR_DRY_MONTHS_VILLAGER,
+  /// "We're supposed to be right in the middle of the rainy season..."
+  ACTOR_RAINY_SEASON_VILLAGER,
+  ACTOR_INNKEEPER,
+  /// "Taopo Swamp has dried up, and now it's inaccessible."
+  ACTOR_DRIED_SWAMP_VILLAGER,
+  /// Sunshine the blacksmith, lying in bed until rain comes or the party
+  /// brings him something to forge.
+  ACTOR_SUNSHINE,
+  ACTOR_SUNSHINES_WIFE,
+  ACTOR_SUNSHINES_CHILD,
+  /// The counter in front of Sunshine's bed, talked to across.
+  ACTOR_SUNSHINES_COUNTER
+};
+
+/// The shops' actors (SceneId_YallamInteriorsShops), numbering the rows of
+/// gYallamInteriorsShopsPlacements.
+enum YallamInteriorsShopsActorId {
+  /// "Sunshine has started complaining that he can't work lately."
+  ACTOR_COMPLAINT_VILLAGER = ACTOR_FIRST_PLACED,
+  /// "Our blacksmith, Sunshine, makes the kinds of items you can't..."
+  ACTOR_BLACKSMITH_VILLAGER,
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_ITEM_MERCHANT,
+  /// The three counters the merchants are talked to across.
+  ///@{
+  ACTOR_WEAPON_COUNTER,
+  ACTOR_ARMOR_COUNTER,
+  ACTOR_ITEM_COUNTER
+  ///@}
 };
 
 void Event_End(void);
@@ -75,11 +83,11 @@ void FieldEffect_StartBlankOverlay(s32 a);
 void Event_StartScreenTransition(void);
 
 extern struct ActorPlacement gYallamInteriors_Placements[];
-extern struct ActorPlacement gYallamInteriors_Room1Placements[];
-extern struct ActorPlacement gYallamInteriors_Room2Placements[];
+extern struct ActorPlacement gYallamInteriorsInnPlacements[];
+extern struct ActorPlacement gYallamInteriorsShopsPlacements[];
 extern struct Trigger gYallamInteriors_Triggers[];
-extern struct Trigger gYallamInteriors_Room1Triggers[];
-extern struct Trigger gYallamInteriors_Room2Triggers[];
+extern struct Trigger gYallamInteriorsInnTriggers[];
+extern struct Trigger gYallamInteriorsShopsTriggers[];
 
 void Forge_Run(s32 actor);
 
@@ -97,18 +105,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_YALLAM_INTERIORS_INN)
-    return gYallamInteriors_Room1Placements;
+    return gYallamInteriorsInnPlacements;
   if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
-    return gYallamInteriors_Room2Placements;
+    return gYallamInteriorsShopsPlacements;
   return gYallamInteriors_Placements;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 /// Sunshine the blacksmith thinks of the swamp he cannot reach without rain,
 /// and once the party has had him forge, of his joy at working (flag 0x301).
@@ -122,7 +123,7 @@ s32 YallamInteriors_MindReadSunshine(void) {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
   // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_SUNSHINE, 0);
   Event_End();
   return 0;
 }
@@ -137,7 +138,7 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
   // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
-  Event_ShowMessage(15, 0);
+  Event_ShowMessage(ACTOR_SUNSHINES_WIFE, 0);
   Event_End();
   return 0;
 }
@@ -152,7 +153,7 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
   // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
   return 0;
 }
@@ -169,7 +170,7 @@ s32 YallamInteriors_TalkToSunshinesChild(void) {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
   // "Dad's not doing any work right now, but I'm making some basic things..."
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
   return 0;
 }
@@ -179,7 +180,7 @@ s32 YallamInteriors_MindReadWeaponMerchant(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
   // "If Sunshine set his mind to it, he could make a lot of money! What a..."
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   Event_End();
   return 0;
 }
@@ -189,7 +190,7 @@ s32 YallamInteriors_MindReadArmorMerchant(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
   // "I shouldn't tell him how boring all this stuff is. I wish Sunshine..."
-  Event_ShowMessage(11, 0);
+  Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
   return 0;
 }
@@ -199,7 +200,7 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
   // "What does Sunshine want in Taopo Swamp? There's nothing up there but..."
-  Event_ShowMessage(12, 0);
+  Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   Event_End();
   return 0;
 }
@@ -208,9 +209,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_YALLAM_INTERIORS_INN)
-    return gYallamInteriors_Room1Triggers;
+    return gYallamInteriorsInnTriggers;
   if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
-    return gYallamInteriors_Room2Triggers;
+    return gYallamInteriorsShopsTriggers;
   return gYallamInteriors_Triggers;
 }
 
@@ -223,15 +224,15 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
   msg = (s32)MsgYallamInteriors10;
   Event_SetMessageId(msg);
   // "Do you like children's songs?"
-  Event_OpenMessage(9, 0);
+  Event_OpenMessage(ACTOR_CHILDRENS_SONGS_VILLAGER, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-    Event_Wait(10);
+    Event_Wait(ACTOR_DRY_MONTHS_VILLAGER);
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_CHILDRENS_SONGS_VILLAGER, 0);
   Event_End();
 }
 
@@ -248,9 +249,7 @@ enum { YALLAM_INN = 7 };
 /// Yallam's weapon merchant sells across the counter, and otherwise wishes
 /// Sunshine would work.
 void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.leaderActorId))
-                   ->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_WEAPONS, actor);
@@ -267,9 +266,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
 /// Yallam's armor merchant sells across the counter, and otherwise sends the
 /// party to Sunshine for something special.
 void YallamInteriors_TalkToArmorMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.leaderActorId))
-                   ->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_ARMOR, actor);
@@ -286,9 +283,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
 /// Yallam's item merchant sells across the counter, and otherwise points the
 /// way to Taopo Swamp.
 void YallamInteriors_TalkToItemMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.leaderActorId))
-                   ->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_ITEMS, actor);
@@ -305,9 +300,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
 /// Yallam's innkeeper takes the party in across the counter, and otherwise
 /// talks of the town that never gets tourists.
 void YallamInteriors_TalkToInnkeeper(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.leaderActorId))
-                   ->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(YALLAM_INN, actor);
@@ -323,9 +316,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
 }
 
 void YallamInteriors_TalkToHealer(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.leaderActorId))
-                   ->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -345,19 +336,19 @@ void YallamInteriors_OfferToForge(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_StartRepeatedMotion(14, 2);
+  Actor_StartRepeatedMotion(ACTOR_SUNSHINE, 2);
   msg = (s32)MsgYallamInteriors31;
   Event_SetMessageId(msg);
   // "Ah, so you want me to make you a little something special?"
-  Event_OpenMessage(14, 0);
+  Event_OpenMessage(ACTOR_SUNSHINE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-    Event_Wait(10);
+    Event_Wait(ACTOR_DRY_MONTHS_VILLAGER);
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_SUNSHINE, 0);
   Event_End();
 }
 
@@ -396,7 +387,7 @@ void YallamInteriors_TalkToSunshine(void) {
     message = (s32)MsgAhSoYou;
     Event_SetMessageId(message);
     // "Ah, so you're looking for a really unique item, huh?"
-    Event_OpenMessage(14, 0);
+    Event_OpenMessage(ACTOR_SUNSHINE, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
       Event_SetMessageId(message + 1);
@@ -404,68 +395,67 @@ void YallamInteriors_TalkToSunshine(void) {
       FieldEvent_Wait(20);
       Event_SetMessageId(message + 2);
     }
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_SUNSHINE, 0);
   } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgICanTWait);
     // "I can't wait to see what I'm going to wind up making with this......"
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_SUNSHINE, 0);
   } else if (Forge_GetItem()) {
     Event_SetMessageId((s32)MsgMyWifeHas);
     // "My wife has the item I made you. She can give it to you."
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_SUNSHINE, 0);
   } else {
     message = (s32)MsgYouWantMe;
     Event_SetMessageId(message);
     // "You want me to make you a little something special?"
-    Event_OpenMessage(14, 0);
+    Event_OpenMessage(ACTOR_SUNSHINE, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
       // "Well, look at that! You went to get some raw materials for me..."
-      Event_ShowMessage(14, 0);
-      Actor_FallOverById(14, 0xc000);
-      Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)),
-                           1);
+      Event_ShowMessage(ACTOR_SUNSHINE, 0);
+      Actor_FallOverById(ACTOR_SUNSHINE, 0xc000);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINE), 1);
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-      Actor_SetDestination(14, 504, 408);
-      Actor_WaitForMoveById(14);
-      Actor_FaceActor(14, gMainRoutineWork.leaderActorId, 0);
-      Forge_Run(14);
+      Actor_SetDestination(ACTOR_SUNSHINE, 504, 408);
+      Actor_WaitForMoveById(ACTOR_SUNSHINE);
+      Actor_FaceActor(ACTOR_SUNSHINE, gMainRoutineWork.leaderActorId, 0);
+      Forge_Run(ACTOR_SUNSHINE);
       if (Forge_GetItem()) {
-        Actor_SetSpeed(14, 0.4);
-        Actor_WalkTo(14, 568, 408);
-        Actor_WaitForMoveById(14);
-        Actor_WalkTo(14, 568, 360);
-        Actor_WaitForMoveById(14);
-        Actor_WalkTo(16, 632, 346);
-        Actor_FaceDirection(16, FACING_SOUTH, 0);
-        Actor_SetAnimation(16, 0);
-        Actor_WalkTo(14, 600, 360);
-        Actor_WaitForMoveById(14);
-        Actor_SetAnimation(14, 0);
-        Actor_FaceDirection(14, FACING_SOUTH, 0);
-        ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags =
-            129;
-        ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags = 1;
-        Actor_SetSpritePriority(14, 1);
-        ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags |= 1;
+        Actor_SetSpeed(ACTOR_SUNSHINE, 0.4);
+        Actor_WalkTo(ACTOR_SUNSHINE, 568, 408);
+        Actor_WaitForMoveById(ACTOR_SUNSHINE);
+        Actor_WalkTo(ACTOR_SUNSHINE, 568, 360);
+        Actor_WaitForMoveById(ACTOR_SUNSHINE);
+        Actor_WalkTo(ACTOR_SUNSHINES_CHILD, 632, 346);
+        Actor_FaceDirection(ACTOR_SUNSHINES_CHILD, FACING_SOUTH, 0);
+        Actor_SetAnimation(ACTOR_SUNSHINES_CHILD, 0);
+        Actor_WalkTo(ACTOR_SUNSHINE, 600, 360);
+        Actor_WaitForMoveById(ACTOR_SUNSHINE);
+        Actor_SetAnimation(ACTOR_SUNSHINE, 0);
+        Actor_FaceDirection(ACTOR_SUNSHINE, FACING_SOUTH, 0);
+        Actor_GetById(ACTOR_SUNSHINE)->collisionFlags =
+            ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID;
+        Actor_GetById(ACTOR_SUNSHINE)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+        Actor_SetSpritePriority(ACTOR_SUNSHINE, 1);
+        Actor_GetById(ACTOR_SUNSHINE)->priorityFlags |=
+            ACTOR_PRIORITY_AUTOMATIC;
 #if TLA_PATCH_1
-        Actor_SetPosition(17, 0, 0);
+        Actor_SetPosition(ACTOR_SUNSHINES_COUNTER, 0, 0);
 #endif
         Event_SetFlag(FLAG_AREA_TEMP_01);
       } else {
-        Actor_SetDestination(14, 491, 398);
-        Actor_WaitForMoveById(14);
-        Actor_FaceDirection(14, FACING_SOUTH, 0);
-        Actor_SetSpriteFlags(
-            ((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
-        Actor_FallOverById(14, 0);
+        Actor_SetDestination(ACTOR_SUNSHINE, 491, 398);
+        Actor_WaitForMoveById(ACTOR_SUNSHINE);
+        Actor_FaceDirection(ACTOR_SUNSHINE, FACING_SOUTH, 0);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINE), 0);
+        Actor_FallOverById(ACTOR_SUNSHINE, 0);
       }
     } else {
       Event_SetMessageId(message + 2);
       // "Hm... Maybe I made a mistake. It's hard to tell... If you want..."
-      Event_ShowMessage(14, 0);
+      Event_ShowMessage(ACTOR_SUNSHINE, 0);
     }
   }
 }
@@ -534,27 +524,26 @@ s32 Scene_Initialize(void) {
   }
   if (scene == SCENE_YALLAM_INTERIORS_INN) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
-      Actor_SetPosition(14, 600, 360);
-      Actor_SetPosition(16, 632, 346);
-      Actor_FaceDirection(16, FACING_SOUTH, 0);
+      Actor_SetPosition(ACTOR_SUNSHINE, 600, 360);
+      Actor_SetPosition(ACTOR_SUNSHINES_CHILD, 632, 346);
+      Actor_FaceDirection(ACTOR_SUNSHINES_CHILD, FACING_SOUTH, 0);
 #if TLA_PATCH_1
-      Actor_SetPosition(17, 0, 0);
+      Actor_SetPosition(ACTOR_SUNSHINES_COUNTER, 0, 0);
 #endif
     } else {
-      Actor_FallOverById(14, 0);
+      Actor_FallOverById(ACTOR_SUNSHINE, 0);
     }
-    Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(17)),
-                         0);
-    Actor_SetSpritePriority(11, 2);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINES_COUNTER), 0);
+    Actor_SetSpritePriority(ACTOR_RAINY_SEASON_VILLAGER, 2);
   }
   if (gMainRoutineWork.next == SCENE_YALLAM_INTERIORS_SHOPS) {
     FieldEffect_StartBlankOverlay(0);
-    Actor_SetSpritePriority(12, 2);
-    ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;
-    Actor_SetSpritePriority(10, 2);
-    ((struct YallamInteriorsObject *)Actor_GetById(10))->collisionFlags |= 4;
-    Actor_SetSpritePriority(11, 2);
-    ((struct YallamInteriorsObject *)Actor_GetById(11))->collisionFlags |= 4;
+    Actor_SetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
+    Actor_GetById(ACTOR_ITEM_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+    Actor_SetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
+    Actor_GetById(ACTOR_WEAPON_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+    Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+    Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
   }
   return 0;
 }
@@ -632,7 +621,7 @@ struct ActorPlacement gYallamInteriors_Placements[] = {
 };
 // clang-format on
 
-struct ActorPlacement gYallamInteriors_Room1Placements[] = {
+struct ActorPlacement gYallamInteriorsInnPlacements[] = {
 #if !TLA_PATCH_2
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136,
                     FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -665,7 +654,7 @@ struct ActorPlacement gYallamInteriors_Room1Placements[] = {
 #include "text/msg_ids.h"
 
 // clang-format off
-struct ActorPlacement gYallamInteriors_Room2Placements[] = {
+struct ActorPlacement gYallamInteriorsShopsPlacements[] = {
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 188, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 405, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -684,7 +673,7 @@ struct Trigger gYallamInteriors_Triggers[] = {
 };
 // clang-format on
 
-struct Trigger gYallamInteriors_Room1Triggers[] = {
+struct Trigger gYallamInteriorsInnTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -728,7 +717,7 @@ struct Trigger gYallamInteriors_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gYallamInteriors_Room2Triggers[] = {
+struct Trigger gYallamInteriorsShopsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

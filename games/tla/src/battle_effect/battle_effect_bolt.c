@@ -17,6 +17,9 @@
 /// The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
+/// Where LightningBoltSheet is decoded in the effect's pictures.
+#define BOLT_LIGHTNING_BOLT_PICTURES 0xc56
+
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
 /// where it lands while glints flicker there.
 ///
@@ -37,12 +40,12 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + 0xc56, 1, 1);
+                             work->sheet + BOLT_LIGHTNING_BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (j = 0; j != SPARK_COUNT; j++)
     SPARKS[j].variant = 0;
@@ -144,8 +147,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
-          s32 x = spark->x >> 16;
-          s32 y = spark->y >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 y = Q_16_16_TO_INT(spark->y);
 
           draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   x - size / 2, y - size, size, size * 2);

@@ -113,6 +113,12 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
 // they close in; at the center they burst, and the mode's picture plays
 // there (a dagger, a shield, a streak or a wisp).
 
+#define STAT_BOOST_PICTURE_FRAME 80
+
+/// When the first target's flares burst and its picture appears, with the
+/// damage; each later target follows 8 frames behind.
+#define STAT_BOOST_BURST_FRAME 52
+
 /// Flares of light swirl in to the centre of each target in turn and burst, and
 /// the mode's picture plays over it.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
@@ -176,7 +182,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
   // Crucible Fire is Impact joined at frame 53, with a fade.
   if (mode == STAT_BOOST_CRUCIBLE_FIRE) {
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     mode = STAT_BOOST_IMPACT;
     start = 53;
   }
@@ -211,7 +217,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                                work->sheet + SERIES_B_PICTURE, 1, 0);
     CopyWordsRoutine()((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   } else {
     void *palette;
 
@@ -233,7 +239,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    CopyWordsRoutine()((void *)BG_PLTT, palette, 128);
+    CopyWordsRoutine()((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -291,15 +297,16 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
     if (mode == STAT_BOOST_STEAM && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
-    if (frame == 80)
+    if (frame == STAT_BOOST_PICTURE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
     prelude = args->prelude;
     if (prelude == 1) {
-      s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+      s32 x =
+          (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
@@ -310,9 +317,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+      draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+              DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+        draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
 
@@ -321,7 +330,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           BattleObject_GetFar(args->targets[member])->object;
       s32 height = BattleUnit_GetEffectHeightFar(args->targets[member]) * 2 / 3;
 
-      if (frame == member * 8 + 80)
+      if (frame == member * 8 + STAT_BOOST_PICTURE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
@@ -404,46 +413,54 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       screen.x = screen.x * 4 / 5 + shift;
 
       // The burst: from frame 52, six pictures four frames apart.
-      if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
+      if (frame >= member * 8 + STAT_BOOST_BURST_FRAME &&
+          frame < member * 8 + 76) {
         s32 cel;
 
         /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
-        cel = (frame - member * 8 - 52) / 4 % 6;
+        cel = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
 
         LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
-                screen.x - 20, screen.y - 20, 40, 40);
+                screen.x - 20, screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
       // From frame 80, the mode's picture.
       if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 7;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 108) {
+          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 7;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
-                  screen.x - 12, screen.y - 20, 24, 40);
+          draw[0](canvas,
+                  work->sheet + cel * PICTURE_BYTES(DAGGER) + SERIES_B_PICTURE,
+                  screen.x - 12, screen.y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
                  mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
+          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
-                  screen.x - 16, screen.y - 32, 32, 64);
+          draw[0](canvas,
+                  work->sheet + cel * PICTURE_BYTES(VIOLET_STREAK) +
+                      SERIES_B_PICTURE,
+                  screen.x - 16, screen.y - 32, VIOLET_STREAK_WIDTH,
+                  VIOLET_STREAK_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 2 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
+          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 2 % 6;
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
@@ -455,14 +472,17 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                                     BLITTER_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-          draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
-          draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
+          draw[0](canvas, picture, screen.x - 32, screen.y - 24, WISP_WIDTH,
+                  WISP_HEIGHT);
+          draw[1](canvas, picture, screen.x - 32, screen.y + 8, WISP_WIDTH,
+                  WISP_HEIGHT);
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
+          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
@@ -551,7 +571,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     palette = (s32)&ResourceId_GlowOrbSheet;
   else
     palette = (s32)&ResourceId_PinkBurstSheet;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
                              work->sheet + RAMP_IMAGE, 0, 0);
 
@@ -570,7 +591,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
-    xOffset = -112;
+    xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     REG_BG2X = 0;
     xOffset = 0;
@@ -583,7 +604,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     s32 radius = 192;
     s32 angle;
 
-    angle = Random16() & 0xffff;
+    angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
       shard->y = px((i & 31) / 4 * 6 - 10);
@@ -635,11 +656,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
           if (time <= 26)
             callbacks[0](canvas, work->sheet + time / 4 % 7 * 960, x - 12,
-                         y - 20, 24, 40);
+                         y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
         } else {
           if (time <= 23)
             draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20,
-                    40, 40);
+                    SHIELD_WIDTH, SHIELD_HEIGHT);
         }
         // frame - j * 4 is time; this spelling matches here and below.
         if (frame - j * 4 == 24)

@@ -18,7 +18,7 @@ struct StripQuad;
     void *palette = Resource_GetTableEntry((s32)&(resource));                  \
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
                                                                                \
-    copy((void *)BG_PLTT, palette, 128);                                       \
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
   }
 /// Sets the transform for one of modes 11 and 14's spinning particles: at its
 /// position, half as wide (the canvas holds every other column), turned by z.
@@ -34,6 +34,11 @@ struct StripQuad;
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
+
+/// Where VenusDjinnSheet is decoded in the effect's pictures.
+#define GASP_FAMILY_VENUS_DJINN_PICTURES 0x1000
+/// Where CornerGlowSheet is decoded in the effect's pictures.
+#define GASP_FAMILY_CORNER_GLOW_PICTURES 0x4000
 
 /// The shared body of sixteen abilities' effects, named for the first (its
 /// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
@@ -59,7 +64,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (mode == GASP_MODE_GASP) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_JUPITER,
@@ -96,7 +101,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
-                               work->sheet + 0x1000, 1, 0);
+                               work->sheet + GASP_FAMILY_VENUS_DJINN_PICTURES,
+                               1, 0);
     {
       s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
 
@@ -123,7 +129,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   } else if (mode == GASP_MODE_CLARION_CRY) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 64;
   } else if (mode == GASP_MODE_CAGE) {
@@ -133,17 +139,21 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   } else if (mode == GASP_MODE_ELEMENT_SWAP) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
-    work->fadeFrames = 24;
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_PSY_BOOST) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
-    work->fadeFrames = 24;
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_SHINE) {
@@ -156,7 +166,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000,
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
@@ -181,8 +192,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     frames = 76;
   } else if (mode == GASP_MODE_DEMON_EYE) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     frames = 16;
@@ -215,7 +228,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                      screen, other);
       frames = 76;
     } else {
-      work->fadeFrames = 24;
+      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
       frames = 70;
     }
@@ -273,12 +286,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 160; i++)
         *lines++ = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     } else if (mode == 1 && frame > 31) {
-      u16 *pal = (u16 *)(BG_PLTT + 1);
+      u16 *pal = (u16 *)&BG_PLTT_COLOR(0, 1);
 
       for (i = 0; i != 63; i++, pal++) {
-        s32 r = *pal & 31;
-        s32 g = *pal >> 5 & 31;
-        s32 b = *pal >> 10 & 31;
+        s32 r = RGB_RED(*pal);
+        s32 g = RGB_GREEN(*pal);
+        s32 b = RGB_BLUE(*pal);
 
         if (frame > 40) {
           r += 4;
@@ -289,13 +302,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           g += 2;
           b += 2;
         }
-        if (r > 31)
-          r = 31;
-        if (g > 31)
-          g = 31;
-        if (b > 31)
-          b = 31;
-        *pal = b << 10 | g << 5 | r;
+        if (r > RGB_LEVEL_MAX)
+          r = RGB_LEVEL_MAX;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
+        *pal = RGB(r, g, b);
       }
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
     }
@@ -322,8 +335,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         head = from.x + gGaspFamily_StreakSteps[n] * dx / 16;
         tail = from.x + gGaspFamily_StreakSteps[n - 1] * dx / 16;
         for (i = 0, step = head - tail, acc = 0; i != 4; i++, acc += step)
-          draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20, 20,
-                  40);
+          draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20,
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
       if (frame > 37) {
         if (frame == 38) {
@@ -364,13 +377,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
-      y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
+      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 44) {
         twice = frame * 2;
         y = y - twice + 88;
       }
-      draw[0](canvas, FIGURE(work), x, y, 20, 40);
+      draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
       BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
       struct ScreenPoint target;
@@ -383,10 +397,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         if (r > 12)
           r = 12;
         a = frame << 9;
-        x -= Trig_Sin(a) * r * 2 >> 16;
-        y -= (Trig_Cos(a) * r >> 16) - r;
+        x -= Q_16_16_TO_INT(Trig_Sin(a) * r * 2);
+        y -= (Q_16_16_TO_INT(Trig_Cos(a) * r)) - r;
         if (frame <= 61)
-          draw[0](canvas, FIGURE(work), x, y, 20, 40);
+          draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
       }
       if (frame == 0)
         Sound_PlayFar(SE_SWIRL);
@@ -408,8 +423,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         if ((u32)p->variant <= 31) {
           s32 n = p->variant / 8 + 2;
-          s32 x = (Trig_Sin(p->z) * p->velocityZ / 2 >> 16) + target.x / 2;
-          s32 y = (Trig_Cos(p->z) * p->velocityZ >> 16) + target.y;
+          s32 x = (Q_16_16_TO_INT(Trig_Sin(p->z) * p->velocityZ / 2)) +
+                  target.x / 2;
+          s32 y = (Q_16_16_TO_INT(Trig_Cos(p->z) * p->velocityZ)) + target.y;
 
           p->z += 512;
           p->velocityZ -= 4;
@@ -431,20 +447,21 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         ball->velocityZ = other[2];
       }
       if (frame <= 47) {
-        s32 *user = BattleObject_GetFar(args->user)->object;
+        struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-        ball->velocityX += (user[2] - other[0]) / 40;
+        ball->velocityX += (user->x - other[0]) / 40;
         ball->velocityY += (0x3c0000 - other[1]) / 40;
-        ball->velocityZ += (user[4] - other[2]) / 40;
+        ball->velocityZ += (user->z - other[2]) / 40;
       } else {
-        s32 *target = BattleObject_GetFar(args->targets[0])->object;
+        struct MotionObject *target =
+            BattleObject_GetFar(args->targets[0])->object;
         struct Particle *fall = &work->particles[62];
 
         if (frame == 48) {
           SET_POSITION(fall, 0, 0, 0);
-          fall->velocityX = (target[2] - ball->velocityX) / 32;
+          fall->velocityX = (target->x - ball->velocityX) / 32;
           fall->velocityY = -ball->velocityY / 32;
-          fall->velocityZ = (target[4] - ball->velocityZ) / 32;
+          fall->velocityZ = (target->z - ball->velocityZ) / 32;
         }
         ball->velocityX += fall->x;
         ball->velocityY += fall->y;
@@ -461,7 +478,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       ball->x = x;
       y = pos.y;
       ball->y = y;
-      draw[0](canvas, FIGURE(work), x - 10, y - 20, 20, 40);
+      draw[0](canvas, FIGURE(work), x - 10, y - 20, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
       if (frame == 55) {
@@ -481,14 +499,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
-      y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
+      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 48) {
         twice = frame * 2;
         y = y - twice + 96;
       }
       if (y > -40)
-        draw[0](canvas, FIGURE(work), x, y, 20, 40);
+        draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
     }
 
     // The model layer.
@@ -529,7 +548,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             shade = p->variant * 8 - 64;
           if (p->variant > 31) {
             shade = (32 - p->variant) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -565,7 +584,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 63) {
             shade = (64 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -615,7 +634,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         model->shade = -16;
         texture.logWidth = 5;
         texture.logHeight = 2;
-        texture.pixels = work->sheet + 0x4000;
+        texture.pixels = work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES;
         model->texture = &texture;
         model->kind = 7;
         model->mesh = gGaspFamily_StreakMesh;
@@ -624,7 +643,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           for (i = 0; i != 16; i++) {
             struct Particle *p = &work->particles[i];
 
-            p->x = Random16() & 0xffff;
+            p->x = Random16() & TRIG_ANGLE_MASK;
             p->y = (Random16() & 255) + 128;
             if (Random16() & 1)
               p->y = -p->y;
@@ -674,7 +693,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             if (t > 7)
               shade = (8 - t) * 8;
             model->shade = shade;
-            if (shade > -64) {
+            if (shade > MODEL_SHADE_INVISIBLE) {
               Transform_Reset();
               Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 64), 0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -785,9 +804,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p = &work->particles[i];
 
         if ((u32)p->variant <= 23) {
-          draw[0](canvas, work->sheet + p->variant / 4 * 1152,
+          draw[0](canvas,
+                  work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                   Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
-                  24, 48);
+                  SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 16);
           p->variant++;
         }
@@ -818,7 +838,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           scale /= 2;
         if (frame > 15)
           shade = (16 - frame) * 8;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           model->shade = shade;
           texture.logWidth = 7;
           texture.logHeight = 7;
@@ -879,7 +899,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 23) {
             shade = (24 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -928,7 +948,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (t > 23) {
             shade = (24 - t) * 4;
-            if (shade < -64)
+            if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
@@ -952,7 +972,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 14)
-        Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 16);
+        Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
+                                   ANIMATION_STEP_NORMAL);
       if (frame == 22)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 26) {
@@ -1168,7 +1189,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Render_DrawModelList(model);
       }
       if (frame == 0) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *p = &work->particles[i];
 
           Random16();
@@ -1179,7 +1200,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         LOAD_BG_PALETTE(ResourceId_BlastSheet);
       }
       if (frame <= 15) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *p = &work->particles[i];
 
           for (j = 0; j != 3; j++) {
@@ -1305,8 +1326,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(verts);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
     BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}

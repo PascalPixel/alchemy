@@ -41,13 +41,13 @@ enum BurstShowerMode {
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
-  u16 control = channel[5];
+  u16 control = channel[DMA_CONTROL_HALF];
   u32 io;
 
-  channel[5] = control & 0xc5ff;
-  channel[5] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   io = 0x80;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }
@@ -57,13 +57,13 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 void BattleEffect_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
-  u16 control = channel[5];
+  u16 control = channel[DMA_CONTROL_HALF];
   u32 io;
 
-  channel[5] = control & 0xc5ff;
-  channel[5] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   io = 0x80;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }
@@ -195,9 +195,9 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_AGING_GAS);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the second projectile volley's shots fly at
@@ -209,9 +209,9 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 // BattleEffect_RunBurstShower, the body behind the 22 wrappers
@@ -271,7 +271,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       mode == BURST_SHOWER_MODE_DJINNFEST ||
       mode == BURST_SHOWER_MODE_HEAT_KISS ||
       mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
 
@@ -298,7 +298,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                  BGCNT_SCREEN_BASE(7);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (args->prelude == 1) {
@@ -361,7 +361,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     if (mode == BURST_SHOWER_MODE_DJINNFEST)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+                      SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -373,7 +373,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
     // A violet ramp from color 1, blended 16:4.
     for (i = 1; i != 64; i++) {
@@ -389,12 +389,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_CHAR) {
     // Six smoke pictures, each with more holes punched at random.
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
@@ -405,7 +405,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     }
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
              mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
     // The beam, each 24-pixel row drawn twice side by side.
@@ -422,11 +422,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_LimePalette),
-                      128);
+                      SHEET_PALETTE_BYTES);
     else
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                      128);
+                      SHEET_PALETTE_BYTES);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -435,7 +435,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       for (i = 0; i != 64; i++) {
         s32 level = i / 4;
 
-        BG_PLTT[i] = (level << 10) | (level << 5) | level;
+        BG_PLTT[i] = RGB(level, level, level);
       }
       REG_BLDCNT = 0;
     } else {
@@ -454,7 +454,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           for (i = 0; i != 64; i++) {
             s32 level = i / 4;
 
-            BG_PLTT[i] = (level << 10) | (level << 5) | level;
+            BG_PLTT[i] = RGB(level, level, level);
           }
           palette = NULL;
         } else if (mode == BURST_SHOWER_MODE_SAND_BREATH) {
@@ -647,8 +647,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
       if (args->prelude == 1) {
-        s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + origin[0] / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + origin[1] - 24;
+        s32 x =
+            (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 4)) + origin[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 2)) + origin[1] - 24;
 
         if (frame > 56)
           y = y - frame * 2 + 112;
@@ -687,8 +688,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           aim[1] = targets[target][1] + Random16() % 96 - 32;
         else if (mode == BURST_SHOWER_MODE_FIRE_DANCE) {
           aim[1] = targets[target][1] + (Random16() & 255) - 192;
-          aim[1] =
-              targets[target][1] + ((Trig_Sin(frame << 12) << 8) >> 16) - 128;
+          aim[1] = targets[target][1] +
+                   (Q_16_16_TO_INT(Trig_Sin(frame << 12) << 8)) - 128;
         } else
           aim[1] = targets[target][1] + (Random16() & 63) - 16;
         limit = 16;
@@ -715,7 +716,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       }
 
       // Draw and move the shots in flight.
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *shot = &work->particles[i];
         s32 age = shot->variant;
         s32 cel;
@@ -752,7 +753,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
             pair[1](canvas, work->sheet + cel * 1024,
-                    Q_16_16_UPPER_HALF(shot->x) - 16, (y >> 16) - 16, 32, 32);
+                    Q_16_16_UPPER_HALF(shot->x) - 16, (Q_16_16_TO_INT(y)) - 16,
+                    32, 32);
           }
         } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
           s32 cel = i % 5 * 3 + age % 3;
@@ -773,7 +775,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           s32 wobble = Trig_Sin((i * 2 + frame) << 11);
           s32 y;
           cel = age >> 2;
-          y = (shot->y + (wobble << 5)) >> 16;
+          y = Q_16_16_TO_INT(shot->y + (wobble << 5));
 
           pair[1](canvas, work->sheet + cel * 1152,
                   Q_16_16_UPPER_HALF(shot->x) - 12, y - 24, 24, 48);
@@ -827,12 +829,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
               // Default: set for real below.
               widths = NULL;
               heights = NULL;
-              angle = Random16() & 0xffff;
-              x = (Trig_Sin(angle) << 4) >> 16;
+              angle = Random16() & TRIG_ANGLE_MASK;
+              x = Q_16_16_TO_INT(Trig_Sin(angle) << 4);
               x += targets[i][0] / 2;
               widths = gBattleEffect_GlintPictureWidths;
               x -= widths[cel] >> 1;
-              y = (Trig_Cos(angle) << 4) >> 16;
+              y = Q_16_16_TO_INT(Trig_Cos(angle) << 4);
               y += targets[i][1];
               heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;
@@ -895,8 +897,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                        POSE_DAMAGE, i, 3);
             if (mode != BURST_SHOWER_MODE_FIRE_DANCE &&
                 mode != BURST_SHOWER_MODE_DESERT_GASP)
-              BattleEffect_StartActorMotion(args->targets[i], 1, 0x10000,
-                                            0x40000, 0x20000, frame + 100);
+              BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
+                                            px(2), frame + 100);
           }
         }
       }
@@ -960,8 +962,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         mode == BURST_SHOWER_MODE_DESERT_GASP ||
         mode == BURST_SHOWER_MODE_HEAT_KISS) {
       // Hand over to the canvas effect: clear both canvases first.
-      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-      Iwram_ClearWords(canvas, 0x3c00);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+      Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       args->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       if (mode == BURST_SHOWER_MODE_DESERT_GASP)

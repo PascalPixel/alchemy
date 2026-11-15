@@ -12,6 +12,9 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
+/// Where BladeSheet is decoded in the effect's pictures.
+#define LEGEND_BLADE_PICTURES 0x4000
+
 /// Legend: a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
 /// it. Then one sword for each step of the variant (variant + 1 in all, 16
@@ -42,8 +45,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   // Set up the canvas and a clipped MAX blitter, mirrored to face the
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -55,8 +58,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
   Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet, work->sheet + 0x4000,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet,
+                             work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet + 0x5000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
@@ -125,7 +128,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
         if (y > 24)
           height = 104 - y;
-        draw[0](canvas, work->sheet + 0x4000, x, y, 40, height);
+        draw[0](canvas, work->sheet + LEGEND_BLADE_PICTURES, x, y, 40, height);
         if (step->variant <= 12) {
           step->x += step->velocityX;
           step->y += step->velocityY;
@@ -189,11 +192,11 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyTranslation(px(start.x - 128), px(height), 0);
-        Transform_ApplyPitch(0x5900);
+        Transform_ApplyPitch(TRIG_TURN * 89 / 256);
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Transform_ApplyYaw(0x1900);
+          Transform_ApplyYaw(TRIG_TURN * 25 / 256);
         else
-          Transform_ApplyYaw(-0x1900);
+          Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
         Transform_ApplyRoll(frame << 9);
         Transform_ApplyUniformScale(scale);
         Transform_ApplyAxisScale(Q16_ONE, Q16_ONE, Q16_ONE);
@@ -216,11 +219,11 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyTranslation(px(start.x - 128), -px(48), 0);
-            Transform_ApplyPitch(0x5900);
+            Transform_ApplyPitch(TRIG_TURN * 89 / 256);
             if (args->side == EFFECT_SIDE_ENEMIES)
-              Transform_ApplyYaw(0x1900);
+              Transform_ApplyYaw(TRIG_TURN * 25 / 256);
             else
-              Transform_ApplyYaw(-0x1900);
+              Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
             Transform_ApplyRoll(frame << 9);
             Transform_ApplyUniformScale(scale);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -314,8 +317,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   scale = 0;
@@ -451,9 +454,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
           if (step->variant >= 0) {
             if (step->variant > 1)
-              draw[0](canvas, work->sheet + 0x800 + step->variant / 4 * 0x480,
+              draw[0](canvas,
+                      work->sheet + 0x800 +
+                          step->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                       Q_16_16_UPPER_HALF(step->x) - 12,
-                      Q_16_16_UPPER_HALF(step->y) - 24, 24, 48);
+                      Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
+                      SMOKE_PUFF_HEIGHT);
             step->x += step->velocityX;
             step->y += step->velocityY;
             if (step->y > px(96)) {
@@ -500,8 +506,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-          BattleEffect_StartActorMotion(args->targets[i], 1, 0x20000, 0x80000,
-                                        0x10000, 100 + speed);
+          BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(8),
+                                        px(1), 100 + speed);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
           burst = 0;

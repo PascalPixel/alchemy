@@ -9,6 +9,12 @@
 
 #define PILLAR_FRAMES 96
 
+#define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4    ///< and each frame after
+
+/// The flame on odd frames, then on even frames, after the 34x104 column.
+#define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
+
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
 ///
@@ -31,8 +37,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -41,14 +47,14 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   } else if (args->variant == EFFECT_VARIANT_STRONGEST) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -99,22 +105,26 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         // Four frames after it starts the pillar burns: its flames scroll
         // up through two copies, and its base flickers between two cels.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
-          s32 scroll = (frame * 16 + pillar * 25) % 104;
+          s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll - 104, 34, 104);
+                           screen.y - scroll - FIRE_PILLAR_HEIGHT,
+                           FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
                            screen.y - scroll, 34, scroll);
           if (frame & 1) {
-            draw[0](canvas, work->sheet + 0xdd0, screen.x - 20, screen.y - 24,
-                    20, 37);
-            draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24, 20,
-                    37);
+            draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD, screen.x,
+                    screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
+                    FIRE_PILLAR_FLAME_HEIGHT);
           } else {
-            draw[0](canvas, work->sheet + 0x10b4, screen.x - 20, screen.y - 24,
-                    20, 37);
-            draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24, 20,
-                    37);
+            draw[0](canvas, work->sheet + 0x10b4,
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
           }
         }
 
@@ -139,11 +149,11 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {
                 spark->variant = (Random16() & 7) + 48;
-                if (spawned == 200)
+                if (spawned == VOLCANO_ERUPTION)
                   break;
               } else {
                 spark->variant = (Random16() & 7) + 24;
-                if (spawned == 4)
+                if (spawned == VOLCANO_TRICKLE)
                   break;
               }
             }
@@ -176,8 +186,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         spark->variant = life - 1;
         x = spark->x += spark->z;
         y = spark->y += spark->velocityY;
-        spark->z = spark->z * 60 / 64;
-        spark->velocityY = spark->velocityY * 60 / 64 - 16;
+        spark->z = spark->z * 60 / DAMPING_SCALE;
+        spark->velocityY = spark->velocityY * 60 / DAMPING_SCALE - 16;
         py = y / 256;
         if (py > 120) {
           spark->velocityY = -spark->velocityY / 2;

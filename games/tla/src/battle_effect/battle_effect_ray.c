@@ -14,6 +14,8 @@
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
 
+#define RAY_FRAMES 64
+
 /// Four bolts close in, turning towards the centre and scattering sparks from
 /// their roots.
 ///
@@ -35,9 +37,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   xOffset = 0;
   if (args->side == EFFECT_SIDE_ENEMIES)
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   else
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   if (args->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5); // twice as wide
   else
@@ -79,15 +81,16 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
     speed = (Random16() & 0x3ff) + 256;
     angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-    SET_POSITION(spark, px(1) / 4, px(7) / 16, (Trig_Sin(angle) * speed) >> 16);
-    spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
+    SET_POSITION(spark, px(1) / 4, px(7) / 16,
+                 Q_16_16_TO_INT(Trig_Sin(angle) * speed));
+    spark->velocityZ = Q_16_16_TO_INT(-(Trig_Cos(angle) * speed * 2));
     spark->variant = 0;
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != RAY_FRAMES; frame++) {
     if (frame == 20)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     if (frame < 16) {
@@ -102,16 +105,18 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         // The radius across shrinks from 32 a pixel a frame.
         count = 0;
         angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
-        x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
-        y = -((Trig_Cos(angle) << 3) >> 16) - 8;
+        x = (Q_16_16_TO_INT((32 - frame) * Trig_Sin(angle))) + 64;
+        y = -(Q_16_16_TO_INT(Trig_Cos(angle) << 3)) - 8;
         if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
-                  xOffset + x + (Random16() & 7) - 16, y, 24, 120);
+                  xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+                  LIGHTNING_BOLT_HEIGHT);
         else
           draw[bolt & 1](
               canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
-              xOffset + x + (Random16() & 7) - 16, y, 24, 120);
+              xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+              LIGHTNING_BOLT_HEIGHT);
 
         // Throw sparks from the bolt's foot.
         for (i = 0; i != SPARK_COUNT; i++) {
@@ -147,8 +152,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         if (spark->y > px(120)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-          s32 x = spark->x >> 16;
-          s32 y = spark->y >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 y = Q_16_16_TO_INT(spark->y);
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],

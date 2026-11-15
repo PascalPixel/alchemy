@@ -68,11 +68,10 @@ void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
 
 #undef RESULTS_FRAME
 
-/// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
-/// variant's are half as tall.
-#define PICTURE_SIZE 120
-#define PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE)
-#define HALF_PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
+/// One 120x120 picture of a flashing strike; the reflected variant's are half
+/// as tall.
+#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
+#define FLASHING_STRIKE_HALF_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE / 2)
 
 #define REVEAL_FRAMES 21
 #define FLOOD_FRAME 16 ///< the pictures end and the canvas floods
@@ -92,7 +91,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (variant 5's four half pictures all there).
@@ -112,11 +111,11 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                                1, 1);
     // Turn the first 64 BG colours: red to blue, blue to green, green to red.
     for (i = 0; i != 64; i++) {
-      s32 blue = (((u16 *)BG_PLTT)[i] >> 10) & 0x1f;
-      s32 green = (((u16 *)BG_PLTT)[i] >> 5) & 0x1f;
-      s32 red = ((u16 *)BG_PLTT)[i] & 0x1f;
+      s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
+      s32 green = RGB_GREEN(((u16 *)BG_PLTT)[i]);
+      s32 red = RGB_RED(((u16 *)BG_PLTT)[i]);
 
-      ((u16 *)BG_PLTT)[i] = (red << 10) | (blue << 5) | green;
+      ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
   } else if (variant == 3) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
@@ -144,7 +143,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     Actor_SelectAnimationFar(user, 2);
-    Actor_SetAnimationSpeedFar(user, 48);
+    Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   if (variant == 4)
@@ -176,37 +175,42 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     if (variant == 5) {
       // Half the picture, then its reflection below it.
       if (frame <= 3) {
-        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer, 0, PICTURE_SIZE / 2, PICTURE_SIZE,
-                PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer, 0, SLASH_PICTURE_SIZE / 2,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 7) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 11) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
+                0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 15) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
+                0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       }
     } else {
       if (frame <= 3)
-        draw[0](canvas, work->sheet, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE);
       else if (frame <= 7)
-        draw[0](canvas, work->sheet + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE);
+        draw[0](canvas, work->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
       else if (frame <= 11)
-        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE);
       else if (frame <= 15)
-        draw[0](canvas, Ram_MapCellBuffer + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     }
 
     // The flood: four frames of the canvas filled with colour 0x3f.
@@ -227,13 +231,17 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunWeaken(args);
   } else {
     if (variant == 4)
-      Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 16);
+      Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
+                                 ANIMATION_STEP_NORMAL);
     BattleEffect_EndCanvasLayer();
   }
 }
+
+#undef FLASHING_STRIKE_PICTURE_BYTES
+#undef FLASHING_STRIKE_HALF_BYTES

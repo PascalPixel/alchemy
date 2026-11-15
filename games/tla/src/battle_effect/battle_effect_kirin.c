@@ -8,10 +8,12 @@
 #define KIRIN_BLOB_BYTES (48 * 32)
 
 /// The hit bursts, 32 for each target, in the map cell buffer.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 extern struct SpriteScale gKirin_SweepScale;
 extern struct SpriteScale gKirin_ChargeScale;
+
+#define KIRIN_CHARGE_FRAMES 96 ///< frames of the charge and the wall of fire
+#define KIRIN_SWEEP_FRAMES 120 ///< frames of Kirin's bound through the hoop
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then, unseen behind the battle background, it charges across the
@@ -51,7 +53,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   // Setup: wipe the battle away, swap in the forest and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -71,7 +73,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   view->active = 1;
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *fire = &work->particles[i];
 
     fire->x = (Random16() & 31) + 16;
@@ -86,7 +88,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
 
   // The sweep: Kirin bounds in over the forest (A or B ends it).
-  for (frame = 0; frame != 120; frame++) {
+  for (frame = 0; frame != KIRIN_SWEEP_FRAMES; frame++) {
     wave = 0;
     if (frame == 0)
       Sound_PlayFar(SE_WHOOSH);
@@ -128,10 +130,10 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         amp = 96;
         if (frame <= 104)
           amp = 32;
-        ang = (frame * 1024 - TRIG_TURN / 8) & 0xffff;
+        ang = (frame * 1024 - TRIG_TURN / 8) & TRIG_ANGLE_MASK;
         if (ang > TRIG_TURN / 2)
           ang -= TRIG_TURN / 2;
-        wave = (Trig_Sin(ang) * amp) >> 16;
+        wave = Q_16_16_TO_INT(Trig_Sin(ang) * amp);
         if ((frame & 31) == 8)
           work->shakeFrames = 4;
       }
@@ -156,8 +158,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         count = 64;
       for (i = 0; i != count; i++) {
         s32 ang = i << 10;
-        s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
-        s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
+        s32 x = (Q_16_16_TO_INT(Trig_Sin(ang) * (grow * 2 + 8))) + grow + 96;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(ang) * (grow * 12 + 48))) + 64;
 
         EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
@@ -181,7 +183,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                Q_16_16_UPPER_HALF(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
-          fire->velocityY = fire->velocityY * 48 / 64;
+          fire->velocityY = fire->velocityY * 48 / DAMPING_SCALE;
         } else {
           fire->variant--;
         }
@@ -204,7 +206,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       y = 0;
       do {
         blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-             120 - slide, y, 48, 32);
+             120 - slide, y, FIRE_BLOB_WIDTH, FIRE_BLOB_HEIGHT);
         i++;
         y += 18;
       } while (i != 6);
@@ -214,7 +216,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       work->shakeFrames--;
       gBgScroll[1].y = (Random16() & 7) + 28;
     } else {
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -241,9 +243,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-    for (frame = 0; frame != 96; frame++) {
+    for (frame = 0; frame != KIRIN_CHARGE_FRAMES; frame++) {
       if (frame <= 23) {
         struct SpriteScale chargeScale = gKirin_ChargeScale;
         s32 ang;
@@ -254,12 +256,12 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           ang = frame * 2048 + TRIG_TURN / 4;
           if (ang > TRIG_TURN / 2)
             ang -= TRIG_TURN / 2;
-          rise = (Trig_Sin(ang) * 64) >> 16;
+          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 64);
         } else {
           ang = frame * 2048 + TRIG_TURN / 4;
           if (ang > TRIG_TURN / 2)
             ang -= TRIG_TURN / 2;
-          rise = (Trig_Sin(ang) * 32) >> 16;
+          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 32);
         }
         chargePlace.groundHeight = 0;
         chargePlace.height = px(255);
@@ -333,7 +335,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         y = -8;
         do {
           blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-               jitterRow[i] - slide + 120, y, 48, 32);
+               jitterRow[i] - slide + 120, y, FIRE_BLOB_WIDTH,
+               FIRE_BLOB_HEIGHT);
           i++;
           y += 8;
         } while (i != 16);
@@ -378,18 +381,3 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define SCENE_FRAMES 244  ///< act one; A or B ends it after frame 16
 #define PILLAR_FRAMES 144 ///< act two
 #define RESULTS_FRAME 96
-
-/* VIEW(ability_effects): tag struct SpriteObject as struct
- * SpriteObject__ability_effects; battle_effect/cybele has another definition;
- * not tried: struct SpriteObject__ability_effects was not found. */
-struct SpriteObject {
-  u16 unk00;
-  u16 unk02;
-  u16 unk04;
-  u16 unk06;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[6];
-  u8 slot;
-};

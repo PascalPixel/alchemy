@@ -79,6 +79,9 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
+#define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
+#define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
+
 /// Around each target in turn, motes (smoke, hearts, orbs) close in on it or
 /// rise, and the target flashes.
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
@@ -126,7 +129,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
@@ -178,7 +181,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
     // Ripple the canvas: one horizontal offset for each line.
     row = work->bg2xLines;
-    for (i = 0; i != 160; i++)
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
 
     for (member = 0; member != args->targetCount; member++) {
@@ -201,7 +204,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
           /* FAKEMATCH(temporary): w and h set inside statement expressions at
            * their first reads. */
-          angle = Random16() & 0xffff;
+          angle = Random16() & TRIG_ANGLE_MASK;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (({
@@ -212,7 +215,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
            * width table's address. */
           __asm__("" : "=r"(w) : "0"(w));
-          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+          y = base.y - (Q_16_16_TO_INT(Trig_Cos(angle) * radius)) -
               (({
                  h = gBattleEffect_GlintPictureHeights;
                  h;
@@ -254,7 +257,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
           Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
-          struct Particle *mote = &PARTICLES[member * 64 + i];
+          struct Particle *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
 
           if (frame > member * 8 + i) {
@@ -271,16 +274,17 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
-                        screen.y - 20, 40, 40);
+                        screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
-                        42);
+                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21,
+                        HEART_WIDTH, HEART_HEIGHT);
               else
                 draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
-                                   screen.x - 12, screen.y - 24, 24, 48);
+                                   screen.x - 12, screen.y - 24, 24,
+                                   VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
               if (DECAYS(mode)) {
@@ -291,7 +295,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 mote->y += px(1);
               }
               mote->variant++;
-              if (mote->variant == 24) {
+              if (mote->variant == TARGET_MOTES_CYCLE) {
                 if (DECAYS(mode)) {
                   mote->variant = 0;
                 } else {
@@ -334,6 +338,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SHEEP_FRAMES 98
 #define GROUND_Y px(92)
 
+#define SLEEP_SEEDED 32 ///< particles cleared at the start
+
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
+
 /// Twelve sheep drop onto the targets' side, tumbling, and each target falls
 /// asleep in turn.
 ///
@@ -358,7 +367,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
@@ -370,7 +379,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   drawB = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   // The sheep wait above the screen with a random spin and starting cel.
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != SLEEP_SEEDED; i++) {
     one = &sheep[i];
     one->x = px((Random16() & 63) + 32);
     one->y = -px(32);
@@ -427,10 +436,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         cel = (one->variant / 16) & 7;
         if (cel < 4)
           drawA(canvas, work->sheet + (cel << 10) + 0x800,
-                scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
+                scroll + (Q_16_16_TO_INT(one->x)) - 16,
+                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
         else
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
-                scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
+                scroll + (Q_16_16_TO_INT(one->x)) - 16,
+                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
         one->y += one->velocityY;
         one->velocityY += px(1) / 8;
         one->variant += one->z;
@@ -453,6 +464,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
+/// FlameColumnSheet: the flame's nine pictures, then the marker at the
+/// target's feet.
+#define CURSE_FLAME_WIDTH 16
+#define CURSE_FLAME_HEIGHT 12
+#define CURSE_MARKER_PICTURE_WIDTH 16
+#define CURSE_MARKER_PICTURE_HEIGHT 20
+#define CURSE_MARKER_PICTURE (9 * PICTURE_BYTES(CURSE_FLAME))
+
 /// A small flame burns above each target in turn, over a marker at its feet.
 ///
 /// Abilities: Curse; Lucid Prophecy.
@@ -472,7 +491,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // right half of the field.
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
@@ -508,16 +527,18 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
           if (args->side == EFFECT_SIDE_PARTY) {
-            pos.x -= 112;
+            pos.x -= NARROW_CANVAS_PARTY_X;
           }
           y = pos.y;
           pos.y = y - 16;
-          draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
+          draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE, pos.x - 8,
+                  y - CURSE_MARKER_PICTURE_HEIGHT, CURSE_MARKER_PICTURE_WIDTH,
+                  CURSE_MARKER_PICTURE_HEIGHT);
           // DEAD: always true here; the ROM keeps the test.
           if (frame >= start) {
             cel = ((frame - start) + marker->variant) / 6 % MARKER_CELS;
-            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16,
-                    12);
+            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16,
+                    CURSE_FLAME_WIDTH, CURSE_FLAME_HEIGHT);
           }
         }
         i++;
@@ -530,6 +551,12 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Tear down.
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#define DJINN_HEAL_FRAMES 98
+
+#define DJINN_HEAL_SPARKS 512 ///< sparks in PARTICLES, 64 for each target
+#define DJINN_HEAL_SPARKS_PER_TARGET 64
+#define DJINN_HEAL_SWIRL_MOTES 32 ///< motes swirled in
 
 /// A Djinni rides a swarm of sparks from the user to the first target, then
 /// hovers over the targets while sparkles gather on each in turn.
@@ -566,9 +593,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   goal = BattleObject_GetFar(args->targets[0])->object;
 
   // The swarm: 64 sparks thrown out level from the Djinn.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 heading = Random16() & 0xffff;
+    s32 heading = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 0xff) + 128;
 
     SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
@@ -591,7 +618,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   delta[1] = (target[1] - position[1]) / 40;
   delta[2] = (target[2] - position[2]) / 40;
 
-  for (frame = 0; frame != 98; frame++) {
+  for (frame = 0; frame != DJINN_HEAL_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 8)
@@ -617,7 +644,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
     // Each spark spins in one of four planes, smaller further away, and
     // after 30 frames is pulled back toward the Djinn.
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       if (frame > i && spark->variant == 0) {
@@ -669,13 +696,14 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       rider[2] = 0;
       EffectPosition_ProjectPoint(rider, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
+      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17,
+              SMALL_DJINNI_WIDTH, MERCURY_SMALL_DJINNI_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
 
   // The second part: 64 puffs of sparkle for each target.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_HEAL_SPARKS; i++) {
     struct Particle *spark = &PARTICLES[i];
 
     SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -699,7 +727,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;
     EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
+    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17,
+                 SMALL_DJINNI_WIDTH, 34);
 
     // Each target in turn, eight frames apart: its puffs close in around
     // it, and it flashes from 40 to 64 frames into its turn.
@@ -724,8 +753,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                                  TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
-        for (i = 0; i != 64; i++) {
-          struct Particle *spark = &PARTICLES[member * 64 + i];
+        for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
+          struct Particle *spark =
+              &PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];
 
           if (frame > start + i / 2) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
@@ -792,4 +822,3 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef MARKER_FRAMES
 #undef MARKER_STAGGER
 #undef MARKER_CELS
-#undef PARTICLES

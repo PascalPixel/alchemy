@@ -22,6 +22,11 @@ struct RenderModel__megiddo {
   u8 scrollV;
 };
 
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define MEGIDDO_DUST_BLOB_PICTURES 0x2400
+
+#define MEGIDDO_FRAMES 188
+
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
 ///
@@ -71,12 +76,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   savedYaw = 0;
   zero = 0;
   ring = gMapGridCellBuffer;
-  transformed = Data_02011000;
-  strip = Data_02012000;
-  scratchSheet = gData_02014000;
+  transformed = Ram_MapCellBuffer + 0x1000;
+  strip = Ram_MapCellBuffer + 0x2000;
+  scratchSheet = Ram_MapCellBuffer + 0x4000;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -92,14 +97,14 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   for (j = 0; j != 16; j++) {
     s32 c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
-    s32 y = (c * 16) >> 16;
-    s32 r = (s * 48) >> 16;
+    s32 y = Q_16_16_TO_INT(c * 16);
+    s32 r = Q_16_16_TO_INT(s * 48);
 
     for (m = 0; m != 2; m++) {
       struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      SET_POSITION(v, (Trig_Sin(m << 13) * r) >> 16, y + 24,
-                   (Trig_Cos(m << 13) * r) >> 16);
+      SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(m << 13) * r), y + 24,
+                   Q_16_16_TO_INT(Trig_Cos(m << 13) * r));
     }
   }
   casterValue = caster[18];
@@ -110,7 +115,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   caster[13] = 0;
   caster[18] = 0;
 
-  for (frame = 0; frame != 188; frame++) {
+  for (frame = 0; frame != MEGIDDO_FRAMES; frame++) {
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
@@ -130,24 +135,26 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       frame = 143;
     }
     if (frame == 0) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
-                                 0);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
                                  1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                                 work->sheet + 0x2400, 1, 0);
+                                 work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
+                                 0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (!args->side) {
-        x = 0xa00000;
+        x = px(160);
       } else {
-        x = 0x500000;
+        x = px(80);
       }
-      z = -0x600000;
+      z = -px(96);
       {
         volatile u16 *ime;
         struct IoWriteQueue *q;
@@ -198,10 +205,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         s32 r = 80;
 
         if (i != 1) {
-          r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
+          r = (Q_16_16_TO_INT(Trig_Sin((frame + k * 4) << 12) * 2)) + 120;
         }
-        SET_POSITION(v, (Trig_Sin(k << 11) * r) >> 16,
-                     (Trig_Cos(k << 11) * r) >> 16, zero);
+        SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(k << 11) * r),
+                     Q_16_16_TO_INT(Trig_Cos(k << 11) * r), zero);
       }
     }
 
@@ -210,7 +217,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       s32 d;
 
       if (y > 104) {
-        y -= 0x10000;
+        y -= px(1);
       }
       if (frame <= 63) {
         d = -16;
@@ -245,31 +252,31 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       gBgScroll[1].y = y;
     }
     if ((u32)(frame - 42) <= 37) {
-      z += 0x20000;
+      z += px(2);
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!args->side) {
-        x -= 0x20000;
+        x -= px(2);
       } else {
-        x += 0x20000;
+        x += px(2);
       }
-      z += 0x40000;
+      z += px(4);
     }
     if (frame == 143) {
-      s32 *target;
+      struct MotionObject *target;
 
       Palette_BrightenBattleBg(-12, -2, -2);
       camera[27] = savedYaw;
-      x = 0x780000;
-      z = 0x300000;
+      x = px(120);
+      z = px(48);
       targetList[0] = args->targets[0];
       targetList[1] = 255;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
       gProjection.centerY = 556;
       target = BattleObject_GetFar(args->targets[0])->object;
-      target[2] = zero;
-      target[4] = zero;
+      target->x = zero;
+      target->z = zero;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
@@ -306,13 +313,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         IME_RESTORE(ime, saved);
       }
       Actor_SetAnimationSpeedFar(caster, 128);
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame == 171) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -396,7 +405,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
       t->logWidth = 5;
       t->logHeight = 5;
-      t->pixels = work->sheet + 0x2400;
+      t->pixels = work->sheet + MEGIDDO_DUST_BLOB_PICTURES;
       model->kind = 7;
       model->mesh = meshB;
       tint = -24;
@@ -439,9 +448,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
 
     if (frame == 8) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         p->x = Random16() & 127;
         p->y = Random16() & 127;
       }
@@ -450,7 +460,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       s32 off = (frame * 2 - 16) & 127;
 
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         if (p->variant >= 0) {
           s32 size = 1;
           s32 mx = p->x;
@@ -475,7 +485,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
       if (frame == 143) {
         p = work->particles;
-        for (i = 0; i != 64; i++, p++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
           SET_POSITION(p, Random16() & 127, Random16() % 192 - 64,
                        Random16() & 127);
         }
@@ -483,7 +493,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_ApplyPitch(n * 384 - TRIG_TURN * 3 / 16);
       p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
@@ -513,7 +523,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s = (t << 14) + 0x4000;
           model->shade = shade;
           Transform_Reset();

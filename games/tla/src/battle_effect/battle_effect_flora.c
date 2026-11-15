@@ -9,17 +9,6 @@
 
 struct StripQuad;
 
-/// A sprite as Flora reads it: its tile, flags and resource.
-struct FloraObject {
-  u8 unk0[8];
-  u16 tile : 10;
-  u16 flags : 2;
-  u16 unk08 : 4;
-  u16 unk0a;
-  u8 unk0c[4];
-  u8 resource;
-};
-
 /// Flora's petals in the scratch block at 0x02014000: the bloom's fifteen
 /// tile numbers, each petal's animation phase, position and velocity, and
 /// the object palette as it fades.
@@ -35,7 +24,6 @@ struct FloraWork {
 };
 
 #define w ((struct FloraWork *)petals)
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -92,7 +80,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
-  petals = (s32)&gData_02014000;
+  petals = (s32)gData_02014000;
   source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -105,7 +93,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 27) {
       u8 *e;
 
-      gProjection.centerY = 240;
+      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
@@ -115,21 +103,21 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)(OBJ_PLTT + 15 * 16), e, 32);
+      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e, 32);
       e += 32;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct FloraObject *obj =
-            EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
+            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
         work->sprites[12 + i] = obj;
-        obj->flags = 2;
+        obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
-        w->tiles[i] = ((struct FloraObject *)work->sprites[12 + i])->tile;
+        w->tiles[i] = ((struct Sprite *)work->sprites[12 + i])->image.tile;
       }
       for (i = 0; i != 17; i++) {
-        struct FloraObject *obj =
-            EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
+        struct Sprite *obj =
+            EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
         work->sprites[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
       }
@@ -137,7 +125,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       phase = Data_0201401e;
       for (; i != 32; i++, phase++) {
         *phase = (Random16() % 15) << 8;
-        ((struct FloraObject *)work->sprites[12 + i])->tile =
+        ((struct Sprite *)work->sprites[12 + i])->image.tile =
             w->tiles[*phase / 256];
       }
       e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
@@ -145,9 +133,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj =
-            EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
-        obj->flags = 2;
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
+            32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+        obj->image.priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
       }
@@ -175,7 +163,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   posX = 128;
@@ -202,7 +190,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
        frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
@@ -222,7 +210,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 108) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      BattleEffect_DrawShadedCircles(source, 8, 0x10000);
+      BattleEffect_DrawShadedCircles(source, 8, Q16_ONE);
       BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
       BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
       BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
@@ -239,13 +227,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
       for (i = 0; i != 240; i++, e++) {
         s32 c = w->palette[i];
-        s32 b = (u16)c >> 10 & 31;
-        s32 g = (u16)c >> 5 & 31;
-        s32 r = c & 31;
+        s32 b = RGB_BLUE((u16)c);
+        s32 g = RGB_GREEN((u16)c);
+        s32 r = RGB_RED(c);
         s32 t = *e;
-        s32 tb = (u16)t >> 10 & 31;
-        s32 tg = (u16)t >> 5 & 31;
-        s32 tr = t & 31;
+        s32 tb = RGB_BLUE((u16)t);
+        s32 tg = RGB_GREEN((u16)t);
+        s32 tr = RGB_RED(t);
 
         if (b > tb) {
           b--;
@@ -256,7 +244,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         if (r > tr) {
           r--;
         }
-        w->palette[i] = b << 10 | g << 5 | r;
+        w->palette[i] = RGB(r, g, b);
       }
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
     }
@@ -270,16 +258,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dx = 0;
     place[1] = px(255);
     if (frame <= 119) {
-      posX = Trig_Sin(0xcd00) * 24 + 0x980000;
-      posY = Trig_Cos(0xcd00) * 20 + 0x2c0000;
+      posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + 0x980000;
+      posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + 0x2c0000;
     } else if (frame <= 179) {
       s32 a = frame * 3 * 256 + -0x9800;
 
       posX = Trig_Sin(a) * 24 + 0x980000;
       posY = Trig_Cos(a) * 20 + 0x2c0000;
     } else if (frame <= 221) {
-      posX += -0x12000;
-      posY += 0x8000;
+      posX += -px(9) / 8;
+      posY += px(1) / 2;
     } else if (frame <= 251) {
       s32 m = frame % 6;
       s32 m4;
@@ -320,9 +308,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         gBgScroll[1].y = 34;
       }
     } else {
-      gBgScroll[1].y = 32;
-      posX += 0x80000;
-      posY += -0x60000;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+      posX += px(8);
+      posY += -px(6);
     }
     if (frame > 111) {
       for (i = 0; i != 12; i++) {
@@ -448,7 +436,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame == start) {
           w->x[i] = px(Random16() & 7) + px(92);
           w->y[i] = px(Random16() & 7) + px(104);
-          w->vx[i] = (Random16() & 0xffff) * 12 + -0xc0000;
+          w->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
           if (w->x[i] >= -px(16) && w->y[i] <= px(168)) {
@@ -464,7 +452,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == 112) {
-          u32 a = Random16() & 0xffff;
+          u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
           w->x[i] = px(Random16() & 7) + px(168);
@@ -472,7 +460,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
-          u32 a = Random16() & 0xffff;
+          u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
           w->x[i] = px(Random16() & 7) + px(92);
@@ -482,8 +470,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];
-          w->vx[i] = w->vx[i] * 63 / 64;
-          w->vy[i] = w->vy[i] * 63 / 64;
+          w->vx[i] = w->vx[i] * 63 / DAMPING_SCALE;
+          w->vy[i] = w->vy[i] * 63 / DAMPING_SCALE;
           if ((u32)(w->vx[i] + 0xffff) <= 0x1fffe &&
               (u32)(w->vy[i] + 0xffff) <= 0x1fffe) {
             w->x[i] = px(256);
@@ -496,7 +484,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       } else {
         Data_02014002[14 + i] = (Data_02014002[14 + i] + 128) % 3840;
       }
-      ((struct FloraObject *)work->sprites[12 + i])->tile =
+      ((struct Sprite *)work->sprites[12 + i])->image.tile =
           w->tiles[Data_02014002[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {
@@ -545,8 +533,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
     Transform_Reset();
-    Transform_ApplyPitch(0x9400);
-    Transform_ApplyYaw(0x6800);
+    Transform_ApplyPitch(TRIG_TURN * 37 / 64);
+    Transform_ApplyYaw(TRIG_TURN * 13 / 32);
     if (frame == 156) {
       spin = 512;
       angle = 0;
@@ -600,8 +588,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             }
           }
         }
-        pos.x = Trig_Sin(a + b) * rr >> 16;
-        pos.y = Trig_Cos(a + b) * rr >> 16;
+        pos.x = Q_16_16_TO_INT(Trig_Sin(a + b) * rr);
+        pos.y = Q_16_16_TO_INT(Trig_Cos(a + b) * rr);
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
@@ -651,8 +639,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       outerY = 92 - sy;
       innerY = 88 - sy;
       for (i = 0; i != 128; i++) {
-        ringPoint.x = Trig_Sin(i << 9) * inner >> 16;
-        ringPoint.y = Trig_Cos(i << 9) * inner >> 16;
+        ringPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
+        ringPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
         ringPoint.depth = 0;
         EffectPosition_ProjectPoint(&ringPoint, &ringScreen);
         ringScreen.x >>= 1;
@@ -678,8 +666,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         dot[0] = c;
         dot[1] = c;
         for (i = 0; i != 128; i++) {
-          fadeRingPoint.x = Trig_Sin(i << 9) * inner >> 16;
-          fadeRingPoint.y = Trig_Cos(i << 9) * inner >> 16;
+          fadeRingPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
+          fadeRingPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
           fadeRingPoint.depth = 0;
           EffectPosition_ProjectPoint(&fadeRingPoint, &fadeRingScreen);
           fadeRingScreen.x >>= 1;
@@ -706,7 +694,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -714,7 +702,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   REG_BLDCNT = 0;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(0.5);
   {
     /* FAKEMATCH(pin): e kept in r6. */
@@ -890,7 +878,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
                              1, 1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Centre the canvas's x 64 on the target.
   BattleObject_GetFar(args->targets[0]);
@@ -978,8 +966,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     }
     Heap_Release(quad);
     Heap_Release(vertices);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
@@ -988,15 +976,6 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-/* VIEW(ability_effects): tag struct FxSlot as struct FxSlot__ability_effects;
- * battle_effect/battle_effect.h has another definition; not tried:
- * struct FxSlot__ability_effects was not found. */
-struct FxSlot {
-  void *object;
-  u8 unk04[0x26];
-  u8 hidden;
-};
 
 /// A sprite record as Flora sets its priority.
 struct FxRecord {
@@ -1007,14 +986,14 @@ struct FxRecord {
 };
 
 /// Sets the OBJ priority of every motion record of the battle object, unless
-/// its slot is hidden.
+/// the object is fading out.
 void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
-  struct FxSlot *slot = BattleObject_GetFar(objectId);
+  struct BattleObject *slot = BattleObject_GetFar(objectId);
   struct FxRecord *record;
   s32 i;
 
   for (i = 0; (record = GetMotionRecordFar(slot->object, i)) != NULL; i++) {
-    if (slot->hidden == 0)
+    if (slot->fading == 0)
       record->priority = priority;
   }
 }
@@ -1051,14 +1030,14 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
   battle = Ram_HeapSlots->battleWork;
@@ -1094,9 +1073,11 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 
       for (i = 0, puff = work->particles; i != 24; i++, puff++) {
         if (frame >= i / 8 && puff->variant <= 23) {
-          draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
+          draw[0](canvas,
+                  work->sheet + (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                   Q_16_16_UPPER_HALF(puff->x) - 12,
-                  Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
+                  Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                  SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(puff, 48, -px(1) / 8);
           puff->variant++;
         }
@@ -1177,7 +1158,6 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef w
-#undef OBJ_TILES
 #undef DAGGER_FRAMES
 #undef DAGGER_COUNT
 #undef DAGGER_FALL_FRAME

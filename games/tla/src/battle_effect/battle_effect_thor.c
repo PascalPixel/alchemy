@@ -18,6 +18,20 @@
 #define STORM_LIGHTNING_FRAMES 128
 #define STORM_BOLTS 18
 
+/// Where ParticleSpritesC is decoded in the effect's pictures.
+#define THOR_PARTICLE_SPRITES_C_PICTURES 0x1800
+
+/// The opening's beam of light, and the storm's bolts.
+#define THOR_BEAM_FRAME 151
+#define THOR_BOLTS_FRAME 80
+/// The second part's sheet: the pillar of lightning in two pictures, then
+/// the bolts.
+#define THOR_BOLT_WIDTH 72
+#define THOR_BOLT_HEIGHT 72
+
+#define THOR_LIGHT_FAN_WIDTH 32
+#define THOR_LIGHT_FAN_HEIGHT 96
+
 /// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
@@ -49,10 +63,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
-                             work->sheet + 0x1800, 0, 0);
+                             work->sheet + THOR_PARTICLE_SPRITES_C_PICTURES, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // Eight copies of the dot pictures, each with its colour levels capped 7
@@ -78,7 +93,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  BG_PLTT[1] = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   work->scrollTimer = 0;
@@ -91,7 +106,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -103,16 +118,17 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   for (i = 0; i != 16; i++) {
     ramp[i] = i * 8 + 3;
     ramp[31 - i] = i * 8 + 3;
-    if (ramp[i] > 63) {
-      ramp[i] = 63;
+    if (ramp[i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[i] = CANVAS_LEVEL_BRIGHTEST;
     }
-    if (ramp[31 - i] > 63) {
-      ramp[31 - i] = 63;
+    if (ramp[31 - i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[31 - i] = CANVAS_LEVEL_BRIGHTEST;
     }
   }
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                  SHEET_PALETTE_BYTES);
 
   for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
     size = 2;
@@ -123,7 +139,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     if (frame == 132) {
       Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     }
-    if (frame == 151) {
+    if (frame == THOR_BEAM_FRAME) {
       Sound_PlayFar(SE_CRASH);
     }
     if (gInput.repeat & (KEY_A | KEY_B)) {
@@ -186,7 +202,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                    px(gThor_Points[i][1] - 96));
         EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
-        screen[i].y = (screen[i].y >> 16) + 60;
+        screen[i].y = (Q_16_16_TO_INT(screen[i].y)) + 60;
       }
       for (i = 0; i != 3; i++) {
         dotCount = count * 2 - i * 48 - 256;
@@ -238,7 +254,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         point[2] = -(Trig_Cos(i << 9) * 96);
         EffectPosition_ProjectPoint(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
-        screen[0].y = (screen[0].y >> 16) + 60;
+        screen[0].y = (Q_16_16_TO_INT(screen[0].y)) + 60;
         drawAlt(canvas,
                 work->sheet +
                     (level * STORM_DIMMED_DOT_BYTES +
@@ -257,8 +273,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       s32 inset = 0;
       s32 never = 0;
       s32 neverToo = 0;
-      beamHeight = (frame - 151) * 20 + 44;
-      if (frame > 151) {
+      beamHeight = (frame - THOR_BEAM_FRAME) * 20 + 44;
+      if (frame > THOR_BEAM_FRAME) {
         inset = frame - 152;
       }
       if (inset > 15) {
@@ -275,8 +291,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
-      BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
-                        96);
+      BLITTER_ALTERNATE(canvas, work->sheet, 32,
+                        (frame - THOR_BEAM_FRAME) * 20 - 12,
+                        THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       /* FAKEMATCH(dead): a never-true test of never and neverToo. */
       if (never || neverToo) {
@@ -284,8 +301,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      BLITTER_ALTERNATE(canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32,
-                        96);
+      BLITTER_ALTERNATE(canvas, work->sheet, 64,
+                        (frame - THOR_BEAM_FRAME) * 20 - 12,
+                        THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     EFFECT_PRESENT_CANVAS(work);
@@ -296,7 +314,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(9, 0x282, 1);
+  BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
@@ -305,12 +323,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              work->sheet + STORM_MOTE_CELLS, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
-    s32 formationX = 0x500000;
-    s32 formationY = 0x400000;
+    s32 formationX = px(80);
+    s32 formationY = px(64);
     s32 formationSpeedX = 0;
     s32 formationSpeedY = 0;
     s32 pillarX;
@@ -333,7 +351,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
                                    work->sheet, 1, 0);
       }
-      stormFrame = frame - 80;
+      stormFrame = frame - THOR_BOLTS_FRAME;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
@@ -346,10 +364,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           pillarX = 60;
           pillarY = 112;
           if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-            blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
+            blit[0](canvas, work->sheet, 36, 0, LIGHTNING_PILLAR_WIDTH,
+                    pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + 0x1500, 36, 0, LIGHTNING_PILLAR_WIDTH,
+                    LIGHTNING_PILLAR_HEIGHT);
           }
           if (frame == start + 2) {
             spawned = 0;
@@ -386,22 +406,22 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 moteY;
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
-          if (frame == i * 8 + 80) {
+          if (frame == i * 8 + THOR_BOLTS_FRAME) {
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
         for (i = 0; i != STORM_BOLTS; i++) {
-          if (frame >= i * 2 + 80) {
+          if (frame >= i * 2 + THOR_BOLTS_FRAME) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
               BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
-                                boltY, 72, 72);
+                                boltY, THOR_BOLT_WIDTH, THOR_BOLT_HEIGHT);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
-            if (frame == i * 2 + 80) {
+            if (frame == i * 2 + THOR_BOLTS_FRAME) {
               spawned = 0;
               for (j = 0, spark = STORM_PARTICLES; j != STORM_PARTICLE_COUNT;
                    j++, spark++) {
@@ -409,7 +429,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                   s32 speed = 0x3ff;
                   s32 angle;
                   speed &= Random16();
-                  angle = Random16() & 0xffff;
+                  angle = Random16() & TRIG_ANGLE_MASK;
                   spark->x = px(16);
                   spark->y = px(80);
                   speed += 32;
@@ -436,9 +456,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 radius = 7;
           s32 angle;
           radius &= Random16();
-          angle = Random16() & 0xffff;
-          mirrorX = ((Trig_Sin(angle) * (radius + 8)) >> 16) + 72;
-          moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
+          angle = Random16() & TRIG_ANGLE_MASK;
+          mirrorX = (Q_16_16_TO_INT(Trig_Sin(angle) * (radius + 8))) + 72;
+          moteY = 32 - (Q_16_16_TO_INT(Trig_Cos(angle) * (radius + 8)));
         }
         Canvas_BlitAtFoot(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
         spawned = 0;
@@ -448,7 +468,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             s32 speed = 63;
             s32 angle;
             speed &= Random16();
-            angle = Random16() & 0xffff;
+            angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = px(mirrorX);
             spark->y = px(moteY);
             speed += 64;
@@ -475,8 +495,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
-              s32 x = spark->x >> 16;
-              s32 y = spark->y >> 16;
+              s32 x = Q_16_16_TO_INT(spark->x);
+              s32 y = Q_16_16_TO_INT(spark->y);
               s32 dotSize = spark->variant / 16 + 1;
               draw(canvas, sprites + gBattleEffect_MotePictures[dotSize - 1],
                    x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
@@ -489,14 +509,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The formation is pushed back from frame 32.
       if (frame > 15) {
         if (frame == 32) {
-          formationSpeedX = 0x40000;
-          formationSpeedY = -0x4000;
+          formationSpeedX = px(4);
+          formationSpeedY = -px(1) / 4;
         }
         if (frame > 31) {
           formationX += formationSpeedX;
           formationY += formationSpeedY;
-          formationSpeedX = formationSpeedX * 60 / 64;
-          formationSpeedY = formationSpeedY * 60 / 64;
+          formationSpeedX = formationSpeedX * 60 / DAMPING_SCALE;
+          formationSpeedY = formationSpeedY * 60 / DAMPING_SCALE;
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
                                            formationY);
@@ -512,10 +532,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 never = 0;
           s32 neverToo = 0;
           cell = i & 3;
-          angle = Random16() & 0xffff;
-          x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
+          angle = Random16() & TRIG_ANGLE_MASK;
+          x = (Q_16_16_TO_INT(Trig_Sin(angle) * 8)) + formationScreenX -
               (gBattleEffect_GlintPictureWidths[cell] >> 1);
-          y = ((Trig_Cos(angle) * 40) >> 16) -
+          y = (Q_16_16_TO_INT(Trig_Cos(angle) * 40)) -
               (gBattleEffect_GlintPictureHeights[cell] >> 1);
           /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
            * that clears y. */

@@ -10,6 +10,10 @@
 #define SPARK_MAX 1024
 #define PILLAR_BASE_Y 104
 
+#define PLASMA_SPACING 8 ///< frames between pillars
+/// The second picture in the sheet, after the first 48x112 one.
+#define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
+
 /// Pillars of lightning strike one after another, each with a white flash,
 /// throwing sparks up from the ground and knocking the targets back.
 ///
@@ -35,8 +39,8 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -50,7 +54,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   // Every spark starts at rest.
@@ -84,7 +88,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     // Pillar i strikes at frame 8i: a flash, then its first cel for one
     // frame and its second for two.
     for (i = 0; i != count; i++) {
-      start = i * 8;
+      start = i * PLASMA_SPACING;
       if (frame == start) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
@@ -92,10 +96,11 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
           draw[0](canvas, work->sheet, gPlasma_Columns[i + args->side * 7] - 24,
-                  0, 48, 112);
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
-          draw[0](canvas, work->sheet + 0x1500,
-                  gPlasma_Columns[i + args->side * 7] - 24, 0, 48, 112);
+          draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
+                  gPlasma_Columns[i + args->side * 7] - 24, 0,
+                  LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
         // Throw sparks up from the pillar's base, within 90 degrees of
         // straight up, and shake the camera.
@@ -145,12 +150,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         if (spark->y > px(PILLAR_BASE_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = spark->x >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = spark->y >> 16;
+            y = Q_16_16_TO_INT(spark->y);
             size = spark->variant / 8 + 1;
             draw[k & 1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                         x - size / 2, y - size, size, size * 2);
@@ -188,6 +193,8 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)
 
+#define SPARK_GROUPS_SPACING 8 ///< frames between bursts
+
 /// One to three groups of sparks burst one after another, eight frames apart:
 /// each opens with a big flash, a ring of small flashes and a spray of sparks
 /// that fall (or, from the caster, rise) and bounce; six frames after each
@@ -212,14 +219,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
   // The burst's origin on the canvas.
   if (kind == SPARK_GROUPS_NOVA) {
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
     originX = 60;
     originY = 48;
   } else if (kind == SPARK_GROUPS_DYNAMITE) {
     BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
   } else {
     BattleEffect_StartCanvasLayer(0);
@@ -229,7 +236,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   }
 
   // The flash sheet, the particle sprites and the kind's palette.
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -240,14 +247,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   } else if (kind == SPARK_GROUPS_RISING) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   sparks = gMapGridCellBuffer;
@@ -261,7 +268,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       point = &work->particles[i * FLASH_POINTS + j];
       radius = j * 2;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + 25;
@@ -275,7 +282,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       spark = sparks + i * SPARK_COUNT + j;
       speed = (Random16() & 0x3ff) + 32;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       if (args->side == EFFECT_SIDE_PARTY)
         spark->x = px(originX - GROUP_X(i) + 28);
       else
@@ -300,7 +307,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         camera->yaw -= 256;
     }
     if (args->variant == 3 && frame == 4)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     if (kind == SPARK_GROUPS_DYNAMITE || kind == SPARK_GROUPS_RISING) {
       if (frame == 2) {
@@ -315,7 +323,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     }
 
     for (i = 0; i != GROUP_COUNT; i++) {
-      start = i * 8;
+      start = i * SPARK_GROUPS_SPACING;
       if (frame == start)
         work->shakeFrames = 12;
 
@@ -323,10 +331,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       if (frame >= start && frame < start + 2) {
         if (args->side == EFFECT_SIDE_PARTY)
           draw[0](canvas, work->sheet, originX - GROUP_X(i) + 12, originY - 32,
-                  32, 64);
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         else
           draw[0](canvas, work->sheet, originX + GROUP_X(i) - 44, originY - 32,
-                  32, 64);
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
 
       // The ring of small flashes, each counting down through six cels.
@@ -346,7 +354,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else
@@ -360,9 +368,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         s32 gravity;
 
         if (kind == SPARK_GROUPS_RISING)
-          gravity = -0x1000;
+          gravity = -px(1) / 16;
         else
-          gravity = 0x1000;
+          gravity = px(1) / 16;
         for (j = 0; j != SPARK_COUNT; j++) {
           struct Particle *spark = sparks + i * SPARK_COUNT + j;
           if (spark->variant > 0) {
@@ -371,8 +379,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s16 y = spark->y >> 16;
-              s16 x = spark->x >> 16;
+              s16 y = Q_16_16_TO_INT(spark->y);
+              s16 x = Q_16_16_TO_INT(spark->x);
               s32 size = spark->variant / 5 + 1;
 
               draw[j & 1](canvas,

@@ -11,7 +11,7 @@
 /// queues DISPCNT for VBlank and waits one frame.
 void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
@@ -61,11 +61,11 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
 /// scanline from the map cell buffer.
 void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *dma = REG_DMA0;
-  u16 control = dma[5];
+  u16 control = dma[DMA_CONTROL_HALF];
 
-  dma[5] = control & 0xc5ff; // Clear start timing and repeat.
-  dma[5] &= 0x7fff;          // Stop.
-  (void)dma[5];
+  dma[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  dma[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
+  (void)dma[DMA_CONTROL_HALF];
   Dma_Set(Ram_MapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }

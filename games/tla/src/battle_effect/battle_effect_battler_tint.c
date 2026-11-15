@@ -7,36 +7,22 @@
 #include "gamepak/far_call/battle.h"
 #include "gamepak/far_call/field.h"
 
-/* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
- * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
- * Iwram_FillWords(destination, size, value); }; not tried: FillWords_'s
- * definition holds a FAKEMATCH tag. */
-/// Fills words through the IWRAM fill, in a once-only block.
-static __inline__ void FillWords___f14cca8(void *destination, s32 size,
-                                           u32 value) {
-  /* FAKEMATCH(dead): the call in a once-only block. */
-  do {
-    Iwram_FillWordsEntry(destination, size, value);
-  } while (0);
-}
-
 /// Shows the battle background behind a cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(1, battle->background, 24);
-  /* FAKEMATCH(wrapper): both fills through FillWords_. */
-  FillWords___f14cca8(buffer, 0x4000, 0);
-  FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
+  IWRAM_FILL_WORDS(buffer, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 

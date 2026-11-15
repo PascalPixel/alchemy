@@ -9,6 +9,13 @@
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
+/// Where IceChipSheet is decoded in the effect's pictures.
+#define HAIL_ICE_CHIP_PICTURES 0x400
+/// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
+#define HAIL_MERCURY_DJINN_SMALL_PICTURES 0x65c0
+
+#define HAIL_FRAMES 64
+
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen.
 ///
@@ -56,15 +63,16 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     CHIPS[i].variant = (Random16() & 0xf) + 32;
   }
 
-  for (frame = 0; frame != 64; frame++) {
+  for (frame = 0; frame != HAIL_FRAMES; frame++) {
     // The last sixteen frames fade the layer out.
     if (frame > 47)
-      REG_BLDALPHA = (64 - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
-                                 work->sheet + 0x400, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                                 work->sheet + 0x65c0, 1, 0);
+                                 work->sheet + HAIL_ICE_CHIP_PICTURES, 1, 1);
+      Resource_LoadAndDecompress(
+          (s32)&ResourceId_MercuryDjinnSmallSheet,
+          work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     }
 
     // With its Djinn prelude, the Djinn hovers over the anchor.
@@ -74,14 +82,16 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = ((-Trig_Sin(orbit) << 2) >> 16) + screen[0] / 2 - 10;
-      y = ((Trig_Cos(orbit) << 1) >> 16) + screen[1] - 22;
+      x = (Q_16_16_TO_INT(-Trig_Sin(orbit) << 2)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(orbit) << 1)) + screen[1] - 22;
       // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      blit[1](canvas, work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, x, y,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       if (frame <= 3)
-        blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        blit[1](canvas, work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // Chip i flies from frame 4 + i / 4, through the two blitters in turn.
@@ -92,7 +102,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         u32 height;
 
         cel = (chip->z / 128) & 3;
-        blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
+        blit[i & 1](canvas,
+                    work->sheet + HAIL_ICE_CHIP_PICTURES + gHail_Pictures[cel],
                     Q_16_16_UPPER_HALF(chip->x) -
                         (width = gHail_PictureWidths[cel]) / 2,
                     Q_16_16_UPPER_HALF(chip->y) -
@@ -113,16 +124,17 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // The water rises 4 pixels a frame to 32 and drifts away from the
     // caster's side.
     rise = frame * 4;
-    if (rise > 32)
-      rise = 32;
+    if (rise > WATER_WAVE_HEIGHT)
+      rise = WATER_WAVE_HEIGHT;
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
-                32, 32);
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     } else {
       for (i = 0; i != 5; i++)
-        blit[0](canvas, work->sheet, ((i << 5) + (frame / 4 & 31)) - 32,
-                120 - rise, 32, 32);
+        blit[0](canvas, work->sheet,
+                ((i << 5) + (frame / 4 & 31)) - WATER_WAVE_WIDTH, 120 - rise,
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
 
     BattleCamera_Shake(4, 8);
@@ -159,6 +171,15 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define GROUND_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
+#define GROUND_FRAMES 96
+
+/// PortalSheet's portal.
+#define PORTAL_WIDTH 24
+#define PORTAL_HEIGHT 48
+
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
 ///
@@ -184,7 +205,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniEntrance(
       args, DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
       screen, otherPoint);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -193,7 +214,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 1);
+                             work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, 1,
+                             1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The rocks start at the caster, 66 high, flung out to the side away
@@ -214,7 +236,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       rock->variant = 1;
     }
 
-    for (frame = 0; frame != 96; frame++) {
+    for (frame = 0; frame != GROUND_FRAMES; frame++) {
       // The background takes on the portal's colours from frame 17.
       if (frame > 16)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
@@ -223,8 +245,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       // off from frame 17; the first four frames add a bright copy.
       if (args->prelude == 1) {
         s32 angle = frame << 11;
-        s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
-        s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
+        s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) << 2)) + screen[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) << 1)) + screen[1] - 22;
 
         if (frame > 16)
           y = y - frame * 2 + 32;
@@ -237,9 +259,11 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                               BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + 0x65c0, x, y, 20, 40);
+              canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y, 20,
+              40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        draw[0](canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
 
       // Every other frame each chip takes a new shape (3 to 8) and flip.
@@ -268,7 +292,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             position.x >>= 1;
             x = position.x - 12;
             y = position.y - 24;
-            draw[0](canvas, work->sheet, x, y, 24, 48);
+            draw[0](canvas, work->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
             if ((frame & 3) <= 1)
               draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                       x + gHail_PortalX[1], y + gHail_PortalY[1],
@@ -321,9 +345,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             rock->velocityY += (px(20) - rock->y) >> 8;
             rock->velocityZ += (target->z - rock->z) >> 8;
             if (frame < i * 2 + 85) {
-              rock->velocityX = rock->velocityX * 60 / 64;
-              rock->velocityY = rock->velocityY * 60 / 64;
-              rock->velocityZ = rock->velocityZ * 60 / 64;
+              rock->velocityX = rock->velocityX * 60 / DAMPING_SCALE;
+              rock->velocityY = rock->velocityY * 60 / DAMPING_SCALE;
+              rock->velocityZ = rock->velocityZ * 60 / DAMPING_SCALE;
             }
             if (rock->y < px(20)) {
               work->shakeFrames = 8;
@@ -367,16 +391,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
     s32 offsetX = randomX - halfRange;
 
     gBgScroll[1].x = offsetX;
-    gBgScroll[1].y = offsetY + 32;
-    gProjection.centerX = 120 - offsetX;
-    gProjection.centerY = 120 - offsetY;
+    gBgScroll[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
     (*remainingFrames)--;
     return;
   }
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
 /// While shakeFrames lasts, moves BG1 and the projection centre up or down
@@ -389,12 +413,12 @@ void Camera_ApplyVerticalShake(s32 range) {
   if (*timer > 0) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 
-    gBgScroll[1].y = shake + 32;
-    gProjection.centerY = 120 - shake;
+    gBgScroll[1].y = shake + BATTLE_BACKGROUND_SCROLL_Y;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - shake;
     (*timer)--;
   } else {
     gBgScroll[1].y = *(s32 *)(fx + 0x77a4);
-    gProjection.centerY = 120;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   }
 }
 

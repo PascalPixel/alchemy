@@ -51,7 +51,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Open the canvas on BG2 over the target's side.
-  BattleEffect_StartCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
@@ -59,7 +59,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
       screenX, screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = 0xaa;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -111,7 +111,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     red >>= 3;
     green >>= 3;
     blue >>= 3;
-    ramp[i] = ((u16 *)BG_PLTT)[i] = blue << 10 | green << 5 | red;
+    ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
   // Blit the disc once; from here on only the palette and the scanline
@@ -125,7 +125,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame <= RIPPLE_FADE_IN_FRAMES) {
       level = frame * 2;
       wave = level;
-      REG_BLDALPHA = BLEND_ALPHA(level, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
     } else {
       wave = frame * 2;
     }
@@ -141,7 +141,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
     line = work->bg2xLines;
-    for (i = 0, angle = -(wave << 9); i != 160; i++) {
+    for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
       angle += 0x200;
     }

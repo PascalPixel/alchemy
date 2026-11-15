@@ -13,6 +13,8 @@
 
 #define ACTOR(id) ((struct Actor *)BattleObject_GetFar(id)->object)
 
+#define ASTRAL_BLAST_FRAMES 60
+
 /// Three pink stars of light fly from above the user at the first target,
 /// growing and spinning, while the camera swings round; each knocks the target
 /// back.
@@ -49,12 +51,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Actor_SelectAnimationFar(caster, 2);
-  Actor_SetAnimationSpeedFar(caster, 48);
+  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -78,7 +81,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   }
 
   ring = (struct Particle *)gMapGridCellBuffer;
-  for (frame = 0; frame != 60; frame++) {
+  for (frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
       struct BattleCamera *view = (struct BattleCamera *)camera;
@@ -198,6 +201,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 #define DOT_SIZE 2
 #define GROUND_Y 0x1dffff
 
+#define SHINING_STAR_FRAMES 128
+
 /// Eight rings of stars fly from the caster to the target, one every eight
 /// frames and spinning as they go; each bounces where it meets the ground,
 /// shaking the screen and flashing the targets.
@@ -226,9 +231,10 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -252,7 +258,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   size = DOT_SIZE;
   ring = (struct Particle *)gMapGridCellBuffer;
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -272,15 +278,15 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
               for (j = 0; j != RING_POINTS; j++) {
                 ring[i * 10 + j].velocityX =
                     pos.x +
-                    ((Trig_Sin(j * 0x199a - ((frame - star->variant) << 11)) *
-                      gStar_Radii[j & 1]) /
-                         2 >>
-                     16);
+                    (Q_16_16_TO_INT((Trig_Sin(j * 0x199a -
+                                              ((frame - star->variant) << 11)) *
+                                     gStar_Radii[j & 1]) /
+                                    2));
                 ring[i * 10 + j].velocityY =
                     pos.y -
-                    (Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
-                         gStar_Radii[j & 1] >>
-                     16);
+                    (Q_16_16_TO_INT(
+                        Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
+                        gStar_Radii[j & 1]));
               }
               for (j = 0; j != RING_POINTS; j++) {
                 struct Particle *from = &ring[j + i * 10];

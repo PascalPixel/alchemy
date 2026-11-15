@@ -9,6 +9,9 @@
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
 /// Abilities: Crystal.
 ///
 /// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
@@ -39,23 +42,24 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
-  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
       center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 0);
+                             work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES,
+                             1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
-                       128);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+                       SHEET_PALETTE_BYTES);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -70,7 +74,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
     camera = Ram_HeapSlots->cameraWork;
     target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -86,27 +90,30 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                        target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
                        px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
-          shard->velocityY = (Random16() & 0xffff) + 0x40000;
+          shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + 0x40000;
           shard->velocityZ = (Random16() & 7) + 4;
           shard->variant = -1;
         }
       }
       if (frame > 95) {
-        REG_BLDALPHA = (0xce - frame * 2) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(0xce - frame * 2, BLEND_WEIGHT_MAX);
       }
       Transform_Reset();
       Transform_SetLookAt(camera, (u8 *)camera + 12);
 
       // The pillar of light.
       if (frame <= 19) {
-        s32 x = ((Trig_Sin(frame << 11) * 8) >> 16) + center[0] / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + center[1] - 24;
+        s32 x =
+            (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 8)) + center[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + center[1] - 24;
 
         y += frame * 3;
 
-        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3) {
-          draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+          draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x,
+                  y, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         }
       }
 
@@ -121,7 +128,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
             EffectPosition_ProjectPoint(&shard->x, &screen);
             screen.x >>= 1;
             width = shard->velocityZ;
-            width += Trig_Sin(shard->velocityX) * width / 2 >> 16;
+            width += Q_16_16_TO_INT(Trig_Sin(shard->velocityX) * width / 2);
             shard->velocityX += px(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {
@@ -162,7 +169,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;
-        texture.pixels = gData_02014000;
+        texture.pixels = Ram_MapCellBuffer + 0x4000;
         if (frame > 15) {
           s32 scale = (frame << 12) - Q16_ONE;
 
@@ -181,8 +188,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         Heap_Release(model);
         Heap_Release(vertices);
       }
-      gProjection.centerX = 120;
-      gProjection.centerY = 120;
+      gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+      gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       EFFECT_END_FRAME(work);
     }
   }

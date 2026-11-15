@@ -131,9 +131,11 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// A battle background's id, as the summons read it.
+/// A battle background's id, as the summons read it: the word and the bytes
+/// give the read the alias sets of the stores around it.
 union BattleBackgroundId {
   u16 id;
+  s32 word;
   u8 bytes[6];
 };
 
@@ -180,7 +182,6 @@ void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
 void RagingHeat_FillGradientCanvas(void);
@@ -254,11 +255,11 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 /// The window BattleEffect_BuildCenteredIndexList builds a list of indices
 /// around: its value, radius and limit, and the values it lists.
 typedef struct {
-  s32 reserved00[3];
+  s32 reservedA[3];
   s32 currentValue;
   s32 indexRadius;
   s32 entryLimit;
-  s32 reserved18[3];
+  s32 reservedB[3];
   s16 values[1];
 } BattleEffectIndexWindow;
 /// BattleEffect_RunDjinniEntrance's longer entrance, added to the Djinni's
@@ -330,37 +331,6 @@ enum VolleyBSheet {
   VOLLEY_B_GLOW = 0x1492,    // mode 20's glows
   VOLLEY_B_PICTURE = 0x0c56, // the mode's picture
   VOLLEY_B_DJINNI = 0x65c0   // the 20x40 Djinni
-};
-
-/// The pictures in the slash sheet: five flash pictures, then the shaft in
-/// three parts, with the sizes the draws use.
-enum SlashSheetPicture {
-  /// 14x28
-  ATALANTA_SHAFT_FLASH_1 = 0,
-  /// 23x44
-  ATALANTA_SHAFT_FLASH_2 = ATALANTA_SHAFT_FLASH_1 + 14 * 28,
-  /// 20x30
-  ATALANTA_SHAFT_FLASH_3_TOP = ATALANTA_SHAFT_FLASH_2 + 23 * 44,
-  /// 22x33
-  ATALANTA_SHAFT_FLASH_3_BOTTOM = ATALANTA_SHAFT_FLASH_3_TOP + 20 * 30,
-  /// 18x27
-  ATALANTA_SHAFT_FLASH_4_TOP = ATALANTA_SHAFT_FLASH_3_BOTTOM + 22 * 33,
-  /// 22x22
-  ATALANTA_SHAFT_FLASH_4_MIDDLE = ATALANTA_SHAFT_FLASH_4_TOP + 18 * 27,
-  /// 19x28
-  ATALANTA_SHAFT_FLASH_4_BOTTOM = ATALANTA_SHAFT_FLASH_4_MIDDLE + 22 * 22,
-  /// 16x23
-  ATALANTA_SHAFT_FLASH_5_TOP = ATALANTA_SHAFT_FLASH_4_BOTTOM + 19 * 28,
-  /// 23x28
-  ATALANTA_SHAFT_FLASH_5_MIDDLE = ATALANTA_SHAFT_FLASH_5_TOP + 16 * 23,
-  /// 20x28
-  ATALANTA_SHAFT_FLASH_5_BOTTOM = ATALANTA_SHAFT_FLASH_5_MIDDLE + 23 * 28,
-  /// 16x21
-  ATALANTA_SHAFT_TOP = ATALANTA_SHAFT_FLASH_5_BOTTOM + 20 * 28,
-  /// 29x35
-  ATALANTA_SHAFT_MIDDLE = ATALANTA_SHAFT_TOP + 16 * 21,
-  /// 21x24
-  ATALANTA_SHAFT_BOTTOM = ATALANTA_SHAFT_MIDDLE + 29 * 35
 };
 
 /// A growing column, laid over struct Particle in work->particles.

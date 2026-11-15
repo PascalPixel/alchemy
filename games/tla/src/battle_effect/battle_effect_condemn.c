@@ -16,6 +16,8 @@
 #define PANEL_F 0x4b00
 #define PANEL_G 0x58d2
 
+#define CONDEMN_FRAMES 104
+
 /// A shimmering image circles in, fading out and in as it closes on the first
 /// target, then splits into its panels with a white flash, and the target is
 /// thrown back while the screen shakes.
@@ -43,10 +45,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // Set up: half-and-half blending, the image with its palette, the crescent
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
-  BattleEffect_StartTiledCanvas(0x2000);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
@@ -68,7 +70,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     curve[0] = 0x700000;
   curve[1] = -0x200000;
 
-  for (frame = 0; frame != 104; frame++) {
+  for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
     s32 screenY;
@@ -79,8 +81,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame << 9;
-    screenX = (curve[0] >> 16) + ((Trig_Sin(spin) << 4) >> 16) + 48;
-    screenY = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
+    screenX =
+        (Q_16_16_TO_INT(curve[0])) + (Q_16_16_TO_INT(Trig_Sin(spin) << 4)) + 48;
+    screenY =
+        (Q_16_16_TO_INT(curve[1])) + (Q_16_16_TO_INT(Trig_Cos(spin) << 2)) + 16;
 
     // It jumps closer at frame 24 and onto the target at frame 48, hidden
     // for the frame of each jump.
@@ -93,7 +97,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       visible = 0;
     }
     if (frame == 25) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       visible = 1;
     }
     if (frame == 48) {
@@ -106,7 +110,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       visible = 0;
     }
     if (frame == 49) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       visible = 1;
     }
 
@@ -117,12 +121,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame <= 23) {
       if (frame > 15) {
         amp = (frame * 2) - 32;
-        REG_BLDALPHA = (31 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(31 - frame, BLEND_WEIGHT_MAX);
       }
     } else if (frame <= 47) {
       if (frame > 31) {
         amp = (frame * 2) - 64;
-        REG_BLDALPHA = (47 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(47 - frame, BLEND_WEIGHT_MAX);
       }
     }
     if (amp < 0)
@@ -131,7 +135,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     i = 0;
     rowBase = (6 - screenX) << 8;
     angle = frame << 11;
-    for (; i != 160; i++) {
+    for (; i != DISPLAY_HEIGHT; i++) {
       *scanline++ = rowBase - ((Trig_Sin(angle) * amp) >> 10);
       angle += TRIG_TURN / 32;
     }
@@ -152,16 +156,19 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       }
       if (frame <= 71) {
         draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                         gCondemn_PictureY[row * 7] + screenY, 57, 98);
+                         gCondemn_PictureY[row * 7] + screenY, 57,
+                         REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 75)
           draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                           gCondemn_PictureY[row * 7] + screenY, 57, 98);
+                           gCondemn_PictureY[row * 7] + screenY, 57,
+                           REAPER_SHEET_RAISED_HEIGHT);
         draw[args->side](canvas, work->sheet + PANEL_B,
                          gCondemn_PictureX[column * 7 + 1],
                          gCondemn_PictureY[row * 7 + 1] + screenY, 99, 69);
         if ((u32)(frame - 72) <= 1)
-          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                               CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if ((u32)(frame - 74) <= 1)
           draw[args->side](canvas, work->sheet + PANEL_C,
                            gCondemn_PictureX[column * 7 + 2],

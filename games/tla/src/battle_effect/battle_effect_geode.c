@@ -10,6 +10,11 @@ struct MeshTriangle;
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define GEODE_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
+#define GEODE_FRAMES 74
+
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
 /// palette fades, the Djinni flies across to it, and at frame 48 the dome
@@ -46,7 +51,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
-  BattleEffect_StartCanvasLayer(2);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side,
@@ -67,7 +72,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                         BLITTER_ADDITIVE);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME + 15);
@@ -96,32 +101,33 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 1);
+                             work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
-  IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-  Actor_SetAnimationSpeedFar(caster, 48);
+                       SHEET_PALETTE_BYTES);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
-  for (frame = 0; frame != 74; frame++) {
+  for (frame = 0; frame != GEODE_FRAMES; frame++) {
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
 
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
       u16 *from = battle->palette;
-      u16 *to = (u16 *)(BG_PLTT + 96);
+      u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, from++, to++) {
-        s32 red = *from & 31;
-        s32 green = (*from >> 5) & 31;
-        s32 blue = (*from >> 10) & 31;
-        s32 r = *to & 31;
-        s32 g = (*to >> 5) & 31;
-        s32 b = (*to >> 10) & 31;
+        s32 red = RGB_RED(*from);
+        s32 green = RGB_GREEN(*from);
+        s32 blue = RGB_BLUE(*from);
+        s32 r = RGB_RED(*to);
+        s32 g = RGB_GREEN(*to);
+        s32 b = RGB_BLUE(*to);
 
         if (r > red + 3) {
           r -= 4;
@@ -138,18 +144,26 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         } else {
           b = blue;
         }
-        *to = (b << 10) | (g << 5) | r;
+        *to = RGB(r, g, b);
       }
     }
     if (frame == 1) {
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+                          IO_WRITE_16);
       BattleEffect_BuildCanvasTilemap();
     }
     if (frame == 34) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingBlock2Transfer, TASK_PASS_FRAME + 15);
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
-      Iwram_ClearWordsEntry(canvas, 0x3c00);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                              DISPCNT_BG1_ON | DISPCNT_OBJ_ON |
+                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+                          IO_WRITE_16);
+      Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
       gBgScroll[1].y = 78;
       gBgScroll[1].x = 64 - source.x;
       REG_BG1CNT &= 0xfffc;
@@ -161,17 +175,17 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                TASK_PASS_FRAME + 15);
-      IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
-      IO_WRITE_QUEUE_PUSH(0x0400002c, -0x1000, 0x30000);
-      IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-      IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f44, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_32);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_16);
     }
     if (frame == 18) {
       BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
     }
     if (frame == 36) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
     }
     if ((u32)(frame - 34) <= 5) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -204,8 +218,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       } else {
         x = x / 2 - 20;
       }
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
+      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
+              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
+              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // The battlefield peels up into a dome.
@@ -248,8 +264,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {
-        s32 lift = ((-Trig_Cos(angle) * 3) << 4) >> 16;
-        s32 reach = (Trig_Sin(angle) * 48) >> 16;
+        s32 lift = Q_16_16_TO_INT((-Trig_Cos(angle) * 3) << 4);
+        s32 reach = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
         s32 column;
         s32 y;
         s32 radius;
@@ -257,10 +273,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         radius = (reach - 56) * curl / 16 + 56;
         for (column = 0; column != DOME_COLUMNS; column++) {
           vertices[row * DOME_COLUMNS + column].x =
-              (Trig_Sin(column << 12) * radius) >> 16;
+              Q_16_16_TO_INT(Trig_Sin(column << 12) * radius);
           vertices[row * DOME_COLUMNS + column].y = y;
           vertices[row * DOME_COLUMNS + column].z =
-              (Trig_Cos(column << 12) * radius) >> 16;
+              Q_16_16_TO_INT(Trig_Cos(column << 12) * radius);
         }
       }
       model = Render_AllocateModelList(1);
@@ -320,7 +336,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         rings->shade = shade;
@@ -342,14 +358,14 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 61) {
       transition[4] = 0;
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
     }
     if (frame == 62) {
       BattleBackground_LoadFar(1, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
       battle->brightness = (frame << 13) - 0x7c000;
-      ColorBuffer_ScaleFar(battle->palette, (void *)(BG_PLTT + 96),
+      ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            battle->brightness, 128);
     }
     if (frame == 48) {
@@ -360,7 +376,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     EFFECT_END_FRAME(work);
   }
-  Actor_SetAnimationSpeedFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

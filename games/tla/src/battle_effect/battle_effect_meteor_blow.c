@@ -33,6 +33,11 @@ struct RenderModel__meteor_blow {
   u8 scrollV;
 };
 
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
+
+#define METEOR_BLOW_FRAMES 50
+
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
@@ -82,10 +87,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   work->args = args;
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  ((volatile u16 *)BG_PLTT)[0] = 0;
-  ((volatile u16 *)BG_PLTT)[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   blank = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -94,13 +99,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSetSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                             work->sheet + 0x2000, 1, 1);
+                             work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
+                             1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Graphics_LoadGreyRamp();
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
@@ -116,7 +122,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   projected = work->sheet + 0x5740;
   meshA = work->sheet + 0x5f40;
   triangles = work->sheet + 0x6340;
@@ -132,23 +138,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, arcAngle = 0; frame != 16;
        arcAngle += 1092, offset += 8, frame++) {
-    s32 y = (-Trig_Cos(arcAngle) * 48) >> 16;
-    s32 r = (Trig_Sin(arcAngle) * 48) >> 16;
-    u8 *v;
+    s32 y = Q_16_16_TO_INT(-Trig_Cos(arcAngle) * 48);
+    s32 r = Q_16_16_TO_INT(Trig_Sin(arcAngle) * 48);
+    struct ModelVertex *v;
 
     j = 0;
-    v = meshA + offset;
-    for (; j != 2; v += 4) {
-      s32 c;
-
-      v[0] = (Trig_Sin(j << 13) * r) >> 16;
-      v[1] = y;
-      c = (Trig_Cos(j << 13) * r) >> 16;
-      j++;
-      /* FAKEMATCH(dead): a once-only block. */
-      do {
-        v[2] = c;
-      } while (0);
+    v = (struct ModelVertex *)(meshA + offset);
+    for (; j != 2; j++, v++) {
+      v->x = Q_16_16_TO_INT(Trig_Sin(j << 13) * r);
+      v->y = y;
+      v->z = Q_16_16_TO_INT(Trig_Cos(j << 13) * r);
     }
   }
   mode = 3;
@@ -168,7 +167,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 b;
 
     current->y = Trig_Sin(a) * r;
-    r = (Trig_Cos(a) * r) >> 16;
+    r = Q_16_16_TO_INT(Trig_Cos(a) * r);
     b = Random16() & 0x7fff;
     current->x = Trig_Sin(b) * r;
     current->z = Trig_Cos(b) * r;
@@ -187,8 +186,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 speed;
 
     if (frame == 0) {
-      x = 0x1100000;
-      z = 0x580000;
+      x = px(272);
+      z = px(88);
       size = 0x400;
       pitch = 0xd00;
       yaw = 0x2500;
@@ -200,23 +199,23 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     fade = frame - 96;
     if ((u32)fade <= 16) {
-      REG_BLDALPHA = (16 - fade) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
     }
     if (frame == 115) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-      IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-      IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_16);
     }
     if (frame > 128) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 117) {
       work->frame = 45;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
       scale = Q16_ONE;
@@ -246,13 +245,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
         if (b < 0)
           b = 0;
-        if (b > 31)
-          b = 31;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
         if (g < 0)
           g = 0;
-        if (g > 31)
-          g = 31;
-        *dst++ = b << 10 | g << 5 | g >> 1;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
+        *dst++ = RGB(g >> 1, g, b);
       }
       for (; i != 160; i++) {
         *dst++ = 0;
@@ -272,7 +271,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
-      texture.pixels = work->sheet + 0x2000;
+      texture.pixels = work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES;
       model->kind = 6;
       model->texture = &texture;
       model->mesh = triangles;
@@ -309,14 +308,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       // DEAD: frame is at most 115 here, so the second arm never runs; the
       // source keeps both tests.
       if (frame <= 159) {
-        pitch = ((pitch << 16) + (256 << 16)) >> 16;
+        pitch = Q_16_16_TO_INT((pitch << 16) + (256 << 16));
       } else if (frame <= 191) {
-        pitch = (((u16)pitch - frame * 8 + 1216) << 16) >> 16;
+        pitch = Q_16_16_TO_INT(((u16)pitch - frame * 8 + 1216) << 16);
       }
       if (frame <= 47) {
-        yaw = ((yaw << 16) + (256 << 16)) >> 16;
+        yaw = Q_16_16_TO_INT((yaw << 16) + (256 << 16));
       } else if (frame <= 111) {
-        yaw = (((u16)yaw - frame * 4 + 448) << 16) >> 16;
+        yaw = Q_16_16_TO_INT(((u16)yaw - frame * 4 + 448) << 16);
       }
       position[0] = 120;
       position[1] = 64;
@@ -359,7 +358,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     place[0] = x;
     place[2] = z;
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
-    speed = 0x800;
+    speed = px(1) / 32;
     {
       s32 a = 0x6000;
 
@@ -382,7 +381,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame > 127) {
       speed = (frame << 13) - 0x100000;
       if (speed > 0x1ffff) {
-        speed = 0x20000;
+        speed = px(2);
       }
       z += speed;
       size += 512;
@@ -408,7 +407,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -428,9 +427,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   {
-    s32 *q = (s32 *)Data_02010018;
+    s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
 
     for (i = 0; i != 256; i++, q += 7) {
       *q = 0;
@@ -439,7 +438,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.
-  for (frame = 0; frame != 50; frame++) {
+  for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
     struct RenderModel__meteor_blow *model;
     s32 angle;
     s32 back;
@@ -529,7 +528,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         if (shade > -16) {
           shade = -16;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 + 42768;
 
           model->shade = shade;
@@ -561,7 +560,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 s = (frame - start) * gMeteorBlow_RingGrowth[i] * 1500 + 0x4180;
 
           model->shade = shade;

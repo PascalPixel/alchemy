@@ -23,6 +23,11 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 #define PUFF_LIFE 14 ///< seven cels, two frames each
 #define CUE_COLUMN 133
 
+/// The dust pictures in the vine sheet, after the vines.
+#define GROWING_COLUMNS_VINE_DUST_PICTURES 7769
+/// The dust pictures in the pillar sheet, after the pillars.
+#define GROWING_COLUMNS_PILLAR_DUST_PICTURES 2815
+
 /// Vines or green pillars grow one after another, alternately mirrored, each
 /// throwing up dust from its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
@@ -57,7 +62,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   // 112 pixels right for the other side.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
@@ -84,7 +89,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
   // Every puff starts free.
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PUFFS[i].variant = -1;
   }
 
@@ -125,7 +130,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, BLEND_WEIGHT_MAX);
       }
       // Column i grows 8 pixels a frame from frame i * 4 + 8 to its full
       // length (a pillar no taller than its height table allows); odd
@@ -229,9 +234,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         puffLife = puff->variant;
         if (puffLife >= 0) {
           cel = puffLife / 2;
-          puffCells = 0x1e59;
+          puffCells = GROWING_COLUMNS_VINE_DUST_PICTURES;
           if (mode != 0) {
-            puffCells = 0xaff;
+            puffCells = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
           }
           ((DrawRectangle)rectangle[0])(
               canvas, work->sheet + (gGrowth_PuffPictures[cel] + puffCells),
@@ -386,6 +391,14 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 
 #define CUE_THORN 133
 
+#define THORN_BIG_HEIGHT 80
+#define THORN_SMALL_PICTURE_WIDTH 32
+#define THORN_SMALL_PICTURE_HEIGHT 64
+
+/// ThornSheet: the big thorn, then the small one.
+#define THORN_BIG_WIDTH 48
+#define THORN_SMALL_PICTURE PICTURE_BYTES(THORN_BIG)
+
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
@@ -411,9 +424,9 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
@@ -442,7 +455,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = (total - frame - 1) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(total - frame - 1, BLEND_WEIGHT_MAX);
     }
 
     // Thorn i starts at frame i * 8 + 8. A large one grows 16 pixels a
@@ -455,16 +468,16 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         s32 height;
         s32 lean;
 
-        if (gGrowth_Kinds[i] < 2) {
+        if (gGrowth_Kinds[i] < THORN_SMALL) {
           height = age * 16;
           lean = (age * 2 + age) * 2;
-          if (height > 80) {
-            height = 80;
+          if (height > THORN_BIG_HEIGHT) {
+            height = THORN_BIG_HEIGHT;
           }
           if (lean > 30) {
             lean = 30;
           }
-          if (gGrowth_Kinds[i] & 1) {
+          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height, 48,
                      height);
           } else {
@@ -474,18 +487,19 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         } else {
           height = age * 8;
           lean = age;
-          if (height > 64) {
-            height = 64;
+          if (height > THORN_SMALL_PICTURE_HEIGHT) {
+            height = THORN_SMALL_PICTURE_HEIGHT;
           }
           if (age > 8) {
             lean = 8;
           }
-          if (gGrowth_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet + 0xf00, gGrowth_X[i] - lean,
-                     108 - height, 32, height);
+          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
+            drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
+                     gGrowth_X[i] - lean, 108 - height,
+                     THORN_SMALL_PICTURE_WIDTH, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gGrowth_X[i] + lean, 108 - height,
-                 32, height);
+            draw(canvas, work->sheet + THORN_SMALL_PICTURE, gGrowth_X[i] + lean,
+                 108 - height, THORN_SMALL_PICTURE_WIDTH, height);
           }
         }
         if (frame == start + 1) {

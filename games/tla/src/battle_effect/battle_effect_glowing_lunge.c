@@ -11,6 +11,9 @@
 #define SPARK_COUNT 64
 #define BURST_COUNT 16 ///< mode 5's flame bursts
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define RUSHING_STRIKE_FLASH_BURST_PICTURES 0x800
+
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
@@ -38,7 +41,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
@@ -51,7 +54,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       work->sheet[0x400 + (31 - row) * 32 + column] =
           work->sheet[row * 32 + column];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
+                             work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES,
+                             1, 0);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
     resource = (s32)&ResourceId_FirePillarSheetB;
@@ -70,13 +74,15 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     resource = (s32)&ResourceId_OrangePaletteB;
     break;
   }
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
+                       SHEET_PALETTE_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);
-  Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 48);
+  Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
+                             ANIMATION_STEP_NORMAL * 3);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
@@ -84,7 +90,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The first frame readies the sparks and mode 5's bursts at the
     // target, 8 pixels to the outside of it, flying back the other way.
     if (frame == 0) {
-      struct Particle *spark = gData_02014000;
+      struct Particle *spark = Ram_MapCellBuffer + 0x4000;
 
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
@@ -192,7 +198,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *spark;
 
       Transform_Reset();
-      spark = gData_02014000;
+      spark = Ram_MapCellBuffer + 0x4000;
       /* FAKEMATCH(barrier): an empty asm on spark. */
       __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera, camera + 3);
@@ -224,8 +230,11 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
             EffectPosition_ProjectPoint(&burst->x, &screen);
             screen.x >>= 1;
-            draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
-                    screen.y - 32, 32, 64);
+            draw[0](canvas,
+                    work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES +
+                        (cel << 11),
+                    screen.x - 16, screen.y - 32, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector3(burst, 60, px(1) / 8);
             burst->variant++;
           }

@@ -20,6 +20,8 @@
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
+#define TRIPLE_CHOMP_FRAMES 50
+
 /// Triple Chomp's effect: the caster lunges, three bites close on the target.
 void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
@@ -41,8 +43,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, then let the caster lunge.
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);
   wait(8);
@@ -56,9 +58,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
 
-  for (frame = 0; frame != 50; frame++) {
+  for (frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {
     if (frame == 0) {
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
@@ -104,7 +106,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x80000, 0,
+        BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8), 0,
                                       i * 20 + 120);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);

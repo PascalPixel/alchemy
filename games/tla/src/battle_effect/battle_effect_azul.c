@@ -18,25 +18,16 @@ struct AzulFace {
   u8 unkA[2];
 };
 
-/// A sprite object as Azul edits it: its tile number in the low ten bits of
-/// the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
-struct AzulObject {
-  u8 unk0[8];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 unk08 : 4;
-  u8 unk0a[8];
-  u16 shape;
-};
-
 /// Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
   do {                                                                         \
-    if ((place)[2] < -0x10000)                                                 \
-      (place)[2] = -0x10000;                                                   \
+    if ((place)[2] < -px(1))                                                   \
+      (place)[2] = -px(1);                                                     \
     if ((place)[2] > 0x9fffff)                                                 \
-      (place)[2] = 0xa00000;                                                   \
+      (place)[2] = px(160);                                                    \
   } while (0)
+
+#define AZUL_FRAMES 228
 
 /// Azul: water and bubbles rush over the foes, the winged serpent swims in
 /// from the right and closes them in a great sphere of water, and the sphere
@@ -47,7 +38,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  DrawRectangle blit2;
+  DrawRectangle alternateBlit;
   DrawRectangle blit;
   s32 frame;
   struct BattleWork *battle;
@@ -70,7 +61,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   struct Particle *p;
   struct RenderModel *model;
   void *vertices;
-  struct AzulObject *obj;
+  struct Sprite *obj;
   const u8 *xs;
   u8 *mapCells;
   u8 *planes;
@@ -80,7 +71,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(3);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
@@ -122,22 +113,22 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
-    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[i + 12] = obj;
     Iwram_CopyWordsEntry(obj, work->sprites[5 + (i & 3)], 24);
-    ((struct AzulObject *)work->sprites[i])->priority = 1;
+    ((struct Sprite *)work->sprites[i])->image.priority = 1;
   }
   mapCells = gMapGridCellBuffer;
-  planes = gData_02014000;
+  planes = Ram_MapCellBuffer + 0x4000;
   stripEnd = 0x3a08;
-  for (frame = 0; frame != 228; frame++) {
+  for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       EFFECT_PRESENT_CANVAS(work);
       frame = 186;
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->sprites[i])->shape = 0x4000;
+        ((struct Sprite *)work->sprites[i])->rotation = TRIG_TURN / 4;
       }
     }
     if (frame <= 8) {
@@ -156,13 +147,13 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, frame);
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->sprites[i])->shape = 0xc000;
+        ((struct Sprite *)work->sprites[i])->rotation = TRIG_TURN * 3 / 4;
       }
       base.x = px(120);
       base.y = -px(120);
       vel.x = 0;
       vel.y = px(12);
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
           verts[n * 4 + i].x =
@@ -213,7 +204,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           p->y = px((Random16() & 15) + 120);
           p->velocityX = ((Random16() & mask) - 16) << 13;
           p->velocityY = ((Random16() & mask) - 63) << 12;
-          p->variant = (Trig_Cos(i << 9) << 5 >> 16) - 32;
+          p->variant = (Q_16_16_TO_INT(Trig_Cos(i << 9) << 5)) - 32;
         }
       }
       i = 0;
@@ -222,7 +213,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (p->variant >= 0) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
-          blit(canvas, work->sheet + 0x2df8, ((p->x + (s << 4)) >> 16) - 6,
+          blit(canvas, work->sheet + 0x2df8,
+               (Q_16_16_TO_INT(p->x + (s << 4))) - 6,
                Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);
         }
@@ -253,22 +245,22 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (b < 0) {
           b = 0;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
         if (g < 0) {
           g = 0;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
         if (r < 0) {
           r = 0;
         }
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
-        *c++ = b << 10 | g << 5 | r;
+        *c++ = RGB(r, g, b);
       }
       for (; i != 160; i++) {
         *c++ = 0;
@@ -285,13 +277,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       vel.x = 0;
       vel.y = -px(6);
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->sprites[i])->shape = 0x4000;
+        ((struct Sprite *)work->sprites[i])->rotation = TRIG_TURN / 4;
       }
       for (i = 0; i != args->targetCount; i++) {
-        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
+        struct MotionObject *actor =
+            BattleObject_GetFar(args->targets[i])->object;
 
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x40000, 100);
-        actor[18] = 0;
+        BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(4), 100);
+        actor->verticalMotionStrength = 0;
       }
     }
     if (frame == 186) {
@@ -325,7 +318,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           if (place[2] > 0x9fffff)
             place[2] = px(160);
           obj = work->sprites[i + 12];
-          obj->tile = ((struct AzulObject *)work->sprites[(i & 3) + 5])->tile;
+          obj->image.tile =
+              ((struct Sprite *)work->sprites[(i & 3) + 5])->image.tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
@@ -350,7 +344,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           place[2] = px(gAzul_ObjectZ[row] + i / 4 * 64) + base.y + px(64);
           CLAMP_Y(place);
           obj = work->sprites[i + 12];
-          obj->tile = ((struct AzulObject *)work->sprites[m + 5])->tile;
+          obj->image.tile = ((struct Sprite *)work->sprites[m + 5])->image.tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
@@ -361,7 +355,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
       if (frame == 54) {
         for (i = 0; i != 28; i++) {
-          ((struct AzulObject *)work->sprites[i])->shape = 0;
+          ((struct Sprite *)work->sprites[i])->rotation = 0;
         }
         base.x = px(256);
         base.y = px(72);
@@ -373,8 +367,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
       place[3] = 0;
       place[1] = px(255);
-      vel.x = vel.x * 56 / 64;
-      vel.y = vel.y * 56 / 64;
+      vel.x = vel.x * 56 / DAMPING_SCALE;
+      vel.y = vel.y * 56 / DAMPING_SCALE;
       if (frame <= 137) {
         pos.x = (Trig_Sin(frame << 9) << 4) + base.x;
         x = pos.x;
@@ -430,12 +424,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           p->velocityZ = -p->velocityZ;
         }
       }
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+                          IO_WRITE_16);
     }
     if (frame == 10 || frame == 186) {
       for (i = 0; i != args->targetCount; i++) {
         struct BattleObject *slot = BattleObject_GetFar(args->targets[i]);
-        s32 *actor = slot->object;
+        struct MotionObject *actor = slot->object;
         void *record;
 
         if (frame == 186) {
@@ -451,7 +449,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0,
                                         (Random16() << 1) + 0x10000, 100);
           // record is 0 here; the store reuses its register.
-          actor[18] = (s32)record;
+          actor->verticalMotionStrength = (s32)record;
         }
       }
       if (frame == 186) {
@@ -461,9 +459,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if (frame > 9) {
       for (i = 0; i != args->targetCount; i++) {
-        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
+        struct MotionObject *actor =
+            BattleObject_GetFar(args->targets[i])->object;
 
-        actor[10] = actor[10] * 60 / 64;
+        actor->velocityY = actor->velocityY * 60 / DAMPING_SCALE;
       }
     }
     if (t <= 43) {
@@ -519,20 +518,20 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       angle = 0;
       offset = 0;
       for (; k != 16; angle += 0x888, offset += 64, k++) {
-        s32 y = -Trig_Cos(angle) * 48 >> 16;
-        s32 radius = Trig_Sin(angle) * 48 >> 16;
+        s32 y = Q_16_16_TO_INT(-Trig_Cos(angle) * 48);
+        s32 radius = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
         struct ModelVertex *v;
 
         j = 0;
         v = (struct ModelVertex *)(sphere + offset);
         for (; j != 16; j++) {
-          SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
-                       Trig_Cos(j << 12) * radius >> 16);
+          SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(j << 12) * radius), y,
+                       Q_16_16_TO_INT(Trig_Cos(j << 12) * radius));
           v++;
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet, gData_02014000, 1,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
+                                 Ram_MapCellBuffer + 0x4000, 1, 0);
       for (i = 0; i != 6; i++) {
         for (k = 0; k != 16; k++) {
           for (j = 0; j != 64; j++) {
@@ -542,15 +541,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
-                                 gData_02014000, 1, 0);
-      Picture_MirrorIntoQuadrants(gData_02014000, gMapGridCellBuffer, 64, 64);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
-                                 0);
+                                 (Ram_MapCellBuffer + 0x4000), 1, 0);
+      Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + 0x4000,
+                                  gMapGridCellBuffer, 64, 64);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
     }
     u = frame - 80;
     if (u <= 107) {
@@ -568,9 +568,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-        blit2 = Ram_HeapSlots->ramCodePaired;
+        alternateBlit = Ram_HeapSlots->ramCodePaired;
         i = 0;
-        y = (base.y >> 16) - 32;
+        y = (Q_16_16_TO_INT(base.y)) - 32;
         width = 16;
         height = 64;
         f = frame;
@@ -578,7 +578,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           u8 *cells = work->sheet + 0x2f18 + (f % 6 << 10);
 
           blit(canvas, cells, 30, y, width, height);
-          blit2(canvas, cells, 46, y, width, height);
+          alternateBlit(canvas, cells, 46, y, width, height);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
@@ -616,14 +616,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade > -64) {
-          scratchTexture.pixels = gData_02014000;
+        if (shade > MODEL_SHADE_INVISIBLE) {
+          scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
           scratchTexture.logWidth = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;
-          /* FAKEMATCH(dead): a once-only block. */
-          do {
-            scratchTexture.logHeight = 7;
-          } while (0);
+          scratchTexture.logHeight = 7;
           model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(44), 0, 0);
@@ -639,7 +636,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         size = (frame << 13) + -0x130000;
         scratchTexture.logWidth = 6;
         scratchTexture.logHeight = 6;
-        scratchTexture.pixels = gData_02014000;
+        scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
         model->shade = shade;
         model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
@@ -687,7 +684,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame == 186) {
       BattleBackground_LoadFar(1, battle->background, 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
       for (i = 0; i != args->targetCount; i++) {
         EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
       }
@@ -726,8 +723,9 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
   step->x += vx;
   step->y += vy;
   step->z += vz;
-  SET_VELOCITY(step, vx * damping / 64, (vy + gravity) * damping / 64,
-               vz * damping / 64);
+  SET_VELOCITY(step, vx * damping / DAMPING_SCALE,
+               (vy + gravity) * damping / DAMPING_SCALE,
+               vz * damping / DAMPING_SCALE);
 }
 
 /// Moves a particle one frame on the screen.
@@ -739,8 +737,8 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
 
   step->x = x + vx;
   step->y += vy;
-  step->velocityX = vx * damping / 64;
-  step->velocityY = (vy + gravity) * damping / 64;
+  step->velocityX = vx * damping / DAMPING_SCALE;
+  step->velocityY = (vy + gravity) * damping / DAMPING_SCALE;
 }
 
 /// Projects a 16.16 point onto the screen through the current transform, 16

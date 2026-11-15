@@ -58,7 +58,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 endY;
   s32 i;
 
-  buffer = Data_02012000;
+  buffer = Ram_MapCellBuffer + 0x2000;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
@@ -70,7 +70,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   // Default: set for real below, when j reaches 32.
@@ -111,8 +111,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x20000, 0x40000,
-                                      0x40000, 150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(4), px(4),
+                                      150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
       }
@@ -120,10 +120,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     if (frame > 15) {
       s32 length;
       s32 j;
-      /* FAKEMATCH(temporary): the cell buffer by its fixed address. */
       struct ModelVertex(*cells)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
-      u8 *projected = Data_02011000;
+      u8 *projected = Ram_MapCellBuffer + 0x1000;
       s32 shade;
 
       length = frame * 44 - 704;
@@ -136,26 +135,28 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 
       // The arm's vertices, thicker at its root.
       for (j = 0; j != PUPPET_SEGMENTS; j++) {
-        s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
-        s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
+        s32 width = 50 - (Q_16_16_TO_INT(Trig_Sin(j * 862 + 4310) * 44));
+        s32 wobble =
+            (Q_16_16_TO_INT(Trig_Sin((frame + j) << 11) << 4)) * j / 32;
         s32 outer;
 
         i = 0;
         outer = width + wobble;
         do {
-          cells[j][i].x =
-              ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
-              outer / 2 - 16;
-          cells[j][i].y =
-              -((Trig_Sin(j * length) * (i * width + j + wobble + 32)) >> 16);
+          cells[j][i].x = (Q_16_16_TO_INT(Trig_Cos(j * length) *
+                                          (i * width + wobble + 16))) -
+                          outer / 2 - 16;
+          cells[j][i].y = -(Q_16_16_TO_INT(Trig_Sin(j * length) *
+                                           (i * width + j + wobble + 32)));
           cells[j][i].z = 0;
           i++;
         } while (i != 2);
         if (j == 32) {
-          endX = ((Trig_Cos(length << 5) * (width / 2 + wobble + 16)) >> 16) -
+          endX = (Q_16_16_TO_INT(Trig_Cos(length << 5) *
+                                 (width / 2 + wobble + 16))) -
                  (width + wobble) / 2 - 16;
-          endY =
-              -((Trig_Sin(length << 5) * (width / 2 + j + wobble + 32)) >> 16);
+          endY = -(Q_16_16_TO_INT(Trig_Sin(length << 5) *
+                                  (width / 2 + j + wobble + 32)));
         }
       }
 
@@ -184,8 +185,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       if (frame > 73) {
         Transform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
-      /* FAKEMATCH(temporary): the buffers named, not cells and projected. */
-      Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
+      Render_TransformVertices(Ram_MapCellBuffer, Ram_MapCellBuffer + 0x1000,
+                               66);
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
@@ -214,6 +215,22 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 }
 
 #define SWING_FRAMES 52
+/// Whiplash's sheet: the whip's slash in five cels, one after another.
+#define WHIPLASH_SLASH_A 0
+#define WHIPLASH_SLASH_A_WIDTH 48
+#define WHIPLASH_SLASH_A_HEIGHT 96
+#define WHIPLASH_SLASH_B (WHIPLASH_SLASH_A + PICTURE_BYTES(WHIPLASH_SLASH_A))
+#define WHIPLASH_SLASH_B_WIDTH 38
+#define WHIPLASH_SLASH_B_HEIGHT 92
+#define WHIPLASH_SLASH_C (WHIPLASH_SLASH_B + PICTURE_BYTES(WHIPLASH_SLASH_B))
+#define WHIPLASH_SLASH_C_WIDTH 30
+#define WHIPLASH_SLASH_C_HEIGHT 76
+#define WHIPLASH_SLASH_D (WHIPLASH_SLASH_C + PICTURE_BYTES(WHIPLASH_SLASH_C))
+#define WHIPLASH_SLASH_D_WIDTH 56
+#define WHIPLASH_SLASH_D_HEIGHT 96
+#define WHIPLASH_SLASH_E (WHIPLASH_SLASH_D + PICTURE_BYTES(WHIPLASH_SLASH_D))
+#define WHIPLASH_SLASH_E_WIDTH 56
+#define WHIPLASH_SLASH_E_HEIGHT 88
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256
 
@@ -241,7 +258,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   sparkCels = heap->battleSheet;
 
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
@@ -255,7 +272,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
@@ -264,45 +281,47 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
       switch (frame / 6) {
       case 0:
-        draw[0](canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+                            caster.x / 2 - 48, caster.y - 120);
         break;
       case 1:
-        draw[0](canvas, work->sheet + 0x1200, caster.x / 2 - 38, caster.y - 120,
-                38, 92);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+                            caster.x / 2 - 38, caster.y - 120);
         break;
       case 2:
-        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2 - 38, caster.y - 100,
-                30, 76);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+                            caster.x / 2 - 38, caster.y - 100);
         break;
       case 3:
-        draw[0](canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88,
-                56, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+                            caster.x / 2 - 64, caster.y - 88);
         break;
       case 4:
-        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88,
-                56, 88);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+                            caster.x / 2 - 64, caster.y - 88);
         break;
       }
     } else {
       switch (frame / 6) {
       case 0:
-        draw[0](canvas, work->sheet, caster.x / 2, caster.y - 120, 48, 96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+                            caster.x / 2, caster.y - 120);
         break;
       case 1:
-        draw[0](canvas, work->sheet + 0x1200, caster.x / 2, caster.y - 120, 38,
-                92);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+                            caster.x / 2, caster.y - 120);
         break;
       case 2:
-        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2, caster.y - 100, 30,
-                76);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+                            caster.x / 2, caster.y - 100);
         break;
       case 3:
-        draw[0](canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56,
-                96);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+                            caster.x / 2, caster.y - 88);
         break;
       case 4:
-        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56,
-                88);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+                            caster.x / 2, caster.y - 88);
         break;
       }
     }

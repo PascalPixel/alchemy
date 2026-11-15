@@ -8,6 +8,9 @@
 struct MeshTriangle;
 struct StripQuad;
 
+/// Where MarsDjinnSmallSheet is decoded in the effect's pictures.
+#define DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES 0x1000
+
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 /// the target. For Core it pulls back, then drives in and strikes four times
 /// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
@@ -33,8 +36,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   s32 count;
   s32 i;
 
-  mesh = gData_02014000;
-  projected = Data_02012000;
+  mesh = Ram_MapCellBuffer + 0x4000;
+  projected = Ram_MapCellBuffer + 0x2000;
   cells = gMapGridCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -47,7 +50,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                       gDjinniCharge_EntranceFlags[mode]),
       (s32 *)&screen, focus);
   {
-    s32 *target;
+    struct MotionObject *target;
     s16 savedYaw;
     void *caster;
     s32 frames;
@@ -62,7 +65,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                           BLITTER_ADDITIVE);
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(args->targets[0])->object;
     savedYaw = (s16)camera->yaw;
@@ -74,8 +77,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     work->particles[62].z = focus[2];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
-                               work->sheet + 0x1000, 1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MarsDjinnSmallSheet,
+        work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES, 1, 1);
     if (mode == DJINNI_CHARGE_CORE) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1,
                                  1);
@@ -86,7 +90,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
         s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-        copy((void *)BG_PLTT, source, 128);
+        copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
       }
       frames = 102;
     } else {
@@ -107,14 +111,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         work->particles[63].x = 0;
         work->particles[63].y = 0;
         work->particles[63].z = 0;
-        work->particles[63].velocityX = target[2] - focus[0];
+        work->particles[63].velocityX = target->x - focus[0];
         // DEAD: both arms alike; the ROM keeps the test.
         if (mode == DJINNI_CHARGE_CORE) {
-          work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+          work->particles[63].velocityY = target->y - focus[1] + 0x1e0000;
         } else {
-          work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+          work->particles[63].velocityY = target->y - focus[1] + 0x1e0000;
         }
-        work->particles[63].velocityZ = target[4] - focus[2];
+        work->particles[63].velocityZ = target->z - focus[2];
         for (i = 0; i != 62; i++) {
           work->particles[i].variant = -1;
         }
@@ -152,9 +156,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             work->particles[63].y += work->particles[63].velocityY >> 10;
             work->particles[63].z += work->particles[63].velocityZ >> 10;
           }
-          work->particles[63].x = work->particles[63].x * 56 / 64;
-          work->particles[63].y = work->particles[63].y * 56 / 64;
-          work->particles[63].z = work->particles[63].z * 56 / 64;
+          work->particles[63].x = work->particles[63].x * 56 / DAMPING_SCALE;
+          work->particles[63].y = work->particles[63].y * 56 / DAMPING_SCALE;
+          work->particles[63].z = work->particles[63].z * 56 / DAMPING_SCALE;
           if (frame == 31) {
             Sound_PlayFar(SE_ITEM_BREAK);
           }
@@ -186,7 +190,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             if (p->variant != -1) {
               continue;
             }
-            SET_POSITION(p, target[2], target[3] + px(5), target[4]);
+            SET_POSITION(p, target->x, target->y + px(5), target->z);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (args->side == EFFECT_SIDE_PARTY) {
               p->velocityX = -p->velocityX;
@@ -217,7 +221,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             s32 speed;
 
             p = &work->particles[i];
-            SET_POSITION(p, target[2], target[3] + px(10), target[4]);
+            SET_POSITION(p, target->x, target->y + px(10), target->z);
             angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {
@@ -237,15 +241,20 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectPoint(focus, &screen);
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
-          blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10,
-                  screen.y - 20, 20, 40);
+          blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
+                  screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
         } else if (frame <= 93) {
-          blit[0](canvas, work->sheet + 0x2000 + ((frame - 74) / 4) * 1600,
-                  screen.x / 2 - 20, screen.y - 20, 40, 40);
+          blit[0](canvas,
+                  work->sheet + 0x2000 +
+                      ((frame - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
+                  screen.x / 2 - 20, screen.y - 20, GLOW_ORB_WIDTH,
+                  GLOW_ORB_HEIGHT);
         }
       } else if (frame <= 22) {
-        blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20,
-                20, 40);
+        blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
+                screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
         if (mode == DJINNI_CHARGE_CANNON && frame > 1) {
           s32 picture = (frame / 4) & 3;
           s32 x;
@@ -297,7 +306,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           picture = 5 - p->variant / 6;
           EffectPosition_ProjectPoint(p, &debris);
           blit[0](canvas, work->sheet + 0x2000 + (picture << 11),
-                  debris.x / 2 - 16, debris.y - 32, 32, 64);
+                  debris.x / 2 - 16, debris.y - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector3(p, 62, -px(1) / 64);
           p->variant--;
         }
@@ -321,17 +331,18 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
           Mesh_BuildGrid(mesh, 8, 8, 8, 8);
           for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
-            s32 y = (-Trig_Cos(angle) * 48) >> 16;
-            s32 radius = (Trig_Sin(angle) * 48) >> 16;
+            s32 y = Q_16_16_TO_INT(-Trig_Cos(angle) * 48);
+            s32 radius = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
             struct ModelVertex *vertex = (struct ModelVertex *)cells;
             s32 k;
 
             for (k = 0; k != 8; k++) {
-              s32 x = (Trig_Sin(k << 13) * radius) >> 16;
+              s32 x = Q_16_16_TO_INT(Trig_Sin(k << 13) * radius);
 
               vertex[row * 8 + k].y = y;
               vertex[row * 8 + k].x = x;
-              vertex[row * 8 + k].z = (Trig_Cos(k << 13) * radius) >> 16;
+              vertex[row * 8 + k].z =
+                  Q_16_16_TO_INT(Trig_Cos(k << 13) * radius);
             }
           }
         }
@@ -372,13 +383,13 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           Render_ProjectVertices(cells, projected, 64);
           Render_DrawModelList(model);
         }
-        gProjection.centerX = 120;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
         Heap_Release(model);
       }
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }
-    Actor_SetAnimationSpeedFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

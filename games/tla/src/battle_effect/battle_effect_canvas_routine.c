@@ -20,14 +20,14 @@
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  u8 delay[128];
+  u8 delay[CANVAS_SIZE];
   s32 x;
   s32 y;
   s32 pos;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  for (x = 0; x != 128; x++)
+  for (x = 0; x != CANVAS_SIZE; x++)
     delay[x] = Random16() & 0x3f;
 
   if (direction == 1) {
@@ -41,7 +41,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed;
       speed++;
       for (; x != front; x++) {
-        for (y = 0; y != 128; y++) {
+        for (y = 0; y != CANVAS_SIZE; y++) {
           pos = x - delay[y];
           if (pos >= 0)
             if (pos <= 127)
@@ -62,7 +62,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed / 2;
       speed += 4;
       for (; y != front; y++) {
-        for (x = 0; x != 128; x++) {
+        for (x = 0; x != CANVAS_SIZE; x++) {
           pos = y - delay[x];
           if (pos >= 0)
             if (pos <= 127)

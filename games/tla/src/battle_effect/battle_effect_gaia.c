@@ -13,30 +13,18 @@
 /// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
-/// One OAM entry of a rock sprite.
-struct RockSpritePart {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-};
+#define GAIA_FRAMES 192
 
-/// A rock sprite of the wall: its two OAM entries and its flags.
-struct RockObject {
-  struct RockSpritePart part[2];
-  u8 unk18[2];
-  u8 flags;
-};
+#define GAIA_WALL_SINK_FRAME 160
+#define GAIA_DUST 256 ///< dust in PARTICLES
+/// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
+/// rows, the standing wall's top and foot, then the flames.
+#define GAIA_ROW_HEIGHT 32
+
+/// The wall stands once it has risen, and sinks away a row every three
+/// frames.
+#define GAIA_WALL_STAND_FRAME 88
+#define GAIA_WALL_FOOT_HEIGHT 21
 
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
@@ -90,12 +78,12 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                              1, 0);
   Iwram_CopyWordsEntry(
       palette, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
-  color = (u16 *)&BG_PLTT[1];
+  color = (u16 *)&BG_PLTT_COLOR(0, 1);
   for (i = 0; i != 63; i++) {
     s32 c = *color;
-    s32 blue = ((u16)c >> 10) & 31;
-    s32 green = ((u16)c >> 5) & 31;
-    s32 red = 31;
+    s32 blue = RGB_BLUE((u16)c);
+    s32 green = RGB_GREEN((u16)c);
+    s32 red = RGB_LEVEL_MAX;
 
     red &= c;
     blue -= 8;
@@ -108,7 +96,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 
   // The picture, laid out again in the effect work:
@@ -142,13 +130,13 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct RockObject *object = Sprite_CreateFar(653);
+    struct Sprite *object = Sprite_CreateFar(653);
 
     work->sprites[i] = object;
     if (object != 0) {
       object->flags = 0;
       Sprite_StartAnimationFar(object, i / 4);
-      ((struct RockObject *)work->sprites[i])->part[0].priority = 1;
+      ((struct Sprite *)work->sprites[i])->image.priority = 1;
     }
   }
   // Two max blitters, the second mirrored for the right half.
@@ -159,7 +147,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -178,7 +166,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
   // The dust rises from the foot of the wall after a random wait.
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != GAIA_DUST; i++) {
     struct Particle *dust = &DUST[i];
 
     dust->x = px((Random16() & 63) + wallX + 32);
@@ -190,7 +178,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   work->shakeFrames = 250;
 
-  for (frame = 0; frame != 192; frame++) {
+  for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)
@@ -226,16 +214,16 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         row = 7;
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
       }
     }
 
     // It sinks back the same way (frames 160-183).
-    if (frame >= 160 && frame <= 183) {
-      s32 row = 7 - (frame - 160) / 3;
+    if (frame >= GAIA_WALL_SINK_FRAME && frame <= 183) {
+      s32 row = 7 - (frame - GAIA_WALL_SINK_FRAME) / 3;
 
       if (row < 0)
         row = 0;
@@ -243,19 +231,21 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         row = 7;
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
       }
     }
 
     // The standing wall: its top and its foot (frames 88-159).
-    if (frame >= 88 && frame <= 159) {
+    if (frame >= GAIA_WALL_STAND_FRAME && frame <= 159) {
       draw[0](canvas, &work->sheet[0x13c0], wallX + 16, 0, 48, 96);
       draw[1](canvas, &work->sheet[0x13c0], wallX + 64, 0, 48, 96);
-      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, 48, 21);
-      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, 48, 21);
+      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, 48,
+              GAIA_WALL_FOOT_HEIGHT);
+      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, 48,
+              GAIA_WALL_FOOT_HEIGHT);
     }
 
     // The dust (from frame 88): what leaves the top goes back to the foot
@@ -457,7 +447,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 
     *words++ = 0;
     *words++ = attributes;
-    *words = flags | tile | 0x800;
+    *words = flags | tile | OBJ_PRIORITY(2);
   }
   {
     s32 *p = &found->unk1c;
@@ -469,7 +459,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
-  sprite->scale = 0x10000;
+  sprite->scale = Q16_ONE;
   sprite->height = height;
   sprite->offsetY = 0;
   sprite->offsetX = 0;
@@ -479,7 +469,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 
   objects = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;
-  if (!(attributes & 0x2000))
+  if (!(attributes & OBJ_256_COLORS))
     size = (u32)size >> 1;
   VramCache_Load(sprite->slot, size, 0);
   objects->used += size;
@@ -487,7 +477,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   return found;
 }
 #undef Actor_SetAnimationSpeedFar
-#undef PARTICLES
 #undef CLIP
 #undef BLITTER
 #undef SPARKS

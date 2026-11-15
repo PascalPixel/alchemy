@@ -18,7 +18,7 @@
 ///
 /// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
-  u8 *spraySheet = gData_02014000;
+  u8 *spraySheet = Ram_MapCellBuffer + 0x4000;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -37,8 +37,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, spraySheet, 1,
                              0);
@@ -47,7 +47,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
@@ -55,7 +55,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
     s32 scroll = 0;
     for (frame = 0; frame != OCEAN_FIST_FRAMES; scroll += 8, frame++) {
       if (frame == 0) {
-        s32 *life = Data_02010018;
+        s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
 
         for (i = 0; i != OCEAN_DROPS; i++) {
           *life = -1;
@@ -67,12 +67,12 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         work->shakeFrames = 4;
         halfWidth = 48;
         width = 96;
-        sheet = gData_02014000;
+        sheet = Ram_MapCellBuffer + 0x4000;
       }
       if (frame == 32) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0xf0000, 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(15), 100);
       }
       if (frame == 38) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -147,10 +147,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         for (i = 0, fountain = drops; i != 256; i++, fountain++) {
           if (fountain->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
-            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
+            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             fountain->velocityX = ((Random16() & 63) - 32) << 14;
             fountain->velocityY = (-(Random16() & 63) - 8) << 13;
             fountain->variant = 0;
@@ -188,7 +188,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                                                  gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
-          if (drop->velocityY > 0 && (drop->y >> 16) > 104) {
+          if (drop->velocityY > 0 && (Q_16_16_TO_INT(drop->y)) > 104) {
             drop->variant = -1;
           }
           if (drop->y < -size) {

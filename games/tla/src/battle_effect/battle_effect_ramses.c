@@ -13,7 +13,6 @@
 #define RAMSES_SPARKS 512         ///< sparks of the strike
 
 /// The sparks of the strike, in the map cell buffer.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 extern struct SpriteScale gRamses_UnitScale; ///< one to one
 
@@ -49,13 +48,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   // The statue, its fist and wrist, then six rocks.
   BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct FxAnimObject *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
+    struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[9 + i] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, i % 3);
-      ((struct FxAnimObject *)work->sprites[9 + i])->priority = 1;
+      ((struct Sprite *)work->sprites[9 + i])->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -72,7 +71,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   base.x = px(188);
   base.y = px(92);
@@ -89,8 +88,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   }
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
-  work->fadeFrames = 24;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
@@ -234,7 +233,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
         speed = 0x3ff;
         speed &= Random16();
-        angle = Random16() & 0xffff;
+        angle = Random16() & TRIG_ANGLE_MASK;
         spark->x = px(32);
         spark->y = px(92);
         spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;
@@ -275,4 +274,3 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 #undef RAMSES_SPARKS
 #undef SPRITE_RAMSES
 #undef SPRITE_BATTLE_ROCKS
-#undef PARTICLES

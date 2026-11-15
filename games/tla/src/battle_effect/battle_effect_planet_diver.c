@@ -18,11 +18,13 @@ enum GatheringLightsMode {
 };
 
 /// The skulls live in the map buffer, 64 for each target.
-#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 #define SKULLS 8 ///< per target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
+
+#define HAUNT_SCATTERED 512
+#define HAUNT_SLOTS 64 ///< particles reserved for each target
 
 /// Skulls close in on each target in turn.
 ///
@@ -48,13 +50,13 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Scatter every skull up to 64 pixels from its centre.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != HAUNT_SCATTERED; i++) {
     SET_POSITION(&PARTICLES[i], ((Random16() & 255) - 127) << 15,
                  ((Random16() & 255) - 127) << 15,
                  ((Random16() & 255) - 127) << 15);
@@ -71,10 +73,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
@@ -98,7 +100,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
         for (i = 0; i != SKULLS; i++) {
-          struct Particle *skull = &PARTICLES[k * 64 + i];
+          struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {
             s32 x = (skull->x >> 8) * (skull->x >> 8);
@@ -132,6 +134,8 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
+
+#define ORBITING_SPIRALS_LIFE 60
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
@@ -167,7 +171,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   // On the far side the background and the spirals move 112 pixels left.
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x6800;
-    offsetX = -112;
+    offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
@@ -184,14 +188,15 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
-      for (i = 0, base = 0x80000, angle = frame << 10; i != 160; i++) {
+      for (i = 0, base = 0x80000, angle = frame << 10; i != DISPLAY_HEIGHT;
+           i++) {
         *row++ = (base - (Trig_Sin(angle) << 3)) >> 10;
         angle += 1024;
       }
     } else {
       s32 angle;
 
-      for (i = 0, angle = frame << 10; i != 160; i++) {
+      for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
         *row++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
         angle += 1024;
       }
@@ -205,7 +210,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         struct MotionObject *target;
 
         target = BattleObject_GetFar(args->targets[member])->object;
-        if (frame > member * 16 && frame < (member * 16) + 60) {
+        if (frame > member * 16 &&
+            frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
           s32 spin;
 
           // Halfway through, the target's flash stops.
@@ -225,8 +231,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
             s32 half;
 
             spin = (frame + i * 32) << 9;
-            x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offsetX;
-            y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
+            x = (screen.x + (Q_16_16_TO_INT(Trig_Sin(spin) << 4))) + offsetX;
+            y = screen.y + (Q_16_16_TO_INT(Trig_Cos(spin) << 4));
             half = frame / 16;
             draw[half & 1](canvas,
                            work->sheet + (((frame / 4) - (half * 4)) << 10),
@@ -266,8 +272,15 @@ void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_THORNY_GRAVE);
 }
 
-#define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)
+
+#define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
+/// The targets' turns, this many frames apart.
+#define GATHERING_LIGHTS_TARGET_FRAMES 20
+
+#define GATHERING_LIGHTS_HIT_FRAME 70
+#define MEMBER_BURST_WIDTH 20
+#define MEMBER_BURST_HEIGHT 32
 
 /// From the caster's body 128 motes a target scatter every way, and from frame
 /// 30 each is pulled toward the middle of its target's body, vanishing once it
@@ -292,7 +305,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
   // Set up: the mote picture, the mode's palette, and the max and additive
   // blitters for the caster's side.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||
@@ -319,8 +332,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     struct MotionObject *source = BattleObject_GetFar(args->user)->object;
     s32 height = BattleUnit_GetEffectHeightFar(args->user);
 
-    for (i = 0; i != MOTES_PER_TARGET; i++) {
-      struct Particle *mote = &PARTICLES[k * 128 + i];
+    for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
+      struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
       SET_POSITION(mote, source->x, height, source->z);
       mote->velocityX = ((Random16() & 255) - 128) << 10;
@@ -335,7 +348,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
-       frame != gGatheringLights_Counts[mode * 2 + 1] + args->targetCount * 20;
+       frame != gGatheringLights_Counts[mode * 2 + 1] +
+                    args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
        frame++) {
     s32 *row;
     s32 sway;
@@ -355,13 +369,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
     row = work->bg2xLines;
-    sway = Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
-                                     args->targetCount * 20)) *
-               16 >>
-           16;
+    sway = Q_16_16_TO_INT(
+        Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
+                                  args->targetCount * 20)) *
+        16);
     scrollX = gBgScroll[1].x;
-    for (i = 0; i != 160; i++) {
-      s32 x = (Trig_Sin((frame + i) << 10) * sway >> 16) + scrollX;
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
+      s32 x = (Q_16_16_TO_INT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
 
       if (x < 0)
         x += 0xffff;
@@ -373,29 +387,30 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
           BattleObject_GetFar(args->targets[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(args->targets[k]) / 2;
 
-      if (frame == k * 20 + 71) {
+      if (frame == k * GATHERING_LIGHTS_TARGET_FRAMES + 71) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
         else if (mode != GATHERING_LIGHTS_THORNY_GRAVE)
           Sound_PlayFar(SE_IMPACT);
       }
-      if (frame == k * 20 + 70)
+      if (frame ==
+          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
         BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
-      if (frame > k * 20) {
+      if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
         for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
-          struct Particle *mote = &PARTICLES[k * 128 + i];
+          struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * MOTE_CELL, pos.x - 10,
-                    pos.y - 16, 20, 32);
+                    pos.y - 16, MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector3(mote, 62, 0);
 
             // Thirty frames on, the mote is pulled toward the middle of its
             // target's body.
-            if (frame > k * 20 + i + 30) {
+            if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
               s32 x = mote->x;
               s32 dx = (target->x - x) >> 8;
               s32 dy = (target->y + half - mote->y) >> 9;
@@ -422,8 +437,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
                 if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
-                  BattleEffect_StartActorMotion(args->targets[k], 1, 0x20000,
-                                                0x20000, 0x20000, i * 8 + 100);
+                  BattleEffect_StartActorMotion(args->targets[k], 1, px(2),
+                                                px(2), px(2), i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);
                 }

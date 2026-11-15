@@ -52,11 +52,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
   // Open the canvas, pose the user and place the columns.
   user = BattleObject_GetFar(args->user)->object;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, 2);
-  Actor_SetAnimationSpeedFar(user, 48);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   EffectPosition_ProjectBattler(args->targets[0], &target);
   if (args->side == EFFECT_SIDE_ENEMIES)
     baseX = target.x / 2 - 24;
@@ -77,7 +77,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     do {
       struct Particle *flash = &work->particles[col * FLASHES_PER_COLUMN + i];
       s32 radius = i * 2;
-      s32 angle = Random16() & 0xffff;
+      s32 angle = Random16() & TRIG_ANGLE_MASK;
 
       flash->x = Trig_Sin(angle) * radius;
       flash->y = -(Trig_Cos(angle) * radius);
@@ -92,7 +92,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 angle;
 
       speed = (Random16() & 0x1ff) + 32;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       spark->x = px(gRagnarok_StrikeColumns[col + args->side * 3] + baseX);
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -167,7 +167,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         if (frame < start + 2)
           draw[0](canvas, work->sheet + FLASH_SHEET,
                   gRagnarok_StrikeColumns[col + args->side * 3] + baseX - 16,
-                  56, 32, 64);
+                  56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         i = 0;
         do {
           struct Particle *flash =
@@ -184,7 +184,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             draw[0](canvas,
                     work->sheet + (gRagnarok_FlashPictures[life / 3] << 11) +
                         FLASH_SHEET,
-                    x - 16, y + 56, 32, 64);
+                    x - 16, y + 56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;
           i++;
@@ -202,7 +202,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 y;
             s32 size;
 
-            BattleEffectKernels_IntegrateVector2(spark, 64, px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > px(108)) {
@@ -212,8 +213,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 py = y >> 16;
-                s32 px = x >> 16;
+                s32 py = Q_16_16_TO_INT(y);
+                s32 px = Q_16_16_TO_INT(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
@@ -246,7 +247,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     frame++;
   } while (frame != BLADE_FRAMES);
 
-  Actor_SetAnimationSpeedFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -270,6 +271,9 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define SPARK                                                                  \
   ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
+
+/// The sword strikes: the crash, the damage and the canvas filled bright.
+#define TITAN_BLADE_STRIKE_FRAME 60
 
 /// A great sword falls from the sky onto the target, a pillar of fire and dust
 /// spouting under it, and drives into the ground in a burst of flashes and
@@ -297,8 +301,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   cells = Ram_HeapSlots->battleSheet;
 
   // Open the canvas on BG1 over the target and build the blitters.
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EffectPosition_ProjectBattler(args->targets[0], &target);
   centerX = target.x / 2;
 
@@ -323,11 +327,11 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
-      s32 red = *color & 0x1f;
-      s32 green = (*color >> 5) & 0x1f;
-      s32 blue = (*color >> 10) & 0x1f;
+      s32 red = RGB_RED(*color);
+      s32 green = RGB_GREEN(*color);
+      s32 blue = RGB_BLUE(*color);
 
-      *color++ = (red << 10) | (blue << 5) | green;
+      *color++ = RGB(green, blue, red);
     }
   }
 
@@ -338,7 +342,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   do {
     struct Particle *flash = &work->particles[i];
     s32 scale = i * 2;
-    s32 angle = Random16() & 0xFFFF;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     flash->x = Trig_Sin(angle) * scale;
     flash->y = -(Trig_Cos(angle) * scale);
@@ -362,7 +366,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     speed = 0x1FF;
     speed &= Random16();
-    angle = Random16() & 0xFFFF;
+    angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = origin;
     spark->y = 176 << 15;
     spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
@@ -389,14 +393,14 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = frame;
     if (frame == 48)
       work->shakeFrames = 8;
-    if (frame == 60)
+    if (frame == TITAN_BLADE_STRIKE_FRAME)
       work->shakeFrames = 16;
 
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 32)
       Sound_PlayFar(SE_SCATTER);
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       if (mode == FALLING_SWORD_ACHERONS_GRIEF)
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
@@ -419,7 +423,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           draw[0](canvas,
                   work->sheet + (gTitanBlade_FlashPictures[life / 3] << 11) +
                       FLASH_SHEET,
-                  x - 16, y + 48, 32, 64);
+                  x - 16, y + 48, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
         i++;
@@ -437,7 +441,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 angle;
 
           speed = Random16() & 63;
-          angle = Random16() & 0xFFFF;
+          angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
           dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
@@ -462,7 +466,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 angle;
 
           speed = Random16() & 63;
-          angle = Random16() & 0xFFFF;
+          angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
           dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
@@ -520,8 +524,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
             dust->velocityY += -32768;
           else
             dust->velocityY += gTitanBlade_DustGravity[i & 3];
-          dust->velocityX = dust->velocityX * 62 / 64;
-          dust->velocityY = dust->velocityY * 62 / 64;
+          dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+          dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
           if (dust->velocityY > 0 && Q_16_16_UPPER_HALF(dust->y) > 108)
             dust->variant = -1;
@@ -539,7 +543,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
       x = centerX - 18;
       high = 120;
-      if (frame > 60)
+      if (frame > TITAN_BLADE_STRIKE_FRAME)
         top = frame * 8 - 450;
       else if (frame > 32)
         top = step / 2 + 16;
@@ -564,7 +568,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 y;
           s32 size;
 
-          BattleEffectKernels_IntegrateVector2(spark, 64, 128 << 6);
+          BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                               128 << 6);
           y = spark->y;
           spark->variant--;
           if (y > (216 << 15)) {
@@ -600,7 +605,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                                POSE_DAMAGE, 0, 8);
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
-    if (frame == 60)
+    if (frame == TITAN_BLADE_STRIKE_FRAME)
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
 
     BattleCamera_Shake(16, 16);
@@ -613,31 +618,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
 struct StripQuad;
 
-/// A sprite as Judgment reads it: its priority and resource.
-struct JudgmentObject {
-  u8 unk0[9];
-  u8 flagsLow : 2;
-  u8 priority : 2;
-  u8 flagsHigh : 4;
-  u8 unk0a[6];
-  u8 resource;
-  u8 unk11[9];
-  u8 unk1a;
-};
-
 extern const struct Scale gJudgment_UnitScale;
 
-/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has
- * static __inline__ void FILL(void *dst, s32 size, s32 value) {
- * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
- * the object has, BattleEffect_RunJudgment moves: 684 of 2634 instructions in
- * tla-ja. */
-/// Fills words through the IWRAM fill, in a once-only block.
-static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
-  do {
-    Iwram_FillWordsEntry(dst, size, value);
-  } while (0);
-}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, x, y, w, h);    \
@@ -647,7 +629,6 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only

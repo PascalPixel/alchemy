@@ -44,18 +44,18 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   if (mode != BREATH_BEAM)
     BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet);
     s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copyWords((void *)BG_PLTT, palette, 128);
+    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   } else {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copyWords((void *)BG_PLTT, palette, 128);
+    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, JAW_TEXTURE, 0, 0);
@@ -68,9 +68,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 k;
 
         if (args->variant == EFFECT_VARIANT_BASIC)
-          shade = ((Trig_Sin(j << 10) << 7) >> 16) - i * 4 - 64;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
         else
-          shade = ((Trig_Sin(j << 10) * 63) >> 16) - i * 4;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * 63)) - i * 4;
         if (shade > 63)
           shade = 63;
         if (shade < 0)
@@ -87,7 +87,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   }
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -209,8 +209,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != 32; i++) {
           step = &work->particles[32 + i];
           if (++step->variant >= 0) {
-            s32 x = mouthX + ((Trig_Sin(step->x) * step->y) >> 16);
-            s32 y = mouthY + ((Trig_Cos(step->x) * step->y) >> 16);
+            s32 x = mouthX + (Q_16_16_TO_INT(Trig_Sin(step->x) * step->y));
+            s32 y = mouthY + (Q_16_16_TO_INT(Trig_Cos(step->x) * step->y));
             s32 size = (i & 3) + 3;
 
             if (step->y > 1) {
@@ -427,8 +427,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             else
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 3);
-            BattleEffect_StartActorMotion(args->targets[i], 1, 0x10000, 0x40000,
-                                          0x20000, frame + 100);
+            BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
+                                          px(2), frame + 100);
           }
         }
       } else if (frame == gBreaths_FlashFrames[mode]) {
@@ -465,6 +465,20 @@ void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
+
+#define CRESCENT_SLASH_FRAMES 32
+
+/// The crescent slash's steps, three frames each from frame 8.
+enum CrescentSlashStep {
+  CRESCENT_SLASH_STAR,     ///< the star crescent
+  CRESCENT_SLASH_FLASH,    ///< the canvas filled at its brightest
+  CRESCENT_SLASH_GREY_A,   ///< the grey crescent's first half
+  CRESCENT_SLASH_GREY_B,   ///< its second half
+  CRESCENT_SLASH_STAR_LAST ///< the star crescent's last cell
+};
+
+/// Each half of GreyCrescentSheet is a 128x128 picture.
+#define GREY_CRESCENT_SIZE 128
 
 /// The crescent slash of Human Hunt (mode 0) and Echo Cut (kind 390,
 /// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
@@ -510,7 +524,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -518,7 +532,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(4));
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != CRESCENT_SLASH_FRAMES; frame++) {
     if (frame == 0)
       EffectPosition_ProjectBattler(args->targets[0],
                                     (struct ScreenPoint *)position);
@@ -531,8 +545,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_StartActorMotion(args->targets[0], 1, 0x40000, 0x100000,
-                                    0x40000, 250);
+      BattleEffect_StartActorMotion(args->targets[0], 1, px(4), px(16), px(4),
+                                    250);
       work->shakeFrames = 4;
     }
 
@@ -548,38 +562,48 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         x = position[0] / 2 - 80;
       if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
         switch (step) {
-        case CRESCENT_SLASH_HUMAN_HUNT:
-          draw[0](canvas, work->sheet, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR:
+          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+                  SLASH_PICTURE_SIZE);
           break;
-        case CRESCENT_SLASH_ECHO_CUT:
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        case CRESCENT_SLASH_FLASH:
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           break;
-        case 2:
-          draw[0](canvas, cells, x - 4, y, 128, 128);
+        case CRESCENT_SLASH_GREY_A:
+          draw[0](canvas, cells, x - 4, y, GREY_CRESCENT_SIZE,
+                  GREY_CRESCENT_SIZE);
           break;
-        case 3:
-          draw[0](canvas, cells + 0x4000, x - 4, y, 128, 128);
+        case CRESCENT_SLASH_GREY_B:
+          draw[0](canvas, cells + GREY_CRESCENT_SIZE * GREY_CRESCENT_SIZE,
+                  x - 4, y, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
-        case 4:
-          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR_LAST:
+          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
+                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       } else {
         switch (step) {
-        case CRESCENT_SLASH_ECHO_CUT:
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        case CRESCENT_SLASH_FLASH:
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           break;
-        case CRESCENT_SLASH_HUMAN_HUNT:
-          draw[0](canvas, work->sheet, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR:
+          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+                  SLASH_PICTURE_SIZE);
           break;
-        case 2:
-          draw[0](canvas, cells, x - 4, y - 8, 128, 128);
+        case CRESCENT_SLASH_GREY_A:
+          draw[0](canvas, cells, x - 4, y - 8, GREY_CRESCENT_SIZE,
+                  GREY_CRESCENT_SIZE);
           break;
-        case 3:
-          draw[0](canvas, cells + 0x4000, x - 4, y - 8, 128, 128);
+        case CRESCENT_SLASH_GREY_B:
+          draw[0](canvas, cells + GREY_CRESCENT_SIZE * GREY_CRESCENT_SIZE,
+                  x - 4, y - 8, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
-        case 4:
-          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+        case CRESCENT_SLASH_STAR_LAST:
+          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
+                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       }

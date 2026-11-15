@@ -17,6 +17,9 @@ struct StripQuad;
 // A ring of heat spins over the targets' middle and swells; from frame 56 a
 // pillar of flame (two mirrored halves) falls onto them, bursting into
 // sparks and embers when it lands, under a second, fading ring.
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define RAGING_HEAT_FLASH_BURST_PICTURES 0x4000
+
 /// Raging Heat: a spinning ring of heat over the targets, and a pillar of
 /// flame that falls onto them and bursts into sparks and embers.
 void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
@@ -40,7 +43,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 10);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -57,14 +60,15 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x4000, 1, 0);
+                             work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, TEXTURE_PIXELS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
     if (frame == 0) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = 24;
       }
       for (i = 0; i != 256; i++) {
@@ -128,9 +132,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           if ((u32)particle->variant <= 23) {
             if (particle->variant > 1) {
               draw[0](canvas,
-                      work->sheet + 0x4000 + ((particle->variant / 4) << 11),
+                      work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
+                          ((particle->variant / 4) << 11),
                       Q_16_16_UPPER_HALF(particle->x) - 16,
-                      Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
+                      Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
             }
             BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
           }
@@ -210,7 +216,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           model->shade = shade;
           texture.pixels = TEXTURE_PIXELS;
         }
-        if (scale > 0 && shade > -64) {
+        if (scale > 0 && shade > MODEL_SHADE_INVISIBLE) {
           Transform_ApplyUniformScale(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
@@ -273,8 +279,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   s32 j;
   s32 i;
 
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
@@ -283,15 +289,15 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, source, 128);
+    copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   lift = 0;
   {
-    s32 *life = Data_02010018;
+    s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
 
     for (i = 0; i != SPARK_COUNT; i++) {
       *life = -1;
@@ -330,8 +336,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       ring->y += ring->velocityY;
       ring->velocityX += ring->z;
       ring->velocityY += ring->velocityZ;
-      ring->velocityX = ring->velocityX * 48 / 64;
-      ring->velocityY = ring->velocityY * 48 / 64;
+      ring->velocityX = ring->velocityX * 48 / DAMPING_SCALE;
+      ring->velocityY = ring->velocityY * 48 / DAMPING_SCALE;
     }
 
     // The flames: each one's place on the ring turned into the canvas, the
@@ -425,10 +431,10 @@ void RagingHeat_FillGradientCanvas(void) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   REG_BG2PA = 0x4e;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  for (y = 0; y != 128; y++) {
-    for (x = 0; x != 128; x++) {
+  for (y = 0; y != CANVAS_SIZE; y++) {
+    for (x = 0; x != CANVAS_SIZE; x++) {
       s32 level;
 
       if (y < 32)

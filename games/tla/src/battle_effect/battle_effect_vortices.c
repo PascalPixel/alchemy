@@ -11,6 +11,13 @@
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 ///< the particles that hold each target's seat
 
+/// The vortex's three halves, then the bubble picture.
+#define FROTH_VORTEX_HALF_WIDTH 16
+#define FROTH_VORTEX_HALF_HEIGHT 64
+#define FROTH_BUBBLE_PICTURE_WIDTH 12
+#define FROTH_BUBBLE_PICTURE_HEIGHT 24
+#define FROTH_BUBBLE_PICTURE (3 * PICTURE_BYTES(FROTH_VORTEX_HALF))
+
 /// Bubbles fly out of the top of the user, hang, and home in on the targets;
 /// each that lands bursts into a swirling vortex, knocking back its target,
 /// while the camera swings round.
@@ -37,7 +44,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   landed = (s8 *)Ram_MapCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -95,7 +102,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           pos.depth = 160;
         if (pos.depth > 0x31f)
           pos.depth = 0x31f;
-        draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE, pos.x - 6,
+                pos.y - 12, FROTH_BUBBLE_PICTURE_WIDTH,
+                FROTH_BUBBLE_PICTURE_HEIGHT);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -109,9 +118,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
         if (frame < i * 2 + 85) {
-          point->velocityX = point->velocityX * 60 / 64;
-          point->velocityY = point->velocityY * 60 / 64;
-          point->velocityZ = point->velocityZ * 60 / 64;
+          point->velocityX = point->velocityX * 60 / DAMPING_SCALE;
+          point->velocityY = point->velocityY * 60 / DAMPING_SCALE;
+          point->velocityZ = point->velocityZ * 60 / DAMPING_SCALE;
         }
         if (point->y < 0) {
           landed[i] = 1;
@@ -131,9 +140,11 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       // The splash: three cels, two frames each, drawn as mirrored halves.
       if (point->variant >= 0 && point->variant < 16) {
         draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
-                point->x - 16, point->y - 56, 16, 64);
+                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56, 16,
+                FROTH_VORTEX_HALF_HEIGHT);
         draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
-                point->x, point->y - 56, 16, 64);
+                point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
+                FROTH_VORTEX_HALF_HEIGHT);
         point->variant++;
       }
     }
@@ -175,8 +186,8 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   // second mirrored.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -192,7 +203,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     glint->variant = -(Random16() & 15);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
@@ -214,24 +225,25 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     else
       wave -= 0x200000;
     if (frame <= 16)
-      REG_BLDALPHA = frame | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frame, BLEND_WEIGHT_MAX);
     if (frame > 63)
-      REG_BLDALPHA = (0x4f - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, BLEND_WEIGHT_MAX);
 
     for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = ((gVortices_Shapes[args->variant * 3 + 1] *
-                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-            wave) >>
-           16) +
+      x = (Q_16_16_TO_INT(gVortices_Shapes[args->variant * 3 + 1] *
+                              Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
+                          wave)) +
           40;
-      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
+      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-      draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,
-              32);
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40,
-              32);
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16,
+              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas,
+              work->sheet + segment * PICTURE_BYTES(TORNADO_STRIP) + 0x2a56, x,
+              y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80,
+              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
 
       // Its four glints, the second of each pair mirrored; each restarts at
       // a new place when its cels run out.

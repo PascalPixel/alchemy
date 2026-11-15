@@ -31,32 +31,19 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
   UNUSED u8 unused[4];
 
   if (flip == 0) {
-    u32 heap = 0xc0;
-    s32 flags = 19;
-    void **slots;
-
-    /* FAKEMATCH(barrier): an empty asm on heap and flags. */
-    __asm__("" : "+l"(heap), "+l"(flags));
-    slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
-    out[0] = slots[26];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    out[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    out[1] = slots[47];
+    out[1] = Ram_HeapSlots->ramCodePaired;
   } else {
-    u32 heap = 0xc0;
-    s32 flags = 23;
-    void **slots;
-
-    /* FAKEMATCH(barrier): the same asm for the mirrored blitters. */
-    __asm__("" : "+l"(heap), "+l"(flags));
-    slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
-    out[0] = slots[26];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+    out[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
-    out[1] = slots[47];
+    out[1] = Ram_HeapSlots->ramCodePaired;
   }
 }
 
@@ -79,6 +66,11 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 #define PIC_MOTE 0x2710  ///< the crescent motes, 24 x 24
 #define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
 #define MOTES 8          ///< per target
+
+#define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
+
+#define DJINN_BEAMS_MOTE_WIDTH 24
+#define DJINN_BEAMS_MOTE_HEIGHT 24
 
 /// With a prelude the Djinni of the mode's element appears, sways and rises
 /// away; then for each target in turn, sixteen frames apart, eight motes drift
@@ -129,7 +121,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                                work->sheet + PIC_DJINN, 1, 1);
 
   // The motes start 80 pixels up, each at its own phase of the sway.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     SET_POSITION(&PARTICLES[i], 0, 80 << 16, (Random16() | -32) << 14);
     PARTICLES[i].variant = Random16() & 255;
   }
@@ -141,7 +133,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     offsetX = 64 - one.x;
   } else {
     if (args->side == EFFECT_SIDE_PARTY)
-      offsetX = -112;
+      offsetX = -NARROW_CANVAS_PARTY_X;
     else
       offsetX = 0;
   }
@@ -161,15 +153,17 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     prelude = args->prelude;
     if (prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn[0] + offsetX - 20;
-      s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn[1] - 24;
+      s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) * 20)) + djinn[0] + offsetX - 20;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + djinn[1] - 24;
 
       BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+      draw[1](canvas, work->sheet + PIC_DJINN, x, y, DJINNI_WIDTH,
+              DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+        draw[1](canvas, work->sheet + PIC_DJINN, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -200,7 +194,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
 
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x += offsetX;
-            sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
+            sway = Q_16_16_TO_INT(Trig_Sin(mote->variant << 10) * 16);
             if (i & 1)
               pos.x -= sway;
             else
@@ -210,7 +204,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 576 +
                             PIC_MOTE,
-                        pos.x - 12, pos.y - 12, 24, 24);
+                        pos.x - 12, pos.y - 12, DJINN_BEAMS_MOTE_WIDTH,
+                        DJINN_BEAMS_MOTE_HEIGHT);
             mote->y -= px(1);
             mote->variant++;
           }
@@ -336,6 +331,12 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
 #define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
 #define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
 
+#define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
+#define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
+/// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
+#define LOBBED_SHELL_WIDTH 24
+#define LOBBED_SHELL_HEIGHT 32
+
 /// Shots arc from the caster to each target, one or four per target eight
 /// frames apart, turning as they fly; each bursts where it lands into smoke or
 /// shards, flashing the target. The mode picks the colours and its row of
@@ -373,8 +374,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
-    BattleEffect_StartCanvasLayer(1);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
                              1);
@@ -398,7 +399,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // The shots leave the caster at the mode's height, each aimed at its
   // target with a little spread in depth.
@@ -406,17 +407,17 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
   if (mode == LOBBED_SHELLS_MUD)
-    height = 0x280000;
+    height = px(40);
   else if (mode == LOBBED_SHELLS_RISING_VENOM)
-    height = 0x140000;
+    height = px(20);
   else
-    height = 0x40000;
+    height = px(4);
   for (k = 0; k != args->targetCount; k++) {
     struct MotionObject *target =
         BattleObject_GetFar(args->targets[k % args->targetCount])->object;
 
-    for (i = 0; i != 16; i++) {
-      struct Particle *shot = &PARTICLES[k * 16 + i];
+    for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
+      struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
       s32 aimZ;
 
       SET_POSITION(shot, source->x, height, source->z);
@@ -476,11 +477,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             if (step > 4)
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 16,
-                  position.y - 12, 32, 24);
+                  position.y - 12, LOBBED_SHELL_HEIGHT, 24);
             else
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 12,
-                  position.y - 16, 24, 32);
+                  position.y - 16, LOBBED_SHELL_WIDTH, LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
               BattleEffectKernels_IntegrateVector3(shot, 63, -px(1) / 2);
             if (shot->y < 0) {
@@ -515,13 +516,16 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
     // The bursts: smoke rises slowly and spreads; shards fly up, fall and
     // tumble, facing the way they move. Each lives 45 frames.
-    for (i = 0, burst = BURSTS; i != 256; burst++, i++) {
+    for (i = 0, burst = BURSTS; i != LOBBED_SHELLS_BURST_SLOTS; burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ProjectPoint((s32 *)burst, &position);
         position.x >>= 1;
         if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0) {
-          draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,
-                  position.x - 12, position.y - 24, 24, 48);
+          draw[1](canvas,
+                  work->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
+                      SMOKE_SHEET,
+                  position.x - 12, position.y - 24, SMOKE_PUFF_WIDTH,
+                  SMOKE_PUFF_HEIGHT);
         } else {
           s32 picture = burst->variant / 5;
           s32 flip;
@@ -553,8 +557,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
       BattleEffect_RunImpair(args);

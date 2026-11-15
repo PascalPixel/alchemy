@@ -8,17 +8,6 @@
 
 #define KIND125_FRAMES 114
 
-/* VIEW(summon_effects): tag union BattleBackgroundId as union
- * BattleBackgroundId__summon_effects; battle_effect/battle_effect.h has
- * another definition; not tried: struct BattleBackgroundId__summon_effects was
- * not found. */
-union BattleBackgroundId {
-  u16 id;
-  s32 word;
-};
-#define BACKGROUND(battle)                                                     \
-  (((union BattleBackgroundId *)&(battle)->background)->id)
-
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
 
@@ -40,6 +29,9 @@ struct RenderModel__f190b74 {
     u8 *color;
   } look;
 };
+
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
 
 /// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
@@ -76,11 +68,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                             work->sheet + 0x2f10, 1, 0);
+                             work->sheet + ODYSSEY_DUST_BLOB_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)
@@ -98,13 +90,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &to);
 
     if (frame == 0) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
                                  0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       EFFECT_FREE_PARTICLES(i, work->particles, 64);
     }
 
@@ -119,23 +112,23 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
-      palette = (u16 *)BG_PLTT + 96;
+      palette = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++) {
         s32 entry = *palette;
-        s32 red = 31;
+        s32 red = RGB_LEVEL_MAX;
         u16 green;
         s32 blue;
 
         red &= entry;
         /* FAKEMATCH(dead): green is taken and clamped, then never used. */
-        green = ((u16)entry >> 5) & 31;
-        blue = ((u16)entry >> 10) & 31;
+        green = RGB_GREEN((u16)entry);
+        blue = RGB_BLUE((u16)entry);
 
-        if (red > 31)
-          red = 31;
-        if (blue > 31)
-          blue = 31;
-        green = green > 31 ? 31 : green;
+        if (red > RGB_LEVEL_MAX)
+          red = RGB_LEVEL_MAX;
+        if (blue > RGB_LEVEL_MAX)
+          blue = RGB_LEVEL_MAX;
+        green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;
@@ -144,7 +137,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       gBgScroll[1].x += 8;
 
     if (frame == 8) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       step = work->particles;
       for (i = 0; i != 64; i++) {
         step->x = Random16() % 216 - 96;
@@ -160,7 +154,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 84) {
       Sound_PlayFar(SE_POWER_UP);
       Actor_SelectAnimationFar(caster, 2);
-      Actor_SetAnimationSpeedFar(caster, 48);
+      Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
       BattleEffect_SetApproachMotion(args->user, args->targets[0], 7, 80);
     }
 
@@ -168,12 +162,13 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 90) {
       struct Particle *shard;
 
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
-      shard = Data_02016000;
+      shard = Ram_MapCellBuffer + 0x6000;
       for (i = 0; i != 128; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
@@ -327,7 +322,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         if (shade > 0)
           shade = 0;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
@@ -374,7 +369,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         if (shade > 0)
           shade = 0;
-        if (shade > -64) {
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
@@ -405,7 +400,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, fillMode, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
-      for (i = 0, step = Data_02016000; i != 128; i++) {
+      for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
         color[0] = (i & 7) + 32;
         model->look.color = color;
         Transform_Reset();
@@ -434,7 +429,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   BattleObject_PutFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
-  BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
+  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
+                           24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
@@ -443,7 +439,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
 /// Copies the swirl's colours into background palette entries 96 on.
 static inline s32 Swirl_CopyPalette(const void *source) {
-  return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
+  return Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), source, 128);
 }
 
 /// Draws a size by size square of the swirl at x along the top of the buffer.
@@ -476,9 +472,9 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->battleBackground;
-  BattleEffect_StartCanvasLayer(3);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -493,10 +489,10 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
   Swirl_CopyPalette(palette);
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
-  Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
+  Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -546,20 +542,20 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     // (about half size), about the screen's centre (120, 72).
     sine = Trig_Sin(frame << 6) / 532;
     cosine = Trig_Cos(frame << 6) / 532;
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_16);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                         (Iwram_MulQ16(-120 << 24, cosine) +
                          Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
                             8,
-                        0x30000);
+                        IO_WRITE_32);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
                         (Iwram_MulQ16(-120 << 24, -sine) +
                          Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
                             8,
-                        0x30000);
+                        IO_WRITE_32);
     wait(1);
   }
 
@@ -619,9 +615,9 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   for (i = 0; i != 63; i++) {
     s32 level = i >> 1;
 
-    ramp[i] = level << 10 | level << 5 | level;
+    ramp[i] = RGB(level, level, level);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)ramp, 0x8000003f);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp, 0x8000003f);
 
   REG_BG2X = scrollX << 8;
   // x, done with the band, now counts the slide's frames.
@@ -637,36 +633,18 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
-/// An actor's child sprite, as Actor_SetActiveChildParam sets its mode.
-struct ChildObject {
-  u8 unk00[5];
-  u8 mode;
-  u8 unk06[10];
-  s32 active;
-};
-
-/// An actor's group of child sprites.
-struct ChildGroup {
-  u8 unk00[25];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[12];
-  struct ChildObject *children[1];
-};
-
-/// Sets the draw parameter (byte 5) of each active child of group to mode
-/// and marks the group for redrawing.
-void Actor_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
+/// Unused: sets the colour mode of each running animation layer of a sprite
+/// and marks it for redrawing, as Actor_SetSpriteColor does for an actor's.
+UNUSED void Sprite_SetColorMode(struct Sprite *sprite, s32 mode) {
   s32 i;
 
-  for (i = 0; i < group->count; i++) {
-    struct ChildObject *child = group->children[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *part = sprite->entries[i];
 
-    if (child != NULL && child->active != 0)
-      *((u8 *)child + 5) = mode;
+    if (part != NULL && part->script != NULL)
+      part->colorMode = mode;
   }
-  group->dirty = 1;
+  sprite->dirty = 1;
 }
 
 /// Fills count bytes of table with a rising shade ramp (0 to 63, by a step
@@ -686,7 +664,7 @@ void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -715,7 +693,7 @@ void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -746,7 +724,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -780,12 +758,11 @@ void Iris_RestoreBattle(void) {
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->active = 0;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
   BattleBackground_LoadFar(1, battle->background, 24);
 }
 #undef KIND125_FRAMES
-#undef BACKGROUND
 #undef SWIRL_MAX_FRAMES

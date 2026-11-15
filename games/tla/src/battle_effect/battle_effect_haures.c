@@ -7,16 +7,10 @@
 
 struct StripQuad;
 
-/// Two corners of a wing, each signed x, y and z.
+/// Two corners of a wing: its upper edge, then its lower.
 struct WingVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unused;
-  s8 x2;
-  s8 y2;
-  s8 z2;
-  s8 unused2;
+  struct ModelVertex upper;
+  struct ModelVertex lower;
 };
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
@@ -30,6 +24,8 @@ extern const u16 gHaures_FeatherPoints[][2];
 static __inline__ void PLACE(s32 x, s32 y) {
   Transform_ApplyTranslation(px(x), px(y), 0);
 }
+#define HAURES_FRAMES 92
+
 /// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
 /// a violet glow and a rune flashes; the demon rears in a burning cave, then
 /// charges through the foes in streaks of fire that end in a white flash.
@@ -73,14 +69,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  BG_PLTT[0] = 0;
-  BG_PLTT[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -117,10 +113,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       }
     }
   }
-  sprite = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
+  sprite =
+      EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)work->sprites)[18] = sprite;
   sprite->blendMode = 1;
-  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + 0x06010000;
+  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + OBJ_VRAM0;
   {
     u8 *c = work->sheet;
 
@@ -158,7 +155,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;
   {
-    dst = BG_PLTT + 1;
+    dst = &BG_PLTT_COLOR(0, 1);
 
     for (i = 1; i != 64; i++) {
       s32 b;
@@ -179,14 +176,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         b = t * 4;
         g = t;
         r = b;
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
       }
-      *dst++ = b << 10 | g << 5 | r;
+      *dst++ = RGB(r, g, b);
     }
   }
   {
@@ -196,11 +193,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       s32 b = i * 3 + 2;
       s32 r = i * 2 + 2;
 
-      if (r > 31) {
-        r = 31;
+      if (r > RGB_LEVEL_MAX) {
+        r = RGB_LEVEL_MAX;
       }
-      if (b > 31) {
-        b = 31;
+      if (b > RGB_LEVEL_MAX) {
+        b = RGB_LEVEL_MAX;
       }
       *dst = b << 10 | (i + 2) << 5 | r;
     }
@@ -257,13 +254,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
-          Data_020104f0[i].x = -(Trig_Cos(i * 992) << 6) >> 16;
-          Data_020104f0[i].y = -(Trig_Sin(i * 992) * 18) >> 16;
-          Data_020104f0[i].x2 = i * 4 - 64;
-          Data_020104f0[i].z = 0;
-          Data_020104f0[i].x2 = -(Trig_Cos(i * 992) << 6) >> 16;
-          Data_020104f0[i].y2 = (u32)(Trig_Sin(i * 992) * 9) >> 15;
-          Data_020104f0[i].z2 = 0;
+          Data_020104f0[i].upper.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          Data_020104f0[i].upper.y = Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
+          Data_020104f0[i].lower.x = i * 4 - 64;
+          Data_020104f0[i].upper.z = 0;
+          Data_020104f0[i].lower.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          Data_020104f0[i].lower.y = (u32)(Trig_Sin(i * 992) * 9) >> 15;
+          Data_020104f0[i].lower.z = 0;
         }
       }
       if ((u32)frame <= 31) {
@@ -399,14 +396,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               morph = next;
             }
             for (i = 0; i != 32; i++) {
-              wing[i].y = -(gHaures_WingShapes[i + a * 32] +
-                            n *
-                                (gHaures_WingShapes[i + b * 32] -
-                                 gHaures_WingShapes[i + a * 32]) /
-                                gHaures_WingMorphSteps[a]);
+              wing[i].upper.y = -(gHaures_WingShapes[i + a * 32] +
+                                  n *
+                                      (gHaures_WingShapes[i + b * 32] -
+                                       gHaures_WingShapes[i + a * 32]) /
+                                      gHaures_WingMorphSteps[a]);
             }
             for (i = 0; i != 32; i++) {
-              Data_020104f0[i].x = i * 4 - 64;
+              Data_020104f0[i].upper.x = i * 4 - 64;
             }
           }
           model->flags = 0;
@@ -442,8 +439,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             velocity.x += px(1) / 8;
             velocity.y += -px(1) / 4;
           }
-          velocity.x = velocity.x * 60 / 64;
-          velocity.y = velocity.y * 60 / 64;
+          velocity.x = velocity.x * 60 / DAMPING_SCALE;
+          velocity.y = velocity.y * 60 / DAMPING_SCALE;
           req.x = px(1);
           req.y = px(1);
           for (i = 0; i != 2; i++) {
@@ -502,7 +499,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         s32 s;
 
         if (frame == 267) {
-          u16 *dst = BG_PLTT + 1;
+          u16 *dst = &BG_PLTT_COLOR(0, 1);
 
           for (i = 1; i != 64; i++) {
             s32 v = i;
@@ -618,8 +615,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         gBgScroll[1].x += 0xfff4;
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
-        position.x = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
-        position.y = 0x380000 - (Trig_Cos(frame << 9) << 3);
+        position.x = (Trig_Sin(frame << 9) << 3) + px(108);
+        position.y = px(56) - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
           velocity.x -= (frame - 397) << 14;
           position.x += velocity.x;
@@ -687,7 +684,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
-                (p->y >> 16) >= -16 && (p->y >> 16) <= 136) {
+                (Q_16_16_TO_INT(p->y)) >= -16 &&
+                (Q_16_16_TO_INT(p->y)) <= 136) {
               Transform_Reset();
               Transform_ApplyTranslation(p->x - px(64), p->y - px(64), 0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -746,11 +744,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition[4] = 0;
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   BattleEffect_SpawnObjects(11, 0x293, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
     Iwram_ClearWords(buffer, 0x6c00);
@@ -771,10 +769,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
-  for (frame = 0; frame != 92; frame++) {
+  for (frame = 0; frame != HAURES_FRAMES; frame++) {
     struct RenderModel *model;
     void *verts;
 
@@ -880,8 +878,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 14) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -893,8 +891,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 34) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 50);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      50);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -903,8 +901,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 58) {
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x80000,
-                                      0x40000, 200);
+        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
+                                      200);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -964,9 +962,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       model->scrollU = (frame * 8) & 127;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
-        v = Trig_Sin((frame << 10) + -0xe000) * 80 >> 16;
+        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -0xe000) * 80);
       } else if (frame > 79) {
-        v = Trig_Sin((frame << 10) + -TRIG_TURN) * 80 >> 16;
+        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
       } else {
         v = 80;
       }

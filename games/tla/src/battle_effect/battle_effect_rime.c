@@ -12,6 +12,8 @@
 #define CRYSTAL_OFFSET 0x480
 #define CRYSTAL_ORIGIN (CRYSTAL_OFFSET + 8 * 64 + 8)
 
+#define DJINNI_SIGN_FRAMES 48
+
 /// Rime and Haze: the Djinni rises swaying through the canvas over the
 /// party while its sign turns in the air: for Rime a crystal that spins in
 /// two mirrored copies and shrinks, for Haze sixteen stars that bloom and
@@ -87,7 +89,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                         BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
-  for (frame = 0; frame != 48; frame++) {
+  for (frame = 0; frame != DJINNI_SIGN_FRAMES; frame++) {
     // Frame 0: Haze's stars take random places about the centre, one more
     // every two frames.
     if (frame == 0) {
@@ -120,8 +122,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       if (height > 39)
         height = 40;
       blit[0](canvas, work->sheet + DJINNI_OFFSET,
-              ((Trig_Sin(frame << 10) << 5) >> 16) + 44, center[1] - 20, 40,
-              height);
+              (Q_16_16_TO_INT(Trig_Sin(frame << 10) << 5)) + 44, center[1] - 20,
+              40, height);
     }
 
     Transform_Reset();
@@ -196,8 +198,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
     EFFECT_END_FRAME(work);
   }

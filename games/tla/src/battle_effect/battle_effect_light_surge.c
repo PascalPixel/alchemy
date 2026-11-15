@@ -22,13 +22,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   /* FAKEMATCH(dead): seven locals nothing uses. */
-  s32 unused1;
-  s32 unused2;
-  s32 unused3;
-  s32 unused4;
-  s32 unused5;
-  s32 unused6;
-  s32 unused7;
+  s32 unusedA;
+  s32 unusedB;
+  s32 unusedC;
+  s32 unusedD;
+  s32 unusedE;
+  s32 unusedF;
+  s32 unusedG;
   struct BattleCamera *camera;
   s16 savedYaw;
   struct Actor *target;
@@ -56,8 +56,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
@@ -66,7 +66,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
@@ -78,7 +78,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   offset = 0;
   size = 2;
   for (i = 0; i != 32; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -109,7 +109,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
         fall = &work->particles[32 + i];
         radius = (Random16() & 63) + 32;
-        angle = Random16() & 0xffff;
+        angle = Random16() & TRIG_ANGLE_MASK;
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;
@@ -154,7 +154,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       if ((u32)ring->variant > 15) {
         continue;
       }
-      size = ((Trig_Sin(ring->variant << 11) * ring->velocityX) >> 16) * 2;
+      size =
+          (Q_16_16_TO_INT(Trig_Sin(ring->variant << 11) * ring->velocityX)) * 2;
       index = size - 2;
       ring->variant++;
       if ((u32)index > 61) {

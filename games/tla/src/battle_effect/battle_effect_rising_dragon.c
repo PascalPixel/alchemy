@@ -24,12 +24,9 @@ struct StripVertex {
   s8 z;
   s8 unk3;
 };
-/* VIEW(f178710): variable gMapGridCellBuffer as extern struct StripVertex
- * gMapGridCellBuffer[2][66]; f175f74 has extern u8 gMapGridCellBuffer[]; tried
- * as the rest of the object declares it, BattleEffect_RunRisingDragon moves: 93
- * of 882 instructions in tla-ja. */
-extern struct StripVertex
-    gMapCellBuffer__f178710[2][66] __asm__("gMapGridCellBuffer");
+
+/// Where ClawSlashSheet is decoded in the effect's pictures.
+#define RISING_DRAGON_CLAW_SLASH_PICTURES 0x4000
 
 /// One dragon (two at a higher level: effect->variant + 1) of smoke rises
 /// from the caster and arcs onto the target, each a scrolling textured strip
@@ -61,7 +58,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
@@ -69,13 +66,13 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
     caster = BattleObject_GetFar(args->user)->object;
-    Actor_SetAnimationSpeedFar(caster, 48);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
     Actor_SelectAnimationFar(caster, 2);
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
@@ -84,12 +81,13 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                               work->sheet + 0x4000, 1, 1);
+                               work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES,
+                               1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     REG_BG2PA = Q_8_8(0.5);
-    Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
+    Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Transform_Reset();
@@ -99,7 +97,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         arcs[1] = 0;
         arcs[2] = 0;
         arcs[3] = 0;
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           work->particles[i].variant = -1;
         }
       }
@@ -132,17 +130,17 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           } else {
             Sound_PlayFar(SE_CLATTER);
           }
-          BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
-                                        0x40000, 150);
+          BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4),
+                                        px(4), 150);
         } else {
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
-          BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
-                                        0x70000, TARGET_ANCHOR_PERCENT);
+          BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4),
+                                        px(7), TARGET_ANCHOR_PERCENT);
         }
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         mote = &work->particles[i];
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
@@ -156,9 +154,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       }
 
       if (frame > 15) {
-        struct StripVertex *strip0 = gMapCellBuffer__f178710[0];
+        struct StripVertex *stripA = (struct StripVertex *)gMapGridCellBuffer;
         s32 scale = 20768;
-        const u8 *stripMesh = Data_02012000;
+        const u8 *stripMesh = gMapGridCellBuffer + 0x2000;
 
         // The arcs' heads and tails, 44 units a frame.
         arcs[0] = frame * 44 - 704;
@@ -203,18 +201,18 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
-            struct StripVertex *corner = strip0 + (j * 2 + i);
+            struct StripVertex *corner = stripA + (j * 2 + i);
 
-            corner->x =
-                ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) -
-                distance;
-            corner->y =
-                -((Trig_Sin(angle) * (height + start + i * width)) >> 16);
+            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
+                                        (distance + start + i * width))) -
+                        distance;
+            corner->y = -(
+                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width)));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[0] = ((Trig_Cos(angle) * distance) >> 16) - distance;
-            endY[0] = -((Trig_Sin(angle) * height) >> 16);
+            endX[0] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
+            endY[0] = -(Q_16_16_TO_INT(Trig_Sin(angle) * height));
           }
         }
         for (j = 0; j != DRAGON_SEGMENTS; j++) {
@@ -235,24 +233,25 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
-            struct StripVertex *strip1 =
+            struct StripVertex *stripB =
                 (struct StripVertex *)Ram_MapCellBuffer + 66;
-            struct StripVertex *corner = strip1 + (j * 2 + i);
+            struct StripVertex *corner = stripB + (j * 2 + i);
 
-            corner->x =
-                ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) -
-                distance;
-            corner->y = (Trig_Sin(angle) * (height + start + i * width)) >> 16;
+            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
+                                        (distance + start + i * width))) -
+                        distance;
+            corner->y =
+                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[1] = ((Trig_Cos(angle) * distance) >> 16) - distance;
-            endY[1] = (Trig_Sin(angle) * height) >> 16;
+            endX[1] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
+            endY[1] = Q_16_16_TO_INT(Trig_Sin(angle) * height);
           }
         }
 
         model = Render_AllocateModelList(1);
-        vertices = Data_02011000;
+        vertices = gMapGridCellBuffer + 0x1000;
         model->scrollV = 0;
         model->kind = 6;
         model->texture = &texture;
@@ -281,14 +280,14 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           }
           Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
           Transform_ApplyUniformScale(Q16_ONE * 4);
-          Render_TransformVertices(strip0 + i * 66, vertices, 66);
+          Render_TransformVertices(stripA + i * 66, vertices, 66);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
             model->mesh = gBattleEffect_SquareMesh;
-            texture.pixels = work->sheet + 0x4000;
+            texture.pixels = work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES;
             Transform_ApplyTranslation(px(endX[i]), px(endY[i]), 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             Transform_ApplyUniformScale(20768);
@@ -302,7 +301,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       BattleCamera_Shake(2, 2);
       EFFECT_PRESENT_CANVAS(work);
     }
-    Actor_SetAnimationSpeedFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
@@ -345,7 +344,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;
   parts = Ram_MapCellBuffer;
-  BattleEffect_StartTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -356,7 +355,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = ((DrawRectangle *)heap)[47];
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
@@ -373,7 +372,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       else
         work->particles[0].velocityX = px(6);
       work->particles[0].velocityY = px(8);
-      REG_BLDALPHA = BLEND_ALPHA(0, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
     }
     if (frame < 32)
       BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, 0);
@@ -393,9 +392,9 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 
     // The sway, and the canvas moved with the figure.
     x = Q_16_16_UPPER_HALF(work->particles[0].x) +
-        ((Trig_Sin(frame << 8) << 3) >> 16);
+        (Q_16_16_TO_INT(Trig_Sin(frame << 8) << 3));
     y = Q_16_16_UPPER_HALF(work->particles[0].y) +
-        ((Trig_Cos(frame << 8) << 3) >> 16);
+        (Q_16_16_TO_INT(Trig_Cos(frame << 8) << 3));
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.

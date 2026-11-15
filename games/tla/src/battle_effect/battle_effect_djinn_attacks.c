@@ -45,6 +45,24 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DOTS_PER_FLAME 32
 #define FLAME_COUNT 5
 
+/// The frame each Djinni's attack shows its damage.
+#define DJINN_ATTACK_DAMAGE_FRAME 56
+#define MERCURY_MOTE_SLOTS 256
+
+/// The blue flame sheet's flame, after its shaft; Mercury turns both on their
+/// side, and Venus draws the flame as its rising columns.
+#define BLUE_FLAME_SHEET_FLAME PICTURE_BYTES(BLUE_FLAME_COLUMN)
+
+/// Mercury's sheet: its Djinni, then the blue flame sheet's two pictures turned
+/// on their side.
+enum MercurySheetPicture {
+  /// The shaft turned; never drawn.
+  MERCURY_TURNED_SHAFT = SMALL_DJINNI_WIDTH * MERCURY_SMALL_DJINNI_HEIGHT,
+  /// The flame turned to fly left.
+  MERCURY_TURNED_FLAME = MERCURY_TURNED_SHAFT +
+      BLUE_FLAME_COLUMN_HEIGHT * BLUE_FLAME_COLUMN_WIDTH
+};
+
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -82,8 +100,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
-  BattleEffect_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+  BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT,
+                             BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
+  BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
+                             work->sheet + MERCURY_TURNED_FLAME,
+                             BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -96,15 +117,16 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   frame = 0;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames fly 12 pixels left a frame and shatter on their fifth frame.
     for (i = 0; i != FLAME_COUNT; i++) {
       flame = &work->particles[i];
       if (flame->variant != -1) {
-        blit[0](canvas, work->sheet + 0x990, flame->x - 16, flame->y - 17, 65,
-                34);
+        blit[0](canvas, work->sheet + MERCURY_TURNED_FLAME, flame->x - 16,
+                flame->y - BLUE_FLAME_SPLASH_WIDTH / 2,
+                BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH);
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
@@ -115,7 +137,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             s32 speed;
 
             dot = &DOTS[i * DOTS_PER_FLAME + j];
-            direction = Random16() & 0xffff;
+            direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = px(flame->x);
             dot->y = px(flame->y);
@@ -131,9 +153,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
 
-      draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
+      draw[1](canvas, work->sheet, x - 10, y - 17, SMALL_DJINNI_WIDTH, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
         // On its launch frame a free flame leaves the Djinn's hand.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
@@ -157,7 +179,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     }
 
     // Each live dot shrinks from 4 to 2 pixels and falls.
-    for (i = 0; i != 256; i++) {
+    for (i = 0; i != MERCURY_MOTE_SLOTS; i++) {
       dot = &DOTS[i];
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
@@ -185,6 +207,13 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
+/// Where FlameballSheet is decoded in the effect's pictures.
+#define JUPITER_FLAMEBALL_PICTURES 0x320
+
+#define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
+#define JUPITER_FRAMES 96
+#define JUPITER_BURST_Y 95 ///< a flameball bursts once below this line
+
 /// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
 /// flameballs fall from the top right onto the targets, 4 frames apart; each
 /// bursts into 32 motes and hits every target.
@@ -208,19 +237,19 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
-                             work->sheet + 0x320, 1, 0);
+                             work->sheet + JUPITER_FLAMEBALL_PICTURES, 1, 0);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The balls start above the canvas to the right; no dot is alive yet.
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != DJINN_ATTACKS_MOTES_PER_FLAME; i++) {
     ball = &work->particles[i];
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
@@ -233,32 +262,33 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   angle = TRIG_TURN / 2;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
-      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
-      blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
+      blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
 
     // Ball i drops from frame 8 + 4i until it passes y 95 and bursts.
     for (i = 0; i != BALL_COUNT; i++) {
       ball = &work->particles[i];
-      if (frame >= i * 4 + 8 && ball->y <= 95) {
-        blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32, 40,
-                64);
+      if (frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
+        blit[0](canvas, work->sheet + JUPITER_FLAMEBALL_PICTURES, ball->x - 20,
+                ball->y - 32, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
         ball->x -= 6;
         ball->y += 12;
-        if (ball->y > 95) {
+        if (ball->y > JUPITER_BURST_Y) {
           for (j = 0; j != DOTS_PER_BALL; j++) {
             s32 direction;
             s32 speed;
 
             dot = &DOTS[i * DOTS_PER_BALL + j];
-            direction = Random16() & 0xffff;
+            direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = px(ball->x);
             dot->y = px(ball->y);
@@ -295,7 +325,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
-  } while (frame != 96);
+  } while (frame != JUPITER_FRAMES);
 
   // Teardown.
   EFFECT_FINISH_CANVAS();
@@ -310,15 +340,20 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   if (copy_pal != 0) {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, res, 128);
+    copy((void *)BG_PLTT, res, SHEET_PALETTE_BYTES);
   }
   if (skip_pal != 0)
-    res += 128;
+    res += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(res, dst);
 }
 
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
+
+/// Where BlueFlameSheet is decoded in the effect's pictures.
+#define VENUS_BLUE_FLAME_PICTURES 0x2f8
+
+#define VENUS_FRAMES 96
 
 /// The Venus Djinni drops in from above the targets, swaying and trailing
 /// yellow, while ten columns of yellow fire shoot up from the ground beneath
@@ -345,7 +380,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   canvas = slots->battleCanvas;
   sheet = slots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -356,7 +391,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
-                             work->sheet + 0x2f8, 1, 0);
+                             work->sheet + VENUS_BLUE_FLAME_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Each column starts somewhere in the canvas's 64 pixels, on the ground.
@@ -375,21 +410,21 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   do {
     // The Djinn swings on an arc that narrows by two pixels a frame.
     if (frame <= 79) {
-      s32 x = (Trig_Sin(angle) * 24) >> 16;
-      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+      s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     // The battle resumes and resolves the targets, hit cue 133.
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Column i starts at frame 16 + 4i and climbs 12 pixels a frame.
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
       column = &work->particles[i];
       if (frame >= start) {
-        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32, 34,
-                65);
+        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32,
+                BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (frame == start) {
           // The burst: sixteen dots sprayed upward from the column's foot.
           for (j = 0; j != 16; j++) {
@@ -435,7 +470,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
-  } while (frame != 96);
+  } while (frame != VENUS_FRAMES);
 
   // Teardown.
   EFFECT_FINISH_CANVAS();
@@ -445,6 +480,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
+
+/// Where GlowOrbSheet is decoded in the effect's pictures.
+#define MARS_GLOW_ORB_PICTURES 0x320
 
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along
@@ -474,8 +512,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+                             work->sheet + MARS_GLOW_ORB_PICTURES, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The puffs sit on an oval, alternately left and right of the middle,
@@ -485,8 +523,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   do {
     s32 angle = member << 11;
 
-    puff->x = (Trig_Sin(angle) * 24) >> 16;
-    puff->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+    puff->x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+    puff->y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + 52;
     if (member & 1)
       puff->x = 32 - puff->x;
     else
@@ -498,8 +536,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       spark->y = px((Random16() & 7) + 96);
       spark->velocityX = ((Random16() & 127) - 64) << 11;
       spark->velocityY = ((Random16() & 127) - 64) << 10;
-      spark->z = Random16() & 0xffff;
-      spark->velocityZ = Random16() & 0xffff;
+      spark->z = Random16() & TRIG_ANGLE_MASK;
+      spark->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     puff++;
     member++;
@@ -510,13 +548,15 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   diveY = -172;
   do {
     // The battle resumes and resolves the targets, hit cue 0x85.
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The orb swells, a cel every four frames.
     if (frame <= 23)
-      blit[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,
-              40);
+      blit[0](canvas,
+              work->sheet + MARS_GLOW_ORB_PICTURES +
+                  (frame / 4) * PICTURE_BYTES(GLOW_ORB),
+              40, 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
     // The Djinn appears in the orb, then dives down to the left.
     if (frame == 20)
       Iwram_CopyWordsEntry(
@@ -524,9 +564,11 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
+        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
       else
-        blit[0](canvas, work->sheet, 50, 20, 20, 40);
+        blit[0](canvas, work->sheet, 50, 20, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
     }
     // It lands: the ember sheet replaces the Djinn's.
     if (frame == 32) {
@@ -567,11 +609,13 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = Q_16_16_UPPER_HALF(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
+        x = Q_16_16_UPPER_HALF(spark->x) +
+            (Q_16_16_TO_INT(Trig_Sin(spark->z) * 4));
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
                 size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 64, -px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                             -px(1) / 8);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)

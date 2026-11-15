@@ -8,6 +8,9 @@
 #define CARD (gMapGridCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
+/// Where PaletteRampImage is decoded in the effect's pictures.
+#define CARDS_PALETTE_RAMP_PICTURES 0x2580
+
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle for 48 frames, spinning upright and
 /// growing, the background scrolling with it as far as it can. Then it shows
@@ -44,11 +47,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
-  BattleEffect_StartTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES)
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   else
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
     if (args->side == EFFECT_SIDE_ENEMIES)
@@ -85,7 +88,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_SwordCardSheet, CARD, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
-                               work->sheet + 0x2580, 0, 0);
+                               work->sheet + CARDS_PALETTE_RAMP_PICTURES, 0, 0);
     for (i = 1; i != 8; i++) {
       for (j = 0; j != 696; j++) {
         s32 shade = work->sheet[0x2580 + j];
@@ -259,7 +262,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       if (frame == 48) {
         EFFECT_SHOW_DAMAGE(SE_WHOOSH);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
       if (frame >= 48 && frame <= 79) {
         s32 time = frame - 48;
@@ -274,7 +277,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step->variant = 0;
         }
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
@@ -309,7 +312,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         sheep->velocityY = ((Random16() & mask) - 64) << 11;
         sheep->variant = mode;
       }
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
           draw[0](canvas,
@@ -327,8 +330,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
       // The dagger swings for 24 frames.
       if (time <= 23)
-        draw[0](canvas, work->sheet + time / 4 % 6 * 960, overflow + 52, 44, 24,
-                40);
+        draw[0](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
+                overflow + 52, 44, DAGGER_WIDTH, DAGGER_HEIGHT);
 
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {
@@ -339,7 +342,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 16);
         for (i = 0; i != 64; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 force = 127; // The AND lands in the register holding 127.
 
           force &= Random16();
@@ -352,7 +355,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step->variant = Random16() & 255;
         }
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
 
       // The shards tumble through three cells and darken.
@@ -371,7 +374,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](
               canvas,
-              work->sheet + 0x2580 +
+              work->sheet + CARDS_PALETTE_RAMP_PICTURES +
                   (fade * 696 + gStatChange_ShardPictures[cell]),
               overflow + Q_16_16_UPPER_HALF(step->x) -
                   gStatChange_ShardWidths[cell] / 2,
@@ -389,8 +392,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       if (frame == 64) {
         Sound_PlayFar(SE_CLATTER);
         EFFECT_SHOW_DAMAGE(-1);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x80000,
-                                      0x20000, 110);
+        BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8), px(2),
+                                      110);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;

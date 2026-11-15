@@ -154,7 +154,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
         args,
@@ -170,9 +170,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                              0);
   cels = FLURRY_WAVE_PICTURES;
   for (row = 0; row != 288; row++) {
-    for (col = 0; col != 40; col++) {
-      s32 dst = row * 20 + col / 2;
-      s32 src = row * 40 + col;
+    for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
+      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
+      s32 src = row * YELLOW_ORB_WIDTH + col;
 
       (cels + dst)[0x2e88] = work->sheet[src];
     }
@@ -203,7 +203,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
   }
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
+                       SHEET_PALETTE_BYTES);
 
   // The user closes in; Claw Attack lunges further and waits.
   if (mode == FLURRY_CLAW_ATTACK) {
@@ -235,7 +236,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     mote->variant = -1;
   }
   // The smoke puffs start at the target's feet, one a frame.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *puff = &work->particles[i];
 
     SET_POSITION(puff, px(targetPos.x / 2), px(88), 0);
@@ -286,19 +287,25 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           // The arc: six 48x72 cels.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
-                        targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas,
+                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
           else
-            draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
-                        targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas,
+                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
         } else {
           // The wave: six 48x16 cels.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
-                        targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
+            draw[i & 1](
+                canvas, FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                targetPos.x / 2 - 16, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
           else
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
-                        targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
+            draw[i & 1](
+                canvas, FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                targetPos.x / 2 - 32, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
         }
       }
       // The hit; the last strike knocks the target back.
@@ -323,7 +330,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       // The orb: six 20x48 cels, two frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas, FLURRY_FLASH_PICTURES + ((frame - start - 2) / 2) * 960,
-                targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
+                targetPos.x / 2 - 10, targetPos.y - 24, 20,
+                YELLOW_ORB_PACKED_HEIGHT);
     }
     EFFECT_RELEASE_BLITTERS();
 
@@ -366,7 +374,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           frame <= 31) {
         EffectPosition_ProjectScaledBattler(args->targets[0], &spot);
         for (i = 0; i != 3; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 cel = frame & 3;
           s32 radius = (Random16() & 31) + 4;
           s32 x = spot.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
@@ -399,9 +407,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           struct Particle *puff = &work->particles[i];
 
           if ((u32)puff->variant <= 23) {
-            draw[0](canvas, FLURRY_SMOKE_PICTURES + (puff->variant / 4) * 0x480,
+            draw[0](canvas,
+                    FLURRY_SMOKE_PICTURES +
+                        (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                     Q_16_16_UPPER_HALF(puff->x) - 12,
-                    Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
+                    Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                    SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(puff, 62, -px(1) / 16);
           }
           puff->variant++;

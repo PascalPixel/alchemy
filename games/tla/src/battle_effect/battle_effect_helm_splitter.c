@@ -4,6 +4,13 @@
 
 #include "battle_effect_internal.h"
 
+#define HELM_SPLITTER_FRAMES 70
+
+#define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
+/// The pink star effect, after the swirl.
+#define HELM_SPLITTER_STAR_PICTURES 16000
+#define HELM_SPLITTER_STAR_SIZE 16 ///< PinkStarSheet's six stars
+
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground.
 ///
@@ -20,8 +27,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   s32 i;
 
   // Set up the canvas and load the swirl and the spark sheets.
-  BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);
   }
@@ -29,7 +36,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
                              1);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
-                               work->sheet + 0x3e80, 1, 0);
+                               work->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
     work->transferValue = 50;
   } else {
     // Lift every drawn pixel of the swirl into the upper half of the palette,
@@ -64,7 +71,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   // The caster dashes at the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(7));
 
-  for (frame = 0; frame != 70; frame++) {
+  for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
     if (args->variant == EFFECT_VARIANT_BASIC) {
       EffectPosition_ProjectBattler(args->user, &position);
@@ -118,14 +125,14 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
     // Frame 18: the hit. The target flashes and reels, the screen shakes and
     // the swirl bursts into sparks.
-    if (frame == 18) {
+    if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
       for (i = 0; i != args->variant * 16 + 16; i++) {
         s32 force = (Random16() & 255) + 256;
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
         if (args->variant == EFFECT_VARIANT_BASIC)
@@ -148,15 +155,17 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
-          s32 sx = spark->x >> 16;
-          s32 sy = spark->y >> 16;
+          s32 sx = Q_16_16_TO_INT(spark->x);
+          s32 sy = Q_16_16_TO_INT(spark->y);
 
           if (args->variant == EFFECT_VARIANT_BASIC)
-            draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),
-                    sx - 8, sy - 8, 16, 16);
+            draw[0](canvas,
+                    work->sheet + HELM_SPLITTER_STAR_PICTURES +
+                        (((frame + i) / 4 % 6) << 8),
+                    sx - 8, sy - 8, HELM_SPLITTER_STAR_SIZE, 16);
           else
-            draw[0](canvas, work->sheet + 0x3e80 + i % 3 * 576, sx - 12,
-                    sy - 12, 24, 24);
+            draw[0](canvas, work->sheet + 0x3e80 + i % 3 * PICTURE_BYTES(SKULL),
+                    sx - 12, sy - 12, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }

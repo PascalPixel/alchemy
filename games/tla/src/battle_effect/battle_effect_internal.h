@@ -65,16 +65,6 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags);
 
-/// A dragon sprite as Eclipse reads its priority and palette.
-struct EclipseObject {
-  u8 unk0[9];
-  u8 unk09 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[6];
-  u8 slot;
-};
-
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
@@ -103,11 +93,11 @@ struct StreakPoint {
 struct Streak {
   s32 head;
   s32 tail;
-  s32 unused08;
+  s32 unusedA;
   s32 pitch;
   s32 yaw;
   s32 roll;
-  s32 unused18;
+  s32 unusedB;
 };
 
 /// The backdrop's work, in place of the battle effect work.
@@ -170,12 +160,6 @@ struct ModelDraw {
   s32 tail;
 };
 
-extern u8 Data_02010400[];
-
-extern u8 Data_02010800[];
-
-extern u8 Data_02012800[];
-
 extern const struct Scale gEclipse_Scales;
 
 extern const struct Scale gCruelRuin_UnitScale;
@@ -193,6 +177,9 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
+/// The number of elements of an array, as The Broken Seal's macros.h has it.
+#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
+
 /// The whole pixels of a 16.16 value.
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 
@@ -203,6 +190,279 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #else
 #define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
 #endif
+
+/// A blend weight's whole: the layer at full strength (REG_BLDALPHA).
+#define BLEND_WEIGHT_MAX 16
+/// The canvas added to the battle under it: both blend weights whole.
+#define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
+/// The canvas at `level` sixteenths over the whole battle under it.
+#define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+
+/// The brightest colour, every channel at its highest level, as The Broken
+/// Seal's io_reg.h has it.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+
+/// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it: a
+/// timed command's frames run as written (The Broken Seal's sprite.h).
+#define ANIMATION_STEP_NORMAL 16
+
+/// Attribute 2's 16-colour palette, as The Broken Seal's io_reg.h has it.
+#define OBJ_PALETTE(n) ((n) << 12)
+
+/// The map cell buffer as BattleEffect_BuildWindowEdgeTable reads it: window
+/// 0's right edge, how far each of its lines is set in from that edge, and the
+/// right edge it builds for every screen line.
+#define WINDOW_EDGE_RIGHT ((u16 *)gMapGridCellBuffer)
+#define WINDOW_EDGE_INSETS (Ram_MapCellBuffer + 2)
+#define WINDOW_EDGE_INSET_LINES 128
+#define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
+
+/// The battle background's id in the battle work, read through
+/// union BattleBackgroundId, so the stores around it to the background's view
+/// stay in source order.
+#define BATTLE_BACKGROUND_ID(battle)                                           \
+  (((union BattleBackgroundId *)&(battle)->background)->id)
+
+/// The particles an effect keeps in the map cell buffer, from its start.
+#define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
+
+/// The VRAM address of a sprite's tiles, from its VRAM cache entry.
+#define OBJ_TILES(sprite)                                                      \
+  (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(sprite))->slot].offset)
+
+/// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
+#define DMA_CONTROL_HALF 5
+
+/// The particles the map cell buffer holds when an effect lays its particles
+/// over it from the start.
+#define PARTICLE_POOL_COUNT 1024
+
+/// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
+/// BG_CHAR_BLOCK(1) (CANVAS_BYTES).
+#define CANVAS_SIZE 128
+/// The canvas's rows and columns of 8x8 tiles.
+#define CANVAS_TILES (CANVAS_SIZE / 8)
+/// The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row
+/// by row, each tile 64 bytes row by row.
+#define CANVAS_PIXEL_OFFSET(x, y)                                              \
+  ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+/// The brightest canvas level: the additive blitters and
+/// CANVAS_COPY_AND_BRIGHTEN stop at it.
+#define CANVAS_LEVEL_BRIGHTEST 63
+
+/// The battle view, under the top window and over the menus: screen lines 16
+/// to 135.
+#define BATTLE_VIEW_TOP 16
+#define BATTLE_VIEW_HEIGHT 120
+#define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+/// The canvas's first BATTLE_VIEW_HEIGHT lines, which the battle view shows:
+/// what most of this game's effects clear and fill, leaving the last 8.
+#define CANVAS_VIEW_BYTES (CANVAS_SIZE * BATTLE_VIEW_HEIGHT)
+
+/// How far right the narrow canvas is set to show over the party: against the
+/// screen's right edge.
+#define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
+
+/// BG1's vertical scroll that sets the battle background in the battle view,
+/// and BattleCamera_SetView's zoom, in percent, for the battle's usual view, as
+/// The Broken Seal's battle.h has them.
+#define BATTLE_BACKGROUND_SCROLL_Y 32
+#define BATTLE_ZOOM_NORMAL 100
+
+/// The battle's projection centre on the screen, as projection.h has it in
+/// The Broken Seal.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+/// Where the summons centre the projection while their figures fly, lower
+/// than the battle's BATTLE_PROJECTION_CENTER_Y.
+#define SUMMON_PROJECTION_CENTER_Y 240
+
+/// The frames the battle background darkens behind an effect's canvas
+/// (work->fadeFrames, Palette_StepFadeTransfer).
+#define BACKGROUND_DARKEN_FRAMES 24
+
+/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// pictures.
+#define SHEET_PALETTE_COLORS 64
+#define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
+
+/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
+/// speed * damping / DAMPING_SCALE.
+#define DAMPING_SCALE 64
+/// The damping that keeps a particle's whole speed.
+#define PARTICLE_DAMPING_NONE DAMPING_SCALE
+
+/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
+/// _HEIGHT.
+#define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
+
+/// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
+#define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
+  (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+
+/// The battle background's picture as BG1 shows it from BG character block 2,
+/// one byte a pixel.
+#define BATTLE_BACKGROUND_WIDTH 256
+#define BATTLE_BACKGROUND_HEIGHT 120
+#define BATTLE_BACKGROUND_BYTES                                                \
+  (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
+
+/// A model's shade (RenderModel.shade) is added to each of its pixels' canvas
+/// levels: at this or below, nothing of the model is left to draw, and the
+/// effects skip it.
+#define MODEL_SHADE_INVISIBLE (-64)
+
+/// Starts a frame's 3D projection from the battle camera.
+#define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
+  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
+
+// The sheets' pictures, as The Broken Seal names them: this game draws the same
+// sheets at the same sizes.
+
+/// The bytes of the six glint pictures that open the tornado sheet.
+#define GLINT_SET_BYTES                                                        \
+  (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
+
+/// Draws flare picture `size`, a square, centred on (x, y).
+#define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
+  (draw)(canvas, (sheet) + gBattleEffect_FlarePictures[(size) - 1],            \
+         (x) - (size), (y) - (size), (size) * 2, (size) * 2)
+
+/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
+/// the reaper with its scythe raised, then swung, then the red crescent the
+/// swing leaves.
+#define REAPER_SHEET_RAISED_WIDTH 57
+#define REAPER_SHEET_RAISED_HEIGHT 98
+#define REAPER_SHEET_SWUNG_WIDTH 99
+#define REAPER_SHEET_SWUNG_HEIGHT 69
+#define REAPER_SHEET_CRESCENT_WIDTH 128
+#define REAPER_SHEET_CRESCENT_HEIGHT 91
+enum ReaperSheetPicture {
+  REAPER_SHEET_RAISED = 0,
+  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
+};
+
+/// RedCrescentSheetA: the swing's crescent fading in four pictures.
+#define RED_CRESCENT_FADE_A_WIDTH 128
+#define RED_CRESCENT_FADE_A_HEIGHT 91
+#define RED_CRESCENT_FADE_B_WIDTH 128
+#define RED_CRESCENT_FADE_B_HEIGHT 59
+#define RED_CRESCENT_FADE_C_WIDTH 122
+#define RED_CRESCENT_FADE_C_HEIGHT 29
+#define RED_CRESCENT_FADE_D_WIDTH 76
+#define RED_CRESCENT_FADE_D_HEIGHT 25
+enum RedCrescentPicture {
+  RED_CRESCENT_FADE_A = 0,
+  RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +
+      PICTURE_BYTES(RED_CRESCENT_FADE_A),
+  RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B +
+      PICTURE_BYTES(RED_CRESCENT_FADE_B),
+  RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
+};
+
+/// The slash pictures as wide and tall as the canvas's view: StarBurstSheet's,
+/// CrescentSheet's and the reveal masks.
+#define SLASH_PICTURE_SIZE 120
+
+/// Closing bolts and lightning columns use the same 24x120 pictures.
+#define LIGHTNING_BOLT_WIDTH 24
+#define LIGHTNING_BOLT_HEIGHT 120
+#define LIGHTNING_BOLT_PICTURE_BYTES PICTURE_BYTES(LIGHTNING_BOLT)
+
+/// BlueFlameSheet: the column of flame, then the flame that splashes from it,
+/// twice its width.
+#define BLUE_FLAME_COLUMN_WIDTH 17
+#define BLUE_FLAME_COLUMN_HEIGHT 104
+#define BLUE_FLAME_SPLASH_WIDTH 34
+#define BLUE_FLAME_SPLASH_HEIGHT 65
+/// WaveSheet's six pictures, BlueArcSheetA and B's six, and YellowOrbSheet's.
+#define WAVE_WIDTH 48
+#define WAVE_HEIGHT 16
+#define BLUE_ARC_WIDTH 48
+#define BLUE_ARC_HEIGHT 72
+#define YELLOW_ORB_WIDTH 40
+#define YELLOW_ORB_HEIGHT 48
+/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+#define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
+#define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
+#define YELLOW_ORB_PICTURES 6
+
+/// FireStreakSheet's six pictures and FireBurstSheet's.
+#define FIRE_STREAK_WIDTH 48
+#define FIRE_STREAK_HEIGHT 72
+#define FIRE_BURST_WIDTH 40
+#define FIRE_BURST_HEIGHT 80
+/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
+/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+#define MERCURY_SMALL_DJINNI_HEIGHT 34
+#define VENUS_SMALL_DJINNI_HEIGHT 38
+/// FireBlobSheet's blobs and CrystalSheet's crystal.
+#define FIRE_BLOB_WIDTH 48
+#define FIRE_BLOB_HEIGHT 32
+#define CRYSTAL_WIDTH 32
+#define CRYSTAL_HEIGHT 64
+
+/// LightningPillarSheet's pillar, in two pictures.
+#define LIGHTNING_PILLAR_WIDTH 48
+#define LIGHTNING_PILLAR_HEIGHT 112
+/// FirePillarSheetA: the pillar of fire, then two flames.
+#define FIRE_PILLAR_WIDTH 34
+#define FIRE_PILLAR_HEIGHT 104
+#define FIRE_PILLAR_FLAME_WIDTH 20
+#define FIRE_PILLAR_FLAME_HEIGHT 37
+/// SpiralSheet's pictures.
+#define SPIRAL_WIDTH 32
+#define SPIRAL_HEIGHT 32
+
+/// FlameballSheet and FireballSheet's pictures.
+#define FLAMEBALL_WIDTH 40
+#define FLAMEBALL_HEIGHT 64
+
+/// Each half of RuneSheet's rune, the second drawn mirrored.
+#define RUNE_HALF_WIDTH 24
+#define RUNE_HALF_HEIGHT 48
+
+/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
+/// and its kind), and the one picture of the small sheets.
+#define DJINNI_WIDTH 40
+#define DJINNI_HEIGHT 40
+#define SMALL_DJINNI_WIDTH 20
+#define SMALL_DJINNI_HEIGHT 40
+
+/// The pictures of the sheets several effects share, each sheet's pictures
+/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
+/// skulls and the tornado strips after TornadoSheet's glints.
+#define SMOKE_PUFF_WIDTH 24
+#define SMOKE_PUFF_HEIGHT 48
+#define FLASH_BURST_WIDTH 32
+#define FLASH_BURST_HEIGHT 64
+#define SKULL_WIDTH 24
+#define SKULL_HEIGHT 24
+#define TORNADO_STRIP_WIDTH 40
+#define TORNADO_STRIP_HEIGHT 32
+/// The pictures of DaggerSheet, ShieldSheet, GlowOrbSheet, VioletStreakSheet
+/// and WispSheet.
+#define DAGGER_WIDTH 24
+#define DAGGER_HEIGHT 40
+#define SHIELD_WIDTH 40
+#define SHIELD_HEIGHT 40
+#define GLOW_ORB_WIDTH 40
+#define GLOW_ORB_HEIGHT 40
+#define VIOLET_STREAK_WIDTH 32
+#define VIOLET_STREAK_HEIGHT 64
+#define WISP_WIDTH 64
+#define WISP_HEIGHT 32
+/// VortexSheet's six pictures and HeartSheet's heart.
+#define VORTEX_WIDTH 24
+#define VORTEX_HEIGHT 48
+#define HEART_WIDTH 22
+#define HEART_HEIGHT 42
+/// WaterSpraySheet: the wave, then the splash's pictures.
+#define WATER_WAVE_WIDTH 32
+#define WATER_WAVE_HEIGHT 32
+#define WATER_SPLASH_WIDTH 48
+#define WATER_SPLASH_HEIGHT 48
 
 // The canvas life cycle, shared by every canvas effect.
 
@@ -374,7 +634,7 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// colour added over what lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
-   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// Which way BattleEffect_WipeCanvas sweeps.
@@ -983,6 +1243,9 @@ extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
 extern const s8 gGrowth_ColumnOffsets[];
 extern u8 gGrowth_Kinds[];
+// A thorn's kind in gGrowth_Kinds.
+#define THORN_MIRRORED 1 ///< drawn mirrored across
+#define THORN_SMALL 2    ///< 32 pixels wide, not 48
 extern s8 gGrowth_X[];
 extern u8 gGrowth_Counts[];
 extern s8 gGrowth_ThornPuffWidths[];
@@ -1401,18 +1664,12 @@ extern struct Scale gGaia_UnitScale;
 /// spider_web.c
 /// A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gUlysses_ParticleScale;
-extern u8 Data_02010200[];
 
 // The 64 sparks, past the map cells' first 16 KB.
 extern u8 gData_02014000[];
 
 /// neptune.c
 extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
-
-/// undead_sword.c
-extern u8 Data_02010108[];
-extern u8 Data_02010318[];
-extern u8 Data_02014e20[]; ///< gMapGridCellBuffer + 20000, the berg
 
 // geode.c
 
@@ -1421,14 +1678,6 @@ extern u8 Data_02012000[];
 extern u8 Data_02012540[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
-
-/// rising_dragon.c
-extern u8 Data_02011000[];
-
-/// raging_heat.c
-/// The life of each spark in the map cell buffer: gMapGridCellBuffer's
-/// Particles from their variant field on.
-extern s32 Data_02010018[];
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
@@ -1445,21 +1694,8 @@ extern struct Scale gDaedalus_WaveScale;
 extern struct Scale gDaedalus_ShipScale;
 extern struct Scale gDaedalus_ParticleScale;
 
-/// vengeance.c
-extern u8 Data_020112e8[]; ///< the reaper's raised pose
-extern u8 Data_0201276b[]; ///< the blade's texture
-extern u8 Data_0201476b[]; ///< the handle's texture
-extern u8 Data_0201576b[]; ///< the flash's texture
-/// 256 bubbles past the map cells. Each is an Particle with its picture in z
-/// and its life in variant (-1 once it has left the top of the canvas).
-extern struct Particle gData_02015000[];
-extern u8 Data_02014400[];
-extern u8 Data_02014800[];
 extern const struct Scale gCoatlicue_UnitScale;
 
-/// catastrophe.c
-extern u8 Data_02016000[];
-extern struct Particle Data_02016d00[];
 extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
@@ -1469,10 +1705,6 @@ extern u8 Data_02010fa0[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
-
-/// trident.c
-extern u8 Data_02011400[];
-extern u8 Data_02012964[]; ///< 128 sparks
 
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];

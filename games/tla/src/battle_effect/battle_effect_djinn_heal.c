@@ -58,7 +58,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                work->sheet + SHEET_DJINN, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == TUMBLING_QUADS_TINDER) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1,
@@ -95,21 +95,21 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
     if (frame == 0) {
-      height = -0x200000;
+      height = -px(32);
       for (i = 0; i != 32; i++) {
         quad = &work->particles[i];
-        quad->x = Random16() & 0xffff;
+        quad->x = Random16() & TRIG_ANGLE_MASK;
         Random16();
         quad->z = px(1);
         if (mode == TUMBLING_QUADS_PHOENIX)
           quad->y = px(32);
         else
           quad->y = height;
-        quad->velocityY = ((Random16() & 0xffff) << 1) + 0x10000;
-        quad->velocityX = Random16() & 0xffff;
-        quad->velocityZ = Random16() & 0xffff;
+        quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
+        quad->velocityX = Random16() & TRIG_ANGLE_MASK;
+        quad->velocityZ = Random16() & TRIG_ANGLE_MASK;
         quad->variant = (Random16() & 0x3fff) + 0x2000;
-        height += -0x40000;
+        height += -px(4);
       }
     }
 
@@ -126,13 +126,15 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // after frame 32, and a fan of light lines spreads from the canvas's
     // middle while the canvas fades.
     if (args->prelude == 1) {
-      x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
-      y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
+      x = (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 20)) + 44;
+      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
-      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
+               DJINNI_HEIGHT);
       if (frame <= 3)
-        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
+                 DJINNI_HEIGHT);
       // DEAD: frame never passes 63 here; the source keeps the test.
       if (frame <= 79) {
         s32 angle;
@@ -144,8 +146,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
-          lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
-          lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
+          lineX = (Q_16_16_TO_INT(Trig_Sin(angle) * frame)) + 64;
+          lineY = (Q_16_16_TO_INT((Trig_Cos(angle) * frame) / 8)) - 16;
           draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
           angle += TRIG_TURN / 16;
         }
@@ -211,8 +213,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       Heap_Release(job);
       Heap_Release(vertices);
     }
-    gProjection.centerX = 120;
-    gProjection.centerY = 120;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
     EFFECT_END_FRAME(work);
   }
 
@@ -256,7 +258,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 j;
 
   none = 0;
-  ringPixels = gData_02014000; // the rings' texture, for the whole function
+  ringPixels =
+      Ram_MapCellBuffer + 0x4000; // the rings' texture, for the whole function
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -272,11 +275,11 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   // The screen slides over to the field.
   for (scroll = -80, frame = 0; frame != 28; frame++) {
     if (frame == 27) {
-      gProjection.centerY = 240;
+      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       // Ten ever-fainter copies of one mote.
@@ -313,7 +316,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
@@ -331,10 +334,10 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_191);
     }
     if ((u32)(frame - 78) <= 31) {
-      REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(16 - (frame - 78) / 2, BLEND_WEIGHT_MAX);
     }
     if (frame == 140) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
     }
     if (frame == 157) {
       EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -357,11 +360,11 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Sprite_StartAnimationFar(work->sprites[i], i + 12);
       }
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gProjection.centerX = -968;
-      gProjection.centerY = 120;
+      gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       gBgScroll[1].x = savedScroll + 1128;
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
                                  1);
@@ -376,15 +379,15 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     // The backdrop darkens toward the battle's palette.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
       u16 *from = Resource_GetTableEntry(battle->background);
-      u16 *to = (u16 *)(BG_PLTT + 96);
+      u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, from++, to++) {
-        s32 b = (*to >> 10) & 31;
-        s32 g = (*to >> 5) & 31;
-        s32 r = *to & 31;
-        s32 blue = ((*from >> 10) & 31) - 2;
-        s32 green = ((*from >> 5) & 31) - 10;
-        s32 red = (*from & 31) - 6;
+        s32 b = RGB_BLUE(*to);
+        s32 g = RGB_GREEN(*to);
+        s32 r = RGB_RED(*to);
+        s32 blue = RGB_BLUE(*from) - 2;
+        s32 green = RGB_GREEN(*from) - 10;
+        s32 red = RGB_RED(*from) - 6;
 
         if (blue < 0) {
           blue = 0;
@@ -404,7 +407,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (r > red) {
           r--;
         }
-        *to = (b << 10) | (g << 5) | r;
+        *to = RGB(r, g, b);
       }
     }
     if ((u32)(frame - 64) <= 35) {
@@ -422,7 +425,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.y += px(1) / 32;
     }
     if (frame == 156) {
-      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_CrescentRowSheet, work->sheet,
@@ -504,8 +508,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame > 177) {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 63 / 64;
-      velocity.y = velocity.y * 63 / 64;
+      velocity.x = velocity.x * 63 / DAMPING_SCALE;
+      velocity.y = velocity.y * 63 / DAMPING_SCALE;
     } else if (frame > 149) {
       if (position.y > 0x37ffff) {
         velocity.x = 0;
@@ -516,17 +520,18 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     } else if (frame <= 59) {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 58 / 64;
-      velocity.y = velocity.y * 62 / 64;
+      velocity.x = velocity.x * 58 / DAMPING_SCALE;
+      velocity.y = velocity.y * 62 / DAMPING_SCALE;
     } else {
       position.x += velocity.x;
       position.y += velocity.y;
-      velocity.x = velocity.x * 58 / 64;
-      velocity.y = velocity.y * 61 / 64;
+      velocity.x = velocity.x * 58 / DAMPING_SCALE;
+      velocity.y = velocity.y * 61 / DAMPING_SCALE;
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
       blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
-              (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
+              (Q_16_16_TO_INT(position.x / 2)) - 12,
+              (Q_16_16_TO_INT(position.y)) - 58, 60, 100);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);
@@ -567,7 +572,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (shade <= -64) {
+        if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
         model->shade = shade;
@@ -590,13 +595,13 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         s32 offsetY = randomY - 8;
 
         gBgScroll[1].y = randomY + 24;
-        gProjection.centerX = 120 - offsetX;
-        gProjection.centerY = 120 - offsetY;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+        gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
         work->shakeFrames--;
       } else {
         gBgScroll[1].y = work->savedBg1Y;
-        gProjection.centerX = 120;
-        gProjection.centerY = 120;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+        gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       }
     }
   next:

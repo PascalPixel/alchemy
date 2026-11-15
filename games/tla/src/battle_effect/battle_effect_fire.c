@@ -8,6 +8,9 @@
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
 
+/// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
+#define FIRE_EMBERS 64
+
 /// Embers burst from the top of the user and home in on the targets, and each
 /// that lands shows an impact flare as its target flinches.
 ///
@@ -29,7 +32,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
   if (args->side == EFFECT_SIDE_PARTY)
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
@@ -40,13 +43,13 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The embers leave the top of the user's body: a random heading and
   // speed across, -16 to 111 sixty-fourths of a pixel up.
   user = BattleObject_GetFar(args->user)->object;
   top = user->y + BattleUnit_GetEffectHeightFar(args->user);
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &EMBERS[i];
     s32 angle;
     s32 speed;
@@ -75,7 +78,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
@@ -118,9 +121,9 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
         if (frame < start + 85) {
-          ember->velocityX = vx * 60 / 64;
-          ember->velocityY = vy * 60 / 64;
-          ember->velocityZ = vz * 60 / 64;
+          ember->velocityX = vx * 60 / DAMPING_SCALE;
+          ember->velocityY = vy * 60 / DAMPING_SCALE;
+          ember->velocityZ = vz * 60 / DAMPING_SCALE;
         }
 
         // Below the ground it lands: it keeps its screen position for the

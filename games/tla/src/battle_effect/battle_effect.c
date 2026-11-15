@@ -58,9 +58,6 @@
 // shares to Meteor Blow.
 
 #define SpriteAttributes SpriteAttributes__ability_effects
-#define FxSlot FxSlot__ability_effects
-#define SpriteObject SpriteObject__ability_effects
-#define Texture Texture__ability_effects
 
 #include "battle_effect_projectiles.c"
 #include "battle_effect_djinn_attacks.c"
@@ -117,9 +114,6 @@
 #include "battle_effect_trident.c"
 #include "battle_effect_meteor_blow.c"
 
-#undef Texture
-#undef SpriteObject
-#undef FxSlot
 #undef SpriteAttributes
 
 #include "battle_effect_liquifier.c"
@@ -128,11 +122,9 @@
 // effects draw with.
 
 #define Texture Texture__summon_effects
-#define BattleBackgroundId BattleBackgroundId__summon_effects
 
 #include "battle_effect_megiddo.c"
 #include "battle_effect_odyssey.c"
 #include "battle_effect_moloch.c"
 
-#undef BattleBackgroundId
 #undef Texture

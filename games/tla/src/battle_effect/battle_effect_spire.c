@@ -13,6 +13,9 @@
 /// A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
+#define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
+#define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
+
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
@@ -36,7 +39,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   // Setup: the canvas on BG2, the sheet, a transparent blitter.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -98,7 +101,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                Q_16_16_UPPER_HALF(shard->y) -
                    ((height = gSpire_ShardHeights[cel]) >> 1),
                width, height);
-          BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
+                                               px(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -109,7 +113,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 47,
-               Q_16_16_UPPER_HALF(rock->y), 34, 62);
+               Q_16_16_UPPER_HALF(rock->y), SPIRE_ROCK_WIDTH,
+               SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += px(1);

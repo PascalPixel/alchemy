@@ -12,7 +12,6 @@
 
 #define KIND123_FRAMES 111
 
-/* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
 /// 111 frames. Sparks gather at the caster (frames 0-15)
@@ -40,7 +39,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
@@ -51,7 +50,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
   EffectPosition_ProjectBattler(args->targets[0], &to);
@@ -266,7 +265,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Transform_Reset();
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
-          Transform_ApplyPitch(0x3c00);
+          Transform_ApplyPitch(TRIG_TURN * 15 / 64);
           Transform_ApplyAxisScale(scale, scale, scale);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
@@ -347,7 +346,7 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x1c);
   BattleEffect_RunCanvasBurst(args, 3);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 #define ball (&work->particles[63])
@@ -380,6 +379,9 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
       canvas, (u8 *)(discs[index] + cells), x, y, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
+
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define CANVAS_BURST_FLASH_BURST_PICTURES 0x800
 
 /// The canvas burst family (its wrappers are above). A glowing ball (or
 /// in mode 0 a growing glow at the target, with sixteen rays that close on
@@ -416,10 +418,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   if (mode <= 1)
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   discs = (s16 *)work->sheet;
@@ -445,13 +447,14 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   if (mode == 3)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                    128);
+                    SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
+                             work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1,
+                             0);
 
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(args->user, &from);
@@ -511,8 +514,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         size = 40;
       }
       index = (size - 2) >> 1;
-      x = ball->x >> 16;
-      y = ball->y >> 16;
+      x = Q_16_16_TO_INT(ball->x);
+      y = Q_16_16_TO_INT(ball->y);
       ball->x += ball->velocityX;
       ball->y += ball->velocityY;
       DrawDisc(canvas, discs, cells, x, y, size, index);
@@ -531,10 +534,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
             if (radius >= 0) {
               s32 width = 4;
-              s32 x = to.x / 2 + ((Trig_Sin(step->z) * radius) >> 16);
+              s32 x = to.x / 2 + (Q_16_16_TO_INT(Trig_Sin(step->z) * radius));
               s32 height = size * 2;
               s32 half = size >> 1;
-              s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
+              s32 y = to.y + (Q_16_16_TO_INT(Trig_Cos(step->z) * radius));
 
               draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - half, y - 32 - size, width, height);
@@ -575,7 +578,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
         // Sixteen flames, faster one by one.
         for (i = 0; i != 16; i++) {
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 speed;
 
           newFlame = &work->particles[i];
@@ -590,7 +593,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         // 47 sparks, at half speed in mode 1.
         for (i = 0; i != 47; i++) {
           s32 speed = (Random16() & 255) + 128;
-          s32 angle = Random16() & 0xffff;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
 
           newSpark = &work->particles[16 + i];
 
@@ -616,9 +619,9 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           BattleEffectKernels_IntegrateVector2(flame, 60, 0);
           if ((u32)flame->variant <= 17)
             draw[0](canvas,
-                    work->sheet + 0x800 +
+                    work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
                         (gCanvasBurst_FlamePictures[flame->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (flame->variant > 0)
             flame->variant = flame->variant - 1;
           else
@@ -649,8 +652,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0) {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunImpair(args);
   } else if (mode == 3) {
@@ -665,13 +668,21 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                            DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        IO_WRITE_16);
     REG_BLDCNT = 0;
     wait(1);
     BattleBackground_SetModeFar(2, battle->background, 0);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                            DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        IO_WRITE_16);
     wait(1);
   }
 }

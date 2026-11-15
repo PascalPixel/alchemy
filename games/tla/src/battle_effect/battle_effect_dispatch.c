@@ -155,26 +155,26 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 i;
   s32 right;
 
-  edge = (u16 *)gMapGridCellBuffer;
-  line = (u16 *)(Ram_MapCellBuffer + 0x82);
-  inset = Ram_MapCellBuffer + 2;
-  for (i = 0; i != 160; i++) {
+  edge = WINDOW_EDGE_RIGHT;
+  line = (u16 *)WINDOW_EDGE_LINES;
+  inset = WINDOW_EDGE_INSETS;
+  for (i = 0; i != DISPLAY_HEIGHT; i++) {
     if ((u32)(i - 8) <= 127) {
       right = *edge - inset[i - 8];
-      CLAMP(right, 0, 240);
+      CLAMP(right, 0, DISPLAY_WIDTH);
       line[i] = right;
     } else {
-      line[i] = 0xfff1;
+      line[i] = WIN_RANGE(255, 241);
     }
   }
   {
     volatile u16 *channel = REG_DMA0;
     u16 control;
 
-    control = channel[5];
-    channel[5] = control & 0xc5ff;
-    channel[5] &= 0x7fff;
-    (void)channel[5];
+    control = channel[DMA_CONTROL_HALF];
+    channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+    channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
+    (void)channel[DMA_CONTROL_HALF];
     Dma_Set(gMapGridCellBuffer + 0x82, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }

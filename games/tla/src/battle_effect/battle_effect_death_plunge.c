@@ -5,6 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#define DEATH_PLUNGE_FRAMES 96
+
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
 ///
@@ -49,7 +51,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
     work->transferValue = 50;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -78,7 +80,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   user->speedLimit = px(8);
   wait(20);
 
-  for (frame = 0; frame != 96; frame++) {
+  for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // Frame 0: both leap. Frame 11: both turn upside down.
@@ -121,12 +123,15 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       EffectPosition_ProjectPoint(point, &screen);
       screen.x >>= 1;
       if (frame == 54 || frame == 55)
-        draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
+        draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16,
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       if (frame >= 56 && frame <= 67) {
         for (i = 0; i != 16; i++) {
           s32 angle = i << 12;
-          s32 rx = screen.x + ((Trig_Sin(angle) * (frame - 46) * 2) >> 16);
-          s32 ry = ((Trig_Cos(angle) * (frame - 46) * 2) >> 16) - frame + 100;
+          s32 rx =
+              screen.x + (Q_16_16_TO_INT(Trig_Sin(angle) * (frame - 46) * 2));
+          s32 ry = (Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46) * 2)) -
+                   frame + 100;
 
           draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry,
                   32, 64);
@@ -158,7 +163,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         if (spark->variant >= 0 && spark->variant <= 23) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(spark->x) - 16,
-                  Q_16_16_UPPER_HALF(spark->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(spark->y) - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
         }
         spark->variant++;

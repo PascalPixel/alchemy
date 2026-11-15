@@ -69,6 +69,8 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
 
 #define SPARK_COUNT 64
 
+#define ATTACK_SLASH_FRAMES 32
+
 /// A plain attack: a slash or streak sweeps from the user over its first
 /// target, a yellow orb flashes over the target and sparks fly off.
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
@@ -158,7 +160,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   Dma_Set(Resource_GetTableEntry(args->user > 7
                                      ? (s32)&ResourceId_MarsDjinnSmallSheet
                                      : (s32)&ResourceId_StarCrescentSheet),
-          (void *)BG_PLTT, 0x84000020, REG_DMA3);
+          (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
@@ -199,7 +201,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != ATTACK_SLASH_FRAMES; frame++) {
     // The battle resumes: hit cue 134 for a flagged summon entry, else 133.
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->enemyId))
@@ -214,8 +216,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       else if (kind == 5 || kind == 6)
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       else if (kind == 8)
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0x10000, 0x40000,
-                                      0x30000, 150);
+        BattleEffect_StartActorMotion(args->targets[0], 1, px(1), px(4), px(3),
+                                      150);
       else
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
@@ -229,21 +231,23 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       // The wave: six cels, two frames each, played backwards.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300,
-                  pos.x + shake - 48, pos.y - 8, 48, 16);
+          draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  pos.x + shake - WAVE_WIDTH, pos.y - 8, WAVE_WIDTH,
+                  WAVE_HEIGHT);
         else
-          draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300, pos.x + shake,
-                  pos.y - 8, 48, 16);
+          draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  pos.x + shake, pos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
       }
     } else if ((u32)kind <= 2 || kind == 5 || kind == 6) {
       // The arc: six cels, two frames each.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake - 48,
-                  pos.y - 40, 48, 72);
+          draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  pos.x + shake - BLUE_ARC_WIDTH, pos.y - 40, BLUE_ARC_WIDTH,
+                  BLUE_ARC_HEIGHT);
         else
-          draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake,
-                  pos.y - 40, 48, 72);
+          draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  pos.x + shake, pos.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
       }
     } else if (kind == 3) {
       // The strike: six cels, three frames each, each reaching further.
@@ -266,8 +270,10 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 
     // The orb flashes on the target, six cels, two frames each.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
-              anchor.x - 16, anchor.y - 24, 40, 48);
+      draw[0](canvas,
+              Ram_MapCellBuffer + (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+              anchor.x - 16, anchor.y - 24, YELLOW_ORB_WIDTH,
+              YELLOW_ORB_HEIGHT);
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
@@ -296,9 +302,11 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
+
+#define BEAM_FRAMES 32 ///< the slash's and the critical hit's length
 
 /// A critical hit: motes of light close in on the attacker as it hangs in its
 /// leap, then a crescent slash sweeps across the first target and sparks fly
@@ -368,7 +376,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   // An enemy caster's sparks take the Mars Djinn's colours.
   if (args->user > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-            (void *)BG_PLTT, 0x84000020, REG_DMA3);
+            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
@@ -384,9 +392,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
-      mote->velocityX = Random16() & 0xffff;
-      mote->velocityY = Random16() & 0xffff;
-      mote->velocityZ = Random16() & 0xffff;
+      mote->velocityX = Random16() & TRIG_ANGLE_MASK;
+      mote->velocityY = Random16() & TRIG_ANGLE_MASK;
+      mote->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     Actor_SetAnimationSpeedFar(object, 0);
     velocityX = object->velocityX;
@@ -403,11 +411,11 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     shake = 64 - pos.x;
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
     Sound_PlayFar(SE_POWER_UP);
-    for (frame = 0; frame != 32; frame++) {
+    for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
@@ -437,7 +445,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;
@@ -480,7 +488,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     // The battle resumes, hit cue 134; the target recoils a frame before.
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -490,13 +498,14 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     pos.y += 16;
     // The flash: four cels, two frames each.
     if (frame <= 1)
-      draw[0](canvas, work->sheet, 0, 0, 120, 120);
+      draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE, 120);
     else if (frame <= 3)
       draw[0](canvas, Ram_MapCellBuffer, -4, 0, 128, 128);
     else if (frame <= 5)
       draw[0](canvas, Ram_MapCellBuffer + 0x4000, -4, 0, 128, 128);
     else if (frame <= 7)
-      draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->sheet + 0x3840, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     // From frame 4 the sparks fly, two to each particle, through the two
@@ -526,7 +535,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   // Teardown: the background palette steps back over seven frames.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   for (frame = 0, background = &Ram_HeapSlots->battleWork->background;
        frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(*background, 6 - frame);

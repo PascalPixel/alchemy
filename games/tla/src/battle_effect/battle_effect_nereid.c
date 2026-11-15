@@ -20,6 +20,10 @@
 #define NEREID_COLUMN_WIDTH 34
 #define NEREID_COLUMN_HEIGHT 104
 
+/// The columns of water rise among the targets, from the crash to the clatter.
+#define NEREID_COLUMNS_FRAME 32
+#define NEREID_COLUMNS_END_FRAME 80
+
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away. At frame 28, and every frame
 /// from 32 to 79, spray bursts up beside her and falls back, and every twelve
@@ -37,7 +41,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -84,7 +88,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
-      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&
+          frame <= 97)
         frame = 98;
       if (frame == 120)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -96,8 +101,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
-        velocity.x = velocity.x * 58 / 64;
-        velocity.y = velocity.y * 56 / 64;
+        velocity.x = velocity.x * 58 / DAMPING_SCALE;
+        velocity.y = velocity.y * 56 / DAMPING_SCALE;
         if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
@@ -111,7 +116,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -121,14 +126,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           }
         }
       }
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         s32 spawned = 0;
 
         for (k = 0; k != NEREID_DROPS; k++) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -143,13 +148,13 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       }
       if (frame == 0)
         Sound_PlayFar(SE_SCATTER);
-      if (frame == 32)
+      if (frame == NEREID_COLUMNS_FRAME)
         Sound_PlayFar(SE_CRASH);
-      if (frame == 80)
+      if (frame == NEREID_COLUMNS_END_FRAME)
         Sound_PlayFar(SE_CLATTER);
 
       // The columns of water scroll up.
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % NEREID_COLUMN_HEIGHT;
 
@@ -167,7 +172,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
-                  120 - rise, 32, 32);
+                  120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
       // Drops swell as they clear: they fall under gravity until frame 80, then
@@ -199,8 +204,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             drop->velocityY += -(px(1) / 2);
           else
             drop->velocityY += gNereid_Gravity[k & 3];
-          drop->velocityX = drop->velocityX * 62 / 64;
-          drop->velocityY = drop->velocityY * 62 / 64;
+          drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
+          drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
           if (drop->velocityY > 0 && Q_16_16_UPPER_HALF(drop->y) > 104)
             drop->variant = -1;

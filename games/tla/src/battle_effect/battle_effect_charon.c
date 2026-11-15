@@ -5,103 +5,16 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_charon.c:439: structure has no
- * member named `timer'. */
-struct Particle__f175f74 {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 vx;
-  s32 vy;
-  s32 vz;
-  s32 timer;
-};
-
-/* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_charon.c:326: structure has no
- * member named `oamPriority'. */
-struct SpriteObject__f175f74 {
-  u16 unk00;
-  u16 unk02;
-  u16 unk04 : 10;
-  u16 oamPriority : 2;
-  u16 unk04Palette : 4;
-  u16 unk06;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[6];
-  u8 slot;
-  u8 unk11[6];
-  u8 unk17;
-};
-
-/* VIEW(f175f74): tag struct Model as struct Model__f175f74; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_charon.c:801: structure has no
- * member named `depth'. */
-struct Model__f175f74 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *texture;
-  struct ModelTexture *desc;
-  s32 depth;
-};
-
-/* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_charon.c:272: structure has no
- * member named `transferMode'. */
-struct SummonWork__f175f74 {
-  struct Particle__f175f74 drops[16];
-  struct Particle__f175f74 members[16];
-  struct Particle__f175f74 homes[16];
-  struct Particle__f175f74 columns[12];
-  u8 unk690[0x6c];
-  s32 wave;
-  u8 buffer[0x7080];
-  s32 transferMode;
-  s32 transferValue;
-  u8 unk_7788[0x20];
-  s32 shakeFrames;
-  u8 unk77ac[0x30];
-  struct SpriteObject__f175f74 *objects[14];
-  u8 unk7814[0xd0];
-  // volatile: the VBlank handler counts it up; every effect that waits on it
-  // reads it twice per test.
-  volatile u32 frameSync;
-  s32 frameDone;
-};
-
-/// The battle work as Charon reads it: the backdrop's colours, its background
-/// and the byte at 0x867.
-struct CharonBattle {
-  u8 unk000[0x56c];
-  u16 palette[0x82];
-  u16 unk670;
-  u8 unk672[0x1f5];
-  u8 unk867;
-};
-
-/// The battle camera as Charon reads it: its yaw.
-struct CharonCamera {
-  u8 unk00[0x36];
-  s16 yaw;
-};
-
-/// The line scroll's work as Charon reads it.
-struct LineScrollView {
-  u8 unk00[0x10];
-  s32 unk10;
-};
+/// Charon's particles in the effect work: the drops, the crew's places and
+/// their homes, then the columns; the last particle's variant holds the
+/// shockwave's size.
+#define DROPS (work->particles)
+#define MEMBERS (work->particles + 16)
+#define HOMES (work->particles + 32)
+#define COLUMNS (work->particles + 48)
+#define WAVE_SIZE (work->particles[63].variant)
+/// The crew's sprites, Charon's first.
+#define OBJECTS ((struct Sprite **)work->sprites)
 
 /// A list of units to spawn, as Charon passes an empty one.
 struct SpawnList {
@@ -109,38 +22,21 @@ struct SpawnList {
   u8 unk02[26];
 };
 
-/// The heap slots as Charon reads them.
-struct SystemWork {
-  u8 unk00[0x24];
-  struct CharonBattle *battle;
-  u8 unk28[0x8];
-  struct CharonCamera *camera;
-  u8 unk34[0x28];
-  struct SummonWork__f175f74 *summon;
-  u8 *canvas;
-  u8 *glyphs;
-  s32 (*blit)(void *, const void *, s32, s32, s32, s32);
-  u8 unk6c[0x44];
-  struct LineScrollView *lineScroll;
-  u8 unkb4[0x8];
-  s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
-};
-
-#define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
-
-#define SPRITES ((struct SpriteObject__f175f74 **)Ram_MapCellBuffer)
+#define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
-#define OAM_BUFFER ((u32 *)gData_02014000)
+#define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 0x4000))
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
-#define PARTICLES ((struct Particle__f175f74 *)(Ram_MapCellBuffer + 0x4200))
+#define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
-#define PLTT ((u16 *)BG_PLTT)
 
 extern const struct Scale gCharon_SwarmScale;
 extern const struct Scale gCharon_PulseScale;
 extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
+
+/// Where ParticleSpritesD is decoded in the effect's pictures.
+#define CHARON_PARTICLE_SPRITES_D_PICTURES 0x2400
 
 /// Charon: over a red wasteland a violet whirlpool turns about a red dome that
 /// rises out of it; in a white flash among dark shards Charon appears and
@@ -162,13 +58,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   struct ModelTexture risingTexture;
   struct ModelTexture openingTexture;
   u8 *canvas;
-  struct SummonWork__f175f74 *work;
-  struct LineScrollView *lineScroll;
+  struct BattleEffectWork *work;
+  struct BattlePresentationTransition *backgroundView;
   s32 j;
   s32 frame;
   u32 savedWidth;
   u8 *glyphs;
-  struct CharonBattle *battle;
+  struct BattleWork *battle;
   DrawRectangleFn *blit;
   s32 posX;
   s32 posZ;
@@ -176,7 +72,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 red;
   s32 green;
   s32 blue;
-  struct CharonCamera *camera;
+  struct BattleCamera *camera;
   s32 shake;
   s16 savedYaw;
   s32 i;
@@ -184,7 +80,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u16 *palette;
   u8 *source;
   s32 t;
-  struct SpriteObject__f175f74 **sprites;
+  struct Sprite **sprites;
   struct VramCacheEntry *slots;
   struct VramCacheEntry *objectSlots;
   s32 cell;
@@ -193,18 +89,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 twenty;
   s32 width;
 
-  canvas = SYSTEM_WORK->canvas;
-  work = SYSTEM_WORK->summon;
-  lineScroll = SYSTEM_WORK->lineScroll;
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = Ram_HeapSlots->battleEffect;
+  backgroundView = Ram_HeapSlots->battleBackground;
   savedWidth = gBgScroll[1].x;
-  glyphs = SYSTEM_WORK->glyphs;
-  sprites = (struct SpriteObject__f175f74 **)gMapGridCellBuffer;
-  battle = SYSTEM_WORK->battle;
+  glyphs = Ram_HeapSlots->battleSheet;
+  sprites = (struct Sprite **)gMapGridCellBuffer;
+  battle = Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  PLTT[0] = 0;
-  PLTT[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   {
     s32 order = 0xc80;
@@ -212,8 +108,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  gProjection.centerY = 240;
-  lineScroll->unk10 = 1;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
+  backgroundView->active = 1;
   gBgScroll[1].x = 0;
   emptyList.value = 255;
   BattleActor_SpawnObjectsForListFar(&emptyList, 0);
@@ -222,11 +118,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();
-  battle->unk867 = 1;
+  battle->keepBackdropPalette = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -234,53 +130,50 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   BattleEffect_FetchRectangleBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedSlashTiles);
-  Iwram_CopyWords(PLTT + 0x120, source, 0x140);
+  Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(2, 0), source, 0x140);
   source += 0x140;
-  Decompress_TaggedLz(source, work->buffer);
+  Decompress_TaggedLz(source, work->sheet);
   for (i = 0; i != 0x1000; i++) {
-    if (work->buffer[i] != 0) {
-      work->buffer[i] += 32;
+    if (work->sheet[i] != 0) {
+      work->sheet[i] += 32;
     }
   }
   {
-    struct SpriteObject__f175f74 *object =
-        EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
+    struct Sprite *object = EffectSprite_CreateWithTiles(
+        64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
 
-    work->objects[0] = object;
-    object->priority = 3;
+    OBJECTS[0] = object;
+    object->image.priority = 3;
     slots = gVramCacheEntries;
-    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->buffer,
-                    0x1000);
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->sheet, 0x1000);
   }
-  work->objects[0]->oamPriority = 0;
-  work->objects[0]->unk17 = 32;
+  OBJECTS[0]->image.objectMode = 0;
+  OBJECTS[0]->offsetY = 32;
 
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteArrowsTiles);
-  Iwram_CopyWords(PLTT + 0x1f0, source, 32);
+  Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(15, 0), source, 32);
   source += 32;
-  Decompress_TaggedLz(source, work->buffer);
+  Decompress_TaggedLz(source, work->sheet);
   for (i = 0; i != 16; i++) {
-    struct SpriteObject__f175f74 *object =
-        EffectSprite_CreateWithTiles(16, 16, 0, 0xf000);
+    struct Sprite *object = EffectSprite_CreateWithTiles(16, 16, 0, 0xf000);
     SPRITES[i] = object;
-    object->priority = 1;
-    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset,
-                    work->buffer + i * 32, 32);
-    tiles[i] = SPRITES[i]->tile;
+    object->image.priority = 1;
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->sheet + i * 32,
+                    32);
+    tiles[i] = SPRITES[i]->image.tile;
   }
   for (i = 0; i != 32; i++) {
-    struct SpriteObject__f175f74 *object =
-        EffectSprite_Acquire(8, 8, 0, 0xf000);
+    struct Sprite *object = EffectSprite_Acquire(8, 8, 0, 0xf000);
     SPRITES[16 + i] = object;
     Iwram_CopyWords(object, sprites[0], 24);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, glyphs, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->buffer, 0,
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet, 0,
                              0);
   for (j = 0; j != 10; j++) {
     cell = 4;
     for (i = 0; i != cell * cell * 2; i++) {
-      s32 value = work->buffer[gBattleEffect_MotePictures[cell - 1] + i];
+      s32 value = work->sheet[gBattleEffect_MotePictures[cell - 1] + i];
 
       if (value != 0) {
         value -= j * 7;
@@ -291,11 +184,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       glyphs[cell * cell * j * 2 + i] = value;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->buffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CharmRingSheet,
-                             work->buffer + 0x1000, 1, 1);
+                             work->sheet + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-  Iwram_CopyWords(PLTT, source, 128);
+  Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2X = 0x800;
   posX = 0;
@@ -347,7 +240,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame == 0) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
@@ -360,8 +253,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u32 *a;
 
         for (i = 0, hidden = (240 << 16) + 160, mask.value = 0xf000,
-            timer = &PARTICLES[0].timer, b = (u32 *)(REVEAL_BUFFER + 4),
-            a = OAM_BUFFER;
+            timer = &CHARON_PARTICLES[0].variant,
+            b = (u32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
              i != 64; i++) {
           s32 t;
 
@@ -381,11 +274,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       swarmScale.x = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
-          PARTICLES[i].x = px(Random16() % 160 + 40);
-          PARTICLES[i].y = px((Random16() & 63) + 32);
-          PARTICLES[i].timer = Random16() & 255;
-          PARTICLES[i].vx = ((Random16() & 255) - 127) << 9;
-          PARTICLES[i].vy = (-(Random16() & 255) - 128) << 8;
+          CHARON_PARTICLES[i].x = px(Random16() % 160 + 40);
+          CHARON_PARTICLES[i].y = px((Random16() & 63) + 32);
+          CHARON_PARTICLES[i].variant = Random16() & 255;
+          CHARON_PARTICLES[i].velocityX = ((Random16() & 255) - 127) << 9;
+          CHARON_PARTICLES[i].velocityY = (-(Random16() & 255) - 128) << 8;
         }
       }
       for (i = 0; i != 48; i++) {
@@ -395,21 +288,22 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         swarmPlace[3] = 0;
         swarmPlace[1] = 0xff0000;
-        swarmPlace[0] = PARTICLES[64 + i].x;
-        swarmPlace[2] = PARTICLES[64 + i].y + px(32);
+        swarmPlace[0] = CHARON_PARTICLES[64 + i].x;
+        swarmPlace[2] = CHARON_PARTICLES[64 + i].y + px(32);
         Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, &swarmScale.x,
                                           0);
-        SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
+        SPRITES[i]->image.tile = tiles[CHARON_PARTICLES[64 + i].variant / 16];
       }
       for (i = 0; i != 128; i++) {
-        if (PARTICLES[i].y > -px(16) && PARTICLES[i].x > -px(16) &&
-            PARTICLES[i].x < px(256)) {
-          PARTICLES[i].x += PARTICLES[i].vx;
-          PARTICLES[i].y += PARTICLES[i].vy;
+        if (CHARON_PARTICLES[i].y > -px(16) &&
+            CHARON_PARTICLES[i].x > -px(16) &&
+            CHARON_PARTICLES[i].x < px(256)) {
+          CHARON_PARTICLES[i].x += CHARON_PARTICLES[i].velocityX;
+          CHARON_PARTICLES[i].y += CHARON_PARTICLES[i].velocityY;
         }
-        PARTICLES[i].timer += i / 16 + 2;
-        if (PARTICLES[i].timer > 255) {
-          PARTICLES[i].timer -= 256;
+        CHARON_PARTICLES[i].variant += i / 16 + 2;
+        if (CHARON_PARTICLES[i].variant > 255) {
+          CHARON_PARTICLES[i].variant -= 256;
         }
       }
     }
@@ -422,106 +316,108 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       pulsePlace[1] = 0xff0000;
       pulsePlace[0] = px(114);
       pulsePlace[2] = px(t56 >= 0 ? 78 : 100);
-      Render_ApplyProjectedPlacementFar(work->objects[0], pulsePlace,
-                                        &pulseScale.x, 0);
+      Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
+                                        0);
     }
     if (frame == 131) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-      Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords((u16 *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame >= 132 && frame < 147) {
-      Iwram_FillWords(canvas, 0x3c00, (0x3f - (frame - 132) * 4) * 0x01010101);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      (0x3f - (frame - 132) * 4) * 0x01010101);
     }
     if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
       u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
-      u16 *color = PLTT + 0x60;
+      u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, target++, color++) {
-        s32 r = (*color >> 10) & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = *color & 31;
-        s32 tr;
-        s32 tg;
+        s32 b = RGB_BLUE(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 r = RGB_RED(*color);
         s32 tb;
+        s32 tg;
+        s32 tr;
 
         if (frame < 168) {
-          tr = (*target >> 10) & 31;
-          tg = (*target >> 5) & 31;
-          tb = *target & 31;
+          tb = RGB_BLUE(*target);
+          tg = RGB_GREEN(*target);
+          tr = RGB_RED(*target);
         } else {
-          tr = ((*target >> 10) & 31) - 16;
-          tg = ((*target >> 5) & 31) - 16;
-          tb = (*target & 31) + 8;
+          tb = RGB_BLUE(*target) - 16;
+          tg = RGB_GREEN(*target) - 16;
+          tr = RGB_RED(*target) + 8;
         }
-        if (tr < 0) {
-          tr = 0;
+        if (tb < 0) {
+          tb = 0;
         }
         if (tg < 0) {
           tg = 0;
         }
-        if (tb > 31) {
-          tb = 31;
-        }
-        if (r > tr) {
-          r--;
-        }
-        if (g > tg) {
-          g--;
+        if (tr > RGB_LEVEL_MAX) {
+          tr = RGB_LEVEL_MAX;
         }
         if (b > tb) {
           b--;
         }
-        *color = (r << 10) | (g << 5) | b;
+        if (g > tg) {
+          g--;
+        }
+        if (r > tr) {
+          r--;
+        }
+        *color = RGB(r, g, b);
       }
       for (i = 0; i != 15; i++) {
         s32 r = 31 - (frame - 132) / 4;
         s32 g = r;
         s32 b = r;
 
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
         if (r < 12) {
           r = 12;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
         if (g < 4) {
           g = 4;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
         if (b < 4) {
           b = 4;
         }
-        PLTT[0x1e1 + i] = (b << 10) | (g << 5) | r;
+        OBJ_PLTT_COLOR(14, 1 + i) = RGB(r, g, b);
       }
     }
     if (frame >= 132 && frame < 240) {
       u16 *target = Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
-      u16 *color = PLTT + 0x100;
+      u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 0);
 
       for (i = 0; i != 192; i++, target++, color++) {
-        s32 r = (*color >> 10) & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = *color & 31;
-        s32 tr = (*target >> 10) & 31;
-        s32 tg = (*target >> 5) & 31;
-        s32 tb = *target & 31;
+        s32 b = RGB_BLUE(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 r = RGB_RED(*color);
+        s32 tb = RGB_BLUE(*target);
+        s32 tg = RGB_GREEN(*target);
+        s32 tr = RGB_RED(*target);
 
-        if (r > tr) {
-          r--;
+        if (b > tb) {
+          b--;
         }
         if (g > tg) {
           g--;
         }
-        if (b > tb) {
-          b--;
+        if (r > tr) {
+          r--;
         }
-        *color = (r << 10) | (g << 5) | b;
+        *color = RGB(r, g, b);
       }
     }
     fade = 0;
@@ -551,18 +447,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       u16 *color = Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
 
       for (i = 0; i != 192; i++, color++) {
-        s32 r = (*color & 31) + red;
-        s32 g = ((*color >> 5) & 31) + green;
-        s32 b = ((*color >> 10) & 31) + blue;
+        s32 r = RGB_RED(*color) + red;
+        s32 g = RGB_GREEN(*color) + green;
+        s32 b = RGB_BLUE(*color) + blue;
 
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
         if (r < 0) {
           r = 0;
@@ -573,71 +469,79 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (b < 0) {
           b = 0;
         }
-        PLTT[0x100 + i] = (b << 10) | (g << 5) | r;
+        OBJ_PLTT_COLOR(0, i) = RGB(r, g, b);
       }
     }
     if (frame >= 132 && frame < 860) {
       if (frame == 132) {
-        Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
+        Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
-        Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
+        Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(0, 0), 0x180, 0x7fff7fff);
         source += 0x180;
-        Decompress_TaggedLz(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         for (i = 0, objectSlots = gVramCacheEntries; i != 12; i++) {
-          struct SpriteObject__f175f74 *object =
-              EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+          struct Sprite *object = EffectSprite_CreateWithTiles(
+              32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
-          object->priority = 3;
-          work->objects[i] = object;
+          object->image.priority = 3;
+          OBJECTS[i] = object;
           Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
-                          work->buffer + 0x2400 + i * 0x400, 0x400);
+                          work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES +
+                              i * 0x400,
+                          0x400);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteWispsTiles);
-        Iwram_CopyWords(PLTT + 0x1e0, source, 32);
-        Iwram_FillWords(PLTT + 0x1e0, 32, 0x7fff7fff);
+        Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(14, 0), source, 32);
+        Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(14, 0), 32, 0x7fff7fff);
         source += 32;
-        Decompress_TaggedLz(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         {
-          struct SpriteObject__f175f74 *object =
-              EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
+          struct Sprite *object = EffectSprite_CreateWithTiles(
+              64, 64, OBJ_SIZE_64X64, OBJ_PALETTE(14));
           struct VramCacheEntry *tileSlots;
 
-          work->objects[12] = object;
-          object->priority = 3;
+          OBJECTS[12] = object;
+          object->image.priority = 3;
           tileSlots = gVramCacheEntries;
           {
             u8 *vram = OBJ_VRAM;
 
             // vram holds the base, then the destination.
             vram += tileSlots[object->slot].offset;
-            Iwram_CopyWords(vram, work->buffer + 0x2400, 0x800);
+            Iwram_CopyWords(
+                vram, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x800);
           }
-          object = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
-          work->objects[13] = object;
-          object->priority = 2;
-          object->unk17 = 32;
+          object = EffectSprite_CreateWithTiles(
+              64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
+          OBJECTS[13] = object;
+          object->image.priority = 2;
+          object->offsetY = 32;
           Iwram_FillWords(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
-        Iwram_CopyWords(PLTT, source, 128);
-        Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
-                                   work->buffer + 0x2400, 0, 0);
-        Iwram_CopyWords(glyphs, work->buffer + 0x2400, 0x302);
+        Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
+        Resource_LoadAndDecompress(
+            (s32)&ResourceId_ParticleSpritesD,
+            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0, 0);
+        Iwram_CopyWords(
+            glyphs, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x302);
         Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet,
-                                   work->buffer + 0x1000, 1, 1);
+                                   work->sheet + 0x1000, 1, 1);
         posX = 144 << 15;
         posZ = 224 << 14;
       }
       if (frame == 243) {
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
-        Iwram_FillWords(PLTT + 0x1c0, 64, 0);
+        Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(12, 0), 64, 0);
         source += 64;
-        Decompress_TaggedLz(source, gData_02014000);
+        Decompress_TaggedLz(source, gMapGridCellBuffer + 0x4000);
         for (i = 0; i != 0x1000; i++) {
-          if (gData_02014000[i] != 0) {
-            gData_02014000[i] += 192;
+          if ((gMapGridCellBuffer + 0x4000)[i] != 0) {
+            (gMapGridCellBuffer + 0x4000)[i] += 192;
           }
         }
         for (i = 0; i != 32; i++) {
@@ -655,7 +559,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
             mask = 31;
             half = 0x1000;
-            other = (Random16() & mask) + gData_02014000;
+            other = (Random16() & mask) + (gMapGridCellBuffer + 0x4000);
             other += half;
             swap = *slot;
             value = *other;
@@ -676,37 +580,37 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         objectPlace[3] = 0;
         objectPlace[1] = 0xff0000;
         if (frame < 160) {
-          posX += 0x2000;
-          posZ -= 0x4000;
+          posX += px(1) / 8;
+          posZ -= px(1) / 4;
         } else if (frame < 332) {
-          posX += 0x2000;
-          posZ += 0x1000;
+          posX += px(1) / 8;
+          posZ += px(1) / 16;
         } else {
-          posX += 0x2000;
+          posX += px(1) / 8;
         }
         objectScale[1] = Q16_ONE * 5 / 4;
         objectScale[0] = Q16_ONE * 5 / 4;
         objectScale[0] = objectScale[1] = posZ / 48 + Q16_ONE / 4;
-        objectPlace[0] = posX + 0x400000;
+        objectPlace[0] = posX + px(64);
         objectPlace[2] = px(144);
-        Render_ApplyProjectedPlacementFar(work->objects[12], objectPlace,
-                                          objectScale, 0);
+        Render_ApplyProjectedPlacementFar(OBJECTS[12], objectPlace, objectScale,
+                                          0);
         objectScale[1] = Q16_ONE;
         objectScale[0] = Q16_ONE;
         for (i = 0; i != 12; i++) {
           objectPlace[0] = ((i % 4) << 21) + posX;
           objectPlace[2] = ((i / 4) << 21) + posZ;
-          Render_ApplyProjectedPlacementFar(work->objects[i], objectPlace,
+          Render_ApplyProjectedPlacementFar(OBJECTS[i], objectPlace,
                                             objectScale, 0);
         }
       }
       if (frame == 200) {
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-        Iwram_CopyWords(PLTT, source, 128);
+        Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
       }
       if (frame >= 200 && frame < 302) {
         void *texture = Heap_AllocEwram(32);
-        struct Model__f175f74 *model = Render_AllocateModelList(1);
+        struct RenderModel *model = Render_AllocateModelList(1);
         s32 t = frame - 200;
         s32 depth;
         s32 scale;
@@ -722,21 +626,21 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (depth > 0) {
           depth = 0;
         }
-        model->depth = depth;
+        model->shade = depth;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                             CANVAS_FADE_THREE_QUARTERS);
         lateTexture.logWidth = 7;
         lateTexture.logHeight = 7;
-        lateTexture.pixels = work->buffer + 0x1000;
+        lateTexture.pixels = work->sheet + 0x1000;
         model->kind = 7;
-        model->desc = &lateTexture;
+        model->texture = &lateTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->texture = texture;
+        model->vertices = texture;
         if (frame <= 282) {
           Transform_Reset();
           Transform_ApplyAxisScale(scale * 2, scale * 2, scale * 2);
           Transform_ApplyTranslation(-px(16), -px(8), 0);
-          Transform_ApplyPitch(0xe000);
+          Transform_ApplyPitch(TRIG_TURN * 7 / 8);
           Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
@@ -755,12 +659,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           }
           lateTexture.logWidth = 6;
           lateTexture.logHeight = 6;
-          model->depth = depth;
-          lateTexture.pixels = work->buffer;
-          model->desc = &lateTexture;
+          model->shade = depth;
+          lateTexture.pixels = work->sheet;
+          model->texture = &lateTexture;
           model->mesh = gBattleEffect_SquareMesh;
           model->kind = 7;
-          model->texture = texture;
+          model->vertices = texture;
           Transform_Reset();
           Transform_ApplyTranslation(-px(8), -px(8), 0);
           Transform_ApplyAxisScale(scale, scale, scale);
@@ -792,7 +696,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             s32 texel = *lowByte | (*highByte << 8);
 
             *(u16 *)(OBJ_VRAM +
-                     (row + gVramCacheEntries[work->objects[13]->slot].offset) +
+                     (row + gVramCacheEntries[OBJECTS[13]->slot].offset) +
                      column) = texel;
             column = orderCopy[0x1001] * 2;
             pixel = row + column;
@@ -800,7 +704,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             highByte = high + pixel;
             texel = *lowByte | (*highByte << 8);
             *(u16 *)(OBJ_VRAM +
-                     (row + gVramCacheEntries[work->objects[13]->slot].offset) +
+                     (row + gVramCacheEntries[OBJECTS[13]->slot].offset) +
                      column) = texel;
           }
         }
@@ -809,80 +713,81 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         revealPlace[1] = 0xff0000;
         revealPlace[0] = 184 << 15;
         revealPlace[2] = 144 << 15;
-        Render_ApplyProjectedPlacementFar(work->objects[13], revealPlace,
+        Render_ApplyProjectedPlacementFar(OBJECTS[13], revealPlace,
                                           &revealScale.x, 0);
         {
           u16 *target =
               Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
-          u16 *color = PLTT + 0x1c0;
+          u16 *color = (u16 *)&OBJ_PLTT_COLOR(12, 0);
 
           for (i = 0; i != 32; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr = (*target >> 10) & 31;
-            s32 tg = (*target >> 5) & 31;
-            s32 tb = *target & 31;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
+            s32 tb = RGB_BLUE(*target);
+            s32 tg = RGB_GREEN(*target);
+            s32 tr = RGB_RED(*target);
 
-            if (r < tr) {
-              r++;
+            if (b < tb) {
+              b++;
             }
             if (g < tg) {
               g++;
             }
-            if (b < tb) {
-              b++;
+            if (r < tr) {
+              r++;
             }
-            *color = (r << 10) | (g << 5) | b;
+            *color = RGB(r, g, b);
           }
         }
       }
       if (frame > 301) {
         if (frame == 302) {
-          Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-          Iwram_FillWords(PLTT + 0x1c0, 64, 0x7fff7fff);
+          Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+          Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(12, 0), 64, 0x7fff7fff);
           Iwram_CopyWords(
-              PLTT + 0x60,
+              (u16 *)&BG_PLTT_COLOR(6, 0),
               Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop),
               0x100);
           source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-          Iwram_CopyWords(PLTT, source, 128);
+          Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                                     work->buffer + 0x1000, 0, 0);
+                                     work->sheet + 0x1000, 0, 0);
           Graphics_LoadGreyRamp();
         }
         if (frame > 303) {
           u16 *target =
               Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
-          u16 *color = PLTT + 0x60;
+          u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (i = 0; i != 128; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr = ((*target >> 10) & 31) - 20;
-            s32 tg = ((*target >> 5) & 31) - 20;
-            s32 tb = (*target & 31) + 8;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
+            s32 tb = RGB_BLUE(*target) - 20;
+            s32 tg = RGB_GREEN(*target) - 20;
+            s32 tr = RGB_RED(*target) + 8;
 
-            if (tr < 0) {
-              tr = 0;
+            if (tb < 0) {
+              tb = 0;
             }
             if (tg < 0) {
               tg = 0;
             }
-            if (tb > 31) {
-              tb = 31;
-            }
-            if (r > tr) {
-              r--;
-            }
-            if (g > tg) {
-              g--;
+            if (tr > RGB_LEVEL_MAX) {
+              tr = RGB_LEVEL_MAX;
             }
             if (b > tb) {
               b--;
             }
-            *color = (r << 10) | (g << 5) | b;
+            if (g > tg) {
+              g--;
+            }
+            if (r > tr) {
+              r--;
+            }
+            *color = RGB(r, g, b);
           }
         }
         if (frame > 301) {
@@ -891,15 +796,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 stripShade;
           s32 size;
           void *texture = Heap_AllocEwram(32);
-          struct Model__f175f74 *model = Render_AllocateModelList(1);
+          struct RenderModel *model = Render_AllocateModelList(1);
 
           revealTexture.logWidth = 7;
           revealTexture.logHeight = 7;
-          revealTexture.pixels = work->buffer + 0x1000;
+          revealTexture.pixels = work->sheet + 0x1000;
           model->kind = 7;
-          model->desc = &revealTexture;
+          model->texture = &revealTexture;
           model->mesh = gBattleEffect_LargeSquareMesh;
-          model->texture = texture;
+          model->vertices = texture;
           for (k = 0; k != 3; k++) {
             x = frame - 302 - k * 8;
             if (x >= 0) {
@@ -911,16 +816,16 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               if (stripShade > 0) {
                 stripShade = 0;
               }
-              model->depth = stripShade;
+              model->shade = stripShade;
               Transform_Reset();
               Transform_ApplyTranslation(-px(8), -px(8), 0);
               Transform_ApplyAxisScale(size / 2, size, size / 2);
               if (k == 0) {
-                Transform_ApplyRoll(0xf000);
+                Transform_ApplyRoll(TRIG_TURN * 15 / 16);
               } else if (k == 1) {
                 Transform_ApplyRoll(TRIG_TURN / 8);
               } else {
-                Transform_ApplyRoll(0xe000);
+                Transform_ApplyRoll(TRIG_TURN * 7 / 8);
               }
               Transform_ApplyPitch(TRIG_TURN / 32);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
@@ -933,7 +838,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
       if (frame == 330) {
-        Iwram_FillWords(PLTT + 0x1c0, 64, 0x7c1f7c1f);
+        Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(12, 0), 64, 0x7c1f7c1f);
       }
       if (frame >= 330 && frame < 351) {
         struct Scale finaleScale = gCharon_FinaleScale;
@@ -949,14 +854,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         finalePlace[1] = 0xff0000;
         finalePlace[0] = px(dx) + (184 << 15);
         finalePlace[2] = px(dz) + (144 << 15);
-        Render_ApplyProjectedPlacementFar(work->objects[13], finalePlace,
+        Render_ApplyProjectedPlacementFar(OBJECTS[13], finalePlace,
                                           &finaleScale.x, 0);
       }
       if (frame == 347) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         REG_BLDCNT = 0;
         {
-          u16 *entry = PLTT + 1;
+          u16 *entry = (u16 *)&BG_PLTT_COLOR(0, 1);
           for (i = 0; i != 63; i++, entry++) {
             s32 r = 31 - i;
             s32 b = r;
@@ -976,69 +881,70 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 height = 54;
 
         if (frame > 349) {
-          height = ((-(Trig_Sin((frame << 10) - 0x57800) * 54)) >> 16) + 54;
+          height =
+              (Q_16_16_TO_INT(-(Trig_Sin((frame << 10) - 0x57800) * 54))) + 54;
         }
         if (frame == 360) {
           work->transferMode = CANVAS_COPY;
         }
         if (frame <= 371) {
-          BattleEffect_DrawShadedCircles(work->buffer + 0x1000, t, 0x10000);
+          BattleEffect_DrawShadedCircles(work->sheet + 0x1000, t, Q16_ONE);
         } else {
           t = 104;
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        Canvas_BlitAtFoot(work->buffer + 0x1000, height, 58, t);
+        Canvas_BlitAtFoot(work->sheet + 0x1000, height, 58, t);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        blit[1] = SYSTEM_WORK->blitBc;
+        blit[1] = Ram_HeapSlots->ramCodePaired;
       }
       for (j = 0; j != 2; j++) {
         s32 t = frame - 357 - j * 19;
 
         if (t == 0) {
-          Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
+          Iwram_FillWords((u16 *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
         }
         if (t >= 0 && t < 160) {
           u16 *target =
               Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
-          u16 *color = PLTT + 0x60;
+          u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (i = 0; i != 128; i++, target++, color++) {
-            s32 r = (*color >> 10) & 31;
-            s32 g = (*color >> 5) & 31;
-            s32 b = *color & 31;
-            s32 tr;
-            s32 tg;
+            s32 b = RGB_BLUE(*color);
+            s32 g = RGB_GREEN(*color);
+            s32 r = RGB_RED(*color);
             s32 tb;
+            s32 tg;
+            s32 tr;
 
             if (t < 8) {
-              tr = (*target >> 10) & 31;
-              tg = (*target >> 5) & 31;
-              tb = *target & 31;
+              tb = RGB_BLUE(*target);
+              tg = RGB_GREEN(*target);
+              tr = RGB_RED(*target);
             } else {
-              tr = ((*target >> 10) & 31) - 16;
-              tg = ((*target >> 5) & 31) - 16;
-              tb = (*target & 31) + 8;
+              tb = RGB_BLUE(*target) - 16;
+              tg = RGB_GREEN(*target) - 16;
+              tr = RGB_RED(*target) + 8;
             }
-            if (tr < 0) {
-              tr = 0;
+            if (tb < 0) {
+              tb = 0;
             }
             if (tg < 0) {
               tg = 0;
             }
-            if (tb > 31) {
-              tb = 31;
-            }
-            if (r > tr + 1) {
-              r -= 2;
-            }
-            if (g > tg + 1) {
-              g -= 2;
+            if (tr > RGB_LEVEL_MAX) {
+              tr = RGB_LEVEL_MAX;
             }
             if (b > tb + 1) {
               b -= 2;
             }
-            *color = (r << 10) | (g << 5) | b;
+            if (g > tg + 1) {
+              g -= 2;
+            }
+            if (r > tr + 1) {
+              r -= 2;
+            }
+            *color = RGB(r, g, b);
           }
         }
       }
@@ -1057,9 +963,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       w = 4;
       for (i = 0, h = 8; i != 256; i++) {
-        x = (Trig_Sin(i << 8) * radius * 2) >> 16;
+        x = Q_16_16_TO_INT(Trig_Sin(i << 8) * radius * 2);
         cosine = Trig_Cos(i << 8);
-        y = ((cosine * radius) >> 16) + 68;
+        y = (Q_16_16_TO_INT(cosine * radius)) + 68;
         x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
       }
@@ -1067,31 +973,31 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame >= 108 && frame < 132) {
       u16 *color;
 
-      for (i = 0, color = PLTT + 0x60; i != 128; i++, color++) {
-        s32 r = *color & 31;
-        s32 g = (*color >> 5) & 31;
-        s32 b = (*color >> 10) & 31;
+      for (i = 0, color = (u16 *)&BG_PLTT_COLOR(6, 0); i != 128; i++, color++) {
+        s32 r = RGB_RED(*color);
+        s32 g = RGB_GREEN(*color);
+        s32 b = RGB_BLUE(*color);
 
         g--;
         if (g < 0) {
           r--;
         }
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         } else if (r < 0) {
           r = 0;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         } else if (g < 0) {
           g = 0;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         } else if (b < 0) {
           b = 0;
         }
-        *color = (b << 10) | (g << 5) | r;
+        *color = RGB(r, g, b);
       }
     }
     if (t56 >= 0 && t56 < 36) {
@@ -1102,7 +1008,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         source += 32;
-        Decompress_TaggedLz(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         for (y = 0; y != 80; y++) {
           for (x = 0; x != 184; x += 2) {
             u16 *dst =
@@ -1111,11 +1018,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             u8 hi = *dst >> 8;
             u8 lo = *dst;
 
-            if (work->buffer[0x2400 + y * 184 + x + 1] != 0) {
-              hi = work->buffer[0x2400 + y * 184 + x + 1] - 32;
+            if (work->sheet[0x2400 + y * 184 + x + 1] != 0) {
+              hi = work->sheet[0x2400 + y * 184 + x + 1] - 32;
             }
-            if (work->buffer[0x2400 + y * 184 + x] != 0) {
-              lo = work->buffer[0x2400 + y * 184 + x] - 32;
+            if (work->sheet[0x2400 + y * 184 + x] != 0) {
+              lo = work->sheet[0x2400 + y * 184 + x] - 32;
             }
             *dst = (hi << 8) | lo;
           }
@@ -1123,71 +1030,72 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (frame < 88) {
         u16 *color = Resource_GetTableEntry((s32)&ResourceId_Data0B5);
-        u16 *entry = PLTT + 0xe0;
+        u16 *entry = (u16 *)&BG_PLTT_COLOR(14, 0);
 
         for (i = 0; i != 16; i++, color++, entry++) {
-          s32 add = ((Trig_Cos(t56 << 9) * 12) >> 16) + 16;
-          s32 r = (*color & 31) + add;
-          s32 g = ((*color >> 5) & 31) + add;
-          s32 b = ((*color >> 10) & 31) + add;
+          s32 add = (Q_16_16_TO_INT(Trig_Cos(t56 << 9) * 12)) + 16;
+          s32 r = RGB_RED(*color) + add;
+          s32 g = RGB_GREEN(*color) + add;
+          s32 b = RGB_BLUE(*color) + add;
 
-          if (r > 31) {
-            r = 31;
+          if (r > RGB_LEVEL_MAX) {
+            r = RGB_LEVEL_MAX;
           }
-          if (g > 31) {
-            g = 31;
+          if (g > RGB_LEVEL_MAX) {
+            g = RGB_LEVEL_MAX;
           }
-          if (b > 31) {
-            b = 31;
+          if (b > RGB_LEVEL_MAX) {
+            b = RGB_LEVEL_MAX;
           }
-          *entry = (b << 10) | (g << 5) | r;
+          *entry = RGB(r, g, b);
         }
       }
     }
     if (frame == 54) {
-      Iwram_FillWords(canvas, 0x3c00, 0x20202020);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, CANVAS_FILL_WORD(32));
     }
     if (frame == 55) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame < 132) {
-      s32 scale112;
+      s32 risingScale;
       s32 depth;
       s32 rise = -52576;
       s32 base;
       s32 quarter;
       s32 twice;
       void *texture = Heap_AllocEwram(32);
-      struct Model__f175f74 *model = Render_AllocateModelList(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
 
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       twice = frame * 2;
       quarter = frame * 381;
       depth = twice - 64;
       base = quarter * 4;
-      scale112 = 115536 - base;
+      risingScale = 115536 - base;
       if (frame > 55) {
-        scale112 = base + rise;
+        risingScale = base + rise;
       }
       if (depth >= -8) {
         depth = -8;
       }
       if (frame > 95) {
         depth = 184 - frame * 2;
-        model->depth = depth;
+        model->shade = depth;
       }
       risingTexture.logWidth = 6;
       risingTexture.logHeight = 6;
-      risingTexture.pixels = work->buffer;
+      risingTexture.pixels = work->sheet;
       model->kind = 7;
-      model->desc = &risingTexture;
+      model->texture = &risingTexture;
       model->mesh = gBattleEffect_SquareMesh;
-      model->texture = texture;
+      model->vertices = texture;
       if (depth > -48) {
-        model->depth = depth;
+        model->shade = depth;
         Transform_Reset();
         Transform_ApplyTranslation(px(4), 0, 0);
-        Transform_ApplyAxisScale(scale112, scale112, scale112);
+        Transform_ApplyAxisScale(risingScale, risingScale, risingScale);
         Transform_ApplyPitch(TRIG_TURN / 8);
         if (frame > 55) {
           Transform_ApplyYaw(frame << 10);
@@ -1199,7 +1107,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (frame > 95) {
         depth = 568 - frame * 6;
-        model->depth = depth;
+        model->shade = depth;
       }
       if (depth > -48) {
         Transform_Reset();
@@ -1213,11 +1121,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (frame > 55) {
         s32 last = frame * 2 - 208;
 
-        risingTexture.pixels = work->buffer + 0x1000;
+        risingTexture.pixels = work->sheet + 0x1000;
         if (last >= -32) {
           last = -32;
         }
-        model->depth = last;
+        model->shade = last;
         Transform_Reset();
         Transform_ApplyTranslation(px(2), -px(32), 0);
         Transform_ApplyUniformScale(0x58f0);
@@ -1243,19 +1151,20 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       Heap_Release(model);
       Heap_Release(texture);
-      while (work->frameSync, work->frameSync <= 1) {
+      while (*(volatile u32 *)&work->vblanksSinceTransfer,
+             *(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
       }
     }
-    work->frameDone = 1;
+    work->transferPending = 1;
     wait(1);
   }
 
   Sound_PlayFar(SE_162);
   if (frame < 132) {
-    Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
+    Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
   } else {
     for (i = 0; i != 14; i++) {
-      Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[i]);
+      Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[i]);
     }
   }
   for (i = 0; i != 48; i++) {
@@ -1265,18 +1174,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
-  battle->unk867 = 0;
-  BattleBackground_LoadFar(1, battle->unk670, 24);
-  /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
-  do {
-  } while (0);
-  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  /* FAKEMATCH(dead): an empty once-only loop before the BG fill. */
-  do {
-  } while (0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
-  gProjection.centerY = 120;
-  camera = SYSTEM_WORK->camera;
+  battle->keepBackdropPalette = 0;
+  BattleBackground_LoadFar(1, battle->background, 24);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
+  camera = Ram_HeapSlots->cameraWork;
   shake = 0;
   savedYaw = camera->yaw;
   camera->yaw = shake;
@@ -1301,14 +1204,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (b < 0) {
       b = 0;
     }
-    PLTT[i] = (b << 10) | (g << 5) | r;
+    ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
   }
   arg->targets[arg->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar((struct SpawnList *)arg->targets, 0);
-  BattleEffect_DrawShadedCircles(work->buffer, 56, 0x10000);
-  BattleEffect_DrawShadedCircles(work->buffer + 0x1000, 16, 0x10000);
-  Iwram_FillWords(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C3, work->buffer + 0x3000, 0,
+  BattleEffect_DrawShadedCircles(work->sheet, 56, Q16_ONE);
+  BattleEffect_DrawShadedCircles(work->sheet + 0x1000, 16, Q16_ONE);
+  Iwram_FillWords(work->sheet + 0x2000, 0x1000, 0x3f3f3f3f);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C3, work->sheet + 0x3000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, glyphs, 0, 0);
   {
@@ -1323,23 +1226,23 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
   }
   for (i = 0; i != 0x1000; i++) {
-    if (work->buffer[0x3000 + i] != 0) {
-      work->buffer[0x3000 + i] = 63;
+    if (work->sheet[0x3000 + i] != 0) {
+      work->sheet[0x3000 + i] = 63;
     }
   }
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   for (i = 0; i != 16; i++) {
-    work->drops[i].timer = -i;
+    DROPS[i].variant = -i;
   }
   for (i = 0; i != 128; i++) {
-    PARTICLES[i].timer = -1;
+    CHARON_PARTICLES[i].variant = -1;
   }
   for (i = 0; i != arg->targetCount; i++) {
     struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-    work->homes[i].x = actor->x.fixed;
-    work->homes[i].y = actor->y.fixed;
-    work->homes[i].z = actor->z.fixed;
+    HOMES[i].x = actor->x.fixed;
+    HOMES[i].y = actor->y.fixed;
+    HOMES[i].z = actor->z.fixed;
   }
 
   width = 56;
@@ -1351,10 +1254,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     if (frame == 0) {
       Sound_PlayFar(SE_162);
-      work->wave = 160;
+      WAVE_SIZE = 160;
       shake = 0;
       for (i = 0; i != arg->targetCount; i++) {
-        work->members[i].timer = -1;
+        MEMBERS[i].variant = -1;
       }
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
@@ -1369,7 +1272,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     if (frame == 120) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-      ColorBuffer_ScaleFar(battle->palette, PLTT + 0x60, 0x99a0, 128);
+      ColorBuffer_ScaleFar(battle->palette, (u16 *)&BG_PLTT_COLOR(6, 0), 0x99a0,
+                           128);
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
@@ -1386,41 +1290,42 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 speed = (Random16() & 511) + 32;
           s32 angle = Random16();
 
-          PARTICLES[96 + i].x = 240 << 14;
-          PARTICLES[96 + i].y = 240 << 14;
-          PARTICLES[96 + i].vx = (Trig_Sin(angle) * speed) >> 5;
-          PARTICLES[96 + i].vy = (Trig_Cos(angle) * speed) >> 5;
-          PARTICLES[96 + i].timer = 0;
+          CHARON_PARTICLES[96 + i].x = 240 << 14;
+          CHARON_PARTICLES[96 + i].y = 240 << 14;
+          CHARON_PARTICLES[96 + i].velocityX = (Trig_Sin(angle) * speed) >> 5;
+          CHARON_PARTICLES[96 + i].velocityY = (Trig_Cos(angle) * speed) >> 5;
+          CHARON_PARTICLES[96 + i].variant = 0;
         }
         for (i = 0; i != 128; i++) {
           s32 speed = (Random16() & 255) + 32;
           s32 angle = Random16();
 
-          PARTICLES[128 + i].x = 240 << 14;
-          PARTICLES[128 + i].y = 240 << 14;
-          PARTICLES[128 + i].vx = (Trig_Sin(angle) * speed) >> 6;
-          PARTICLES[128 + i].vy = (Trig_Cos(angle) * speed) >> 6;
-          PARTICLES[128 + i].timer = (Random16() & 15) + 16;
+          CHARON_PARTICLES[128 + i].x = 240 << 14;
+          CHARON_PARTICLES[128 + i].y = 240 << 14;
+          CHARON_PARTICLES[128 + i].velocityX = (Trig_Sin(angle) * speed) >> 6;
+          CHARON_PARTICLES[128 + i].velocityY = (Trig_Cos(angle) * speed) >> 6;
+          CHARON_PARTICLES[128 + i].variant = (Random16() & 15) + 16;
         }
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(SE_CLATTER);
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         for (i = 0; i != arg->targetCount; i++) {
           struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-          SET_ACTOR_POSITION(actor, 0, px(32), work->homes[i].z);
+          SET_ACTOR_POSITION(actor, 0, px(32), HOMES[i].z);
         }
         for (i = 0; i != arg->targetCount; i++) {
           s32 spin = Random16();
           s32 delay = (Random16() & 31) + 120;
           s32 speed = spin * 2 + 0x20000;
 
-          BattleEffect_StartActorMotion(arg->targets[i], 1, 0x40000, 0x80000,
-                                        speed, delay);
+          BattleEffect_StartActorMotion(arg->targets[i], 1, px(4), px(8), speed,
+                                        delay);
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 32);
         }
@@ -1428,39 +1333,40 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      routine[0] = SYSTEM_WORK->blit;
+      routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
       for (i = 0; i != 16; i++) {
-        struct Particle__f175f74 *p = &PARTICLES[96 + i];
+        struct Particle *p = &CHARON_PARTICLES[96 + i];
 
-        if (p->timer >= 0 && p->timer < 24) {
-          s32 row = (p->timer / 4) * 2048;
+        if (p->variant >= 0 && p->variant < 24) {
+          s32 row = (p->variant / 4) * 2048;
           u8 *buffer = SPRITE_BUFFER;
-          s32 x = (p->x >> 16) - 16;
+          s32 x = (Q_16_16_TO_INT(p->x)) - 16;
 
           row += (s32)buffer;
           buffer = (u8 *)row;
-          routine[0](canvas, buffer, x, (p->y >> 16) - 32, 32, 64);
+          routine[0](canvas, buffer, x, (Q_16_16_TO_INT(p->y)) - 32,
+                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 8);
         }
-        p->timer++;
+        p->variant++;
       }
       for (i = 0; i != 128; i++) {
-        struct Particle__f175f74 *p = &PARTICLES[128 + i];
+        struct Particle *p = &CHARON_PARTICLES[128 + i];
 
-        if (p->timer >= 0) {
-          s32 size = (p->timer >> 3) + 2;
+        if (p->variant >= 0) {
+          s32 size = (p->variant >> 3) + 2;
           s32 k;
 
           for (k = 0; k != 4; k++) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
-                       size * 2);
+                       (Q_16_16_TO_INT(p->x)) - size / 2,
+                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
             if (p->y > 224 << 15) {
-              p->vy = -p->vy;
+              p->velocityY = -p->velocityY;
             }
           }
-          p->timer--;
+          p->variant--;
         }
       }
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -1468,20 +1374,20 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame < 120) {
       for (i = 0; i != 3; i++) {
         if (frame == gCharon_FlashFrames[i]) {
-          Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
+          Iwram_FillWords((u16 *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
         }
         if (frame >= gCharon_FlashFrames[i] + 1 &&
             frame < gCharon_FlashFrames[i] + 16) {
-          u16 *target = SYSTEM_WORK->battle->palette;
-          u16 *color = PLTT + 0x60;
+          u16 *target = Ram_HeapSlots->battleWork->palette;
+          u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (j = 0; j != 128; j++) {
-            s32 tr = (target[j] & 31) - twenty / 2;
-            s32 tg = ((target[j] >> 5) & 31) - 20;
-            s32 tb = ((target[j] >> 10) & 31) - twenty / 2;
-            s32 r = color[j] & 31;
-            s32 g = (color[j] >> 5) & 31;
-            s32 b = (color[j] >> 10) & 31;
+            s32 tr = RGB_RED(target[j]) - twenty / 2;
+            s32 tg = RGB_GREEN(target[j]) - 20;
+            s32 tb = RGB_BLUE(target[j]) - twenty / 2;
+            s32 r = RGB_RED(color[j]);
+            s32 g = RGB_GREEN(color[j]);
+            s32 b = RGB_BLUE(color[j]);
 
             if (tr < 0) {
               tr = 0;
@@ -1501,7 +1407,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             if (tb < b - 1) {
               b -= 2;
             }
-            color[j] = (b << 10) | (g << 5) | r;
+            color[j] = RGB(r, g, b);
           }
         }
       }
@@ -1509,17 +1415,17 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame > 120) {
       if (frame == 121) {
         gBgScroll[1].x = savedWidth;
-        lineScroll->unk10 = 0;
+        backgroundView->active = 0;
         camera->yaw = savedYaw;
       }
       if (frame < 148) {
         s32 step = 8 - (frame - 120) / 6;
-        s32 wave = work->wave;
+        s32 wave = WAVE_SIZE;
 
-        work->wave = wave - step;
+        WAVE_SIZE = wave - step;
         if (wave > 0) {
-          BattleEffect_DrawShadedCircles(work->buffer, wave, 0x10000);
-          Canvas_BlitAtFoot(work->buffer, 60, 60, wave);
+          BattleEffect_DrawShadedCircles(work->sheet, wave, Q16_ONE);
+          Canvas_BlitAtFoot(work->sheet, 60, 60, wave);
         }
       }
     } else {
@@ -1534,40 +1440,40 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
-        struct Particle__f175f74 *member = &work->members[i];
+        struct Particle *member = &MEMBERS[i];
         s32 landed = 0;
 
         if (actor->y.fixed < px(100)) {
-          if (member->timer == -1) {
+          if (member->variant == -1) {
             actor->x.fixed += px(10);
           } else {
             actor->x.fixed += px(2);
           }
-          if (member->timer == -1) {
+          if (member->variant == -1) {
             if (actor->x.fixed > px(48)) {
               landed = 1;
             }
             if (landed == 1) {
-              member->timer = 0;
+              member->variant = 0;
               EffectPosition_ProjectScaledBattler(arg->targets[i], member);
               Sound_PlayFar(SE_CURSE);
               for (j = 0; j != 16; j++) {
                 s32 angle = Random16() & 0x7fff;
                 s32 speed;
-                struct Particle__f175f74 *p = &PARTICLES[i * 16 + j];
+                struct Particle *p = &CHARON_PARTICLES[i * 16 + j];
 
                 speed = (Random16() & 255) + 256;
 
                 p->x = member->x << 15;
                 p->y = px(member->y);
-                p->vx = -(Trig_Sin(angle) * speed) >> 7;
-                p->vy = (Trig_Cos(angle) * speed) >> 6;
-                p->timer = (Random16() & 15) + 16;
+                p->velocityX = -(Trig_Sin(angle) * speed) >> 7;
+                p->velocityY = (Trig_Cos(angle) * speed) >> 6;
+                p->variant = (Random16() & 15) + 16;
               }
             }
           }
         }
-        if (member->timer == 2 || member->timer == 7) {
+        if (member->variant == 2 || member->variant == 7) {
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 32);
         }
@@ -1575,11 +1481,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (actor == 0) {
           landed = 2;
         }
-        if (member->timer == 6) {
+        if (member->variant == 6) {
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_HIDDEN,
                                    TINT_KEEP, i, 32);
         }
-        if (member->timer == 8) {
+        if (member->variant == 8) {
           SET_ACTOR_POSITION(actor, 0, px(148), 0);
         }
       }
@@ -1588,15 +1494,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         {
-          struct Particle__f175f74 *column;
+          struct Particle *column;
           s32 x;
           s32 y;
           s32 y2;
           for (i = 0, y2 = -26, y = 0, x = shake, phase = frame << 10,
-              column = work->columns, halfCell = width / 2;
+              column = COLUMNS, halfCell = width / 2;
                i != 4;
                y2 += 30, y += 30, x += 8, phase += 0x2000, column++, i++) {
-            column->x = x + ((Trig_Sin(phase) * 4) >> 16);
+            column->x = x + (Q_16_16_TO_INT(Trig_Sin(phase) * 4));
             column->y = y;
             if (i == 3) {
               column->x -= 8;
@@ -1605,83 +1511,84 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
             }
-            SYSTEM_WORK->blit(canvas, work->buffer, column->x - halfCell,
-                              column->y, halfCell, width);
+            ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet,
+                                                    column->x - halfCell,
+                                                    column->y, halfCell, width);
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         for (i = 0; i != 12; i++) {
-          struct Particle__f175f74 *drop = &work->drops[i];
+          struct Particle *drop = &DROPS[i];
 
-          if (++drop->timer == 4) {
-            drop->timer = 0;
+          if (++drop->variant == 4) {
+            drop->variant = 0;
           }
-          if (drop->timer == 0) {
+          if (drop->variant == 0) {
             drop->x = px(Random16() % 24 + shake - i * 2);
             drop->y = (160 << 15) + i * (192 << 10);
-            drop->vx = -(Random16() & 0xffff) - 0x4000;
-            drop->vy = -0x10000;
+            drop->velocityX = -(Random16() & TRIG_ANGLE_MASK) - 0x4000;
+            drop->velocityY = -px(1);
           }
-          if (drop->timer >= 0) {
-            Canvas_BlitAtFoot(work->buffer + 0x1000, drop->x >> 16,
-                              drop->y >> 16, 16);
-            drop->x += drop->vx;
-            drop->y += drop->vy;
+          if (drop->variant >= 0) {
+            Canvas_BlitAtFoot(work->sheet + 0x1000, Q_16_16_TO_INT(drop->x),
+                              Q_16_16_TO_INT(drop->y), 16);
+            drop->x += drop->velocityX;
+            drop->y += drop->velocityY;
           }
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        routine[0] = SYSTEM_WORK->blit;
+        routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
         for (i = 0; i != 4; i++) {
-          s32 width = 120 - work->columns[i].x;
+          s32 width = 120 - COLUMNS[i].x;
 
           if (width > 0) {
-            routine[0](canvas, work->buffer + 0x2000, work->columns[i].x,
-                       i * 30, width, 30);
+            routine[0](canvas, work->sheet + 0x2000, COLUMNS[i].x, i * 30,
+                       width, 30);
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                             BLITTER_TRANSPARENT);
-        routine[0] = SYSTEM_WORK->blit;
+        routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
         for (i = 0; i != 96; i++) {
-          struct Particle__f175f74 *p = &PARTICLES[i];
+          struct Particle *p = &CHARON_PARTICLES[i];
 
-          if (p->timer >= 0) {
-            s32 size = (p->timer >> 3) + 2;
+          if (p->variant >= 0) {
+            s32 size = (p->variant >> 3) + 2;
 
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
-                       size * 2);
+                       (Q_16_16_TO_INT(p->x)) - size / 2,
+                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);
-            p->timer--;
+            p->variant--;
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
       {
         void *texture = Heap_AllocEwram(32);
-        struct Model__f175f74 *model = Render_AllocateModelList(1);
+        struct RenderModel *model = Render_AllocateModelList(1);
 
         openingTexture.logWidth = 6;
         openingTexture.logHeight = 6;
-        openingTexture.pixels = work->buffer + 0x3000;
+        openingTexture.pixels = work->sheet + 0x3000;
         model->kind = 9;
         model->mesh = gBattleEffect_SquareMesh;
-        model->desc = &openingTexture;
-        model->texture = texture;
+        model->texture = &openingTexture;
+        model->vertices = texture;
         for (i = 0; i != arg->targetCount; i++) {
-          struct Particle__f175f74 *member = &work->members[i];
-          s32 timer = member->timer;
+          struct Particle *member = &MEMBERS[i];
+          s32 timer = member->variant;
 
           if (timer >= 0 && timer < 18) {
             s32 step = timer * 3;
             s32 depth = step - 64;
             s32 size = step * 1016 + 0x800;
 
-            member->timer = timer + 1;
-            model->depth = depth;
+            member->variant = timer + 1;
+            model->shade = depth;
             Transform_Reset();
             Transform_ApplyTranslation(px(member->x / 2 - 56),
                                        px(member->y - 56), 0);
@@ -1698,7 +1605,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     Camera_ApplyVerticalShake(8);
     BattleEffect_CountDownBattlerTints();
-    work->frameDone = 1;
+    work->transferPending = 1;
     wait(1);
     frame++;
   } while (frame != 180);
@@ -1751,12 +1658,15 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
   }
   SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }
-#undef SYSTEM_WORK
 #undef SPRITES
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER
 #undef REVEAL_BUFFER
-#undef PARTICLES
 #undef OBJ_VRAM
 #undef BG_VRAM_A900
-#undef PLTT
+#undef DROPS
+#undef MEMBERS
+#undef HOMES
+#undef COLUMNS
+#undef WAVE_SIZE
+#undef OBJECTS

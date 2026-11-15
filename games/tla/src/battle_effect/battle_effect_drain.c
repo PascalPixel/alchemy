@@ -10,6 +10,9 @@
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 
+/// Break and Drain take the targets in turn, this many frames apart.
+#define DRAIN_TARGET_FRAMES 20
+
 /// Ice shards burst up from each target in turn, 20 frames apart.
 /// Setup: 128 shards per target are scattered around the middle of its body
 /// and thrown sideways and up. Frame loop: from its cue a target flashes, and
@@ -31,11 +34,11 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                       128);
+                       SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
@@ -70,7 +73,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       s32 lift;
 
       radius = Random16() & 0xff;
-      angle = Random16() & 0xffff;
+      angle = Random16() & TRIG_ANGLE_MASK;
       shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
       shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
@@ -83,7 +86,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != args->targetCount * 20 + 56; frame++) {
+  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 56;
+       frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
     for (member = 0; member != args->targetCount; member++) {
@@ -91,13 +95,13 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
       offset = member * SHARDS_PER_MEMBER * sizeof(struct Particle);
       // The target's cue: a chime and a flash.
-      if (frame == member * 20) {
+      if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
-      if (frame > member * 20) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
         struct Particle *shard;
 
         for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);
@@ -147,6 +151,8 @@ void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct Particle *)Ram_MapCellBuffer)
 
+#define DRAIN_DRAWN 32 ///< motes drawn for each target
+
 /// Motes of light burst out of each target in turn, 20 frames apart, and
 /// are drawn into the user.
 /// Setup: each target's 128 motes start at the middle of its body with
@@ -172,9 +178,9 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == 2)
-    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, Q16_ONE);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == 0)
@@ -183,7 +189,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     palette = (s32)&ResourceId_BlastSheet;
   else
     palette = (s32)&ResourceId_VioletPaletteC;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
+                       SHEET_PALETTE_BYTES);
 
   // The motes leave the middle of each target's body.
   for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)
@@ -216,7 +223,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
-    u16 *color = BG_PLTT + 1;
+    u16 *color = &BG_PLTT_COLOR(0, 1);
 
     for (i = 1; i != 64; i++) {
       s32 blue = 21 - (i + 1) / 3;
@@ -232,7 +239,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 72;
+       frame++) {
     struct MotionObject *user;
     s32 half;
 
@@ -245,15 +253,15 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     if (frame == 40)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
-    if (frame == args->targetCount * 20 + 52)
+    if (frame == args->targetCount * DRAIN_TARGET_FRAMES + 52)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
     for (member = 0; member != args->targetCount; member++) {
-      if (frame == member * 20)
+      if (frame == member * DRAIN_TARGET_FRAMES)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, member, 42);
-      if (frame > member * 20) {
-        for (i = 0; i != 32; i++) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
+        for (i = 0; i != DRAIN_DRAWN; i++) {
           struct Particle *mote = &MOTES[member * MOTES_PER_MEMBER + i];
 
           if (mote->variant >= 0) {
@@ -273,7 +281,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
             }
 
             // Home in on the user once ten frames out.
-            if (frame > member * 20 + i + 10) {
+            if (frame > member * DRAIN_TARGET_FRAMES + i + 10) {
               s32 dx;
               s32 dy;
               s32 dz;

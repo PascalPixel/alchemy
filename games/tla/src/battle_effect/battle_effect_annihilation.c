@@ -94,11 +94,12 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       if (args->side == EFFECT_SIDE_ENEMIES)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
-                user.x / 2 - 24, user.y - 24, 48, 72);
+                user.x / 2 - 24, user.y - 24, FIRE_STREAK_WIDTH,
+                FIRE_STREAK_HEIGHT);
       else
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
-                user.x / 2, user.y - 24, 48, 72);
+                user.x / 2, user.y - 24, FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
@@ -116,12 +117,14 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       else
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
-              origin.x / 2 - 20, origin.y - 48, 40, 80);
+              origin.x / 2 - 20, origin.y - 48, FIRE_BURST_WIDTH,
+              FIRE_BURST_HEIGHT);
       BattleEffect_CallDoNothing(10000);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     if (frame == HIT_FRAME)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     // The shards, projected from the battle camera.
     Transform_Reset();

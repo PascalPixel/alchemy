@@ -9,6 +9,10 @@
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
 
+#define SWIRLING_STARS_FRAMES 160
+
+#define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
@@ -39,7 +43,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
-  for (frame = 0; frame != 160; frame++) {
+  for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     s32 *camera;
 
     // The stars turn about a point 80 pixels in front of the camera.
@@ -48,7 +52,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     Transform_SetLookAt(camera, camera + 3);
     Transform_ApplyPosition(record);
     star = STARS;
-    for (i = 0; i != 64; i++, star++) {
+    for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
@@ -79,8 +83,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
           pos.depth = 0x27a;
         size = 9 - (pos.depth - 250) / 64;
         draw[0](canvas,
-                work->sheet +
-                    ((i & 3) * 770 + gBattleEffect_MotePictures[size - 1]),
+                work->sheet + ((i & 3) * MOTE_SET_BYTES +
+                               gBattleEffect_MotePictures[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(star, 60, 0);
 
@@ -103,6 +107,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 
 #define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
 
+#define TARGET_BURSTS_FRAMES 96
+
 /// Target bursts: on each target in turn a burst flares while puffs of smoke
 /// scatter around it.
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
@@ -124,7 +130,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   rectangleA = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -136,7 +142,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     s32 magnitude;
 
     step = &work->particles[i];
-    angle = Random16() & 0xffff;
+    angle = Random16() & TRIG_ANGLE_MASK;
     magnitude = Random16() & 0xff;
     SET_POSITION(step, 0, 0, 0);
     if (i % 6 == 5) {
@@ -152,7 +158,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != 96; frame++) {
+  for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
     s32 *camera;
 
@@ -184,11 +190,12 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
-                       screen.x - 12, screen.y - 36, 24, 48);
+                       screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
+                       SMOKE_PUFF_HEIGHT);
           } else {
             BattleEffectKernels_IntegrateVector3(p, 60, 0x200);
             rectangleB(canvas, work->sheet + cel * 0x480, screen.x - 12,
-                       screen.y - 36, 24, 48);
+                       screen.y - 36, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
           p->variant += 1;
         }
@@ -201,13 +208,4 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef TRAILS
 
-/// A sprite object as EffectSprite_CreateWithTiles returns it.
-struct SpriteObject {
-  u8 unk00[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[6];
-  u8 slot; // its row of gVramCacheEntries
-};
 #undef STARS

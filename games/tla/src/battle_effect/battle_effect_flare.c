@@ -30,7 +30,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -49,8 +49,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   stagger = 0;
   puff = work->particles;
   do {
-    puff->x = ((sign * ((Trig_Sin(angle) << 5) >> 16)) + org) + 20;
-    puff->y = ((Trig_Cos(angle) << 4) >> 16) + 40;
+    puff->x = ((sign * (Q_16_16_TO_INT(Trig_Sin(angle) << 5))) + org) + 20;
+    puff->y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) + 40;
     puff->variant = stagger;
     angle += TRIG_TURN / 16;
     stagger -= 4;

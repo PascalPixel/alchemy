@@ -37,7 +37,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
@@ -99,7 +99,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(shard->x) - gPrism_ShardWidths[cell] / 2,
                 Q_16_16_UPPER_HALF(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
-            BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 8);
+            BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -107,8 +108,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
           draw[i & 1](canvas, work->sheet, Q_16_16_UPPER_HALF(cry->x) - 16,
-                      Q_16_16_UPPER_HALF(cry->y), 32, 64);
-          BattleEffectKernels_IntegrateVector2(cry, 64, px(1));
+                      Q_16_16_UPPER_HALF(cry->y), CRYSTAL_WIDTH,
+                      CRYSTAL_HEIGHT);
+          BattleEffectKernels_IntegrateVector2(cry, PARTICLE_DAMPING_NONE,
+                                               px(1));
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;
             cry->y = GROUND_Y;
@@ -175,20 +178,20 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
     if (red < 0)
       red = 0;
-    if (red > 31)
-      red = 31;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     if (green < 0)
       green = 0;
-    if (green > 31)
-      green = 31;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
     if (blue < 0)
       blue = 0;
-    if (blue > 31)
-      blue = 31;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
 
-    palette[index] = (blue << 10) | (green << 5) | red;
+    palette[index] = RGB(red, green, blue);
     index++;
   } while (index != 64);
 
-  Iwram_CopyWords((void *)(BG_PLTT + 1), palette, sizeof(palette));
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(0, 1), palette, sizeof(palette));
 }

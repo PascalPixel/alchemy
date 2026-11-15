@@ -1371,19 +1371,18 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               s32 x = gCruelRuin_BlastX[i] + d * 8;
               s32 y = gCruelRuin_BlastY[i];
               s32 half;
+              s32 flags = EFFECT_CLIP_BOUNDS;
 
               BattleEffect_DrawShadedCircles(work->sheet, r, FIXED_ONE);
-              /* FAKEMATCH(dead): a test that is always true here (the block is
-               * entered only when r > 1). */
-              BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED,
-                                       r > 1 ? 19 : 0);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
+                                  BLITTER_MAX);
               half = r / 2;
               y -= r;
               ALT_BLITTER(canvas, work->sheet, x - half, y + 8, half, r);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-              /* FAKEMATCH(dead): the same always-true test. */
-              BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED,
-                                       r > 1 ? 23 : 0);
+              flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
+                                  BLITTER_MAX);
               ALT_BLITTER(canvas, work->sheet, x, y + 8, half, r);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }

@@ -1683,21 +1683,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           else
             m = 3;
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-          /* FAKEMATCH(dead): a once-only block. */
-          do {
-            /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
-            register s32 pinned __asm__("r3");
+          {
+            s32 flags;
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                                BLITTER_ADDITIVE);
+            flags = EFFECT_CLIP_BOUNDS;
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
             BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF),
-                    target[0] / 2 - BITE_HALF_WIDTH, pinned = 56,
-                    BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
+                    target[0] / 2 - BITE_HALF_WIDTH, 56, BITE_HALF_WIDTH,
+                    BITE_HALF_HEIGHT);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                                BLITTER_ADDITIVE);
-          } while (0);
+            flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
+          }
           BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF), target[0] / 2,
                   56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);

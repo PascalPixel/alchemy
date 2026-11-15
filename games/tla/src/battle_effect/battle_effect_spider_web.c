@@ -1002,15 +1002,6 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 #define DRAW_QUARTER(x, y)                                                     \
   ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet, x, y, size, size)
 
-// Releases the quarter's blitter.
-// UB: HeapSlot_Release returns nothing; the releases between the quarters
-// call it through a function type that returns s64.
-#ifdef UBFIX
-#define RELEASE_QUARTER() HeapSlot_Release(HEAP_SLOT_RAM_CODE)
-#else
-#define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_SLOT_RAM_CODE)
-#endif
-
 /// A spider web spreads over the targets in four mirrored quarters.
 ///
 /// Abilities: Spider Web.
@@ -1020,6 +1011,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   volatile u16 *blend;
   s32 size;
+  s32 flags;
   s32 frame;
   s32 i;
 
@@ -1048,25 +1040,20 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both. Each blitter is built, drawn with and released before the next
     // is built.
-    LOAD_QUARTER(CLIP);
-    /* FAKEMATCH(dead): each draw, its release and the next build in a
-     * once-only block, three blocks; as plain statements, 164 of 228
-     * instructions differ in tla-en. */
-    do {
-      DRAW_QUARTER(33, 41);
-      RELEASE_QUARTER();
-      LOAD_QUARTER(CLIP | COMPOSITE_FLIP_X);
-    } while (0);
-    do {
-      DRAW_QUARTER(64, 41);
-      RELEASE_QUARTER();
-      LOAD_QUARTER(CLIP | COMPOSITE_FLIP_Y);
-    } while (0);
-    do {
-      DRAW_QUARTER(33, 72);
-      RELEASE_QUARTER();
-      LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
-    } while (0);
+    flags = CLIP;
+    LOAD_QUARTER(flags);
+    DRAW_QUARTER(33, 41);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    flags = CLIP | COMPOSITE_FLIP_X;
+    LOAD_QUARTER(flags);
+    DRAW_QUARTER(64, 41);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    flags = CLIP | COMPOSITE_FLIP_Y;
+    LOAD_QUARTER(flags);
+    DRAW_QUARTER(33, 72);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    flags = CLIP | COMPOSITE_FLIP;
+    LOAD_QUARTER(flags);
     DRAW_QUARTER(64, 72);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
@@ -1093,7 +1080,6 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
 #undef LOAD_QUARTER
 #undef DRAW_QUARTER
-#undef RELEASE_QUARTER
 #undef BLITTER
 #undef CLIP
 #undef ULYSSES_LAST_PARTICLE

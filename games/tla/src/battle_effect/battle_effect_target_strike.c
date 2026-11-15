@@ -942,24 +942,21 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     // x 64, each with its glow.
     if (frame <= 55) {
       s32 n;
+      s32 flags;
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-                          BLITTER_MAX);
-      /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
-       * once-only block. */
-      do {
-        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-        draw[1](canvas, work->sheet + n * 1088, 47,
-                ground.y - ELEMENT_PILLAR_HALF_HEIGHT,
-                ELEMENT_PILLAR_HALF_WIDTH, ELEMENT_PILLAR_HALF_HEIGHT);
-        n = frame / 4 % 3; // a glow picture every 4 frames
-      } while (0);
+      flags = EFFECT_CLIP_BOUNDS;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1](canvas, work->sheet + n * 1088, 47,
+              ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
+              ELEMENT_PILLAR_HALF_HEIGHT);
+      n = frame / 4 % 3; // a glow picture every 4 frames
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36,
               ELEMENT_PILLAR_GLOW_WIDTH, ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64,

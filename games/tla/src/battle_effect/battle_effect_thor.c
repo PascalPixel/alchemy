@@ -274,8 +274,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     if ((u32)(frame - 151) <= 16) {
       s32 beamHeight;
       s32 inset = 0;
-      s32 never = 0;
-      s32 neverToo = 0;
+      s32 flags;
       beamHeight = (frame - THOR_BEAM_FRAME) * 20 + 44;
       if (frame > THOR_BEAM_FRAME) {
         inset = frame - 152;
@@ -292,18 +291,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       for (i = 0; i != beamHeight; i++) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-                          BLITTER_MAX);
+      flags = EFFECT_CLIP_BOUNDS;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 32,
                         (frame - THOR_BEAM_FRAME) * 20 - 12,
                         THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-      /* FAKEMATCH(dead): a never-true test of never and neverToo. */
-      if (never || neverToo) {
-        beamHeight = 0;
-      }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 64,
                         (frame - THOR_BEAM_FRAME) * 20 - 12,
                         THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);

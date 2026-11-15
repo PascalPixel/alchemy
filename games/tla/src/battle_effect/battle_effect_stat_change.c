@@ -97,7 +97,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
 
 /// Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags, mode);            \
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, mode);                        \
   out = (DrawRectangle)Ram_HeapSlots->ramCode
 
 #define FLARES ((struct Particle *)Ram_MapCellBuffer)
@@ -312,8 +312,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
-      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags ^ flipX2,
-                                additive);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags ^ flipX2, additive);
       // Read through the slot's address, which folds to one constant.
       draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
 
@@ -355,8 +354,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags,
-                                    additive);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, additive);
           {
             void **slot = &Ram_HeapSlots->ramCodePaired;
 
@@ -470,8 +468,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags,
-                                    BLITTER_MAX);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,

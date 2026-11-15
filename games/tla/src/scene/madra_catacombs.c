@@ -32,6 +32,11 @@
 #include "sound/sound.h"
 #include "system/system.h"
 
+/// The ropes Lash ties, the tunnel's and the village's, which stay tied until
+/// the party leaves.
+#define FLAG_TUNNEL_ROPE_TIED FLAG_SCENE_TEMP_00
+#define FLAG_VILLAGE_ROPE_TIED FLAG_SCENE_TEMP_01
+
 /// Set once the pillar Move pushed onto cell (40, 13) has dropped into the
 /// deserted village's hole and filled it.
 #define FLAG_MADRA_CATACOMBS_HOLE_FILLED 0x8c8
@@ -283,10 +288,10 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_STONE_RUMBLE);
   for (i = 0; i < 120; i++) {
-    left->x.fixed += -0x1999;
+    left->x.fixed += -(px(1) / 10);
     /* FAKEMATCH(signature): read and written as long, another alias set than
      * the left door's int store. */
-    *(long *)&right->x.fixed += 0x1999;
+    *(long *)&right->x.fixed += px(1) / 10;
     wait(1);
   }
   FieldCamera_SetSpeed(3.2);
@@ -502,7 +507,8 @@ void MadraCatacombs_EnterDoorway(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   cell = FIELD_PIXEL(object->x.fixed);
-  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+  Actor_SetMoveTarget(object,
+                      px(8 - cell % MAPGRID_CELL_PIXELS) + object->x.fixed,
                       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -514,25 +520,29 @@ void MadraCatacombs_EnterDoorway(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
-                                     s32 f) {
+/// A door opens, its open picture copied over it from (sourceX, sourceZ), and
+/// the leader walks through: a stone door two cells wide slides with a thump, a
+/// door one cell wide opens as the leader steps to its middle.
+void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
+                                     s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (mode == 2)
+  if (width == 2)
     Event_PlaySound(SE_THUMP);
   else
     Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_CopyCellsTo(a, b, c, d, mode, f);
+  MapGrid_CopyCellsTo(sourceX, sourceZ, x, z, width, height);
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  if (mode == 1) {
+  if (width == 1) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     cell = FIELD_PIXEL(object->x.fixed);
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+    Actor_SetMoveTarget(object,
+                        px(8 - cell % MAPGRID_CELL_PIXELS) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -570,7 +580,8 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
     Event_ResolvePendingActions(0);                                            \
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);    \
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);   \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),        \
+                         SPRITE_COLOR_HIDDEN);                                 \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
@@ -606,7 +617,7 @@ void MadraCatacombs_SetUpVillage(void) {
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
   Rope_Initialize();
-  b = 0x102;
+  b = FLAG_VILLAGE_ROPE_TIED - 255;
   a = 1;
   /* FAKEMATCH(barrier): a and b held at an empty asm. */
   __asm__("" : "+r"(a), "+r"(b));
@@ -644,7 +655,7 @@ void MadraCatacombs_SetUpVillage(void) {
 
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
-  Rope_Place(0, 0x200, ACTOR_TUNNEL_ROPE_EAST_POST,
+  Rope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
              ACTOR_TUNNEL_ROPE_WEST_POST);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     Actor_SetPosition(ACTOR_TUNNEL_EXPLORER, 0, 0);

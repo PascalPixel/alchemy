@@ -62,14 +62,14 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
 }
 
 /// Whether Cloak can hide the leader on the cell at (x, z): layer 2's
-/// collision code 231.
-s32 MapGrid_IsCloakCell(s32 x, s32 z) {
+/// collision code 231, whatever layer is passed.
+s32 MapGrid_IsCloakCell(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, 2)->collisionCode == 231;
 }
 
 /// Whether Hover holds up over the cell at (x, z): layer 2's collision code
-/// 236.
-s32 MapGrid_IsHoverCell(s32 x, s32 z) {
+/// 236, whatever layer is passed.
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, 2)->collisionCode == 236;
 }
 

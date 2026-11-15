@@ -38,6 +38,10 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
+/// Grind ("Pulverize large objects."): the screen shakes harder and harder
+/// while spray rises round the target, or round the spot 32 pixels before the
+/// caster. A target of sprite 424 is ground down row by row; otherwise the
+/// place's Grind event runs while the shaking is at its height.
 void FieldPsynergy_GrindOnTarget(void) {
   struct GrindWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;

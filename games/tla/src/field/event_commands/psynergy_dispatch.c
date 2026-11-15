@@ -16,10 +16,10 @@
 
 void FieldPsynergy_HaltOnTarget(s32 id);
 void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
-#define FieldPsynergy_SteerPushedTarget FieldPsynergy_SteerPushedTarget
-#define FieldPsynergy_ForceOnTarget FieldPsynergy_ForceOnTarget
-#define FieldPsynergy_DouseOnTarget FieldPsynergy_DouseOnTarget
-#define FieldPsynergy_FrostOnTarget FieldPsynergy_FrostOnTarget
+void FieldPsynergy_SteerPushedTarget(s32 unused);
+void FieldPsynergy_ForceOnTarget(s32 unused);
+void FieldPsynergy_DouseOnTarget(s32 unused);
+void FieldPsynergy_FrostOnTarget(s32 unused);
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
  * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void

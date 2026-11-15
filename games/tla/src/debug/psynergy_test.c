@@ -173,16 +173,19 @@ void PsynergyTest_BrowseWeaponShopMessages(void) {
                                   MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the armor shop's messages.
 void PsynergyTest_BrowseArmorShopMessages(void) {
   PsynergyTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
                                   MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the item shop's messages.
 void PsynergyTest_BrowseItemShopMessages(void) {
   PsynergyTest_BrowseMessageRange((s32)MsgItemShopWelcome,
                                   MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the Sanctum's messages.
 void PsynergyTest_BrowseSanctumMessages(void) {
   PsynergyTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
                                   MsgRightWhenI - MsgWelcomeWearyWanderers);
@@ -192,12 +195,16 @@ void PsynergyTest_BrowseSanctumMessages(void) {
 /// keeper's actor id.
 void PsynergyTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
+/// Opens the armor shop.
 void PsynergyTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
 
+/// Opens the item shop.
 void PsynergyTest_OpenItemShop(s32 keeper) { Shop_Run(3, keeper); }
 
+/// Opens the general store.
 void PsynergyTest_OpenGeneralStore(s32 keeper) { Shop_Run(24, keeper); }
 
+/// Opens the inn.
 void PsynergyTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 
 /// The event for talking to actor 9, which does nothing.
@@ -251,6 +258,8 @@ void PsynergyTest_DamageAndAfflictParty(void) {
   Unit_Calculate(SHEBA);
 }
 
+/// Gives owner a Djinni and sets its flag; with activate 1 the Djinni is also
+/// set.
 void PsynergyTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
   Event_SetFlag(element * 20 + djinn + 48);
   Djinn_Give(owner, element, djinn);
@@ -291,6 +300,7 @@ void PsynergyTest_GivePartyDjinn(void) {
 /// layer 0 again once Sand fades.
 void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 
+/// Puts Felix back on layer 0 as Sand fades.
 void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
 
 /// As Blaze reaches him, the practising man shouts and jumps to the other of
@@ -415,16 +425,19 @@ void PsynergyTest_DigUpHole(s32 mode) {
   PsynergyTest_DigCells(mode, 36, 28, 1, 1, 10, 10);
 }
 
+/// The Scoop spot that digs up an actor that grows out of the ground.
 void PsynergyTest_DigUpGrowingActor(s32 mode) {
   Event_SetFlag(FLAG_GROWING_ACTOR_DUG);
   PsynergyTest_GrowActor(mode, ACTOR_GROWING, 184, 184);
 }
 
+/// The Scoop spot that digs up an actor that falls holding an item.
 void PsynergyTest_DigUpFallingActor(s32 mode) {
   Event_SetFlag(FLAG_FALLING_ACTOR_DUG);
   PsynergyTest_DropActor(mode, ACTOR_FALLING, 200, 200);
 }
 
+/// The Scoop spot that digs up a monster to fight.
 void PsynergyTest_DigUpMonster(s32 mode) {
   Event_SetFlag(FLAG_MONSTER_DUG);
   PsynergyTest_RaiseMonster(mode, 216, 216, 14, 0);
@@ -447,8 +460,10 @@ void PsynergyTest_ParchCells(void) {
   MapGrid_CopyCells(48, 26, 2, 4, frames, flags);
 }
 
+/// Tremor's event, which does nothing.
 void PsynergyTest_IgnoreTremor(void) {}
 
+/// Grind's event, which does nothing.
 void PsynergyTest_IgnoreGrind(void) {}
 
 /// Talking to Mia: rings of light rise around her and the leader for 100
@@ -516,8 +531,10 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Opens the icon browser.
 void PsynergyTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
+/// Opens the Sanctum.
 void PsynergyTest_OpenSanctum(void) { Sanctum_Run(); }
 
 /// At the first stage of a dig, copies the cells of the hole in.

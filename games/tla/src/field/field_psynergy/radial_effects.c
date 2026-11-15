@@ -141,6 +141,8 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   }
 }
 
+/// Runs Whirlwind cast on a target, using the target already stored in the
+/// field effect.
 void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
 
@@ -705,6 +707,9 @@ void FieldPsynergy_LashOnTarget(s32 value) {
 
 extern char ResourceId_StarSparkleFade;
 
+/// Lash: a hand forms over the spot and comes down on it. With no target it
+/// bursts into sparkles; cast on a rope's end it whips out and ties the rope
+/// (Rope_Lash) at the event's target.
 void FieldPsynergy_Lash(void) {
   struct ScatterWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2114);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;

@@ -275,12 +275,14 @@ void PsynergyTest2_EndRocks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
+/// Unused: the Psynergy test's PsynergyTest_DigCells again.
 UNUSED void PsynergyTest2_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
                                    s32 f) {
   if (mode == 1)
     MapGrid_CopyCells(a, b, c, d, e, f);
 }
 
+/// Unused: the Psynergy test's PsynergyTest_GrowActor again.
 UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
@@ -304,6 +306,7 @@ UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
+/// Unused: the Psynergy test's PsynergyTest_DropActor again.
 UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
 

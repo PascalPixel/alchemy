@@ -191,8 +191,12 @@ void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += TRIG_TURN / 16;
 }
 
+/// Cyclone cast on a target: runs FieldPsynergy_Cyclone.
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
+/// Cyclone ("Conjure wind to scatter weeds."): the caster spins in a whirlwind
+/// of blue and white drawn on the canvas sprite, and the weeds on the cells
+/// round it (FieldPsynergy_GatherNearbyCells) are scattered.
 void FieldPsynergy_Cyclone(void) {
   struct CycloneWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;

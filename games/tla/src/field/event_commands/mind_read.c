@@ -203,11 +203,12 @@ void Actor_SetSpritePalette(void *object, s32 value) {
   Actor_SetSpriteColorModeFar(object, child);
 }
 
-u16 BattleEffect_GetCycledTableWord(void) {
-  struct InputState *input = &gInput;
-  u16 *words = gFieldEffect_CyclePatternWords;
-
-  return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
+/// Returns the direction of the d-pad (TRIG_TURN a full turn): right
+/// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH; 0xffff
+/// when none or a diagonal is held.
+s32 Input_GetDpadAngle(u32 unused) {
+  // Indexed by the right, left, up and down bits.
+  return gFieldEffect_CyclePatternWords[(gInput.held >> 4) & 15];
 }
 
 /// Returns the entry of gBattleEffect_EightWayHeadingWords for the direction
@@ -279,15 +280,6 @@ struct Vec3 {
 
 struct PendingEvent;
 
-/* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32
- * BattleEffect_GetCycledTableWord(u32 keys); the definition has u16
- * BattleEffect_GetCycledTableWord(void); tried as the definition's u16
- * BattleEffect_GetCycledTableWord(void), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/mind_read.c:355: too many arguments to
- * function `BattleEffect_GetCycledTableWord'. */
-extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
-    "BattleEffect_GetCycledTableWord");
 /* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
  * Actor_ApplyRandomChildValues(void); field/event_commands has void
  * Actor_ApplyRandomChildValues(struct Actor *owner) {; tried as the
@@ -304,7 +296,7 @@ void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
 /// B, L or R end it.
-void FieldPsynergy_SteerPushedTarget(void) {
+void FieldPsynergy_SteerPushedTarget(s32 unused) {
   struct Vec3 position;
   struct Vec3 beyond;
   struct FieldEffectWork *scene;
@@ -373,7 +365,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
       break;
 
-    direction = (u16)BattleEffect_GetCycledTableWord__f0dd054(gInput.held);
+    direction = (u16)Input_GetDpadAngle(gInput.held);
     // The bytes read the hook's return as the direction; the field is
     // declared void (*)(void) in field_psynergy_work.h, which needs s32.
     callback = (s32 (*)(void))scene->finishCallback;
@@ -677,13 +669,17 @@ void UpdateRisingParticleBurst(void *object) {
   Actor_ReleaseFar(src);
 }
 
-/// Burns 63 loop iterations and returns; callers pass an argument it ignores.
-void BattleEffect_RunBusyWaitDelay(void) {
-  s32 i = 63;
+/// Reveal's colour for the rocks it shows (sprite 200), given at its start
+/// and taken back at its end. Only the loop over the 64 actors is left; value
+/// goes unused.
+void Actor_SetRevealSpriteColor(s32 value) {
+  s32 remainingActors = 63;
 
+  // DEAD: the loop over the actors, its body gone; the ROM keeps its count
+  // and its branch.
 loop:
-  i--;
-  if (i >= 0)
+  remainingActors--;
+  if (remainingActors >= 0)
     goto loop;
 }
 
@@ -717,16 +713,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   }
 }
 
-/* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void
- * BattleEffect_RunBusyWaitDelay(s32 value); the definition has void
- * BattleEffect_RunBusyWaitDelay(void); tried as the definition's void
- * BattleEffect_RunBusyWaitDelay(void), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/mind_read.c:722: too many arguments to
- * function `BattleEffect_RunBusyWaitDelay'. */
-extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
-    "BattleEffect_RunBusyWaitDelay");
-
 #define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
 #define REVEAL_FRAMES 600
 
@@ -741,7 +727,7 @@ void FieldPsynergy_Reveal(void) {
   void *pending;
   s32 frame;
 
-  BattleEffect_RunBusyWaitDelay__f0dd820(6);
+  Actor_SetRevealSpriteColor(6);
   event = Ram_HeapSlots->fieldWork;
   ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
   transition = Ram_HeapSlots->screenTransition;
@@ -793,7 +779,7 @@ void FieldPsynergy_EndReveal(void) {
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
     event->revealActive = 0;
     event->revealFrames = 0;
-    BattleEffect_RunBusyWaitDelay__f0dd820(0);
+    Actor_SetRevealSpriteColor(0);
     PaletteFade_SetTarget(0x10000, 1);
     PaletteFade_StartInterpolation(1);
     PaletteFade_SetSource(0, 0);
@@ -1044,6 +1030,9 @@ void FieldPsynergy_LiftOnTarget(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
+/// Lift cast with no target: two hands appear 32 pixels to either side of the
+/// spot, close 24 pixels in and meet with a crash that scatters 24 fragments,
+/// then vanish.
 void FieldPsynergy_Lift(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -1222,23 +1211,10 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   return 0;
 }
 
-/* VIEW(f0dd820): routine FieldPsynergy_Force as void FieldPsynergy_Force(struct
- * BattleEffectParams *effect); the definition has void
- * FieldPsynergy_Force(void); tried as the definition's void
- * FieldPsynergy_Force(void), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/field/event_commands/mind_read.c:1209: too
- * many arguments to function `FieldPsynergy_Force'. */
-extern void Func_080de21c__f0dd820(struct BattleEffectParams *effect) __asm__(
-    "FieldPsynergy_Force");
+/// Runs Force cast on a target, through FieldPsynergy_Force.
+void FieldPsynergy_ForceOnTarget(s32 unused) { FieldPsynergy_Force(); }
 
-/// Runs field Psynergy animation 4; the target is unused.
-void FieldPsynergy_ForceOnTarget(struct BattleEffectParams *effect) {
-  Func_080de21c__f0dd820(effect);
-}
-
-/// Twelve sparks burst over the user, two frames apart; a ball grows in
-/// front of it and flies off with three trailing copies, and the target is
-/// pushed 16 pixels away unless something blocks it.
+/// Force: restores the colours the cast changed, and does nothing more.
 void FieldPsynergy_Force(void) {
   struct Actor *copies[4];
   struct Effect04Vector pos;
@@ -1440,7 +1416,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
 }
 
 /// Runs Frost cast on a target.
-void FieldPsynergy_FrostOnTarget(void) {
+void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectWork *state = Ram_HeapSlots->fieldEffectWork;
   struct OrbitingParticleChild *child = state->child;
 
@@ -1717,23 +1693,13 @@ struct EventWork__f0de21c {
   u16 state;
 };
 
-/* VIEW(mind_read): routine MapGrid_IsCloakCell as s32 MapGrid_IsCloakCell(s32
- * x, s32 z, s32 layer); field/event_commands has s32 MapGrid_IsCloakCell(s32 x,
- * s32 z) {; tried as the definition's s32 MapGrid_IsCloakCell(s32 x, s32 z),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/mind_read.c:1702: too many arguments to
- * function `MapGrid_IsCloakCell'. */
-s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
-                                   s32 layer) __asm__("MapGrid_IsCloakCell");
-#define MapGrid_IsCloakCell MapGrid_IsCloakCell__mind_read
-
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
 void FieldEffect_CheckCloakTile(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *leader = ObjectTable_Get(Party_GetLeaderActor());
 
-  if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)
+  if (MapGrid_IsCloakCell(leader->x.fixed, leader->z.fixed, leader->layer) == 0)
     event->psynergy = 0x2092;
 }
 

@@ -28,23 +28,23 @@
 #include "field/script_operands.h"
 
 /// Waits, at most 90 frames, for a sprite's animation to change or for its
-/// first sprite animation's script to reach code 241.
-void Animation_WaitForTrackEnd(struct AnimObject *object) {
-  u8 frame = object->frame;
-  struct AnimTrack *track = object->track;
+/// first layer's script to reach code 241.
+void Animation_WaitForTrackEnd(struct AnimationObject *sprite) {
+  u8 animation = sprite->lastNo;
+  struct AnimationEntry *entry = sprite->entries[0];
   s32 i;
 
-  if (object != 0) {
+  if (sprite != NULL) {
     i = 0;
-    if (track->script[track->index] != 241) {
+    if (entry->script[entry->pos] != 241) {
       do {
         wait(1);
         i++;
         if (i > 89)
           break;
-        if (track->script[track->index] == 241)
+        if (entry->script[entry->pos] == 241)
           break;
-      } while (object->frame == frame);
+      } while (sprite->lastNo == animation);
     }
   }
 }
@@ -138,43 +138,46 @@ void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
 /// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
 /// returns -1.
-s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
-  u8 *state = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *org = (s32 *)(state + 228);
-  s32 a;
-  s32 b;
+s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
+                                      s32 *screenPosition) {
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  s32 *view = &map->viewX;
+  s32 viewX;
+  s32 viewZ;
   s32 x;
   s32 y;
 
-  a = org[0] & 0xffff0000;
-  b = org[1] & 0xffff0000;
-  x = obj->field8 - a;
-  y = obj->field16 - b;
-  if ((u32)(x + 0x001fffff) <= 0x012ffffe && y > 0 && y < 0xe00000) {
-    *out++ = x >> 16;
-    *out = y >> 16;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  x = actor->x.fixed - viewX;
+  y = actor->z.fixed - viewZ;
+  // Across, from 32 pixels left of the screen to 32 past its 240; down,
+  // below the view's top and above 224.
+  if (x >= -(px(32) - 1) && x <= px(272) - 1 && y > 0 && y < px(224)) {
+    *screenPosition++ = x >> 16;
+    *screenPosition = y >> 16;
     return 0;
   }
-  *out++ = 0;
-  *out = 0;
+  *screenPosition++ = 0;
+  *screenPosition = 0;
   return -1;
 }
 
-/// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
-/// buffer, both cleared by DMA from one zero word, and the animation callbacks
-/// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
-/// 0x480, the others ActorSystem_PlaceSprites).
+/// Sets up the actor system: allocates and zeroes the 64 actors and the
+/// system's work, sets the outline's colours and registers the per-frame
+/// updates. The battle's mode, 4, moves the actors with Actor_UpdateAllMotion;
+/// modes 3 and 4 place their sprites with the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
-  struct MapAnimationWork *work;
-  void *buffer;
+  struct ObjectSystemWork *system;
+  struct Actor *pool;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*work));
-  buffer = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 0x2000);
+  system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
+  pool = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 64 * sizeof(*pool));
   ActorSystem_Configure(mode);
-  Dma_Fill32Cell(zero, 0, buffer, 0x2000);
-  Dma_Fill32Cell(zero, 0, work, sizeof(*work));
+  Dma_Fill32Cell(zero, 0, pool, 64 * sizeof(*pool));
+  Dma_Fill32Cell(zero, 0, system, sizeof(*system));
   if (mode == 4) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
@@ -185,8 +188,8 @@ void ActorSystem_Initialize(s32 mode) {
     Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
-  work->unk06 = 15;
-  work->unk07 = 0;
+  system->edge = 15;
+  system->fill = 0;
 }
 
 /// Two empty functions follow; nothing in the ROM refers to either.
@@ -929,8 +932,8 @@ s32 ActorCamera_ReturnTrue(void) { return 1; }
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
 /// chosen (flag 363) the sprites are drawn at 1.0 scale.
-void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
-  const s32 *scale = object->scale;
+void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
+  const s32 *scale = &actor->scaleX;
   s32 *point;
   void *sprite;
   void **sprites;
@@ -938,21 +941,21 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
 
   if (GameFlag_Get(363))
     scale = gActorSprite_FullScale;
-  switch (object->kind & 15) {
+  switch (actor->spriteStorageKind & 15) {
   case 1:
-    point = object->position;
-    sprite = object->target;
-    if (!(object->flags & 0x10))
-      Render_PlaceProjectedSprite(sprite, point, scale, object->angle + angle,
-                                  object->layer);
+    point = &actor->x.fixed;
+    sprite = actor->sprite;
+    if (!(actor->priorityFlags & 0x10))
+      Render_PlaceProjectedSprite(sprite, point, scale, actor->facing + angle,
+                                  actor->layer);
     break;
   case 2:
-    sprites = object->target;
+    sprites = actor->sprite;
     for (remaining = 3; remaining >= 0; remaining--) {
       sprite = *sprites++;
       if (sprite != NULL)
-        Render_PlaceProjectedSprite(sprite, object->position, scale,
-                                    object->angle + angle, object->layer);
+        Render_PlaceProjectedSprite(sprite, &actor->x.fixed, scale,
+                                    actor->facing + angle, actor->layer);
     }
     break;
   case 0:
@@ -968,7 +971,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
   struct CameraPoint *eye;
   struct CameraPoint *target;
-  struct PlacedObject *object;
+  struct Actor *actor;
   s32 angle;
   s32 i;
   // Unused: gives the stack frame its 12 bytes.
@@ -1001,11 +1004,12 @@ void ObjectSystem_UpdateCameraFixed(void) {
     SceneTransform_RewindStack();
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
-  object = Ram_HeapSlots->actors;
-  object += 63;
-  for (i = 63; i >= 0; i--, object--) {
-    if (object->active != 0)
-      Actor_PlaceSprites(object, angle);
+  actor = Ram_HeapSlots->actors;
+  actor += 63;
+  for (i = 63; i >= 0; i--, actor--) {
+    // The upper half of a script's address in ROM is never zero.
+    if (((u16 *)&actor->script)[1] != 0)
+      Actor_PlaceSprites(actor, angle);
   }
   HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }

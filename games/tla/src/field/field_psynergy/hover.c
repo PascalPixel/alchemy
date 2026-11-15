@@ -56,7 +56,6 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 #define GLOW_FULL 112
 #define GLOW_SPENT_CUE 0x2099
 
-// Kind 24's work (battle_fx_work[0]).
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
 struct HoverWork {
@@ -73,7 +72,7 @@ struct HoverWork {
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 
-/// Kind 24's frame callback: keeps the glow's strength full while the player
+/// Hover's frame callback: keeps the glow's strength full while the player
 /// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
 /// is fading, the glow shrinks with it and the event takes its cue when it is
 /// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
@@ -153,6 +152,10 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 
 extern char ResourceId_RingOrb;
 
+/// Hover: a glowing ring grows under the leader, who rises and floats (movement
+/// mode 10) while HoverGlow_Update holds the glow up. Where it cannot hover
+/// (off a hover cell, or touching a solid actor) the ring shrinks away and the
+/// place's Hover event runs instead.
 void FieldPsynergy_Hover(void) {
   struct HoverWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -162,7 +165,7 @@ void FieldPsynergy_Hover(void) {
   struct EffectSprite *sprite;
   struct Actor *other;
   s32 position[3];
-  s32 found;
+  s32 blocked;
   s32 slot;
   struct Actor **list;
   s32 tile;
@@ -193,10 +196,10 @@ void FieldPsynergy_Hover(void) {
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
-  found = 0;
+  blocked = 0;
   if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==
       0) {
-    found = 1;
+    blocked = 1;
   } else {
     for (n = 0; n < 80; n++) {
       other = event->actors[n];
@@ -208,14 +211,14 @@ void FieldPsynergy_Hover(void) {
         if (FieldPsynergy_CheckOverlap(&player->x.fixed, player->radius,
                                        &other->x.fixed,
                                        other->radius - 2) >= 0) {
-          found = 1;
+          blocked = 1;
           break;
         }
       }
     }
   }
 
-  if (found) {
+  if (blocked) {
     wait(5);
     Sound_PlayFar(SE_GLITTER);
     for (i = 0; i < 32; i++) {
@@ -257,8 +260,8 @@ void FieldPsynergy_Hover(void) {
   }
 }
 
-// Kind 24's work (battle_fx_work[0]).
-
+/// Ends Hover: the leader drops back to the ground with a splash and the ring
+/// is freed.
 void FieldPsynergy_EndHover(void) {
   struct HoverWork *work = (struct HoverWork *)Ram_HeapSlots->battleEffect;
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());

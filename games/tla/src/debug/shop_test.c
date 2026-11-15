@@ -157,16 +157,19 @@ void ShopTest_BrowseWeaponShopMessages(void) {
                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the armor shop's messages.
 void ShopTest_BrowseArmorShopMessages(void) {
   ShopTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the item shop's messages.
 void ShopTest_BrowseItemShopMessages(void) {
   ShopTest_BrowseMessageRange((s32)MsgItemShopWelcome,
                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
+/// Browses the Sanctum's messages.
 void ShopTest_BrowseSanctumMessages(void) {
   ShopTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
                               MsgRightWhenI - MsgWelcomeWearyWanderers);
@@ -175,14 +178,19 @@ void ShopTest_BrowseSanctumMessages(void) {
 /// The shops and the inn, each passed the keeper's actor id.
 void ShopTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
+/// Opens the armor shop.
 void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
 
+/// Opens the item shop.
 void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(3, keeper); }
 
+/// Opens the general store.
 void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(24, keeper); }
 
+/// Opens the inn.
 void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 
+/// Opens the Sanctum.
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
@@ -292,6 +300,7 @@ void ShopTest_EditPartyNames(void) {
 
 void Party_RemoveMember(s32 owner);
 
+/// Adds an item to a member's inventory.
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
    * call adds the same item. */
@@ -772,16 +781,20 @@ void ShopTest_SelectItem(void) {
   Window_Close(details, 2);
 }
 
+/// Opens the icon browser.
 void ShopTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
+/// Opens the portrait browser.
 void ShopTest_OpenPortraitBrowser(void) { DebugBrowser_Portraits(); }
 
+/// Unused: the Psynergy test's PsynergyTest_DigCells again.
 UNUSED void ShopTest_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
                               s32 f) {
   if (mode == 1)
     Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
+/// Unused: the Psynergy test's PsynergyTest_GrowActor again.
 UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
@@ -805,6 +818,7 @@ UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
+/// Unused: the Psynergy test's PsynergyTest_DropActor again.
 UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
 

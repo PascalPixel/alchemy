@@ -186,6 +186,10 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
+/// Scoop ("Dig in soft ground."): a giant hand rises before the caster and
+/// digs the cell 16 pixels ahead. With an actor in the way, out of reach or on
+/// ground that cannot be dug it stops with the error sound; else earth (or, in
+/// a lit place, sparkles) is thrown up and the place's Scoop event runs.
 void FieldPsynergy_Scoop(void) {
   struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x193c);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;

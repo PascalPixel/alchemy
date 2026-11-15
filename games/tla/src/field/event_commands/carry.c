@@ -19,6 +19,9 @@
 #include "module/field/object.h"
 #include "fixed_math.h"
 
+/// Carry cast with no target: two hands appear 32 pixels to either side of
+/// the spot, close 24 pixels in and meet with a crash that scatters 24
+/// fragments, then vanish.
 void FieldPsynergy_Carry(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;

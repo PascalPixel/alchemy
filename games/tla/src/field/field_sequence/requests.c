@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "djinn_ids.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
@@ -15,7 +16,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   event->encounter = Encounter_GetFormationAtSlot(row, column);
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
+        &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(row, column);
 }
 
@@ -44,21 +45,21 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   s32 index;
 
   flags &= 0xff;
-  group = djinn / 20;
-  index = djinn % 20;
+  group = djinn / DJINN_PER_ELEMENT;
+  index = djinn % DJINN_PER_ELEMENT;
 
-  if (index == 19) {
+  if (index == DJINN_PER_ELEMENT - 1) {
     index = gSceneLocalState[group + 0x1950];
     if (index == 0)
       return;
     index--;
   }
-  djinn = group * 20 + index;
+  djinn = group * DJINN_PER_ELEMENT + index;
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinni = (djinn + 300) | noPrepare;
   work->encounter = Encounter_GetDjinnFormation(djinn);
-  if (work->mode == 3)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(0, 0);
@@ -66,14 +67,16 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
 
 /// Sets the after-battle destination (gMainRoutineWork.afterBattleScene and
 /// afterBattleEntrance), where the party goes once the coming battle is won.
-void Event_SetAfterBattleDestination(s32 first, s32 second) {
-  gMainRoutineWork.afterBattleScene = first;
-  gMainRoutineWork.afterBattleEntrance = second;
+void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
+  gMainRoutineWork.afterBattleScene = sceneId;
+  gMainRoutineWork.afterBattleEntrance = entrance;
 }
 
-void Party_SetFields1f2And1f4(s32 first, s32 second) {
-  gMainRoutineWork.defeatScene = first;
-  gMainRoutineWork.defeatEntrance = second;
+/// Sets the defeat destination (gMainRoutineWork.defeatScene and
+/// defeatEntrance), where the party goes if it loses the coming battle.
+void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance) {
+  gMainRoutineWork.defeatScene = sceneId;
+  gMainRoutineWork.defeatEntrance = entrance;
 }
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
@@ -100,20 +103,23 @@ void Scene_QueueMusic(s32 soundId) {
   Sound_PlayFar(soundId);
 }
 
+/// An event that does nothing.
 void Event_NoOp(void) {}
 
 /// Plays the sound Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusic(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work != 0) {
-    s16 cue = *(s16 *)(work + 0xcb8);
+  if (work != NULL) {
+    s16 cue = work->queuedSound;
 
     if (cue != -1)
       Sound_PlayFar(cue);
   }
 }
 
+/// Shows message in an event and clears FLAG_NOTHING_HAPPENS; when someone in
+/// the party has Scoop, the field menu then opens.
 void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);

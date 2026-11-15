@@ -28,10 +28,6 @@
 
 #undef Actor_ShowEmoteById
 #undef PaletteFade_SetTarget
-#undef FieldPsynergy_SteerPushedTarget
-#undef FieldPsynergy_ForceOnTarget
-#undef FieldPsynergy_FrostOnTarget
-#undef FieldPsynergy_DouseOnTarget
 #undef Actor_ReleaseFar
 
 #include "event_commands/field_psynergy_work.c"
@@ -42,10 +38,7 @@
 #undef Actor_ApplyRandomChildValues
 #undef ScreenPoint
 #undef EffectWork
-#undef MapGrid_IsCloakCell
 
 #include "event_commands/cloak.c"
-
-#undef BattleEffect_GetCycledTableWord
 
 #include "event_commands/carry.c"

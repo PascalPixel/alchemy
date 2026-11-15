@@ -43,6 +43,9 @@ extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
+/// Parch ("Evaporate standing water."): a glowing disc spreads 32 pixels before
+/// the caster and white puffs rise from it. On an actor of sprite 290, or on
+/// water with a Parch event, the water there dries up and the event runs.
 void FieldPsynergy_Parch(void) {
   struct ParchWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
   struct HeapSlots *slots;

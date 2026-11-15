@@ -34,17 +34,6 @@
 #include "battle/battle_effect.h"
 #include "system/frame.h"
 
-/* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
- * BattleEffect_GetCycledTableWord(), called with no declaration in scope; the
- * definition has u16 BattleEffect_GetCycledTableWord(void); tried as the
- * definition's u16 BattleEffect_GetCycledTableWord(void), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/cloak.c:407: too many arguments to
- * function `BattleEffect_GetCycledTableWord'. */
-s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
-    "BattleEffect_GetCycledTableWord");
-#define BattleEffect_GetCycledTableWord BattleEffect_GetCycledTableWord__cloak
-
 /// The end of Cloak, and Douse.
 
 // The caster's palette while it flickers.
@@ -117,7 +106,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 }
 
 /// Runs Douse cast on a target, through FieldPsynergy_Douse.
-void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); }
+void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
@@ -395,7 +384,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     wait(1);
     if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
-    angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
+    angle = (u16)Input_GetDpadAngle(gInput.held);
     if (angle == 0xffff) {
       SET_POSITION(&position, target->x.fixed, target->y.fixed + 0x100000,
                    target->z.fixed);

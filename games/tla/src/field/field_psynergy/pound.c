@@ -148,6 +148,10 @@ void Func_080dba5c(void);
 void Camera_WorldToScreen(s32 *position);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
+/// Pound ("Drive objects into the ground."): a giant fist forms over the spot
+/// 32 pixels before the caster, or over the target, and comes down on it. Out
+/// of reach, or with a solid actor in the way, it shatters with the error
+/// sound; else the place's Pound event runs.
 void FieldPsynergy_Pound(void) {
   struct PoundWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x18b4);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;

@@ -49,33 +49,6 @@ struct MotionScript {
   s32 word[1];
 };
 
-struct AnimTrack {
-  u8 unk00[0x10];
-  u8 *script;
-  u8 index;
-};
-
-struct AnimObject {
-  u8 unk00[0x18];
-  u8 frame;
-  u8 unk19[0xf];
-  struct AnimTrack *track;
-};
-
-struct Thing {
-  u8 filler0[8];
-  s32 field8;
-  u8 filler12[4];
-  s32 field16;
-};
-
-struct MapAnimationWork {
-  u8 unk00[6];
-  u8 unk06;
-  u8 unk07;
-  u8 unk08[84];
-};
-
 struct PlacedSprite {
   u8 unk00[9];
   u8 low09 : 2;
@@ -109,22 +82,6 @@ struct FixedCamera {
   struct CameraPoint target;
   struct CameraPoint *eyeOverride;    ///< when set, used as the eye
   struct CameraPoint *targetOverride; ///< when set, used as the target
-};
-
-struct PlacedObject {
-  u8 unk00[2];
-  u16 active;
-  u8 unk04[2];
-  u16 angle;
-  s32 position[4];
-  s32 scale[2];
-  u8 unk20[2];
-  u8 layer;
-  u8 flags;
-  u8 unk24[0x2c];
-  void *target;
-  u8 kind;
-  u8 unk55[0x2b];
 };
 
 struct PlayerSprite {

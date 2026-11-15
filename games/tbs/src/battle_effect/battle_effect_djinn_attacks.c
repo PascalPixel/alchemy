@@ -18,17 +18,18 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 }
 
 #define MERCURY_FRAMES 96
-/// The blue flame sheet's 34x65 flame, after its 17x104 shaft; Mercury turns
-/// both on their side, and Venus draws the flame as its rising columns.
-#define BLUE_FLAME_SHEET_FLAME (17 * 104)
+/// The blue flame sheet's flame, after its shaft; Mercury turns both on their
+/// side, and Venus draws the flame as its rising columns.
+#define BLUE_FLAME_SHEET_FLAME PICTURE_BYTES(BLUE_FLAME_COLUMN)
 
 /// Mercury's sheet: its Djinni, then the blue flame sheet's two pictures turned
 /// on their side.
 enum MercurySheetPicture {
-  /// 104x17, the shaft turned; never drawn.
+  /// The shaft turned; never drawn.
   MERCURY_TURNED_SHAFT = 20 * 34,
-  /// 65x34, the flame turned to fly left.
-  MERCURY_TURNED_FLAME = MERCURY_TURNED_SHAFT + 104 * 17
+  /// The flame turned to fly left.
+  MERCURY_TURNED_FLAME = MERCURY_TURNED_SHAFT +
+      BLUE_FLAME_COLUMN_HEIGHT * BLUE_FLAME_COLUMN_WIDTH
 };
 
 #define MERCURY_FLAMES 5 ///< flames thrown
@@ -86,7 +87,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       flame = &work->particles[i];
       if (flame->variant != -1) {
         blit[0](canvas, work->sheet + MERCURY_TURNED_FLAME, flame->x - 16,
-                flame->y - 17, 65, 34);
+                flame->y - BLUE_FLAME_SPLASH_WIDTH / 2,
+                BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH);
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
@@ -154,9 +156,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 }
 
 #define JUPITER_FRAMES 96
-#define JUPITER_FLAMEBALLS 8        ///< flameballs that fall
-#define JUPITER_BURST_Y 95          ///< a flameball bursts once below this line
-#define JUPITER_FLAMEBALL (20 * 40) ///< 40x64, after the 20x40 Djinni
+#define JUPITER_FLAMEBALLS 8 ///< flameballs that fall
+#define JUPITER_BURST_Y 95   ///< a flameball bursts once below this line
+#define JUPITER_FLAMEBALL PICTURE_BYTES(SMALL_DJINNI) ///< after the Djinni
 
 /// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
 /// flameballs fall from the top right onto the targets, 4 frames apart; each
@@ -215,8 +217,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
         ball = &work->particles[i];
         if (frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
-          blit[0](canvas, work->sheet + JUPITER_FLAMEBALL, ball->x - 20,
-                  ball->y - 32, 40, 64);
+          blit[0](canvas, work->sheet + JUPITER_FLAMEBALL,
+                  ball->x - FLAMEBALL_WIDTH / 2, ball->y - FLAMEBALL_HEIGHT / 2,
+                  FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           ball->x -= 6;
           ball->y += 12;
           if (ball->y > JUPITER_BURST_Y) {
@@ -342,8 +345,10 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     for (i = 0; i != VENUS_COLUMNS; i++) {
       column = &work->particles[i];
       if (frame >= i * 4 + 16) {
-        draw[0](canvas, work->sheet + VENUS_COLUMN, column->x - 17,
-                column->y - 32, 34, 65);
+        draw[0](canvas, work->sheet + VENUS_COLUMN,
+                column->x - BLUE_FLAME_SPLASH_WIDTH / 2,
+                column->y - BLUE_FLAME_SPLASH_HEIGHT / 2,
+                BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (frame == i * 4 + 16) {
           for (j = 0; j != 16; j++) {
             s32 direction;
@@ -390,7 +395,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 #define MARS_FRAMES 112
 #define MARS_FLAMES 9 ///< flames along the arc
 #define MARS_EMBERS_PER_FLAME 16
-#define MARS_GLOW_ORB (20 * 40) ///< six 40x40 pictures, after the 20x40 Djinni
+#define MARS_GLOW_ORB                                                          \
+  PICTURE_BYTES(SMALL_DJINNI) ///< six pictures, after the Djinni
 
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along
@@ -457,8 +463,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     if (frame <= 23)
       blitters[0](canvas,
                   work->sheet + MARS_GLOW_ORB +
-                      (frame / 4) * PICTURE_BYTES(DJINNI),
-                  40, 20, DJINNI_WIDTH, DJINNI_HEIGHT);
+                      (frame / 4) * PICTURE_BYTES(GLOW_ORB),
+                  40, 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
     if (frame == 20)
       Iwram_CopyWords(BG_PLTT,
                       Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),

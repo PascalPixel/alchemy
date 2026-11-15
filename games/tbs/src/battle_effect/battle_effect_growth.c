@@ -26,8 +26,9 @@ struct GrowingColumn {
   s32 x; ///< the root, in canvas pixels
   s32 y; ///< the root's row: 108 to 115, lower for later columns
   s32 unused[2];
-  s32 height; ///< the full length, 55 to 118 capped by its shape
-  s32 unused2;
+  s32 height;          ///< the full length, 55 to 118 capped by its shape
+  s32 unusedVelocityZ; ///< the Particle's velocityZ, which the columns leave
+                       ///< alone
   /// The frame it starts to grow; set, but the frame loop computes its own.
   s32 start;
 };

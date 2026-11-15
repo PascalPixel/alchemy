@@ -143,10 +143,6 @@ enum CastingImpact {
 #define ASURA_CRESCENT_FADE_D                                                  \
   (ASURA_CRESCENT_FADE_C + CANVAS_SIZE * ASURA_CRESCENT_FADE_C_HEIGHT)
 
-/// The blue flame column Aqua Sock drops, then the splash twice its width.
-#define BLUE_FLAME_COLUMN_WIDTH 17
-#define BLUE_FLAME_COLUMN_HEIGHT 104
-#define BLUE_FLAME_SPLASH_HEIGHT 65
 /// Terra Strike's rock spire at its tallest.
 #define ROCK_SPIRE_WIDTH 32
 #define ROCK_SPIRE_HEIGHT 96
@@ -850,7 +846,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               BLUE_FLAME_COLUMN_HEIGHT - scroll);
           EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
               canvas, pictures + PICTURE_BYTES(BLUE_FLAME_COLUMN),
-              originX - width, fall + 47, width * 2, BLUE_FLAME_SPLASH_HEIGHT);
+              originX - width, fall + 47, BLUE_FLAME_SPLASH_WIDTH,
+              BLUE_FLAME_SPLASH_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           if (frame == 8) {
             work->shakeFrames = frame;

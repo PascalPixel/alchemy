@@ -6,13 +6,13 @@
 
 /// One chip of the impact, over a particle's entry with its velocities moved.
 struct ImpactChip {
-  s32 x;         ///< canvas position, 16.16 fixed point
-  s32 y;         ///< canvas position, 16.16; the ground is y 112
-  s32 velocityX; ///< 16.16 pixels a frame, damped to 56/64 each frame
-  s32 unused0c;  ///< a Particle's velocityX; never read
-  s32 velocityY; ///< 16.16 pixels a frame, with 1/8 pixel of gravity
-  s32 unused14;  ///< a Particle's velocityZ; never read
-  s32 life;      ///< frames left; 0 is free
+  s32 x;               ///< canvas position, 16.16 fixed point
+  s32 y;               ///< canvas position, 16.16; the ground is y 112
+  s32 velocityX;       ///< 16.16 pixels a frame, damped to 56/64 each frame
+  s32 unusedVelocityX; ///< a Particle's velocityX; never read
+  s32 velocityY;       ///< 16.16 pixels a frame, with 1/8 pixel of gravity
+  s32 unusedVelocityZ; ///< a Particle's velocityZ; never read
+  s32 life;            ///< frames left; 0 is free
 };
 
 /// Ram_MapGridCellBuffer seen as Planet Diver's chips.

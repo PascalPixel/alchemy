@@ -303,6 +303,16 @@ enum RedCrescentPicture {
 #define LIGHTNING_BOLT_HEIGHT 120
 #define LIGHTNING_BOLT_PICTURE_BYTES PICTURE_BYTES(LIGHTNING_BOLT)
 
+/// BlueFlameSheet: the column of flame, then the flame that splashes from it,
+/// twice its width.
+#define BLUE_FLAME_COLUMN_WIDTH 17
+#define BLUE_FLAME_COLUMN_HEIGHT 104
+#define BLUE_FLAME_SPLASH_WIDTH 34
+#define BLUE_FLAME_SPLASH_HEIGHT 65
+/// FlameballSheet and FireballSheet's pictures.
+#define FLAMEBALL_WIDTH 40
+#define FLAMEBALL_HEIGHT 64
+
 /// Each half of RuneSheet's rune, the second drawn mirrored.
 #define RUNE_HALF_WIDTH 24
 #define RUNE_HALF_HEIGHT 48

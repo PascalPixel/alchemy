@@ -325,10 +325,24 @@ enum VolleyField {
 /// The hit flashes turned on their side, after the upright ones.
 #define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
   (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
-/// The yellow spark sheet: the small spark (12x8) first, then the medium one
-/// (18x13), then the large one.
-#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE (12 * 8)
-#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE (12 * 8 + 18 * 13)
+/// The yellow spark sheet: the small spark first, then the medium one, then
+/// the large one.
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH 12
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT 8
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH 18
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT 13
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH 29
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT 23
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE 0
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE                                 \
+  PICTURE_BYTES(PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE)
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE                                  \
+  (PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE +                                    \
+   PICTURE_BYTES(PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE))
+/// The comets' width, and the shuriken's six pictures.
+#define PROJECTILE_VOLLEY_COMET_WIDTH 32
+#define SHURIKEN_WIDTH 32
+#define SHURIKEN_HEIGHT 24
 #define PROJECTILE_VOLLEY_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100      ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512      ///< the first trail in PARTICLES
@@ -709,8 +723,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                  position.x - 16,
-                  position.y - gProjectileVolley_CometHeights[comet], 32,
+                  position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
+                  position.y - gProjectileVolley_CometHeights[comet],
+                  PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               if (work->args->side == EFFECT_SIDE_PARTY)
@@ -723,13 +738,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                  position.x - 16, position.y, 32,
+                  position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2, position.y,
+                  PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               if (ABS(shot->x) <= ABS(target->x.fixed))
-                draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
-                        position.x - 16, position.y - 12, 32, 24);
+                draw[0](canvas,
+                        work->sheet + frame % 6 * PICTURE_BYTES(SHURIKEN),
+                        position.x - SHURIKEN_WIDTH / 2,
+                        position.y - SHURIKEN_HEIGHT / 2, SHURIKEN_WIDTH,
+                        SHURIKEN_HEIGHT);
             } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
@@ -741,19 +760,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
                       position.y - 8, 8, 16);
             } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
-              draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
-                      position.x - 9, position.y - 7, 18, 13);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
+                                  position.x - 9, position.y - 7);
             } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-              draw[0](canvas, work->sheet, position.x - 6, position.y - 4, 12,
-                      8);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
+                                  position.x - 6, position.y - 4);
             } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
-              draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
-                      position.x - 15, position.y - 12, 29, 23);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
+                                  position.x - 15, position.y - 12);
             } else {
-              draw[0](canvas, work->sheet, position.x - 20, position.y - 32, 40,
-                      64);
+              draw[0](canvas, work->sheet, position.x - FLAMEBALL_WIDTH / 2,
+                      position.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
+                      FLAMEBALL_HEIGHT);
             }
           }
         }

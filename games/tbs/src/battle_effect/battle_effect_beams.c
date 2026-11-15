@@ -5,6 +5,17 @@
 
 #include "battle_effect_internal.h"
 
+/// The beams' pictures: the wave's six, the blue arcs' six (BlueArcSheetA and
+/// B), the yellow orb's, and the slash's four, each the size of the canvas's
+/// view.
+#define BEAM_WAVE_WIDTH 48
+#define BEAM_WAVE_HEIGHT 16
+#define BEAM_ARC_WIDTH 48
+#define BEAM_ARC_HEIGHT 72
+#define YELLOW_ORB_WIDTH 40
+#define YELLOW_ORB_HEIGHT 48
+#define BEAM_SLASH_SIZE 120
+
 /// The plain attack's pictures, by effect kind: the attacker's attack effect.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< drawn as BEAM_ARC_A; no attack has kind 0
@@ -104,8 +115,9 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
   }
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
+    Iwram_CopyWords(BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
                     SHEET_PALETTE_BYTES);
@@ -162,23 +174,29 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (kind == BEAM_WAVE) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
-                  screenPosition.x + scrollX - 48, screenPosition.y - 8, 48,
-                  16);
+          draw[1](canvas,
+                  work->sheet + (5 - frame / 2) * PICTURE_BYTES(BEAM_WAVE),
+                  screenPosition.x + scrollX - BEAM_WAVE_WIDTH,
+                  screenPosition.y - BEAM_WAVE_HEIGHT / 2, BEAM_WAVE_WIDTH,
+                  BEAM_WAVE_HEIGHT);
         else
-          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
-                  screenPosition.x + scrollX, screenPosition.y - 8, 48, 16);
+          draw[1](canvas,
+                  work->sheet + (5 - frame / 2) * PICTURE_BYTES(BEAM_WAVE),
+                  screenPosition.x + scrollX,
+                  screenPosition.y - BEAM_WAVE_HEIGHT / 2, BEAM_WAVE_WIDTH,
+                  BEAM_WAVE_HEIGHT);
       }
     } else if ((kind >= BEAM_PLAIN_ATTACK && kind <= BEAM_ARC_B) ||
                kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
-                  screenPosition.x + scrollX - 48, screenPosition.y - 40, 48,
-                  72);
+          draw[1](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BEAM_ARC),
+                  screenPosition.x + scrollX - BEAM_ARC_WIDTH,
+                  screenPosition.y - 40, BEAM_ARC_WIDTH, BEAM_ARC_HEIGHT);
         else
-          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
-                  screenPosition.x + scrollX, screenPosition.y - 40, 48, 72);
+          draw[1](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BEAM_ARC),
+                  screenPosition.x + scrollX, screenPosition.y - 40,
+                  BEAM_ARC_WIDTH, BEAM_ARC_HEIGHT);
       }
     } else {
       if (frame <= 17) {
@@ -200,8 +218,11 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
     // The yellow orb flashes over the target.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
-              anchor.x - 16, anchor.y - 24, 40, 48);
+      draw[0](canvas,
+              Ram_MapGridCellBuffer +
+                  (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+              anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2, YELLOW_ORB_WIDTH,
+              YELLOW_ORB_HEIGHT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {
@@ -304,8 +325,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
                              1);
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
+    Iwram_CopyWords(BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    SHEET_PALETTE_BYTES);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
@@ -416,13 +438,17 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     screenPosition.y += 16;
     // The slash: a star, an arc, then two crescents.
     if (frame <= 1)
-      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, BEAM_SLASH_SIZE,
+              BEAM_SLASH_SIZE);
     else if (frame <= 3)
-      draw[0](canvas, work->imageStorage + (120 * 120), 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage + BEAM_SLASH_SIZE * BEAM_SLASH_SIZE, 0,
+              0, BEAM_SLASH_SIZE, BEAM_SLASH_SIZE);
     else if (frame <= 5)
-      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, BEAM_SLASH_SIZE,
+              BEAM_SLASH_SIZE);
     else if (frame <= 7)
-      draw[0](canvas, Ram_MapGridCellBuffer + (120 * 120), 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer + BEAM_SLASH_SIZE * BEAM_SLASH_SIZE,
+              0, 0, BEAM_SLASH_SIZE, BEAM_SLASH_SIZE);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {

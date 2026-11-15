@@ -14,7 +14,7 @@ Field_SolSanctumMaze:
 	.incbin "games/tbs/src/map/sol_sanctum_maze/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumMaze_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_SolSanctumMaze_GRID:
 	.incbin "games/tbs/src/map/sol_sanctum_maze/map.grid.lz"

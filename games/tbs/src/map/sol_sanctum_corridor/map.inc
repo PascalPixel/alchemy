@@ -14,7 +14,7 @@ Field_SolSanctumCorridor:
 	.incbin "games/tbs/src/map/sol_sanctum_corridor/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumCorridor_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_SolSanctumCorridor_GRID:
 	.incbin "games/tbs/src/map/sol_sanctum_corridor/map.grid.lz"

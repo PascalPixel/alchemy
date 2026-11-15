@@ -184,7 +184,7 @@ struct MapHeader {
 
 /// One of a layout's resources, from its row of gMaps.
 #define MAPGRID_RESOURCE(offset)                                               \
-  Resource_GetTableEntry((offset) + (u32)RESOURCE_MAP_001)
+  Resource_GetTableEntry((offset) + (u32)RESOURCE_EMPTY_MAP)
 
 /// Loads layout index from gMaps: its cell pictures, shapes, cells, tileset
 /// animations, blend script and treasure spots; sets up the three background

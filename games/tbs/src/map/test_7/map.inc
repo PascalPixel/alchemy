@@ -11,13 +11,13 @@ Field_Test7:
 	map_offset Field_Test7
 	map_offset Field_Test7, .LField_Test7_MARKERS
 .LField_Test7_CELL_PICTURES:
-	.incbin "games/tbs/src/map/map_001/cell_pictures.delta0.lz"
+	.incbin "games/tbs/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test7_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_Test7_GRID:
-	.incbin "games/tbs/src/map/map_001/map.grid.lz"
+	.incbin "games/tbs/src/map/empty_map/map.grid.lz"
 	.balign 4, 0
 .LField_Test7_MARKERS:
 	treasure_spots_end

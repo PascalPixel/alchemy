@@ -442,11 +442,10 @@ extern char ResourceId_Icons;
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.
 extern char ResourceId_CommandIcons;
 #define RESOURCE_COMMAND_ICONS ((s32)&ResourceId_CommandIcons)
-/// The first layout row, layout 1's header (map/map_001), whose number
-/// it is named for: gMaps counts its rows from here, and
-/// MapGrid_LoadMap adds them to it.
-extern char ResourceId_Map001;
-#define RESOURCE_MAP_001 ((s32)&ResourceId_Map001)
+/// The empty layout's header (map/empty_map), the first layout row: gMaps
+/// counts its rows from here, and MapGrid_LoadMap adds them to it.
+extern char ResourceId_EmptyMap;
+#define RESOURCE_EMPTY_MAP ((s32)&ResourceId_EmptyMap)
 
 // Battle effect pictures, continued.
 

@@ -14,7 +14,7 @@ Field_ImilFallsCave:
 	.incbin "games/tbs/src/map/imil_falls_cave/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_ImilFallsCave_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_ImilFallsCave_GRID:
 	.incbin "games/tbs/src/map/imil_falls_cave/map.grid.lz"

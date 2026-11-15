@@ -14,7 +14,7 @@ Field_SolSanctumPsynergyStone:
 	.incbin "games/tbs/src/map/sol_sanctum_psynergy_stone/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumPsynergyStone_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_SolSanctumPsynergyStone_GRID:
 	.incbin "games/tbs/src/map/sol_sanctum_psynergy_stone/map.grid.lz"

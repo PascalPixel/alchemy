@@ -1,35 +1,35 @@
-	.global Field_Map001
-Field_Map001:
+	.global Field_EmptyMap
+Field_EmptyMap:
 	map_header 0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map001, .LField_Map001_CELL_PICTURES
-	map_offset Field_Map001, .LField_Map001_SHAPES
-	map_offset Field_Map001, .LField_Map001_GRID
-	map_offset Field_Map001
-	map_offset Field_Map001
-	map_offset Field_Map001, .LField_Map001_MARKERS
-.LField_Map001_CELL_PICTURES:
-	.incbin "games/tbs/src/map/map_001/cell_pictures.delta0.lz"
+	map_offset Field_EmptyMap, .LField_EmptyMap_CELL_PICTURES
+	map_offset Field_EmptyMap, .LField_EmptyMap_SHAPES
+	map_offset Field_EmptyMap, .LField_EmptyMap_GRID
+	map_offset Field_EmptyMap
+	map_offset Field_EmptyMap
+	map_offset Field_EmptyMap, .LField_EmptyMap_MARKERS
+.LField_EmptyMap_CELL_PICTURES:
+	.incbin "games/tbs/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
-.LField_Map001_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+.LField_EmptyMap_SHAPES:
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
-.LField_Map001_GRID:
-	.incbin "games/tbs/src/map/map_001/map.grid.lz"
+.LField_EmptyMap_GRID:
+	.incbin "games/tbs/src/map/empty_map/map.grid.lz"
 	.balign 4, 0
-.LField_Map001_MARKERS:
+.LField_EmptyMap_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
 	.global Tileset_BlankPalette
 Tileset_BlankPalette:
 	.incbin "games/tbs/src/graphics/tileset/test_0/palette.gbapal.lz"
-	.byte 0x00	@ PACKER: left in the buffer by Field_Map001+0xb
+	.byte 0x00	@ PACKER: left in the buffer by Field_EmptyMap+0xb
 	.global Tileset_BlankTilesA
 Tileset_BlankTilesA:
 	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_a.4bpp.mtf"
-	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Map001+0x14e
+	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_EmptyMap+0x14e
 	.global Tileset_BlankTilesB
 Tileset_BlankTilesB:
 	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_b.4bpp.mtf"

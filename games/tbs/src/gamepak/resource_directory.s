@@ -17,7 +17,7 @@
 @ after it. Code naming a resource by its symbol follows, but some numbers
 @ travel bare: the scene table (field/scenes.s) names each scene's overlay by
 @ number, overlay.ld numbers each overlay's objects, the layouts are counted on
-@ from ResourceId_Map001 (MapGrid_LoadMap), and the settings menu's marker
+@ from ResourceId_EmptyMap (MapGrid_LoadMap), and the settings menu's marker
 @ steps through eight pictures from ResourceId_MenuCursorPictures.
 	.macro group kind:req, names:vararg
 	.irp n, \names
@@ -160,7 +160,7 @@ Resource_DirectoryTable:
 	group Monster, FireDragonSprites, CrawlerSprites, MimicSprites, SeaBeastSprites, SpiritHorseSprites
 	group Monster, KrakenSprites, SlimeSprites, SaturosSprites, MenardiSprites, GhostHeadSprites
 	group Monster, FusionDragonSprites, PurpleBeastSprites, RedWarriorSprites, SwordGirlSprites
-	group Field, Map001
+	group Field, EmptyMap
 	resource , Tileset_BlankPalette
 	resource , Tileset_BlankTilesA
 	resource , Tileset_BlankTilesB

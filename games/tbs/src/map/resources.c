@@ -5,8 +5,8 @@
 
 // clang-format off
 const struct MapResources gMaps[] = {
-    {0, 1, {2, 3, 4}, 5}, // map_001, the empty layout of the title and file screens
-    {0, 1, {2, 3, 4}, 5}, // map_001 again: MapIndex_World, the World Map's row
+    {0, 1, {2, 3, 4}, 5}, // empty_map, the empty layout of the title and file screens
+    {0, 1, {2, 3, 4}, 5}, // empty_map again: MapIndex_World, the World Map's row
     {6, 7, {8, 9, 10}, 11}, // vale_prologue
     {12, 13, {14, 15, 16}, 17}, // vale
     {18, 19, {20, 21, 22}, 23}, // vale_plaza

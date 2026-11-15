@@ -92,12 +92,11 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       /* FAKEMATCH(pin): x held in r0 from its shift. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
-      /* FAKEMATCH(pin): the target held in ip, where the stub
-       * Transform_CallInThumb reads it. */
+      // Transform_CallInThumb jumps to the target it finds in ip; the asm
+      // keeps ip set for the call, which C cannot say.
       register void *entry __asm__("ip") = table->atan2.target;
-      /* FAKEMATCH(barrier): an empty asm reading the arguments and the target.
-       */
-      __asm__("" : : "r"(x), "r"(y), "r"(entry));
+
+      __asm__("" : : "r"(entry));
       angle = (u16)Transform_CallInThumb(x, y);
     }
   }

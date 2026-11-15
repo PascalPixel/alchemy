@@ -8,6 +8,14 @@
 #include "system/input.h"
 #include "graphics/render_placement.h"
 
+enum {
+  /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
+  /// or 10 of them.
+  UI_SPRITE_VIEWER_COPY_COUNT = 10,
+  UI_SPRITE_VIEWER_SPRITE_LIMIT = 716,    ///< sprite ids 0 to 715 are offered
+  UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
+};
+
 /// What left and right choose for L and R to change on the selected sprite
 /// animation.
 enum UiSpriteViewerEditMode {
@@ -21,7 +29,7 @@ enum UiSpriteViewerEditMode {
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
 void SpriteViewer_Run(void) {
-  struct SpriteViewerLayer layers[4];
+  struct SpriteViewerLayer layers[ANIM_LAYER_COUNT];
   volatile u32 zero;
   s32 x;
   s32 y;
@@ -45,7 +53,7 @@ void SpriteViewer_Run(void) {
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
   spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
     layers[i].spriteId = spriteId;
@@ -64,13 +72,15 @@ restart:
   VramCache_Reset();
   ActorSystem_Initialize(2);
   SpritePictureCache_Load(0, gMapGridCellBuffer, layers[0].spriteId, 0);
-  if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
+  if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind ==
+      ANIM_FACING_TWO_PART)
     SpritePictureCache_Load(1, gActorSpriteSlots, layers[0].spriteId + 1, 0);
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;
 
-    if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20 &&
+    if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind ==
+            ANIM_FACING_TWO_PART &&
         (i & 1))
       part = 1;
     sprite = Sprite_Create(layers[0].spriteId + part + (part << 12));
@@ -102,13 +112,13 @@ next:
   wait(1);
   for (;;) {
     if (gInput.held & 8) {
-      if (gInput.held & 32)
+      if (gInput.held & KEY_LEFT)
         x--;
-      if (gInput.held & 16)
+      if (gInput.held & KEY_RIGHT)
         x++;
-      if (gInput.held & 64)
+      if (gInput.held & KEY_UP)
         y--;
-      if (gInput.held & 128)
+      if (gInput.held & KEY_DOWN)
         y++;
       SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
@@ -128,7 +138,7 @@ next:
       struct ViewerSprite *sprites = Ram_HeapSlots->sprites;
 
       shadowsEnabled ^= 1;
-      for (i = 0; i < 10; i++) {
+      for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
         sprites->flags = shadowsEnabled;
         sprites++;
       }
@@ -149,8 +159,10 @@ next:
       if (!(gInput.repeat & KEY_R))
         break;
       layers[selectedLayer].animationIndex++;
-      if (layers[selectedLayer].animationIndex > 99)
-        layers[selectedLayer].animationIndex = 99;
+      if (layers[selectedLayer].animationIndex >
+          UI_SPRITE_VIEWER_ANIMATION_LIMIT - 1)
+        layers[selectedLayer].animationIndex =
+            UI_SPRITE_VIEWER_ANIMATION_LIMIT - 1;
       if (selectedLayer == 0)
         layers[1].animationIndex = layers[0].animationIndex;
       goto next;
@@ -289,13 +301,13 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
     if (step == 1) {
       value += delta;
       if (value < 0)
-        value = 715;
-      if (value >= 716)
+        value = UI_SPRITE_VIEWER_SPRITE_LIMIT - 1;
+      if (value >= UI_SPRITE_VIEWER_SPRITE_LIMIT)
         value = 0;
     } else if (delta > 0) {
       u32 i;
 
-      for (i = 0; i < 10; i++) {
+      for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
         if (value < gSpriteViewer_SkipStops[i]) {
           value = gSpriteViewer_SkipStops[i];
           if (value == 0xffff)
@@ -375,7 +387,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   case 4:
   case 6:
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
       angle <<= 16;
       positions->x = px(centerX);
       angle = (u32)angle >> 16;

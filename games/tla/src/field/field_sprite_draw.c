@@ -160,23 +160,23 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
     picture = layer->pictureBase;
   select_direction:
     switch (layer->kind) {
-    case 1:
+    case ANIM_FACING_ONE_PICTURE:
       facing = gAnimationFacing_OnePicture[(dir >> 13) & 7];
       break;
-    case 2:
-    case 20:
+    case ANIM_FACING_FRONT_BACK:
+    case ANIM_FACING_TWO_PART:
       facing = gAnimationFacing_FrontBack[(dir >> 13) & 7];
       break;
-    case 22:
+    case ANIM_FACING_FRONT_BACK_SWAPPED:
       facing = gAnimationFacing_FrontBackSwapped[(dir >> 13) & 7];
       break;
-    case 3:
+    case ANIM_FACING_THREE_PICTURES:
       facing = gAnimationFacing_ThreePictures[(dir >> 12) & 15];
       break;
-    case 5:
+    case ANIM_FACING_SIX_PICTURES:
       facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
-    case 8:
+    case ANIM_FACING_EIGHT_PICTURES:
       facing = gAnimationFacing_EightPictures[((dir + FACING_STEP) >> 13) & 7];
       break;
     default:

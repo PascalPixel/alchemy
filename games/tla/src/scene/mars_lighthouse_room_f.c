@@ -1913,11 +1913,19 @@ void FlameThrowers_Puff(void) {
   }
 }
 
+/// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
+/// keeps the block cached.
+struct RideAnimation {
+  u8 beforeVramBlock[0x10];
+  u8 vramBlock;
+  u8 keepEntry : 1;
+};
+
 void Ride_Create(void) {
   struct MarsLighthouseRoomFRideWork *work =
       (struct MarsLighthouseRoomFRideWork *)RIDE_WORK;
   struct Actor *object;
-  struct MarsLighthouseRoomFAnimation *animation;
+  struct RideAnimation *animation;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
@@ -1926,8 +1934,8 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->value10;
-  animation->flag11 = 1;
+  work->value0c = animation->vramBlock;
+  animation->keepEntry = 1;
 }
 
 /// The ride work seen from one flame thrower's entry: the work's header, then

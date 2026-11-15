@@ -786,12 +786,8 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
   }
 }
 
-struct EventNote {
-  u8 unk000[0x15a];
-  u16 unk15a;
-};
-
-/// "There's a space for you to place something."
+/// "There's a space for you to place something." Then the field menu opens,
+/// for the party to choose what to place.
 void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -799,7 +795,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   // "There's a space for you to place something."
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
-  ((struct EventNote *)work)->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -1116,8 +1112,10 @@ L_020093b0:
 
 #endif
 
+/// A rising spark as its update reads the actor: its frames, kept where an
+/// actor keeps its watched actor.
 struct RiseTimer {
-  u8 unk00[0x68];
+  u8 beforeFrames[0x68];
   s32 frames;
 };
 
@@ -1460,10 +1458,12 @@ void FlameThrowers_Puff(void) {
   }
 }
 
+/// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
+/// keeps the block cached.
 struct RideAnimation {
-  u8 unk00[0x10];
-  u8 value10;
-  u8 flag11 : 1;
+  u8 beforeVramBlock[0x10];
+  u8 vramBlock;
+  u8 keepEntry : 1;
 };
 
 extern u8 gInventorySnapshot[];
@@ -1480,8 +1480,8 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->value10;
-  animation->flag11 = 1;
+  work->value0c = animation->vramBlock;
+  animation->keepEntry = 1;
 }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -1495,10 +1495,10 @@ void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
  * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition; not
  * tried: struct MarsLighthouseBeam__ride_handle was not found. */
 struct MarsLighthouseBeam__ride_handle {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
+  u8 beforeHitTrigger[10];
+  u16 hitTrigger; ///< the step trigger a flame that hits the leader raises
+  u8 beforeOnStopped[4];
+  s32 onStopped; ///< called once a flame reaches its stop
   struct MarsLighthouseBeamTarget targets[4];
   struct MarsLighthouseBeamStop {
     u16 kind;
@@ -1506,7 +1506,8 @@ struct MarsLighthouseBeam__ride_handle {
   } stops[4];
 };
 
-void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
+                         s32 hitTrigger) {
   struct MarsLighthouseBeam__ride_handle *beam =
       (struct MarsLighthouseBeam__ride_handle *)RIDE_WORK;
   struct MarsLighthouseBeamTarget *target = beam->targets;
@@ -1546,8 +1547,8 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       }
     }
   }
-  beam->unk10 = a2;
-  beam->unk0a = a3;
+  beam->onStopped = onStopped;
+  beam->hitTrigger = hitTrigger;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = 0xc08;

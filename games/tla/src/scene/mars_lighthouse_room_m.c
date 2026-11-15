@@ -238,13 +238,16 @@ struct MarsLighthouseRoomMVector {
   s32 z;
 };
 
+/// A sprite as the beacon ledge reads it: the priority bits of its OAM
+/// attribute 2 (layer), its VRAM block, the bit that keeps the block cached,
+/// and its rotation.
 struct MarsLighthouseRoomMAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
+  u8 beforeLayer[9];
+  u8 tileHigh : 2;
   u8 layer : 2;
-  u8 unk0a[6];
-  u8 value10;
-  u8 flag11 : 1;
+  u8 beforeVramBlock[6];
+  u8 vramBlock;
+  u8 keepEntry : 1;
   u16 angle;
 };
 
@@ -1512,8 +1515,8 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->value10;
-  animation->flag11 = 1;
+  work->value0c = animation->vramBlock;
+  animation->keepEntry = 1;
 }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);

@@ -1072,7 +1072,8 @@ void MarsLighthouseEntrance_StopSlideWhileRiding(void) {
     Leader_SetSlideStopped(1);
 }
 
-void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3);
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
+                         s32 hitTrigger);
 void Ride_SetEntryCount(s32 index, s16 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void);
@@ -1587,11 +1588,19 @@ void FlameThrowers_Puff(void) {
 }
 
 #undef Actor_HoldDuringEvent
+/// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
+/// keeps the block cached.
+struct RideAnimation {
+  u8 beforeVramBlock[0x10];
+  u8 vramBlock;
+  u8 keepEntry : 1;
+};
+
 void Ride_Create(void) {
   struct MarsLighthouseEntranceRideHead *work =
       (struct MarsLighthouseEntranceRideHead *)RIDE_WORK;
   struct Actor *object;
-  struct MarsLighthouseEntranceAnimation *animation;
+  struct RideAnimation *animation;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
@@ -1600,8 +1609,8 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->value10;
-  animation->flag11 = 1;
+  work->value0c = animation->vramBlock;
+  animation->keepEntry = 1;
 }
 
 UNUSED void Ride_Release(void) {

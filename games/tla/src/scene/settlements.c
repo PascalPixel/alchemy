@@ -234,17 +234,22 @@ extern u32 gFieldEffect_MediumScript[];
 extern s32 gSettlements_BobScript[];
 extern u32 gSettlements_CrateBobScript[];
 
+/// The apple's sprite as Kalt Island sets it up: the high bytes of its OAM
+/// attributes 0 and 2, its VRAM block and its state, laid out as struct
+/// FieldSprite has them.
 struct OrbitSprite {
-  u8 beforeFlags05[5];
-  u8 flags05Low : 5;
-  u8 flags05Bit5 : 1;
-  u8 flags05High : 2;
-  u8 beforeFlags09[3];
-  u8 flags09Low : 2;
-  u8 flags09Mode : 2;
-  u8 flags09High : 4;
-  u8 beforePalette[6];
-  u8 palette;
+  u8 beforeShape[5];
+  u8 affine : 2;
+  u8 blendMode : 2;
+  u8 mosaic : 1;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  u8 beforePriority[3];
+  u8 tileHigh : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 beforeVramBlock[6];
+  u8 vramBlock;
   u8 beforeState[10];
   u8 state;
 };
@@ -592,9 +597,9 @@ void Settlements_SetUpKaltIsland(void) {
   }
   actor = (struct OrbitObject *)Actor_Get(ACTOR_APPLE);
   sprite = actor->sprite;
-  sprite->flags09Mode = 1;
-  sprite->flags05Bit5 = 0;
-  sprite->flags09High = 0;
+  sprite->priority = 1;
+  sprite->fullColor = 0;
+  sprite->palette = 0;
   sprite->state = 0;
   Actor_SetSpriteFlags((struct Actor *)actor, 0);
   actor->active = 0;
@@ -606,7 +611,7 @@ void Settlements_SetUpKaltIsland(void) {
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Item_LoadIcon(ITEM_APPLE);
   transfer += 0x400;
-  Vram_Load(sprite->palette, 128, transfer);
+  Vram_Load(sprite->vramBlock, 128, transfer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;

@@ -9,6 +9,8 @@
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+/// The angle star `i` turns each frame about its axis: each later star faster.
+#define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
@@ -50,17 +52,17 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * (i + 32) * 8);
+          Transform_ApplyYaw(frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * SWIRLING_STAR_SPIN(i));
+          Transform_ApplyRoll(-frame * SWIRLING_STAR_SPIN(i));
           break;
         }
         Projection_Point(star, &screen);
@@ -169,8 +171,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
               Q_16_16_TO_INT(
                   (Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           spark->velocityX += TRIG_TURN / 128;
-          draw[0](canvas, work->sheet + i * (24 * 24), x - SKULL_WIDTH / 2,
-                  y - 28, SKULL_WIDTH, SKULL_HEIGHT);
+          draw[0](canvas, work->sheet + i * PICTURE_BYTES(SKULL),
+                  x - SKULL_WIDTH / 2, y - 28, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }
@@ -261,12 +263,13 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
-                      work->sheet + picture * (24 * 48) + TARGET_BURST_PICTURES,
+                      work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                          TARGET_BURST_PICTURES,
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
-            drawSmoke(canvas, work->sheet + picture * (24 * 48),
+            drawSmoke(canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }

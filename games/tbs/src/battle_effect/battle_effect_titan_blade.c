@@ -293,8 +293,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
               size = spark->variant / 5 + 1;
               picture = sheet + gBattleEffect_MotePictures[size - 1];
-              x >>= 16;
-              y >>= 16;
+              x = Q_16_16_TO_INT(x);
+              y = Q_16_16_TO_INT(y);
               x -= size / 2;
               y -= size;
               blitters[0](canvas, picture, x, y, size, size * 2);

@@ -68,10 +68,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, cells, 1, 1);
-  BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT, 17,
-                             104);
+  BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT,
+                             BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
   BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
-                             work->sheet + MERCURY_TURNED_FLAME, 34, 65);
+                             work->sheet + MERCURY_TURNED_FLAME,
+                             BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
   // The canvas fades by a quarter each frame, so each flame trails like a
   // comet.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+/// Break and Drain take the targets in turn, this many frames apart.
+#define DRAIN_TARGET_FRAMES 20
 #define DRAIN_ICE_SHARDS_PER_TARGET 128
 
 /// Ice shards burst up from each target in turn, tinting it, and fall away.
@@ -71,20 +73,21 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != work->args->targetCount * 20 + 56; frame++) {
+  for (frame = 0; frame != work->args->targetCount * DRAIN_TARGET_FRAMES + 56;
+       frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       s32 offset;
 
       offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
-      if (frame == member * 20) {
+      if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
       }
       // A shard falls and goes out below the ground.
-      if (frame > member * 20) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
         struct Particle *shard;
 
         for (i = 0, shard = (struct Particle *)(Ram_MapGridCellBuffer + offset);
@@ -113,7 +116,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 #define DRAIN_MOTES_PER_TARGET 128
 #define DRAIN_DRAWN 32 ///< motes drawn for each target
 
-/// Motes of light burst from each target in turn, 20 frames apart, and are
+/// Motes of light burst from each target in turn, and are
 /// pulled into the centre of the user's body.
 ///
 /// Abilities: Drain, Psy Drain.
@@ -173,7 +176,8 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != work->args->targetCount * DRAIN_TARGET_FRAMES + 72;
+       frame++) {
     struct Actor *user;
     s32 halfHeight;
 
@@ -185,14 +189,14 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     if (frame == 40)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
-    if (frame == work->args->targetCount * 20 + 52)
+    if (frame == work->args->targetCount * DRAIN_TARGET_FRAMES + 52)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
-      if (frame == member * 20)
+      if (frame == member * DRAIN_TARGET_FRAMES)
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
-      if (frame > member * 20) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
         for (i = 0; i != DRAIN_DRAWN; i++) {
           struct Particle *mote =
               &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
@@ -206,7 +210,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity3D(mote, 62, 0);
 
             // After a moment a mote is pulled into the user.
-            if (frame > member * 20 + i + 10) {
+            if (frame > member * DRAIN_TARGET_FRAMES + i + 10) {
               s32 dx;
               s32 dy;
               s32 dz;

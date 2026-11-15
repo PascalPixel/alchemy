@@ -87,7 +87,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         s32 y = screenPosition.y + Q_16_16_TO_INT(frame * Trig_Cos(i << 12)) -
                 frame;
 
-        draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64),
+        draw[0](canvas,
+                work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
                 x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
                 FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }

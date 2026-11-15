@@ -167,7 +167,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
                     work->sheet +
-                        gRagnarok_FlashPictures[life / 3] * (32 * 64) +
+                        gRagnarok_FlashPictures[life / 3] *
+                            PICTURE_BYTES(FLASH_BURST) +
                         RAGNAROK_FLASH_PICTURES,
                     x - FLASH_BURST_WIDTH / 2, y + 56, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);

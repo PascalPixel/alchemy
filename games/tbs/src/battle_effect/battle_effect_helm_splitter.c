@@ -8,6 +8,7 @@
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star effect, after the swirl.
 #define HELM_SPLITTER_STAR_PICTURES 16000
+#define HELM_SPLITTER_STAR_SIZE 16 ///< PinkStarSheet's six stars
 #define HELM_SPLITTER_CLEARED_SLOTS                                            \
   PARTICLE_POOL_COUNT                 ///< PARTICLES slots freed first
 #define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
@@ -133,7 +134,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           draw[0](canvas,
                   work->sheet + HELM_SPLITTER_STAR_PICTURES +
                       (((frame + i) / 4 % 6) << 8),
-                  sx - 8, sy - 8, 16, 16);
+                  sx - HELM_SPLITTER_STAR_SIZE / 2,
+                  sy - HELM_SPLITTER_STAR_SIZE / 2, HELM_SPLITTER_STAR_SIZE,
+                  HELM_SPLITTER_STAR_SIZE);
         }
       }
     }

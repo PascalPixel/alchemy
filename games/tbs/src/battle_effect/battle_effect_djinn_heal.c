@@ -9,6 +9,8 @@
 
 #define DJINN_HEAL_SWIRL_FRAMES 98
 #define DJINN_HEAL_SWIRL_MOTES 32 ///< motes swirled in
+/// The angle mote `i` turns each frame about its axis: each later mote faster.
+#define DJINN_HEAL_MOTE_SPIN(i) ((i) * 32 + 256)
 
 /// A small Mercury Djinni heals the party: motes swirl up from the user, the
 /// Djinni appears where they gather, and sparkles spiral in on each target in
@@ -87,17 +89,17 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * (i * 32 + 256));
+          Transform_ApplyYaw(frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * DJINN_HEAL_MOTE_SPIN(i));
+          Transform_ApplyRoll(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         }
         Projection_Point(spark, &screen);

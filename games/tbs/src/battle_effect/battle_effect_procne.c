@@ -331,7 +331,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               Projection_Point(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
               screen.y = Q_16_16_TO_INT(screen.y) + Q_16_16_TO_INT(wave.y) - 4;
-              screen.depth >>= 16;
+              screen.depth = Q_16_16_TO_INT(screen.depth);
               if (screen.depth <= 169)
                 screen.depth = 170;
               if (screen.depth > 350)
@@ -380,7 +380,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 Projection_Point(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
                 screen.y = Q_16_16_TO_INT(screen.y) + 56;
-                screen.depth >>= 16;
+                screen.depth = Q_16_16_TO_INT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)
@@ -447,7 +447,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
                 screen.y = Q_16_16_TO_INT(screen.y) +
                            work->particles[index + 60].velocityY;
-                screen.depth >>= 16;
+                screen.depth = Q_16_16_TO_INT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)

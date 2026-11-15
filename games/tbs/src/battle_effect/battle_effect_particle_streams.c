@@ -14,21 +14,27 @@ enum ParticleStreamsMode {
 };
 
 /// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
-/// where the one before ends: six 32x32 flames, then three 24x24 and three 8x8
+/// where the one before ends: six flames, then three large and three small
 /// glows, each glow brighter at its centre than the one before. The fall draws
 /// only the six and the brightest glow of each size.
+#define PARTICLE_STREAMS_FLAME_SIZE 32
+#define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
+#define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
   PARTICLE_STREAMS_FLAMES = 0,
   /// The brightest 24x24 glow
-  PARTICLE_STREAMS_LARGE_GLOW = PARTICLE_STREAMS_FLAMES + 6 * 32 * 32 +
-      2 * 24 * 24,
+  PARTICLE_STREAMS_LARGE_GLOW = PARTICLE_STREAMS_FLAMES +
+      6 * PARTICLE_STREAMS_FLAME_SIZE * PARTICLE_STREAMS_FLAME_SIZE +
+      2 * PARTICLE_STREAMS_LARGE_GLOW_SIZE * PARTICLE_STREAMS_LARGE_GLOW_SIZE,
   /// The brightest 8x8 glow
-  PARTICLE_STREAMS_SMALL_GLOW = PARTICLE_STREAMS_LARGE_GLOW + 24 * 24 +
-      2 * 8 * 8,
+  PARTICLE_STREAMS_SMALL_GLOW = PARTICLE_STREAMS_LARGE_GLOW +
+      PARTICLE_STREAMS_LARGE_GLOW_SIZE * PARTICLE_STREAMS_LARGE_GLOW_SIZE +
+      2 * PARTICLE_STREAMS_SMALL_GLOW_SIZE * PARTICLE_STREAMS_SMALL_GLOW_SIZE,
   /// Past the sheet's end: the backdrop's 160 colours, one a line, that the
   /// fall writes there.
-  PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW + 8 * 8
+  PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW +
+      PARTICLE_STREAMS_SMALL_GLOW_SIZE * PARTICLE_STREAMS_SMALL_GLOW_SIZE
 };
 
 /// Brightens background colours 1 to 63 by a step in each channel.
@@ -399,7 +405,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         spot.x = Q_16_16_TO_INT(spot.x) + 128;
         spot.y = Q_16_16_TO_INT(spot.y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
-             spot.x - 4, spot.y - 4, 8, 8);
+             spot.x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
+             spot.y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
+             PARTICLE_STREAMS_SMALL_GLOW_SIZE,
+             PARTICLE_STREAMS_SMALL_GLOW_SIZE);
       }
       if (direction == 1)
         x = frame / 4 - 16;
@@ -412,8 +421,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
         if (fireballY <= 93)
           draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_LARGE_GLOW,
-               gParticleStreams_FireballPoints[i][0] + x - 12, fireballY - 12,
-               24, 24);
+               gParticleStreams_FireballPoints[i][0] + x -
+                   PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
+               fireballY - PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
+               PARTICLE_STREAMS_LARGE_GLOW_SIZE,
+               PARTICLE_STREAMS_LARGE_GLOW_SIZE);
         else if (fireballY <= 95)
           ParticleStreams_SpawnLanding(
               px(gParticleStreams_FireballPoints[i][0] + x), px(fireballY), 1);
@@ -425,9 +437,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (flame->variant >= 0) {
           draw(Ram_MapGridCellBuffer,
                work->sheet + PARTICLE_STREAMS_FLAMES +
-                   flame->variant * (32 * 32),
-               Q_16_16_TO_INT(flame->x) - 16, Q_16_16_TO_INT(flame->y) - 16, 32,
-               32);
+                   flame->variant * (PARTICLE_STREAMS_FLAME_SIZE *
+                                     PARTICLE_STREAMS_FLAME_SIZE),
+               Q_16_16_TO_INT(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               Q_16_16_TO_INT(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               PARTICLE_STREAMS_FLAME_SIZE, PARTICLE_STREAMS_FLAME_SIZE);
           flame->x -= direction * (px(5) / 4);
           flame->y -= px(5);
           flame->variant++;

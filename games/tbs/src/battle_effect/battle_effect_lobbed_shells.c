@@ -73,6 +73,9 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
+/// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
+#define LOBBED_SHELL_WIDTH 24
+#define LOBBED_SHELL_HEIGHT 32
 
 /// Nonzero when the style's shells burst into shards instead of smoke.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Styles[(mode) * 2]
@@ -208,11 +211,15 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
             position.x >>= 1;
             if (step > 4)
-              draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,
-                      position.y - 12, 32, 24);
+              draw[0](canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                      position.x - LOBBED_SHELL_HEIGHT / 2,
+                      position.y - LOBBED_SHELL_WIDTH / 2, LOBBED_SHELL_HEIGHT,
+                      LOBBED_SHELL_WIDTH);
             else
-              draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
-                      position.y - 16, 24, 32);
+              draw[0](canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                      position.x - LOBBED_SHELL_WIDTH / 2,
+                      position.y - LOBBED_SHELL_HEIGHT / 2, LOBBED_SHELL_WIDTH,
+                      LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
               Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
             // On the ground the shell stops and bursts.
@@ -259,7 +266,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
           draw[1](canvas,
-                  work->sheet + burst->variant / 8 * (24 * 48) +
+                  work->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
                       LOBBED_SHELLS_SMOKE_PICTURES,
                   position.x - SMOKE_PUFF_WIDTH / 2,
                   position.y - SMOKE_PUFF_HEIGHT / 2, SMOKE_PUFF_WIDTH,

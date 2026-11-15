@@ -12,6 +12,11 @@
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_PICTURES 12800
+/// The bite's stages after the tornado sheet: BeamImage for a slash,
+/// TwelveModeImage otherwise.
+#define TARGET_STRIKE_BITE_PICTURES 3200
+#define TARGET_STRIKE_BITE_WIDTH 18
+#define TARGET_STRIKE_BITE_HEIGHT 48
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -142,10 +147,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE, work->sheet + 3200, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE,
+                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
-    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE, work->sheet + 3200,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE,
+                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
     resource = RESOURCE_BLUE_BEAM_SHEET;
@@ -326,15 +332,21 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-          canvas, work->sheet + stage * (18 * 48) + 3200,
-          targetPosition.x / 2 - 18, 56, 18, 48);
+          canvas,
+          work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
+              TARGET_STRIKE_BITE_PICTURES,
+          targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, 56,
+          TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-          canvas, work->sheet + stage * (18 * 48) + 3200, targetPosition.x / 2,
-          56, 18, 48);
+          canvas,
+          work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
+              TARGET_STRIKE_BITE_PICTURES,
+          targetPosition.x / 2, 56, TARGET_STRIKE_BITE_WIDTH,
+          TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       if (frame %
               (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) ==
@@ -429,7 +441,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             s32 picture = step->variant / 4;
 
             draw[i & 1](canvas,
-                        work->sheet + picture * (24 * 48) +
+                        work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                             TARGET_STRIKE_SMOKE_PICTURES,
                         Q_16_16_TO_INT(step->x) - SMOKE_PUFF_WIDTH / 2,
                         Q_16_16_TO_INT(step->y) - SMOKE_PUFF_HEIGHT / 2,

@@ -10,6 +10,9 @@
 /// The particles each target's triangle keeps, and the flares along each edge.
 #define BIND_SLOTS_PER_TARGET 32
 #define BIND_EDGE_FLARES 24
+/// The frames the triangle of flares shrinks and turns before the rune shows,
+/// with the damage.
+#define BIND_RUNE_FRAME 64
 
 // Bind and Luff spin a shrinking triangle onto the first target and stand a
 // rune there. The triangle's corners are projected onto the canvas and each
@@ -139,7 +142,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The colours cycle through the hues.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
@@ -187,13 +190,13 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
-            if (memberFrame <= 63) {
+            if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_Vertex, &corner);
@@ -219,7 +222,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
           }
         }
         // Then the rune, in two mirrored halves.
-        if (memberFrame > 63) {
+        if (memberFrame >= BIND_RUNE_FRAME) {
           draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
@@ -286,7 +289,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The user sets off towards the target.
     if (frame == 46)
@@ -318,13 +321,13 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
-            if (memberFrame <= 63) {
+            if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_TriangleStrikeVertex, &corner);
@@ -350,7 +353,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
           }
         }
         // Then the rune, in two mirrored halves.
-        if (memberFrame > 63) {
+        if (memberFrame >= BIND_RUNE_FRAME) {
           draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);

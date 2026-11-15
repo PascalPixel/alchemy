@@ -9,6 +9,9 @@
 // dust the same way.
 
 #define NEREID_FRAMES 124
+/// The columns of water rise among the targets, from the crash to the clatter.
+#define NEREID_COLUMNS_FRAME 32
+#define NEREID_COLUMNS_END_FRAME 80
 
 #define NEREID_OBJECTS 12 ///< the sprites that draw Nereid on her turtle
 /// Wrapping columns of water; gNereid_Columns has a fourth row that nothing
@@ -76,7 +79,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
-      if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
+      if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&
+          frame <= 97)
         frame = 98;
       if (frame == 120)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -111,7 +115,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           }
         }
       }
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         s32 spawned = 0;
 
         for (k = 0; k != NEREID_DROPS; k++) {
@@ -133,13 +137,13 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       }
       if (frame == 0)
         Sound_PlayFar(SE_SCATTER);
-      if (frame == 32)
+      if (frame == NEREID_COLUMNS_FRAME)
         Sound_PlayFar(SE_CRASH);
-      if (frame == 80)
+      if (frame == NEREID_COLUMNS_END_FRAME)
         Sound_PlayFar(SE_CLATTER);
 
       // The columns of water scroll up.
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
@@ -149,8 +153,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
                       FIRE_PILLAR_HEIGHT,
                   FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereid_Columns[k][NEREID_COLUMN_X] - 17,
-                  gNereid_Columns[k][NEREID_COLUMN_Y] - span, 34, span);
+                  gNereid_Columns[k][NEREID_COLUMN_X] - FIRE_PILLAR_WIDTH / 2,
+                  gNereid_Columns[k][NEREID_COLUMN_Y] - span, FIRE_PILLAR_WIDTH,
+                  span);
         }
       }
 

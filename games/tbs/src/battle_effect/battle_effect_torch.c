@@ -94,7 +94,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     pal[i] = ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
   }
 
-  draw[0](canvas, work->sheet, 0, 0, 128, 128);
+  draw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   work->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 

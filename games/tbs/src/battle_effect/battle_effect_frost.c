@@ -210,8 +210,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           highest = chip->y;
       }
     }
-    lowest >>= 16;
-    highest >>= 16;
+    lowest = Q_16_16_TO_INT(lowest);
+    highest = Q_16_16_TO_INT(highest);
     if (highest <= lowest)
       highest = lowest + 1;
 

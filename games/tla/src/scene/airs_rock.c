@@ -176,7 +176,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
 // the mark.
 #include "text/msg_ids.h"
 
-void Actor_PlaceMovedBlock(s32 id);
+void Actor_PlaceMovedBlock(void);
 
 void Blocks_MarkCells(u16 *ids) {
   struct Actor *object;
@@ -1137,15 +1137,6 @@ void AirsRock_LiftPillar(void) {
   Blocks_UnmarkCells(work->movedBlock);
 }
 
-/* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
- * Actor_PlaceMovedBlock(void); scene/scene.h has void
- * Actor_PlaceMovedBlock(s32 id); tried as the definition's void
- * Actor_PlaceMovedBlock(void), which the object already declares, it does not
- * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1051: too
- * few arguments to function `Actor_PlaceMovedBlock'. */
-extern void
-Actor_PlaceMovedBlock__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
-
 /// After it: a pillar left over a gap drops into it with a thump, closing the
 /// gap, and sets its flag.
 void AirsRock_PlacePillar(void) {
@@ -1154,7 +1145,7 @@ void AirsRock_PlacePillar(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_PlaceMovedBlock__airs_rock();
+  Actor_PlaceMovedBlock();
   Blocks_MarkCells(((u8 *)gAirsRock_EntrancePillars));
   if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
       object->y.fixed) {

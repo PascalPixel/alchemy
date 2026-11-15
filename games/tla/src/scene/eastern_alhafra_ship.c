@@ -243,7 +243,10 @@ extern u32 gEasternAlhafraShip_NoteScript[];
 void Actor_SelectAnimation(struct Actor020003e8 *object, s32 mode);
 void Actor_StartScript(struct Actor020003e8 *object, const void *script);
 
-void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
+void EasternAlhafraShip_SpawnNote(x, y, z, value, fifth) s32 x, y, z;
+s16 value;
+s32 fifth;
+{
   struct Actor020003e8 *object;
   struct Sprite020003e8 *sprite;
 
@@ -261,38 +264,27 @@ void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   }
 }
 
-/* VIEW(s0438): routine EasternAlhafraShip_SpawnNote as s32
- * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
- * the definition has void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16
- * value, s32 fifth); tried as the definition's void
- * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth),
- * which the object already declares, Actor_EmitNotes moves: 2 of 79
- * instructions in tla-ja. */
-extern s32 EasternAlhafraShip_SpawnNote__s0438(
-    s32 x, s32 y, s32 z, s32 rotation,
-    s32 timer) __asm__("EasternAlhafraShip_SpawnNote");
-
 void Actor_EmitNotes(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0x1000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed + px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0xf000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed - px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0x1000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed + px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0xf000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed - px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
 }

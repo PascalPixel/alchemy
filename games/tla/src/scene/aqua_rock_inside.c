@@ -775,19 +775,10 @@ void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
   Event_SetFlag(FLAG_SCENE_TEMP_49);
 }
 
-void AquaRockInside_JumpDownLedge(void) {
+void AquaRockInside_JumpDownLedge() {
   Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
   Event_End();
 }
-
-/* VIEW(s0cc8): routine AquaRockInside_JumpDownLedge as void
- * AquaRockInside_JumpDownLedge(); the parts before it has another declaration;
- * tried as the definition's void AquaRockInside_JumpDownLedge(void), which the
- * object already declares, it does not compile in tla-ja (aqua_rock_inside.c):
- * games/tla/src/scene/aqua_rock_inside.c:740: too many arguments to function
- * `AquaRockInside_JumpDownLedge'. */
-extern void
-AquaRockInside_JumpDownLedge__rapids() __asm__("AquaRockInside_JumpDownLedge");
 
 void AquaRockInside_StepIntoRapids(s32 trigger) {
   s32 clear = 1;
@@ -818,7 +809,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
 step:
   if (result < 0) {
     object->facing = FACING_SOUTH;
-    AquaRockInside_JumpDownLedge__rapids(trigger);
+    AquaRockInside_JumpDownLedge(trigger);
     return;
   }
   {

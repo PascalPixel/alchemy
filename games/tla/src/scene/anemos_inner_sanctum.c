@@ -72,16 +72,6 @@ struct SpawnParams {
   u8 unk08[32];
 };
 
-struct Globals {
-  u8 pad[108];
-  struct Work *work;
-};
-
-struct MainRoutineWork2c2 {
-  u8 unk000[0x2c2];
-  u8 value;
-};
-
 struct AnemosInnerSanctumPicture {
   const void *data;
   u16 a;
@@ -447,8 +437,10 @@ struct Work {
 void Actor_StartScript();
 extern s32 gAnemosInnerSanctum_SparkScript[];
 
-void AnemosInnerSanctum_SendSpark(struct Vector3 *from, struct Vector3 *to,
-                                  s16 part) {
+void AnemosInnerSanctum_SendSpark(from, to, part) struct Vector3 *from;
+struct Vector3 *to;
+s16 part;
+{
   struct Work *actor;
   s32 x, z, distance;
 
@@ -476,7 +468,11 @@ void AnemosInnerSanctum_SendSpark(struct Vector3 *from, struct Vector3 *to,
   AnemosInnerSanctum_SpiralMover(actor);
 }
 
-void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
+void AnemosInnerSanctum_SparkRing(x, y, part, a3) s32 x;
+s32 y;
+s16 part;
+s16 a3;
+{
   s32 i;
 
   for (i = 0; i != 16;) {
@@ -502,12 +498,15 @@ void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
   }
 }
 
-void AnemosInnerSanctum_DropSpark(s32 a0, s32 a1, s16 a2) {
+void AnemosInnerSanctum_DropSpark(x, z, part) s32 x;
+s32 z;
+s16 part;
+{
   struct Actor *object;
 
-  object = FieldActor_Create(0x2a0, px(a0), px(a1 + 3), px(152));
+  object = FieldActor_Create(0x2a0, px(x), px(z + 3), px(152));
   object->motionFlags = 4;
-  FieldActor_SetSpriteColor(object, (u16)a2);
+  FieldActor_SetSpriteColor(object, (u16)part);
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 7);
   Actor_SetSpriteFlags(object, 0);
@@ -515,60 +514,20 @@ void AnemosInnerSanctum_DropSpark(s32 a0, s32 a1, s16 a2) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
- * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
- * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:544: structure has no member named
- * `room'. */
-struct Work__s0ac8 {
-  u8 pad[340];
-  u16 room;
-};
-
-/* VIEW(s0ac8): routine AnemosInnerSanctum_SendSpark as void
- * AnemosInnerSanctum_SendSpark(), with no prototype, as the part calls it;
- * scene/anemos_inner_sanctum/scene_tables has void
- * AnemosInnerSanctum_SendSpark(struct Vector3 *, struct Vector3 *, s16); tried
- * as the definition's void AnemosInnerSanctum_SendSpark(struct Vector3 *from,
- * struct Vector3 *to, s16 part), which the object already declares,
- * AnemosInnerSanctum_LightThePillar moves: 7 of 630 instructions in tla-ja. */
-void AnemosInnerSanctum_SendSpark__pillar() __asm__(
-    "AnemosInnerSanctum_SendSpark");
-#define AnemosInnerSanctum_SendSpark AnemosInnerSanctum_SendSpark__pillar
-/* VIEW(s0ac8): routine AnemosInnerSanctum_SparkRing as void
- * AnemosInnerSanctum_SparkRing(), with no prototype, as the part calls it;
- * scene/anemos_inner_sanctum/scene_tables has void
- * AnemosInnerSanctum_SparkRing(s32, s32, s16, s16); tried as the definition's
- * void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3), which the
- * object already declares, AnemosInnerSanctum_LightThePillar moves: 10 of 630
- * instructions in tla-ja. */
-void AnemosInnerSanctum_SparkRing__pillar() __asm__(
-    "AnemosInnerSanctum_SparkRing");
-#define AnemosInnerSanctum_SparkRing AnemosInnerSanctum_SparkRing__pillar
-/* VIEW(s0ac8): routine AnemosInnerSanctum_DropSpark as void
- * AnemosInnerSanctum_DropSpark(), with no prototype, as the part calls it;
- * scene/anemos_inner_sanctum/scene_tables has void
- * AnemosInnerSanctum_DropSpark(s32, s32, s16); tried as the definition's void
- * AnemosInnerSanctum_DropSpark(s32 a0, s32 a1, s16 a2), which the object
- * already declares, AnemosInnerSanctum_LightThePillar moves: 1 of 630
- * instructions in tla-ja. */
-void AnemosInnerSanctum_DropSpark__pillar() __asm__(
-    "AnemosInnerSanctum_DropSpark");
-#define AnemosInnerSanctum_DropSpark AnemosInnerSanctum_DropSpark__pillar
 void BlendScript_Resume(void);
 extern u32 gAnemosInnerSanctum_PillarRisesScript[];
 extern s32 gAnemosInnerSanctum_PillarSparkScript[];
 extern s32 gAnemosInnerSanctum_SparkOffsets[][2];
 
 void AnemosInnerSanctum_LightThePillar(void) {
-  struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;
   s32 targetX = 0;
   s32 targetZ = 0;
-  s16 type = work->room + 193;
-  s16 room = work->room;
+  s16 type = work->stepTrigger + 193;
+  s16 room = work->stepTrigger;
   s32 index = room - 50;
   s32 base;
   u8 count;
@@ -734,7 +693,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
     BlendScript_Resume();
     Event_WaitTransitionFrames();
   } else {
-    Event_SetFlag((s16)work->room + 0xa55);
+    Event_SetFlag((s16)work->stepTrigger + 0xa55);
     Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(4);
@@ -1113,10 +1072,6 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   }
 }
 
-#undef AnemosInnerSanctum_SendSpark
-#undef AnemosInnerSanctum_SparkRing
-#undef AnemosInnerSanctum_DropSpark
-
 #include "text/msg_ids.h"
 
 void Actor_PlaceBlocks(void);
@@ -1268,12 +1223,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AnemosInnerSanctum_TeleportOut(void) {
   PaletteCycle_Start();
   Teleport_PlaySparks();
-  {
-    struct MainRoutineWork2c2 *party =
-        (struct MainRoutineWork2c2 *)&gMainRoutineWork;
-
-    party->value = 2;
-  }
+  gMainRoutineWork.teleportState = 2;
   Event_SetDestination(SCENE_CONTIGO, 99);
   FieldEvent_Wait(40);
   AnemosInnerSanctum_StopPaletteCycle();
@@ -1690,9 +1640,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
 #undef CELL_PUSH_SLOT_ENTRY
-#undef AnemosInnerSanctum_SendSpark
-#undef AnemosInnerSanctum_SparkRing
-#undef AnemosInnerSanctum_DropSpark
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;

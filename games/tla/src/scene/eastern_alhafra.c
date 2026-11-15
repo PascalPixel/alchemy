@@ -1227,7 +1227,10 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 
 /// Spawns a puff (actor type 0x1e8) at x, y, z, turned to value, for timer
 /// frames.
-void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
+void EasternAlhafra_SpawnPuff(x, y, z, value, timer) s32 x, y, z;
+s16 value;
+s32 timer;
+{
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
@@ -1251,37 +1254,23 @@ void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef EVENT_WORK
 #undef OBJECT
 
-/* VIEW(s1bf4): routine EasternAlhafra_SpawnPuff as s32
- * EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the
- * definition has void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value,
- * s32 timer); tried as the definition's void EasternAlhafra_SpawnPuff(s32 x,
- * s32 y, s32 z, s16 value, s32 timer), which the object already declares,
- * EasternAlhafra_PuffFrom moves: 2 of 79 instructions in tla-ja. */
-extern s32
-EasternAlhafra_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 rotation,
-                                s32 timer) __asm__("EasternAlhafra_SpawnPuff");
-
 void EasternAlhafra_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  EasternAlhafra_SpawnPuff__puffs(object->x.fixed + px(8),
-                                  object->y.fixed + px(28), object->z.fixed,
-                                  0x1000, 15);
+  EasternAlhafra_SpawnPuff(object->x.fixed + px(8), object->y.fixed + px(28),
+                           object->z.fixed, 0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x.fixed - px(8),
-                                  object->y.fixed + px(28), object->z.fixed,
-                                  0xf000, 15);
+  EasternAlhafra_SpawnPuff(object->x.fixed - px(8), object->y.fixed + px(28),
+                           object->z.fixed, 0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x.fixed + px(8),
-                                  object->y.fixed + px(28), object->z.fixed,
-                                  0x1000, 15);
+  EasternAlhafra_SpawnPuff(object->x.fixed + px(8), object->y.fixed + px(28),
+                           object->z.fixed, 0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x.fixed - px(8),
-                                  object->y.fixed + px(28), object->z.fixed,
-                                  0xf000, 15);
+  EasternAlhafra_SpawnPuff(object->x.fixed - px(8), object->y.fixed + px(28),
+                           object->z.fixed, 0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }

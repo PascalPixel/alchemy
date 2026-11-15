@@ -947,16 +947,6 @@ void WorldMap_ExplainGivingDjinn(void) {
   Field_RequestBattleFromEncounterTable(9, 5);
 }
 
-#define ARM_NORTH(id)                                                          \
-  do {                                                                         \
-    /* FAKEMATCH(barrier): the native copies the angle before it loads the     \
-     * actor id. */                                                            \
-    s32 a1 = north;                                                            \
-                                                                               \
-    asm volatile("" : "+l"(a1));                                               \
-    Actor_FaceDirection(id, a1, 0);                                            \
-  } while (0)
-
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.
 void WorldMap_FightBanditAndThieves(s32 entrance) {
   s32 south, north, facingSouth, southB, northB;
@@ -1036,27 +1026,28 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "You've got a grudge against Isaac, and you're going to take it out..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    ARM_NORTH(ACTOR_FELIX);
-    ARM_NORTH(ACTOR_KRADEN);
+    {
+      s32 facing = FACING_NORTH;
+
+      Actor_FaceDirection(ACTOR_FELIX, facing, 0);
+      Actor_FaceDirection(ACTOR_KRADEN, facing, 0);
+    }
     // "Oh yeah, you could call it a grudge... A serious grudge."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
     Actor_WalkBy(ACTOR_FELIX, 8, -8);
     Actor_WalkBy(ACTOR_KRADEN, -8, 8);
     Actor_WaitForMoveById(ACTOR_FELIX);
     Actor_WaitForMoveById(ACTOR_KRADEN);
-    ARM_NORTH(ACTOR_FELIX);
-    ARM_NORTH(ACTOR_KRADEN);
     {
-      /* FAKEMATCH(barrier): the native starts 0x102, loads the 30, shifts, and
-       * loads the actor last. */
-      s32 a1 = 129, a2;
+      s32 facing = FACING_NORTH;
 
-      asm volatile("" : "+l"(a1));
-      a2 = 30;
-      /* FAKEMATCH(barrier): the asm on the 30, the same call's second. */
-      asm volatile("" : "+l"(a2));
-      a1 <<= 1;
-      Actor_ShowEmote(ACTOR_FELIX, a1, a2);
+      Actor_FaceDirection(ACTOR_FELIX, facing, 0);
+      Actor_FaceDirection(ACTOR_KRADEN, facing, 0);
+    }
+    {
+      s32 emote = EMOTE_IN_FRONT | EMOTE_WINCE;
+
+      Actor_ShowEmote(ACTOR_FELIX, emote, 30);
     }
     Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
@@ -1293,19 +1284,18 @@ extern u32 gWorldMap_LohoWorkerLeaveScriptB[];
 extern u32 gWorldMap_LohoWorkerLeaveScriptC[];
 
 void WorldMap_DeliverLohoCannon(void) {
-  s32 angle;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = 2;
   Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = 2;
   Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = 2;
-  /* FAKEMATCH(temporary): the facing angle held in a local is built once and
-   * shared by the three placements. */
-  angle = FACING_NORTHEAST;
-  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, px(8913), px(5853), angle);
-  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, px(8929), px(5869), angle);
-  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, px(8929), px(5885), angle);
+  {
+    s32 facing = FACING_NORTHEAST;
+
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, px(8913), px(5853), facing);
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, px(8929), px(5869), facing);
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, px(8929), px(5885), facing);
+  }
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_LOHO_WORKER_A, 0.2);
   Actor_SetSpeed(ACTOR_LOHO_WORKER_B, 0.2);
@@ -2758,7 +2748,6 @@ u32 gWorldMap_GlowColorModes[] = {
 
 #undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
-#undef ARM_NORTH
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode

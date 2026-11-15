@@ -143,22 +143,12 @@ s32 Scene_Initialize(void) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
-          /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
-           * after the wait call, where sched2 would fill the call's stall with
-           * it. */
-          do {
-          } while (0);
-          frames = 0;
-          goto test_frame;
-        next_frame:
-          frames++;
-        test_frame:
-          if (frames > 119)
-            continue;
-          wait(1);
-          if (gInput.pressed != 0)
-            continue;
-          goto next_frame;
+          for (frames = 0; frames <= 119; frames++) {
+            wait(1);
+            if (gInput.pressed != 0)
+              break;
+          }
+          continue;
         }
       }
       break;
@@ -217,37 +207,35 @@ void Title_LoadSprites(s32 unused) {
 /// on.
 // ☀️'s Title_UpdateSpriteReveal.
 void Title_UpdateSpriteReveal(void) {
-  u32 *w;
-  struct TitleSprite *p;
-  s32 tile;
-  s32 i;
-  s32 n;
-  s32 y;
-  s32 x;
+  u32 *attributes;
+  struct TitleSprite *sprite;
+  s32 tileIndex;
+  s32 column;
+  s32 revealAge;
+  s32 screenX;
 
-  p = gTitleSprites;
-  w = gTitleSprites[0].attr;
-  tile = gVramCacheEntries[gTitleVramBlock].offset >> 5;
-  i = 0;
   // One row of 18 sprites of 8 by 16 pixels at y 136 and x 88 to 224: 0x8400
   // is the tall shape and semi-transparent, 0xf000 palette 15.
-  y = 136;
+  sprite = gTitleSprites;
+  attributes = gTitleSprites[0].attr;
+  tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
+  column = 0;
   do {
-    /* FAKEMATCH(temporary): the row's y copied to n. */
-    n = y;
-    x = 232 - (18 - i) * 8;
-    *w++ = 0;
-    *w++ = (x << 16) | n | 0x8400;
-    *w++ = 0xf000 | tile;
-    n = gTitleRevealFrame / 2 - i;
-    if (n < 0)
-      n = 0;
-    if (n <= 2 && (gFrameCount & 1))
-      n = 0;
-    if (n != 0)
-      Oam_AddSpriteAtDepthClamped(p++, 255);
-    tile += 2;
-  } while (++i <= 17);
+    s32 screenY = 136;
+
+    screenX = 232 - (18 - column) * 8;
+    *attributes++ = 0;
+    *attributes++ = (screenX << 16) | screenY | 0x8400;
+    *attributes++ = 0xf000 | tileIndex;
+    revealAge = gTitleRevealFrame / 2 - column;
+    if (revealAge < 0)
+      revealAge = 0;
+    if (revealAge <= 2 && (gFrameCount & 1))
+      revealAge = 0;
+    if (revealAge != 0)
+      Oam_AddSpriteAtDepthClamped(sprite++, 255);
+    tileIndex += 2;
+  } while (++column <= 17);
   gTitleRevealFrame++;
 }
 

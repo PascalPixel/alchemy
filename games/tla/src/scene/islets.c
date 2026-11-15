@@ -2136,12 +2136,12 @@ void Islets_InitializeTurtle(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Islets_StartPaletteCycle(void) {
-  struct PaletteSnapshotWork *queue;
-  struct PaletteSnapshot *entry;
+  struct PaletteCycleWork *queue;
+  struct PaletteCycle *entry;
   s16 i, j;
 
   queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                              sizeof(struct PaletteSnapshotWork));
+                              sizeof(struct PaletteCycleWork));
   entry = queue->entries;
   i = 0;
 outer:
@@ -2171,8 +2171,7 @@ inner:
   queue->count = 0;
 }
 
-#define gPaletteWork                                                           \
-  ((struct PaletteSnapshotWork *)Ram_HeapSlots->paletteCycles)
+#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 
 #include "../field/palqueue_add.c"
 #undef gPaletteWork
@@ -2189,21 +2188,12 @@ void Islets_StopWaterShimmer(void) {
   return;
 }
 
-/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
- * palette_snapshots.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2232: structure has no member named `count'. */
-struct PaletteCycleWork__s3410 {
-  struct PaletteCycle entries[4];
-  u16 count;
-};
-
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 #define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
 void Islets_ShimmerWater(void) {
   if (EVENT_S16(0x166) == 0 && EVENT_S16(0x15a) == 0 && EVENT_S16(0x15e) == 0) {
-    struct PaletteCycleWork__s3410 *work = gPaletteWork;
+    struct PaletteCycleWork *work = gPaletteWork;
     u8 i;
     u16 count = work->count & 3;
     u16 buf[16];

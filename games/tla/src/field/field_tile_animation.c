@@ -468,13 +468,13 @@ void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.
 UNUSED void PaletteCycle_Initialize(void) {
-  struct PaletteSnapshotWork *queue;
-  struct PaletteSnapshot *entry;
+  struct PaletteCycleWork *queue;
+  struct PaletteCycle *entry;
   u16 i;
   u16 j;
 
   queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                              sizeof(struct PaletteSnapshotWork));
+                              sizeof(struct PaletteCycleWork));
   entry = queue->entries;
   for (i = 0; i != 4; i++) {
     entry->source = 0;
@@ -490,8 +490,7 @@ UNUSED void PaletteCycle_Initialize(void) {
   queue->count = 0;
 }
 
-#define gPaletteWork                                                           \
-  ((struct PaletteSnapshotWork *)Ram_HeapSlots->paletteCycles)
+#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 
 #include "palqueue_add.c"
 
@@ -504,13 +503,13 @@ void PaletteQueue_Stop(void) {
 void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK); }
 
 void PaletteCycle_Step(void) {
-  struct PaletteSnapshotWork *work = gPaletteWork;
+  struct PaletteCycleWork *work = gPaletteWork;
   u8 i;
   u16 count = work->count & 3;
   u16 buf[16];
 
   for (i = 0; i < count; i++) {
-    struct PaletteSnapshot *cycle = &work->entries[i];
+    struct PaletteCycle *cycle = &work->entries[i];
     if (cycle->timer == 0) {
       u16 start = cycle->position;
       u16 len = cycle->count;

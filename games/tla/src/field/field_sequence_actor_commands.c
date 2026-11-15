@@ -278,15 +278,17 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
   }
 }
 
+// clang-format off
 /// As Actor_SetHorizontalPositionWithTerrain, and turns the actor to angle.
 /// Written in the old style: the angle arrives as a word and is taken as a
 /// halfword.
 void Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, angle)
-    s32 actorId;
-s32 x;
-s32 z;
-s16 angle;
+  s32 actorId;
+  s32 x;
+  s32 z;
+  s16 angle;
 {
+  // clang-format on
   struct Actor *actor = Actor_Lookup(actorId);
   s32 terrainHeight;
 

@@ -7,8 +7,8 @@
 /// rotated by one every delay + 1 frames (PaletteCycle_Step). Returns 0, or -1
 /// when all four cycles are taken.
 s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count) {
-  struct PaletteSnapshotWork *work;
-  struct PaletteSnapshot *entry;
+  struct PaletteCycleWork *work;
+  struct PaletteCycle *entry;
   u16 *source;
   u32 slot;
   u16 size;

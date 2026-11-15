@@ -57,7 +57,7 @@ struct MainRoutineWork {
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
-  u8 unk14c[0x94]; ///< not named by ⚓️ code
+  u8 unusedAfterPrizeWeights[0x94]; ///< no code names it
   s16 next;
   s16 entrance;
   u16 restartScene;    ///< where a defeat returns to without a defeat point
@@ -169,7 +169,11 @@ struct MainRoutineWork {
   s32 shipX;      ///< the ship's x on the world map, where it is moored
   s32 shipZ;      ///< the ship's z on the world map
   s32 shipFacing; ///< the ship's facing on the world map
-  u8 unk284[3];   ///< not named by ⚓️ code; [2] is set from gAnyFileCleared
+  u8 unusedAfterShipFacing[2]; ///< no code names it
+  /// gAnyFileCleared as the new game began
+  /// (MainRoutineWork_InitializeDefaults): 1 when a file on the cartridge had
+  /// been cleared. Nothing reads it back.
+  u8 clearedFileAtStart;
   /// The level chosen on starting again from a cleared game: 1 Easy, 2 Hard,
   /// 0 Normal.
   u8 difficulty;
@@ -177,8 +181,8 @@ struct MainRoutineWork {
   /// The Broken Seal's coins, kept from the data transfer (DataTransfer_Apply)
   /// until Isaac's party joins and Party_AddIsaacsParty adds them.
   s32 transferredCoins;
-  u8 unk290[0x2c]; ///< not named by ⚓️ code
-  u16 forgeItem;   ///< the item left at the forge (Forge_SetItem)
+  u8 unusedAfterTransferredCoins[0x2c]; ///< no code names it
+  u16 forgeItem; ///< the item left at the forge (Forge_SetItem)
   /// Teleport's destination: SCENE_WORLD_MAP once a place is chosen on the
   /// world picture (WorldPicture_Show), -1 after cancelling.
   s16 teleportScene;

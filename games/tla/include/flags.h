@@ -335,6 +335,21 @@
 /// ceremony at the Gabomba Statue; Madra, Alhafra and the Kibombo then speak of
 /// the raids and the Black Crystal.
 #define FLAG_GABOMBA_MESSAGE_CARRIED 0x8ff
+/// Set as Felix's party first meets Piers in Kibombo (Kibombo_MeetPiers);
+/// Jenna, Sheba and Kraden then stand at Gondowan Cliffs' hideout.
+#define FLAG_KIBOMBO_PIERS_MET 0x8f3
+/// Set as the Gabomba's charges drive the party back from the statue, cleared
+/// as Akafubu ends the ceremony; while it is set the music rules
+/// choose silence for their groups 31 and 32 (cue_rules.s).
+#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
+/// Set as the ceremony sends the party back to Kibombo; the Gabomba Statue's
+/// arrow room reads it once and clears it.
+#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
+/// Set while Kibombo is shown at its ceremony night
+/// (Kibombo_InitializeCeremony), cleared by day and once the message is
+/// carried: the houses' and the statue's exits lead to KibomboCeremony while it
+/// is set.
+#define FLAG_KIBOMBO_AT_CEREMONY 0x86b
 
 /// Set as the party sets out on the ship Hamma gave wings to at Atteka Inlet:
 /// from then on the ship flies, with no encounters at sea.
@@ -943,6 +958,10 @@
 /// Set as Jenna says "They're waiting for us. Let's go to Contigo." on the
 /// World Map, once the Jupiter beacon is lit.
 #define FLAG_JENNA_POINTED_TO_CONTIGO 0x9b3
+/// Set as the ship comes into Atteka Inlet's harbour, cleared on landing at
+/// Lemuria: while it is set the Lemurian Ship blocks retreat and its first exit
+/// leads to Atteka Inlet rather than Lemuria's dock.
+#define FLAG_SHIP_AT_ATTEKA_INLET 0x9b4
 /// Set as the Sea of Time opens (SeaOfTime_Open); the way to Lemuria and the
 /// fortune-teller's later reading of the Trident follow it.
 #define FLAG_SEA_OF_TIME_OPENED 0x940

@@ -74,11 +74,11 @@ struct AbilityDefinition {
   u8 targetMode; ///< whom it can be aimed at
   /// bits: 7 usable in battle | 6 usable in the field | 3..0 ability kind.
   u8 flags;
-  u8 element;       ///< enum Element
-  u8 effect;        ///< enum AbilityEffect
-  u16 icon;         ///< the icon the menus draw
-  u8 fieldPsynergy; ///< enum FieldPsynergy, or 0 for none
-  u8 unk07;         ///< 0 in every row
+  u8 element;                    ///< enum Element
+  u8 effect;                     ///< enum AbilityEffect
+  u16 icon;                      ///< the icon the menus draw
+  u8 fieldPsynergy;              ///< enum FieldPsynergy, or 0 for none
+  u8 reservedAfterFieldPsynergy; ///< 0 in every row
   u8 range;  ///< the aimed unit and range - 1 either side, or 255 for all
   u8 ppCost; ///< PP the ability costs
   u16 power; ///< what the ability's kind applies

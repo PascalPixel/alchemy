@@ -589,7 +589,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
-  gMainRoutineWork.unk284[2] = gAnyFileCleared;
+  gMainRoutineWork.clearedFileAtStart = gAnyFileCleared;
   gMainRoutineWork.prizeWeights[0] = 4;
   gMainRoutineWork.prizeWeights[1] = 4;
   gMainRoutineWork.prizeWeights[2] = 4;

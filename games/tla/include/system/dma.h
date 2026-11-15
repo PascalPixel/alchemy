@@ -32,13 +32,11 @@ struct DmaRegisters {
             REG_DMA3);                                                         \
   }
 
-/// Dma_Fill32 with the caller's word, a volatile local the function declares
-/// at its own scope: the word takes that place in the frame (in
-/// Map_InitializePerspectiveScene sp+28, where Dma_Fill32's inner word lands
-/// at sp+16), and a function that fills several blocks keeps one word for
-/// all of them and forms its address once.
-/// The fill word is local to the function. Repeated fills reuse that one word,
-/// assigning its value before each transfer.
+/// Dma_Fill32 with the caller's word, a local the function declares at its own
+/// scope: the word takes that place in the frame rather than Dma_Fill32's inner
+/// one, and a function that fills several blocks keeps one word for all of
+/// them, set before each transfer, and forms its address once
+/// (ActorSystem_Initialize's two fills).
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \

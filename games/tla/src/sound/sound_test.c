@@ -8,7 +8,6 @@
 #include "macros.h"
 #include "sounds.h"
 #include "types.h"
-#include "sound/sound.h"
 #include "sound/sound_driver.h"
 #include "system/input.h"
 #include "system/io_reg.h"
@@ -16,8 +15,9 @@
 #include "system/iwram_call.h"
 #include "system/system.h"
 
-/// An empty function in the sound code; nothing calls it.
-void UnusedDummyFunc2(void) {}
+/// Unused: the sound test's own empty function, as sound.c keeps
+/// UnusedDummyFunc; nothing calls it.
+void SoundTest_UnusedDummyFunc(void) {}
 
 void Sound_LoadReverbCode(s32 preset);
 

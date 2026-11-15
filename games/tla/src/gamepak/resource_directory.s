@@ -188,7 +188,7 @@ Resource_DirectoryTable:
 	resource GlowOrbSetSheet, BattleEffect_GlowOrbSetSheet
 	resource Data0B0, Resource_Data0B0
 	resource Data0B1, Resource_Data0B1
-	resource , Resource_Data0B2
+	resource , BattleEffect_UnusedSilhouette
 	resource Data0B3, Resource_Data0B3
 	resource Data0B4, Resource_Data0B4
 	resource Data0B5, Resource_Data0B5
@@ -493,18 +493,18 @@ Resource_DirectoryTable:
 	resource Leaves, FieldEffect_Leaves
 	resource DustPuffA, FieldEffect_DustPuffA
 	resource DustPuffB, FieldEffect_DustPuffB
-	resource , Resource_Data1E3
+	resource , FieldEffect_UnusedFillingBox
 	resource GoldStar, FieldEffect_GoldStar
 	resource , FieldEffect_GoldCrystal
 	resource FlamingArrow, FieldEffect_FlamingArrow
 	resource BowDraw, FieldEffect_BowDraw
 	resource FieldEffectExplosion, FieldEffect_Explosion
-	resource Data1E9, Resource_Data1E9
+	resource Data1E9, FieldEffect_ScoopEarth
 	resource SparkleFade, FieldEffect_SparkleFade
 	resource StarSparkleFade, FieldEffect_StarSparkleFade
 	resource WhitePuff, FieldEffect_WhitePuff
-	resource Data1ED, Resource_Data1ED
-	resource ShakeTiles, Resource_Data1EE
+	resource Data1ED, FieldEffect_RingWaves
+	resource ShakeTiles, FieldEffect_ShakeTiles
 	resource ColouredOrbs, FieldEffect_ColouredOrbs
 	resource FallingRock, FieldEffect_FallingRock
 	resource WaterSplash, FieldEffect_WaterSplash
@@ -553,7 +553,7 @@ Resource_DirectoryTable:
 	resource MummySprites, Monster_MummySprites
 	resource RaptorSprites, Monster_RaptorSprites
 	resource GreenKnightSprites, Monster_GreenKnightSprites
-	resource Data21F, Resource_Data21F
+	resource Data21F, Monster_WyvernSprites
 	resource HydraSprites, Monster_HydraSprites
 	resource LarvaSprites, Monster_LarvaSprites
 	resource JackalSprites, Monster_JackalSprites

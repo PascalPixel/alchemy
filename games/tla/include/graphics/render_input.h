@@ -76,7 +76,7 @@ struct WindowSprite {
 
   u16 x;                      ///< screen pixels
   u16 y;                      ///< screen pixels
-  u16 unk0a;                  ///< not named by ⚓️ code
+  u16 unused;                 ///< nothing reads it
   u16 animStep;               ///< step of its motion's animation
   s8 index;                   ///< VRAM cache slot, or a glyph's tile
   u8 sentinel;                ///< depth slot it is drawn at

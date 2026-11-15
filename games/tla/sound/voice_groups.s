@@ -42,7 +42,7 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_WaveFingerBass, 255, 0, 255, 165
-	voice 0x0b, 60, 0, 0, Sound_CgbWave8, 0, 2, 3, 3
+	voice 0x0b, 60, 0, 0, Sound_CgbWavePickBass, 0, 2, 3, 3
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
@@ -202,7 +202,7 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x09, 60, 0, 0, 2, 1, 6, 0, 6
-	voice 0x0b, 60, 0, 0, Sound_CgbWave7, 0, 4, 0, 2
+	voice 0x0b, 60, 0, 0, Sound_CgbWaveSquare, 0, 4, 0, 2
 	voice 0x0c, 60, 0, 0, 0, 2, 7, 10, 7
 	voice 0x0c, 60, 0, 0, 0, 0, 7, 4, 3
 	voice 0x0c, 60, 0, 0, 0, 5, 2, 6, 6

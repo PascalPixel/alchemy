@@ -63,9 +63,6 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
     inventory[usedSlots] = 0;
 }
 
-#include "battle/battle_unit.h"
-#include "game/owner_state.h"
-
 /// The rare item counters RareItemStock_Adjust keeps; an index from here on
 /// has no stock.
 enum { ITEM_COUNTER_COUNT = 300 };

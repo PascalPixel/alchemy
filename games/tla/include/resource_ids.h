@@ -646,7 +646,7 @@ extern char ResourceId_RobedGoddessTiles;
 extern char ResourceId_DefaultMapEntrances;
 extern char ResourceId_WaterSplash;
 extern char ResourceId_RingOrb;
-// The two 8x8 tiles of the shaken sprites (Resource_Data1EE): the row
+// The two 8x8 tiles of the shaken sprites (FieldEffect_ShakeTiles): the row
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
 /// The lava cave backdrop of the Valukar battle in the Yampi Desert Cave.

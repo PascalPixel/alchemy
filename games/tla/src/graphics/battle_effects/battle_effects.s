@@ -17,16 +17,16 @@ Resource_Data0B1:
 @ A 64x64 silhouette with no palette of its own. No code loads it: only the
 @ resource directory names it. The PNG carries the palette of resource 0xB3,
 @ the next resource and another silhouette, as a neighbour's, not as a use
-	.global Resource_Data0B2
-Resource_Data0B2:
-	.incbin "games/tla/src/graphics/battle_effects/sheet_0b2.bitmap.lz"
+	.global BattleEffect_UnusedSilhouette
+BattleEffect_UnusedSilhouette:
+	.incbin "games/tla/src/graphics/battle_effects/unused_silhouette.bitmap.lz"
 @ Eighteen cels of a fluttering silhouette in their own 64-colour palette, at
 @ the sizes and offsets of BattleEffect_RunUlysses's cel tables
 	.global Resource_Data0B3
 Resource_Data0B3:
 	.incbin "games/tla/src/graphics/battle_effects/fluttering_flake_sheet_00.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/fluttering_flake_sheet.parts.lz"
-	.byte 0x03, 0x71	@ PACKER: left in the buffer by Resource_Data0B2+0x196
+	.byte 0x03, 0x71	@ PACKER: left in the buffer by BattleEffect_UnusedSilhouette+0x196
 @ Uncolored art using BattleEffect_MarsDjinnSheet colors (same effect).
 	.global Resource_Data0B4
 Resource_Data0B4:

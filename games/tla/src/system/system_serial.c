@@ -3,6 +3,8 @@
 // Part of system.c.
 
 #include "system_internal.h"
+#include "sounds.h"
+#include "field/actor.h"
 
 enum {
   /// A packet: its number, missing mask, checksum and the 24-byte payload.
@@ -16,8 +18,6 @@ enum {
   /// about 20 a frame.
   SERIAL_TIMER_RELOAD = 0xc963
 };
-#include "sounds.h"
-#include "field/actor.h"
 
 /// Hands `command` to the serial work (heap slot HEAP_SLOT_SAVE) and starts it
 /// from the beginning; does nothing without the work.

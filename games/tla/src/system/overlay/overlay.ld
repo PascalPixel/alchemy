@@ -317,7 +317,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_cliff_caves.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves.o"(.data)
-        "*/games/tla/src/graphics/field/pal685.o"(.rodata)
+        "*/games/tla/src/graphics/field/explosion_palette.o"(.rodata)
         "*/games/tla/src/scene/champa_cliff_caves.o"(.data.late)
     }
 }
@@ -654,7 +654,7 @@ SECTIONS
         "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/loho.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/graphics/field/pal685.o"(.rodata)
+        "*/games/tla/src/graphics/field/explosion_palette.o"(.rodata)
         "*/games/tla/src/scene/loho.o"(.data)
     }
 }
@@ -666,7 +666,7 @@ SECTIONS
         "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/northern_reaches.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/graphics/field/pal685.o"(.rodata)
+        "*/games/tla/src/graphics/field/explosion_palette.o"(.rodata)
         "*/games/tla/src/scene/northern_reaches.o"(.data)
     }
 }

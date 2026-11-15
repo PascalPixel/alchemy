@@ -1,9 +1,14 @@
 #ifndef ALCHEMY_SYSTEM_H
 #define ALCHEMY_SYSTEM_H
 
-#include "types.h"
-#include "heap_release.h"
+/// @file
+/// The system's routines and globals: interrupts, BIOS sound bias, random
+/// numbers and sleep, the save slot, the debug text, and the system bank's
+/// other routines, as The Broken Seal's system.h.
+
 #include "edition.h"
+#include "types.h"
+#include "system/heap_release.h"
 
 void wait(s32 frames);
 void System_WaitForFrameInterrupt(void);
@@ -20,11 +25,6 @@ extern u32 gRandomSeed;
 
 /// 1 while the CPU is stopped for sleep, until L and R wake it.
 extern u16 gSleepActive;
-
-// SYSTEM
-
-#include "types.h"
-#include "edition.h"
 
 struct FlashType;
 struct FlashSetupInfo;

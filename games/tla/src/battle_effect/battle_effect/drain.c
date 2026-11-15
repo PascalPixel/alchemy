@@ -4,15 +4,8 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 // Break's ice shards (effect kind 43).
-
-#include "battle/battle_action.h"
-
-#include "field/particle.h"
-
-#include "system/heap_release.h"
 
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)

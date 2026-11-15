@@ -3,9 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

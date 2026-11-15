@@ -4,9 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of

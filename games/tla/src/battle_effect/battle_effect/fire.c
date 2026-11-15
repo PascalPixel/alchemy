@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames

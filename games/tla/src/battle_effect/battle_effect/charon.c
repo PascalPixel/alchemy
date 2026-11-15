@@ -3,9 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 /* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest

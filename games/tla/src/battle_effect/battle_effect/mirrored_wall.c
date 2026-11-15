@@ -3,13 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-#include "macros.h"
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap

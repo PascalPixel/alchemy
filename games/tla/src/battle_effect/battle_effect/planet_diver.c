@@ -4,12 +4,9 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
-#include "macros.h"
 
 /// The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)

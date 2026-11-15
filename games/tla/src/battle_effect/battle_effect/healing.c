@@ -4,15 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
-
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
 
 DEFINE_EFFECT_KIND(BattleEffect_RunPly, BattleEffect_RunHealingMotes, 0)
 

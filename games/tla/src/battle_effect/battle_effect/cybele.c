@@ -4,26 +4,13 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "battle/battle.h"
-#include "battle_display.h"
 #include "gamepak/far_call/battle.h"
-#include "graphics/graphics.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
-#include "graphics/render_placement.h"
 #include "module/window/screens.h"
 #include "resource_ids.h"
-#include "system/scene.h"
-#include "system/system.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -42,16 +29,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
 }
-
-#include "fixed_math.h"
-#include "system/task.h"
-#include "system/input.h"
-#include "system/iwram_call.h"
-#include "battle/motobj.h"
-#include "system/transform.h"
-#include "battle/battle_effect.h"
-#include "battle_effect_work.h"
-#include "graphics/resource.h"
 
 #define FORMATION_THORN_VINES 645 ///< eight objects
 
@@ -537,8 +514,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
-
-#include "bg_scroll.h"
 
 #define FORMATION_ICE_BLOCKS 643 ///< nine objects in a 3x3 block
 

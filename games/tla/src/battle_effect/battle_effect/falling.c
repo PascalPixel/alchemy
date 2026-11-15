@@ -4,9 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
 
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]

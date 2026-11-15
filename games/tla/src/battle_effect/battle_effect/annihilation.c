@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #undef HIT_FRAME
 

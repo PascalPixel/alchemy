@@ -5,27 +5,10 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/io_reg.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "battle/battle_effect.h"
-#include "battle_effect_work.h"
-#include "system/task.h"
-#include "actor.h"
-#include "battle_display.h"
-#include "fixed_math.h"
-#include "graphics/graphics.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/system/system.h"
-#include "battle/render_model.h"
-#include "graphics/resource.h"
 #include "resource_ids.h"
-#include "system/system.h"
 
 #define KIND123_FRAMES 111
 
@@ -336,19 +319,6 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-
-#include "battle/motobj.h"
-#include "field_event.h"
-
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
@@ -376,10 +346,6 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   BattleEffect_RunCanvasBurst(args, 3);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
-
-#include "system/io_write_queue.h"
-#include "bg_scroll.h"
-#include "battle_work.h"
 
 #define ball (&work->particles[63])
 

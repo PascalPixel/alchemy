@@ -4,11 +4,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"

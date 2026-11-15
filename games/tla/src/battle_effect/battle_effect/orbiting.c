@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "macros.h"
 
 #define STARS ((struct Particle *)Ram_MapCellBuffer)
 
@@ -202,8 +201,6 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 }
 
 #undef TRAILS
-
-#include "graphics/vram_tab.h"
 
 /// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \

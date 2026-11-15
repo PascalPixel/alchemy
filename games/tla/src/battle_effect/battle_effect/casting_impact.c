@@ -4,9 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Steps background colours 0 to 63 one level towards a palette resource.
 void BattleEffect_StepPaletteToResource(s32 resource) {

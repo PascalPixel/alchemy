@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 /// The battle wipes away to a violet sky where Judgment flies forward while

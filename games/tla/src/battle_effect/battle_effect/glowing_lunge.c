@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 
 #define LUNGE_FRAMES 60
 #define LUNGE_STREAK_FRAMES 15 ///< the streak follows the caster

@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Projects a unit onto the screen, raised by half its height, from the battle
 /// camera.

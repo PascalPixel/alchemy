@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.

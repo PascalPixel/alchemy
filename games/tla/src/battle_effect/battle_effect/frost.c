@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 

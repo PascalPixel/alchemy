@@ -5,7 +5,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
 /// effect's variant (enum EffectVariant) says.

@@ -4,9 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Sparks swirl around a point that travels from the user to the anchor and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.

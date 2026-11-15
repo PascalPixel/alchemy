@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-#include "battle/battle_effect_params.h"
-
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
 
@@ -170,8 +168,6 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-
-#include "field_sprite.h"
 
 /// Creates entryCount sprites of one resource in the effect work's object
 /// slots, each showing its own animation at the given priority (The Broken

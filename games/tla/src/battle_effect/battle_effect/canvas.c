@@ -4,15 +4,11 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
-#include "macros.h"
 
 /// The flashes, after the map cells.
 #define FLASHES ((struct Particle *)gData_02014000)
@@ -1718,3 +1714,5 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
     }
   }
 }
+
+#undef FLASHES

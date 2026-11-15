@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static

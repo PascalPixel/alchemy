@@ -3,9 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
@@ -40,8 +38,6 @@ void BattleEffect_ArmBg1HBlankDma(void) {
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }
-
-#include "field_event.h"
 
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)

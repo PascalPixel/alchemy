@@ -12,38 +12,43 @@
 ///   (VenusLighthouseEntrance_RuffianWaitsForBackup). A lost battle in the
 ///   prologue wakes them by the door, with Alex come back for them
 ///   (VenusLighthouseEntrance_WakeUp).
-
-#include "system/task.h"
+#include "fixed_math.h"
+#include "scene_ids.h"
+#include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
 #include "field/actor.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "gamepak/far_call/system.h"
-#include "window/item_icon.h"
-#include "field/event_commands.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "scene_ids.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "field/call.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "field/field_sprite.h"
-#include "field/effect_sprite.h"
-#include "text/msg_ids.h"
 #include "field/actor_script.h"
-#include "fixed_math.h"
+#include "field/call.h"
+#include "field/effect_sprite.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "gamepak/far_call/system.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "text/msg_ids.h"
+
+void Field_StartColorTransition(s32 frames, s32 color);
+void VenusLighthouseEntrance_BlastActorSkyward(s32 id);
+void Party_RestoreHpPp(s32 cureConditions);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
 /// from then on.
@@ -185,7 +190,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  leader->priorityFlags |= 0x20;
+  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 5);
   FieldActor_SetSpritePriority(ACTOR_WEST_BIRD, 1);
   Actor_SetAnimation(ACTOR_EAST_BIRD, 5);
@@ -249,7 +254,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Actor_StartScript();
-void FieldCamera_WaitForArrival(void);
 
 /// The two birds fly down and land below the door as the party first comes out
 /// of the lighthouse.
@@ -869,7 +873,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   {
     s32 a0 = ACTOR_JENNA;
 
-    /* FAKEMATCH(dead): an empty once-only block before the angle's load. */
+    /* FAKEMATCH(dead): an empty once-only block before the angle's load; as
+     * the plain call, 2 of 2142 instructions differ in tla-en. */
     do {
     } while (0);
     Actor_FaceDirection(a0, FACING_SOUTH, 0);
@@ -905,7 +910,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
-  /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
+  /* FAKEMATCH(dead): an empty once-only block ends CSE's block; as no
+   * block, 78 of 2142 instructions differ in tla-en. */
   do {
   } while (0);
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1108,8 +1114,9 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Actor_WalkBy(ACTOR_WAITING_RUFFIAN, 26, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
-  FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 99);
-  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 98);
+  FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
+                                       ENTRANCE_AFTER_BATTLE);
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, ENTRANCE_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();
@@ -1260,6 +1267,9 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Event_End();
 }
 
+/// The blast column's stage once it has burnt out.
+#define BLAST_FINISHED 999
+
 /// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
 /// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
 /// blast's effect actor.
@@ -1272,7 +1282,7 @@ struct BlastColumnWork {
   s32 x;
   s32 y;
   s32 z;
-  s16 stage;
+  s16 stage; ///< BLAST_FINISHED once the column has burnt out
   s16 timer;
   u16 tileTop;
   u16 tile;
@@ -1313,7 +1323,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     break;
   case 3:
     if (work->timer == 0) {
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       object->velocityY = px(24);
       work->follow = 0;
       Sound_Play(SE_HEAVY_IMPACT);
@@ -1348,15 +1358,14 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     s16 *timer;
 
     scale = effect->scaleX;
-    if (scale > 0)
-      scale -= 0x51e;
-    else
-      scale = 0;
-    effect->scaleX = scale;
-    effect->scaleY = scale;
-    /* FAKEMATCH(dead): an empty once-only block after the scale's stores. */
-    do {
-    } while (0);
+    if (scale > 0) {
+      scale -= Q16_ONE * 2 / 100;
+      effect->scaleX = scale;
+      effect->scaleY = scale;
+    } else {
+      effect->scaleX = 0;
+      effect->scaleY = 0;
+    }
     timer = &work->timer;
     if (work->timer == 10)
       Sound_Play(SE_FALL);
@@ -1376,7 +1385,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     if (*timer == 30) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       if (work->timer == 30) {
-        work->stage = 999;
+        work->stage = BLAST_FINISHED;
         work->timer = -1;
       }
     }
@@ -1388,7 +1397,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + (y << 16) + 0x80000;
+      state->y = work->y + px(y) + px(8);
       state->z = work->z;
       sprite = &work->sprites[i];
       state->frame++;
@@ -1400,7 +1409,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     if (i <= 15) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + (work->height << 16);
+      state->y = work->y + px(work->height);
       state->z = work->z;
       state->frame++;
       state->y +=
@@ -1469,10 +1478,10 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
   Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
-  if (work->stage != 999) {
+  if (work->stage != BLAST_FINISHED) {
   wait:
     System_Wait(1);
-    if (work->stage != 999)
+    if (work->stage != BLAST_FINISHED)
       goto wait;
   }
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
@@ -1481,7 +1490,8 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-void BattleEffect_StepVector3(struct SparkState *state, s32 a, s32 b);
+void BattleEffect_StepVector3(struct SparkState *state, s32 damping,
+                              s32 gravity);
 
 void VenusLighthouseEntrance_UpdateDust(void) {
   struct DustPuffWork *work = Ram_HeapSlots->menuWork;
@@ -1554,7 +1564,7 @@ void VenusLighthouseEntrance_StartDust(void) {
     s32 zero = 0;
     work->next = zero;
   }
-  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
+  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_VBLANK);
 }
 
 void VenusLighthouseEntrance_StopDust(void) {

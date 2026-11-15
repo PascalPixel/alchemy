@@ -2,32 +2,33 @@
 /// Yallam's houses and shops, with Sunshine the blacksmith, who forges the
 /// rare materials the party brings him into weapons and armor once rain has
 /// let him reach Taopo Swamp.
-
-#include "battle/battle.h"
-#include "window/message_argument.h"
-#include "field/field_work.h"
-#include "flags.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "scene_ids.h"
-#include "field/field_sprite.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "game/inventory.h"
-#include "version.h"
-#include "scene/scene.h"
-#include "text/msg_ids.h"
-#include "field/actor_script.h"
 #include "fixed_math.h"
+#include "flags.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "version.h"
+#include "battle/battle.h"
+#include "field/actor_script.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sprite.h"
+#include "field/field_work.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/frame.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "window/message_argument.h"
+#include "text/msg_ids.h"
+
+void MessageArgument_Push(u32 value, u32 kind);
 
 /// The inn's actors (SceneId_YallamInteriorsInn), numbering the rows of
 /// gYallamInteriorsInnPlacements; Sunshine's house is beside it.
@@ -74,7 +75,6 @@ void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -649,8 +649,6 @@ struct ActorPlacement gYallamInteriorsInnPlacements[] = {
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
-
-#include "text/msg_ids.h"
 
 // clang-format off
 struct ActorPlacement gYallamInteriorsShopsPlacements[] = {

@@ -1,38 +1,39 @@
 /// @file
 /// Treasure Isle's first object: the shared actor helpers it links first.
-
-#include "flags.h"
 #include "djinn_ids.h"
+#include "edition.h"
+#include "fixed_math.h"
+#include "flags.h"
+#include "scene_ids.h"
 #include "types.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "shared/tables.h"
 #include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/call.h"
+#include "field/cell_target.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_event.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
 #include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
 #include "scene/scene.h"
-#include "scene_ids.h"
-#include "field/event_commands.h"
-#include "field/cell_target.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
+#include "sound/sound.h"
 #include "system/field_effect.h"
-#include "field/field_event.h"
-#include "field/call.h"
-#include "system/iwram_call.h"
 #include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 #include "system/task.h"
-#include "edition.h"
+#include "text/msg_ids.h"
+
+#include "shared/tables.h"
 #include "../field/actor_set_sprite_priority.c"
-#include "field/actor_script.h"
-#include "fixed_math.h"
 
 #include "../field/actor_prepare.c"
 
@@ -70,7 +71,6 @@ extern u32 gTreasureIsle_RockDust[];
 
 /// Import stubs: Event_Start and Event_End, and the pending
 /// actions' resolution.
-void Event_Start(void);
 
 extern struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[];
 extern struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[];
@@ -113,13 +113,14 @@ extern u32 gTreasureIsle_LiftRockScale[];
 
 void TreasureIsle_PressRoom2Button(void);
 
-void FieldCamera_WaitForArrival(void);
-
-#include "text/msg_ids.h"
-
-extern u16 gTreasureIsle_SavedBgColors[];
-extern volatile u16 gTreasureIsle_SavedObjColors[];
-extern u16 gTreasureIsle_ObjColors[];
+/// One palette's sixteen colours.
+struct Palette {
+  u16 colors[PALETTE_COLORS];
+};
+extern struct Palette gTreasureIsle_SavedBgColors;
+extern struct Palette gTreasureIsle_BgColors;
+extern struct Palette gTreasureIsle_SavedObjColors;
+extern struct Palette gTreasureIsle_ObjColors;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -179,24 +180,33 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   FieldCamera_SetSpeed(6);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  FieldCamera_MoveToFixed((cell->x << 20) + 0x80000, -1,
-                          (cell->z << 20) + 0x80000, 1);
+  FieldCamera_MoveToFixed(FIELD_CELL_CENTER(cell->x), -1,
+                          FIELD_CELL_CENTER(cell->z), 1);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SE_POUND);
-  options.startScaleX = 0x13333;
-  options.startScaleY = 0x18000;
+  options.startScaleX = Q16_ONE * 12 / 10;
+  options.startScaleY = Q16_ONE * 3 / 2;
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn((cell->x << 20) + px(8), 0, (cell->z << 20) + px(20), 0, 0,
-                    0, 0x3a0000, &options);
-  options.startScaleX = 0x9999;
-  FieldEffect_Spawn((cell->x << 20) - px(2), 0, (cell->z << 20) + px(8), 0, 0,
-                    0, 0x3a0000, &options);
-  FieldEffect_Spawn((cell->x << 20) + px(18), 0, (cell->z << 20) + px(8), 0, 0,
-                    0, 0x3a0000, &options);
+  FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0, (cell->z << 20) + px(20), 0,
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
+  options.startScaleX = Q16_ONE * 6 / 10;
+  FieldEffect_Spawn((cell->x << 20) - px(2), 0, FIELD_CELL_CENTER(cell->z), 0,
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
+  FieldEffect_Spawn((cell->x << 20) + px(18), 0, FIELD_CELL_CENTER(cell->z), 0,
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
@@ -327,36 +337,6 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-/// Talking to Gale, the Jupiter Djinni, starts its battle.
-void TreasureIsle_FightGale(void) { Field_RequestDjinnBattle(0x17, 0x4d); }
-
-/// The Venus Djinni waiting here joins the party without a fight.
-void TreasureIsle_VenusDjinniJoins(void) { Djinn_JoinParty(9, 0, 0x13); }
-
-/// Grind on a spiky rock: it crumbles over three steps and its cell opens
-/// again (its flag cleared), the frame passed by the Psynergy.
-void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
-  struct TreasureIsleCell *cells;
-
-  if (id < 50) {
-    cells = gTreasureIsle_Room2SpikyRocks;
-    id -= 40;
-  } else {
-    cells = gTreasureIsle_Room3SpikyRocks;
-    id -= 50;
-  }
-  if (frame == 15) {
-    MapGrid_CopyCellsLayered(3, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-  } else if (frame == 30) {
-    MapGrid_CopyCellsLayered(6, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-  } else if (frame == 45) {
-    MapGrid_CopyCellsLayered(9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, cells[id].x, cells[id].z);
-    Event_ClearFlag(cells[id].flag);
-  }
-}
-
-/// Lift raises one of Room4's rocks out of the way for good (flag n2).
 /// The first room's three pillars, set where Move pushed them.
 enum {
   ACTOR_PUSHED_PILLAR_A = ACTOR_FIRST_PLACED,
@@ -383,9 +363,45 @@ enum TreasureIsleGaleRoomActorId {
   ACTOR_GALE
 };
 
-/// The guardian of water, in the last room.
-enum { ACTOR_WATER_GUARDIAN = ACTOR_FIRST_PLACED };
+/// The guardian of water, in the last room (gTreasureIsle_Room5Placements),
+/// and the Venus Djinni Earth19 waiting there.
+enum { ACTOR_WATER_GUARDIAN = ACTOR_FIRST_PLACED, ACTOR_EARTH19 };
 
+/// Talking to Gale, the Jupiter Djinni, starts its battle.
+void TreasureIsle_FightGale(void) {
+  Field_RequestDjinnBattle(ACTOR_GALE, DJINNI_GALE);
+}
+
+/// The Venus Djinni waiting here joins the party without a fight.
+void TreasureIsle_VenusDjinniJoins(void) {
+  Djinn_JoinParty(ACTOR_EARTH19, DJINNI_EARTH19 / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_EARTH19));
+}
+
+/// Grind on a spiky rock: it crumbles over three steps and its cell opens
+/// again (its flag cleared), the frame passed by the Psynergy.
+void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
+  struct TreasureIsleCell *cells;
+
+  if (id < 50) {
+    cells = gTreasureIsle_Room2SpikyRocks;
+    id -= 40;
+  } else {
+    cells = gTreasureIsle_Room3SpikyRocks;
+    id -= 50;
+  }
+  if (frame == 15) {
+    MapGrid_CopyCellsLayered(3, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+  } else if (frame == 30) {
+    MapGrid_CopyCellsLayered(6, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+  } else if (frame == 45) {
+    MapGrid_CopyCellsLayered(9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, cells[id].x, cells[id].z);
+    Event_ClearFlag(cells[id].flag);
+  }
+}
+
+/// Lift raises one of Room4's rocks out of the way for good (flag n2).
 #define DEFINE_LIFT_ROCK(name, n1, n2)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -423,12 +439,12 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldActor_StartRepeatedMotion(ACTOR_WATER_GUARDIAN, 2);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(Q16_ONE, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgIAmTheGuardian, 0, 6);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(Q16_ONE, 0);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   t12 = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -461,7 +477,6 @@ const u8 *Scene_GetTriggers(void) {
 /// The water colours' cycle frame, -1 until the first frame saves the
 /// palettes.
 extern s32 gTreasureIsle_ColorCycleFrame[];
-extern volatile u16 gTreasureIsle_BgColors[];
 
 /// A task: cycles four colours of a background and an object palette every
 /// eight frames, saving both palettes the first time.
@@ -477,28 +492,29 @@ void TreasureIsle_CycleWaterColors(void) {
   if (busy != 0)
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
-    Iwram_CopyWords(gTreasureIsle_SavedBgColors, (void *)0x05000060, 32);
-    Iwram_CopyWordsEntry((void *)gTreasureIsle_BgColors,
-                         gTreasureIsle_SavedBgColors, 32);
-    Iwram_CopyWordsEntry((void *)gTreasureIsle_SavedObjColors,
-                         (void *)0x05000140, 32);
-    Iwram_CopyWordsEntry(gTreasureIsle_ObjColors,
-                         (void *)gTreasureIsle_SavedObjColors, 32);
+    Iwram_CopyWords(gTreasureIsle_SavedBgColors.colors,
+                    (void *)&BG_PLTT_COLOR(3, 0), 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_BgColors.colors,
+                         gTreasureIsle_SavedBgColors.colors, 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_SavedObjColors.colors,
+                         (void *)&BG_PLTT_COLOR(10, 0), 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_ObjColors.colors,
+                         gTreasureIsle_SavedObjColors.colors, 32);
     gTreasureIsle_ColorCycleFrame[0] = 0;
   }
-  /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile.
-   */
   phase = gTreasureIsle_ColorCycleFrame[0] / 8 % 4;
   for (i = 0; i <= 3; i++) {
-    gTreasureIsle_BgColors[(phase + i) % 4 + 2] =
-        gTreasureIsle_SavedBgColors[i + 2];
-    gTreasureIsle_ObjColors[(phase + i) % 4 + 2] =
-        gTreasureIsle_SavedObjColors[i + 2];
+    gTreasureIsle_BgColors.colors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedBgColors.colors[i + 2];
+    gTreasureIsle_ObjColors.colors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedObjColors.colors[i + 2];
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gTreasureIsle_BgColors,
-                      0x84000008);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(10, 0), (u32)gTreasureIsle_ObjColors,
-                      0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0),
+                      (u32)gTreasureIsle_BgColors.colors,
+                      DMA_COPY_WORDS(PALETTE_COLORS / 2));
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(10, 0),
+                      (u32)gTreasureIsle_ObjColors.colors,
+                      DMA_COPY_WORDS(PALETTE_COLORS / 2));
   gTreasureIsle_ColorCycleFrame[0]++;
 }
 #undef FIELD_AT
@@ -582,8 +598,6 @@ s32 Scene_PrepareMap(void) { return 0; }
        ->v)
 
 void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
-
-#include "text/msg_ids.h"
 
 // The Rusty Sword's name; the Japanese edition holds message 0 in its place.
 #if LANGUAGE == LANGUAGE_JAPANESE

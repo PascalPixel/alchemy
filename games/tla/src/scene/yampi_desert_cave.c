@@ -4,37 +4,40 @@
 /// sinks stakes with Pound, bursts pillars, slips under walls with Sand,
 /// Scoops up the Venus Djinni Crystal racing through the sand, and meets
 /// Valukar, the guardian of fire.
-
+#include "djinn_ids.h"
+#include "fixed_math.h"
 #include "flags.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
-#include "field/actor.h"
 #include "macros.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "field/event_commands.h"
-#include "scene/scene.h"
 #include "scene_ids.h"
-#include "field/field.h"
-#include "system/main_routine_work.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/task.h"
-#include "field/field_event.h"
+#include "types.h"
+#include "version.h"
 #include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_event.h"
+#include "field/field_sequence_event.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
 #include "menu/menu.h"
+#include "scene/scene.h"
 #include "sound/sound.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
 #include "system/system.h"
-#include "field/scene_tables.h"
-#include "version.h"
+#include "system/task.h"
+#include "text/msg_ids.h"
+
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+
 #include "shared/tables.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
-#include "djinn_ids.h"
 
 /// Set once Burst has broken the pillar in the Water of Life chest's room.
 #define FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST FLAG_AREA_TEMP_00
@@ -132,8 +135,6 @@ void YampiDesertCave_EndSand(void);
 
 extern u32 gYampiDesertCave_Settle[];
 
-void Teleport_PlayWhirl(void);
-
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 extern u16 *gYampiDesertCave_MarkColors;
 extern u16 *gYampiDesertCave_MarkDimColors;
@@ -175,9 +176,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   // cells below.
   i = gYampiDesertCave_LogFootprints[kind * 4 + 1];
   h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >> 4;
-  x = (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
-      20;
-  z = (object->z.fixed + (i << 16)) >> 20;
+  x = (object->x.fixed + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
+  z = FIELD_CELL(object->z.fixed + px(i));
   i = map->layers[1].offsetX >> 20;
   az = map->layers[1].offsetY >> 20;
   bx = map->layers[2].offsetX;
@@ -229,8 +229,8 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     h = (ABS(gYampiDesertCave_LogFootprints[kind * 4 + 1]) +
          ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
         4;
-    dx = gPushLeaderSteps[direction] & 0xffff0000;
-    dz = gPushLeaderSteps[direction] << 16;
+    dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
+    dz = px(gPushLeaderSteps[direction]);
     position[5] = 0;
     count = 0;
     state = &object->layer;
@@ -241,20 +241,19 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     // The row loop is built from labels: as a loop it grows by 14 bytes.
   next:
     offset = kind;
-    probe[2] =
-        position[2] + (gYampiDesertCave_LogFootprints[offset * 4 + 1] << 16);
+    probe[2] = position[2] + px(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
     offset *= 4;
     j = 0;
     if (j >= h)
       goto advance;
   row:
-    probe[0] = position[0] + (gYampiDesertCave_LogFootprints[offset] << 16);
+    probe[0] = position[0] + px(gYampiDesertCave_LogFootprints[offset]);
     for (i = 0; i < w; i++) {
       if (FieldActor_CheckMovementCollision(object, probe) == 2)
         goto hit;
-      probe[0] += 0x100000;
+      probe[0] += px(16);
     }
-    probe[2] += 0x100000;
+    probe[2] += px(16);
     j++;
     if (j < h)
       goto row;
@@ -275,8 +274,6 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     return 0;
   }
 }
-
-#include "text/msg_ids.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
@@ -389,11 +386,10 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
   cell[0] =
-      (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
+      (object->x.fixed + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
+  cell[2] =
+      (object->z.fixed + px(gYampiDesertCave_LogFootprints[kind * 4 + 1])) >>
       20;
-  cell[2] = (object->z.fixed +
-             (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >>
-            20;
   w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
       4;
@@ -422,7 +418,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  offset = gPushLeaderSteps[i] << 16;
+  offset = px(gPushLeaderSteps[i]);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, offset >> 31,
                              offset >> 17);
   if (rect.word[5] != 0)
@@ -439,10 +435,9 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
                                   rect.word[2]);
   Actor_SelectAnimation(object, 1);
   rect.word[0] =
-      (rect.word[0] + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >> 20;
+      (rect.word[0] + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
   rect.word[2] =
-      (rect.word[2] + (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >>
-      20;
+      (rect.word[2] + px(gYampiDesertCave_LogFootprints[kind * 4 + 1])) >> 20;
   ax = map->layers[1].offsetX >> 20;
   az = map->layers[1].offsetY >> 20;
   bx = map->layers[2].offsetX >> 20;
@@ -453,9 +448,8 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
                              rect.word[0] + 64, rect.word[2] + 64);
   Map_FillCellRectByte2(0, rect.word[0], rect.word[2], w, h, 255);
   Map_FillCellRectByte2(2, rect.word[0], rect.word[2], w, h, 255);
-  cell[0] = (from[0] + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >> 20;
-  cell[2] =
-      (from[2] + (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >> 20;
+  cell[0] = (from[0] + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
+  cell[2] = (from[2] + px(gYampiDesertCave_LogFootprints[kind * 4 + 1])) >> 20;
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,
@@ -521,7 +515,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(Q16_ONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     YampiDesertCave_ArriveByTeleport();
 }
@@ -600,7 +594,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
 
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(Q16_ONE, 2);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -608,7 +602,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   Teleport_PlayWhirl();
   wait(40);
   YampiDesertCave_StopMarkGlow();
-  PaletteFade_SetTarget(0x10000, 1);
+  PaletteFade_SetTarget(Q16_ONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -650,19 +644,15 @@ loop:
 // Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
 
-s32 Actor_GetCellIndex(struct Actor *object);
-
 #include "shared/actor_set_cell_open.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
 void YampiDesertCave_FightCrystal(void) {
   Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP);
-  Event_RequestDjinnBattle(17, 17);
+  Event_RequestDjinnBattle(ACTOR_CRYSTAL, DJINNI_CRYSTAL);
   return;
 }
-
-void Event_End();
 
 /// Talking to the ripple racing through the sand only puzzles the leader.
 void YampiDesertCave_WonderAtRipple(void) {
@@ -923,12 +913,12 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_VALUKAR, 2);
   Event_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(Q16_ONE, 0);
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(Q16_ONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);

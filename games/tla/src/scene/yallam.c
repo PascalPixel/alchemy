@@ -3,32 +3,32 @@
 /// circle round the village to the words of the songs of the moon, the stars
 /// and the sun, the Scoop spots that hide its treasure, and the pillar Force
 /// pushes down to reach the Masamune.
-
-#include "types.h"
+#include "fixed_math.h"
 #include "flags.h"
-#include "text/msg_ids.h"
-#include "field/actor.h"
-#include "field/field.h"
-#include "scene/scene.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
+#include "macros.h"
+#include "sprite_ids.h"
+#include "types.h"
 #include "version.h"
 #include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence_event.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
 #include "menu/menu.h"
+#include "scene/scene.h"
 #include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
 #include "system/system.h"
-#include "field/scene_tables.h"
-#include "field/field_sequence_event.h"
 #include "system/task.h"
-#include "macros.h"
+#include "text/msg_ids.h"
+
 #include "shared/tables.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
-#include "sprite_ids.h"
 
 /// Yallam's actors, numbering the rows of gYallam_Placements.
 enum YallamActorId {
@@ -120,7 +120,6 @@ s32 Yallam_HideSprite(struct Actor *object) {
 
 void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
-void Event_End(void);
 
 struct YallamSaved {
   s32 action;
@@ -139,9 +138,6 @@ extern struct YallamSaved gYallam_SavedSongGame[5];
 extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
-s32 ArcTan2(s32 y, s32 x);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
                       s32 force);
 void Yallam_UpdateSongGame(void);
@@ -190,36 +186,28 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
+  struct Actor *target;
+  u16 *flags;
   s32 force = 0;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x.fixed,
                                              &object->x.fixed) <= 11) {
-    u8 *state = &object->paused;
-    /* FAKEMATCH(temporary): the call's argument copied before the barrier
-     * below. */
-    struct Actor *arg = object;
-
-    /* FAKEMATCH(barrier): the state's address and the argument are both formed
-     * before the state is stored. */
-    asm("" : : "l"(arg), "l"(state));
-    *state = force;
-    Actor_SelectAnimation(arg, 2);
-  } else {
-    struct Actor *target;
-    u16 *flags = (u16 *)&object->timer;
-
-    if (*flags & 1)
-      target = Actor_Get(ACTOR_GAME_CHILD);
-    else
-      target = Actor_Get(ACTOR_CIRCLES_CHILD);
-    if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
-      leader = Actor_Get(gMainRoutineWork.leaderActorId);
-      if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
-        force = 1;
-      Yallam_FaceIfNear(object, leader, 24, force);
-    }
+    object->paused = 0;
+    Actor_SelectAnimation(object, 2);
+    return 0;
+  }
+  flags = (u16 *)&object->timer;
+  if (*flags & 1)
+    target = Actor_Get(ACTOR_GAME_CHILD);
+  else
+    target = Actor_Get(ACTOR_CIRCLES_CHILD);
+  if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
+      force = 1;
+    Yallam_FaceIfNear(object, leader, 24, force);
   }
   return 0;
 }
@@ -252,12 +240,17 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// The children's song game: entered by entrance 15, left by exit 15 back to
+/// where the party joined it.
+enum { YALLAM_SONG_GAME = 15, YALLAM_EXIT_SONG_GAME = 15 };
+
 extern struct ActorPlacement gYallam_Placements[];
 extern struct ActorPlacement gYallam_CavePlacements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM &&
+      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGamePlacements;
   if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CavePlacements;
@@ -369,7 +362,8 @@ extern struct Trigger gYallam_CaveTriggers[];
 extern struct Trigger gYallam_SongGameTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM &&
+      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGameTriggers;
   if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CaveTriggers;
@@ -1562,7 +1556,7 @@ waitForLastVerse:
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_Wait(40);
-    FieldEvent_SetExitRequest(15);
+    FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
   }
 }
 
@@ -1649,7 +1643,7 @@ declined:
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
-  FieldEvent_SetExitRequest(15);
+  FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 done:
 }
 
@@ -1783,7 +1777,7 @@ waitFourthVerse:
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
-  FieldEvent_SetExitRequest(15);
+  FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
 
 /// Once Force has pushed it (FLAG_AREA_TEMP_00), the log lies where it fell.
@@ -1795,7 +1789,7 @@ void Yallam_PlaceFallenPillar(void) {
 
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM) {
-    if (gMainRoutineWork.entrance == 15)
+    if (gMainRoutineWork.entrance == YALLAM_SONG_GAME)
       Yallam_StartWatchers();
     else
       Yallam_PlaceFallenPillar();
@@ -1870,7 +1864,6 @@ void Yallam_StartWatchers(void) {
 #undef BYTE_AT
 #undef EVENT_WORK
 #undef FIELD_AT
-#include "text/msg_ids.h"
 
 void Yallam_EnterDoor(void);
 void Yallam_DigThirdHole(void);
@@ -1994,9 +1987,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT(9, YallamCave, 6),
     SCENE_EXIT(10, WorldMap, 34),
     SCENE_EXIT(11, WorldMap, 33),
-    SCENE_EXIT(12, Yallam, 15),
+    SCENE_EXIT(12, Yallam, YALLAM_SONG_GAME),
     SCENE_EXIT(13, YallamCave, 7),
-    SCENE_EXIT(15, Yallam, 12),
+    SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, 12),
     SCENE_EXITS(YallamCave),
     SCENE_EXIT(6, Yallam, 9),
     SCENE_EXIT(7, Yallam, 13),
@@ -2038,7 +2031,6 @@ struct ActorPlacement gYallam_Placements[] = {
                     TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
-
 
 struct ActorPlacement gYallam_CavePlacements[] = {
     {SCENE_TABLE_END},

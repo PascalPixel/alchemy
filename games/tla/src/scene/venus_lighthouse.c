@@ -2,42 +2,44 @@
 /// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
 /// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
 /// leave, meet Alex and set off for Idejima (SceneId_VenusLighthouse).
-
-#include "../field/actor_set_sprite_priority.c"
-#include "battle/battle.h"
+#include "fixed_math.h"
 #include "flags.h"
-#include "game/character_ids.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
+#include "tla_edition.h"
+#include "types.h"
+#include "version.h"
+#include "battle/battle.h"
 #include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_coordinate.h"
+#include "field/field_event.h"
+#include "field/field_psynergy_work.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/flag_call.h"
+#include "field/scene_tables.h"
+#include "game/character_ids.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
 #include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/field_event.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
-#include "field/field_sprite.h"
-#include "system/field_effect.h"
-#include "field/field_coordinate.h"
 #include "scene/scene.h"
-#include "system/scene.h"
-#include "field/scene_tables.h"
+#include "sound/sound.h"
+#include "system/field_effect.h"
 #include "system/frame.h"
-#include "shared/tables.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
 #include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-#include "field/field_psynergy_work.h"
-#include "field/event.h"
-#include "field/flag_call.h"
-#include "field/event_commands.h"
-#include "tla_edition.h"
-#include "scene_ids.h"
-#include "version.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
+#include "system/scene.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+#include "../field/actor_set_sprite_priority.c"
+#include "shared/tables.h"
 
 /// Set once the statue Felix moved has sunk into the floor; the statue by it no
 /// longer throws the leader back.
@@ -140,7 +142,6 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -155,7 +156,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -238,7 +240,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   directionIndex = leader->facing >> 12;
   step = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = leader->x.fixed + (step & 0xffff0000);
+  targetPosition.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = leader->y.fixed;
   step <<= 16;
   targetPosition.z = leader->z.fixed + step;
@@ -247,7 +249,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
     return;
 
   step = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = pillar->x.fixed + (step & 0xffff0000);
+  targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
   step <<= 16;
   targetPosition.z = pillar->z.fixed + step;
@@ -264,7 +266,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
 
   pillar->layer = 2;
   step = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = pillar->x.fixed + (step & 0xffff0000);
+  targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
   step <<= 16;
   targetPosition.z = pillar->z.fixed + step;
@@ -375,6 +377,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
+void Exit_PrepareActorAnimation(s32 id, s32 side);
+void Actor_VanishInSparks(s32 objectId);
 void VenusLighthouse_FelixLeaves(void);
 
 void VenusLighthouse_RepelLeader(void);
@@ -387,9 +391,6 @@ extern s32 gVenusGreyStatueScript[];
 extern s32 gVenusMiniatureLighthouseScript[];
 
 extern s32 gVenusLeaderDazedScript[];
-
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
 
 /// Sets bits in a byte of flags.
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
@@ -455,8 +456,6 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     Event_End();
   }
 }
-
-#include "text/msg_ids.h"
 
 /// The statue Felix moved sinks into the floor in column 42, and
 /// the way past it opens.

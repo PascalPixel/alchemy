@@ -3,10 +3,53 @@
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
-#include "../field/actor_set_sprite_priority.c"
-#include "resource_ids.h"
-#include "field/actor_script.h"
+#include "djinn_ids.h"
+#include "edition.h"
 #include "fixed_math.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_event.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/item.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/affine.h"
+#include "system/dma.h"
+#include "system/field_effect.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+#include "../field/actor_set_sprite_priority.c"
 
 /// The trial grounds' actors (SceneId_ShamanVillageTrialGrounds), numbering the
 /// rows of gShamanVillageTrialGroundsActorPlacements; Moapa, his guards and
@@ -59,11 +102,12 @@ enum {
 /// The sanctum's priest (SceneId_ShamanVillageSanctum).
 #define ACTOR_PRIEST ACTOR_FIRST_PLACED
 /// Aroma's room (SceneId_ShamanVillageAroma): the pillar Move drops, the
-/// fortune teller, and Aroma, the Jupiter Djinni.
+/// fortune teller and her flame, and Aroma, the Jupiter Djinni.
 #define ACTOR_AROMA_ROOM_PILLAR (ACTOR_FIRST_PLACED + 6)
+/// The small flame before the fortune teller, which flares as she hops.
+#define ACTOR_FORTUNE_TELLERS_FLAME (ACTOR_FIRST_PLACED + 8)
 #define ACTOR_FORTUNE_TELLER (ACTOR_FIRST_PLACED + 9)
 #define ACTOR_AROMA (ACTOR_FIRST_PLACED + 10)
-#include "djinn_ids.h"
 
 /// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
 /// and blown the sand away.
@@ -89,41 +133,6 @@ enum {
 
 #include "../field/field_effect_move.c"
 
-#include "flags.h"
-#include "item_ids.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "window/window.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field/field_event.h"
-#include "system/frame.h"
-#include "field/actor.h"
-#include "field/field_sprite.h"
-#include "game/item.h"
-#include "window/item_icon.h"
-#include "system/task.h"
-#include "system/affine.h"
-#include "graphics/vram_tab.h"
-#include "system/io_write_queue.h"
-#include "edition.h"
-#include "system/heap_release.h"
-#include "system/input.h"
-
 struct ItemDefinition;
 
 extern s16 gShamanVillage_WaveLines[];
@@ -136,8 +145,6 @@ extern u32 gShamanVillage_ShebaStandsByRodScript[];
 extern u32 gShamanVillage_MoapaLeavesHouseScript[];
 extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
 extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
-
-struct ItemDefinition *Item_GetDirect(s32 item);
 
 extern u32 gShamanVillage_LetteringSprites[];
 
@@ -159,6 +166,24 @@ extern s16 gShamanVillage_LetteringBlendFrames;
 extern s16 gShamanVillage_LetteringBlendFrame;
 extern s16 gShamanVillage_LetteringMode;
 extern s16 gShamanVillage_LetteringTileOffset;
+
+/// The lettering scripts' commands (ShamanVillage_RunLettering): each is
+/// followed by its values; START's are the x and the speed, SPEED's, SCALE's
+/// and BLEND's the new value and the frames to reach it, WAIT's the frames.
+/// The lettering's sprites: affine, drawn at twice their size so turning never
+/// clips them, and blended; palette 15, priority 1.
+#define LETTERING_OBJ_MODE                                                     \
+  (OBJ_AFFINE | OBJ_DOUBLE_SIZE | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT))
+#define LETTERING_ATTRIBUTES ((15 << 12) | OBJ_PRIORITY(1))
+
+enum LetteringCommand {
+  LETTERING_END = -1,
+  LETTERING_SCALE = 0x1000,
+  LETTERING_BLEND = 0x2000,
+  LETTERING_SPEED = 0x3000,
+  LETTERING_START = 0x4000,
+  LETTERING_WAIT = 0x7fff
+};
 
 extern s16 gShamanVillage_LetteringSlideScript[];
 extern s16 gShamanVillage_LetteringCountScript[];
@@ -219,8 +244,6 @@ void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -232,7 +255,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -276,8 +300,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -295,42 +319,16 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #ifndef TLA_SHAMAN_VILLAGE_H
 #define TLA_SHAMAN_VILLAGE_H
 
-#include "types.h"
-#include "system/system.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "scene_ids.h"
-#include "text/msg_ids.h"
-#include "field/field_sprite.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "field/scene_tables.h"
-#include "field/field_sequence_event.h"
-
-void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Import_ActorSetMode(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-void Actor_SetBlendMode(struct Actor *object, u32 value);
-void FieldPsynergy_RunHandler(s32 type);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void FieldCamera_WaitForArrival(void);
 
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-void BattleEffect_StartArcEffect(void);
-void BattleEffect_EndArcEffect(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value);
-void Scene_PlayMusic(void);
 void InventorySnapshot_Save(void);
 
 // ---- this overlay
@@ -368,8 +366,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
     return gShamanVillageSanctumEntrances;
   return gShamanVillage_Entrances;
 }
-
-#include "field/field.h"
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
@@ -442,12 +438,12 @@ void ShamanVillage_WaveWhirlwindLines(void) {
 void ShamanVillage_ScrollSandLayer(void) {
   s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
 
-  view[2] -= 0x20000;
+  view[2] -= px(2);
 
-  view[3] += 0x20000;
-  if (view[3] > 0x4100000) {
+  view[3] += px(2);
+  if (view[3] > px(1040)) {
     view[2] = 0;
-    view[3] = 0x4000000;
+    view[3] = px(1024);
   }
 }
 
@@ -467,7 +463,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
   s32 step = WORD_AT(object, 48);
 
   radius >>= 2;
-  radius += 0xc0000;
+  radius += px(12);
   object->x.fixed = WORD_AT(object, 68) +
                     Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z.fixed =
@@ -488,16 +484,16 @@ void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->z.fixed += *(s32 *)((u8 *)object + 76);
   if (FIELD_PIXEL(object->x.fixed) < 168) {
     object->bounce += Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX += 0xccc;
+    object->scaleY = object->scaleX += Q16_ONE * 5 / 100;
   } else {
     object->bounce -= Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX -= 0x51e;
+    object->scaleY = object->scaleX -= Q16_ONE * 2 / 100;
   }
   if (object->bounce > 0)
     Scene_SetActorSpritePriority(object, 1);
   else
     Scene_SetActorSpritePriority(object, 2);
-  ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
+  ((struct FieldSprite *)object->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 extern u32 gFieldEffect_MediumScript[];
@@ -525,11 +521,8 @@ void ShamanVillage_BlowAwaySand(void) {
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_SAND_MOUND, 1);
-  do {
-    s32 control = 0x40d;
-
-    REG_BG0CNT = control;
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(1),
+             &REG_BG0CNT);
   REG_BG0CNT &= ~3;
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
@@ -589,7 +582,7 @@ row:
   FieldCamera_WaitForArrival();
   Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_FRAME);
   Event_PlaySound(SE_RUSH);
-  REG_BLDALPHA = 0xf00;
+  REG_BLDALPHA = BLEND_ALPHA(0, 15);
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
@@ -603,7 +596,7 @@ rise:
     goto rise;
   Event_Wait(60);
   MapGrid_SetShake(3, 3, 1);
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
   REG_BLDCNT = 0x3f42;
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
   MapGrid_CopyCellsTo(64, 64, 2, 83, 16, 16);
@@ -611,7 +604,7 @@ rise:
   Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_VBLANK);
   i = 0;
 swirl:
-  REG_BLDALPHA = ((16 - (i >> 2)) << 8) | (i >> 2);
+  REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
   OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
@@ -623,17 +616,10 @@ swirl:
 
     MapGrid_CopyCellsTo(45, 90, 4, 19, width, height);
   }
-  {
-    s32 control = 0x602;
-
-    REG_BG2CNT = control;
-  }
-  /* FAKEMATCH(dead): the empty once-only block ends CSE's run here. */
-  do {
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(6) | BGCNT_PRIORITY(2), &REG_BG2CNT);
   Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
           REG_DMA3);
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0xa44;
   i = 0;
 stage:
@@ -649,16 +635,17 @@ frame:
     options.priority = 1;
     options.update = ShamanVillage_SwirlSandGrain;
     v[0] = 0;
-    v[2] = -0x20000;
+    v[2] = -px(2);
     v[1] = 0;
     {
       s32 x = ((Random16() & 127) << 16) + (208 << 15);
 
       FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
-                        v[2], 0x1020001, &options);
+                        v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                        &options);
     }
   }
-  REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
+  REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
   OBJ14_BYTE(98) = Random16() & 7;
   wait(1);
   j++;
@@ -666,7 +653,7 @@ frame:
     goto frame;
   Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
           REG_DMA3);
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   i++;
   if (i != 8)
     goto stage;
@@ -682,11 +669,11 @@ frame:
 
     MapGrid_CopyCellsTo(47, 19, 38, 19, width, height);
   }
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0x3f42;
   i = 0;
 clear:
-  REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
+  REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
   OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
@@ -697,7 +684,7 @@ clear:
   REG_BG1CNT |= 1;
   MapGrid_CopyCellsTo(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
-  REG_BLDALPHA = 15;
+  REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   OBJ14_BYTE(98) = 6;
@@ -706,7 +693,7 @@ fade:
   {
     u32 q = i >> 2;
 
-    REG_BLDALPHA = (q << 8) | (16 - q);
+    REG_BLDALPHA = (q << 8) | (BLEND_WEIGHT_MAX - q);
   }
   Event_Wait(1);
   i++;
@@ -728,7 +715,8 @@ fade:
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
+      ~ACTOR_PRIORITY_IGNORES_RISES;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   Actor_GetById(ACTOR_SAND_MOUND)->priorityFlags |= 1;
   REG_DISPCNT |= DISPCNT_BG2_ON;
@@ -1030,7 +1018,8 @@ void ShamanVillage_HopFortuneTeller(void) {
   Actor_Jump(ACTOR_FORTUNE_TELLER, 4, 20);
   Event_PlaySound(SE_SPLASH);
   wait(2);
-  Actor_RunScriptAndWait(16, gShamanVillage_HopFortuneTellerScript);
+  Actor_RunScriptAndWait(ACTOR_FORTUNE_TELLERS_FLAME,
+                         gShamanVillage_HopFortuneTellerScript);
 }
 
 /// The fortune-teller, actor 17, reads the party's fortune once a visit to the
@@ -1039,7 +1028,7 @@ void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD)) {
-    if (Event_GetFlag(0xa21))
+    if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgShamanFortuneAvoidNortheast);
     else
       Event_SetMessageId((s32)MsgShamanFortuneAvoidSouth);
@@ -1047,7 +1036,7 @@ void ShamanVillage_TellFortune(void) {
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   } else {
     Event_PlaySound(MUS_SILENCE);
-    if (Event_GetFlag(0xa21))
+    if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgShamanFortuneOfferAfterTrial);
     else
       Event_SetMessageId((s32)MsgShamanFortuneOfferBeforeTrial);
@@ -1274,7 +1263,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
   // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, 15, 0);
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
@@ -1344,7 +1333,7 @@ void ShamanVillage_TakeRightPath(void) {
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
   // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, 15, 0);
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
@@ -1395,7 +1384,7 @@ void ShamanVillage_DropPillar(void) {
   if (FIELD_CELL(object->x.fixed) == 32 && FIELD_CELL(object->z.fixed) == 11) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     do {
       wait(1);
     } while (object->velocityY != 0);
@@ -1430,8 +1419,8 @@ void ShamanVillage_MeetMoapa(void) {
   }
   Actor_SetSpeed(ACTOR_MOAPA, 0.4);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 208);
-  Actor_MoveToObject(ACTOR_WEST_GUARD, 15);
-  Actor_MoveToObject(ACTOR_EAST_GUARD, 15);
+  Actor_MoveToObject(ACTOR_WEST_GUARD, ACTOR_MOAPA);
+  Actor_MoveToObject(ACTOR_EAST_GUARD, ACTOR_MOAPA);
   wait(1);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 0.8);
@@ -1457,11 +1446,11 @@ void ShamanVillage_MeetMoapa(void) {
   Event_Wait(1);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->steeringFlags |= 1;
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Who have we here? Strangers in Shaman Village? What is your purpose..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOAPA, 0);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 1);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldActor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // "Shaman Village does not appreciate intruders."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_EAST_GUARD, 0);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
@@ -1529,7 +1518,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 264);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   rod = ShamanVillage_CreateRodIcon();
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetSpeed(ACTOR_MOAPA, 2.4);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 242);
   Event_PlaySound(MUS_TUNDARIA_TOWER);
@@ -1554,7 +1543,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetScript(ACTOR_PIERS, gShamanVillage_PiersStandsByRodScript);
   Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaStandsByRodScript);
   Actor_SetScript(ACTOR_SHEBA, gShamanVillage_ShebaStandsByRodScript);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 1.2);
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 136, 232);
   // "We thought it was lost forever... It once belonged to the great Hoabna."
@@ -1566,7 +1555,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "He vowed to care for the sacred treasure of Contigo, the Hover..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Have you outlanders come to claim the Hover Jade?"
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
@@ -1577,19 +1566,19 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetSpeed(ACTOR_MOAPA, 0.8);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 252);
   Event_Wait(40);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(ACTOR_MOAPA, 136, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkToAndWait(ACTOR_MOAPA, 104, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(ACTOR_MOAPA, 152, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkToAndWait(ACTOR_MOAPA, 88, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 40);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 252);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 242);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_SOUTH);
@@ -1605,7 +1594,7 @@ void ShamanVillage_ShowShamansRod(void) {
   // "But...we brought you the Shaman's Rod... What's stopping you from..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTHEAST, 0);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "Hoabna handed the Hover Jade down from generation to generation for..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1635,7 +1624,7 @@ void ShamanVillage_ShowShamansRod(void) {
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   // "No. You ask the impossible."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
+  FieldActor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_FaceDirectionAndWait(ACTOR_EAST_GUARD, FACING_SOUTHWEST);
   // "What about...the test? Would that be a bad idea, Moapa?"
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
@@ -1645,12 +1634,12 @@ void ShamanVillage_ShowShamansRod(void) {
   // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   {
-    s32 y = 0x500000;
-    s32 z = 0xf20000;
+    s32 y = px(80);
+    s32 z = px(242);
 
-    DriftScene_SpawnObject(0x740000, y, z, 0xe000);
+    DriftScene_SpawnObject(px(116), y, z, 0xe000);
     Event_Wait(10);
-    DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
+    DriftScene_SpawnObject(px(124), y, z, 0x2000);
     Event_Wait(30);
     FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
@@ -1671,11 +1660,11 @@ void ShamanVillage_ShowShamansRod(void) {
   }
   object = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
   object->riseEnabled = 0;
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 15);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 15);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_MOAPA);
   Actor_SetSpeed(ACTOR_MOAPA, 1.6);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 1.6);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 1.6);
@@ -1827,7 +1816,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   EVENT_WORK->message++;
   if (remaining != 0) {
   refuse:
-    FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
@@ -1865,33 +1854,33 @@ void ShamanVillage_RunLettering(void) {
 commands:
   if (gShamanVillage_LetteringWait == 0) {
     switch (*gShamanVillage_LetteringCursor++) {
-    case 0x4000:
+    case LETTERING_START:
       gShamanVillage_LetteringX = *gShamanVillage_LetteringCursor++ << 8;
       gShamanVillage_LetteringSpeed = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringSpeedFrames = 0;
       break;
-    case 0x3000:
+    case LETTERING_SPEED:
       gShamanVillage_LetteringSpeedFrom = gShamanVillage_LetteringSpeed;
       gShamanVillage_LetteringSpeed = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringSpeedFrames = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringSpeedFrame = 0;
       break;
-    case 0x1000:
+    case LETTERING_SCALE:
       gShamanVillage_LetteringScaleFrom = gShamanVillage_LetteringScale;
       gShamanVillage_LetteringScale = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringScaleFrames = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringScaleFrame = 0;
       break;
-    case 0x2000:
+    case LETTERING_BLEND:
       gShamanVillage_LetteringBlendFrom = gShamanVillage_LetteringBlend;
       gShamanVillage_LetteringBlend = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringBlendFrames = *gShamanVillage_LetteringCursor++;
       gShamanVillage_LetteringBlendFrame = 0;
       break;
-    case 0x7fff:
+    case LETTERING_WAIT:
       gShamanVillage_LetteringWait = *gShamanVillage_LetteringCursor++;
       break;
-    case -1:
+    case LETTERING_END:
       Task_Remove(ShamanVillage_RunLettering);
       VramCache_FreeEntry(gShamanVillage_LetteringVramEntry[0]);
       return;
@@ -1966,14 +1955,14 @@ commands:
   case 1: {
     for (i = 0; i < 4; i++) {
       y = 56;
-      flags = 0x80004000;
+      flags = OBJ_SIZE_32X16;
       x = pos + scale * (i * 32 - 48) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-        *write++ = 0xf400 | tile;
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ = LETTERING_ATTRIBUTES | tile;
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -1983,14 +1972,15 @@ commands:
   case 3: {
     for (i = 0; i < 2; i++) {
       y = 48;
-      flags = 0x80004000;
+      flags = OBJ_SIZE_32X16;
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-        *write++ = 0xf400 | (tile + gShamanVillage_LetteringTileOffset);
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ =
+            LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -2001,14 +1991,15 @@ commands:
   case 4: {
     for (i = 0; i < 2; i++) {
       y = 64;
-      flags = 0x80004000;
+      flags = OBJ_SIZE_32X16;
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-        *write++ = 0xf400 | (tile + gShamanVillage_LetteringTileOffset);
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ =
+            LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -2018,32 +2009,35 @@ commands:
 #else
   case 4:
     y = 48;
-    flags = 0xc0004000;
+    flags = OBJ_SIZE_64X32;
     left = pos + 56;
     if ((u32)(pos + 120) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gShamanVillage_LetteringTileOffset);
+      *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+      *write++ =
+          LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
       Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
 #endif
   case 2:
     y = 48;
-    flags = 0x80000000;
+    flags = OBJ_SIZE_32X32;
     left = pos + 88;
     if ((u32)(pos + 152) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gShamanVillage_LetteringTileOffset);
+      *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+      *write++ =
+          LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
       Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend, 0x20000);
 }
 
 /// Starts the mode task: keeps the mode and its parameter, schedules
@@ -2220,12 +2214,13 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAttachedEffect(ACTOR_WEST_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "She's the one! She must have come from Contigo!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 16, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_WEST_GUARD, 0,
+                                 20);
   Actor_RunRepeatedMotion(ACTOR_MOAPA, 1);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
   // "Her?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTH);
   // "She's the one that did it? But she's...just a girl!"
   Event_ShowMessage(ACTOR_MOAPA, 0);
@@ -2250,14 +2245,14 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
   // "This was just a test to see if you earned the right to take the test..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "So, there's more that they have to do before you'll give them the stone?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTH);
   // "You will have to reach the end of Trial Road."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_EAST_GUARD, FACING_SOUTHWEST);
@@ -2328,10 +2323,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(ACTOR_MOAPA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHWEST, 0);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "If we reach the end of Trial Road, won't our names join the ranks of..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   // "Kraden's right... It shouldn't matter if a girl does it... All that..."
@@ -2342,7 +2337,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   // "If you give us the chance, we will prove it to you."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Unless you're afraid that a girl like me might become your town's..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -2418,11 +2413,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   }
   Actor_WalkToAndWait(ACTOR_MOAPA, 212, 582);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 500, 1);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 15);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 15);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_MOAPA);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MOAPA);
   *done = 0;
   Actor_SetScript(ACTOR_MOAPA, gShamanVillage_HeadForTrialRoadScript);
   Event_Wait(20);
@@ -2508,7 +2503,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     cell = FIELD_PIXEL(object->x.fixed);
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+    Actor_SetMoveTarget(object, px(8 - cell % 16) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -2735,11 +2730,12 @@ void ShamanVillage_SetUpAromaRoom(void) {
     MapGrid_CopyCellsTo(48, 40, 101, 11, 1, 2);
   else
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
-  object = ((struct Actor *)Actor_GetById(16));
-  object->collisionFlags = 8;
-  object->scaleX = 0xcccc;
-  object->scaleY = 0xcccc;
-  Actor_SetSpriteFlags(((struct Actor *)Actor_GetById(16)), 0);
+  object = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
+  object->collisionFlags = ACTOR_NOT_TARGETED;
+  object->scaleX = Q16_ONE * 8 / 10;
+  object->scaleY = Q16_ONE * 8 / 10;
+  Actor_SetSpriteFlags(
+      ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
 
 void ShamanVillage_DriftSmoke(struct Actor *object) {
@@ -2747,7 +2743,7 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;
@@ -2758,7 +2754,8 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
 }
 
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(285, x, y, z));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
   if (object != NULL) {
     object->retainSpriteCache = 2;
@@ -2767,7 +2764,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->priorityFlags &= ~1;
     FieldActor_SetSpriteColor(object, 7);
     ((struct FieldSprite *)object->sprite)->priority = 1;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = Q16_ONE / 2;
     object->scaleY = Q16_ONE / 2;
@@ -2827,17 +2824,18 @@ void ShamanVillage_SetUpVillage(void) {
   Rope_Place(0, 0x204, 19, 20);
   if (Event_GetFlag(FLAG_SCENE_TEMP_05))
     ShamanVillage_GrowVine();
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, 0x480);
-  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, 0x480);
+  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, TASK_PASS_VBLANK);
 }
 
 void ShamanVillage_SetUpInn(void) {
   u32 i;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags = 8;
+  ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags =
+      ACTOR_NOT_TARGETED;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     s32 angle = FACING_SOUTH_SOUTHEAST;
 
@@ -2942,21 +2940,43 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 s16 gShamanVillage_LetteringCountScript[] = {
-    0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
-    30, 0x7fff, 30, -1,
+    LETTERING_SCALE, 512, 1,
+    LETTERING_BLEND, 0, 1,
+    LETTERING_SCALE, 256, 6,
+    LETTERING_BLEND, 16, 6,
+    LETTERING_WAIT, 30,
+    LETTERING_BLEND, 0, 30,
+    LETTERING_WAIT, 30,
+    LETTERING_END,
 };
 
 /// Unused: the scripts of modes 3 and 1, which nothing in this overlay starts.
 s16 gShamanVillage_LetteringThrobScript[] = {
-    0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
-    6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
-    0x1000, 368, 6, 0x7fff, 6, 0x1000, 224, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 352, 6,
-    0x7fff, 6, 0x1000, 208, 6, 0x7fff, 6, 0x1000,
-    336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
-    6, 0x1000, 320, 6, 0x7fff, 6, -1,
+    LETTERING_SCALE, 128, 1,
+    LETTERING_BLEND, 0, 1,
+    LETTERING_SCALE, 256, 6,
+    LETTERING_BLEND, 16, 6,
+    LETTERING_WAIT, 60,
+    LETTERING_SCALE, 384, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 240, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 368, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 224, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_BLEND, 0, 30,
+    LETTERING_SCALE, 352, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 208, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 336, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 192, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 320, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_END,
 };
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -3208,27 +3228,45 @@ s16 gShamanVillage_LetteringVramEntry[] = {
 #endif
 
 s16 gShamanVillage_LetteringSlideScript[] = {
-    0x4000, -188, 0x800, 0x1000, SHAMAN_GRAPHIC1_SCALE, 1, 0x2000, 16,
-    1, 0x7fff, 14, 0x3000, 0, 20, 0x7fff, 60,
-    0x3000, 0x800, 20, 0x7fff, 60, -1,
+    LETTERING_START, -188, 0x800,
+    LETTERING_SCALE, SHAMAN_GRAPHIC1_SCALE, 1,
+    LETTERING_BLEND, 16, 1,
+    LETTERING_WAIT, 14,
+    LETTERING_SPEED, 0, 20,
+    LETTERING_WAIT, 60,
+    LETTERING_SPEED, 0x800, 20,
+    LETTERING_WAIT, 60,
+    LETTERING_END,
 };
 
 s16 gShamanVillage_LetteringGoScript[] = {
-    0x1000, SHAMAN_GRAPHIC4_START_SCALE, 1, 0x2000, 0, 1,
-    0x1000, SHAMAN_GRAPHIC4_SMALL_SCALE, 6, 0x2000, 16, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_LARGE_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_SMALL_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_LARGE_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_SMALL_SCALE, 6, 0x7fff, 6, 0x2000, 0, 30,
-    0x1000, SHAMAN_GRAPHIC4_LARGE_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_SMALL_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_LARGE_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_SMALL_SCALE, 6, 0x7fff, 6,
-    0x1000, SHAMAN_GRAPHIC4_LARGE_SCALE, 6, 0x7fff, 6, -1,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_START_SCALE, 1,
+    LETTERING_BLEND, 0, 1,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_SMALL_SCALE, 6,
+    LETTERING_BLEND, 16, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_LARGE_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_SMALL_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_LARGE_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_SMALL_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_BLEND, 0, 30,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_LARGE_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_SMALL_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_LARGE_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_SMALL_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, SHAMAN_GRAPHIC4_LARGE_SCALE, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_END,
 };
 // clang-format on
-
-#include "text/msg_ids.h"
 
 void ShamanVillage_MeetAroma(void);
 void Scene_ShowEntranceLocked(void);
@@ -3348,7 +3386,7 @@ struct ActorPlacement gShamanVillageAromaRoomActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 264, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 536, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 336, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 296, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 296, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(46, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_AROMA), MOVEMENT_TYPE_STAND, 680, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},

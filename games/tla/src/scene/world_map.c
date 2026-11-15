@@ -1,49 +1,54 @@
 /// @file
-#include "flags.h"
 #include "djinn_ids.h"
-#include "sprite_ids.h"
+#include "fixed_math.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #include "version.h"
-#include "field/event_inline.h"
 #include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/frame.h"
-#include "system/iwram_call.h"
 #include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/call.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/field_coordinate.h"
-#include "game/owner_state.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/call.h"
-#include "system/task.h"
-#include "fixed_math.h"
-#include "system/input.h"
-#include "window/item_icon.h"
-#include "field/event_commands.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "game/owner_state.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
+#include "menu/menu.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
-#include "window/window.h"
-#include "scene_ids.h"
+#include "sound/sound.h"
+#include "system/bg_scroll.h"
+#include "system/frame.h"
+#include "system/input.h"
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
-#include "graphics/resource.h"
-#include "system/bg_scroll.h"
-#include "field/sprite.h"
-#include "graphics/vram_tab.h"
-#include "macros.h"
-#include "shared/tables.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
-#include "field/actor_script.h"
+
+void Actor_StartScript(struct Actor *actor, const s32 *script);
+void WorldMap_LoadTidalWave(void);
+
+#include "shared/tables.h"
 
 struct Actor;
 
@@ -197,15 +202,12 @@ void WorldMap_WatchVenusLighthouseCollapse(void);
 
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
-void WorldMap_Freeze(void);
-void WorldMap_ReloadPendingAreaGraphics(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
 void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
-void FieldCamera_WaitForArrival(void);
 extern s32 gWorldMap_HiddenMembers[8];
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
@@ -280,10 +282,12 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(world_map): routine Actor_SetSpriteColorMode as void
- * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
- * void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the definition's
- * void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
- * WorldMap_MeetEcho moves: 1 of 714 instructions in tla-ja. */
+ * Actor_SetSpriteColorMode(struct Actor *object, s32 value); field/actor_view.h
+ * has void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the
+ * definition's void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
+ * it compiles and moves 1 of 714 instructions in tla-ja (WorldMap_MeetEcho); as
+ * The Broken Seal's inline Actor_SetColorMode(struct Actor *, s32), 2 lines in
+ * every edition. */
 void Actor_SetSpriteColorMode__world_map(
     struct Actor *object, s32 value) __asm__("Actor_SetSpriteColorMode");
 #define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__world_map
@@ -307,10 +311,10 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = px(10120);
-    y = Math_MulQ16(Math_Sin(*angle << 3), 0x40000);
-    z = 0x20a40000;
+    y = Math_MulQ16(Math_Sin(*angle << 3), px(4));
+    z = px(8356);
 
-    rise = 0x100000;
+    rise = px(16);
     marker->y.fixed = y + rise;
     marker->z.fixed = z;
     radius = rise;
@@ -372,18 +376,50 @@ extern struct ActorPlacement gWorldMap_DriftPlacements[];
 extern struct ActorPlacement gWorldMap_FirstVoyagePlacements[];
 extern struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[];
 
+/// The world map's entrances its code tests: arrivals at a place by its exit
+/// (WORLD_MAP_AT_), and the story's scenes the map plays on arrival.
+enum WorldMapEntrance {
+  WORLD_MAP_AT_DAILA = 2,
+  WORLD_MAP_AT_MADRA = 9,
+  WORLD_MAP_AT_GAIA_ROCK = 39,
+  WORLD_MAP_AT_LOHO = 59,
+  WORLD_MAP_AT_NORTHERN_REACHES = 61,
+  WORLD_MAP_VENUS_COLLAPSE = 64, ///< Venus Lighthouse falls, Idejima breaks
+  WORLD_MAP_DRIFT_NORTH = 65,    ///< the tidal wave carries Idejima north
+  WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
+  WORLD_MAP_FIRST_VOYAGE = 68, ///< the party first takes the ship's tiller
+  WORLD_MAP_SAIL_TO_DECK = 69,
+  WORLD_MAP_PIERS_DJINN = 70,
+  WORLD_MAP_JUPITER_BEACON = 72, ///< the beacon lit, seen from the sea
+  WORLD_MAP_BANDIT_BEATEN = 73,  ///< after the battle with the bandit
+  WORLD_MAP_BANDIT_LOST = 74,
+  WORLD_MAP_IDEJIMA_DRIFTING = 77,
+  WORLD_MAP_TO_AQUA_ROCK = 78,
+  WORLD_MAP_DEBUG_FLIGHT = 98, ///< the debug menu's: the ship flying
+  WORLD_MAP_DEBUG_SAILING = 99
+};
+
+/// The world map's exits its story scenes leave by (gSceneExits).
+enum WorldMapExit {
+  WORLD_MAP_EXIT_IDEJIMA_DRIFTING = 64,
+  WORLD_MAP_EXIT_IDEJIMA = 65,
+  WORLD_MAP_EXIT_SHIP_TILLER = 66,
+  WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT = 77,
+  WORLD_MAP_EXIT_AQUA_ROCK = 78
+};
+
 void Leader_Search(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
-  case 64:
+  case WORLD_MAP_VENUS_COLLAPSE:
     return gWorldMap_CollapsePlacements;
-  case 65:
+  case WORLD_MAP_DRIFT_NORTH:
     return gWorldMap_DriftPlacements;
-  case 68:
+  case WORLD_MAP_FIRST_VOYAGE:
     if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
       return gWorldMap_FirstVoyagePlacements;
-  case 77:
+  case WORLD_MAP_IDEJIMA_DRIFTING:
     return gWorldMap_DriftingIdejimaPlacements;
   default:
     return gWorldMapActorPlacements;
@@ -398,8 +434,8 @@ void WorldMap_SetUpFlyingShip(void) {
   gMainRoutineWork.movementMode = 8;
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
-    MessageArgument_Push(153, MESSAGE_ARGUMENT_ABILITY);
-    // "..."
+    MessageArgument_Push(ABILITY_HOVER, MESSAGE_ARGUMENT_ABILITY);
+    // "Hover"
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -461,8 +497,8 @@ void WorldMap_BoardShip(void) {
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ship = Actor_Get(ACTOR_SHIP);
-  dx = (leader->x.fixed - ship->x.fixed) >> 16;
-  dz = (leader->z.fixed - ship->z.fixed) >> 16;
+  dx = FIELD_PIXEL(leader->x.fixed - ship->x.fixed);
+  dz = FIELD_PIXEL(leader->z.fixed - ship->z.fixed);
   distance = dx * dx + dz * dz;
   if (kind != 8 && distance > 255)
     return;
@@ -470,7 +506,7 @@ void WorldMap_BoardShip(void) {
   FieldEvent_ResolvePendingActions(0);
   gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
-  Event_SetFlag(0x176);
+  Event_SetFlag(FLAG_SAILING);
   gMainRoutineWork.shipX = ship->x.fixed;
   gMainRoutineWork.shipZ = ship->z.fixed;
   gMainRoutineWork.shipFacing = ship->facing;
@@ -498,7 +534,7 @@ void WorldMap_BoardShip(void) {
 #if TLA_PATCH_1
   work->stepTrigger = 0;
 #endif
-  FieldEffect_ScheduleRatioTransition(0x10000, 30);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE, 30);
 }
 
 /// The leader jumps ashore from the ship, where the shore ahead lets them land.
@@ -530,16 +566,16 @@ void WorldMap_LeaveShip(void) {
     if ((block[3] & 64) == 0 && shore != 0) {
       blocked = 1;
     } else {
-      position[0] += 0x60000;
+      position[0] += px(6);
       blocked |= WorldMap_IsWalkable(ship, position);
-      position[0] += -0xc0000;
+      position[0] += -px(12);
       blocked |= WorldMap_IsWalkable(ship, position);
-      position[0] += 0x60000;
-      position[1] += 0x60000;
+      position[0] += px(6);
+      position[1] += px(6);
       blocked |= WorldMap_IsWalkable(ship, position);
-      position[1] += -0xc0000;
+      position[1] += -px(12);
       blocked |= WorldMap_IsWalkable(ship, position);
-      position[1] += 0x60000;
+      position[1] += px(6);
       blocked |= WorldMap_IsWalkable(ship, position);
     }
   }
@@ -547,10 +583,10 @@ void WorldMap_LeaveShip(void) {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldEffect_ScheduleRatioTransition(0x10000, 10);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
     gMainRoutineWork.movementMode = 1;
     gMainRoutineWork.ownerOverride = 0;
-    Event_ClearFlag(0x176);
+    Event_ClearFlag(FLAG_SAILING);
     gMainRoutineWork.shipX = ship->x.fixed;
     gMainRoutineWork.shipZ = ship->z.fixed;
     gMainRoutineWork.shipFacing = ship->facing;
@@ -598,7 +634,7 @@ void WorldMap_GoAboard(void) {
   gMainRoutineWork.shipZ = leader->z.fixed;
   gMainRoutineWork.shipFacing = 0;
   gMainRoutineWork.ownerOverride = 0;
-  Event_ClearFlag(0x176);
+  Event_ClearFlag(FLAG_SAILING);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
@@ -623,7 +659,8 @@ void WorldMap_RefuseToRunAway(void) {
   s32 southwest = FACING_SOUTHWEST;
   s32 west = FACING_WEST;
 
-  if (Event_GetFlag(0xa21) && !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
+  if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT) &&
+      !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     x = object->x.fixed;
     z = object->z.fixed;
@@ -632,7 +669,7 @@ void WorldMap_RefuseToRunAway(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(0x9b3)) {
-      FieldEffect_ScheduleRatioTransition(0x16666, 6);
+      FieldEffect_ScheduleRatioTransition(Q16_ONE * 7 / 5, 6);
       Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       Actor_WalkToAndWait(ACTOR_JENNA, (x << 4) + 24, (z << 4) - 12);
@@ -647,11 +684,11 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_JoinLeader(ACTOR_JENNA);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
-      FieldEffect_ScheduleRatioTransition(0x10000, 6);
+      FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
     } else {
       s32 besideZ;
 
-      FieldEffect_ScheduleRatioTransition(0x16666, 6);
+      FieldEffect_ScheduleRatioTransition(Q16_ONE * 7 / 5, 6);
       Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       x <<= 4;
@@ -685,7 +722,7 @@ void WorldMap_RefuseToRunAway(void) {
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
       Event_SetFlag(0x9b3);
-      FieldEffect_ScheduleRatioTransition(0x10000, 6);
+      FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
     }
     System_Wait(8);
     Event_End();
@@ -712,31 +749,29 @@ void WorldMap_GazeIntoPond(void) {
   if (roll == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 slot = ACTOR_POND_COINS;
-    struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
+    struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
     struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
     s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
-    /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
-    register struct Actor *object asm("r6");
 
     // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
-    position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed;
-    position[2] = leader->z.fixed;
-    FieldVector_AddPolarOffset(16, leader->facing, position);
-    object = Actor_Get(ACTOR_POND_COINS);
+    position[0] = actor->x.fixed;
+    position[1] = actor->y.fixed;
+    position[2] = actor->z.fixed;
+    FieldVector_AddPolarOffset(16, actor->facing, position);
+    actor = Actor_Get(ACTOR_POND_COINS);
     x = position[0];
-    if (object == NULL) {
-      object = FieldActor_Create(0x1e9, x, position[1], position[2]);
-      if (object == NULL)
+    if (actor == NULL) {
+      actor = FieldActor_Create(0x1e9, x, position[1], position[2]);
+      if (actor == NULL)
         return;
-      work->actors[slot] = object;
+      work->actors[slot] = actor;
     } else {
-      object->x.fixed = x;
-      object->y.fixed = position[1];
-      object->z.fixed = position[2];
+      actor->x.fixed = x;
+      actor->y.fixed = position[1];
+      actor->z.fixed = position[2];
     }
     FieldActor_ShowItemIconById(ACTOR_POND_COINS, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
@@ -759,7 +794,8 @@ void WorldMap_GazeIntoPond(void) {
 void WorldMap_PickUpGoldenBoots(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, 0x198, -1) == 0)
+  if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS,
+             -1) == 0)
     Event_ClearFlag(0xa77);
   Event_End();
 }
@@ -805,7 +841,7 @@ s32 Scene_Initialize(void) {
     ship->userValue = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
-    FieldEffect_ScheduleRatioTransition(0x10000, 1);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE, 1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   work = Ram_HeapSlots->fieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
@@ -816,60 +852,60 @@ s32 Scene_Initialize(void) {
   WorldMap_StartPlacedActors();
   if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
-  if (GameFlag_Get(0xa21)) {
+  if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT)) {
     Field_SetWorldMapWindowCellTile(0, 224, 208, 256);
     Field_SetWorldMapWindowCellTile(16, 224, 224, 256);
   }
   if (GameFlag_Get(0xa77))
     WorldMap_ShowGoldenBoots();
   switch (gMainRoutineWork.entrance) {
-  case 39:
+  case WORLD_MAP_AT_GAIA_ROCK:
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       GameFlag_Set(0x9ab);
     break;
-  case 9:
-  case 73:
-  case 74:
+  case WORLD_MAP_AT_MADRA:
+  case WORLD_MAP_BANDIT_BEATEN:
+  case WORLD_MAP_BANDIT_LOST:
     if (GameFlag_Get(0xa76))
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
-  case 77:
+  case WORLD_MAP_IDEJIMA_DRIFTING:
     WorldMap_ShowIdejimaDrifting();
     break;
-  case 78:
+  case WORLD_MAP_TO_AQUA_ROCK:
     WorldMap_CarryPartyToAquaRock();
     break;
-  case 59:
+  case WORLD_MAP_AT_LOHO:
     if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) && GameFlag_Get(0xa5f) != 0) {
       GameFlag_Set(FLAG_SHIP_CARRIES_CANNON);
       WorldMap_DeliverLohoCannon();
     }
     break;
-  case 64:
+  case WORLD_MAP_VENUS_COLLAPSE:
     WorldMap_WatchVenusLighthouseCollapse();
     break;
-  case 65:
+  case WORLD_MAP_DRIFT_NORTH:
     WorldMap_DriftNorthOfContinent();
     break;
-  case 70:
+  case WORLD_MAP_PIERS_DJINN:
     Party_GivePiersDjinn();
     break;
-  case 2:
+  case WORLD_MAP_AT_DAILA:
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO)) == 0) {
       Actor_SetScript(ACTOR_ECHO, gWorldMap_EchoScript);
       WorldMap_MeetEcho();
     }
     break;
-  case 67:
+  case WORLD_MAP_ALHAFRA_MANOR_VIEW:
     WorldMap_PanToAlhafraManor();
     break;
-  case 68:
+  case WORLD_MAP_FIRST_VOYAGE:
     WorldMap_TakeTheTiller();
     break;
-  case 69:
+  case WORLD_MAP_SAIL_TO_DECK:
     WorldMap_SailToShipDeck();
     break;
-  case 72:
+  case WORLD_MAP_JUPITER_BEACON:
     WorldMap_PlayLighthouseTransition(2);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), 15);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
@@ -884,15 +920,15 @@ s32 Scene_Initialize(void) {
     Event_WaitTransitionFrames();
     Event_SetDestination(SCENE_JUPITER_LIGHTHOUSE_AERIE_BEACON, 9);
     break;
-  case 98:
+  case WORLD_MAP_DEBUG_FLIGHT:
     gMainRoutineWork.ownerOverride = 1;
     Event_SetFlag(FLAG_SHIP_SAILABLE);
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
     Event_SetFlag(0x11d);
-    Event_SetDestination(SCENE_WORLD_MAP, 61);
+    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AT_NORTHERN_REACHES);
     break;
-  case 99:
+  case WORLD_MAP_DEBUG_SAILING:
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
     GameFlag_Set(0x11d);
     break;
@@ -909,13 +945,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 // As The Broken Seal's WorldMap_ShowDjinnTutorial.
 void WorldMap_ExplainGivingDjinn(void) {
   WorldMap_ReloadPendingAreaGraphics();
-  FieldEffect_ScheduleRatioTransition(0x10000, 6);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
   Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
-  FieldEvent_SetMessageId(Event_GetFlag(0x175) * ((s32)MsgDjinnGiveTutorialB -
-                                                  (s32)MsgDjinnGiveTutorialA) +
-                          (s32)MsgAfterBringingA);
+  FieldEvent_SetMessageId(
+      Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN) *
+          ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
+      (s32)MsgAfterBringingA);
   Event_ShowMessage(ACTOR_ECHO, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_MENU_CURSOR_MOVE);
@@ -925,7 +962,7 @@ void WorldMap_ExplainGivingDjinn(void) {
   DjinnMenu_Run();
   FieldActor_Jump(ACTOR_ECHO, 4, 30);
   {
-    s32 flag = Event_GetFlag(0x175);
+    s32 flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);
     s32 base = (s32)MsgNextILl;
 
     FieldEvent_SetMessageId(
@@ -946,7 +983,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (entrance == 9) {
+  if (entrance == WORLD_MAP_AT_MADRA) {
     north = FACING_NORTH;
     Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9000), north);
     Event_StartScreenTransition();
@@ -956,7 +993,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "Hey! Wait a minute!"
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
-    FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 31 / 20, 16);
     Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 32);
     Actor_FaceDirection(ACTOR_FELIX, north, 0);
@@ -1047,12 +1084,13 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "But don't worry... We're just going to give you a little sample of..."
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    FieldEvent_SetAfterBattleDestination(SCENE_WORLD_MAP, 73);
-    Event_SetDefeatDestination(SCENE_WORLD_MAP, 74);
+    FieldEvent_SetAfterBattleDestination(SCENE_WORLD_MAP,
+                                         WORLD_MAP_BANDIT_BEATEN);
+    Event_SetDefeatDestination(SCENE_WORLD_MAP, WORLD_MAP_BANDIT_LOST);
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Field_RequestBattleFromEncounterTable(102, 3);
-  } else if (entrance == 74) {
+  } else if (entrance == WORLD_MAP_BANDIT_LOST) {
     Event_ClearFlag(0xa76);
     facingSouth = FACING_SOUTH;
     Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9616), facingSouth);
@@ -1066,7 +1104,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(ACTOR_FELIX, px(10168), px(9648),
                                FACING_NORTHWEST);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
-    FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 31 / 20, 1);
     Actor_SetAnimation(ACTOR_FELIX, 19);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
     Event_StartScreenTransition();
@@ -1124,7 +1162,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(ACTOR_KRADEN, px(10160), px(9680), northB);
     Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), northB);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
-    FieldEffect_ScheduleRatioTransition(0x18000, 1);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 2, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
@@ -1267,7 +1305,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     WorldMap_ReloadPendingAreaGraphics();
-    FieldEffect_ScheduleRatioTransition(0x10000, 15);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE, 15);
     Event_End();
   }
 }
@@ -1279,9 +1317,9 @@ extern u32 gWorldMap_LohoWorkerLeaveScriptC[];
 void WorldMap_DeliverLohoCannon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = 2;
-  Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = 2;
-  Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = 2;
+  Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = ACTOR_FALLS;
   {
     s32 facing = FACING_NORTHEAST;
 
@@ -1297,7 +1335,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_WalkBy(ACTOR_LOHO_WORKER_B, 10, 0);
   Actor_WalkBy(ACTOR_LOHO_WORKER_C, 10, 0);
   Event_WaitTransitionFrames();
-  FieldEffect_ScheduleRatioTransition(0x13333, 6);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 12 / 10, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
   FieldActor_WaitForMoveById(ACTOR_LOHO_WORKER_A);
@@ -1328,7 +1366,7 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldActor_WaitForScriptEndById(ACTOR_LOHO_WORKER_C);
   WorldMap_ReloadPendingAreaGraphics();
   FieldEvent_Wait(30);
-  FieldEffect_ScheduleRatioTransition(0x10000, 6);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
   Event_End();
 }
 
@@ -1339,7 +1377,8 @@ void WorldMap_DeliverLohoCannon(void) {
    (s32)(base))
 
 /// A tutorial message: the second set while flag 0x175 is set.
-#define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Event_GetFlag(0x175), base)
+#define TUTORIAL_MESSAGE(base)                                                 \
+  TUTORIAL_SET_MESSAGE(Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN), base)
 
 /// The first Djinni, Echo, joins south of Daila, however often he is refused.
 void WorldMap_MeetEcho(void) {
@@ -1356,12 +1395,12 @@ void WorldMap_MeetEcho(void) {
 
   djinni = Actor_GetById(ACTOR_ECHO);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  x = (leader->x.fixed - px(10120)) / 2 + 0x27880000;
-  z = (leader->z.fixed - px(8356)) / 2 + 0x20a40000;
-  flag = Event_GetFlag(0x16e);
+  x = (leader->x.fixed - px(10120)) / 2 + px(10120);
+  z = (leader->z.fixed - px(8356)) / 2 + px(8356);
+  flag = Event_GetFlag(FLAG_DJINN_LESSON);
   if (flag == 0) {
     if (gInput.held & KEY_UP)
-      Event_SetFlag(0x175);
+      Event_SetFlag(FLAG_ALREADY_KNOWS_DJINN);
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
@@ -1394,15 +1433,15 @@ void WorldMap_MeetEcho(void) {
     }
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     wait(16);
-    flag = Event_GetFlag(0x175);
+    flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     WorldMap_ReloadPendingAreaGraphics();
-    FieldEffect_ScheduleRatioTransition(0x13333, 6);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 12 / 10, 6);
     Event_WaitForZoomTransition();
     WorldMap_Freeze();
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->gravity = px(1) / 4;
     djinni->speedLimit = px(1);
     djinni->acceleration = px(1);
@@ -1412,8 +1451,8 @@ void WorldMap_MeetEcho(void) {
     asm("" : "+m"(*djinni));
     FieldActor_SetMoveTarget(djinni, 10120, 0, 8356);
     while (i >= 0) {
-      djinni->scaleX += 0x800;
-      djinni->scaleY += 0x800;
+      djinni->scaleX += Q16_ONE / 32;
+      djinni->scaleY += Q16_ONE / 32;
       wait(1);
       i--;
     }
@@ -1463,7 +1502,7 @@ void WorldMap_MeetEcho(void) {
     }
     Actor_SetAnimationById(owner, 1);
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
     i = 7;
@@ -1508,7 +1547,7 @@ void WorldMap_MeetEcho(void) {
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   joined:
-    MessageArgument_Push(0x133, MESSAGE_ARGUMENT_ABILITY);
+    MessageArgument_Push(ABILITY_ECHO, MESSAGE_ARGUMENT_ABILITY);
     Sound_Play(MUS_JOINED);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
@@ -1516,7 +1555,7 @@ void WorldMap_MeetEcho(void) {
     FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
-    if (Event_GetFlag(0x175))
+    if (Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN))
       Sound_Play(MUS_SONG_GAME);
     else
       Sound_Play(MUS_BRIGGS_STEALS_SHIP);
@@ -1561,7 +1600,7 @@ void WorldMap_MeetEcho(void) {
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
   Event_ShowMessageAndWait(ACTOR_ECHO, 0);
-  Actor_WalkToAndWait(ACTOR_ECHO, x >> 16, z >> 16);
+  Actor_WalkToAndWait(ACTOR_ECHO, FIELD_PIXEL(x), FIELD_PIXEL(z));
 tutorial:
   WorldMap_ExplainGivingDjinn();
   WorldMap_ReloadPendingAreaGraphics();
@@ -1602,7 +1641,7 @@ void WorldMap_SpawnCollapseDust(void) {
 
   x = (Random_Below(40)) << 16;
   z = (Random_Below(30)) << 16;
-  obj = (FieldActor_Create(285, x + 0x7b80000, 0, z + 0x1c5c0000));
+  obj = (FieldActor_Create(285, x + px(1976), 0, z + px(7260)));
   if (obj != NULL) {
     sprite = obj->sprite;
     scale = ((Random16() << 15) >> 16) + 0x13333;
@@ -1649,8 +1688,8 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplySource(RGB_WHITE, 0);
+  PaletteFade_ApplyTarget(Q16_ONE, 0);
   PaletteFade_Interpolate(60);
   Task_AddFrame(WorldMap_SpawnCollapseDust, TASK_PASS_VBLANK);
   MapGrid_SetShake(5, 5, 1);
@@ -1664,7 +1703,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(7, 7, 1);
   FieldCamera_MoveTo(1988, CAMERA_KEEP, 7553, 1);
-  FieldEffect_ScheduleRatioTransition(39321, 60);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 5, 60);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   WorldMap_Freeze();
@@ -1710,7 +1749,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(64);
+  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_DRIFTING);
   FieldEvent_Wait(120);
 }
 
@@ -1745,7 +1784,7 @@ void WorldMap_SpawnIdejimaWake(void) {
   }
   spr->nextFrame = 0;
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
-  obj->priorityFlags |= 2;
+  obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
   Import_ActorSelectAnimation(obj, 2);
@@ -1761,9 +1800,9 @@ void WorldMap_ShowIdejimaDrifting(void) {
   FieldEvent_Wait(60);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEffect_ScheduleRatioTransition(39321, 1);
-  actor->scaleX = 0x13333;
-  actor->scaleY = 0x13333;
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 5, 1);
+  actor->scaleX = Q16_ONE * 12 / 10;
+  actor->scaleY = Q16_ONE * 12 / 10;
   EventCamera_FollowActor(ACTOR_DRIFTING_IDEJIMA, 1);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
@@ -1778,13 +1817,13 @@ void WorldMap_ShowIdejimaDrifting(void) {
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
   FieldEvent_Wait(120);
-  FieldEffect_ScheduleRatioTransition(0x16666, 300);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 7 / 5, 300);
   FieldEvent_Wait(270);
   gFieldWork->transitionFrames = 16;
-  *(u16 *)BG_PLTT = RGB(31, 31, 31);
+  *(u16 *)BG_PLTT = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(77);
+  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT);
 }
 
 void WorldMap_DriftNorthOfContinent(void) {
@@ -1796,8 +1835,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldWorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
   FieldWorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
-  boat->scaleX = 0x13333;
-  boat->scaleY = 0x13333;
+  boat->scaleX = Q16_ONE * 12 / 10;
+  boat->scaleY = Q16_ONE * 12 / 10;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
@@ -1842,7 +1881,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   for (i = 31; i >= 0; i--) {
     map->unk11e += 0xff80;
     map->unk11c += 128;
-    Actor_Get(ACTOR_IDEJIMA)->scaleY += -0x300;
+    Actor_Get(ACTOR_IDEJIMA)->scaleY += -(Q16_ONE * 3 / 256);
     System_Wait(1);
   }
   WorldMap_Freeze();
@@ -1859,7 +1898,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
-  FieldEffect_ScheduleRatioTransition(39321, 1);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 5, 1);
   map->unk11e = 0;
   map->unk11c = 0xe000;
   System_Wait(1);
@@ -1894,8 +1933,13 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
   Actor_WalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
   Event_PlaySound(SE_163);
-  WorldMap_LoadTidalWave(0);
-  FieldEvent_SetExitRequest(65);
+#ifdef UBFIX
+  WorldMap_LoadTidalWave();
+#else
+  // UB: WorldMap_LoadTidalWave takes no argument, but this call passes 0.
+  ((void (*)(s32))WorldMap_LoadTidalWave)(0);
+#endif
+  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA);
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;
@@ -2021,7 +2065,7 @@ void WorldMap_SailToShipDeck(void) {
   Actor_MoveToAndWait(ACTOR_SHIP, 10720, 9075);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(66);
+  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_SHIP_TILLER);
 }
 
 /// The ship's first flight once it has wings (flag 0xa78).
@@ -2035,8 +2079,8 @@ void WorldMap_TakeOff(void) {
   Event_SetFlag(0xa78);
   Actor_MoveToAndWait(ACTOR_SHIP, 7158, 8532);
   WorldMap_SetUpShip();
-  x = Actor_Get(ACTOR_SHIP)->x.fixed / 0x10000;
-  z = Actor_Get(ACTOR_SHIP)->z.fixed / 0x10000;
+  x = Actor_Get(ACTOR_SHIP)->x.fixed / px(1);
+  z = Actor_Get(ACTOR_SHIP)->z.fixed / px(1);
   i = 0;
   {
     do {
@@ -2202,7 +2246,7 @@ void WorldMap_CarryPartyToAquaRock(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 8;
   Actor_Get(gMainRoutineWork.leaderActorId)->speedLimit = px(2);
   System_Wait(5);
-  FieldEffect_ScheduleRatioTransition(49152, 60);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 4, 60);
   Event_StartScreenTransition();
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14537, 8577);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14465, 8662);
@@ -2213,13 +2257,13 @@ void WorldMap_CarryPartyToAquaRock(void) {
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8870);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8831);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8772);
-  FieldEffect_ScheduleRatioTransition(0x14000, 120);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 5 / 4, 120);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14275, 8736);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
-  FieldEvent_SetExitRequest(78);
+  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_AQUA_ROCK);
 }
 
 s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
@@ -2282,23 +2326,17 @@ void WorldMap_EndFlight(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
-static inline void QueueBlend(u32 address, u32 value) {
-  /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
-   * their own order: the native finishes the value's orr before the register
-   * address's add. */
-  IoWriteQueue_Store16(address, value);
-}
-
 /// Run each frame of the lighthouse transition: every other two frames the
 /// blend alternates between two strengths.
 void WorldMap_UpdateTransitionBlend(void) {
 
-  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 12);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
+                         gWorldMapBlend | (BLEND_WEIGHT_MAX - 4));
   else
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 16);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -2308,12 +2346,14 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-#define PUSH_PICTURE(offset)                                                   \
-  IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
+#define PUSH_PICTURE(frame)                                                    \
+  IO_WRITE_QUEUE_PUSH(                                                         \
+      PICTURE_MAP,                                                             \
+      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
+      DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
-  u32 blend;
 
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
@@ -2329,84 +2369,83 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
+  Decompress_TaggedLz(gWorldMapPackedPictures,
+                      buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                      (u32)(gWorldMapPalettes + mode * PALETTE_COLORS * 2),
+                      DMA_COPY_HALFWORDS(PALETTE_COLORS));
+  IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)buffer,
+                      DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
-  gWorldMapBlend = 0xe00;
-  PUSH_PICTURE(0x3480);
+  gWorldMapBlend = BLEND_ALPHA(0, 14);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0xd00;
-  PUSH_PICTURE(0x2e80);
+  gWorldMapBlend = BLEND_ALPHA(0, 13);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0xc00;
-  PUSH_PICTURE(0x2880);
+  gWorldMapBlend = BLEND_ALPHA(0, 12);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0xb00;
-  PUSH_PICTURE(0x2280);
+  gWorldMapBlend = BLEND_ALPHA(0, 11);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0xa00;
-  PUSH_PICTURE(0x1c80);
+  gWorldMapBlend = BLEND_ALPHA(0, 10);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0x900;
-  PUSH_PICTURE(0x1680);
+  gWorldMapBlend = BLEND_ALPHA(0, 9);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(2);
-  gWorldMapBlend = 0x800;
-  PUSH_PICTURE(0x1080);
+  gWorldMapBlend = BLEND_ALPHA(0, 8);
+  PUSH_PICTURE(0);
   FieldEvent_Wait(140);
-  PUSH_PICTURE(0x1680);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x1c80);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x2280);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(4);
-  gWorldMapBlend = 0x900;
-  PUSH_PICTURE(0x2880);
+  gWorldMapBlend = BLEND_ALPHA(0, 9);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(4);
-  gWorldMapBlend = 0xa00;
-  PUSH_PICTURE(0x2e80);
+  gWorldMapBlend = BLEND_ALPHA(0, 10);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(4);
-  gWorldMapBlend = 0xb00;
-  PUSH_PICTURE(0x3480);
+  gWorldMapBlend = BLEND_ALPHA(0, 11);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(4);
-  gWorldMapBlend = 0xc00;
-  PUSH_PICTURE(0x3a80);
+  gWorldMapBlend = BLEND_ALPHA(0, 12);
+  PUSH_PICTURE(7);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
-    gWorldMapBlend = 0xd00;
+    gWorldMapBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0xe00;
+    gWorldMapBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0xf00;
+    gWorldMapBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0x1000;
+    gWorldMapBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
     FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    /* FAKEMATCH(temporary): the blend read into blend before each of the two
-     * IoWriteQueue_Store16 calls. */
-    blend = gWorldMapBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   } else {
-    gWorldMapBlend = 0xd00;
+    gWorldMapBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0xe00;
+    gWorldMapBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0xf00;
+    gWorldMapBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gWorldMapBlend = 0x1000;
+    gWorldMapBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
     FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    blend = gWorldMapBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
@@ -2415,28 +2454,31 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
 void WorldMap_LoadTidalWave(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
-  s32 x, y, i, t, scrollX;
+  u32 x;
+  s32 y, i, scrollX;
   u16 scrollY;
   s32 mode;
 
   Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
   Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0), (u32)gWorldMapPalettesB,
-                      0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f41);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                      (u32)gWorldMapPalettesB,
+                      DMA_COPY_HALFWORDS(PALETTE_COLORS));
+  IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
+                      DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
+  IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
+                      DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0x3f41);
+  Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
+                       BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX));
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, 0xc200, 0x20000);
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
-    /* FAKEMATCH(temporary): x * 16 held in t before the divide. */
-    t = x * 16;
-    scrollX = t / 128;
+    scrollX = (s32)(x * 16) / 128;
     scrollY = -y / 128 + 352;
     gBgScroll[0].x = scrollX;
     gBgScroll[0].y = scrollY;
@@ -2450,9 +2492,9 @@ void WorldMap_LoadTidalWave(void) {
   // mode holds one 0 for the rest of the function; the closing scroll reset
   // stores it again.
   mode = 0;
-  PaletteFade_ApplyTarget(0x7fff, mode);
+  PaletteFade_ApplyTarget(RGB_WHITE, mode);
   PaletteFade_Interpolate(1);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1000);
+  Scene_QueueIoWrite16((u32)&REG_BLDALPHA, BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
@@ -2505,8 +2547,8 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (FieldActor_Create(271, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed));
+    child = (FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed));
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -2552,53 +2594,56 @@ extern u8 gGauge_SourceTiles[][32];
 
 /// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {
-  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
-  s32 kind = 0;
+  s32 level = ((progress * GAUGE_LEVELS + Q16_ONE / 2) >> 16) + 1;
+  s32 kind = GAUGE_EMPTY;
   s32 count, base, i;
 
   if (progress != 0)
-    kind = 100;
+    kind = GAUGE_SHOWN;
   if (level <= 15 && (gFrameCount & 15) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (level <= 7 && (gFrameCount & 7) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (kind + level == gGauge_Shown)
     return;
   gGauge_Shown = kind + level;
-  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(0x100));
+  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(GAUGE_SIZE));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    if (kind == 0) {
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+    if (kind == GAUGE_EMPTY) {
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
       goto done;
     }
-    if (kind == 100)
-      copy(gGauge_Tiles, gGauge_SourceTiles[4], 0x80);
+    if (kind == GAUGE_SHOWN)
+      copy(gGauge_Tiles, gGauge_SourceTiles[4], 4 * TILE_SIZE_4BPP);
     else
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, TILE_SIZE_4BPP);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3],
+                         TILE_SIZE_4BPP);
     base = 0;
     count = 0;
   }
@@ -2624,7 +2669,7 @@ void Gauge_Draw(s32 progress) {
     }
   }
 done:
-  Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, gGauge_Tiles);
 }
 
 /// The Psynergy gauge over the leader as the ship flies: while A or B is held
@@ -2645,7 +2690,7 @@ void Gauge_Update(void) {
     }
   }
   Gauge_Draw(Party_GetPpRatio());
-  attributes = 0x80004000;
+  attributes = OBJ_SIZE_32X16;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
         (s32)(screen));
   {
@@ -2653,9 +2698,9 @@ void Gauge_Update(void) {
     s32 y = screen[1] - 32;
 
     *oam++ = 0;
-    *oam++ = (y | (x << 16)) | attributes;
+    *oam++ = (y | OBJ_X(x)) | attributes;
   }
-  *oam = tile | 0x400;
+  *oam = tile | OBJ_PRIORITY(1);
   Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
@@ -2663,7 +2708,7 @@ void Gauge_Update(void) {
 void Gauge_Init(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
   gGauge_Vram = VramCache_FindFreeEntry();
-  Vram_Load(gGauge_Vram, 0x100, 0);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, 0);
   gGauge_Shown = -1;
   gGauge_Countdown = 10;
   Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);
@@ -2839,11 +2884,11 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(WorldMap),
-    SCENE_EXIT(64, WorldMap, 77),
-    SCENE_EXIT(65, Idejima, 2),
-    SCENE_EXIT(66, LemurianShipTiller, 10),
-    SCENE_EXIT(77, Idejima, 12),
-    SCENE_EXIT(78, AquaRockMoai, 5),
+    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_DRIFTING, WorldMap, 77),
+    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA, Idejima, 2),
+    SCENE_EXIT(WORLD_MAP_EXIT_SHIP_TILLER, LemurianShipTiller, 10),
+    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT, Idejima, 12),
+    SCENE_EXIT(WORLD_MAP_EXIT_AQUA_ROCK, AquaRockMoai, 5),
     SCENE_EXIT(1, Idejima, 4),
     SCENE_EXIT_UNLESS(2, DailaFlooded, 8, 0x873),
     SCENE_EXIT_UNLESS(3, DailaFlooded, 9, 0x873),

@@ -52,12 +52,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     REG_BLDALPHA = EFFECT_BLEND_ADD;
 
     sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
-    Iwram_CopyWords(BG_PLTT, sheet, 128);
-    sheet = sheet + 128;
+    Iwram_CopyWords(BG_PLTT, sheet, SHEET_PALETTE_BYTES);
+    sheet = sheet + SHEET_PALETTE_BYTES;
     Decompress_TaggedLz(sheet, work->sheet);
     cells = Ram_MapGridCellBuffer;
     sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
-    sheet = sheet + 128;
+    sheet = sheet + SHEET_PALETTE_BYTES;
     Decompress_TaggedLz(sheet, cells);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
@@ -169,43 +169,43 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
               canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
               CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
         }
-        draw[work->args->side](canvas, work->sheet + REAPER_SHEET_SWUNG,
-                               CONDEMN_PICTURE_X(pictureColumn, 1),
-                               CONDEMN_PICTURE_Y(pictureRow, 1) + screenY, 99,
-                               69);
+        EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+                            REAPER_SHEET_SWUNG,
+                            CONDEMN_PICTURE_X(pictureColumn, 1),
+                            CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
         if (frame >= 88 && frame <= 89) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame >= 90 && frame <= 91) {
-          draw[work->args->side](canvas, work->sheet + REAPER_SHEET_CRESCENT,
-                                 CONDEMN_PICTURE_X(pictureColumn, 2),
-                                 CONDEMN_PICTURE_Y(pictureRow, 2) + screenY,
-                                 128, 91);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+                              REAPER_SHEET_CRESCENT,
+                              CONDEMN_PICTURE_X(pictureColumn, 2),
+                              CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
         }
         if (frame >= 92 && frame <= 93) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_1,
-              CONDEMN_PICTURE_X(pictureColumn, 3),
-              CONDEMN_PICTURE_Y(pictureRow, 3) + screenY, 128, 91);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_A,
+                              CONDEMN_PICTURE_X(pictureColumn, 3),
+                              CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
         }
         if (frame >= 94 && frame <= 95) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_2,
-              CONDEMN_PICTURE_X(pictureColumn, 4),
-              CONDEMN_PICTURE_Y(pictureRow, 4) + screenY, 128, 59);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_B,
+                              CONDEMN_PICTURE_X(pictureColumn, 4),
+                              CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
         }
         if (frame >= 96 && frame <= 97) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_3,
-              CONDEMN_PICTURE_X(pictureColumn, 5),
-              CONDEMN_PICTURE_Y(pictureRow, 5) + screenY, 122, 29);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_C,
+                              CONDEMN_PICTURE_X(pictureColumn, 5),
+                              CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
         }
         if (frame >= 98 && frame <= 99) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_4,
-              CONDEMN_PICTURE_X(pictureColumn, 6),
-              CONDEMN_PICTURE_Y(pictureRow, 6) + screenY, 76, 25);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_D,
+                              CONDEMN_PICTURE_X(pictureColumn, 6),
+                              CONDEMN_PICTURE_Y(pictureRow, 6) + screenY);
         }
       }
     }

@@ -351,7 +351,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         s32 drawX;
         s32 drawY;
 
-        Particle_AdvanceWithGravity2D(shard, 64, 0);
+        Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
         picture = (frame - 36) / 7;
         drawX = Q_16_16_UPPER_HALF(shard->x);
         drawY = Q_16_16_UPPER_HALF(shard->y);

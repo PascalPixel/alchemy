@@ -339,7 +339,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = 0;
@@ -688,7 +688,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          Particle_AdvanceWithGravity2D(piece, 64, px(1) / 4);
+          Particle_AdvanceWithGravity2D(piece, PARTICLE_DAMPING_NONE,
+                                        px(1) / 4);
       }
     }
 
@@ -814,7 +815,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = px(128);
@@ -984,7 +985,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
     break;
   }
   palette = Resource_GetTableEntry(id);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   work->frame = 0;
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = CANVAS_FILL_WORD(6);

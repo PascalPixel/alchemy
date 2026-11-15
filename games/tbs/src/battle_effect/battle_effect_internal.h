@@ -124,7 +124,23 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
-#define CANVAS_BYTES (128 * 128)
+#define CANVAS_SIZE 128
+#define CANVAS_BYTES (CANVAS_SIZE * CANVAS_SIZE)
+
+/// The battle view, under the top window and over the menus: screen lines 16
+/// to 135.
+#define BATTLE_VIEW_TOP 16
+#define BATTLE_VIEW_HEIGHT 120
+#define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+
+/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// pictures.
+#define SHEET_PALETTE_COLORS 64
+#define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
+
+/// Particle_AdvanceWithGravity3D's and 2D's damping, out of 64, that keeps a
+/// particle's whole speed.
+#define PARTICLE_DAMPING_NONE 64
 
 /// Opens the canvas layer at the canvas's own width.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
@@ -170,6 +186,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
+/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
+/// _HEIGHT.
+#define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
+
+/// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
+#define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
+  (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
@@ -205,7 +229,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// colour added over what lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
-   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// A WIN0H value whose left edge is past its right edge, written only on lines
@@ -232,25 +256,34 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
 /// the reaper with its scythe raised, then swung, then the red crescent the
 /// swing leaves.
+#define REAPER_SHEET_RAISED_WIDTH 57
+#define REAPER_SHEET_RAISED_HEIGHT 98
+#define REAPER_SHEET_SWUNG_WIDTH 99
+#define REAPER_SHEET_SWUNG_HEIGHT 69
+#define REAPER_SHEET_CRESCENT_WIDTH 128
+#define REAPER_SHEET_CRESCENT_HEIGHT 91
 enum ReaperSheetPicture {
-  /// 57x98
   REAPER_SHEET_RAISED = 0,
-  /// 99x69
-  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + 57 * 98,
-  /// 128x91
-  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + 99 * 69
+  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
 };
 
 /// RedCrescentSheetA: the swing's crescent fading in four pictures.
+#define RED_CRESCENT_FADE_A_WIDTH 128
+#define RED_CRESCENT_FADE_A_HEIGHT 91
+#define RED_CRESCENT_FADE_B_WIDTH 128
+#define RED_CRESCENT_FADE_B_HEIGHT 59
+#define RED_CRESCENT_FADE_C_WIDTH 122
+#define RED_CRESCENT_FADE_C_HEIGHT 29
+#define RED_CRESCENT_FADE_D_WIDTH 76
+#define RED_CRESCENT_FADE_D_HEIGHT 25
 enum RedCrescentPicture {
-  /// 128x91
-  RED_CRESCENT_FADE_1 = 0,
-  /// 128x59
-  RED_CRESCENT_FADE_2 = RED_CRESCENT_FADE_1 + 128 * 91,
-  /// 122x29
-  RED_CRESCENT_FADE_3 = RED_CRESCENT_FADE_2 + 128 * 59,
-  /// 76x25
-  RED_CRESCENT_FADE_4 = RED_CRESCENT_FADE_3 + 122 * 29
+  RED_CRESCENT_FADE_A = 0,
+  RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +
+      PICTURE_BYTES(RED_CRESCENT_FADE_A),
+  RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B +
+      PICTURE_BYTES(RED_CRESCENT_FADE_B),
+  RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
 };
 
 /// Closing bolts and lightning columns use the same 24x120 pictures.
@@ -259,14 +292,16 @@ enum RedCrescentPicture {
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                            \
-  (REG_WIN0H = WIN_RANGE(0, 240), REG_WIN0V = WIN_RANGE(16, 136),              \
-   REG_WIN1H = WIN_RANGE(0, 240), REG_WIN1V = WIN_RANGE(16, 136))
+  (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                 \
+   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 
 /// BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to
 /// twice its width: the 128x128 canvas across the battle view.
 #define EFFECT_SET_CANVAS_AFFINE()                                             \
-  (REG_BG2X = 0, REG_BG2Y = -(16 << 8), REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0, \
-   REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
+  (REG_BG2X = 0, REG_BG2Y = -(BATTLE_VIEW_TOP << 8), REG_BG2PA = Q_8_8(0.5),   \
+   REG_BG2PB = 0, REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
 /// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \

@@ -102,12 +102,12 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
@@ -123,7 +123,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   else
     palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);

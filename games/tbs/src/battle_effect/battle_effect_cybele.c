@@ -165,7 +165,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           tall = gCybele_ThornHeights[pictureIndex];
           y -= tall >> 1;
           draw[0](canvas, picture, x, y, width, tall);
-          Particle_AdvanceWithGravity2D(thorn, 64, px(1) / 16);
+          Particle_AdvanceWithGravity2D(thorn, PARTICLE_DAMPING_NONE,
+                                        px(1) / 16);
         }
       }
     }

@@ -55,7 +55,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     paletteId = RESOURCE_MARS_DJINN_SHEET;
   else
     paletteId = RESOURCE_MERCURY_DJINN_SHEET;
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
+                  SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
 
   // The lights fly off the user in every direction.

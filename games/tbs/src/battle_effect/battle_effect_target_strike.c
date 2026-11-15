@@ -164,7 +164,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_LIGHTNING_BOLT_SHEET;
     break;
   }
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),
+                  SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                              work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 

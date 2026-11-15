@@ -267,9 +267,9 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   u8 *data = Resource_GetTableEntry(id);
 
   if (copyPalette != 0)
-    Iwram_CopyWords(BG_PLTT, data, 128);
+    Iwram_CopyWords(BG_PLTT, data, SHEET_PALETTE_BYTES);
   if (skipPalette != 0)
-    data += 128;
+    data += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(data, dst);
 }
 
@@ -512,7 +512,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         x = Q_16_16_TO_INT(step->x) + Q_16_16_TO_INT(Trig_Sin(step->z) * 4);
         EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, Q_16_16_TO_INT(step->y),
                          size);
-        Particle_AdvanceWithGravity2D(step, 64, -px(1) / 8);
+        Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, -px(1) / 8);
         step->z += TRIG_TURN / 32;
         if (step->z > TRIG_ANGLE_MASK)
           step->z -= TRIG_TURN - 1;

@@ -185,7 +185,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 y;
             s32 size;
 
-            Particle_AdvanceWithGravity2D(spark, 64, px(1) / 16);
+            Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                          px(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > px(108)) {

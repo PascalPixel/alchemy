@@ -146,7 +146,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     break;
   }
   palette = Resource_GetTableEntry(paletteId);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   wait(1);
 
   Projection_ScaledUnit(work->args->targets[0], &targetPos);

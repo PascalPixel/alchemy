@@ -52,7 +52,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (work->args->variant != EFFECT_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
-    Iwram_CopyWords(BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   life = &((struct Particle *)PARTICLES)->variant;

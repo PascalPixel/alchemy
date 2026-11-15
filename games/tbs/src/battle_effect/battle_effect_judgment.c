@@ -128,7 +128,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   view->busy = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   depth = -px(64);
   zoom = px(8);
   minimumDepth = 0xffff;

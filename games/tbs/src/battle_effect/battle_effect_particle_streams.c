@@ -528,7 +528,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                   (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
              screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(ember, 64, -px(1) / 8);
+        Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE, -px(1) / 8);
         if (ember->y <= px(20)) {
           ember->x = 0;
           ember->z = 0;
@@ -578,7 +578,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
           flash->variant = 0;
         } else {
-          Particle_AdvanceWithGravity3D(flash, 64, 1);
+          Particle_AdvanceWithGravity3D(flash, PARTICLE_DAMPING_NONE, 1);
         }
       }
     }

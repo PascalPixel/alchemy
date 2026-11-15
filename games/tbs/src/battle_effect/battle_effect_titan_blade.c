@@ -279,7 +279,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 y;
           s32 size;
 
-          Particle_AdvanceWithGravity2D(spark, 64, px(1) / 8);
+          Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                        px(1) / 8);
           y = spark->y;
           spark->variant--;
           if (y > px(108)) {

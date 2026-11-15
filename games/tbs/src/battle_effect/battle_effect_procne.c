@@ -68,8 +68,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                           HEAP_SLOT_RAM_CODE_2);
 
   resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
-  Iwram_CopyWords(BG_PLTT, resource, 128);
-  resource += 128;
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
@@ -243,8 +243,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       BattleEffect_SpawnObjects(9, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
-      Iwram_CopyWords(BG_PLTT, resource, 128);
-      resource += 128;
+      Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+      resource += SHEET_PALETTE_BYTES;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
 
       for (index = 0; index != 512; index++) {

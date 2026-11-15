@@ -49,19 +49,19 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                                    work->args->side ^ work->args->prelude,
                                    DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_CRESCENT_MOON_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_PICTURES);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SHEET);
   else
     palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
   for (i = 0; i != 512; i++) {

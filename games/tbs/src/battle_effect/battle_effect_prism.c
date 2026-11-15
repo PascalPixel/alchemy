@@ -95,7 +95,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[picture] / 2,
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[picture] / 2,
                 gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
-            Particle_AdvanceWithGravity2D(shard, 64, px(1) / 8);
+            Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
+                                          px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -104,7 +105,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           // A falling crystal.
           draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
                       Q_16_16_TO_INT(crystal->y), 32, 64);
-          Particle_AdvanceWithGravity2D(crystal, 64, Q16_ONE);
+          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
+                                        Q16_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
             crystal->z = 1;

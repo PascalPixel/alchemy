@@ -9,13 +9,14 @@
 
 /// Steps background colours 0 to 63 one level towards a palette resource.
 void BattleEffect_StepPaletteToResource(s32 resourceId) {
-  u16 target[64];
+  u16 target[SHEET_PALETTE_COLORS];
   u16 *color = (u16 *)BG_PLTT;
   s32 i;
 
-  Iwram_CopyWords(target, Resource_GetTableEntry(resourceId), 128);
+  Iwram_CopyWords(target, Resource_GetTableEntry(resourceId),
+                  SHEET_PALETTE_BYTES);
   target[0] = 0;
-  for (i = 0; i != 64; i++, color++) {
+  for (i = 0; i != SHEET_PALETTE_COLORS; i++, color++) {
     s32 red = RGB_RED(*color);
     s32 green = RGB_GREEN(*color);
     s32 blue = RGB_BLUE(*color);
@@ -37,7 +38,7 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
       blue--;
     target[i] = RGB(red, green, blue);
   }
-  Iwram_CopyWords(BG_PLTT, target, 128);
+  Iwram_CopyWords(BG_PLTT, target, SHEET_PALETTE_BYTES);
 }
 
 /// Clears the prelude image, stops its tasks and releases its blitters
@@ -904,37 +905,43 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                         CASTING_IMPACT_PICTURE_X(work->args->side, 0),
                         imageY + gCastingImpact_PictureY[0], 57, 98);
           }
-          blitters[0](canvas, work->sheet + REAPER_SHEET_SWUNG,
-                      CASTING_IMPACT_PICTURE_X(work->args->side, 1),
-                      imageY + gCastingImpact_PictureY[1], 99, 69);
+          EFFECT_DRAW_PICTURE(blitters[0], canvas, work->sheet,
+                              REAPER_SHEET_SWUNG,
+                              CASTING_IMPACT_PICTURE_X(work->args->side, 1),
+                              imageY + gCastingImpact_PictureY[1]);
           if (frame == 4 || frame == 5) {
             Iwram_FillWords(canvas, CANVAS_BYTES,
                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           }
           if (frame == 6 || frame == 7) {
-            blitters[0](canvas, work->sheet + REAPER_SHEET_CRESCENT,
-                        CASTING_IMPACT_PICTURE_X(work->args->side, 2),
-                        imageY + gCastingImpact_PictureY[2], 128, 91);
+            EFFECT_DRAW_PICTURE(blitters[0], canvas, work->sheet,
+                                REAPER_SHEET_CRESCENT,
+                                CASTING_IMPACT_PICTURE_X(work->args->side, 2),
+                                imageY + gCastingImpact_PictureY[2]);
           }
           if (frame == 8 || frame == 9) {
-            blitters[0](canvas, pictures + RED_CRESCENT_FADE_1,
-                        CASTING_IMPACT_PICTURE_X(work->args->side, 3),
-                        imageY + gCastingImpact_PictureY[3], 128, 91);
+            EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
+                                RED_CRESCENT_FADE_A,
+                                CASTING_IMPACT_PICTURE_X(work->args->side, 3),
+                                imageY + gCastingImpact_PictureY[3]);
           }
           if (frame == 10 || frame == 11) {
-            blitters[0](canvas, pictures + RED_CRESCENT_FADE_2,
-                        CASTING_IMPACT_PICTURE_X(work->args->side, 4),
-                        imageY + gCastingImpact_PictureY[4], 128, 59);
+            EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
+                                RED_CRESCENT_FADE_B,
+                                CASTING_IMPACT_PICTURE_X(work->args->side, 4),
+                                imageY + gCastingImpact_PictureY[4]);
           }
           if (frame == 12 || frame == 13) {
-            blitters[0](canvas, pictures + RED_CRESCENT_FADE_3,
-                        CASTING_IMPACT_PICTURE_X(work->args->side, 5),
-                        imageY + gCastingImpact_PictureY[5], 122, 29);
+            EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
+                                RED_CRESCENT_FADE_C,
+                                CASTING_IMPACT_PICTURE_X(work->args->side, 5),
+                                imageY + gCastingImpact_PictureY[5]);
           }
           if (frame == 14 || frame == 15) {
-            blitters[0](canvas, pictures + RED_CRESCENT_FADE_4,
-                        CASTING_IMPACT_PICTURE_X(work->args->side, 6),
-                        imageY + gCastingImpact_PictureY[6], 76, 25);
+            EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
+                                RED_CRESCENT_FADE_D,
+                                CASTING_IMPACT_PICTURE_X(work->args->side, 6),
+                                imageY + gCastingImpact_PictureY[6]);
           }
         }
       } else if (mode == CASTING_IMPACT_IMPACT_ASURA) {

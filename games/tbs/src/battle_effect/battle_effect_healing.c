@@ -143,7 +143,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   } else {
     resource = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   }
-  Iwram_CopyWords(BG_PLTT, resource, 128);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
@@ -156,7 +156,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     else
       resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
-  resource += 128;
+  resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
 

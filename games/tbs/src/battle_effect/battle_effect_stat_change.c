@@ -147,7 +147,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else
       palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-    Iwram_CopyWords(BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   if (mode == STAT_BOOST_GRANITE)
     Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
@@ -405,7 +405,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     paletteId = RESOURCE_GLOW_ORB_SHEET;
   else
     paletteId = RESOURCE_PINK_BURST_SHEET;
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
+                  SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 

@@ -84,7 +84,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   windowEdgeStep = 1;
   neptuneX = px(280);
   neptuneZ = px(200);

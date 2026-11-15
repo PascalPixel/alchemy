@@ -80,7 +80,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_VIOLET_SKY_BACKDROP, 0);
   BattleEffect_SpawnObjects(9, SPRITE_BOREAS, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != 64; i++) {
@@ -416,7 +416,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           draw(canvas, work->sheet + gBoreas_FallPictures[picture],
                Q_16_16_TO_INT(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
-          Particle_AdvanceWithGravity2D(crystal, 64, px(1));
+          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE, px(1));
           if (Q_16_16_TO_INT(crystal->y) > 120 && crystal->velocityY > px(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
             crystal->y = px(120);

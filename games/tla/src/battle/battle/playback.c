@@ -14,8 +14,8 @@ void BattlePlayback_Start(s32 cue) {
   struct BattleEventState *ev;
 
   ev = &Ram_HeapSlots->battleWork->events;
-  if (ev->phase == BATTLE_PLAYBACK_IDLE) {
-    ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+  if (ev->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
+    ev->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
       if (ev->unk16a == 0)
         ev->pendingCue = cue;
@@ -32,7 +32,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   ev->queue.count = 0;
   ev->eventIndex = 0;
   ev->timer = frames;
-  ev->phase = BATTLE_PLAYBACK_DISPATCH;
+  ev->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
   work->unk67a[3] = 0;
   return Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
 }
@@ -89,80 +89,80 @@ void BattlePlayback_Run(void) {
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
   }
 
-  if (battle->events.phase == BATTLE_PLAYBACK_IDLE)
+  if (battle->events.phase == BATTLE_PLAYBACK_PHASE_IDLE)
     return;
   for (;;) {
-    if (events->phase == BATTLE_PLAYBACK_READY)
+    if (events->phase == BATTLE_PLAYBACK_PHASE_READY)
       return;
-    if (events->phase == BATTLE_PLAYBACK_RESOLVE_TARGET) {
+    if (events->phase == BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET) {
       if (events->queue.targetIndex < battle->plan.targetCount) {
         events->queue.count = 0;
         events->eventIndex = 0;
         events->timer = 0;
-        BattleTarget_Execute(&battle->plan, events->queue.targetIndex);
+        BattleAbility_ApplyToTarget(&battle->plan, events->queue.targetIndex);
         events->queue.targetIndex++;
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       } else {
-        events->phase = BATTLE_PLAYBACK_READY;
+        events->phase = BATTLE_PLAYBACK_PHASE_READY;
       }
-    } else if (events->phase == BATTLE_PLAYBACK_DISPATCH) {
+    } else if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH) {
       while (events->eventIndex < events->queue.count) {
         {
           s32 eventIndex = events->eventIndex;
 
-          if (events->phase != BATTLE_PLAYBACK_DISPATCH)
+          if (events->phase != BATTLE_PLAYBACK_PHASE_DISPATCH)
             break;
           if (events->timer != 0) {
             events->timer--;
             return;
           }
           switch (events->queue.opcodes[eventIndex]) {
-          case BATTLE_EVENT_SOUND:
+          case PLAYBACK_SOUND:
             Sound_PlayFar(events->queue.operands[eventIndex]);
             break;
-          case BATTLE_EVENT_DJINN_BONUS:
+          case PLAYBACK_DJINN_BONUS:
             BattlePlayback_GrantDjinnBonus(events,
                                            events->queue.operands[eventIndex]);
             break;
-          case BATTLE_EVENT_UNIT_NAME:
+          case PLAYBACK_UNIT_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     MESSAGE_ARGUMENT_ACTOR);
             break;
-          case BATTLE_EVENT_NUMBER:
+          case PLAYBACK_NUMBER:
             MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     MESSAGE_ARGUMENT_NUMBER);
             break;
-          case BATTLE_EVENT_ITEM_NAME:
+          case PLAYBACK_ITEM_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
                                     MESSAGE_ARGUMENT_ITEM);
             break;
-          case BATTLE_EVENT_ABILITY_NAME:
+          case PLAYBACK_ABILITY_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
-          case BATTLE_EVENT_MARK:
+          case PLAYBACK_MARK:
             ((struct BattleMessageDisplay *)Ram_HeapSlots->battleMessage)
                 ->marked = 1;
             break;
-          case BATTLE_EVENT_MESSAGE:
+          case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = 3;
             gInput.pendingPressed = 0;
             break;
-          case BATTLE_EVENT_MESSAGE_NO_WAIT:
+          case PLAYBACK_MESSAGE_NO_WAIT:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = 13;
             break;
-          case BATTLE_EVENT_CLEAR_ARGUMENTS:
+          case PLAYBACK_CLEAR_ARGUMENTS:
             MessageArgument_ClearAllFar();
             break;
-          case BATTLE_EVENT_REMOVE_UNIT:
+          case PLAYBACK_REMOVE_UNIT:
             BattleObject_DestroyTemporaryObject(
                 events->queue.operands[eventIndex]);
             break;
-          case BATTLE_EVENT_HIT:
+          case PLAYBACK_HIT:
             if (events->pendingCue > 0)
               Sound_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
@@ -171,7 +171,7 @@ void BattlePlayback_Run(void) {
             events->phase = 10;
             events->timer = 0;
             break;
-          case BATTLE_EVENT_DEFEAT: {
+          case PLAYBACK_DEFEAT: {
             struct BattleUnit *unit;
             void *record;
             s32 recordIndex;
@@ -196,10 +196,10 @@ void BattlePlayback_Run(void) {
             }
             break;
           }
-          case BATTLE_EVENT_DRAW_STATUS:
+          case PLAYBACK_DRAW_STATUS:
             PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
             break;
-          case BATTLE_EVENT_REFRESH_UNIT: {
+          case PLAYBACK_REFRESH_UNIT: {
             struct BattleObj *slot;
 
             BattleUnit_BuildStatusFlags(
@@ -212,20 +212,20 @@ void BattlePlayback_Run(void) {
             BattleObject_UpdatePose(events->queue.operands[eventIndex]);
             break;
           }
-          case 15:
+          case PLAYBACK_BLOW_AWAY:
             BattleObject_RemoveFromLists(events->queue.operands[eventIndex]);
             break;
           }
           events->eventIndex++;
         }
       }
-      if (events->phase == BATTLE_PLAYBACK_DISPATCH)
-        events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+      if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH)
+        events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     } else if (events->phase == 3 || events->phase == 13) {
       if (Message_AllTypedFar() == 0)
         return;
       if (events->phase == 13) {
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
         events->phase = 5;
@@ -259,7 +259,7 @@ void BattlePlayback_Run(void) {
       if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
         Oam_AddSpriteAtDepth(prompt, 240);
@@ -287,7 +287,7 @@ void BattlePlayback_Run(void) {
       events->timer++;
       if (events->timer <= 7)
         return;
-      events->phase = BATTLE_PLAYBACK_DISPATCH;
+      events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
     } else if (events->phase == 11) {
       if (events->timer == 0 || events->timer >= 0x400) {
@@ -366,7 +366,7 @@ void BattlePlayback_Run(void) {
           for (recordIndex = 0; recordIndex < count; recordIndex++)
             BattleSprite_ClearTiles(records[recordIndex], 0);
           BattleObject_MarkForRelease(events->actorId);
-          events->phase = BATTLE_PLAYBACK_DISPATCH;
+          events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
           events->timer = 0;
           return;
         }
@@ -395,7 +395,7 @@ u32 BattlePlayback_Reset(void) {
 
   work = Ram_HeapSlots->battleWork;
   events = &work->events;
-  events->phase = BATTLE_PLAYBACK_IDLE;
+  events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
   events->queue.count = 0;
   events->eventIndex = 0;
   events->timer = 0;
@@ -411,14 +411,14 @@ s32 BattlePlayback_WaitForReady(void) {
 
   events = &Ram_HeapSlots->battleWork->events;
   state = events->phase;
-  if (state == BATTLE_PLAYBACK_IDLE) {
-    events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
-    state = BATTLE_PLAYBACK_RESOLVE_TARGET;
+  if (state == BATTLE_PLAYBACK_PHASE_IDLE) {
+    events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
+    state = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
   }
-  if (state != BATTLE_PLAYBACK_READY) {
+  if (state != BATTLE_PLAYBACK_PHASE_READY) {
     do {
       wait(1U);
-    } while (events->phase != BATTLE_PLAYBACK_READY);
+    } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
   }
   Task_Remove((u32)BattlePlayback_Run);
   return BattlePlayback_Reset();

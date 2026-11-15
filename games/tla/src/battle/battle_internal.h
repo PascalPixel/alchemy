@@ -82,6 +82,164 @@
 #include "system/transform.h"
 #include "field/particle.h"
 #include "battle_formation.h"
+#include "enemy_ids.h"
+
+/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
+/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
+/// passing the letter to BattleUnit_SetFar.
+#define ENEMY_LETTER_FIRST_TOO 0x8000
+#define ENEMY_LETTER_MASK 0x7fff
+
+/// The most actions BattleWork.actions holds for a turn.
+#define BATTLE_ACTION_CAPACITY 20
+
+/// BattleAI_ChooseTarget's results when it picks no one: the side it
+/// may target lists no one, or no one there is worth the ability.
+#define TARGET_PICK_SIDE_EMPTY -2
+#define TARGET_PICK_NONE -1
+
+/// The list place codes the target pickers return (targeting.c,
+/// Battle_FindUnitPlace): a place in the party's list or the enemies',
+/// or'd with the side's tag.
+#define PLACE_PARTY 0x100
+#define PLACE_ENEMY 0x180
+
+/// Enemy ids the battle tests, each named from the English release
+/// (MsgEnemyName plus the id less ENEMY_ID_FIRST). Rows that share a name take
+/// _2 onwards in row order, as the game itself numbers some of them ("Serpent
+/// 6").
+#define ENEMY_RUFFIAN 68
+#define ENEMY_RUFFIAN_2 69
+#define ENEMY_RUFFIAN_3 70
+#define ENEMY_DEVIL_SCORPION 78
+#define ENEMY_SAND_SCORPION 79
+#define ENEMY_BRIGGS 80
+#define ENEMY_SEA_FIGHTER 81
+#define ENEMY_CHAMPA_2 82
+#define ENEMY_CHAMPA_3 83
+#define ENEMY_AQUA_HYDRA 88
+#define ENEMY_HYDRA 89
+#define ENEMY_PYRODRA 90
+#define ENEMY_SERPENT 91
+#define ENEMY_SERPENT_2 92
+#define ENEMY_SERPENT_3 93
+#define ENEMY_SERPENT_4 94
+#define ENEMY_SERPENT_5 95
+#define ENEMY_SERPENT_6 96
+#define ENEMY_SERPENT_7 97
+#define ENEMY_POSEIDON 101
+#define ENEMY_POSEIDON_2 102
+#define ENEMY_POSEIDON_3 103
+#define ENEMY_MOAPA 104
+#define ENEMY_MOAPA_2 105
+#define ENEMY_MOAPA_3 106
+#define ENEMY_KNIGHT 107
+#define ENEMY_KNIGHT_2 108
+#define ENEMY_KNIGHT_3 109
+#define ENEMY_AGATIO 110
+#define ENEMY_AGATIO_2 111
+#define ENEMY_AGATIO_3 112
+#define ENEMY_KARST 113
+#define ENEMY_KARST_2 114
+#define ENEMY_KARST_3 115
+#define ENEMY_WILD_WOLF 117
+#define ENEMY_DIRE_WOLF 118
+#define ENEMY_WHITE_WOLF 119
+#define ENEMY_DINO 149
+#define ENEMY_DINOX 150
+#define ENEMY_DINOSAURUS 151
+#define ENEMY_PIXIE 158
+#define ENEMY_FAERY 159
+#define ENEMY_WEIRD_NYPMH 160
+#define ENEMY_STAR_MAGICIAN 164
+#define ENEMY_SEA_DRAGON 176
+#define ENEMY_TURTLE_DRAGON 177
+#define ENEMY_OCEAN_DRAGON 178
+#define ENEMY_FLAME_DRAGON 194
+#define ENEMY_FLAME_DRAGON_2 195
+#define ENEMY_MINOTAURUS 197
+#define ENEMY_MINOS_WARRIOR 198
+#define ENEMY_MINOS_KNIGHT 199
+#define ENEMY_AKA_MANAH 206
+#define ENEMY_DRUJ 207
+#define ENEMY_AESHMA 208
+#define ENEMY_VALUKAR 209
+#define ENEMY_VALUKAR_2 210
+#define ENEMY_VALUKAR_3 211
+#define ENEMY_DULLAHAN 218
+#define ENEMY_DULLAHAN_2 219
+#define ENEMY_DULLAHAN_3 220
+#define ENEMY_SENTINEL 221
+#define ENEMY_SENTINEL_2 222
+#define ENEMY_SENTINEL_3 223
+#define ENEMY_SLIME 234
+#define ENEMY_SLIME_2 235
+#define ENEMY_OOZE 236
+#define ENEMY_SLIME_BEAST 237
+#define ENEMY_BANDIT 245
+#define ENEMY_THIEF 246
+#define ENEMY_TROLL 263
+#define ENEMY_CAVE_TROLL 264
+#define ENEMY_RECLUSE 268
+#define ENEMY_SIREN 281
+#define ENEMY_SUCCUBUS 282
+#define ENEMY_NIGHTMARE 283
+#define ENEMY_KILLER_APE 291
+#define ENEMY_ORC_CAPTAIN 297
+#define ENEMY_ORC_LORD 298
+#define ENEMY_MANTICORE 302
+#define ENEMY_KOBOLD 305
+#define ENEMY_HOBGOBLIN 307
+#define ENEMY_GRYPHON 311
+#define ENEMY_CERBERUS 318
+#define ENEMY_CHIMERA 323
+#define ENEMY_ANT_LION 333
+#define ENEMY_TOADONPA 336
+#define ENEMY_LIVING_STATUE 339
+#define ENEMY_HYDROS_STATUE 340
+#define ENEMY_AZART 341
+#define ENEMY_AZART_2 342
+#define ENEMY_SATRAGE 343
+#define ENEMY_SATRAGE_2 344
+#define ENEMY_NAVAMPA 345
+#define ENEMY_NAVAMPA_2 346
+#define ENEMY_TRET 347
+#define ENEMY_KRAKEN 348
+#define ENEMY_TORNADO_LIZARD 349
+#define ENEMY_STORM_LIZARD 350
+#define ENEMY_TEMPEST_LIZARD 351
+#define ENEMY_MYSTERY_MAN 352
+#define ENEMY_SATUROS 353
+#define ENEMY_SATUROS_2 354
+#define ENEMY_MYSTERY_WOMAN 355
+#define ENEMY_MENARDI 356
+#define ENEMY_FUSION_DRAGON 357
+#define ENEMY_DEADBEARD 358
+#define ENEMY_MIMIC 359
+#define ENEMY_MIMIC_2 360
+#define ENEMY_MIMIC_3 361
+#define ENEMY_MIMIC_4 362
+#define ENEMY_MIMIC_5 363
+#define ENEMY_MIMIC_6 364
+#define ENEMY_MIMIC_7 365
+#define ENEMY_MIMIC_8 366
+#define ENEMY_MIMIC_9 367
+#define ENEMY_DOOM_DRAGON 369
+#define ENEMY_DOOM_DRAGON_2 370
+#define ENEMY_DOOM_DRAGON_3 371
+#define ENEMY_DOOM_DRAGON_4 372
+#define ENEMY_DOOM_DRAGON_5 373
+#define ENEMY_DOOM_DRAGON_6 374
+#define ENEMY_DOOM_DRAGON_7 375
+#define ENEMY_DOOM_DRAGON_8 376
+#define ENEMY_DOOM_DRAGON_9 377
+#define ENEMY_REFRESH_BALL 378
+#define ENEMY_THUNDER_BALL 379
+#define ENEMY_ANGER_BALL 380
+#define ENEMY_GUARDIAN_BALL 381
+#define ENEMY_BANDIT_2 385
+#define ENEMY_THIEF_2 386
 
 // Far calls the parts make, each passing its own view of the record:
 // ResourceMetadata_Register and SpriteAnimation_Start (field.c, resource_slot/)

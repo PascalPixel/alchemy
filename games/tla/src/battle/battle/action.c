@@ -225,8 +225,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if (id == BATTLE_UNIT_REMOVED)
         continue;
       if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattlePlayback_Push(BATTLE_EVENT_HIT, id);
-        BattlePlayback_Push(BATTLE_EVENT_DEFEAT, id);
+        BattlePlayback_Push(PLAYBACK_HIT, id);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }
     }
     BattlePlayback_RunAll();
@@ -489,14 +489,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         Unit_CalculateFar(request->unitId);
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
-        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(BATTLE_EVENT_ABILITY_NAME,
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
+        BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                             DJINN_ELEMENT(request->parameter) * 20 +
                                 DJINN_INDEX(request->parameter) + 300);
-        BattlePlayback_Push(BATTLE_EVENT_SOUND, 175);
-        BattlePlayback_Push(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
-        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
+        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(

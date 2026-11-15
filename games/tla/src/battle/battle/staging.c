@@ -583,7 +583,7 @@ s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
     BattleMessage_WaitForAdvance();
   } else {
     for (i = 0; i < plan->targetCount; i++) {
-      BattleTarget_Execute(plan, i);
+      BattleAbility_ApplyToTarget(plan, i);
       BattlePlayback_RunAll();
     }
   }

@@ -795,13 +795,13 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       if (gain > 0) {
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(25);
-        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattlePlayback_Push(BATTLE_EVENT_NUMBER, gain);
-        BattlePlayback_Push(BATTLE_EVENT_SOUND, 175);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_NUMBER, gain);
+        BattlePlayback_Push(PLAYBACK_SOUND, 175);
         // Messages 3285 to 3288, 3232, 3240, 3185, 3191 and 3188 in English;
         // all but MsgGoesDown still need their names in the PO catalogs.
-        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
-        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgEarthPowerUp + i);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
@@ -818,23 +818,23 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
 
     BattlePlayback_Reset();
     if (plan->hauntDamage != 0) {
-      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
-      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
+      BattlePlayback_Push(PLAYBACK_HIT, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_NUMBER, plan->hauntDamage);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         } else {
-          BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
-          BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
+          BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+          BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+          BattlePlayback_Push(PLAYBACK_MESSAGE,
                               unitId <= ALLY_MAX ? (u32)MsgGoesDown
                                                  : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }
     }
     BattlePlayback_RunAll();
@@ -844,10 +844,10 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       s32 damage = unit->hpMax * *poison / 10;
       struct BattleWork *state = Ram_HeapSlots->battleWork;
 
-      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_NUMBER, damage);
-      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
+      BattlePlayback_Push(PLAYBACK_HIT, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_NUMBER, damage);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
         state->events.pendingCue = 134;
       } else {
@@ -856,16 +856,16 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         } else {
-          BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
-          BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
+          BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+          BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+          BattlePlayback_Push(PLAYBACK_MESSAGE,
                               unitId <= ALLY_MAX ? (u32)MsgGoesDown
                                                  : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }
     }
     BattlePlayback_RunAll();
@@ -873,15 +873,15 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
-      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
-      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls);
+      BattlePlayback_Push(PLAYBACK_HIT, unitId);
+      BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       if (unitId <= ALLY_MAX) {
-        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {
-        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls + 3);
       }
     }
     BattlePlayback_RunAll();

@@ -36,7 +36,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  SET_VECTOR(center, 0, 160 << 15, 0);
+  SET_VECTOR(center, 0, px(80), 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
@@ -123,7 +123,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
-    xOffset = -112;
+    xOffset = -NARROW_CANVAS_PARTY_X;
   /* FAKEMATCH(dead): the scroll's store in a once-only block. */
   do {
     REG_BG2X = xOffset << 8;
@@ -244,7 +244,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
       args = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, args->x.fixed, 160 << 13, args->z.fixed);
+      SET_VECTOR(point, args->x.fixed, px(20), args->z.fixed);
       Transform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *puff;

@@ -74,6 +74,11 @@ enum StatBoostSheet {
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
 };
 
+/// When the first target's flares burst and its picture appears, with the
+/// damage; each later target follows 8 frames behind.
+#define STAT_BOOST_BURST_FRAME 52
+#define STAT_BOOST_PICTURE_FRAME 80
+
 /// Flares of light swirl in to the centre of each target in turn and burst, and
 /// the mode's picture plays over it.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
@@ -189,10 +194,12 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     drawFlags = EFFECT_CLIP_BOUNDS;
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * 8 + 108; frame++) {
+  for (frame = 0;
+       frame != work->args->targetCount * 8 + STAT_BOOST_PICTURE_FRAME + 28;
+       frame++) {
     struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
-    if (frame == 80)
+    if (frame == STAT_BOOST_PICTURE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
     if (work->args->prelude == 1) {
@@ -222,7 +229,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       s32 height =
           BattleUnit_GetEffectHeightFar(work->args->targets[member]) * 2 / 3;
 
-      if (frame == member * 8 + 80)
+      if (frame == member * 8 + STAT_BOOST_PICTURE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
@@ -278,8 +285,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       Projection_Point(center, &screen);
       screen.x = screen.x * 4 / 5 + canvasShiftX;
 
-      if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
-        s32 picture = (frame - member * 8 - 52) / 4 % 6;
+      if (frame >= member * 8 + STAT_BOOST_BURST_FRAME &&
+          frame < member * 8 + STAT_BOOST_BURST_FRAME + 24) {
+        s32 picture = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
         draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -292,8 +300,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       }
 
       if (mode == STAT_BOOST_IMPACT) {
-        if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
-          s32 picture = (frame - member * 8 - 80) / 4 % 7;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 28) {
+          s32 picture = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -305,8 +314,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 picture = (frame - member * 8 - 80) / 4 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -319,8 +329,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR) {
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 picture = (frame - member * 8 - 80) / 2 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 2 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -339,8 +350,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 picture = (frame - member * 8 - 80) / 4 % 6;
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
                               COMPOSITE_ADDITIVE);
@@ -438,8 +450,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   }
 
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(112 << 8);
-    xOffset = -112;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
+    xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     REG_BG2X = 0;
     xOffset = 0;
@@ -495,7 +507,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         // DEAD: the view set from the camera a first time, which the second
         // call repeats; the ROM keeps both calls.
         EFFECT_VIEW_FROM_CAMERA(camera);
-        SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
+        SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
         EFFECT_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(point);
         SET_VECTOR(origin, 0, 0, 0);

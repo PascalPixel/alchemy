@@ -50,7 +50,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
   for (frame = 0;
        frame != gFrost_Timings[work->args->variant][FROST_FRAME] + 75;

@@ -73,8 +73,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   }
 
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(112 << 8);
-    xOffset = -112;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
+    xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     xOffset = 0;
   }

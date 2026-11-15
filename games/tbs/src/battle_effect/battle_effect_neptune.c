@@ -5,6 +5,10 @@
 #include "battle_effect_internal.h"
 
 #define NEPTUNE_COLUMN_FRAMES 144 ///< frames of the columns of water
+/// The first stage's flares converging on Neptune's head, and the burst at
+/// its end.
+#define NEPTUNE_FLARES_FRAME 152
+#define NEPTUNE_BURST_FRAME 222
 
 /// Sets BG2's horizontal scale back to one texel a pixel above the stretched
 /// lines.
@@ -144,7 +148,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     if (frame == 154) {
       Sound_PlayFar(SE_SWIRL);
     }
-    if (frame == 222) {
+    if (frame == NEPTUNE_BURST_FRAME) {
       Sound_PlayFar(SE_CRASH);
     }
     // The window opens with a ragged edge.
@@ -220,18 +224,19 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame == 152) {
+    if (frame == NEPTUNE_FLARES_FRAME) {
       Irq_SetHandler(IRQ_VCOUNT, 96, BattleEffect_SetBg2AffineScaleHalf);
       work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 
     // Flares converge on Neptune's head.
-    t = frame - 152;
+    t = frame - NEPTUNE_FLARES_FRAME;
     if (t >= 0 && t < 88) {
       for (i = 0; i != 32; i++) {
         flare = &work->particles[i];
-        if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
+        if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
+            frame < i / 4 + NEPTUNE_FLARES_FRAME + 32) {
           s32 fx = Q_16_16_TO_INT(flare->x) + 112;
           s32 fy = Q_16_16_TO_INT(flare->y) + 62;
           s32 r = (i & 3) + 5;
@@ -246,7 +251,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame == 222) {
+    if (frame == NEPTUNE_BURST_FRAME) {
       for (i = 0; i != 64; i++) {
         burstSeed = &work->particles[i];
         burstSeed->x = (Random16() & 15) - 8;
@@ -269,13 +274,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         burstSeed->variant = 0;
       }
     }
-    if (frame > 221) {
+    if (frame >= NEPTUNE_BURST_FRAME) {
       u16 *pictures = gBattleEffect_FlarePictures;
 
       for (i = 0; i != 64; i++) {
         /* LEFTOVER(template): r holds 1, the smallest flare's size. */
         s32 r = 1;
-        if (frame >= i / 2 + 222) {
+        if (frame >= i / 2 + NEPTUNE_BURST_FRAME) {
           blit[0](canvas, work->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,
                   work->particles[i].x - r, work->particles[i].y - r, r * 2,
                   r * 2);
@@ -292,7 +297,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // The beam runs from the top of the canvas to the burst.
     if (frame > 175) {
       n = 5;
-      if (frame > 221) {
+      if (frame >= NEPTUNE_BURST_FRAME) {
         n = 60;
         if (frame != 223 && frame != 224) {
           n = 40;
@@ -358,9 +363,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                           100, 52, z);
       }
     }
-    if (frame >= 214 && frame < 222) {
+    if (frame >= NEPTUNE_BURST_FRAME - 8 && frame < NEPTUNE_BURST_FRAME) {
       s32 z;
-      z = (frame - 214) / 4;
+      z = (frame - (NEPTUNE_BURST_FRAME - 8)) / 4;
       if (z > 2) {
         z = 2;
       }
@@ -368,9 +373,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               work->sheet + NEPTUNE_SPLASH + z * PICTURE_BYTES(WATER_SPLASH),
               63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
-    if (frame > 221) {
+    if (frame >= NEPTUNE_BURST_FRAME) {
       s32 z;
-      z = (frame - 222) / 2 % 4 + 3;
+      z = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
       blit[0](canvas,
               work->sheet + NEPTUNE_SPLASH + z * PICTURE_BYTES(WATER_SPLASH),
               72, 30, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);

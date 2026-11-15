@@ -139,6 +139,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
 
+/// How far right the narrow canvas is set to show over the party: against the
+/// screen's right edge.
+#define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
+
 /// BG1's vertical scroll that sets the battle background in the battle view.
 #define BATTLE_BACKGROUND_SCROLL_Y 32
 

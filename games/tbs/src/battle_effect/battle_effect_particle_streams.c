@@ -452,7 +452,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BG2Y = -(16 << 8);
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;

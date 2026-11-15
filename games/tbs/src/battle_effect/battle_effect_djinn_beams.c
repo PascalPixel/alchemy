@@ -81,7 +81,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     offsetX = 64 - one.x;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      offsetX = -112;
+      offsetX = -NARROW_CANVAS_PARTY_X;
     else
       offsetX = 0;
   }

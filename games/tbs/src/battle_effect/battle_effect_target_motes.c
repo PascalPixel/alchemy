@@ -235,7 +235,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                           COMPOSITE_LIGHTEN);
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
+      SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
       Transform_ApplyPosition(point);
       if (frame > member * 8) {
         Transform_ApplyYaw(frame << 9);
@@ -361,7 +361,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     current->variant = Random16() & 255;
   }
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
@@ -374,7 +374,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
       target = GetBattleObjectSlotFar(work->args->targets[targetIndex])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(anchor, target->x.fixed, 160 << 14, target->z.fixed);
+      SET_VECTOR(anchor, target->x.fixed, px(40), target->z.fixed);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         BattleEffect_TintBattler(work->args->targets[targetIndex],
@@ -452,7 +452,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -478,7 +478,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
         if (frame >= start && frame < start + 72) {
           Projection_ScaledUnit(work->args->targets[i], &screenPosition);
           if (work->args->side == EFFECT_SIDE_PARTY) {
-            screenPosition.x -= 112;
+            screenPosition.x -= NARROW_CANVAS_PARTY_X;
           }
           y = screenPosition.y;
           screenPosition.y = y - 16;

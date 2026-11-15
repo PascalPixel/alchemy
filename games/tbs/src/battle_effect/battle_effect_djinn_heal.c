@@ -57,7 +57,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
     // The swirl.
     SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
-    SET_VECTOR(target, goal->x.fixed, 180 << 15, 0);
+    SET_VECTOR(target, goal->x.fixed, px(90), 0);
   }
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
@@ -156,7 +156,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
           GetBattleObjectSlotFar(work->args->targets[member])->actor;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);
+      SET_VECTOR(position, object->x.fixed, px(40), object->z.fixed);
       Transform_ApplyPosition(position);
       // Each target glows with the recovery sound.
       if (frame == start + 30)

@@ -5,6 +5,9 @@
 #include "battle_effect_internal.h"
 
 #define PROCNE_FRAMES 400 ///< frames of Procne
+/// Procne appears in the violet sky, and the targets it lifted drop.
+#define PROCNE_ARRIVAL_FRAME 160
+#define PROCNE_DROP_FRAME 395
 
 /// The whirlwind sheet: three whirlwind pictures, then the dust.
 #define PROCNE_DUST (3 * (48 * 64))
@@ -109,10 +112,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   }
   for (frame = 0; frame != PROCNE_FRAMES; frame++) {
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
-      if (frame <= 159)
-        frame = 160;
-      else if (frame <= 394)
-        frame = 395;
+      if (frame < PROCNE_ARRIVAL_FRAME)
+        frame = PROCNE_ARRIVAL_FRAME;
+      else if (frame < PROCNE_DROP_FRAME)
+        frame = PROCNE_DROP_FRAME;
     }
 
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -137,7 +140,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
         actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
-        if (frame <= 159) {
+        if (frame < PROCNE_ARRIVAL_FRAME) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
@@ -155,7 +158,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           actor->facing += spin[index] / 4;
         }
 
-        if (frame == 395)
+        if (frame == PROCNE_DROP_FRAME)
           actor->gravity = BATTLE_UNIT_GRAVITY;
 
         for (slot = 0; slot != 4; slot++) {
@@ -171,7 +174,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame >= 16 && frame <= 159) {
+    if (frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 32;
       if (size > 48)
         size = 48;
@@ -180,7 +183,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               112 - size, width, size);
     }
 
-    if (frame >= 48 && frame <= 159) {
+    if (frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 96;
       if (size > 64)
         size = 64;
@@ -189,14 +192,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               64 - size, width, size);
     }
 
-    if (frame >= 160 && frame <= 399) {
+    if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
       image = work->sheet + frame / 4 % 3 * (48 * 64);
       draw[0](canvas, image, 8, 0, width, 64);
       draw[0](canvas, image, 8, 64, width, 64);
     }
 
     // The dust spirals in and up.
-    if (frame <= 159) {
+    if (frame < PROCNE_ARRIVAL_FRAME) {
       point = work->particles;
       for (index = 0; index != 24; index++) {
         if (point[index].variant == 0) {
@@ -233,7 +236,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame == 160) {
+    if (frame == PROCNE_ARRIVAL_FRAME) {
       s32 speed;
       s32 angle;
 
@@ -277,14 +280,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     }
 
     // Procne sways, pushed by each comet.
-    if (frame > 159) {
+    if (frame >= PROCNE_ARRIVAL_FRAME) {
       scale = unitScale;
       size = 16;
-      if (frame - 160 <= 64)
+      if (frame - PROCNE_ARRIVAL_FRAME <= 64)
         size = 32;
 
-      wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-      wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+      wave.x -= (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * 32) >> 6;
+      wave.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
       wave.x += drift.x;
       wave.y += drift.y;
       drift.x /= 2;

@@ -338,7 +338,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(104 << 8);
-    offsetX = -112;
+    offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
@@ -353,8 +353,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         *row++ = (px(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) - (112 << 8);
+        *row++ = (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) -
+                 (NARROW_CANVAS_PARTY_X << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_FOR_EACH_TARGET(member, work->args) {

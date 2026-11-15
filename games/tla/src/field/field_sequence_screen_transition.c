@@ -8,8 +8,6 @@
 /// opening half and the closing half mirrored.
 #define TRANSITION_OPEN 32
 #define TRANSITION_CLOSED 64
-/// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
-#define TRANSITION_SHOW_ALL 0x7f7f
 
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0

@@ -39,30 +39,6 @@ enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_EXP = 10 ///< MsgOwnerStatusExp
 };
 
-/// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
-/// cursor stops in window_tables.s name; the status icons' places follow.
-enum BattleSummaryHelp {
-  /// The name, whose help says how to switch party members with L and R.
-  OWNER_STATUS_HELP_NAME = 0,
-  OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
-  OWNER_STATUS_HELP_EXPERIENCE = 2,
-  OWNER_STATUS_HELP_HP = 3,
-  OWNER_STATUS_HELP_PP = 4,
-  OWNER_STATUS_HELP_CLASS = 5,
-  OWNER_STATUS_HELP_DJINN = 6,
-  OWNER_STATUS_HELP_ELEMENT_LEVEL = 7,
-  OWNER_STATUS_HELP_POWER = 8,
-  OWNER_STATUS_HELP_RESIST = 9,
-  OWNER_STATUS_HELP_ATTACK = 10,
-  OWNER_STATUS_HELP_DEFENSE = 11,
-  OWNER_STATUS_HELP_AGILITY = 12,
-  OWNER_STATUS_HELP_LUCK = 13,
-  /// The first status icon's place: its help is its status's
-  /// (MsgOwnerStatusConditionHelp).
-  OWNER_STATUS_HELP_CONDITION = 14,
-  OWNER_STATUS_HELP_LAST_CONDITION = 21 ///< the eighth icon's place
-};
-
 /// A status the Status screen shows as an icon, which picks both the icon
 /// and its help (MsgOwnerStatusConditionHelp + condition).
 enum BattleSummaryStatus {

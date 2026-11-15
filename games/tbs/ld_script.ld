@@ -208,6 +208,12 @@ SECTIONS
         "*/games/tbs/src/graphics/ui/sprite_cursors.o"(.rodata)
         "*/games/tbs/src/window/scales.o"(.rodata)
         "*/games/tbs/src/window/window_tables.o"(.rodata)
+        "*/games/tbs/src/window/menu_title_tables.o"(.rodata)
+        "*/games/tbs/src/window/shift_prompt.o"(.rodata)
+        "*/games/tbs/src/window/expand_nibble_table.o"(.rodata)
+        "*/games/tbs/src/window/djinn_blink.o"(.rodata)
+        "*/games/tbs/src/window/battle_status_cursors.o"(.rodata)
+        "*/games/tbs/src/window/window_labels.o"(.rodata)
         "*/games/tbs/text/messages.o"(.rodata)
         /* Every edition but the Japanese links the item genders; only German and
            Italian give them entries. */

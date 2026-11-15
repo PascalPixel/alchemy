@@ -166,7 +166,7 @@ extern u8 gDecodeFillByte;
   (*(struct PaletteCycleWork **)&gHeapSlots[HEAP_SLOT_PALETTE_CYCLES])
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
-extern u16 gGraphics_ExpandNibbleTable[];
+extern const u16 gGraphics_ExpandNibbleTable[];
 /// HEAP_SLOT_SPRITES: the actor system's sprite pool, which the
 /// field animation and the sprite viewer walk.
 #define gSprites (*(struct Sprite **)&gHeapSlots[HEAP_SLOT_SPRITES])
@@ -256,7 +256,7 @@ extern u8 Tile_ExpandOpaqueCodeSize[];
 extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// settings menu's selected icon through.
-extern s32 gWindowSprite_PulseScales[];
+extern const s32 gWindowSprite_PulseScales[];
 /// The pixel offsets MenuTitle_Bob moves a sprite pair up and down
 /// by.
 extern const u8 gMenuTitleBobOffsets[];

@@ -30,11 +30,36 @@ struct BattleSummaryCursor {
   u8 reserved; ///< 0 in every row
 };
 
+/// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
+/// cursor stops (battle_status_cursors.c) name; the status icons' places
+/// follow.
+enum BattleSummaryHelp {
+  /// The name, whose help says how to switch party members with L and R.
+  OWNER_STATUS_HELP_NAME = 0,
+  OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
+  OWNER_STATUS_HELP_EXPERIENCE = 2,
+  OWNER_STATUS_HELP_HP = 3,
+  OWNER_STATUS_HELP_PP = 4,
+  OWNER_STATUS_HELP_CLASS = 5,
+  OWNER_STATUS_HELP_DJINN = 6,
+  OWNER_STATUS_HELP_ELEMENT_LEVEL = 7,
+  OWNER_STATUS_HELP_POWER = 8,
+  OWNER_STATUS_HELP_RESIST = 9,
+  OWNER_STATUS_HELP_ATTACK = 10,
+  OWNER_STATUS_HELP_DEFENSE = 11,
+  OWNER_STATUS_HELP_AGILITY = 12,
+  OWNER_STATUS_HELP_LUCK = 13,
+  /// The first status icon's place: its help is its status's
+  /// (MsgOwnerStatusConditionHelp).
+  OWNER_STATUS_HELP_CONDITION = 14,
+  OWNER_STATUS_HELP_LAST_CONDITION = 21 ///< the eighth icon's place
+};
+
 STATIC_ASSERT(sizeof(struct BattleSummaryStatCursor) == 8);
 STATIC_ASSERT(sizeof(struct BattleSummaryCursor) == 4);
 
 /// The stat cursor stops: rows 0 to 8 for a character with Djinn, rows 9 to
-/// 15 for one without (window/window_tables.s).
+/// 15 for one without (window/battle_status_cursors.c).
 extern const struct BattleSummaryStatCursor gBattleStatusScreen_StatCursors[];
 /// The cursor stops of the screen's second group
 /// (STATUS_CURSOR_COMBAT_STATS): column 19, rows 1 to 4.

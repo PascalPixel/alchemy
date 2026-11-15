@@ -345,7 +345,8 @@ struct BattleCommandRowWork {
 
 // The Djinn menu's blinking tile, and where each element's Djinn count sits in
 // the party status window, in tiles, to blink while the Djinni under the
-// cursor is of that element, on standby and ready to summon (window_tables.s).
+// cursor is of that element, on standby and ready to summon (djinn_blink.s,
+// window_labels.s).
 /// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
 /// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
 /// blank), the second stays.

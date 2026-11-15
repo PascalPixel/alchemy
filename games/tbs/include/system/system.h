@@ -25,7 +25,7 @@ extern u8 gNumberBufferDecimalEnd[];
 extern u8 gNumberBufferHexEnd[];
 /// The link battle timer's heading: `TIME`; `TMPO.` in Spanish, `TEMPS` in
 /// French.
-extern u8 gLink_TimeLabelString[];
+extern const u8 gLink_TimeLabelString[];
 /// Each resource's ROM address by resource id (Resource_GetTableEntry).
 extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decompress_tagged_lz.s).

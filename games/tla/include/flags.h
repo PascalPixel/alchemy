@@ -34,6 +34,11 @@
 #define FLAG_TRANSFERRED_BY_PASSWORD 0x2d
 /// Set once data was transferred, either way.
 #define FLAG_DATA_TRANSFERRED 0x2f
+
+/// Set when the Clear scene's "Play on HARD level? (Monsters are stronger)"
+/// is answered yes (MsgPlayOnHardLevel): outside the monster battles each
+/// enemy is strengthened as a battle sets it up (BattleUnit_Strengthen).
+#define FLAG_HARD_LEVEL 0x2e
 /// The first of the 28 flags of The Broken Seal's Djinn, seven to an element
 /// in element order: set for each Djinni the transferred data held, or for
 /// each DataTransfer_GiveDefaultDjinn handed out.
@@ -57,6 +62,10 @@
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
+/// Set while the item menu's info window holds a message ItemMenu_ShowMessage
+/// left there; the item and Psynergy menus then leave the window be once and
+/// clear it, in place of drawing the selection's description.
+#define FLAG_INFO_WINDOW_HOLDS_MESSAGE 0x151
 /// Set while the field menu is open; scenes hold their moving actors still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or pressing a shortcut raises the
@@ -169,6 +178,10 @@
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// The Djinn lesson: its battle and the parts of it the Djinn menu plays.
 #define FLAG_DJINN_LESSON 0x16e
+/// Set when Up is held as Echo's Djinn lesson begins on the World Map: the
+/// lesson then takes its second set of messages, opening "You look like you
+/// already know a little about us, huh?" (MsgDjinnGiveTutorialB and its kin).
+#define FLAG_ALREADY_KNOWS_DJINN 0x175
 /// With FLAG_DJINN_LESSON set, this and FLAG_DJINN_LESSON_PART_B choose the
 /// part of the lesson the Djinn menu plays.
 #define FLAG_DJINN_LESSON_PART_A 0x16f

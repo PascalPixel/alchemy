@@ -58,9 +58,18 @@ extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 /// Kindle the Mars Djinni, and Kraden (Jenna's and Sheba's rows take their own
 /// numbers).
 enum {
+  ACTOR_TIGHTROPE_POST_A = 8,
+  ACTOR_TIGHTROPE_POST_B,
+  ACTOR_ROPE_POST_A,
+  ACTOR_ROPE_POST_B,
   ACTOR_FIRST_PUDDLE = 12,
   ACTOR_SECOND_PUDDLE = 13,
+  ACTOR_IVY,
+  /// The stump that stands in the stream once
+  /// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER is set.
+  ACTOR_STUMP,
   ACTOR_DOG = 16,
+  ACTOR_GEYSER, ///< the unseen point the geyser rises from
   ACTOR_KINDLE = 21,
   ACTOR_KRADEN = 22
 };
@@ -206,7 +215,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-  if (FIELD_CELL(Actor_GetById(15)->x.fixed) == 76) {
+  if (FIELD_CELL(Actor_GetById(ACTOR_STUMP)->x.fixed) == 76) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
@@ -245,7 +254,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     Event_PlaySound(SE_CAST);
     Actor_SetAnimation(id, 3);
     FieldMapGrid_WaitForShakeToSettle();
-    Actor_GetById(15)->priorityFlags |= 2;
+    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER);
   }
   Event_End();
@@ -280,9 +289,9 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   struct Actor *object;
 
   if (cell == 30) {
-    object = Actor_Get(17);
+    object = Actor_Get(ACTOR_GEYSER);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, 1912, 728);
+    Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
     object->groundHeight = object->y.fixed =
         Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
@@ -448,38 +457,38 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next != SCENE_GONDOWAN_CLIFFS)
     goto done;
   Rope_Initialize();
-  Rope_Place(0, 0x200, 10, 11);
+  Rope_Place(0, FLAG_SCENE_TEMP_00, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Tightrope_Initialize();
-    Tightrope_Place(0, 8, 9);
+    Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
   }
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
-    Actor_SetPosition(14, 0, 0);
+    Actor_SetPosition(ACTOR_IVY, 0, 0);
   else
-    Actor_GetById(14)->scaleY = Q16_ONE * 5 / 4;
+    Actor_GetById(ACTOR_IVY)->scaleY = Q16_ONE * 5 / 4;
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Geysers_Start(0, 240);
-  Geyser_Add(0, 17, 0, 0, 64);
+  Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
-    actor = Actor_GetById(17);
+    actor = Actor_GetById(ACTOR_GEYSER);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, 1912, 728);
+    Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
     height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     actor->y.fixed = height;
     actor->groundHeight = height;
   }
-  Actor_SetAnimation(16, 4);
+  Actor_SetAnimation(ACTOR_DOG, 4);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetPosition(15, 1193, 530);
-    Actor_GetById(15)->priorityFlags |= 2;
-    Actor_GetById(15)->collisionFlags = 0;
-    Actor_SetAnimation(15, 2);
+    Actor_SetPosition(ACTOR_STUMP, 1193, 530);
+    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_STUMP)->collisionFlags = 0;
+    Actor_SetAnimation(ACTOR_STUMP, 2);
   } else {
-    Actor_GetById(15)->collisionFlags |= 16;
+    Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
@@ -710,7 +719,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->step = 0;
     entry->phase = 0;
     entry->unk14 = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   rider = (FieldActor_Create(0x8000, object->x.fixed, object->y.fixed,
                              object->z.fixed));

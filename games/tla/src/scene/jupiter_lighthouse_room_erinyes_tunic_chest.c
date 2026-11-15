@@ -61,8 +61,16 @@ struct PushTarget {
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
-/// The log the leader pushes off the ledge, one of four blue logs.
-enum { ACTOR_LEDGE_LOG = ACTOR_FIRST_PLACED + 2 };
+/// The room's four blue logs (fallen columns), the third the one the leader
+/// pushes off the ledge, and the two pillars Move drops into the gaps.
+enum {
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_LOG,
+  ACTOR_LEDGE_LOG,
+  ACTOR_FOURTH_LOG,
+  ACTOR_LEFT_PILLAR = ACTOR_FIRST_PLACED + 6,
+  ACTOR_RIGHT_PILLAR
+};
 
 void Scene_SetArrivalFlags(s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
@@ -201,35 +209,35 @@ s32 Scene_PrepareMap(void) {
 
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
-    object = Actor_Get(14);
+    object = Actor_Get(ACTOR_LEFT_PILLAR);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPosition(14, 328, 584);
+    Actor_SetPosition(ACTOR_LEFT_PILLAR, 328, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
-    object = Actor_Get(15);
+    object = Actor_Get(ACTOR_RIGHT_PILLAR);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPosition(15, 520, 584);
+    Actor_SetPosition(ACTOR_RIGHT_PILLAR, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
-  Actor_Get(8)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(9)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_FIRST_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_SECOND_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(11)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  FieldActor_SetSpritePriority(8, 3);
+  Actor_Get(ACTOR_FOURTH_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_FIRST_LOG, 3);
   FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
-  FieldActor_SetSpritePriority(9, 3);
-  FieldActor_SetSpritePriority(11, 3);
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 2;
-  Actor_DisableById(8);
-  Actor_DisableById(9);
-  Actor_DisableById(10);
-  Actor_DisableById(11);
-  PushTarget_FillFootprint(8);
+  FieldActor_SetSpritePriority(ACTOR_SECOND_LOG, 3);
+  FieldActor_SetSpritePriority(ACTOR_FOURTH_LOG, 3);
+  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_DisableById(ACTOR_FIRST_LOG);
+  Actor_DisableById(ACTOR_SECOND_LOG);
+  Actor_DisableById(ACTOR_LEDGE_LOG);
+  Actor_DisableById(ACTOR_FOURTH_LOG);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG);
   PushTarget_FillFootprint(9);
   PushTarget_FillFootprint(10);
   PushTarget_FillFootprint(11);

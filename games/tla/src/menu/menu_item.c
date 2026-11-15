@@ -1153,8 +1153,6 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   s32 descriptionShown = 0;
   s8 redraw;
   s32 heldCount;
-  s32 label;
-  s32 labelX;
   struct WindowSprite *marker;
 
   Window_SetBounds(window, 13, 5, 17, 12);
@@ -1185,25 +1183,15 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           if (ItemMenu_CountItems(menu->memberIds[selection]) ==
                   INVENTORY_SLOTS &&
               heldCount == 0) {
-            labelX = TRADE_LABEL_X;
-            label = (s32)MsgTradeForWhat;
+            Text_DrawMessageAsTilesFar((s32)MsgTradeForWhat, window,
+                                       TRADE_LABEL_X, 72);
           } else if (heldCount != 0) {
             Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
-            /* FAKEMATCH(dead): an empty once-only block between
-             * `Text_DrawNumberInWindowFar(heldCount. */
-            do {
-            } while (0);
-            labelX = IN_STOCK_LABEL_X;
-            label = (s32)MsgInStock;
+            Text_DrawMessageAsTilesFar((s32)MsgInStock, window,
+                                       IN_STOCK_LABEL_X, 72);
           } else {
-            labelX = 16;
-            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16.
-             */
-            do {
-            } while (0);
-            label = (s32)MsgNoneInStock;
+            Text_DrawMessageAsTilesFar((s32)MsgNoneInStock, window, 16, 72);
           }
-          Text_DrawMessageAsTilesFar(label, window, labelX, 72);
         }
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
                                   0, menu->memberIds[selection]);

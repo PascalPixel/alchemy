@@ -586,7 +586,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
-    /* FAKEMATCH(dead): the rolls in a one-pass block left by break. */
+    // A deluded attacker misses 153 times in 256, and any attack 1 in 32; a
+    // target that cannot move is never missed, and in the Djinn tutorial the
+    // attack always misses.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

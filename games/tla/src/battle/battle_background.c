@@ -351,16 +351,10 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
-  {
-    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound stores.
-     */
-    register s32 *camera asm("r1") = (s32 *)scene;
-
-    renderBounds[0] = 0;
-    renderBounds[1] = 0;
-    renderBounds[2] = span;
-    Iwram_TransformVectorEntry(renderBounds, camera);
-  }
+  renderBounds[0] = 0;
+  renderBounds[1] = 0;
+  renderBounds[2] = span;
+  Iwram_TransformVector(renderBounds, (s32 *)scene);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();

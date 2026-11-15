@@ -64,14 +64,6 @@ extern s16 gClear_CodeUnlocked;
 
 extern u16 gClear_PasswordStackItems[];
 
-struct Panel_02001804 {
-  u8 unk00[8];
-  u16 stride;
-  u8 unk0a[2];
-  s16 x;
-  s16 y;
-};
-
 extern u16 gClear_BlendFrame[];
 extern s16 gClear_ExtraCodeUnlocked;
 extern s16 gClear_CodeProgress;
@@ -1332,63 +1324,63 @@ s32 Clear_EnterPassword(void) {
   }
 }
 
-/// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
-/// at the panel's cell into the BG map at 0x06002000 and into the window
-/// tilemap's shadow: palette 15, the tile of each cell the row times the
-/// panel's stride plus the column.
-void Clear_DrawPanel(struct Panel_02001804 *panel, const void *source) {
-  /* FAKEMATCH(pin): the shadow pointer in r5. */
-  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowWork;
-  void *work = Heap_AllocEwram(0x300);
-  u16 *tiles;
-  s32 offset;
+/// Unpacks the tiles into a scratch block, then fills a 16 by 8 block
+/// of the window tilemap, in VRAM and in its shadow, at the window's cell: each
+/// cell's tile the row times the window's width plus the column.
+UNUSED void Clear_DrawPanel(struct Window *window,
+                            const void *compressedTiles) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  u16 *shadow;
+  u16 *vram;
+  void *decodedTiles;
   s32 row;
-  s32 column;
+  s32 col;
+  s32 cell;
 
-  Decompress_TaggedLz(source, work);
-  offset = panel->y * 32 + panel->x;
-
-  offset *= 2;
-  tiles = (u16 *)(offset + 0x06002000);
-  shadow = (u16 *)((u8 *)shadow + offset + 8);
+  decodedTiles = Heap_AllocEwram(768);
+  Decompress_TaggedLz(compressedTiles, decodedTiles);
+  cell = (s16)window->y * 32 + (s16)window->x;
+  vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
+  shadow = &work->tilemap[0][cell];
   for (row = 0; row <= 7; row++) {
-    for (column = 0; column <= 15; column++) {
-      // One cell, the same tile in the map and in the shadow.
-      s16 tile = (panel->stride * row + column) | 0xf000;
+    for (col = 0; col <= 15; col++) {
+      s16 tile = WINDOW_TILE(window->width * row + col);
 
-      *tiles++ = tile;
+      *vram++ = tile;
       *shadow++ = tile;
     }
-    tiles += 16;
+    vram += 16;
     shadow += 16;
   }
-  Heap_Release(work);
+  Heap_Release(decodedTiles);
 }
 
-void Clear_DrawLowerPanel(struct Panel_02001804 *panel) {
-  /* FAKEMATCH(pin): the shadow pointer in r5. */
-  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowWork;
-  void *work = Heap_AllocEwram(0x300);
-  u16 *tiles;
-  s32 offset;
+/// Fills a 16 by 8 block of the window tilemap with the tiles from 32
+/// on.
+UNUSED void Clear_DrawLowerPanel(struct Window *window) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  u16 *shadow;
+  u16 *vram;
+  void *buffer;
   s32 row;
-  s32 column;
+  s32 col;
+  s32 cell;
 
-  offset = (panel->y * 32 + panel->x) * 2;
-  tiles = (u16 *)(offset + 0x06002000);
-  shadow = (u16 *)((u8 *)shadow + offset + 8);
+  buffer = Heap_AllocEwram(768);
+  cell = (s16)window->y * 32 + (s16)window->x;
+  vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
+  shadow = &work->tilemap[0][cell];
   for (row = 0; row <= 7; row++) {
-    for (column = 0; column <= 15; column++) {
-      // One cell, the same tile in the map and in the shadow.
-      s16 tile = (row * 16 + column + 32) | 0xf000;
+    for (col = 0; col <= 15; col++) {
+      s16 tile = WINDOW_TILE(row * 16 + col + 32);
 
-      *tiles++ = tile;
+      *vram++ = tile;
       *shadow++ = tile;
     }
-    tiles += 16;
+    vram += 16;
     shadow += 16;
   }
-  Heap_Release(work);
+  Heap_Release(buffer);
 }
 
 extern s32 gClear_ImportedMembers[];

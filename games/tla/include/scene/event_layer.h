@@ -19,6 +19,15 @@ static inline void FieldMapGrid_SetCellHeight(s32 x, s32 z, s32 layer,
   MapGrid_SetCellHeight(x, z, layer, height);
 }
 
+s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
+
+/// Replaces a cell's collision code and attributes on a layer
+/// (MapCell_SetAttributes).
+static inline void FieldMapCell_SetAttributes(s32 layer, s32 x, s32 z,
+                                              s32 value) {
+  MapCell_SetAttributes(layer, x, z, value);
+}
+
 void Field_StartColorTransition(s32 frames, s32 color);
 
 /// Fades the palettes to `color` over `frames` frames, keeping the field's

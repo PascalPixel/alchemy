@@ -2023,8 +2023,8 @@ void AirsRockInside_FinishPushingPillar(void) {
     if (x == 81 && z == 37)
       GameFlag_Set(FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
-    Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
-    Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
+    FieldMapGrid_SetCellHeight(px(608), px(336), 2, -4);
+    FieldMapGrid_SetCellHeight(px(624), px(336), 2, -4);
     if (x == 43 && z == 87)
       GameFlag_Set(FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED);
     if ((Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_A)->x.fixed >> 19 == 73 &&
@@ -3077,8 +3077,6 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 i, z, one;
 
-  /* FAKEMATCH(wrapper): MapCell_SetAttributes called through call.h's Call4. */
-
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -3227,15 +3225,14 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     AirsRockInside_StartRestoringCells();
     i = 0;
-  loop:
-    if (GameFlag_Get(514 + i)) {
-      z = 24 - (i << 1);
-      MapGrid_CopyCellsTo(65, 1, 80, z, 1, 2);
-      Call4((void (*)())MapCell_SetAttributes, 0, 16, z, 0xff00);
-    }
-    i++;
-    if (i != 6)
-      goto loop;
+    do {
+      if (GameFlag_Get(514 + i)) {
+        z = 24 - (i << 1);
+        MapGrid_CopyCellsTo(65, 1, 80, z, 1, 2);
+        FieldMapCell_SetAttributes(0, 16, z, 0xff00);
+      }
+      i++;
+    } while (i != 6);
     Actor_GetById(ACTOR_REVEAL_TABLET)->motionFlags = 0;
     object = Actor_GetById(ACTOR_REVEAL_TABLET);
     Actor_GetById(ACTOR_REVEAL_TABLET)->groundHeight = px(16);

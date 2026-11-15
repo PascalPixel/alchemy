@@ -5,7 +5,6 @@ void Leader_SlideOnIceAhead(void) {
   s32 startBehavior;
   s32 x;
   s32 z;
-  s32 radius;
   struct Actor *actor;
   struct Vector3 *next;
   s32 nextBehavior;
@@ -14,10 +13,6 @@ void Leader_SlideOnIceAhead(void) {
   struct Vector3 *position;
   u8 *flags;
   s32 i;
-  s32 cell;
-  s32 angle;
-  s32 zero;
-  struct Vector3 *step;
   s32 startX;
   s32 startZ;
 
@@ -30,27 +25,22 @@ top:
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
-  /* Default: one zero, spilled and reloaded at each use. */
-  zero = 0;
-  actor->velocityX = zero;
-  actor->velocityZ = zero;
-  /* FAKEMATCH(temporary): cell holds the masked x. */
-  cell = actor->x.fixed & 0xfff00000;
-  i = px(8);
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = cell + i;
+  position->x = startX = (actor->x.fixed & 0xfff00000) + px(8);
   position->y = actor->y.fixed;
-  position->z = startZ = (actor->z.fixed & 0xfff00000) + i;
+  position->z = startZ = (actor->z.fixed & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
-  startBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->layer), startX, startZ);
+  layer = &actor->layer;
+  startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, startX, startZ);
   FieldVector_AddPolarOffset(16, heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
-          i) {
+          px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -62,33 +52,32 @@ top:
   position->z = z;
   actor->speedLimit = px(2);
   actor->acceleration = px(1) / 10;
-  actor->timer = zero;
+  actor->timer = 0;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Actor_SteerByPad;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading
-   * nextBehavior twice. */
-  asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed > px(8)) {
     goto stop;
   }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->actors;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
+  {
+    s32 radius = actor->radius - 2;
+    other = Ram_HeapSlots->actors;
+    flags = &other->collisionFlags;
+    for (i = 0; i < 64; i++, flags += 128, other++) {
+      if (other->script != NULL && (*flags & 1) && other != actor) {
+        /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
+         * next and actor. */
+        asm(""
+            :
+            : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+              "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
+            : SFP_CLOBBER, "r4");
+        if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
+                                      other->radius - 2) >= 0) {
+          goto stop;
+        }
       }
     }
   }
@@ -102,13 +91,7 @@ body:
     goto blocked;
   }
 test:
-  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
-  asm("" : "=r"(angle) : "0"(heading) : "r4");
-  step = &probe;
-  FieldVector_AddPolarOffset(16, angle, step);
-  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
-   */
-  step = NULL;
+  FieldVector_AddPolarOffset(16, heading, &probe);
   next = &probe;
   nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
   if (nextBehavior != 255) {

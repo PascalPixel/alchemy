@@ -379,13 +379,14 @@ s32 Scene_Initialize(void) {
   EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture,
                      (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  goto L_02008692;
-L_0200868c:
+  // The embrace stays until a button is pressed.
+  goto checkForPress;
+waitForPress:
   System_Wait(1);
-L_02008692:
+checkForPress:
   p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
-    goto L_0200868c;
+    goto waitForPress;
   Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingReunionPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
@@ -403,16 +404,16 @@ L_02008692:
   p = &gMainRoutineWork;
   ((struct MainRoutineWork *)p)->messageSpeed = saved;
   FieldEvent_Wait(300);
+  // The End stays until a button is pressed, or for three minutes.
   count = 0;
-  if (gInput.pressed != 0)
-    goto L_0200871e;
-  do {
-    System_Wait(1);
-    count++;
-    if (count > 10799)
-      goto L_0200871e;
-  } while (gInput.pressed == 0);
-L_0200871e:
+  if (gInput.pressed == 0) {
+    do {
+      System_Wait(1);
+      count++;
+      if (count >= 3 * 60 * FRAMES_PER_SECOND)
+        break;
+    } while (gInput.pressed == 0);
+  }
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Io_Write16(0, &REG_BLDCNT);

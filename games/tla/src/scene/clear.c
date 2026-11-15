@@ -255,13 +255,6 @@ void Clear_FollowSecretCodes(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Clear_CanRetreat(void) {
   struct MainRoutineWork *party;
   s32 mode;
@@ -270,7 +263,7 @@ s32 Clear_CanRetreat(void) {
     return 0;
   party = &gMainRoutineWork;
 
-  if (FIELD_AT(party, s16, 0x25e) == 2)
+  if (party->sceneType == 2)
     return 0;
   mode = party->next ^ SCENE_WORLD_MAP;
   return -NONZERO(mode);
@@ -293,8 +286,6 @@ void Save_CopyFile(void);
 u32 BuildStamp_GetTime(void);
 void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
-
-#define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
 #define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
 
@@ -505,7 +496,7 @@ top:
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       WindowColor_Apply(party->windowHue, party->windowBrightness);
-      if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
+      if (party->buildStamp != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
         if (Clear_CanRetreat()) {
@@ -1937,8 +1928,6 @@ s16 gClear_FirstCodeStarted = 0;
 
 s16 gClear_SecondCodeDone = 0;
 
-#undef FIELD_AT
-#undef PARTY_WORD
 #undef MAP_CELL_BACKUP
 #undef YEAH_WIDTH
 #undef COPY_CELLS

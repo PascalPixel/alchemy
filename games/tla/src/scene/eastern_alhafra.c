@@ -1250,7 +1250,6 @@ void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 }
 #undef EVENT_WORK
 #undef OBJECT
-#undef FIELD_AT
 
 /* VIEW(s1bf4): routine EasternAlhafra_SpawnPuff as s32
  * EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the
@@ -2680,7 +2679,6 @@ next:
 #undef ABS
 #undef EVENT_WORK
 #undef OBJECT
-#undef FIELD_AT
 #undef PIXEL_PART
 #include "text/msg_ids.h"
 

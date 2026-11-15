@@ -74,8 +74,9 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "macros.h"
 #include "text/msg_ids.h"
 
-struct WarpTarget {
-  const void *scene;
+/// A door's opening: the map edit that draws it and the cell it plays at.
+struct DoorEdit {
+  const s16 *frames;
   u16 x;
   u16 z;
 };
@@ -88,16 +89,10 @@ struct RiseObject {
   s32 update;
 };
 
-/* VIEW(champa_cliff_caves): routine gChampaCliffCaves_FirstDoor as this part
- * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA s32 gChampaCliffCaves_FirstDoor[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:189: `gChampaCliffCaves_FirstDoor'
- * undeclared (first use in this function). */
-extern const struct WarpTarget
-    gChampaCliffCaves_FirstDoor__view __asm__("gChampaCliffCaves_FirstDoor");
-#define gChampaCliffCaves_FirstDoor gChampaCliffCaves_FirstDoor__view
+extern LATE_DATA struct DoorEdit gChampaCliffCaves_FirstDoor;
+extern LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor;
 
-void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
+void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode);
 void Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_WatchActor(struct Actor *object, struct Actor *target);
@@ -125,6 +120,32 @@ void ChampaCliffCaves_UpdateSparks(void);
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
+/// A scale of the Champa forge's glow, 16.16; a union, so that a store to it
+/// keeps its place after the sprite's (ChampaCliffCaves_DrawSparks).
+union ChampaCliffCavesScale {
+  s32 value;
+  u16 half;
+};
+
+/// The work of the glow over Obaba's forge (heap slot HEAP_SLOT_MENU): the
+/// pictures of the glowing disc and the column of fire, their sprites at the
+/// forge's spot, and their scales, each one's height trailing its width.
+struct ChampaCliffCavesWork {
+  u8 tiles[0x1000];
+  s32 position[3];
+  struct EffectSprite disc;
+  struct EffectSprite column;
+  s16 discEntry;
+  u16 discVram;
+  s16 columnEntry;
+  u16 columnVram;
+  union ChampaCliffCavesScale discScale;
+  union ChampaCliffCavesScale discTrailingScale;
+  union ChampaCliffCavesScale columnScale;
+  union ChampaCliffCavesScale columnTrailingScale;
+  s16 frame;
+};
+
 void ChampaCliffCaves_DrawSparks(void);
 void ChampaCliffCaves_DrawGlow(void);
 void ChampaCliffCaves_DrawFallingSparks(void);
@@ -208,14 +229,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
-void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
+void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode) {
   s32 id;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
+  MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -235,25 +256,16 @@ void ChampaCliffCaves_EnterDoor(s32 door) {
   ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_FirstDoor, door, 0);
 }
 
-/* VIEW(champa_cliff_caves): routine gChampaCliffCaves_SecondDoor as this part
- * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA s32 gChampaCliffCaves_SecondDoor[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:229: `gChampaCliffCaves_SecondDoor'
- * undeclared (first use in this function). */
-extern const struct WarpTarget
-    gChampaCliffCaves_SecondDoor__view __asm__("gChampaCliffCaves_SecondDoor");
-#define gChampaCliffCaves_SecondDoor gChampaCliffCaves_SecondDoor__view
-
 void ChampaCliffCaves_ObabaAsksForBriggs(void) {
-  const struct WarpTarget *warp;
+  const struct DoorEdit *edit;
   s32 msg;
 
-  warp = &gChampaCliffCaves_FirstDoor;
+  edit = &gChampaCliffCaves_FirstDoor;
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 168, 424);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_EAST);
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
+  MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
   Actor_GetById(ACTOR_OBABA)->motionFlags = 0;
   Actor_SetPosition(ACTOR_OBABA, 184, 408);
   Actor_SetSpeed(ACTOR_OBABA, 1.8);
@@ -274,8 +286,8 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Actor_SetSpeed(ACTOR_OBABA, 0.8);
   Actor_WalkByAndWait(ACTOR_OBABA, 0, -14);
   Actor_SetPosition(ACTOR_OBABA, 0, 0);
-  warp = &gChampaCliffCaves_SecondDoor;
-  MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
+  edit = &gChampaCliffCaves_SecondDoor;
+  MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
   Sound_Play(SE_DOOR_OPEN);
 }
 
@@ -550,13 +562,6 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
 }
 
 #include "text/msg_ids.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
 void Actor_ShowItemIconById(s32 id, s32 animation);
@@ -1701,14 +1706,11 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   VramCache_FreeEntry(slot);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
-#undef FIELD_AT
 #undef PALETTE
-#undef BYTE_AT
-#undef WORD_AT
 
 void ChampaCliffCaves_DrawSparks(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
-  struct ChampaCliffCavesSprite *sprite;
+  struct EffectSprite *sprite;
   s32 i;
   u8 *tile;
   s32 entry;
@@ -1726,48 +1728,21 @@ next:
     goto next;
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 0x1000, work);
-  work->entryA = entry;
-  work->vramA = vram;
-  sprite = &work->spriteA;
+  work->discEntry = entry;
+  work->discVram = vram;
+  sprite = &work->disc;
   Place(sprite, 31, 31, 0xc0000000, vram);
-  sprite->fullColor = 1;
-  sprite->palette = 0;
-  sprite->priority = 2;
-  sprite->unk1e = 1;
-  work->field1064.value = 0;
-  work->field1068.value = 0;
+  sprite->oam.palette256 = 1;
+  sprite->oam.palette = 0;
+  sprite->oam.priority = 2;
+  sprite->depth = 1;
+  work->discScale.value = 0;
+  work->discTrailingScale.value = 0;
 }
 
-/* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
- * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1607: request for member
- * `value' in something not a structure or union. */
-struct ChampaCliffCavesWork__s2d34 {
-  u8 tiles[0x1000];
-  s32 originX;
-  s32 originY;
-  s32 originZ;
-  struct ChampaCliffCavesSprite spriteA;
-  struct ChampaCliffCavesSprite spriteB;
-  u16 entryA;
-  u16 vramA;
-  u16 entryB;
-  u16 vramB;
-  s32 field1064;
-  s32 field1068;
-  // A union: the two stores below keep their place after the sprite's.
-  union {
-    s32 value;
-    u16 half;
-  } field106c, field1070;
-  u16 field1074;
-  u8 unk1076[2];
-};
-
 void ChampaCliffCaves_DrawFallingSparks(void) {
-  struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuWork;
-  struct ChampaCliffCavesSprite *sprite;
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
+  struct EffectSprite *sprite;
   s32 i;
   u8 *tile;
   s32 entry;
@@ -1786,52 +1761,25 @@ next:
     goto next;
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 0x800, work);
-  work->entryB = entry;
-  work->vramB = vram;
-  sprite = &work->spriteB;
+  work->columnEntry = entry;
+  work->columnVram = vram;
+  sprite = &work->column;
   Place(sprite, 15, 47, 0xc0008000, vram);
-  sprite->fullColor = 1;
-  sprite->palette = 1;
-  sprite->priority = 1;
-  sprite->unk1e = 1;
-  work->field106c.value = 0;
-  work->field1070.value = 0;
+  sprite->oam.palette256 = 1;
+  sprite->oam.palette = 1;
+  sprite->oam.priority = 1;
+  sprite->depth = 1;
+  work->columnScale.value = 0;
+  work->columnTrailingScale.value = 0;
 }
-
-// The glow's frame callback.
-/* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
- * GlowSprite__champa_cliff_caves; scene/scene.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1688: structure has no
- * member named `x'. */
-struct GlowSprite__champa_cliff_caves {
-  u8 unk_0[12];
-  s32 x;
-  s32 z;
-  s32 scale;
-  s32 trailingScale;
-  u8 unk_1C[12];
-};
-
-struct Glow {
-  u8 unk_0[4096];
-  s32 position[3];
-  struct GlowSprite__champa_cliff_caves sprites[2];
-  u8 unk_105C[8];
-  s32 scale;
-  s32 trailingScale;
-  s32 scale2;
-  s32 trailingScale2;
-  s16 frame;
-};
 
 /// Cycles thirty-two colours of the object palettes through a wave of greens
 /// and blues, places the glow's two sprites at its spot with their scales, and
 /// lets each sprite's second scale trail its first at 31/40.
 void ChampaCliffCaves_DrawGlow(void) {
-  struct Glow *work = (struct Glow *)Ram_HeapSlots->menuWork;
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 position[3];
-  struct GlowSprite__champa_cliff_caves *sprite;
+  struct EffectSprite *sprite;
   s32 i;
 
   i = 0;
@@ -1860,46 +1808,40 @@ loop:
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
-  sprite = &work->sprites[0];
+  sprite = &work->disc;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
-  sprite->z = position[2];
-  sprite->scale = work->scale;
-  sprite->trailingScale = work->trailingScale;
+  sprite->y = position[2];
+  sprite->scaleX = work->discScale.value;
+  sprite->scaleY = work->discTrailingScale.value;
   EffectSprite_Draw(sprite);
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
-  sprite = &work->sprites[1];
+  sprite = &work->column;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
-  sprite->z = position[2];
-  sprite->scale = work->scale2;
-  sprite->trailingScale = work->trailingScale2;
+  sprite->y = position[2];
+  sprite->scaleX = work->columnScale.value;
+  sprite->scaleY = work->columnTrailingScale.value;
   EffectSprite_Draw(sprite);
-  work->trailingScale = work->scale * 31 / 40;
-  work->trailingScale2 = work->scale2 * 31 / 40;
+  work->discTrailingScale.value = work->discScale.value * 31 / 40;
+  work->columnTrailingScale.value = work->columnScale.value * 31 / 40;
   work->frame++;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void ChampaCliffCaves_StartForgeFire(const s32 *position) {
-  u8 *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x1078);
+  struct ChampaCliffCavesWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 time;
   s32 state;
 
-  FIELD_AT(work, s32, 4096) = position[0];
-  FIELD_AT(work, s32, 4100) = position[1];
-  FIELD_AT(work, s32, 4104) = position[2];
+  work->position[0] = position[0];
+  work->position[1] = position[1];
+  work->position[2] = position[2];
   ChampaCliffCaves_DrawSparks();
   ChampaCliffCaves_DrawFallingSparks();
-  FIELD_AT(work, u16, 4212) = 0;
+  work->frame = 0;
   time = 0;
   {
     s32 priority = 0x480;
@@ -1911,8 +1853,8 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   do {
     switch (state) {
     case 0:
-      if ((FIELD_AT(work, s32, 4196) += 0x600) > 0x14ccb) {
-        FIELD_AT(work, s32, 4196) = 0x14ccc;
+      if ((work->discScale.value += 0x600) > 0x14ccb) {
+        work->discScale.value = 0x14ccc;
         state = 1;
         time = -1;
       }
@@ -1924,15 +1866,15 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       }
       break;
     case 2:
-      if ((FIELD_AT(work, s32, 4204) += 0x400) > 0x6665) {
-        FIELD_AT(work, s32, 4204) = 0x6666;
+      if ((work->columnScale.value += 0x400) > 0x6665) {
+        work->columnScale.value = 0x6666;
         state = 3;
         time = -1;
       }
       break;
     case 3:
-      if ((FIELD_AT(work, s32, 4204) += 0x3000) > 0x14ccb) {
-        FIELD_AT(work, s32, 4204) = 0x14ccc;
+      if ((work->columnScale.value += 0x3000) > 0x14ccb) {
+        work->columnScale.value = 0x14ccc;
         state = 999;
       }
       break;
@@ -1943,28 +1885,28 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
 }
 
 void ChampaCliffCaves_UpdateForgeFire(void) {
-  u8 *work = Ram_HeapSlots->menuWork;
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 position[3];
   s32 state;
   s32 time;
 
-  position[0] = FIELD_AT(work, s32, 4096);
-  position[1] = FIELD_AT(work, s32, 4100) - px(32);
+  position[0] = work->position[0];
+  position[1] = work->position[1] - px(32);
   state = 0;
   time = 0;
-  position[2] = FIELD_AT(work, s32, 4104);
+  position[2] = work->position[2];
   do {
     switch (state) {
     case 0:
-      if ((FIELD_AT(work, s32, 4204) -= 0x1000) < 0) {
-        FIELD_AT(work, s32, 4204) = 0;
+      if ((work->columnScale.value -= 0x1000) < 0) {
+        work->columnScale.value = 0;
         time = -1;
         state = 1;
       }
       break;
     case 1:
-      if ((FIELD_AT(work, s32, 4196) -= 0x800) < 0) {
-        FIELD_AT(work, s32, 4196) = 0;
+      if ((work->discScale.value -= 0x800) < 0) {
+        work->discScale.value = 0;
         state = 2;
         time = -1;
       }
@@ -1979,35 +1921,10 @@ void ChampaCliffCaves_UpdateForgeFire(void) {
   } while (state != 999);
   Task_Remove(ChampaCliffCaves_DrawGlow);
   MapGrid_SetShake(0, 0, 0);
-  VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
-  VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
+  VramCache_FreeEntry(work->discEntry);
+  VramCache_FreeEntry(work->columnEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
-#undef FIELD_AT
-
-/* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
- * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1852: invalid operands to
- * binary +. */
-struct ChampaCliffCavesWork__s3164 {
-  u8 tiles[0x1000];
-  s32 originX;
-  s32 originY;
-  s32 originZ;
-  u8 spriteA[40];
-  u8 spriteB[40];
-  u16 entryA;
-  u16 vramA;
-  u16 entryB;
-  u16 vramB;
-  s32 field1064;
-  s32 field1068;
-  s32 field106c;
-  s32 field1070;
-  u16 field1074;
-  u8 unk1076[2];
-};
 
 struct Vec3 {
   s32 x;
@@ -2016,17 +1933,17 @@ struct Vec3 {
 };
 
 void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
-  struct ChampaCliffCavesWork__s3164 *work = HeapSlot_Alloc(
-      HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork__s3164));
+  struct ChampaCliffCavesWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
-  work->originX = origin->x;
-  work->originY = origin->y;
-  work->originZ = origin->z;
+  work->position[0] = origin->x;
+  work->position[1] = origin->y;
+  work->position[2] = origin->z;
   ChampaCliffCaves_DrawSparks();
-  work->field106c = 0;
-  work->field1070 = 0;
-  work->field1074 = 0;
+  work->columnScale.value = 0;
+  work->columnTrailingScale.value = 0;
+  work->frame = 0;
   {
     s32 priority = 0x480;
 
@@ -2036,9 +1953,9 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   state = 0;
   do {
     if (state == 0) {
-      work->field1064 += 0x1000;
-      if (work->field1064 > 0x14ccb) {
-        work->field1064 = 0x14ccc;
+      work->discScale.value += 0x1000;
+      if (work->discScale.value > 0x14ccb) {
+        work->discScale.value = 0x14ccc;
         state = 999;
       }
     }
@@ -2062,16 +1979,16 @@ void ChampaCliffCaves_StartSparks(void) {
   do {
     switch (state) {
     case 0:
-      work->field106c += 0x1000;
-      if (work->field106c > 0x6665) {
-        work->field106c = 0x6666;
+      work->columnScale.value += 0x1000;
+      if (work->columnScale.value > 0x6665) {
+        work->columnScale.value = 0x6666;
         state = 1;
       }
       break;
     case 1:
-      work->field106c += 0x3000;
-      if (work->field106c > 0x14ccb) {
-        work->field106c = 0x14ccc;
+      work->columnScale.value += 0x3000;
+      if (work->columnScale.value > 0x14ccb) {
+        work->columnScale.value = 0x14ccc;
         state = 999;
       }
       break;
@@ -2080,39 +1997,32 @@ void ChampaCliffCaves_StartSparks(void) {
   } while (state != 999);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void ChampaCliffCaves_UpdateSparks(void) {
-  u8 *work = Ram_HeapSlots->menuWork;
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 state = 0;
   s32 time = 0;
 
   do {
     switch (state) {
     case 0:
-      if ((FIELD_AT(work, s32, 4204) += 0x1000) > 0x1ffff) {
-        FIELD_AT(work, s32, 4204) = 0x20000;
+      if ((work->columnScale.value += 0x1000) > 0x1ffff) {
+        work->columnScale.value = 0x20000;
         state = 1;
         time = -1;
       }
       break;
     case 1:
-      if ((FIELD_AT(work, s32, 4204) -= 0x1000) <= 0x14ccb) {
-        FIELD_AT(work, s32, 4204) = 0x14ccc;
+      if ((work->columnScale.value -= 0x1000) <= 0x14ccb) {
+        work->columnScale.value = 0x14ccc;
         state = 2;
         time = -1;
       }
       /* fall through */
     case 2:
-      if ((FIELD_AT(work, s32, 4204) -= 0x1000) < 0)
-        FIELD_AT(work, s32, 4204) = 0;
-      if ((FIELD_AT(work, s32, 4196) -= 0x1000) < 0) {
-        FIELD_AT(work, s32, 4196) = 0;
+      if ((work->columnScale.value -= 0x1000) < 0)
+        work->columnScale.value = 0;
+      if ((work->discScale.value -= 0x1000) < 0) {
+        work->discScale.value = 0;
         state++;
         time = -1;
       }
@@ -2126,23 +2036,18 @@ void ChampaCliffCaves_UpdateSparks(void) {
     time++;
   } while (state != 999);
   Task_Remove(ChampaCliffCaves_DrawGlow);
-  VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
-  VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
+  VramCache_FreeEntry(work->discEntry);
+  VramCache_FreeEntry(work->columnEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 struct ThrowAnimations gChampaCliffCaves_ThrowAnimations = {{439, 440, 441}};
-#undef FIELD_AT
 
-#undef FIELD_AT
 #undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
 #undef PALETTE
-#undef BYTE_AT
-#undef WORD_AT
-#undef gChampaCliffCaves_FirstDoor
-#undef gChampaCliffCaves_SecondDoor
 
 #include "text/msg_ids.h"
+#include "field/effect_sprite.h"
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2464,15 +2369,11 @@ LATE_DATA s16 gChampaCliffCaves_OtherDoorFrames[] = {
     1, 64, 1, 2, 6, 0, 64, 1, 2, 6, -1,
 };
 
-LATE_DATA s32 gChampaCliffCaves_FirstDoor[] = {
-    (s32)gChampaCliffCaves_DoorFrames,
-    0x58000b,
-};
+LATE_DATA struct DoorEdit gChampaCliffCaves_FirstDoor = {
+    gChampaCliffCaves_DoorFrames, 11, 88};
 
-LATE_DATA s32 gChampaCliffCaves_SecondDoor[] = {
-    (s32)gChampaCliffCaves_OtherDoorFrames,
-    0x58000b,
-};
+LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor = {
+    gChampaCliffCaves_OtherDoorFrames, 11, 88};
 
 LATE_DATA struct Trigger gChampaCliffCaves_BriggsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},

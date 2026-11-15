@@ -781,13 +781,6 @@ void AnemosInnerSanctum_LightThePillar(void) {
   Event_End();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void AnemosInnerSanctum_StepOntoCenter(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
@@ -1120,8 +1113,6 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   }
 }
 
-#undef FIELD_AT
-
 #undef AnemosInnerSanctum_SendSpark
 #undef AnemosInnerSanctum_SparkRing
 #undef AnemosInnerSanctum_DropSpark
@@ -1237,13 +1228,6 @@ void AnemosInnerSanctum_MarkEntrance(void) {
   MapGrid_SetCellHeight(column << 20, 0x580000, 0, 0);
   Event_End();
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void AnemosInnerSanctum_SummonTheGuardian(void) {
   Event_Start();
@@ -1704,8 +1688,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef BYTE_AT
-#undef FIELD_AT
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
 #undef CELL_PUSH_SLOT_ENTRY
 #undef AnemosInnerSanctum_SendSpark

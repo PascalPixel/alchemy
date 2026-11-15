@@ -1149,7 +1149,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 #include "shared/actor_emit_bubbles.h"
-#undef BYTE_AT
 
 union ActorView {
   struct Actor actor;
@@ -1315,13 +1314,6 @@ column:
   wait(1);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Actor_MoveToObject();
 
 void AquaRockInside_ReadParchTablet(void) {
@@ -1394,8 +1386,8 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   if (object != 0) {
-    Actor_SetDestination(ACTOR_PIERS, FIELD_AT((u8 *)object, s16, 10),
-                         FIELD_AT((u8 *)object, s16, 18));
+    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -2476,7 +2468,6 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   }
   return reached;
 }
-#undef FIELD_AT
 #undef BG1_SET_PRIORITY_1
 
 #define VENT_TOUCHING Vent_IsTouching
@@ -2732,10 +2723,8 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef FIELD_AT
 #undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
 #undef BG1_SET_PRIORITY_1
-#undef BYTE_AT
 
 void AquaRockInside_FightSteam(void);
 void AquaRockInside_FreezePuddle(void);

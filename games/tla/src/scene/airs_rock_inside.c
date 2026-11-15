@@ -6,6 +6,7 @@
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "field/emote.h"
+#include "field/field_psynergy_work.h"
 #include "field/event.h"
 #include "field/event_inline.h"
 #include "sounds.h"
@@ -53,9 +54,6 @@
 #define FLAG_AIRS_ROCK_HALL_STATUE_WOKEN 0x89a
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
-
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct AirsRockInsideMapLayer {
   u8 unk00[0x30];
@@ -512,7 +510,7 @@ void AirsRockInside_DriftMote(struct Actor *object) {
 void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRockInside_TakeOverWhirlwind(void) {
-  BYTE_AT(Ram_HeapSlots->fieldEffectWork, 52) = 1;
+  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
 
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
@@ -1263,7 +1261,7 @@ void AirsRockInside_PuffVents(void) {
 }
 
 void AirsRockInside_FollowGust(struct Actor *object) {
-  struct Actor *target = (struct Actor *)WORD_AT(object, 104);
+  struct Actor *target = object->watchedActor;
 
   object->priorityFlags ^= 2 << (gFrameCount & 1);
   SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed + (128 << 12),
@@ -2747,12 +2745,6 @@ third:
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 #define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
@@ -2823,8 +2815,8 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestinationById(ACTOR_SHEBA, FIELD_AT(object, s16, 10),
-                               FIELD_AT(object, s16, 18));
+      Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
+                               object->z.part[0].pixel);
     Actor_WaitForMoveById(ACTOR_SHEBA);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
     Actor_SetMovementType(Actor_GetById(ACTOR_REVEAL_TABLET),
@@ -3211,13 +3203,11 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
   gAirsRockInside_LeaderLevel = level;
 }
 #undef EVENT_WORK
-#undef FIELD_AT
 
 #include "../field/field_effect_advance_motion.c"
 
 #undef EVENT_WORK
 #undef DEFINE_AIRS_ROCK_INSIDE_SET_DOORS
-#undef FIELD_AT
 #undef DEFINE_AIRS_ROCK_INSIDE_READ_TABLET
 #undef DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL
 #undef EFFECT_SPAWN

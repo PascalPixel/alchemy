@@ -212,45 +212,6 @@ struct FlashWork {
   struct FlashSprite sprite;
 };
 
-struct ChampaCliffCavesSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct ChampaCliffCavesWork {
-  u8 tiles[0x1000];
-  s32 originX;
-  s32 originY;
-  s32 originZ;
-  struct ChampaCliffCavesSprite spriteA;
-  struct ChampaCliffCavesSprite spriteB;
-  u16 entryA;
-  u16 vramA;
-  u16 entryB;
-  u16 vramB;
-  // A union: the two stores below keep their place after the sprite's.
-  union {
-    s32 value;
-    u16 half;
-  } field1064, field1068;
-  s32 field106c;
-  s32 field1070;
-  u16 field1074;
-  u8 unk1076[2];
-};
-
 /// The bytes of an actor this handler uses. unk63 is the last of the four
 /// scene-owned bytes the Broken Seal's actors keep at this place.
 struct TalkActor {

@@ -2653,7 +2653,6 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     }
   }
 }
-#undef BYTE_AT
 #undef MSG_COINS_WON
 #undef MSG_COINS_LOST
 #undef MSG_READ_SIGN
@@ -3381,7 +3380,6 @@ struct Trigger gContigo_LuckyDiceTriggers[] = {
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
-#undef BYTE_AT
 #undef MSG_COINS_WON
 #undef MSG_COINS_LOST
 #undef MSG_READ_SIGN

@@ -4,6 +4,7 @@
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
 #include "system/task.h"
+#include "field/field_psynergy_work.h"
 #include "types.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
@@ -259,13 +260,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAirsRock_FujinShieldChestPlacements;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Examining a Wind Stone shows its warning.
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
@@ -404,7 +398,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRock_TakeOverWhirlwind(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->fieldEffectWork + 0x34), u8, 0) = 1;
+  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
 
 /// Circles the object around the centre in words 68 and 76, the radius
@@ -1973,8 +1967,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#undef FIELD_AT
-#undef WORD_AT
 #undef WAVE_SCROLL
 #undef WAVE_SCROLL_LINES
 #undef LEADER

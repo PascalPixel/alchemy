@@ -1,9 +1,13 @@
 #ifndef ALCHEMY_FIELD_PSYNERGY_WORK_H
 #define ALCHEMY_FIELD_PSYNERGY_WORK_H
 
+/// @file
+/// The field Psynergy's work (FieldEffectWork) and its particle.
+
 #include "types.h"
 #include "static_assert.h"
 #include "field_particle.h"
+#include "effect_sprite.h"
 
 struct AnimationObject;
 union FieldObject;
@@ -22,60 +26,104 @@ struct ArcEffectObject {
   void (*callback)(union FieldObject *object); ///< run each frame
 };
 
-/// The work of a Psynergy effect scene: its caster and target, where it takes
-/// place, the map state it restores and its 24 effect slots.
-struct BattleFxScene {
-  s32 angle;          ///< 1/65536 turns
-  s32 x;              ///< 16.16 fixed-point pixels
-  s32 y;              ///< 16.16 fixed-point pixels
-  s32 z;              ///< 16.16 fixed-point pixels
-  void *mainObject;   ///< the caster's object
-  void *child;        ///< the target's object, or NULL
-  s16 firstObjectId;  ///< the caster's object id
-  s16 secondObjectId; ///< the target's object id
-  u16 action;         ///< the ability id
-  s16 fieldKind;      ///< the ability's field kind
-  s8 enabled;         ///< cleared once the target has been dispatched
-  u8 mode;
-  s8 visible;
-  s8 active;
-  void (*finishCallback)(void); ///< run, when set, as an effect ends
-  u8 unk28[0x0c];
+/// A particle of a field Psynergy's effect: its place and velocity, in 16.16
+/// pixels on the field or on the screen, and the frames since it began
+/// (negative before it starts, or while it is free).
+struct FieldPsynergyParticle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 timer;
+};
+
+/// The work of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
+/// and target, where it takes place, the map state it restores, its 24 field
+/// effect sprites and the sprite and stage a lasting Psynergy keeps.
+struct FieldEffectWork {
+  /// The caster's facing, rounded to four directions, 1/65536 turns.
+  u16 angle;
+  /// The caster's facing, rounded to eight directions, 1/65536 turns.
+  u16 angle8;
+  s32 x;                   ///< 16.16 fixed-point pixels
+  s32 y;                   ///< 16.16 fixed-point pixels
+  s32 z;                   ///< 16.16 fixed-point pixels
+  struct Actor *mainActor; ///< the caster's actor
+  struct Actor *child;     ///< the target's actor, or NULL
+  s16 firstActorId;        ///< the caster's actor id
+  s16 secondActorId;       ///< the target's actor id, -1 for none
+  s16 action;              ///< the ability id
+  s16 fieldPsynergy;       ///< the ability's field Psynergy kind
+  /// Set at the start; cleared once the target has been dispatched.
+  s8 enabled;
+  u8 mode;    ///< where it runs; ACTOR_SYSTEM_WORLD_MAP on the World Map
+  s8 visible; ///< set at the start: the caster flashes with a sound
+  s8 active;  ///< set at the start: the ability's name is announced
+  void (*finishCallback)(void); ///< run, when set, as the Psynergy ends
+  u8 unusedAfterFinish[12];
+  /// Set by some scenes before a field Psynergy; it treats the target
+  /// differently with it.
   s8 childOption;
-  s8 childMode;
-  u8 unk36[2];
+  s8 childMode; ///< set by some scenes: the Psynergy leaves the target be
+  u8 paddingAfterChildMode[2];
+  /// The target's update routine and script, saved at the start and restored
+  /// when the Psynergy lets it go.
+  ///@{
   void (*savedCallback)(union FieldObject *object);
   const s32 *savedScript;
-  u8 unk40[4];
-  u8 savedPalette;
+  ///@}
+  u8 savedPalette; ///< the target's first sprite animation's colour mode
+  /// Set in a few scenes (Gabomba Catacombs, Tundaria Tower, Jupiter
+  /// Lighthouse's aerie, Loho) before a field Psynergy.
   u8 lit;
-  u16 tileSlot;
-  u16 unk48;
-  u16 freeBlocks;
-  /// The map's shake and its decay, kept to restore after the effect.
+  u16 freeBlocks; ///< 512 less the free VRAM cache blocks at the start
+  /// The map's shake and its decay, restored when the field Psynergy ends.
   ///@{
   s32 savedShakeX;
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct FieldParticle slots[24];
-  u8 unk718[2];
-  s16 arcTileSlot;
-  s8 messageMode;
-  u8 unk71d[3];
+  struct FieldParticle particles[24]; ///< its field effect sprites
+  s16 arcTileSlot; ///< the VRAM cache entry of the falling arcs' tiles
+  s8 messageMode;  ///< the announcement's box mode: 1, an event adds 8
+  u8 messageShown; ///< set while the announcement's message is open
+  u8 unk714[4];
+  /// The caster's priority flags and sprite priority, saved at the start and
+  /// restored as it ends.
+  ///@{
+  u8 savedPriorityFlags;
+  u8 savedSpritePriority;
+  ///@}
+  u8 unk71a[0xaa];
+  /// A lasting Psynergy's stage and frame, passed to its event as it runs.
+  ///@{
+  s16 stage;
+  s16 frame;
+  ///@}
+  struct EffectSprite sprite; ///< a field Psynergy's own sprite on screen
+  s16 spriteVramSlot;         ///< its VRAM cache entry
+  s16 spriteActive;           ///< nonzero while sprite is drawn
 };
 
-STATIC_ASSERT(sizeof(struct BattleFxScene) == 0x720);
-STATIC_ASSERT(offsetof(struct BattleFxScene, mainObject) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleFxScene, action) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleFxScene, savedCallback) == 0x38);
-STATIC_ASSERT(offsetof(struct BattleFxScene, tileSlot) == 0x46);
-STATIC_ASSERT(offsetof(struct BattleFxScene, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleFxScene, slots) == 0x58);
-STATIC_ASSERT(offsetof(struct BattleFxScene, arcTileSlot) == 0x71a);
-STATIC_ASSERT(offsetof(struct BattleFxScene, messageMode) == 0x71c);
+STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x7f4);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, childOption) == 0x34);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, lit) == 0x41);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x44);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 0x50);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x712);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedPriorityFlags) == 0x718);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, stage) == 0x7c4);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, sprite) == 0x7c8);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, spriteActive) == 0x7f2);
 
-static __inline__ s32 BattleEffect_Interpolate(s32 to, s32 from, s32 step) {
+/// Returns the value step tenths of the way from `from` to `to`; the field
+/// Psynergy that uses it steps from 0 to 10, one a frame.
+static __inline__ s32 FieldEffect_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }
 

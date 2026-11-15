@@ -5,6 +5,7 @@
 
 #include "../field_internal.h"
 #include "flag_call.h"
+#include "flags.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
@@ -25,28 +26,31 @@
 #include "system/iwram_call.h"
 #include "field/sprite.h"
 #include "field/field.h"
-#include "field/script.h"
+#include "field/script_operands.h"
 
-void Animation_WaitForTrackEnd(struct AnimObject *object) {
-  u8 frame = object->frame;
-  struct AnimTrack *track = object->track;
+/// Waits, at most 90 frames, for a sprite's animation to change or for its
+/// first layer's script to reach code 241.
+void Animation_WaitForTrackEnd(struct AnimationObject *sprite) {
+  u8 animation = sprite->lastNo;
+  struct AnimationEntry *entry = sprite->entries[0];
   s32 i;
 
-  if (object != 0) {
+  if (sprite != NULL) {
     i = 0;
-    if (track->script[track->index] != 241) {
+    if (entry->script[entry->pos] != 241) {
       do {
         wait(1);
         i++;
         if (i > 89)
           break;
-        if (track->script[track->index] == 241)
+        if (entry->script[entry->pos] == 241)
           break;
-      } while (object->frame == frame);
+      } while (sprite->lastNo == animation);
     }
   }
 }
 
+/// One step of dissolving a sprite pixel by pixel.
 void SpriteDissolve_Step(u8 *object, u32 position) {
   u16 *destination;
   s32 count;
@@ -85,6 +89,7 @@ void SpriteDissolve_Step(u8 *object, u32 position) {
   }
 }
 
+/// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
 void SpriteDissolve_Run(u8 *object) {
   u32 pos;
 
@@ -99,6 +104,7 @@ void SpriteDissolve_Run(u8 *object) {
   } while (pos <= 0x7f);
 }
 
+/// Dissolves count sprites together, pixel by pixel, over 32 frames.
 void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
   u8 **top;
   u8 **p;
@@ -130,43 +136,49 @@ void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
   } while (pos <= 0x7FU);
 }
 
-s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
-  u8 *state = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *org = (s32 *)(state + 228);
-  s32 a;
-  s32 b;
+/// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
+/// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
+/// returns -1.
+s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
+                                      s32 *screenPosition) {
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  s32 *view = &map->viewX;
+  s32 viewX;
+  s32 viewZ;
   s32 x;
   s32 y;
 
-  a = org[0] & 0xffff0000;
-  b = org[1] & 0xffff0000;
-  x = obj->field8 - a;
-  y = obj->field16 - b;
-  if ((u32)(x + 0x001fffff) <= 0x012ffffe && y > 0 && y < 0xe00000) {
-    *out++ = x >> 16;
-    *out = y >> 16;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  x = actor->x.fixed - viewX;
+  y = actor->z.fixed - viewZ;
+  // Across, from 32 pixels left of the screen to 32 past its 240; down,
+  // below the view's top and above 224.
+  if (x >= -(px(32) - 1) && x <= px(272) - 1 && y > 0 && y < px(224)) {
+    *screenPosition++ = x >> 16;
+    *screenPosition = y >> 16;
     return 0;
   }
-  *out++ = 0;
-  *out = 0;
+  *screenPosition++ = 0;
+  *screenPosition = 0;
   return -1;
 }
 
-/// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
-/// buffer, both cleared by DMA from one zero word, and the animation callbacks
-/// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
-/// 0x480, the others ActorSystem_PlaceSprites).
+/// Sets up the actor system: allocates and zeroes the 64 actors and the
+/// system's work, sets the outline's colours and registers the per-frame
+/// updates. The battle's mode, 4, moves the actors with Actor_UpdateAllMotion;
+/// modes 3 and 4 place their sprites with the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
-  struct MapAnimationWork *work;
-  void *buffer;
+  struct ObjectSystemWork *system;
+  struct Actor *pool;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*work));
-  buffer = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 0x2000);
+  system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
+  pool = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 64 * sizeof(*pool));
   ActorSystem_Configure(mode);
-  Dma_Fill32Cell(zero, 0, buffer, 0x2000);
-  Dma_Fill32Cell(zero, 0, work, sizeof(*work));
+  Dma_Fill32Cell(zero, 0, pool, 64 * sizeof(*pool));
+  Dma_Fill32Cell(zero, 0, system, sizeof(*system));
   if (mode == 4) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
@@ -174,16 +186,17 @@ void ActorSystem_Initialize(s32 mode) {
     Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
-    Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_ProjectSprites, TASK_PASS_VBLANK);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
-  work->unk06 = 15;
-  work->unk07 = 0;
+  system->edge = 15;
+  system->fill = 0;
 }
 
 /// Two empty functions follow; nothing in the ROM refers to either.
 void ActorSystem_ReservedNoOpA(void) {}
 
+/// An empty routine.
 void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
@@ -253,6 +266,9 @@ void Actor_Release(struct Actor *obj) {
   }
 }
 
+/// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
+/// is in use. id / 4096 is the kind of actor and the low 12 bits the sprite's
+/// animation id.
 struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object;
   void *sprite;
@@ -331,6 +347,8 @@ void Actor_StartScript(struct Actor *object, const s32 *script) {
   }
 }
 
+/// Starts animation argument on an actor's sprite, or on each of the four
+/// sprites of a group (Animation_ApplyChildArgument).
 void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
@@ -356,6 +374,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   }
 }
 
+/// Sets the timer step, the animation speed, of an actor's sprite, or of each
+/// sprite of a group (16 is normal speed).
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   s32 count;
   struct ActorSpriteView *child;
@@ -381,6 +401,8 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   }
 }
 
+/// Both of the above: switches all of an actor's sprites to animation and
+/// sets their timer step to step.
 void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
@@ -408,11 +430,14 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   }
 }
 
+/// Sets the rotation of an actor's sprite, when it has just one.
 void Actor_SetSpriteRotation(struct Actor *object, u32 value) {
   if (object != 0 && (object->spriteStorageKind & 0xf) == 1)
     ((struct ActorSpriteView *)object->sprite)->value12 = value;
 }
 
+/// Gives a one-sprite actor's first sprite animation animation id animationId
+/// and restarts its animations. A negative animationId does nothing.
 void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
   struct ActorSpriteView *child;
 
@@ -425,6 +450,8 @@ void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
   }
 }
 
+/// Adds a sprite animation of animation id animationId to a one-sprite actor's
+/// sprite. A negative animationId does nothing.
 void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
   if (object != 0 && (object->spriteStorageKind & 0xf) == 1) {
     struct ActorSpriteView *child = ((struct ActorSpriteView *)object->sprite);
@@ -494,10 +521,13 @@ void Actor_StartRenderModeScript(struct Actor *object) {
   Actor_StartScript(object, script);
 }
 
+/// Starts an actor on the idle script (a lone SC_END).
 void Actor_StartIdle(struct Actor *object) {
   Actor_StartScript(object, gActorScript_EndScript);
 }
 
+/// Starts an actor on the camera script (SC_CAMERA). With a leader to follow,
+/// it also gets a speed limit of 4 pixels a frame and an acceleration of 0.5.
 void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
   Actor_StartScript(object, gActor_CameraScript);
   if (watched != NULL) {
@@ -508,6 +538,9 @@ void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
   }
 }
 
+/// Waits until the actor's script reaches SC_END, at most 600 frames; it
+/// returns as soon as the script idles, and after the limit whether or not it
+/// has.
 void Actor_WaitForCommandEnd(struct Actor *object) {
   s32 cnt = 0;
 
@@ -523,27 +556,35 @@ void Actor_WaitForCommandEnd(struct Actor *object) {
   }
 }
 
+/// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
 void Actor_SetSpriteFlags(struct Actor *object, u32 value) {
   if (object != NULL && (object->spriteStorageKind & 0xf) == 1)
     ((struct ActorSpriteView *)object->sprite)->value1a = value;
 }
 
+/// Sets the OAM blend mode of a one-sprite actor's sprite.
 void Actor_SetBlendMode(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == 1)
     ((struct ActorSpriteView *)object->sprite)->stateFlags = value;
 }
 
+/// Sets a one-sprite actor's sprite's own-scale bit: drawn at its own scale,
+/// not scaled by distance.
 void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == 1)
     ((struct ActorSpriteView *)object->sprite)->displayFlag = value;
 }
 
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
+/// animations, except those drawn hidden.
 void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == 1)
     Animation_ApplyChildValuesToRecord(
         ((struct ActorSpriteView *)object->sprite), value);
 }
 
+/// Fixes the priority of a one-sprite actor's sprite and its shadow, which
+/// then no longer follow its depth (clears priorityFlags bit 0).
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   struct FieldSprite *sprite;
 
@@ -624,11 +665,13 @@ void Actor_WaitForTrackEnd(u8 *object) {
     Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }
 
+/// Suspends the actor camera updates, starts the palette back to normal and, a
+/// frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   u16 dispcnt;
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
-  Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
+  Task_SuspendAll(ActorSystem_ProjectSprites);
   PaletteFade_SetTargetFar(0x10000, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
@@ -636,15 +679,17 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
   REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
+/// Resumes the actor camera updates and hides BG1-3 and the sprites.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   u16 dispcnt;
 
   Task_ResumeAll(ActorSystem_PlaceSprites);
-  Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(ActorSystem_ProjectSprites);
   dispcnt = REG_DISPCNT;
   REG_DISPCNT = dispcnt & 0xe1ff;
 }
 
+/// Unused: returns 1.
 s32 Actor_ReturnTrue(void) { return 1; }
 
 #define Render_ApplyProjectedPlacementAtDepth                                  \
@@ -658,9 +703,11 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #define CELL_LAYER(cells, x, z)                                                \
   (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 18) >> 30)
 
+/// Each frame, with the scrolling camera: places every actor's sprite on the
+/// screen.
 void ActorSystem_PlaceSprites(void) {
   // Unused: gives the stack frame its 36 bytes, as The Broken Seal's.
-  struct CameraPoint unusedPoints[3];
+  struct ActorCameraPoint unusedPoints[3];
   struct SpritePlacement point;
   struct SpriteScale scale;
   s32 objectIndex;
@@ -880,35 +927,36 @@ void ActorSystem_PlaceSprites(void) {
 // by the angle from the eye to the target, each object in a function of its
 // own.
 
+/// Unused: returns 1.
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
-/// chosen (flag 363) the sprites are drawn at 1.0 scale.
-void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
-  const s32 *scale = object->scale;
+/// chosen (FLAG_CHOOSING_COMMANDS) the sprites are drawn at 1.0 scale.
+void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
+  const s32 *scale = &actor->scaleX;
   s32 *point;
   void *sprite;
   void **sprites;
   s32 remaining;
 
-  if (GameFlag_Get(363))
+  if (GameFlag_Get(FLAG_CHOOSING_COMMANDS))
     scale = gActorSprite_FullScale;
-  switch (object->kind & 15) {
+  switch (actor->spriteStorageKind & 15) {
   case 1:
-    point = object->position;
-    sprite = object->target;
-    if (!(object->flags & 0x10))
-      Render_PlaceProjectedSprite(sprite, point, scale, object->angle + angle,
-                                  object->layer);
+    point = &actor->x.fixed;
+    sprite = actor->sprite;
+    if (!(actor->priorityFlags & 0x10))
+      Render_PlaceProjectedSprite(sprite, point, scale, actor->facing + angle,
+                                  actor->layer);
     break;
   case 2:
-    sprites = object->target;
+    sprites = actor->sprite;
     for (remaining = 3; remaining >= 0; remaining--) {
       sprite = *sprites++;
       if (sprite != NULL)
-        Render_PlaceProjectedSprite(sprite, object->position, scale,
-                                    object->angle + angle, object->layer);
+        Render_PlaceProjectedSprite(sprite, &actor->x.fixed, scale,
+                                    actor->facing + angle, actor->layer);
     }
     break;
   case 0:
@@ -917,18 +965,18 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
 }
 
 /// Each frame, with the fixed camera: places every active object, from the
-/// 64th down. While battle commands are chosen (flag 363) it uses the fixed
-/// view matrix and turns the objects by an eighth of a turn less.
-void ObjectSystem_UpdateCameraFixed(void) {
-  struct FixedCamera *camera = Ram_HeapSlots->cameraWork;
+/// 64th down. While battle commands are chosen (FLAG_CHOOSING_COMMANDS) it uses
+/// the fixed view matrix and turns the objects by an eighth of a turn less.
+void ActorSystem_ProjectSprites(void) {
+  struct ActorCameraFixed *camera = Ram_HeapSlots->cameraWork;
   struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
-  struct CameraPoint *eye;
-  struct CameraPoint *target;
-  struct PlacedObject *object;
+  struct ActorCameraPoint *eye;
+  struct ActorCameraPoint *target;
+  struct Actor *actor;
   s32 angle;
   s32 i;
   // Unused: gives the stack frame its 12 bytes.
-  struct CameraPoint unused;
+  struct ActorCameraPoint unused;
 
   /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
@@ -942,13 +990,13 @@ void ObjectSystem_UpdateCameraFixed(void) {
   } while (0);
   eye = &camera->eye;
   target = &camera->target;
-  if (camera->eyeOverride != NULL)
-    eye = camera->eyeOverride;
-  if (camera->targetOverride != NULL)
-    target = camera->targetOverride;
+  if (camera->followEye != NULL)
+    eye = camera->followEye;
+  if (camera->followPosition != NULL)
+    target = camera->followPosition;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
-  if (GameFlag_Get(363)) {
+  if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     Transform_Reset();
     angle += 0xffffe000;
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
@@ -957,38 +1005,36 @@ void ObjectSystem_UpdateCameraFixed(void) {
     SceneTransform_RewindStack();
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
-  object = Ram_HeapSlots->actors;
-  object += 63;
-  for (i = 63; i >= 0; i--, object--) {
-    if (object->active != 0)
-      Actor_PlaceSprites(object, angle);
+  actor = Ram_HeapSlots->actors;
+  actor += 63;
+  for (i = 63; i >= 0; i--, actor--) {
+    // The upper half of a script's address in ROM is never zero.
+    if (((u16 *)&actor->script)[1] != 0)
+      Actor_PlaceSprites(actor, angle);
   }
   HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-/// Jumps to the script the next word points to and returns 1 to continue
-/// with its first command.
-s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
-  s32 zero;
-
-  // Jump to the script pointed to by the following word.
-  sc->script = (const s32 *)sc->script[sc->cursor + 1];
-  zero = 0;
-  sc->cursor = zero;
+/// SC_GOTO(script): goes on in script, from its first command, this frame.
+s32 ActorScript_Goto(struct Actor *interpreter) {
+  interpreter->script =
+      (const s32 *)interpreter->script[interpreter->scriptCursor + 1];
+  interpreter->scriptCursor = 0;
   return 1;
 }
 
-/// Hides the sprites (spriteStorageKind 0) and advances to the next command.
-s32 ActorScript_HideSprites(struct ScriptInterpreter *sc) {
-  sc->spriteStorageKind = 0;
-  sc->cursor++;
+/// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
+/// to the next command.
+s32 ActorScript_HideSprites(struct Actor *interpreter) {
+  interpreter->spriteStorageKind = 0;
+  interpreter->scriptCursor++;
   return 1;
 }
 
 /// Shows one sprite (spriteStorageKind 1) and advances to the next command.
-s32 ActorScript_ShowSprite(struct ScriptInterpreter *sc) {
-  sc->spriteStorageKind = 1;
-  sc->cursor++;
+s32 ActorScript_ShowSprite(struct Actor *interpreter) {
+  interpreter->spriteStorageKind = 1;
+  interpreter->scriptCursor++;
   return 1;
 }
 

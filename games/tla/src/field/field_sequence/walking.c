@@ -17,47 +17,60 @@
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
+/// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
-  s16 value;
-  struct BattleEffectCounterState *state;
+  struct FieldWork *work = gFieldWork;
 
-  value = 0;
-  state = Ram_HeapSlots->fieldWork;
-  state->counters[0] = value;
-  state->counters[1] = 0;
-  state->counters[2] = 0;
-  state->counters[3] = 0;
-  state->counters[4] = 0;
-  state->counters[5] = 0;
-  state->counters[6] = 0;
-  state->counters[7] = 0;
-  state->counters[8] = 0;
-  state->counters[9] = 0;
-  state->counters[10] = 0;
-  state->counters[11] = 0;
+  work->stepTrigger = 0;
+  work->pushCell = 0;
+  work->exit = 0;
+  work->fieldMenu = 0;
+  work->aButton = 0;
+  work->pauseMenu = 0;
+  work->talk = 0;
+  work->examineCell = 0;
+  work->encounter = 0;
+  work->psynergy = 0;
+  work->item = 0;
+  work->raisedTrigger = 0;
 }
 
+/// Returns the sum of the field's twelve pending requests: non-zero while any
+/// request is pending.
 s32 Field_CountRequests(void) {
-  struct BattleEffectCounterState *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
 
-  return state->counters[0] + state->counters[1] + state->counters[2] +
-         state->counters[3] + state->counters[4] + state->counters[5] +
-         state->counters[6] + state->counters[7] + state->counters[8] +
-         state->counters[9] + state->counters[10] + state->counters[11];
+  // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises
+  // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a party member falls to
+  // poison, and the step trigger request is the cell's cell behavior, 1 on
+  // step trigger 1's cells; together they sum to 0, and both wait until
+  // another request breaks the tie. BUGFIX tests each request instead.
+#ifdef BUGFIX
+  return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
+         work->aButton | work->pauseMenu | work->talk | work->examineCell |
+         work->encounter | work->psynergy | work->item | work->raisedTrigger;
+#else
+  return work->stepTrigger + work->pushCell + work->exit + work->fieldMenu +
+         work->aButton + work->pauseMenu + work->talk + work->examineCell +
+         work->encounter + work->psynergy + work->item + work->raisedTrigger;
+#endif
 }
 
-/// Sets event work byte 0xd39 when flag 0x8df is set and a party member
-/// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
-/// movement reads it.
+/// Sets the field work's hoverReady when the ship flies (FLAG_SHIP_FLIES) and a
+/// party member knows Hover; clears it otherwise. The world map's pad movement
+/// reads it.
 void Field_UpdateHoverReady(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Get(FLAG_SHIP_FLIES) &&
+      Party_FindOwnerWithActionFar(ABILITY_HOVER) != -1)
     work->hoverReady = 1;
   else
     work->hoverReady = 0;
 }
 
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
+/// leader (a World Map cell picture on the World Map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
@@ -118,6 +131,10 @@ s32 Field_GetCollisionUnderLeader(void) {
 
 // The overlay's entry table; entry 11 returns the map's region list.
 
+/// Takes the exit of the first of the scene's exit regions that contains the
+/// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
+/// region's exit value for FieldSequence_Run, plays the exit sound and starts
+/// leaving the scene.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
   struct FieldWork *runtime;
@@ -164,11 +181,13 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   }
 }
 
-#define gPartyStep (*(struct PartyStepView *)&gMainRoutineWork)
-
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
+/// Handles one frame of the party leader's walking onto the cell at (x, y, z)
+/// of map grid layer: records step triggers and push cells, takes exits, and
+/// while walking advances the encounter counter, regenerates PP, hurts the
+/// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -176,7 +195,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
   struct MapCell *tile;
-  struct UnitStepView *unit;
+  struct BattleUnit *unit;
   s32 partyHurt;
   u32 partyCount;
   u32 i;
@@ -195,7 +214,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
     previousHp[i] =
-        ((struct UnitStepView *)Unit_Get(gPartyStep.activeOwners[i]))->hp;
+        ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
@@ -220,8 +239,9 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   if (attributes & 0xe2)
     work->pushCell = attributes;
 
-  if ((gPartyStep.renderMode <= 1 || gPartyStep.renderMode == 6 ||
-       gPartyStep.renderMode == 7) &&
+  if ((gMainRoutineWork.movementMode <= 1 ||
+       gMainRoutineWork.movementMode == 6 ||
+       gMainRoutineWork.movementMode == 7) &&
       leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;
@@ -250,33 +270,34 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       partyHurt = Party_ApplyPoisonDamage();
     }
 
-    if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
+    if (gMainRoutineWork.hazardMode == 0 && (attributes & 8)) {
       if (work->previousCell->attributeB & 8)
-        gPartyStep.hazardSteps += leader->speedLimit / Q16_ONE;
+        gMainRoutineWork.hazardSteps += leader->speedLimit / Q16_ONE;
       else
-        gPartyStep.hazardSteps = gPartyStep.hazardLimit / 2;
+        gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
     }
 
-    if (gPartyStep.avoidDistance != 0 && gPartyStep.sceneVariant != 2) {
-      gPartyStep.avoidDistance -= leader->speedLimit;
-      if (gPartyStep.avoidDistance <= 0) {
-        gPartyStep.avoidDistance = 1;
+    if (gMainRoutineWork.avoidDistance != 0 &&
+        gMainRoutineWork.sceneType != 2) {
+      gMainRoutineWork.avoidDistance -= leader->speedLimit;
+      if (gMainRoutineWork.avoidDistance <= 0) {
+        gMainRoutineWork.avoidDistance = 1;
         if (work->psynergy == 0)
           work->psynergy = 0x2096;
       }
     }
   }
 
-  if (gPartyStep.hazardMode == 1) {
-    gPartyStep.hazardSteps++;
-    if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit / 2)
+  if (gMainRoutineWork.hazardMode == 1) {
+    gMainRoutineWork.hazardSteps++;
+    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
       FieldEffect_SetAttached(leaderId, 0x101);
-    if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit)
+    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit)
       FieldEffect_SetAttached(leaderId, 0x100);
   }
-  if ((s16)gPartyStep.hazardSteps >= gPartyStep.hazardLimit) {
-    amount = gPartyStep.hazardDamage;
-    gPartyStep.hazardSteps = 0;
+  if ((s16)gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
+    amount = gMainRoutineWork.hazardDamage;
+    gMainRoutineWork.hazardSteps = 0;
     Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
@@ -286,11 +307,11 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     work->survivorCount = 0;
     FieldEffect_SetAttached(leaderId, 0x102);
     for (i = 0; i < partyCount; i++) {
-      unit = Unit_Get(gPartyStep.activeOwners[i]);
+      unit = Unit_Get(gMainRoutineWork.party[i]);
       if (unit->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gPartyStep.activeOwners[i];
+        work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
         work->raisedTrigger = -1;
         unit->poison = 0;
       }
@@ -298,6 +319,8 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   }
 }
 
+/// Gives each character in the party amount PP (PP regenerates as the party
+/// walks).
 void Party_AddPp(s32 amount, s32 unused) {
   s32 targetCount = Party_CountMembersFar();
   s32 i;
@@ -306,6 +329,8 @@ void Party_AddPp(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.party[i], amount);
 }
 
+/// Changes each party member's HP by amount, or by that percentage of maximum
+/// HP when percent is set.
 void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
@@ -338,6 +363,9 @@ void Party_AddHp(s32 amount, s32 scaled) {
   }
 }
 
+/// Hurts each poisoned character in the party: poison takes a twentieth of
+/// their maximum HP and deadly poison a tenth, rounded to the nearest and at
+/// least 1.
 s32 Party_ApplyPoisonDamage(void) {
   s32 result = 0;
   s32 count = Party_CountMembersFar();
@@ -390,26 +418,29 @@ s32 Party_ApplyPoisonDamage(void) {
   return result;
 }
 
-/// In control mode 3, marks the event work busy, shows its object and, when a
-/// fade is pending, starts it at level 80 and waits 2 frames; then calls
-/// WorldMap_StartStillPictureFar.
+/// On the World Map, with no area graphics already pending: marks them
+/// pending, pauses the camera's actor and, when a screen transition is
+/// running, ends it at once and waits 2 frames; then shows the still picture
+/// (WorldMap_StartStillPictureFar).
 void WorldMap_Freeze(void) {
-  struct FxWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
+  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
 
-  if (*(u16 *)&work->state == 3) {
-    struct FadeWork *fade;
+  // The mode and areaGraphicsPending read as one halfword.
+  if (*(u16 *)&work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    struct ScreenTransitionState *transition;
     s32 zero;
 
-    work->busy = 1;
+    work->areaGraphicsPending = 1;
 
-    work->sprite->visible = 1;
+    work->camera->paused = 1;
     zero = 0;
-    fade = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
-    if (fade != NULL && fade->pending != 0) {
-      fade->level = 80;
-      fade->step = zero;
-      fade->active = 1;
-      fade->pending = zero;
+    transition =
+        HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*transition));
+    if (transition != NULL && transition->step != 0) {
+      transition->start = 80;
+      transition->end = zero;
+      transition->duration = 1;
+      transition->step = zero;
       wait(2);
     }
     WorldMap_StartStillPictureFar();
@@ -421,13 +452,16 @@ void WorldMap_Freeze(void) {
 void WorldMap_ReloadPendingAreaGraphics(void) {
   struct FieldWork *block = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
-  if (block->mode == 3 && block->unk18b != 0) {
-    block->unk18b = 0;
+  if (block->mode == ACTOR_SYSTEM_WORLD_MAP &&
+      block->areaGraphicsPending != 0) {
+    block->areaGraphicsPending = 0;
     block->camera->paused = 0;
     WorldMap_LoadAreaGraphicsFar();
   }
 }
 
+/// Ends what WorldMap_Freeze started: on the World Map, reloads
+/// the area's graphics and sets the camera's movement state back to 0.
 void *WorldMap_Unfreeze(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;

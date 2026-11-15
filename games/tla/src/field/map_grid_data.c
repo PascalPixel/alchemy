@@ -7,7 +7,7 @@
 #include "types.h"
 #include "module/field/field.h"
 #include "curve.h"
-#include "field/script.h"
+#include "field/script_operands.h"
 #include "objcmd.h"
 
 //--------------------------------------------------------------------------
@@ -104,11 +104,8 @@ const s32 gBattle_FormationPlacementScale[2] = {
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
-typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
-                            s32 value);
-
 s32 ActorScript_Wait();
-s32 Script_WaitForArrival();
+s32 ActorScript_WaitForArrival();
 s32 ActorScript_SetPositionAndResetMotion();
 s32 ActorScript_ResetToOrigin();
 s32 ActorScript_ApplyAbsolutePosition();
@@ -145,11 +142,11 @@ s32 Actor_MoveAsSandOnWorldMap();
 s32 Actor_UpdateHoverControl();
 s32 Actor_UpdateWalkingControl();
 s32 Field_CheckConfiguredKeysAndCount();
-s32 Actor_ReleaseAndClear();
+s32 ActorScript_Release();
 s32 ActorScript_SetAnimation();
 s32 ActorScript_Nop();
-s32 Script_PlaySound();
-s32 Script_CallWithOperand();
+s32 ActorScript_PlaySound();
+s32 ActorScript_PlaySoundInView();
 s32 ActorScript_InvokeCallback();
 s32 FieldCamera_FollowWatchedInBounds();
 s32 ActorScript_SetMoveTargetXZ();
@@ -162,90 +159,105 @@ const s32 gActor_KeyCheckScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Climbing by the keys (Actor_MoveByKeys).
 const s32 gActor_KeysScript[] = {
     SC_CMD_1B,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Crossing a tied rope (Actor_CrossRope).
 const s32 gActor_RopeScript[] = {
     SC_ROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Crossing a tightrope (Actor_CrossTightrope).
 const s32 gActor_TightropeScript[] = {
     SC_TIGHTROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Moving as sand (Actor_MoveAsSand).
 const s32 gActor_SandScript[] = {
     SC_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Hovering (Actor_UpdateHoverControl).
 const s32 gActor_HoverScript[] = {
     SC_HOVER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Walking (Actor_UpdateWalkingControl).
 const s32 gActor_WalkingScript[] = {
     SC_WALK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The leader on foot (Actor_UpdatePlayerControl).
 const s32 gActor_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The leader on the World Map (Actor_MoveOnWorldMap).
 const s32 gActor_WorldMapScript[] = {
     SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Sailing on a map (Actor_SailOnMap).
 const s32 gActor_SailOnMapScript[] = {
     SC_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Sailing on the World Map (Actor_SailOnWorldMap).
 const s32 gActor_SailScript[] = {
     SC_WORLD_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Flying on the World Map (Actor_FlyOnWorldMap).
 const s32 gActor_FlyScript[] = {
     SC_WORLD_FLY,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Moving as sand on the World Map (Actor_MoveAsSandOnWorldMap).
 const s32 gActor_SandOnWorldMapScript[] = {
     SC_WORLD_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The camera following the leader within the map's bounds.
 const s32 gActor_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Following the watched actor (Actor_ApproachWatchedActor).
 const s32 gActor_ApproachWatchedScript[] = {
     SC_APPROACH_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// A script that ends at once.
 const s32 gActorScript_EndScript[] = {
     SC_END,
 };
@@ -253,7 +265,7 @@ const s32 gActorScript_EndScript[] = {
 /// The handler of each command. 0x31 to 0x35 repeat SC_END's.
 const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
-    Script_WaitForArrival,                    // 0x01 SC_SYNC
+    ActorScript_WaitForArrival,               // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
     ActorScript_ResetToOrigin,                // 0x03 SC_CMD_03
     ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
@@ -290,12 +302,12 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     Actor_UpdateHoverControl,                 // 0x23 SC_HOVER
     Actor_UpdateWalkingControl,               // 0x24 SC_WALK
     Field_CheckConfiguredKeysAndCount,        // 0x25 SC_KEY_COUNT
-    Actor_ReleaseAndClear,                    // 0x26 SC_FREE
+    ActorScript_Release,                      // 0x26 SC_FREE
     ActorScript_SetAnimation,                 // 0x27 SC_ARG
     ActorScript_Nop,                          // 0x28 SC_NOP
-    Script_PlaySound,                         // 0x29 SC_SE
-    Script_CallWithOperand,                   // 0x2a SC_CALL_WITH
-    Script_JumpToNextOperandPointer,          // 0x2b SC_GOTO
+    ActorScript_PlaySound,                    // 0x29 SC_SE
+    ActorScript_PlaySoundInView,              // 0x2a SC_CALL_WITH
+    ActorScript_Goto,                         // 0x2b SC_GOTO
     ActorScript_HideSprites,                  // 0x2c SC_HIDE_SPRITES
     ActorScript_ShowSprite,                   // 0x2d SC_SHOW_SPRITE
     ActorScript_InvokeCallback,               // 0x2e SC_CALL

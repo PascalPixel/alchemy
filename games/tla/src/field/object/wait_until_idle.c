@@ -1,3 +1,6 @@
+/// @file
+/// Waiting for an actor to finish its script.
+
 #include "types.h"
 #include "system/system.h"
 #include "actor.h"

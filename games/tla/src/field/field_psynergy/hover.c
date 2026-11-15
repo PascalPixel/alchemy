@@ -12,7 +12,7 @@
 /// read a third of a turn apart for red, green and blue.
 extern const u8 gData_080f0fe0[];
 
-/// The colour of field Psynergy kind 24's glow (HoverGlow_Update) for a step of
+/// The colour of Hover's glow (HoverGlow_Update) for a step of
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
 /// RGB555.
@@ -56,8 +56,9 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 #define GLOW_FULL 112
 #define GLOW_SPENT_CUE 0x2099
 
-// Kind 24's work (battle_fx_work[0]).
-struct HoverGlowWork {
+/// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
+/// hovering leader, its scale, tile and stage.
+struct HoverWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
   s32 scale;
@@ -68,25 +69,17 @@ struct HoverGlowWork {
   s16 fading;
 };
 
-struct GlowEvent {
-  u8 unk000[0x166];
-  u16 cue;
-  u8 unk168[0xbdc];
-  s16 glow;
-  s16 glowHeld;
-};
-
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 
-// Kind 24's frame callback: keeps the glow's strength full while the player
-// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
-// is fading, the glow shrinks with it and the event takes its cue when it is
-// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
-// flickers between two pictures every other frame, and draws the glow under the
-// player, flattened to three quarters of its height.
+/// Hover's frame callback: keeps the glow's strength full while the player
+/// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
+/// is fading, the glow shrinks with it and the event takes its cue when it is
+/// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
+/// flickers between two pictures every other frame, and draws the glow under
+/// the player, flattened to three quarters of its height.
 void HoverGlow_Update(void) {
-  struct HoverGlowWork *work = Ram_HeapSlots->battleEffect;
+  struct HoverWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
@@ -146,7 +139,7 @@ void HoverGlow_Update(void) {
   EffectSprite_Draw(sprite);
 }
 
-/// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
+/// Hover cast on a target: runs FieldPsynergy_Hover.
 void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_START
@@ -157,36 +150,31 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef GLOW_FULL
 #undef GLOW_SPENT_CUE
 
-struct GlowScene {
-  u8 unk00[0x10];
-  struct Actor *mainObject;
-  u8 unk14[4];
-  s16 unk18;
-  s16 unk1a;
-  u8 unk1c[2];
-  s16 kind;
-};
-
 extern char ResourceId_RingOrb;
 
+/// Hover: a glowing ring grows under the leader, who rises and floats (movement
+/// mode 10) while HoverGlow_Update holds the glow up. Where it cannot hover
+/// (off a hover cell, or touching a solid actor) the ring shrinks away and the
+/// place's Hover event runs instead.
 void FieldPsynergy_Hover(void) {
-  struct HoverGlowWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
-  struct GlowScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct HoverWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *player = scene->mainObject;
+  struct Actor *player = scene->mainActor;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
   struct Actor *other;
   s32 position[3];
-  s32 found;
+  s32 blocked;
   s32 slot;
   struct Actor **list;
   s32 tile;
   s32 i;
   s32 n;
 
-  pending = Scene_FindPsynergyTrigger(0x50000005, scene->kind,
-                                      Scene_SelectPsynergyTarget(scene->kind));
+  pending = Scene_FindPsynergyTrigger(
+      0x50000005, scene->fieldPsynergy,
+      Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);
@@ -208,29 +196,29 @@ void FieldPsynergy_Hover(void) {
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
-  found = 0;
+  blocked = 0;
   if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==
       0) {
-    found = 1;
+    blocked = 1;
   } else {
     for (n = 0; n < 80; n++) {
       other = event->actors[n];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainObject) {
+          (other->collisionFlags & 1) && other != scene->mainActor) {
         position[0] = other->x.fixed;
         position[1] = other->groundHeight;
         position[2] = other->z.fixed;
         if (FieldPsynergy_CheckOverlap(&player->x.fixed, player->radius,
                                        &other->x.fixed,
                                        other->radius - 2) >= 0) {
-          found = 1;
+          blocked = 1;
           break;
         }
       }
     }
   }
 
-  if (found) {
+  if (blocked) {
     wait(5);
     Sound_PlayFar(SE_GLITTER);
     for (i = 0; i < 32; i++) {
@@ -239,7 +227,8 @@ void FieldPsynergy_Hover(void) {
     }
     wait(10);
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, scene->unk18, scene->unk1a);
+      Field_RunPsynergyEvent(pending, scene->firstActorId,
+                             scene->secondActorId);
     for (i = 31; i != 0; i--) {
       work->scale = i << 11;
       wait(1);
@@ -271,11 +260,10 @@ void FieldPsynergy_Hover(void) {
   }
 }
 
-// Kind 24's work (battle_fx_work[0]).
-
+/// Ends Hover: the leader drops back to the ground with a splash and the ring
+/// is freed.
 void FieldPsynergy_EndHover(void) {
-  struct HoverGlowWork *work =
-      (struct HoverGlowWork *)Ram_HeapSlots->battleEffect;
+  struct HoverWork *work = (struct HoverWork *)Ram_HeapSlots->battleEffect;
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 

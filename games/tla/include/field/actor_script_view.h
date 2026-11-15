@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ACTOR_SCRIPT_VIEW_H
 #define ALCHEMY_ACTOR_SCRIPT_VIEW_H
 
+/// @file
+/// The actor as its script's wander commands read it.
+
 #include "types.h"
 #include "static_assert.h"
 

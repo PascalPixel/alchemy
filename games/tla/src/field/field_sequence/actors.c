@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "fixed_math.h"
 #include "actor_view.h"
@@ -36,12 +37,15 @@ s32 Party_GetCharacterSprite(s32 character) {
 /// Does nothing; nothing calls Actor_ReservedNoOpFar.
 void Actor_ReservedNoOp(void) {}
 
+/// Creates the actors of a scene's actor placement table (ended by sprite -1),
+/// and records the table among the scene's tables.
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 index = 0;
+  s32 actorIndex = 0;
   s32 i;
-  u16 id;
+  u16 placementSprite;
 
+  // Remember the table once, before consuming slots for its actor placements.
   for (i = 0; i < 4; i++) {
     if (work->tables[i] == entry)
       break;
@@ -50,103 +54,114 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       break;
     }
   }
-  for (id = entry->sprite; (s16)id != -1 && slot <= 63;
-       entry++, id = entry->sprite) {
-    struct Actor *object;
-    struct SpawnSprite *sprite;
+  for (placementSprite = entry->sprite;
+       (s16)placementSprite != -1 && slot <= 63;
+       entry++, placementSprite = entry->sprite) {
+    struct Actor *actor;
+    struct AnimationObject *sprite;
     s32 condition;
-    s32 character;
+    s32 spriteId;
 
     if (entry->sprite <= 7)
-      index = entry->sprite;
-    else if (entry->sprite <= 0x2705)
-      index = slot++;
+      actorIndex = entry->sprite;
+    else if (entry->sprite <= 9989)
+      actorIndex = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    if ((u32)(condition - 48) <= 79) {
-      s32 group = (condition - 48) / 20;
+    if ((u32)(condition - FLAG_DJINN_FIRST) <= 79) {
+      s32 element = (condition - FLAG_DJINN_FIRST) / DJINN_PER_ELEMENT;
 
-      if ((condition - 48) % 20 == 19) {
-        s32 member = gSceneLocalState[group + 0x1950];
+      // The last flag of an element stands for the Djinni the scene chose
+      // for it, numbered from 1; with none chosen the actor is left out.
+      if ((condition - FLAG_DJINN_FIRST) % DJINN_PER_ELEMENT ==
+          DJINN_PER_ELEMENT - 1) {
+        s32 member = gSceneLocalState[element + 0x1950];
 
         if (member == 0)
           continue;
-        condition = group * 20 + member + 47;
+        condition = element * DJINN_PER_ELEMENT + member + FLAG_DJINN_FIRST - 1;
         if (!GameFlag_IsConditionActive(condition))
           continue;
       }
-      if (work->mode != 3 && !GameFlag_IsConditionActive(condition + 80))
+      // Djinn_ResolvePending hides a Djinni after the party loses or flees.
+      if (work->mode != ACTOR_SYSTEM_WORLD_MAP &&
+          !GameFlag_IsConditionActive(condition + 80))
         continue;
     }
-    character = Party_GetCharacterSprite(entry->sprite);
-    object = ObjectTable_Get(index);
-    if (object == NULL) {
+    spriteId = Party_GetCharacterSprite(entry->sprite);
+    actor = ObjectTable_Get(actorIndex);
+    if (actor == NULL) {
+      // Flag 2: x is the number of a scene point to stand on.
       if (entry->flags & 2) {
         s32 position[3];
 
-        position[0] = (s32)object;
-        position[1] = (s32)object;
-        position[2] = (s32)object;
+        position[0] = (s32)actor;
+        position[1] = (s32)actor;
+        position[2] = (s32)actor;
         ScenePoint_GetPosition(entry->x, position);
-        object = Actor_CreateFar(character, position[0], 0, position[2]);
+        actor = Actor_CreateFar(spriteId, position[0], 0, position[2]);
       } else {
-        object = Actor_CreateFar(character, entry->x, entry->y, entry->z);
+        actor = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
       }
+      // Flag 1: share the previous actor's sprite resource.
       if (entry->flags & 1) {
-        struct Actor *previous = ObjectTable_Get(index - 1);
+        struct Actor *previous = ObjectTable_Get(actorIndex - 1);
 
-        if (previous->spriteStorageKind == 1 &&
-            object->spriteStorageKind == 1) {
-          u8 resource;
+        if (previous->spriteStorageKind == 1 && actor->spriteStorageKind == 1) {
+          u8 spriteSlot;
 
           sprite = previous->sprite;
-          sprite->displayFlags |= 1;
-          resource = sprite->slot;
-          sprite = object->sprite;
-          sprite->displayFlags |= 1;
+          sprite->retainCacheEntry = 1;
+          spriteSlot = sprite->slot;
+          sprite = actor->sprite;
+          sprite->retainCacheEntry = 1;
           VramCache_FreeEntry(sprite->slot);
-          sprite->slot = resource;
+          sprite->slot = spriteSlot;
         }
       }
     } else {
       if (entry->sprite == gMainRoutineWork.leaderActorId)
         continue;
-      Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
+      Actor_SetPositionAndResetMotionFar(actor, entry->x, entry->y, entry->z);
     }
-    if (object != NULL) {
-      sprite = object->sprite;
-      Actor_SelectAnimationFar(object, 1);
-      if (object->spriteStorageKind == 1 && sprite != NULL) {
-        for (i = 0; i < sprite->partCount; i++) {
-          struct SpawnSpritePart *part = sprite->parts[i];
+    if (actor != NULL) {
+      sprite = actor->sprite;
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
+      // Each layer starts its first picture 0 to 4 sixteenths of a frame
+      // apart, so actors placed together do not move in step.
+      if (actor->spriteStorageKind == 1 && sprite != NULL) {
+        for (i = 0; i < sprite->count; i++) {
+          struct AnimationEntry *layer = sprite->entries[i];
 
-          if (part != NULL)
-            part->frame = (Random16() * 5) >> 15;
+          if (layer != NULL)
+            layer->timer = (Random16() * 5) >> 15;
         }
-        sprite->unk19 = 1;
+        sprite->dirty = 1;
       }
-      object->facing = entry->facing;
-      object->collisionFlags = 1;
-      Actor_SetActionCallback(object, entry->behavior);
-      ((struct SpawnActor *)object)->homeX = object->x.fixed / Q16_ONE;
-      ((struct SpawnActor *)object)->homeZ = object->z.fixed / Q16_ONE;
-      if (object->y.fixed != 0) {
-        object->motionFlags = 4;
-        object->y.fixed += px(1) / 2;
+      actor->facing = entry->facing;
+      actor->collisionFlags = 1;
+      Actor_SetActionCallback(actor, entry->behavior);
+      ((struct SpawnActor *)actor)->homeX = actor->x.fixed / Q16_ONE;
+      ((struct SpawnActor *)actor)->homeZ = actor->z.fixed / Q16_ONE;
+      // An actor placement with a height is lifted half a pixel more and
+      // floats: it neither follows the ground nor falls.
+      if (actor->y.fixed != 0) {
+        actor->motionFlags = 4;
+        actor->y.fixed += px(1) / 2;
       }
-      if (work->mode == 3) {
-        object->motionFlags &= 0xfe;
-        if (!GameFlag_Get(33))
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+        actor->motionFlags &= 0xfe;
+        if (!GameFlag_Get(0x21))
           sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
       } else {
-        object->groundHeight =
-            MapGrid_GetTerrainHeightFar(0, object->x.fixed, object->z.fixed);
-        object->y.fixed += object->groundHeight;
+        actor->groundHeight =
+            MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+        actor->y.fixed += actor->groundHeight;
       }
-      object->priorityFlags = 1;
+      actor->priorityFlags = 1;
     }
-    work->actors[index] = object;
+    work->actors[actorIndex] = actor;
   }
 }
 
@@ -190,7 +205,6 @@ u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 /// that follows the leader; it also chooses the leader's control mode.
 void Actor_ResetForLeader(s32 table) {
   struct FieldWork *work;
-  struct EventWorkPlacements *placements;
   struct ActorPlacement *entry;
   struct Actor *object;
   struct Actor *camera;
@@ -201,13 +215,12 @@ void Actor_ResetForLeader(s32 table) {
   s32 height;
 
   work = Ram_HeapSlots->fieldWork;
-  placements = (struct EventWorkPlacements *)work;
   leader = gMainRoutineWork.leaderActorId;
-  entry = placements->leader;
+  entry = work->leaderPlacements;
   entry[0] = gField_DefaultPlacements[0];
   entry[1] = gField_DefaultPlacements[1];
   for (i = 0; i < 4; i++)
-    placements->tables[i] = 0;
+    work->tables[i] = 0;
   ObjectTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
@@ -283,6 +296,8 @@ void Actor_ResetForLeader(s32 table) {
   work->camera = camera;
 }
 
+/// Returns the slot after the last placed actor (8 when there is none), or -1
+/// when the last slot is occupied.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 last = 7;
@@ -298,8 +313,10 @@ s32 Actor_FindLastActiveId(void) {
   return last;
 }
 
+/// Gives each actor placement with condition 0 a condition saying whether
+/// it lies within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
-  struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapGrid;
+  struct MapWork *view = Ram_HeapSlots->mapGrid;
 
   GameFlag_Clear(0x164);
   GameFlag_Set(0x165);
@@ -314,8 +331,8 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
     }
     x = entry->x;
     z = entry->z;
-    if (view->minX <= x && x <= view->maxX && view->minY <= z &&
-        z <= view->maxY)
+    if (view->minX <= x && x <= view->maxX && view->minZ <= z &&
+        z <= view->maxZ)
       entry->flag = 0x164;
     else
       entry->flag = 0x165;
@@ -323,6 +340,7 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   }
 }
 
+/// Empties all the actor slots, without releasing the actors.
 void ObjectTable_Clear(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
@@ -331,6 +349,7 @@ void ObjectTable_Clear(void) {
     work->actors[i] = NULL;
 }
 
+/// Returns the actor in slot objectId (below 192), or NULL.
 struct Actor *ObjectTable_Get(u32 objectId) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -339,6 +358,8 @@ struct Actor *ObjectTable_Get(u32 objectId) {
   return work->actors[objectId];
 }
 
+/// Saves up to 32 actors into gSnapshotObjects, with each one's slot,
+/// animation, sprite flags and priority, so that they can be put back.
 void ObjectTable_Snapshot(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;
@@ -382,6 +403,8 @@ void ObjectTable_Snapshot(void) {
     *indices++ = 255;
 }
 
+/// Puts back the actors the snapshot saved, and moves the camera to the party
+/// leader's height.
 void Actor_Restore(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;

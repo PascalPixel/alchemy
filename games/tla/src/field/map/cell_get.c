@@ -1,3 +1,7 @@
+/// @file
+/// A map cell's collision code and attributes, read on a layer or from the
+/// cell buffer.
+
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "map.h"

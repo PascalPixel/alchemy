@@ -1,3 +1,6 @@
+/// @file
+/// A field effect's motion each frame, drawn at the leader's priority.
+
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"

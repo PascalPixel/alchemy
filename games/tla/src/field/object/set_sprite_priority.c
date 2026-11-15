@@ -1,6 +1,11 @@
+/// @file
+/// Setting an actor's sprite priority by hand.
+
 #include "types.h"
 #include "field_event.h"
 
+/// Gives the actor's sprite and its shadow drawing priority priority, and
+/// stops the camera choosing it from the map.
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority) {
   struct FieldSprite *sprite;
 

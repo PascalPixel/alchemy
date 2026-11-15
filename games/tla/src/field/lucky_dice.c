@@ -47,6 +47,8 @@ extern const u8 gLuckyDice_LabelTiles[];
 extern const u8 gLuckyDice_FaceTiles[];
 extern const s16 gLuckyDice_FaceHeights[];
 
+/// Starts the Lucky Dice minigame: leaves only the sprites on screen, starts
+/// the music and plays until the player quits. Returns 0.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Sound_PlayFar(MUS_ALHAFRA);
@@ -54,8 +56,8 @@ s32 LuckyDice_Start(void) {
   return 0;
 }
 
-/// Resets the scene camera and its projection.
-// As The Broken Seal's.
+/// Puts the 3D camera back at its starting view: at the origin, unturned,
+/// pitched to 152 and 510 units away, following nothing.
 void Camera_ResetViewDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
@@ -93,6 +95,7 @@ void Camera_ResetViewDefaults(void) {
   Projection_Set(param, ratio, 0x7fff0000);
 }
 
+/// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
 s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
   s16 left = arg0;
   s16 right = arg1;
@@ -111,10 +114,14 @@ s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
   return (s16)(adjusted >> 8);
 }
 
+/// Unused: divides two 8.8 fixed-point values.
 s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
 
+/// Unused: the reciprocal of an 8.8 fixed-point value.
 s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
+/// Copies count RGB555 colours from source to destination with each channel
+/// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -233,6 +240,8 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 #define DICE_RESULT_LABEL_CENTER_X 632
 #endif
 
+/// Runs the Lucky Dice minigame until the player quits or cannot afford a
+/// throw. Each throw costs ten coins per level of the party's average.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[4];

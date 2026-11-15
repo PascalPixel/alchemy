@@ -7,6 +7,7 @@
 #include "sounds.h"
 #include "module/field/field_sequence.h"
 
+/// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
   struct Actor *state = object;
   s32 height;
@@ -52,9 +53,13 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
+/// Places an actor at each of the map's treasure spots (ids 100 to 239) that
+/// the scene has an event for, up to ten: a chest for a chest event, shown open
+/// once its flag is set and gone once its mimic was beaten, and a Psynergy
+/// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
-  struct SceneItemWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 type;
   s32 id;
@@ -109,7 +114,7 @@ void Field_PlaceTreasureSpots(void) {
             s32 z;
 
             *motionFlags = 2;
-            object->groundHeight += 0xfff00000;
+            object->groundHeight -= px(16);
             object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
             x = object->x.fixed >> 20;
@@ -131,9 +136,9 @@ void Field_PlaceTreasureSpots(void) {
         object->userValue = object->z.fixed / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
-        work->objects[i] = object;
+        work->actors[FIELD_TREASURE_ACTOR + i] = object;
         if (type == 131)
-          Actor_ShowItemIconById(i + 64, item);
+          Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
         if (type == 133)
           object->collisionFlags = 0;
       }
@@ -161,6 +166,8 @@ struct ObjectSprite__field_sequence {
   u8 yOffset;
 };
 
+/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY 0x31415927;
+/// any other mode draws its sprite wide (shape 1), 4 pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
   struct ObjectSprite__field_sequence *sprite;
@@ -182,6 +189,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   sprite->attr1High &= 0x3f;
 }
 
+/// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
 void Actor_SetSquareSprite(u32 objectId) {
   struct Actor *object;
   struct ObjectSprite__field_sequence *sprite;
@@ -197,6 +205,8 @@ void Actor_SetSquareSprite(u32 objectId) {
   sprite->attr1High = (sprite->attr1High & 0x3f) | 0x40;
 }
 
+/// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
+/// 0 without one.
 s32 Actor_GetSpriteShape(u32 objectId) {
   struct Actor *object;
   struct ObjectSprite__field_sequence *sprite;
@@ -211,6 +221,8 @@ s32 Actor_GetSpriteShape(u32 objectId) {
   return shape;
 }
 
+/// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
+/// again and drops it back home (homeX, homeZ) at Scoop's anchor.
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   struct ActorScriptView *object;
 
@@ -229,6 +241,7 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   }
 }
 
+/// Shakes the actor's facing at random for 16 frames, then turns it back.
 void Actor_ShakeAngle(u32 objectId) {
   struct Actor *object;
   s32 angle;
@@ -252,12 +265,17 @@ void Actor_ShakeAngle(u32 objectId) {
   object->facing = angle;
 }
 
+/// Closes the chest of the actor again (its item could not be carried), with
+/// SE_CHEST_CLOSE, and waits 12 frames.
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 5);
   Sound_PlayFar(SE_CHEST_CLOSE);
   wait(12);
 }
 
+/// Makes the chest of the actor jump up as a mimic: after 18 frames it takes
+/// animation 7, plays SE_ENEMY_CRY and gets an upward velocity of 8 pixels a
+/// frame, its shadow shown.
 void ObjectEvent_Spring(u32 objectId) {
   struct Actor *object;
 
@@ -271,38 +289,35 @@ void ObjectEvent_Spring(u32 objectId) {
   }
 }
 
+/// Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
 void ObjectEvent_SetMode4WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 4);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
+/// Shows the chest of the actor open, with no sound.
 void ObjectEvent_SetMode2(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 2);
 }
 
+/// Gives the actor animation 6 with SE_CHEST_OPEN, and waits 12 frames.
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 6);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
+/// Returns the actor, or NULL.
 struct Actor *ObjectEvent_GetObject(u32 objectId) {
   return ObjectTable_Get(objectId);
 }
 
+/// Releases the actor and empties its slot.
 void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 
-/* VIEW(field_sequence): routine ObjectEvent_PlaceOnGround as void
- * ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z); field/event.h has void
- * ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z); tried as the
- * definition's void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:85: conflicting types for
- * `ObjectEvent_PlaceOnGround'. */
-void ObjectEvent_PlaceOnGround__field_sequence(
-    u32 objectId, s32 x, s32 z) __asm__("ObjectEvent_PlaceOnGround");
-#define ObjectEvent_PlaceOnGround ObjectEvent_PlaceOnGround__field_sequence
+/// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
+/// (homeX, homeZ) on that axis.
 void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
   struct ActorScriptView *object;
 

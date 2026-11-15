@@ -88,22 +88,27 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   }
 }
 
+/// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
+/// its collision flags, so nothing collides with it.
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;
   return 0;
 }
 
+/// Actor script hook: clears the actor's sprite flags (outline and shadow).
 s32 Actor_ClearChildFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
 
+/// Actor script hook: sets priorityFlags bit 5.
 s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
   obj->flags23 |= 0x20;
   return 0;
 }
 
+/// The SC_CALL routine of movement type 5: follows the watched actor.
 s32 Actor_MoveTowardTarget(struct Actor *object) {
   struct Actor *target;
   s32 deltaX;
@@ -140,28 +145,27 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
-/// Turns the object toward its facing target, if it has one, by at most
-/// 0x1000 (22.5 degrees).
-/// obj: object to turn.
-s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
+/// Per-frame update that turns an actor toward its watched actor, if it has
+/// one, at most 1/16 turn a frame, and stops it facing where it moves.
+s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s32 turn;
   u16 old;
-  s32 dir;
-  struct FacingObject *target;
+  s32 angle;
+  struct Actor *target;
 
-  target = obj->facingTarget;
+  target = actor->watchedActor;
   if (target != NULL) {
-    obj->facingFlags = 0xfe & obj->facingFlags;
-    dir = (u16)ArcTan2(target->positionZ - obj->positionZ,
-                       target->positionX - obj->positionX);
-    old = obj->facing;
-    turn = (s16)(dir - old);
+    actor->steeringFlags = 0xfe & actor->steeringFlags;
+    angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+                         target->x.fixed - actor->x.fixed);
+    old = actor->facing;
+    turn = (s16)(angle - old);
     if (turn != 0) {
-      if (turn > 0x1000)
-        turn = 0x1000;
-      if (turn < -0x1000)
-        turn = -0x1000;
-      obj->facing = old + turn;
+      if (turn > TRIG_TURN / 16)
+        turn = TRIG_TURN / 16;
+      if (turn < -(TRIG_TURN / 16))
+        turn = -(TRIG_TURN / 16);
+      actor->facing = old + turn;
     }
   }
   return 1;
@@ -200,6 +204,8 @@ extern const u8 gMovementType_TakeLeaderLayerScript[];
 extern const u8 gMovementType_ResetActionScript[];
 extern const u8 gMovementType_ClearChildScript[];
 
+/// Starts an actor's movement type: an enum MovementType, or any other value as
+/// the actor script to run itself.
 void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:

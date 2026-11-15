@@ -314,10 +314,10 @@ static inline void FieldWorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px,
   WorldMap_SetWindowCellTileAndDraw(x, y, px, py);
 }
 
-/// Moves the camera onto an actor, keeping its height
+/// Moves the camera onto an actor, to its height too
 /// (FieldCamera_MoveToActor).
-static inline s32 EventCamera_MoveToActor(s32 actorId, s32 pan) {
-  return FieldCamera_MoveToActor(actorId, pan);
+static inline void EventCamera_MoveToActor(s32 actorId, s32 pan) {
+  FieldCamera_MoveToActor(actorId, pan);
 }
 
 /// Rotates an actor's sprite (Actor_SetSpriteRotationById).

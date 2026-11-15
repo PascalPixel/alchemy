@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "module/field/field.h"
 
-struct BattleFxScene;
+struct FieldEffectWork;
 
 /// A Venus Djinni joining the party, as The Broken Seal's
 /// Djinn_RunVenusJoinEffect.
@@ -139,7 +139,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   FieldEffect_ReleaseSlots();
 }
 
-struct BattleFxScene;
+struct FieldEffectWork;
 
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15

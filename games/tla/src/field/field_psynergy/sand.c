@@ -16,6 +16,18 @@
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
 
+/// Sand's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and
+/// the copy it sinks into the ground, the grains of sand thrown up round it and
+/// the sprite the sinking leader is drawn with.
+struct SandWork {
+  u8 picture[32 * 32]; ///< the leader's picture, 8 bits a pixel
+  u8 sunk[32 * 32];    ///< the picture with its columns sunk by a wave
+  struct EffectSprite grainSprites[64];
+  struct FieldPsynergyParticle grains[64];
+  struct EffectSprite leader;
+  u8 unused[4];
+};
+
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
 /// Task of the Sand: ends it (cue 0x208b) when the leader, not blocked, stands
@@ -59,6 +71,8 @@ void FieldPsynergy_WatchSandGround(void) {
 #define PICTURE_FORMAT_COMPRESSED                                              \
   3 ///< compressed, then run through the decoder
 
+/// A sprite layer as FieldPsynergy_DecodePicture reads it: how its pictures
+/// are coded and the one shown.
 struct PictureSource {
   u8 unk00[5];
   u8 decodeMode;
@@ -119,18 +133,6 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
 #undef PICTURE_FORMAT_TYPE01
 #undef PICTURE_FORMAT_COMPRESSED
 
-/// A particle's position and velocity (16.16), integrated each frame, and its
-/// age in frames.
-struct EffectParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
 void Camera_WorldToScreen(s32 *position);
 
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
@@ -165,25 +167,25 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
   EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
+  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
+  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->scaleY = Q16_ONE * 3 / 4;
   } else {
-    sprite->scaleX = scene->mainObject->scaleX;
-    sprite->scaleY = scene->mainObject->scaleY;
+    sprite->scaleX = scene->mainActor->scaleX;
+    sprite->scaleY = scene->mainActor->scaleY;
   }
-  position[0] = scene->mainObject->x.fixed;
-  position[1] = scene->mainObject->y.fixed;
-  position[2] = scene->mainObject->z.fixed;
+  position[0] = scene->mainActor->x.fixed;
+  position[1] = scene->mainActor->y.fixed;
+  position[2] = scene->mainActor->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
@@ -196,16 +198,16 @@ void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 /// up and 2 out when the leader stands (high), else 4 out, drifting outward,
 /// drawn small just in front of the leader.
 void Sand_SpawnGrain(struct EffectSprite *sprite,
-                     struct EffectParticle *particle, s32 unused, s32 tiles,
-                     s32 high) {
-  struct Actor *mainObject =
-      ((struct FxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
+                     struct FieldPsynergyParticle *particle, s32 unused,
+                     s32 tiles, s32 high) {
+  struct Actor *mainActor =
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   s32 position[3];
   s32 y;
 
-  position[0] = mainObject->x.fixed;
-  position[1] = y = mainObject->y.fixed;
-  position[2] = mainObject->z.fixed;
+  position[0] = mainActor->x.fixed;
+  position[1] = y = mainActor->y.fixed;
+  position[2] = mainActor->z.fixed;
   if (high) {
     position[1] = y + 0x20000;
     Vector_AddPolarOffset(px(2), Random16(), position);
@@ -225,8 +227,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   EffectSprite_Init(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(mainObject);
-  sprite->depth = BattleEffect_GetObjectDepth(mainObject) + 2;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
+  sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
 }
@@ -240,7 +242,7 @@ void Camera_WorldToScreen(s32 *position);
 /// only its age counts on. Reached from FieldPsynergy_EndSand and
 /// FieldPsynergy_Sand.
 void GrowingParticle_Update(struct EffectSprite *sprite,
-                            struct EffectParticle *particle, s32 unused,
+                            struct FieldPsynergyParticle *particle, s32 unused,
                             s32 tiles) {
   s32 position[3];
   s32 scale;
@@ -272,20 +274,23 @@ struct PendingEvent;
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 
+/// Ends Sand: the leader rises out of the ground in a spray of grains and takes
+/// its own sprite back; on sand, the place's Sand event then runs.
 void FieldPsynergy_EndSand(void) {
-  u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct SandWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SandWork));
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
-  struct Actor *owner = effect->mainObject;
+  struct Actor *owner = effect->mainActor;
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
   u8 *rippled;
 
   s32 sprite;
-  u8 *particle;
-  u8 *particleSprite;
+  struct FieldPsynergyParticle *particle;
+  struct EffectSprite *particleSprite;
   u8 *animation;
   struct MainRoutineWork *party;
   s32 pictureOffset;
@@ -303,16 +308,16 @@ void FieldPsynergy_EndSand(void) {
   particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
-  particle = work + 0x1200;
+  particle = work->grains;
   delay = 0;
-  particleSprite = work + 0x800;
+  particleSprite = work->grainSprites;
   for (; i < 64; i++) {
     Sand_SpawnGrain(particleSprite, particle, i, particleTiles,
                     event->standing);
-    *(s32 *)(particle + 24) = delay;
-    particleSprite += 40;
+    particle->timer = delay;
+    particleSprite++;
     delay -= 2;
-    particle += 28;
+    particle++;
   }
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   motionFlags = &owner->motionFlags;
@@ -342,7 +347,7 @@ void FieldPsynergy_EndSand(void) {
       /* FAKEMATCH(pin): the copy's size pinned to r2. */
       register s32 size asm("r2") = sprite;
 
-      FieldPsynergy_DecodePicture(source, work, size);
+      FieldPsynergy_DecodePicture(source, work->picture, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
@@ -350,27 +355,27 @@ void FieldPsynergy_EndSand(void) {
   asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
-  Sand_InitLeaderSprite(work + 0x1900, sprite);
+  Sand_InitLeaderSprite(&work->leader, sprite);
   wait(1);
 
   frame = 0;
-  rippled = work + 0x400;
+  rippled = work->sunk;
   ripple = 0;
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_544);
     if (frame <= 64) {
-      Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
+      Picture_SinkColumnsByWave(work->picture, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
           rippled, 32, 32, (u8 *)OBJ_VRAM0 + pictureOffset);
-      Sand_DrawLeaderSprite(work + 0x1900);
+      Sand_DrawLeaderSprite(&work->leader);
     }
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 1);
-      FieldCamera_FollowActor(effect->firstObjectId, 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 1);
+      FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_539);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineWork.movementMode = 1;
@@ -382,17 +387,17 @@ void FieldPsynergy_EndSand(void) {
       if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, effect->fieldKind,
-                Scene_SelectPsynergyTarget(effect->fieldKind)),
-            effect->firstObjectId, -1);
+                0x40000005, effect->fieldPsynergy,
+                Scene_SelectPsynergyTarget(effect->fieldPsynergy)),
+            effect->firstActorId, -1);
     }
     i = 0;
-    particle = work + 0x1200;
-    particleSprite = work + 0x800;
+    particle = work->grains;
+    particleSprite = work->grainSprites;
     for (; i < 30; i++) {
       GrowingParticle_Update(particleSprite, particle, i, particleTiles);
-      particleSprite += 40;
-      particle += 28;
+      particleSprite++;
+      particle++;
     }
     wait(1);
     ripple += 3;
@@ -403,12 +408,17 @@ void FieldPsynergy_EndSand(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// Psynergy effect 23 cast on a target: runs its effect.
+/// Sand cast on a target: runs FieldPsynergy_Sand.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }
 
+/// Sand: the leader spins and sinks into the ground in a spray of grains, then
+/// moves on as a mound of sand (movement mode 5, or 9 on the World Map) until
+/// FieldPsynergy_WatchSandGround ends it. Off sand it rises again at once; a
+/// leader whose sprite is not 32 by 32 pixels does nothing.
 void FieldPsynergy_Sand(void) {
-  u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
-  struct BattleFxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct SandWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SandWork));
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
@@ -418,13 +428,13 @@ void FieldPsynergy_Sand(void) {
   u8 savedFlags;
   u8 *motionFlags;
   s32 pictureTiles;
-  u8 *sprite;
-  u8 *particle;
+  struct EffectSprite *sprite;
+  struct FieldPsynergyParticle *particle;
   s32 frame;
   s32 delay;
   s32 i;
 
-  owner = effect->mainObject;
+  owner = effect->mainActor;
   savedY = owner->y.fixed;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
@@ -441,18 +451,18 @@ void FieldPsynergy_Sand(void) {
   particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
-  particle = work + 0x1200;
+  particle = work->grains;
   delay = -12;
-  sprite = work + 0x800;
+  sprite = work->grainSprites;
   for (; i < 64; i++) {
     Sand_SpawnGrain(sprite, particle, i, particleTiles, event->standing);
-    *(s32 *)(particle + 24) = delay;
-    sprite += 40;
+    particle->timer = delay;
+    sprite++;
     delay -= 2;
-    particle += 28;
+    particle++;
   }
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-  BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                      owner->z.fixed);
   *motionFlags = 0;
@@ -467,24 +477,24 @@ void FieldPsynergy_Sand(void) {
   }
   owner->facing = TRIG_TURN / 4;
   wait(1);
-  FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40), work,
-                              0x400);
+  FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40),
+                              work->picture, 0x400);
   pictureEntry = VramCache_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
-  Sand_InitLeaderSprite(work + 0x1900, pictureTiles);
+  Sand_InitLeaderSprite(&work->leader, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
-    Picture_SinkColumnsByWave(work, work + 0x400, frame * 3 / 2);
+    Picture_SinkColumnsByWave(work->picture, work->sunk, frame * 3 / 2);
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
-        work + 0x400, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
-    Sand_DrawLeaderSprite(work + 0x1900);
+        work->sunk, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
+    Sand_DrawLeaderSprite(&work->leader);
     i = 0;
-    particle = work + 0x1200;
-    sprite = work + 0x800;
+    particle = work->grains;
+    sprite = work->grainSprites;
     for (; i <= 32; i++) {
       GrowingParticle_Update(sprite, particle, i, particleTiles);
-      sprite += 40;
-      particle += 28;
+      sprite++;
+      particle++;
     }
     if (frame == 16)
       Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
@@ -495,8 +505,8 @@ void FieldPsynergy_Sand(void) {
       ((u8 *)owner->sprite)[5] &= 63;
       ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
       Actor_SelectAnimationFar(owner, 1);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 0);
-      FieldCamera_FollowActor(effect->firstObjectId, 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
+      FieldCamera_FollowActor(effect->firstActorId, 1);
       owner->y.fixed = savedY;
       *motionFlags = savedFlags;
     }

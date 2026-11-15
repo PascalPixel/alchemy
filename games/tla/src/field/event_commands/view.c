@@ -16,6 +16,8 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
   map->maxZ = maxZ;
 }
 
+/// Each frame of a World Map zoom: moves the zoom from zoomFrom toward zoomTo
+/// over zoomFrames frames.
 void WorldMap_StepZoom(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 *duration;
@@ -43,6 +45,7 @@ void WorldMap_StepZoom(void) {
   }
 }
 
+/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 result;
@@ -61,6 +64,8 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
 }
 
+/// Waits for a zoom transition to end (on the World Map only, at most 300
+/// frames).
 void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 frames;
@@ -77,6 +82,8 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
+/// Per-frame update: keeps the actor on the actor it watches, raised by the
+/// height of that actor's sprite and 8 pixels more.
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   struct Actor *link;
 
@@ -116,6 +123,8 @@ struct BattleEffectWatchedObject *
 Actor_ShowEmoteById__event_commands(s32 resourceId, s32 flags,
                                     s32 state) __asm__("Actor_ShowEmoteById");
 #define Actor_ShowEmoteById Actor_ShowEmoteById__event_commands
+/// The event command "actor show emote": shows an emote bubble (sprite 21) over
+/// an actor, then waits the given number of frames.
 struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
                                                       s32 state) {
   struct BattleEffectResource *resource;
@@ -167,6 +176,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
   return object;
 }
 
+/// Returns 0 while the actor's first layer runs animation 0x108, else 1.
 s32 Actor_IsOutsideAnimation108(struct Actor *object) {
   struct ObjectAnimationState *state;
   s32 value;

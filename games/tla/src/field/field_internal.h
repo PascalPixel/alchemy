@@ -11,6 +11,8 @@
 #include "system/scene.h"
 #include "field/sprite.h"
 #include "field/perspective.h"
+#include "field/world_map_affine.h"
+#include "system/fixed_point_position.h"
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -49,33 +51,6 @@ struct MotionScript {
   s32 word[1];
 };
 
-struct AnimTrack {
-  u8 unk00[0x10];
-  u8 *script;
-  u8 index;
-};
-
-struct AnimObject {
-  u8 unk00[0x18];
-  u8 frame;
-  u8 unk19[0xf];
-  struct AnimTrack *track;
-};
-
-struct Thing {
-  u8 filler0[8];
-  s32 field8;
-  u8 filler12[4];
-  s32 field16;
-};
-
-struct MapAnimationWork {
-  u8 unk00[6];
-  u8 unk06;
-  u8 unk07;
-  u8 unk08[84];
-};
-
 struct PlacedSprite {
   u8 unk00[9];
   u8 low09 : 2;
@@ -93,10 +68,11 @@ struct PlacedSprite {
   u8 high25 : 4;
 };
 
-struct CameraPoint {
-  s32 x;
-  s32 y;
-  s32 z;
+/// A point the fixed camera looks from or at.
+struct ActorCameraPoint {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 };
 
 struct MapPriorityWork {
@@ -104,27 +80,14 @@ struct MapPriorityWork {
   s8 basePriority;
 };
 
-struct FixedCamera {
-  struct CameraPoint eye;
-  struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    ///< when set, used as the eye
-  struct CameraPoint *targetOverride; ///< when set, used as the target
-};
-
-struct PlacedObject {
-  u8 unk00[2];
-  u16 active;
-  u8 unk04[2];
-  u16 angle;
-  s32 position[4];
-  s32 scale[2];
-  u8 unk20[2];
-  u8 layer;
-  u8 flags;
-  u8 unk24[0x2c];
-  void *target;
-  u8 kind;
-  u8 unk55[0x2b];
+/// The start of the 3D camera's work (heap slot cameraWork), as the fixed
+/// camera reads it: the eye and target it looks from and at, or the points
+/// that stand in for them.
+struct ActorCameraFixed {
+  struct ActorCameraPoint eye;
+  struct ActorCameraPoint target;
+  struct ActorCameraPoint *followEye;      ///< when set, used as the eye
+  struct ActorCameraPoint *followPosition; ///< when set, used as the target
 };
 
 struct PlayerSprite {
@@ -151,34 +114,46 @@ struct MapFlagsWork {
   u8 groundEffects; ///< bits: 3..2 the wading kind | 1..0 footprints
 };
 
-struct LayeredSceneEntry {
-  u16 resources[6];
+/// A row of gMaps: a layout's resources, each counted from ResourceId_Map000.
+struct MapResources {
+  u16 header;
+  u16 palette;
+  u16 tiles[3];       ///< for char blocks 1, 2 and 3
+  u16 animationTiles; ///< into gData_02028000
 };
 
-struct LayeredSceneLayer {
-  u8 x;
-  u8 y;
-  s8 scaleX;
-  s8 scaleY;
-  s8 speedX;
-  s8 speedY;
-  u8 periodX;
-  u8 periodY;
+/// One background layer's setup in a layout's header: its origin, its
+/// parallax and drift, and where it wraps.
+struct MapHeaderLayer {
+  u8 x;       ///< 8-pixel tiles
+  u8 y;       ///< 8-pixel tiles
+  s8 scrollX; ///< sixteenths of the view's motion
+  s8 scrollY; ///< sixteenths of the view's motion
+  s8 speedX;  ///< 1/16 pixels per frame
+  s8 speedY;  ///< 1/16 pixels per frame
+  u8 periodX; ///< 8-pixel tiles
+  u8 periodY; ///< 8-pixel tiles
 };
 
-struct LayeredSceneHeader {
-  u8 origin[4];
+/// A layout's header: the camera's bounds, the layers' priorities, tile
+/// bases and setup, and the offsets, from the header's start, of its packed
+/// cell pictures, collision, cells, shapes, tileset animation, blend script
+/// and script.
+struct MapHeader {
+  /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
+  u8 cameraBounds[4];
+  /// Each layer's BG priority, 1 to 3; 0 leaves the layer off.
   u8 priority[3];
-  u8 charBase[3];
-  u16 unk0a;
-  struct LayeredSceneLayer layers[3];
-  s32 tiles;
-  s32 collision;
-  s32 tilemap;
-  s32 shapes;
-  s32 animation;
-  s32 blend;
-  s32 script;
+  u8 charBase[3]; ///< each layer's BG char block
+  u16 reserved;   ///< nothing reads it
+  struct MapHeaderLayer layers[3];
+  s32 cellPictures; ///< staged and unpacked into the cell picture buffer
+  s32 collision;    ///< into Ram_MapCollision
+  s32 cells;        ///< into Ram_MapCellBuffer
+  s32 shapes;       ///< into gMapShapeGrid
+  s32 animation;    ///< the tileset animation script, or 0 for none
+  s32 blend;        ///< the blend script, or 0 for none
+  s32 script;       ///< into Ram_MapCollision + 0x2000
 };
 
 struct MapLayerScroll {
@@ -205,10 +180,6 @@ struct MapScrollWork {
   u8 enabled[3];
   u8 unk107;
   struct MapLayerScroll layers[3];
-};
-
-struct EyeOffset {
-  s32 x, y, z;
 };
 
 struct Unk_WakeActor {
@@ -243,25 +214,19 @@ struct MapLayerWindow {
   u8 *terrainIds;
 };
 
+/// A map layer's scroll position in whole 16-pixel cells.
 struct TilePos {
   s32 x, y;
 };
 
-struct MapCopyCommand {
-  u16 source;
+/// One step of a map edit: the rectangle of cells to copy from and the
+/// wait after it.
+struct MapGridCellAnimationStep {
+  u16 source; ///< the source rectangle's x in cells, or 0xffff to end
+  /// The source rectangle's y, width and height in cells, and the frames to
+  /// wait after the copy.
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
-
-struct MapHeader {
-  u8 unk00[44];
-  s32 cells;
-  s32 shapes;
-};
-
-struct SpriteAngle {
-  u8 unk00[18];
-  u16 angle;
-};
 
 struct Child {
   u8 unk00[9];
@@ -272,48 +237,27 @@ struct Child {
   u8 value1a;
 };
 
-struct WorldEventWork {
-  u8 unk000[0xd39];
-  s8 unkd39;
-  u8 terrainKind;
-};
-
-/// The actor as SC_SYNC reads it: the frames a solid object has blocked it
-/// are a byte of the actor itself, which struct Actor leaves unnamed.
+/// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
+/// axis and blocked count.
 struct WaitingActor {
   u8 unk00[0x38];
   s32 targetX;
   s32 targetY;
   s32 targetZ;
   u8 unk44[0x12];
-  u8 unk56;
+  u8 arrivalAxis;
   u8 unk57[9];
-  u8 delay;
-};
-
-struct ScriptObject {
-  u8 unk00[0x6c];
-  s32 value;
+  u8 refused;
 };
 
 enum { RESOURCE_SLOT_COUNT = 8 };
 
+/// A row of gResourceSlot_NumberTable: the resource holding the pictures of
+/// sprite animation number, which SpritePictureCache_Load decodes into a
+/// resource slot; a number of 0 ends the table.
 struct ResourceSlotNumber {
   u16 resource;
   s16 number;
-};
-
-struct MapScanline {
-  u8 unk00[20];
-};
-
-struct MapAffinePair {
-  u32 words[8];
-};
-
-struct MapAffineWork {
-  struct MapScanline scanlines[160];
-  struct MapAffinePair pages[2][160];
 };
 
 extern char ResourceId_Data199;

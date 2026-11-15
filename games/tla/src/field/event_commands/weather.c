@@ -42,7 +42,7 @@ struct GroundParticleWork {
 /// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
 /// whole. Each particle plays its 16 frames of
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
-/// while flag 358 is set.
+/// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct GroundParticleWork *work = Ram_HeapSlots->weather;
@@ -59,7 +59,7 @@ void GroundParticles_Update(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    if (GameFlag_Get(358))
+    if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
     x = (particle->posX - originX) / Q16_ONE + *frame++;
@@ -100,7 +100,7 @@ struct GroundParticleWork__f0d6674 {
 
 /// The Broken Seal's routine with fixed sprites, and
 /// GroundParticles_Update's sibling for the same 64 ground particles: each
-/// counts down its frame (held while flag 358 is set), is drawn at its
+/// counts down its frame (held while FLAG_WEATHER_HELD is set), is drawn at its
 /// picture's offset (gGroundParticle_Offsets, pairs) with the work's tile,
 /// shape 1 and size 2 when on screen, and when its count runs out is placed
 /// again at a random point (x within -64 to +192, z within -128 to +128 pixels
@@ -121,7 +121,7 @@ void Weather_UpdateRain(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    if (GameFlag_Get(358))
+    if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gGroundParticle_Offsets[2 * particle->timer];
     x = (particle->posX - originX) / Q16_ONE + *frame++;
@@ -151,7 +151,9 @@ void Weather_UpdateRain(void) {
 void PaletteFade_SetTarget(s32 value, s32 mode);
 #define PaletteFade_SetTarget PaletteFade_SetTarget
 
-// Lightning: selects the palette according to the remaining duration.
+/// Task for the storm: lightning flashes the BG colours three times, 5 frames
+/// apart, with thunder; while lightning is on, the next burst comes 50 to 550
+/// frames later. While FLAG_WEATHER_HELD is set no burst comes.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->fieldBlend;
   struct PaletteFade *target = Ram_HeapSlots->paletteFade;
@@ -159,7 +161,7 @@ void Weather_UpdateLightning(void) {
 
   if (*timer < 0)
     return;
-  if (GameFlag_Get(358))
+  if (GameFlag_Get(FLAG_WEATHER_HELD))
     work->timer = 128;
   switch ((*timer)--) {
   case 0:

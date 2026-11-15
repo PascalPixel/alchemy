@@ -1,3 +1,6 @@
+/// @file
+/// Filling a rectangle of a map layer's cells with one attribute byte.
+
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "map.h"

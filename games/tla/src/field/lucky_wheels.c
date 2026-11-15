@@ -46,6 +46,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
+/// keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *source, u16 *destination, s32 scale,
                             s32 count) {
   s32 remaining;
@@ -111,6 +113,8 @@ void LuckyWheels_TransferCanvas(void) {
   }
 }
 
+/// Darkens the screen one step: lowers each channel of the 16 colours of BG
+/// palette 10 and of OBJ colours 1 to 239 by 1.
 void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
@@ -350,6 +354,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define REEL_TITLE_TILE 0x370
 #endif
 
+/// Lucky Wheels' work: the five reels, the game's state, cursor, spins and
+/// bet, the keys read, the winning lines, the reel sprites, the windows and
+/// the scanline offsets that bend the reels.
 struct ReelWork {
   struct Reel reels[5];
   s32 state;
@@ -375,16 +382,21 @@ struct ReelWork {
 #endif
 };
 
-extern char MsgSlotsBet[];
-extern char MsgSlotsStopReels[];
-extern char MsgSlotsChooseHeld[];
-extern char MsgSlotsPullLever[];
-extern char MsgSlotsHold[];
-extern char MsgSlotsRelease[];
-extern char MsgSlotsStart[];
-extern char MsgSlotsAllHeld[];
-extern char MsgSlotsCannotPull[];
+extern char MsgSlotsBet[];        ///< "Bet"
+extern char MsgSlotsStopReels[];  ///< "{button_icon:4}:Stop slots"
+extern char MsgSlotsChooseHeld[]; ///< "When you've chosen which slots"
+extern char MsgSlotsPullLever[];  ///< "to lock, pull the lever!"
+extern char MsgSlotsHold[];       ///< "{button_icon:1}:Stop"
+extern char MsgSlotsRelease[];    ///< "{button_icon:1}:Spin"
+extern char MsgSlotsStart[];      ///< "{button_icon:1}:Start machine"
+extern char MsgSlotsAllHeld[];    ///< "If you lock all the slots,"
+extern char MsgSlotsCannotPull[]; ///< "you can't pull the lever!"
 
+/// Lucky Wheels' VBlank task: reads the keys, runs the game's state
+/// (betting, spinning and stopping the wheels, scoring the paylines, choosing
+/// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
+/// title letters of a win, the frame, the hold lamps, the spin counter, the
+/// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
   struct ReelEffectWork *fx;
   s32 objMode;
@@ -1045,9 +1057,15 @@ void LuckyWheels_InitializeTitle(void) {
 typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
                               s32 width, s32 height);
 
-extern char MsgSlotsChangeBet[];
-extern char MsgSlotsControls[];
+extern char MsgSlotsChangeBet[]; ///< "Press up or down to change value"
+extern char MsgSlotsControls[];  ///< "{button_icon:1}:Start machine
+                                 ///< {button_icon:2}:Quit"
 
+/// Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of
+/// the five wheels with 21 random symbols (with eight placed symbols of rank 0
+/// to 5), then runs until the player leaves: fading in, drawing the paylines
+/// on the canvas while betting or winning, and the jackpot's sparks and
+/// colour cycle while showing a win. Then fades out and frees its memory.
 void LuckyWheels_Run(void) {
   s32 picks[8];
   s32 litLines[7];
@@ -1369,6 +1387,8 @@ void LuckyWheels_Run(void) {
   }
 }
 
+/// The LZ packer below: empties its 256 hash chains (one per byte value) and
+/// numbers its 1024 window nodes.
 void LzPack_ResetSlotBuckets(void) {
   s32 index;
   struct LzPackNode **bucket;
@@ -1383,6 +1403,7 @@ void LzPack_ResetSlotBuckets(void) {
   }
 }
 
+/// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
   struct LzPackWork *work = gLzPackWork;
 
@@ -1394,6 +1415,7 @@ void LzPack_InsertSlotNode(s32 index) {
     work->nodes[index].next->previous = &work->nodes[index];
 }
 
+/// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
   if (gLzPackWork->nodes[slot].previous != NULL) {
     if (gLzPackWork->nodes[slot].next != NULL)
@@ -1403,6 +1425,9 @@ void LzPack_RemoveSlotNode(s32 slot) {
   }
 }
 
+/// Reads count more input bytes into the window from position start, dropping
+/// the bytes they replace from their chains; past the end of the input the
+/// positions are marked empty (-1).
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;
   s32 current = 0;
@@ -1455,6 +1480,8 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   }
 }
 
+/// Appends the finished group (a flag byte and up to eight items) to the
+/// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
   struct LzPackWork *work = gLzPackWork;
   s32 index;
@@ -1470,6 +1497,9 @@ void LzPack_CopyBufferedBytes(u8 *destination) {
 #define PACK_DISTANCE_MAX 63
 #define PACK_LOOKAHEAD 672
 
+/// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
+/// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLength
+/// stays 1 for none.
 static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;

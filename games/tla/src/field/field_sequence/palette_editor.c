@@ -9,6 +9,8 @@
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
 
+/// The debug palette editor (L on the Pause menu in debug mode). Shows colours
+/// 1 to 15 of a palette with their red, green and blue values in hex.
 void PaletteEditor_Run(void) {
   s32 palette = 0;
   s32 channel = 1;

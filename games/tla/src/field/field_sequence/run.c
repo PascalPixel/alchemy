@@ -41,11 +41,15 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
-#define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
 
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
 
+/// The field sequence: runs the current scene, which the party entered by
+/// entrance, until it leaves; returns the exit kind it left by, for
+/// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
+/// gMainRoutineWork: a random battle, a party that fell outside battle, Retreat
+/// or an event's destination.
 s32 FieldSequence_Run(void) {
   struct FieldWork *work;
   struct MainRoutineWork *party;
@@ -111,7 +115,7 @@ s32 FieldSequence_Run(void) {
     OVERLAY_CALL(13);
     MapGrid_CenterOnFollowedPointFar();
   }
-  GameFlag_Clear(287);
+  GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(0x10000, 0);
   work->transition = 0x100;
@@ -126,9 +130,9 @@ s32 FieldSequence_Run(void) {
   work->previousCell = gMapGridCellBuffer;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
-    HAZARD.limit = 16;
-    HAZARD.mode = 0;
-    HAZARD.damage = 1;
+    gMainRoutineWork.hazardLimit = 16;
+    gMainRoutineWork.hazardMode = 0;
+    gMainRoutineWork.hazardDamage = 1;
     gMainRoutineWork.haltedActor = -1;
     gMainRoutineWork.cloaked = 0;
   }
@@ -438,7 +442,7 @@ s32 FieldSequence_Run(void) {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
-          if (!GameFlag_Get(382)) {
+          if (!GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
             u8 *objects = (u8 *)Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
@@ -503,6 +507,10 @@ struct Object__field_sequence {
   u8 kind;
 };
 
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
+/// leader when there is something to search there: a fixed search spot whose
+/// ground is level with the leader or up to 64 pixels above it, or a behavior
+/// the scene has an examine trigger for. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   u8 *mapBytes;
@@ -704,6 +712,7 @@ s32 Field_PlaceAtEntrance(void) {
   }
 }
 
+/// Reads a little-endian halfword at *cursor and moves the cursor past it.
 u32 Stream_ReadU16(u8 **cursor) {
   u32 low = *(*cursor)++;
   u32 high = *(*cursor)++;
@@ -711,6 +720,8 @@ u32 Stream_ReadU16(u8 **cursor) {
   return low | (high << 8);
 }
 
+/// Reads a signed little-endian halfword at *cursor and moves the cursor past
+/// it.
 s16 Stream_ReadS16(u8 **cursor) {
   u32 value;
 
@@ -719,6 +730,9 @@ s16 Stream_ReadS16(u8 **cursor) {
   return value;
 }
 
+/// Places the party where it enters: by the scene's entrance row for
+/// gMainRoutineWork.entrance, else on a map by the map's own entrance stream
+/// (Field_PlaceAtEntrance), else by the scene's first entrance row.
 void BattleMap_ApplySceneEntranceView(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 done;

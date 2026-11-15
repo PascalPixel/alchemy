@@ -14,30 +14,6 @@ struct AnimationEntry;
 struct Effect04Vector;
 struct EffectVector;
 
-struct ObjectPairPosition {
-  u8 unk00[6];
-  s16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ObjectPart {
-  u8 unk00[5];
-  u8 attribute;
-  u8 unk06[0xa];
-  void *graphics;
-};
-
-struct ObjectPartList {
-  u8 unk00[0x19];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[0xc];
-  struct ObjectPart *parts[1];
-};
-
 struct ItemHead {
   u8 unk00[3];
   u8 flags;
@@ -61,11 +37,6 @@ struct ScatterPosition {
   s32 x;
   s32 y;
   s32 z;
-};
-
-struct ParticleTimer {
-  u8 unk00[0x5e];
-  u16 timer;
 };
 
 /// A composite sprite, as field.h's CompositeAnimation.
@@ -117,6 +88,8 @@ struct TouchCopies {
   s8 count;
 };
 
+/// A particle of the particle burst (ParticleBurst_Start): its place, heading,
+/// speed, spin and the frames before it starts.
 struct BurstParticle {
   s32 x;
   s32 y;
@@ -127,7 +100,9 @@ struct BurstParticle {
   s32 delay;
 };
 
-struct BurstWork {
+/// The particle burst's work (ParticleBurst_Start): its tiles, 96 sprites and
+/// particles, its VRAM cache entry, a flash on frame 30 and its frame count.
+struct ParticleBurstWork {
   u8 tiles[384];
   struct EffectSprite sprites[96];
   struct BurstParticle particles[96];
@@ -138,16 +113,10 @@ struct BurstWork {
   s16 active;
 };
 
+/// A cell the particle burst covers, in cells.
 struct BurstCell {
   s16 x;
   s16 z;
-};
-
-struct CueObject {
-  u8 unk00[8];
-  s32 x;
-  s32 base;
-  s32 top;
 };
 
 struct ScaledSprite {
@@ -371,24 +340,6 @@ struct Effect05Sprite {
   u32 unk09_4 : 4;
 };
 
-struct Effect05State {
-  u16 angle;
-  u8 unk02[2];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *target;
-  struct Actor *anchor;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u8 unk1c[4];
-  u8 highArc;
-  u8 unk21[0x13];
-  u8 variant;
-  u8 unk35[0x0c];
-  u8 alternate;
-};
-
 struct FallVector {
   s32 x;
   s32 y;
@@ -399,32 +350,6 @@ struct FxPosition {
   s32 x;
   s32 y;
   s32 z;
-};
-
-struct FxObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 ground;
-  u8 unk18[10];
-  u8 mode;
-  u8 unk23;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speed;
-  s32 lift;
-  u8 unk38[12];
-  s32 gravity;
-  u8 unk48[13];
-  u8 flag;
-  u8 unk56[4];
-  u8 unk5a;
-  u8 unk5b;
-  u8 unk5c[12];
-  struct FxObject *linked;
-  void *callback;
 };
 
 // A flag entry as the world map reads it: its world position.
@@ -445,58 +370,6 @@ struct WorldMapPlace {
 struct WorldMapAliasedHalfword {
   s16 value;
   s32 unk04;
-};
-
-struct PairScene {
-  u16 angle;  ///< Four directions.
-  u16 angle8; ///< Eight directions.
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u8 unk1c[0x1c];
-  void *savedCallback;
-  const s32 *savedScript;
-  u8 savedPalette;
-  u8 unk41[0x6d7];
-  u8 savedTerrain;
-  u8 savedPriority;
-};
-
-struct FinishWork {
-  u8 unk000[16];
-  struct Actor *object;
-  u8 unk014[8];
-  s16 quantity;
-  u8 unk01e[4];
-  s8 sound;
-  s8 showQuantity;
-  u8 unk024[0x6ee];
-  s8 messageRow;
-  u8 messageShown;
-};
-
-struct EffectSceneWork {
-  u8 reserved00[16];
-  struct Actor *mainObject;
-};
-
-struct CleanupWork {
-  u8 unk000[16];
-  struct Actor *owner;
-  u8 unk014[10];
-  s16 animation;
-  u8 unk020[36];
-  s32 savedShakeX;
-  s32 savedShakeY;
-  s32 savedShakeDecay;
-  struct FieldParticle slots[24];
-  u8 unk710[8];
-  u8 ownerByte;
-  u8 layer;
 };
 
 void FieldEffect_CheckCloakTile(void);
@@ -560,25 +433,6 @@ struct ResourceEntry {
   u8 vramBlock;
 };
 
-struct Effect04Scene {
-  u16 angle;
-  u8 unk02[2];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u8 unk1c[4];
-  s8 enabled;
-  u8 unk21[0x13];
-  s8 childOption;
-  s8 childMode;
-  u8 unk36[0x1a];
-  struct FieldParticle slots[24];
-};
-
 struct Effect04Vector {
   s32 x;
   s32 y;
@@ -633,7 +487,7 @@ struct BattleEffectScene {
   s32 x;
   s32 y;
   s32 z;
-  void *mainObject;
+  void *mainActor;
   void *child;
 };
 

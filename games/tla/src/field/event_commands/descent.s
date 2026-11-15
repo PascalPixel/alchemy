@@ -2,7 +2,8 @@
 	.global gField_ExamineTriggerMessageOffsets
 gField_ExamineTriggerMessageOffsets:
 	.byte 2, 3, 13, 8, 30, 31
-@ 8-byte rows searched by ID by Field_GetPsynergyTargetRule; ID -1 terminates.
+@ How far each field Psynergy reaches (struct FieldPsynergyReach): its kind,
+@ range and height in pixels and width in 1/65536 turns; -1 ends it.
 	.global gData_080eff28
 gData_080eff28:
 	.2byte 3, 16, 8, 6144

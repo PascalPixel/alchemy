@@ -9,6 +9,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/field_sequence.h"
 
+/// Runs message as an event of its own, shown at actor.
 void Event_RunMessage(s32 actor, s32 message) {
   Event_Start();
   Event_SetMessageId(message);
@@ -16,20 +17,26 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
+/// Ends every lasting Psynergy (Event_ResolvePendingActions with none skipped).
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
+/// Ends the lasting Psynergy and runs their end events: Reveal unless skip bit
+/// 0 is set, field Psynergy 28's ring unless bit 1, and the one
+/// pendingThird marks unless bit 2.
 void Event_ResolvePendingActions(s32 skip) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
 
   state->busy = 0;
   if (state->revealActive != 0 && !(skip & 1))
     Field_RunPsynergyEndEvents(0x2090);
-  if (state->unkcac != 0 && !(skip & 2))
+  if (state->ringActive != 0 && !(skip & 2))
     Field_RunPsynergyEndEvents(0x209b);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
     Field_RunPsynergyEndEvents(0x208b);
 }
 
+/// Returns the leader's actor id, or 8 while gMainRoutineWork.ownerOverride is
+/// set.
 s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
@@ -40,6 +47,8 @@ s32 Party_GetLeaderActor(void) {
   return actor;
 }
 
+/// Returns 1 when item_id answers filter: the item itself, 0x1ff any item, or
+/// 0x1fe any item of types 1 to 4; else 0.
 s32 Item_MatchesFilter(s32 filter, s32 item_id) {
   if (filter == item_id)
     return 1;
@@ -58,7 +67,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 /// Rewritten from The Broken Seal's form: The Lost Age asks
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the trigger's item.
-s32 Field_FindItemTrigger(s32 source) {
+const struct Trigger *Field_FindItemTrigger(s32 source) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
@@ -81,15 +90,15 @@ s32 Field_FindItemTrigger(s32 source) {
       if (source == 0 || Item_MatchesFilter(item, source)) {
         if ((trigger->control & 0x10) != 0) {
           if (lowValue == selected)
-            return (s32)trigger;
+            return trigger;
         } else if (lowValue == collision) {
-          return (s32)trigger;
+          return trigger;
         }
       }
     }
     trigger++;
   }
-  return 0;
+  return NULL;
 }
 
 s32 FieldYesNo_Ask(s32 mode);
@@ -110,8 +119,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 itemId;
   s32 actor;
   s32 actorMask;
-  struct ItemUnit *obj;
-  struct ItemTrigger *event;
+  struct BattleUnit *unit;
+  const struct Trigger *trigger;
   s32 j;
   s32 i;
   s32 best;
@@ -132,10 +141,10 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actor == 15) {
       actor = 0;
       for (i = 0; i < count; i++) {
-        obj = Unit_Get(gMainRoutineWork.party[i]);
+        unit = Unit_Get(gMainRoutineWork.party[i]);
         matches = 0;
         for (j = 0; j < 15; j++) {
-          if ((obj->inventory[j] & 0x1ff) == itemId)
+          if ((unit->inventory[j] & INVENTORY_ITEM_ID_MASK) == itemId)
             matches++;
         }
 
@@ -145,9 +154,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         }
       }
     } else {
-      obj = Unit_Get(actor);
+      unit = Unit_Get(actor);
       for (j = 0; j < 15; j++) {
-        if ((obj->inventory[j] & 0x1ff) == itemId)
+        if ((unit->inventory[j] & INVENTORY_ITEM_ID_MASK) == itemId)
           best++;
       }
     }
@@ -158,24 +167,24 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
   }
 
-  event = (struct ItemTrigger *)Field_FindItemTrigger(itemId);
-  if (event != 0 && event->value != 0) {
+  trigger = Field_FindItemTrigger(itemId);
+  if (trigger != NULL && trigger->value != 0) {
     GameFlag_Clear(FLAG_ITEM_USED_UP);
     GameFlag_Clear(FLAG_NOTHING_HAPPENS);
-    if (!(event->trigger & 0x400)) {
+    if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
     }
-    if ((s32)event->value < 0x10000) {
+    if ((s32)trigger->value < 0x10000) {
       s32 objref = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
 
       Event_Start();
-      Event_SetMessageId(event->value);
+      Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(objref, 0);
       Event_End();
     } else {
-      ((ItemTriggerCallback)event->value)(itemId, actor, slot);
+      ((ItemTriggerCallback)trigger->value)(itemId, actor, slot);
     }
     result = 0;
   } else {
@@ -183,15 +192,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
     GameFlag_Clear(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_NOTHING_HAPPENS);
-    actionId =
-        ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
+    actionId = Item_GetDirectFar(itemId)->abilityId;
     runtime = Ram_HeapSlots->fieldWork;
 
     if (actionId != 0) {
       GameFlag_Set(FLAG_ITEM_USE);
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
-      if (actionId == 149 && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
+      if (actionId == ABILITY_RETREAT && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = FieldYesNo_Ask(1);
@@ -213,7 +221,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       runtime->psynergyActing = 0;
       BattleEffect_CleanupSceneObjects();
 
-      if (((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->useType & 1)
+      if (Item_GetDirectFar(itemId)->useType & 1)
         GameFlag_Set(FLAG_ITEM_USED_UP);
     }
   }
@@ -250,8 +258,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind =
-        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -298,6 +305,11 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   return result;
 }
 
+/// Returns the scene's first Psynergy trigger (kind 5) for a field Psynergy
+/// kind whose condition holds, whose facing (when it has one) the leader
+/// faces, whose stage matches filter (0xf0000005 takes any) and whose target
+/// is what selector names (Scene_SelectPsynergyTarget: a cell, an actor, or
+/// anything); NULL when there is none.
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -312,8 +324,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind =
-        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -349,6 +360,10 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
   return NULL;
 }
 
+/// Runs the scene's events for Psynergy without paying its PP or showing its
+/// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
+/// the kind's ending), as for a Psynergy that ends by itself: packed holds the
+/// Psynergy (bits 0 to 9) and its user (bits 10 to 13).
 s32 Field_RunPsynergyEndEvents(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;

@@ -55,6 +55,7 @@ void SummonTablet_CyclePictures(struct Actor *object) {
   object->timer++;
 }
 
+/// A point chasing its target on the ground, 16.16 pixels.
 struct Chase {
   s32 x;
   s32 z;
@@ -82,8 +83,8 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   }
 }
 
-// One mote: a position chasing its target (Motion_StepTowardTarget's struct
-// Chase) and a frame count, negative before it starts.
+/// One mote: a position chasing its target (Motion_StepTowardTarget's struct
+/// Chase) and a frame count, negative before it starts.
 struct ChasingMote {
   s32 x;
   s32 z;
@@ -94,6 +95,9 @@ struct ChasingMote {
   s32 timer;
 };
 
+/// The summon tablet's work (heap slot battleEffect): the decoded mote
+/// pictures, the sparks and motes that fly between the tablet and the leader,
+/// and the circle they gather on.
 struct MoteWork {
   u8 unk0000[0x800];
   struct ChasingMote sparks[32];
@@ -439,6 +443,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// A flag block: its actor and the flag that says it has been moved, in a list
+/// ended by actor 0xffff (FlagBlock_PlaceAll).
 struct ActorFlag {
   u16 actor;
   s16 flag;
@@ -454,6 +460,11 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /// Lemurian Ship call it as they start.
 // XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
 // would settle it.
+/// Sets up a scene's flag blocks (actor and flag pairs, ended by actor 0xffff):
+/// each stops being solid and blocks its cell; one whose flag is set takes
+/// animation 0 and has the flag cleared, the others animation 1. Then
+/// FlagBlock_ApplyFlags applies them and the leader is lifted onto the ground
+/// if it now lies below it.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;
@@ -484,18 +495,6 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   if (leader->y.fixed < height)
     leader->y.fixed = leader->groundHeight = height;
 }
-
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);

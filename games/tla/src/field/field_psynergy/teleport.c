@@ -13,17 +13,8 @@
 
 #define WHIRL_COUNT 100
 
-struct WhirlSpark {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 angle;
-  s32 unk10;
-  s32 radius;
-  s32 age;
-};
-
-// Heap block 92: the decoded picture, then the sparks and their sprites.
+/// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
+/// then the 100 sparks and their sprites.
 struct TeleportWhirlWork {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
@@ -37,6 +28,7 @@ extern char ResourceId_ColouredOrbs;
 /// Anemos Inner Sanctum, the Yampi Desert and Islet caves, Contigo).
 // XXX: whether the whirl is the leaving or the arriving half of a teleport;
 // a render of a Teleport circle would settle it.
+/// Teleport's whirl: 100 sparks circle round the leader as they fall in.
 void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct TeleportWhirlWork *work =
@@ -164,20 +156,11 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
-struct TeleportSpark {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
-// Heap block 92: the decoded picture, then the sparks and their sprites.
+/// Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
+/// then the sparks and their sprites.
 struct SparkWork {
   u8 picture[0x400];
-  struct TeleportSpark particles[SPARK_COUNT];
+  struct FieldPsynergyParticle particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
 
@@ -188,7 +171,7 @@ void Teleport_PlaySparks(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
-  struct TeleportSpark *particle;
+  struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 state;
   s32 entry;
@@ -215,7 +198,7 @@ void Teleport_PlaySparks(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    particle->age = -1;
+    particle->timer = -1;
   }
   wait(10);
   Actor_FaceDirectionById(owner, 0x4000, 0);
@@ -239,7 +222,7 @@ void Teleport_PlaySparks(void) {
     for (i = 0; i < count; i++) {
       angle = Random16();
       particle = &work->particles[next];
-      particle->age = zero;
+      particle->timer = zero;
       SET_POSITION(particle, object->x.fixed, object->y.fixed + Random16() * 20,
                    object->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
@@ -262,22 +245,22 @@ void Teleport_PlaySparks(void) {
 
     for (i = 0, particle = work->particles, sprite = work->sprites;
          i < SPARK_COUNT; i++, sprite++, particle++) {
-      age = particle->age;
+      age = particle->timer;
       if (age >= 0) {
         if ((u32)age < 20) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
-            age = particle->age;
+            age = particle->timer;
           } else {
             BattleEffect_IntegrateVector3(&particle->x, 63, -0xa000);
-            age = particle->age;
+            age = particle->timer;
           }
         }
-        particle->age = ++age;
+        particle->timer = ++age;
         if (age == 20)
-          particle->age = -1;
+          particle->timer = -1;
       }
     }
 
@@ -329,11 +312,12 @@ void Teleport_PlaySparksAndFade(void) {
   wait(10);
 }
 
-/// Field Psynergy kind 30's targeted handler.
+/// Teleport cast on a target: does nothing.
 void FieldPsynergy_TeleportOnTarget(void) {}
 
-/// Field Psynergy kind 30.
+/// Teleport: raises FIELD_RAISED_TRIGGER_TELEPORT, which shows the picture of
+/// the whole world for the player to choose where to go.
 void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
-  ((struct ControlEvent *)Ram_HeapSlots->fieldWork)->cue = 0xfc89;
+  gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }

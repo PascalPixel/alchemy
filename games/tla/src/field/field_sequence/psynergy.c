@@ -11,6 +11,8 @@
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
    FieldMessage_ShowFar((s32)&(message), 1))
 
+/// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9) and its
+/// user (bits 10 to 13; 15 for the first party member).
 s32 Field_UsePsynergy(u32 code) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 abilityId = code & 0x3ff;
@@ -34,7 +36,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_Clear(FLAG_ITEM_USE);
   if (userId == 15)
     userId = 0;
-  if (GameFlag_Get(382)) {
+  if (GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
     FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
@@ -46,7 +48,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (abilityId == 153) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
-        GameFlag_Set(327);
+        GameFlag_Set(0x147);
         event->raisedTrigger = 253;
         return 0;
       }
@@ -125,16 +127,16 @@ s32 Field_UsePsynergy(u32 code) {
       during = NULL;
     }
   }
-  GameFlag_Set(320);
-  GameFlag_Clear(321);
+  GameFlag_Set(0x140);
+  GameFlag_Clear(0x141);
   target = -1;
   if (before != NULL || after != NULL || during != NULL) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
-    GameFlag_Set(321);
+    GameFlag_Set(0x141);
     if (after != NULL && (after->flags & 0x400)) {
-      GameFlag_Clear(320);
-      GameFlag_Clear(321);
+      GameFlag_Clear(0x140);
+      GameFlag_Clear(0x141);
     }
   }
   BattleEffect_LoadActionEffectResources(abilityId, 0);
@@ -161,8 +163,8 @@ s32 Field_UsePsynergy(u32 code) {
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   EventObject_Initialize();
   Field_RunPsynergyEvent(before, userId, target);
-  if (GameFlag_Get(320)) {
-    if (GameFlag_Get(321))
+  if (GameFlag_Get(0x140)) {
+    if (GameFlag_Get(0x141))
       FieldPsynergy_Dispatch();
     else
       FieldPsynergy_Run();
@@ -176,15 +178,18 @@ s32 Field_UsePsynergy(u32 code) {
       Field_RunPsynergyEvent(pending, userId, event->unkd30);
   }
   Field_RunPsynergyEvent(after, userId, target);
-  if (GameFlag_Get(320))
+  if (GameFlag_Get(0x140))
     FieldPsynergy_FinishMindRead();
   event->psynergyActing = 0;
   BattleEffect_CleanupSceneObjects();
-  GameFlag_Clear(320);
-  GameFlag_Clear(321);
+  GameFlag_Clear(0x140);
+  GameFlag_Clear(0x141);
   return 0;
 }
 
+/// Runs the event tied to a field Psynergy: a result below 0x10000 is a
+/// message, shown at target; a larger one is a routine, called with mode and
+/// target. With FLAG_NOTHING_HAPPENS set it then says nothing happens.
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   if (event != NULL) {
     if (event->action != 0) {
@@ -206,17 +211,20 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   return 0;
 }
 
-s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
-  u16 kind = effectId;
+/// Returns whether the scene has a trigger for the field Psynergy kind on what
+/// it would act on (Scene_SelectPsynergyTarget), at any stage.
+s32 BattleEffect_HasMatchingEvent5(s32 fieldPsynergy) {
+  u16 kind = fieldPsynergy;
   s32 result = (s32)Scene_FindPsynergyTrigger(0xf0000005, kind,
                                               Scene_SelectPsynergyTarget(kind));
 
   return (u32)((-result) | result) >> 31;
 }
 
-u32 BattleEffect_HasTrigger(u16 effectId) {
+/// Returns whether the scene has an event for item and what the leader faces.
+u32 BattleEffect_HasTrigger(u16 item) {
   s32 result;
 
-  result = Field_FindItemTrigger(effectId);
+  result = (s32)Field_FindItemTrigger(item);
   return (u32)((0 - result) | result) >> 31;
 }

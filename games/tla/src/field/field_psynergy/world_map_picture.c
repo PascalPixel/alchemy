@@ -150,6 +150,10 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
+/// Task of the World Map screen: shows a marker at each
+/// area whose flag is set, moves the cursor with the d-pad (to the current
+/// area while L or R is held) and shows the name of the marker nearest
+/// the cursor.
 void WorldPicture_UpdateMarkers(void) {
   struct WorldMapWork *work;
   struct WorldMapMarker *marker;
@@ -588,6 +592,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
   }
 }
 
+/// Adds a cell to a column number.
 static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
   /* FAKEMATCH(wrapper): the column added through an inline. */
   return column + cell;
@@ -709,6 +714,8 @@ extern s32 gWorldPicture_ScrollY;
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
+/// Borrows the map-cell buffer for the still map until A or B closes it.
+/// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
   u8 savedFlags[16];
@@ -825,7 +832,8 @@ s32 WorldPicture_Show(s32 mode) {
     Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                    DISPCNT_OBJ_ON,
                &REG_DISPCNT);
-    if ((GameFlag_Get(284) || GameFlag_Get(286)) && !messageShown) {
+    if ((GameFlag_Get(FLAG_WORLD_MAP_LEFT) || GameFlag_Get(0x11e)) &&
+        !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
     }

@@ -37,7 +37,7 @@ void Camera_WorldToScreen(s32 *position);
 /// position and advances the particle.
 void BattleEffect_UpdateGrowingParticleSprite(
     struct EffectSprite__psynergy_effects_11 *sprite,
-    struct EffectParticle *particle, s32 tiles) {
+    struct FieldPsynergyParticle *particle, s32 tiles) {
   s32 position[3];
   s32 scale;
 

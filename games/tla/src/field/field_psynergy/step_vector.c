@@ -10,14 +10,19 @@
 #include "macros.h"
 #include "field_sprite.h"
 
+/// Moves a 2D point by its velocity, damped and pulled by gravity
+/// (BattleEffect_IntegrateVector2).
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
 }
 
+/// Moves a 3D point by its velocity, damped and pulled by gravity
+/// (BattleEffect_IntegrateVector3).
 void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector3(vector, damping, gravity);
 }
 
+/// Plots a pixel of colour color at (x, y) on the 64-pixel canvas.
 void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas;
@@ -26,6 +31,8 @@ void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   canvas[map[(y << 6) + x]] = color;
 }
 
+/// Plots a pixel of colour color at (x, y) on the 128-pixel-wide canvas pair:
+/// x from 64 lands on the second canvas.
 void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -135,6 +142,8 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep1Map: step 1 of the canvas's fade.
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep1Map;
@@ -148,6 +157,8 @@ void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep2Map: step 2 of the canvas's fade.
 void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep2Map;
@@ -161,6 +172,8 @@ void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
   }
 }
 
+/// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
+/// gColorBuffer_FadeStep3Map: step 3 of the canvas's fade.
 void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep3Map;
@@ -230,9 +243,9 @@ void BattleEffect_UploadCanvas(void) {
 // OAM attributes 0 and 1 of a 64x64 square sprite.
 #define OAM_SQUARE_64X64 0xc0000000
 
-// The canvas sprite's frame callback: places the sprite at the work's
-// position (whole pixels), scale and angle, and draws it. A sprite scaled to
-// nothing is not drawn.
+/// The canvas sprite's frame callback: places the sprite at the work's
+/// position (whole pixels), scale and angle, and draws it. A sprite scaled to
+/// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   s32 x = work->x << 16;
@@ -338,21 +351,11 @@ void BattleEffect_EndCanvasSprite(void) {
   HeapSlot_Release(HEAP_SLOT_CANVAS_SPRITE);
 }
 
-// One spark: where it circles round, its angle and radius, and its age in
-// frames (-1: unused).
-struct Spark {
-  s32 centre[3];
-  s32 angle;
-  s32 unk10;
-  s32 radius;
-  s32 age;
-};
-
 /// Actor_VanishInSparks' work, in heap slot 92: the sparks' picture, then the
 /// sparks and their sprites.
 struct VanishSparksWork {
   u8 picture[0x400];
-  struct Spark sparks[64];
+  struct WhirlSpark sparks[64];
   struct EffectSprite sprites[64];
 };
 
@@ -374,7 +377,7 @@ void Actor_VanishInSparks(s32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   s32 angle = (u16)object->facing;
-  struct Spark *spark;
+  struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 i;
   s32 next;
@@ -413,10 +416,10 @@ void Actor_VanishInSparks(s32 objectId) {
         spark = &work->sparks[next];
 
         spark->age = 0;
-        spark->centre[0] = object->x.fixed;
-        spark->centre[1] = object->y.fixed + 0x140000;
-        spark->centre[2] = object->z.fixed;
-        Vector_AddPolarOffset(Random16(), sparkAngle, spark->centre);
+        spark->x = object->x.fixed;
+        spark->y = object->y.fixed + 0x140000;
+        spark->z = object->z.fixed;
+        Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
         spark->angle = sparkAngle;
         spark->radius = radius;
@@ -437,9 +440,9 @@ void Actor_VanishInSparks(s32 objectId) {
           s32 sparkAngle = spark->angle;
           s32 radius = spark->radius;
 
-          pos[0] = spark->centre[0];
-          pos[1] = spark->centre[1];
-          pos[2] = spark->centre[2];
+          pos[0] = spark->x;
+          pos[1] = spark->y;
+          pos[2] = spark->z;
           Vector_AddPolarOffset(radius, sparkAngle, pos);
           if (pos[2] > object->z.fixed)
             sprite->depth = depth + 2;
@@ -452,7 +455,7 @@ void Actor_VanishInSparks(s32 objectId) {
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= 0x3333;
-          spark->centre[1] -= 0x4000;
+          spark->y -= 0x4000;
         }
         if (++spark->age == SPARK_LIFE)
           spark->age = -1;
@@ -489,6 +492,8 @@ void Actor_VanishInSparks(s32 objectId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// Updates one field effect sprite: counts its age, runs its callback (after
+/// any delay), moves it and draws it.
 void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -505,6 +510,9 @@ void FieldParticle_Update(struct FieldParticle *effect) {
   }
 }
 
+/// Draws a field effect sprite at its screen position and scale, when it is
+/// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
+/// exclusive.
 void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
@@ -524,6 +532,9 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
+/// Moves a field effect sprite toward its target, turning at most turnStepMax
+/// a frame when turnStepLimited is set and speeding up by acceleration to
+/// speedMax. One that stops at its target lands on it once within 8 pixels.
 void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 dx;
   s32 dz;
@@ -588,6 +599,7 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   return ((0u - value) | value) >> 31;
 }
 
+/// Places a field effect sprite at (x, z), at rest with no target.
 void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;
@@ -596,10 +608,12 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->speed = 0;
 }
 
+/// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
   Animation_ApplyChildArgumentFar(effect->object, mode);
 }
 
+/// Gives a field effect sprite its per-frame callback, starting at state 0.
 void FieldParticle_SetCallback(struct FieldParticle *effect,
                                EffectCallback callback) {
   effect->callback = callback;
@@ -642,6 +656,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   FieldParticle_SetActorMode(effect, 1);
 }
 
+/// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   if (slot->object)
     Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);

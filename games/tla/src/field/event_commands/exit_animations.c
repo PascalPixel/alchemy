@@ -107,8 +107,8 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   *&context->flags = zero;
   kind = 15;
   effect->param = kind;
-  object->x.fixed = (object->x.fixed & 0xFFF00000) + 0x80000;
-  object->z.fixed = (object->z.fixed & 0xFFF00000) + 0x100000;
+  object->x.fixed = (object->x.fixed & 0xfff00000) + px(8);
+  object->z.fixed = (object->z.fixed & 0xfff00000) + px(16);
   object->velocityX = zero;
   object->velocityZ = zero;
   object->targetX = TARGET_UNSET;
@@ -152,16 +152,23 @@ void Exit_PrepareAnimation(s32 animation) {
   wait(18);
 }
 
+/// Leaves through a stairs-up exit (ANIM_LEADER_LEAVE); FLAG_ARRIVAL_STAIRS_UP
+/// makes the next scene play the matching arrival (Entrance_PlayArrival).
 void Exit_StartStairsUp(void) {
-  Exit_PrepareAnimation(0x1A);
+  Exit_PrepareAnimation(ANIM_LEADER_LEAVE);
   GameFlag_Set(FLAG_ARRIVAL_STAIRS_UP);
 }
 
+/// Leaves through a stairs-down exit (ANIM_LEADER_LEAVE_ALTERNATE), recorded in
+/// FLAG_ARRIVAL_STAIRS_DOWN.
 void Exit_StartStairsDown(void) {
-  Exit_PrepareAnimation(0x19);
+  Exit_PrepareAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
   GameFlag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
 }
 
+/// Plays the leader's arrival animation through an exit: centred on its cell at
+/// the cell's north edge, the leader plays animation for 30 frames, loses the
+/// extra sprite animation (sprite 267) and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.leaderActorId);
@@ -171,7 +178,7 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   zero = 0;
   ctx->flags = zero;
   eff->param = 15;
-  obj->x.fixed = (obj->x.fixed & 0xfff00000) + 0x80000;
+  obj->x.fixed = (obj->x.fixed & 0xfff00000) + px(8);
   obj->z.fixed &= 0xfff00000;
   Actor_SelectAnimationFar(obj, mode);
   wait(30);
@@ -186,27 +193,31 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   }
   obj->acceleration = px(1);
   obj->speedLimit = px(1);
-  Actor_SetMoveTargetFar(obj, obj->x.fixed, obj->y.fixed,
-                         obj->z.fixed + 0x80000);
+  Actor_SetMoveTargetFar(obj, obj->x.fixed, obj->y.fixed, obj->z.fixed + px(8));
   Actor_WaitForMoveFar(obj);
 }
 
+/// Plays the leader's arrival for the way the last scene was left: through a
+/// stairs-up exit (FLAG_ARRIVAL_STAIRS_UP, ANIM_LEADER_ARRIVE, returns 1) or a
+/// stairs-down one (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE,
+/// returns 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING,
+/// returns 3).
 s32 Entrance_PlayArrival(void) {
   s32 result = 0;
-  s32 flag = 0x120;
+  s32 flag = FLAG_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_Get(flag) != 0) {
-    Entrance_EndArrivalAnimation(24);
+    Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
     GameFlag_Clear(flag);
     result = 1;
   } else {
-    flag = 0x121;
+    flag = FLAG_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_Get(flag) != 0) {
-      Entrance_EndArrivalAnimation(23);
+      Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
       GameFlag_Clear(flag);
       result = 2;
     } else {
-      flag = 0x122;
+      flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_Get(flag) != 0) {
         s32 id;
         struct Actor *object;
@@ -231,6 +242,8 @@ s32 Entrance_PlayArrival(void) {
   return result;
 }
 
+/// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
+/// drawn transparent (SPRITE_COLOR_HIDDEN).
 void Func_080d5fd4(void) {
   struct Actor *object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   u8 *metadata =

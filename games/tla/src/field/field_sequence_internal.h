@@ -71,13 +71,7 @@
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 
-// A row of the field Psynergy target table (gData_080eff28).
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[2];
-  s16 range;
-  u8 unk06[2];
-};
+extern const struct FieldPsynergyReach gData_080eff28[];
 
 // The object's functions its parts call before their definitions.
 
@@ -99,45 +93,23 @@ extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
 #include "scene_tables.h"
 #include "inventory.h"
 #include "graphics/uiwindow.h"
-#include "field/facing_object.h"
 #include "actor_view.h"
+
+/// Trigger.subject of an item trigger: the event shows its own message in
+/// place of the "uses" message (MsgActorUsesItem).
+#define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
-struct SpawnSpritePart {
-  u8 unk00[2];
-  u16 frame;
-};
-
-// The Lost Age's sprite object as this function reads it.
-struct SpawnSprite {
-  u8 unk00[12];
-  s32 scale;
-  u8 slot;
-  u8 displayFlags;
-  u8 unk12[7];
-  u8 unk19;
-  u8 unk1a;
-  u8 partCount;
-  u8 unk1c[12];
-  struct SpawnSpritePart *parts[1];
-};
-
-// The object fields this function sets as an actor's home cell.
+/// The object fields this function sets as an actor's home cell.
 struct SpawnActor {
   u8 unk00[100];
   s16 homeX;
   s16 homeZ;
 };
 
-// The event work as this function reads it: the four event tables it clears
-// and the leader's two-row placement table at 0x1ec.
-struct EventWorkPlacements {
-  const struct ActorPlacement *tables[4];
-  u8 unk010[0x1dc];
-  struct ActorPlacement leader[2];
-};
-
+/// A scene region as Scene_AssignViewFlags reads it: its id, its flag and
+/// its place.
 struct SceneRegionEntry {
   s16 id;
   s16 flag;
@@ -148,14 +120,8 @@ struct SceneRegionEntry {
   u8 unk14[4];
 };
 
-struct MapViewBounds {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minY;
-  s32 maxX;
-  s32 maxY;
-};
-
+/// A row of the scenes' encounter rules (gScene_EncounterRules): a scene and
+/// entrance (-1 any) and, while a flag is clear, the two values it selects.
 struct SceneMusicEntry {
   s16 scene;
   s16 entrance; // -1 any
@@ -172,30 +138,6 @@ struct TerrainRule {
   s16 zone;
 };
 
-struct ItemUnit {
-  u8 unk000[0xd8];
-  u16 inventory[15];
-};
-
-struct ItemTrigger {
-  u8 unk00[4];
-  u16 trigger;
-  u8 unk06[2];
-  u32 value;
-};
-
-struct ItemDefinitionView {
-  u8 unk00[12];
-  u8 useType;
-  u8 unk0d[27];
-  u16 actionId;
-};
-
-struct PendingAction {
-  u8 unk00[6];
-  u8 eventKind;
-};
-
 struct ArrivalView {
   u8 unk000[0x2be];
   s16 scene;
@@ -203,75 +145,36 @@ struct ArrivalView {
   s8 state;
 };
 
-struct HazardView {
-  u8 unk000[0x24c];
-  u16 limit;
-  u16 mode;
-  u16 damage;
-};
-
 union PolarOffsetPosition {
   struct EffectVector vector;
   s32 coordinates[3];
 };
 
-// How far, how high and how wide of the caster's facing an animation reaches
-// (gData_080eff28, one row per animation, ended by -1).
-struct NearbyRule {
-  s16 animation;
-  s16 range;  // pixels, inclusive
-  s16 height; // pixels above or below
-  s16 width;  // of the facing, in 1/65536 turns
+/// What a scene's container actor is, ContainerRow.type, named by what the
+/// leader checks when talking to it.
+enum ContainerKind {
+  CONTAINER_CHEST = 128,          ///< "checked the chest..."
+  CONTAINER_MIMIC = 129,          ///< a chest that is "really a Mimic!"
+  CONTAINER_PSYNERGY_STONE = 130, ///< restores the party's PP
+  /// "There's something buried here!": the Scoop spot, actor 79.
+  CONTAINER_BURIED = 131,
+  CONTAINER_STONE_TABLET = 132, ///< a summon tablet
+  CONTAINER_POND = 133          ///< "There's something in the shallows!"
 };
 
-struct SceneItemWork {
-  u8 unk000[0x114];
-  struct Actor *objects[16];
-  u8 unk154[0x18a - 0x154];
-  s8 mode;
-};
-
+/// A row of the scene's container table (SceneItem_GetRows), numbered from
+/// actor 64.
 struct ContainerRow {
-  s16 type;
-  s16 noHint;
-  s16 flag;
+  s16 type;   ///< enum ContainerKind
+  s16 noHint; ///< 0 lets Venus Lighthouse hint at a chest already opened
+  s16 flag;   ///< set once it has been opened; -1 for none
+  /// The item inside, 0 for none; a Mimic's formation slot; a Psynergy
+  /// Stone's number; a tablet's summon.
   s16 contents;
 };
 
-struct TalkEvent {
-  u8 unk00[8];
-  s32 script;
-};
-
-/// A scene event as the event finder (Scene_FindTrigger) returns it.
-struct TouchEvent {
-  s32 flags;
-  u8 target;
-  u8 unk05;
-  s16 condition;
-  /// A message number below 0x10000, else a function; read as a union
-  /// member, so a store to the field work does not let it stay in a
-  /// register.
-  union {
-    s32 result;
-  } u;
-};
-
-struct SceneEventEntry {
-  s32 flags;
-  u8 value;
-  u8 unk05;
-  s16 condition;
-  s32 result;
-};
-
-struct BattleEffectCounterState {
-  u8 unk000[0x154];
-  s16 counters[12];
-};
-
-// A box of the map in whole cells (16.16 when compared) and the value it
-// selects while its condition holds; a row with minX -1 ends the list.
+/// A box of the map in whole cells (16.16 when compared) and the value it
+/// selects while its condition holds; a row with minX -1 ends the list.
 struct MapRegion {
   s16 minX;
   s16 minY;
@@ -281,60 +184,6 @@ struct MapRegion {
   s16 maxZ;
   s16 condition;
   s16 value;
-};
-
-struct MapFocusObject {
-  u8 padding00[6];
-  u16 kind;
-  s32 x;
-  s32 unk0c;
-  s32 y;
-};
-
-struct MapFocusPosition {
-  s32 x;
-  s32 unk04;
-  s32 y;
-};
-
-// A unit as this function reads it.
-struct UnitStepView {
-  u8 unk000[0x38];
-  s16 hp;
-  u8 unk03a[0xf7];
-  s8 poison;
-};
-
-struct PartyStepView {
-  u8 unk000[0x212];
-  u8 renderMode;
-  u8 unk213[5];
-  u8 activeOwners[8];
-  u8 unk220[0x2c];
-  s16 hazardLimit;
-  s16 hazardMode;
-  s16 hazardDamage;
-  u16 hazardSteps;
-  u8 unk254[0xa];
-  s16 sceneVariant;
-  u8 unk260[4];
-  s32 avoidDistance;
-};
-
-struct FxWork {
-  u8 unk000[394];
-  u8 state;
-  u8 busy;
-  u8 unk18c[64];
-  struct FxSprite *sprite;
-};
-
-struct FadeWork {
-  u8 unk000[0x53a];
-  u8 level;
-  u8 step;
-  u8 active;
-  s8 pending;
 };
 
 extern const struct SceneMusicEntry gScene_EncounterRules[];

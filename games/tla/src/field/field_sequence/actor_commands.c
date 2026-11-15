@@ -9,237 +9,271 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 
-struct Actor *Actor_GetById(u32 objectId) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Returns an actor, or NULL if it does not exist.
+struct Actor *Actor_GetById(u32 actorId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object == NULL)
+  if (actor == NULL)
     return NULL;
-  return object;
+  return actor;
 }
 
+/// The event command "set actor speed": its top speed and acceleration, 16.16
+/// pixels per frame. Writes the actor's speedLimit and acceleration.
 void Actor_SetSpeedParameters(s32 actorId, s32 speedLimit, s32 acceleration) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->acceleration = acceleration;
-    object->speedLimit = speedLimit;
+  if (actor != NULL) {
+    actor->acceleration = acceleration;
+    actor->speedLimit = speedLimit;
   }
 }
 
+/// Gives an actor a movement type or actor script (Actor_SetActionCallback)
+/// and makes it face where it moves (steeringFlags bit 0).
 void Actor_SetMovementTypeById(s32 actorId, const void *script) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    s32 value = 1;
-    value |= object->steeringFlags;
-    object->steeringFlags = value;
-    Actor_SetActionCallback(object, (s32)script);
+  if (actor != NULL) {
+    actor->steeringFlags |= 1;
+    Actor_SetActionCallback(actor, (s32)script);
   }
 }
 
+/// The event command "stop actor": stops its movement type and puts it back
+/// under script control, on the idle script (a lone SC_END), and makes it face
+/// where it moves.
 void Actor_Stop(s32 actorId) {
-  struct Actor *object = ObjectTable_Get(actorId);
-  u8 enabled;
-
-  if (object != NULL) {
-    enabled = 1;
-    object->steeringFlags = enabled | object->steeringFlags;
-    Actor_StartIdleFar(object);
+  struct Actor *actor = ObjectTable_Get(actorId);
+  if (actor != NULL) {
+    actor->steeringFlags |= 1;
+    Actor_StartIdleFar(actor);
   }
 }
 
-void Actor_ResetTargetsAndVelocity(u32 objectId) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// As Actor_Stop, and also clears the actor's target and velocity, so it
+/// stands where it is.
+void Actor_ResetTargetsAndVelocity(u32 actorId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->steeringFlags = (u8)(object->steeringFlags | 1);
-    Actor_StartIdleFar(object);
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    SET_VELOCITY(object, 0, 0, 0);
-    object->arrivalAxis = 0;
+  if (actor != NULL) {
+    actor->steeringFlags |= 1;
+    Actor_StartIdleFar(actor);
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    SET_VELOCITY(actor, 0, 0, 0);
+    actor->arrivalAxis = 0;
   }
 }
 
-void Actor_WatchAndSetScript(s32 actorId, s32 linkedObjectId) {
-  struct Actor *object = ObjectTable_Get(actorId);
+/// Makes an actor follow another (the watched actor script): writes its
+/// watchedActor.
+void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->watchedActor = Actor_GetById(linkedObjectId);
-    Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
+  if (actor != NULL) {
+    actor->watchedActor = Actor_GetById(watchedActorId);
+    Actor_SetActionCallback(actor, (s32)gActor_FaceWatchedScript);
   }
 }
 
-void Actor_RefreshSelectorById(u32 objectId) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Waits, at most 300 frames, for an actor's script to reach its end (SC_END).
+void Actor_RefreshSelectorById(u32 actorId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL)
-    Actor_WaitForCommandEndFar(object);
+  if (actor != NULL)
+    Actor_WaitForCommandEndFar(actor);
 }
 
+/// Starts a movement type or supplied actor script, as
+/// Actor_SetMovementTypeById does, then waits up to 300 frames for its script
+/// to end.
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    s32 value = 1;
-    value |= object->steeringFlags;
-    object->steeringFlags = value;
-    Actor_SetActionCallback(object, (s32)script);
-    Actor_WaitForCommandEndFar(object);
+  if (actor != NULL) {
+    actor->steeringFlags |= 1;
+    Actor_SetActionCallback(actor, (s32)script);
+    Actor_WaitForCommandEndFar(actor);
   }
 }
 
-void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// The event command "set actor destination": the actor heads for (x, z), in
+/// pixels, keeping its current animation.
+void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
-void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// The event command "move actor and wait": as Actor_SetDestinationById, then
+/// waits (at most 600 frames) for the actor to arrive.
+void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
-    Actor_WaitForMoveFar(object);
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_WaitForMoveFar(actor);
   }
 }
 
+/// The event command "walk actor to": the actor walks toward (x, z), in pixels.
 void Actor_WalkToById(s32 actorId, s32 x, s32 z) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
+/// The event command "walk actor to and wait": walks the actor to (x, z), in
+/// pixels, waits for it to arrive and stands it still.
 void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
-    Actor_WaitForMoveFar(object);
-    Actor_SelectAnimationFar(object, 1);
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_WaitForMoveFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
-void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
-  struct Actor *object;
-  s16 currentAngle;
-  s32 snappedAngle;
-  s16 angleRemainder;
-  s32 x;
-  s32 eight;
+/// The event command "center actor and walk": walks the actor sideways to the
+/// middle of its 16-pixel column, sets its sprite priority to priority
+/// (Actor_SetSpritePriority), then sends it zOffset pixels along z.
+void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
+  struct Actor *actor;
+  s16 pixelX;
+  s32 columnX;
+  s16 offsetInColumn;
 
-  object = ObjectTable_Get(objectId);
-  if (object != NULL) {
-    currentAngle = *(s16 *)((u8 *)object + 0x0a);
-    snappedAngle = currentAngle;
-    if (currentAngle < 0) {
-      snappedAngle += 15;
+  actor = ObjectTable_Get(actorId);
+  if (actor != NULL) {
+    // The column's left edge, from a division by 16 that rounds toward zero
+    // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
+    // in.
+    pixelX = actor->x.part[0].pixel;
+    columnX = pixelX;
+    if (pixelX < 0) {
+      columnX += 15;
     }
-    snappedAngle >>= 4;
-    snappedAngle *= 16;
-    angleRemainder = currentAngle - snappedAngle;
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SelectAnimationFar(object, 2);
-    x = object->x.fixed;
-    eight = 8;
-    Actor_SetMoveTargetFar(object, x + ((eight - angleRemainder) << 16),
-                           object->y.fixed, object->z.fixed);
-    Actor_WaitForMoveFar(object);
-    Actor_SetSpritePriority(objectId, action);
-    Actor_SetMoveTargetFar(object, object->x.fixed, object->y.fixed,
-                           object->z.fixed + (zOffset << 16));
+    columnX >>= 4;
+    columnX *= 16;
+    offsetInColumn = pixelX - columnX;
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(8 - offsetInColumn),
+                           actor->y.fixed, actor->z.fixed);
+    Actor_WaitForMoveFar(actor);
+    Actor_SetSpritePriority(actorId, priority);
+    Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
+                           actor->z.fixed + px(zOffset));
   }
 }
 
+/// The event command "set actor destination offset": the actor heads (xOffset,
+/// zOffset) pixels from where it stands.
 void Actor_SetDestinationOffsetById(s32 actorId, s32 xOffset, s32 zOffset) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, object->x.fixed + (xOffset << 16),
-                           object->y.fixed, object->z.fixed + (zOffset << 16));
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartIdleFar(actor);
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
+                           actor->z.fixed + px(zOffset));
   }
 }
 
-void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Walks the actor (xOffset, zOffset) pixels from where it stands, through the
+/// offset script.
+void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    object->paused = 0;
-    Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
-    Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, object->x.fixed + (xOffset << 16),
-                           object->y.fixed, object->z.fixed + (zOffset << 16));
+  if (actor != NULL) {
+    actor->paused = 0;
+    Actor_StartScriptFar(actor, (u32)gActor_OffsetScript);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
+                           actor->z.fixed + px(zOffset));
   }
 }
 
-void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and stands
+/// it still.
+void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  Actor_WalkByById(objectId, xOffset, zOffset);
-  if (object != NULL) {
-    Actor_WaitForMoveFar(object);
-    Actor_SelectAnimationFar(object, 1);
+  Actor_WalkByById(actorId, xOffset, zOffset);
+  if (actor != NULL) {
+    Actor_WaitForMoveFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
+/// Places an actor on the leader, a pixel nearer the back, and sends it walking
+/// (xOffset, zOffset) pixels away at speed 0.8 and acceleration 0.4, through
+/// the launch script; the actor then takes movement type action.
 void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    Actor_SetSpeedParameters(actorId, 0xcccc, 0x6666);
+  if (actor != NULL) {
+    Actor_SetSpeedParameters(actorId, px(4) / 5, px(2) / 5);
     Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
-    Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
-                                       object->z.fixed - 0x10000);
-    object->paused = 0;
-    Actor_SelectAnimationFar(object, 2);
+    Actor_SetPositionAndResetMotionFar(actor, actor->x.fixed, actor->y.fixed,
+                                       actor->z.fixed - px(1));
+    actor->paused = 0;
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
-    Actor_StartScriptFar(object, gActor_LaunchScript);
-    object->timer = action;
+    Actor_StartScriptFar(actor, gActor_LaunchScript);
+    actor->timer = action;
   }
 }
 
+/// The event command "wait for actor": waits (at most 600 frames) for the actor
+/// to arrive and stands it still.
 void Actor_WaitForMoveById(s32 actorId) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL) {
-    Actor_WaitForMoveFar(object);
-    Actor_SelectAnimationFar(object, 1);
+  if (actor != NULL) {
+    Actor_WaitForMoveFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
 #define Actor_SetPositionAndResetMotionFar                                     \
   ((s32 (*)(struct Actor *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
-void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// The event command "set actor position": puts the actor at (x, z), 16.16
+/// pixels, at rest; an actor that follows the ground keeps its height above
+/// it.
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
+  struct Actor *actor = ObjectTable_Get(actorId);
   s32 terrainHeight;
 
-  if (object != NULL) {
-    Actor_StartIdleFar(object);
-    Actor_SetPositionAndResetMotionFar(object, x, object->y.fixed, z);
-    if (object->motionFlags & 1) {
-      terrainHeight = MapGrid_GetTerrainHeightFar(
-          object->layer, object->x.fixed, object->z.fixed);
-      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
-      object->groundHeight = terrainHeight;
+  if (actor != NULL) {
+    Actor_StartIdleFar(actor);
+    Actor_SetPositionAndResetMotionFar(actor, x, actor->y.fixed, z);
+    // Swap the old ground's height for the new one, so the actor's height above
+    // the ground is kept.
+    if (actor->motionFlags & 1) {
+      terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
+                                                  actor->z.fixed);
+      actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
+      actor->groundHeight = terrainHeight;
     }
   }
 }
@@ -258,272 +292,287 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 #define Actor_SetHorizontalPositionAndAngleWithTerrain                         \
   Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands
+/// As Actor_SetHorizontalPositionWithTerrain, and turns the actor to angle.
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s16 angle) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *actor = ObjectTable_Get(actorId);
   s32 terrainHeight;
 
-  if (object != NULL) {
-    Actor_StartIdleFar(object);
-    Actor_SetPositionAndResetMotionFar(object, x, object->y.fixed, z);
-    object->facing = angle;
-    if (object->motionFlags & 1) {
-      terrainHeight = MapGrid_GetTerrainHeightFar(
-          object->layer, object->x.fixed, object->z.fixed);
-      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
-      object->groundHeight = terrainHeight;
+  if (actor != NULL) {
+    Actor_StartIdleFar(actor);
+    Actor_SetPositionAndResetMotionFar(actor, x, actor->y.fixed, z);
+    actor->facing = angle;
+    if (actor->motionFlags & 1) {
+      terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
+                                                  actor->z.fixed);
+      actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
+      actor->groundHeight = terrainHeight;
     }
   }
 }
 
-void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
+/// the ground is raised by the ground height there, as
+/// Actor_SetHorizontalPositionWithTerrain raises it.
+void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
+  struct Actor *actor = ObjectTable_Get(actorId);
   s32 terrainHeight;
 
-  if (object != NULL) {
-    Actor_StartIdleFar(object);
-    Actor_SetPositionAndResetMotionFar(object, x, y, z);
-    if (object->motionFlags & 1) {
-      terrainHeight = MapGrid_GetTerrainHeightFar(
-          object->layer, object->x.fixed, object->z.fixed);
-      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
-      object->groundHeight = terrainHeight;
+  if (actor != NULL) {
+    Actor_StartIdleFar(actor);
+    Actor_SetPositionAndResetMotionFar(actor, x, y, z);
+    if (actor->motionFlags & 1) {
+      terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
+                                                  actor->z.fixed);
+      actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
+      actor->groundHeight = terrainHeight;
     }
   }
 }
 
-void Actor_MoveToObject(u32 objectId, u32 otherId) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// Puts the first actor where the second stands, at rest, on the same ground
+/// height.
+void Actor_MoveToObject(u32 actorId, u32 otherId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
   struct Actor *other = ObjectTable_Get(otherId);
 
-  if (object != NULL && other != NULL) {
-    Actor_SetPositionAndResetMotionFar(object, other->x.fixed, other->y.fixed,
+  if (actor != NULL && other != NULL) {
+    Actor_SetPositionAndResetMotionFar(actor, other->x.fixed, other->y.fixed,
                                        other->z.fixed);
-    object->groundHeight = other->groundHeight;
+    actor->groundHeight = other->groundHeight;
   }
 }
 
-void Actor_SetModeById(u32 objectId, s32 action) {
-  struct Actor *object = ObjectTable_Get(objectId);
+/// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
+/// the head and so on).
+void Actor_SetModeById(u32 actorId, s32 animation) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL)
-    Actor_SelectAnimationFar(object, action);
+  if (actor != NULL)
+    Actor_SelectAnimationFar(actor, animation);
 }
 
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-void Actor_SetActionById(s32 actorId, s32 action) {
-  struct Actor *object = ObjectTable_Get(actorId);
+/// Sets the animation timer steps of each of an actor's sprites.
+void Actor_SetActionById(s32 actorId, s32 steps) {
+  struct Actor *actor = ObjectTable_Get(actorId);
 
-  if (object != NULL)
-    Actor_SetAnimationSpeedFar(object, action);
+  if (actor != NULL)
+    Actor_SetAnimationSpeedFar(actor, steps);
 }
 
 /// Waits, at most 90 frames, for an actor's animation to change or for its
-/// first entry's script to reach code 241.
-void Actor_WaitForAnimationChange(u32 objectId) {
-  struct Actor *object = ObjectTable_Get(objectId);
-  struct AnimationGroup *group;
+/// first sprite animation's script to reach code 241. Only an actor drawn as
+/// one sprite is waited for.
+void Actor_WaitForAnimationChange(u32 actorId) {
+  struct Actor *actor = ObjectTable_Get(actorId);
+  struct AnimationObject *sprite;
   /* FAKEMATCH(volatile): saved lives in a 4-byte stack frame. */
   volatile u32 saved;
   s32 elapsedFrames;
 
-  if (object != NULL && object->spriteStorageKind == 1) {
-    group = object->sprite;
-    saved = group->lastNo;
+  if (actor != NULL && actor->spriteStorageKind == 1) {
+    sprite = actor->sprite;
+    saved = sprite->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
       wait(1);
-      if (saved != group->lastNo)
+      if (saved != sprite->lastNo)
         break;
-      if (group->entries[0] != NULL && group->entries[0]->script != NULL &&
-          group->entries[0]->script[group->entries[0]->pos] == 241)
+      if (sprite->entries[0] != NULL && sprite->entries[0]->script != NULL &&
+          sprite->entries[0]->script[sprite->entries[0]->pos] == 241)
         break;
     }
   }
 }
 
-void Motion_SetModeAndWaitAnimation(s32 actorId, s32 action) {
-  Actor_SetModeById(actorId, action);
+/// The event command "set actor animation and wait": plays the animation and
+/// waits for it to end.
+void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation) {
+  Actor_SetModeById(actorId, animation);
   Actor_WaitForAnimationChange(actorId);
 }
 
-void Actor_Jump(s32 actorId, s32 speed, s32 eventId) {
-  struct Actor *object;
-  u8 *objectFlags;
-  s32 updatedFlags;
-  s32 verticalVelocity;
+/// The event command "actor jump": throws the actor upward at speed pixels per
+/// frame with a jump sound (a higher one above 5), then waits frames frames.
+void Actor_Jump(s32 actorId, s32 speed, s32 frames) {
+  struct Actor *actor;
 
-  object = ObjectTable_Get(actorId);
-  if (object != NULL) {
-    objectFlags = &object->motionFlags;
-    updatedFlags = *objectFlags | 2;
-    verticalVelocity = speed << 16;
-    *objectFlags = updatedFlags;
-    object->velocityY = verticalVelocity;
+  actor = ObjectTable_Get(actorId);
+  if (actor != NULL) {
+    actor->motionFlags |= 2;
+    actor->velocityY = px(speed);
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
     } else {
       Sound_PlayFar(SE_JUMP);
     }
-    Event_Wait(eventId);
-  }
-}
-
-void Actor_StartRepeatedMotion(u32 objectId, s32 variant) {
-  struct Actor *object;
-
-  object = ObjectTable_Get(objectId);
-  if (object != NULL && variant > 0) {
-    if (variant > 3)
-      variant = 3;
-    Actor_StartScriptFar(object,
-                         (u32)(gActor_VariantScripts + ((3 - variant) << 7)));
-  }
-}
-
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant) {
-  Actor_StartRepeatedMotion(objectId, variant);
-  Actor_RefreshSelectorById(objectId);
-}
-
-void FieldEffect_UpdateDustPuff(struct Actor *object) {
-  s32 driftX;
-  s32 driftZ;
-  s32 pos;
-
-  driftX = object->speedLimit;
-  pos = object->x.fixed;
-  driftZ = object->acceleration;
-  object->x.fixed = pos + driftX;
-  object->z.fixed += driftZ;
-  object->y.fixed += 0x400;
-  object->speedLimit = driftX - driftX / 18;
-  object->acceleration = driftZ - driftZ / 16;
-}
-
-/* VIEW(event_commands): tag struct ParticleSprite as struct
- * ParticleSprite__event_commands; module/tla.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence/actor_commands.c:406: redefinition
- * of `struct ParticleSprite'. */
-#define ParticleSprite ParticleSprite__event_commands
-struct ParticleSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[16];
-  u8 flags;
-};
-
-/// Kicks up a dust puff (object 285) where source stands.
-void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
-  struct Actor *object;
-  struct ParticleSprite *child;
-  s32 speed;
-  s32 rate = -0x1999;
-
-  object =
-      Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
-  if (object != NULL) {
-    child = object->sprite;
-    switch (Random16() & 1) {
-    case 1:
-      Actor_SelectAnimationFar(object, 2);
-      Actor_StartScriptFar(object, Data_080f085c);
-      break;
-    default:
-      Actor_SelectAnimationFar(object, 1);
-      Actor_StartScriptFar(object, Data_080f0874);
-      break;
-    }
-
-    if (param != 0)
-      Actor_SetSpriteColor(object, param);
-
-    object->motionFlags = 0;
-    speed = Random16() % 10 + 5;
-    object->acceleration = rate * speed;
-    speed = Random16() % 15 - 7;
-    speed <<= 1;
-    object->speedLimit = 0x1999 * speed;
-    object->timer = 0;
-    object->priorityFlags |= 2;
-    ((u8 *)object)[0x61] = 1;
-    object->update = (void (*)(void))FieldEffect_UpdateDustPuff;
-    child->flags = 0;
-    child->priority = ((struct ParticleSprite *)source->sprite)->priority;
-  }
-}
-
-/// Makes an object jump down off a ledge in front of it: it plays `mode` for 10
-/// frames, hops 12 pixels forward from its cell's centre line, then sinks 2
-/// pixels a frame for 14 frames from cue 217, dropping a particle of kind
-/// `particle` every other frame (none for -1), and jumps on 16 pixels to land,
-/// waiting up to 180 frames for it unless `particle` has flag 0x1000. The
-/// Broken Seal's twin is Actor_JumpDownLedge.
-void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
-  struct Actor *object = Actor_GetById(id);
-  s32 z = object->z.fixed;
-  s32 x = (object->x.fixed & 0xfff00000) + 0x80000;
-  s32 frame;
-  u32 i;
-
-  if (object == NULL)
-    return;
-  frame = ((struct FieldSprite *)object->sprite)->nextFrame;
-  Actor_SelectAnimationFar(object, mode);
-  wait(10);
-  Actor_SelectAnimationFar(object, 1);
-  Actor_SetSpriteFlagsFar(object, 0);
-  object->motionFlags |= 2;
-  object->velocityY = px(4);
-  Actor_SetMoveTargetFar(object, x, object->y.fixed, z + 0xc0000);
-  wait(6);
-  Sound_PlayFar(SE_FLOOR_SWITCH);
-  Actor_FaceDirectionById(id, 0x5000, 0);
-  object->motionFlags = 0;
-  for (i = 0; i < 14; i++) {
-    object->y.fixed -= px(2);
-    object->targetY = object->y.fixed;
-    wait(1);
-    if (particle != -1 && (i & 1))
-      FieldEffect_SpawnDustPuff(object, particle);
-  }
-  object->motionFlags = 3;
-  object->velocityY = px(3);
-  Actor_SetMoveTargetFar(object, x, object->y.fixed, z + 0x100000);
-  Actor_WaitForMoveFar(object);
-  if (particle & 0x1000) {
-    wait(4);
-    return;
-  }
-  i = 0;
-  if (object->y.fixed > object->groundHeight) {
-    do {
-      wait(1);
-      if (++i >= 180)
-        break;
-    } while (object->y.fixed > object->groundHeight);
-  }
-  Actor_SetSpriteFlagsFar(object, frame);
-  wait(2);
-  Event_NoOp();
-}
-
-void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
-  struct ObjectPairPosition *first;
-  struct ObjectPairPosition *second;
-
-  first = ObjectTable_Get(firstId);
-  second = ObjectTable_Get(secondId);
-  if (first != 0 && second != 0) {
-    first->angle = ArcTan2(second->z - first->z, second->x - first->x);
     Event_Wait(frames);
   }
 }
 
+/// The event command "start repeated motion": the actor squashes and springs
+/// back count times (1 to 3), through gActor_VariantScripts.
+void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
+  struct Actor *actor;
+
+  actor = ObjectTable_Get(actorId);
+  if (actor != NULL && count > 0) {
+    if (count > 3)
+      count = 3;
+    // Each count is 32 words of the script; start that many from its end.
+    Actor_StartScriptFar(actor,
+                         (u32)(gActor_VariantScripts + ((3 - count) << 7)));
+  }
+}
+
+/// The event command "run repeated motion": as Actor_StartRepeatedMotion, then
+/// waits for it to end.
+void Motion_SetVarCbAndRefresh(u32 actorId, s32 count) {
+  Actor_StartRepeatedMotion(actorId, count);
+  Actor_RefreshSelectorById(actorId);
+}
+
+/// Moves a dust puff of FieldEffect_SpawnDustPuff: it drifts with its x and z
+/// velocity (kept in speed and acceleration), which drag slows by 1/18 and 1/16
+/// each frame, and rises 1/64 pixel a frame.
+void FieldEffect_UpdateDustPuff(struct Actor *particle) {
+  s32 velocityX = particle->speedLimit;
+  s32 velocityZ = particle->acceleration;
+
+  particle->x.fixed += velocityX;
+  particle->z.fixed += velocityZ;
+  particle->y.fixed += px(1) / 64;
+  particle->speedLimit = velocityX - velocityX / 18;
+  particle->acceleration = velocityZ - velocityZ / 16;
+}
+
+/// Kicks up a dust puff (sprite 285) where source stands: it flies off toward
+/// the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
+/// of two animations, drawn at source's priority.
+void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
+  struct Actor *actor;
+  struct AnimationObject *child;
+  s32 speed;
+  s32 backStep = -(px(1) / 10); // 0.1 pixel a frame toward the back
+
+  actor =
+      Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
+  if (actor != NULL) {
+    child = actor->sprite;
+    switch (Random16() & 1) {
+    case 1:
+      Actor_SelectAnimationFar(actor, 2);
+      Actor_StartScriptFar(actor, Data_080f085c);
+      break;
+    default:
+      Actor_SelectAnimationFar(actor, 1);
+      Actor_StartScriptFar(actor, Data_080f0874);
+      break;
+    }
+
+    if (param != 0)
+      Actor_SetSpriteColor(actor, param);
+
+    // speed and acceleration hold the puff's x and z velocity, in steps of
+    // px(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
+    // 0.2.
+    actor->motionFlags = 0;
+    speed = Random16() % 10 + 5;
+    actor->acceleration = backStep * speed;
+    speed = Random16() % 15 - 7;
+    speed <<= 1;
+    actor->speedLimit = px(1) / 10 * speed;
+    actor->timer = 0;
+    actor->priorityFlags |= 2;
+    actor->frozen = 1;
+    actor->update = (void (*)(void))FieldEffect_UpdateDustPuff;
+    child->flags = 0;
+    child->image.priority =
+        ((struct AnimationObject *)source->sprite)->image.priority;
+  }
+}
+
+/// Makes an actor jump down off a ledge in front of it: it shows pose for 10
+/// frames, hops 12 pixels south from the middle of its 16-pixel column, turns
+/// toward FACING_SOUTH_SOUTHWEST while sinking 28 pixels with a dust puff every
+/// other frame (none when param is -1), then jumps on to 16 pixels south of
+/// where it started and lands, waiting at most 180 frames for it unless param
+/// has bit 12 set.
+void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
+  struct Actor *actor = Actor_GetById(actorId);
+  s32 startZ = actor->z.fixed;
+  s32 x = (actor->x.fixed & 0xfff00000) + px(8);
+  s32 spriteFlags;
+  u32 i;
+
+  if (actor == NULL)
+    return;
+  spriteFlags = ((struct FieldSprite *)actor->sprite)->nextFrame;
+  Actor_SelectAnimationFar(actor, pose);
+  wait(10);
+
+  // Hop up and forward 12 pixels.
+  Actor_SelectAnimationFar(actor, ANIM_STAND);
+  Actor_SetSpriteFlagsFar(actor, 0);
+  actor->motionFlags |= 2;
+  actor->velocityY = px(4);
+  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + px(12));
+  wait(6);
+
+  // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
+  // flight: no motion flags, so it neither falls nor follows the ground.
+  Sound_PlayFar(SE_FLOOR_SWITCH);
+  Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
+  actor->motionFlags = 0;
+  for (i = 0; i < 14; i++) {
+    actor->y.fixed -= px(2);
+    actor->targetY = actor->y.fixed;
+    wait(1);
+    if (param != -1 && (i & 1))
+      FieldEffect_SpawnDustPuff(actor, param);
+  }
+
+  // Jump 16 pixels forward, following the ground and falling again.
+  actor->motionFlags = 3;
+  actor->velocityY = px(3);
+  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + px(16));
+  Actor_WaitForMoveFar(actor);
+  if (param & 0x1000) {
+    wait(4);
+    return;
+  }
+  i = 0;
+  if (actor->y.fixed > actor->groundHeight) {
+    do {
+      wait(1);
+      if (++i >= 180)
+        break;
+    } while (actor->y.fixed > actor->groundHeight);
+  }
+  Actor_SetSpriteFlagsFar(actor, spriteFlags);
+  wait(2);
+  Event_NoOp();
+}
+
+/// The event command "actor face actor": turns the first actor at once to face
+/// the second, then waits the given number of frames.
+void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
+  struct Actor *first;
+  struct Actor *second;
+
+  first = ObjectTable_Get(firstId);
+  second = ObjectTable_Get(secondId);
+  if (first != 0 && second != 0) {
+    first->facing = ArcTan2(second->z.fixed - first->z.fixed,
+                            second->x.fixed - first->x.fixed);
+    Event_Wait(frames);
+  }
+}
+
+/// The event command "actors face each other": turns two actors toward each
+/// other, then waits the given number of frames.
 void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *first = ObjectTable_Get(firstId);
   void *second = ObjectTable_Get(secondId);
@@ -534,115 +583,127 @@ void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   }
 }
 
-void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
-                                   struct FacingObject *second) {
-  s32 toward;
-  s32 away;
+/// Turns two actors to face each other, at most 1/16 turn a frame each,
+/// until both do (at most 60 frames). Only Actor_TurnToFaceEachOther calls it.
+void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
+  s32 firstTargetAngle;
+  s32 secondTargetAngle;
   s32 frame;
-  s32 turning;
-  s32 delta;
+  s32 actorsTurning;
+  s32 angleDifference;
 
   if (first == NULL || second == NULL)
     return;
-  toward = (u16)ArcTan2(second->positionZ - first->positionZ,
-                        second->positionX - first->positionX);
-  away = toward + 0x8000;
+  firstTargetAngle = (u16)ArcTan2(second->z.fixed - first->z.fixed,
+                                  second->x.fixed - first->x.fixed);
+  // The second actor faces the opposite way, half a turn round.
+  secondTargetAngle = firstTargetAngle + TRIG_TURN / 2;
   for (frame = 0; frame < 60; frame++) {
-    delta = (s16)(toward - first->facing);
-    turning = 2;
-    if (delta != 0) {
-      if (delta > 0x1000)
-        delta = 0x1000;
-      if (delta < -0x1000)
-        delta = -0x1000;
-      first->facing += delta;
+    // Each actor that already faces its way takes one off the count;
+    // both facing ends the turn early.
+    actorsTurning = 2;
+    angleDifference = (s16)(firstTargetAngle - first->facing);
+    if (angleDifference != 0) {
+      if (angleDifference > TRIG_TURN / 16)
+        angleDifference = TRIG_TURN / 16;
+      if (angleDifference < -(TRIG_TURN / 16))
+        angleDifference = -(TRIG_TURN / 16);
+      first->facing += angleDifference;
     } else {
-      turning = 1;
+      actorsTurning = 1;
     }
-    delta = (s16)(away - second->facing);
-    if (delta != 0) {
-      if (delta > 0x1000)
-        delta = 0x1000;
-      if (delta < -0x1000)
-        delta = -0x1000;
-      second->facing += delta;
+    angleDifference = (s16)(secondTargetAngle - second->facing);
+    if (angleDifference != 0) {
+      if (angleDifference > TRIG_TURN / 16)
+        angleDifference = TRIG_TURN / 16;
+      if (angleDifference < -(TRIG_TURN / 16))
+        angleDifference = -(TRIG_TURN / 16);
+      second->facing += angleDifference;
     } else {
-      turning--;
+      actorsTurning--;
     }
-    if (turning == 0)
+    if (actorsTurning == 0)
       break;
     wait(1);
   }
 }
 
-void ObjectTable_DestroyById(s32 id) {
-  void *object = ObjectTable_Get(id);
+/// The event command "release actor": releases the actor and empties its slot
+/// in the field work's actor table.
+void ObjectTable_DestroyById(s32 actorId) {
+  void *released = ObjectTable_Get(actorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (object != NULL) {
-    Actor_ReleaseFar(object);
-    work->actors[id] = NULL;
+  if (released != NULL) {
+    Actor_ReleaseFar(released);
+    work->actors[actorId] = NULL;
   }
 }
 
-void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
-  struct Actor *object;
+/// The event command "set actor sprite param": gives every sprite animation of
+/// the actor param (Actor_SetSpriteColor); with bit 8 set the actor blinks
+/// instead (Actor_UpdateBlink).
+void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
+  struct Actor *actor;
 
-  object = ObjectTable_Get(objectId);
-  if (object != NULL) {
-    if (value & 0x100) {
-      object->update = Actor_ApplyIndexedChildValue;
+  actor = ObjectTable_Get(actorId);
+  if (actor != NULL) {
+    if (param & 0x100) {
+      actor->update = Actor_UpdateBlink;
       return;
     }
-    object->update = NULL;
-    Actor_SetSpriteColor(object, value);
+    actor->update = NULL;
+    Actor_SetSpriteColor(actor, param);
   }
 }
 
-void Actor_ApplyIndexedChildValue(struct Actor *object) {
-  struct ObjectPartList *list;
-  struct ObjectPart *part;
-  s32 attribute;
+/// Per-frame update routine of a blinking actor: sets its sprite animations'
+/// colour mode from gActor_BlinkSpriteColors, each entry lasting two frames.
+void Actor_UpdateBlink(struct Actor *actor) {
+  struct AnimationObject *sprite;
+  struct AnimationEntry *animation;
+  s32 colorMode;
   s32 i;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
-    list = object->sprite;
-    attribute = gActor_BlinkChildValues[(gFrameCount >> 1) & 3];
-    for (i = 0; i < list->count; i++) {
-      part = list->parts[i];
-      if (part != 0 && part->graphics != 0) {
-        part->attribute = attribute;
+  if ((actor->spriteStorageKind & 0xf) == 1) {
+    sprite = actor->sprite;
+    colorMode = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
+    for (i = 0; i < sprite->count; i++) {
+      animation = sprite->entries[i];
+      if (animation != 0 && animation->script != 0) {
+        animation->param = colorMode;
       }
     }
-    list->dirty = 1;
+    sprite->dirty = 1;
   }
 }
 
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute) {
-  struct ObjectPartList *list;
-  struct ObjectPart *part;
+/// Sets the colour mode (SpriteColorMode) of every running sprite animation of
+/// an actor's sprite. Events set 0 or 15, and alternate the two to make an
+/// actor flash.
+void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
+  struct AnimationObject *sprite;
+  struct AnimationEntry *animation;
   s32 i;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
-    list = object->sprite;
-    for (i = 0; i < list->count; i++) {
-      part = list->parts[i];
-      if (part != 0 && part->graphics != 0) {
-        part->attribute = attribute;
+  if ((actor->spriteStorageKind & 0xf) == 1) {
+    sprite = actor->sprite;
+    for (i = 0; i < sprite->count; i++) {
+      animation = sprite->entries[i];
+      if (animation != 0 && animation->script != 0) {
+        animation->param = colorMode;
       }
     }
-    list->dirty = 1;
+    sprite->dirty = 1;
   }
 }
 
-/// Links an object to the object in the low 8 bits of targetId and starts
-/// callback on it. Unless bit 16 of targetId is set it takes a follow
-/// distance of 40 pixels (action 40), the target's top speed with twice its
-/// acceleration, to keep up with it, and no collision flags, so it cannot
-/// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
-void Actor_WatchAndStartScript(u32 objectId, s32 targetId,
-                               const void *callback) {
-  struct Actor *follower = ObjectTable_Get(objectId);
+/// Makes an actor follow the actor in the low 8 bits of targetId and starts
+/// script on it. Unless bit 16 of targetId is set it takes a follow distance
+/// of 40 pixels, the target's top speed with twice its acceleration, to keep
+/// up with it, and no collision flags, so it cannot block the target.
+void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
+  struct Actor *follower = ObjectTable_Get(actorId);
   struct Actor *target = ObjectTable_Get(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
@@ -655,6 +716,6 @@ void Actor_WatchAndStartScript(u32 objectId, s32 targetId,
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = none;
     }
-    Actor_StartScriptFar(follower, callback);
+    Actor_StartScriptFar(follower, script);
   }
 }

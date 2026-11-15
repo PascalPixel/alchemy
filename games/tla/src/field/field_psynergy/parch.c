@@ -11,10 +11,11 @@
 #include "window.h"
 #include "bg_scroll.h"
 
-/// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
+/// Parch cast on a target: runs FieldPsynergy_Parch.
 void FieldPsynergy_ParchOnTarget(void) { FieldPsynergy_Parch(); }
 
-struct PuffParticle {
+/// A puff of Parch's steam: its place, its sway and rise, and its age.
+struct ParchPuff {
   s32 x;
   s32 y;
   s32 z;
@@ -24,7 +25,9 @@ struct PuffParticle {
   s32 timer;
 };
 
-struct PuffWork {
+/// Parch's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
+/// target and the 64 puffs of steam that rise as it dries.
+struct ParchWork {
   u8 tiles[0x1000];
   struct EffectSprite disc;
   u8 unk1028[0x28];
@@ -33,17 +36,20 @@ struct PuffWork {
   s32 discScaleX;
   s32 discScaleY;
   struct EffectSprite sprites[64];
-  struct PuffParticle particles[64];
+  struct ParchPuff particles[64];
 };
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
+/// Parch ("Evaporate standing water."): a glowing disc spreads 32 pixels before
+/// the caster and white puffs rise from it. On an actor of sprite 290, or on
+/// water with a Parch event, the water there dries up and the event runs.
 void FieldPsynergy_Parch(void) {
-  struct PuffWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
+  struct ParchWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
   struct HeapSlots *slots;
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
@@ -52,7 +58,7 @@ void FieldPsynergy_Parch(void) {
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;
-  struct PuffParticle *particle;
+  struct ParchPuff *particle;
   s32 screen[3];
   s32 pos[3];
   s32 phase;
@@ -79,7 +85,7 @@ void FieldPsynergy_Parch(void) {
   s32 i;
   u8 *dst;
 
-  caster = scene->mainObject;
+  caster = scene->mainActor;
   found = -1;
   fade = -1;
   pending = NULL;
@@ -87,7 +93,7 @@ void FieldPsynergy_Parch(void) {
   pos[0] = caster->x.fixed;
   pos[1] = caster->y.fixed;
   pos[2] = caster->z.fixed;
-  Vector_AddPolarOffset(px(32), scene->facing, pos);
+  Vector_AddPolarOffset(px(32), scene->angle, pos);
 
   i = 0;
   kind = 290;
@@ -105,13 +111,13 @@ void FieldPsynergy_Parch(void) {
       goto loaded;
     }
   }
-  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, pos) == -1) {
+  if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, pos) == -1) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldKind,
+        0x50000005, scene->fieldPsynergy,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
     result = 2;
     if (pending == NULL)
@@ -239,7 +245,7 @@ loaded:
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =
-        FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
+        FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
     sprite->depth = 1;
     sprite->x = x;
     sprite->y = y;
@@ -351,8 +357,7 @@ loaded:
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)
-    Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                           scene->secondObjectId);
+    Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   VramCache_FreeEntry(entry);
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);

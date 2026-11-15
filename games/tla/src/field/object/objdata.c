@@ -1,3 +1,6 @@
+/// @file
+/// The facing tables the animated sprites choose their pictures by.
+
 #include "objcmd.h"
 #include "types.h"
 #include "module/field/object.h"

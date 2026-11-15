@@ -27,9 +27,7 @@
 #include "field_sequence/psynergy.c"
 #include "field_sequence/treasure_spots.c"
 
-#undef ObjectEvent_PlaceOnGround
 #undef PartyInventory_GiveItem
-#undef BattleEffect_GetFlags
 
 #include "field_sequence/screen_transition.c"
 
@@ -57,6 +55,5 @@ void Actor_MoveToObject(u32 objectId, u32 otherId);
 #undef Field_RequestDjinnBattle
 #undef EventWork1cc
 #undef Actor_SetHorizontalPositionAndAngleWithTerrain
-#undef ParticleSprite
 #undef GameFlag_GetByte
 #undef Actor_SetHorizontalPositionWithTerrain

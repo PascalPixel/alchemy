@@ -164,6 +164,7 @@ void RisingParticles_Start(void) {
   Task_Add(RisingParticles_Update, priority);
 }
 
+/// The work of the ground motes: their VRAM entry, tiles and 64 particles.
 struct MoteWork {
   s32 entry;
   s32 tileBase;
@@ -191,7 +192,7 @@ void FieldMotes_Update(void) {
       u32 firstJitterDraw;
       u32 secondJitterDraw;
 
-      if (GameFlag_Get(0x166)) {
+      if (GameFlag_Get(FLAG_WEATHER_HELD)) {
         mote->timer++;
         mote->delay--;
       }

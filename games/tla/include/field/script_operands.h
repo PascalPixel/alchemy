@@ -1,0 +1,89 @@
+#ifndef ALCHEMY_SCRIPT_OPERANDS_H
+#define ALCHEMY_SCRIPT_OPERANDS_H
+
+/// @file
+/// The actor script interpreter and the operands its commands read.
+
+#include "edition.h"
+#include "types.h"
+#include "static_assert.h"
+
+struct Actor;
+
+/// An actor script command's handler: it reads its operands at the actor's
+/// script cursor, moves the cursor past them and returns 1 to run the next
+/// command this frame or 0 to wait.
+typedef s32 (*ScriptCommand)(struct Actor *);
+
+/// Raw fields of the full slot, addressed by the set/add/compare commands.
+struct ScriptOperands {
+  u32 script;
+  u16 cursor;
+  u16 facing;
+  u32 x;
+  u32 y;
+  u32 z;
+  u32 groundHeight;
+  u32 scaleX;
+  u32 scaleY;
+  u16 radius;
+  u8 padding22[2];
+  u32 velocityX;
+  u32 velocityY;
+  u32 velocityZ;
+  u32 speedLimit;
+  u32 acceleration;
+  u32 targetX;
+  u32 targetY;
+  u32 targetZ;
+  u32 bounce;
+  u32 gravity;
+  u32 riseBaseY;
+  u32 sprite;
+  u8 spriteStorageKind; ///< Actor.spriteStorageKind
+  u8 motionFlags;
+  u8 arrivalAxis;
+  u8 conditionResult; ///< the last test; every compare sets it
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount; ///< the SC_LOOP count
+  u16 wait;       ///< SC_WAIT's frames left, compared as signed
+  u8 refused;     ///< Actor.refused, the blocked frames
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 timer;
+  s16 userValue;
+  u32 watchedActor;
+  u32 update;
+};
+
+STATIC_ASSERT(offsetof(struct ScriptOperands, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 0x54);
+STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 0x5d);
+STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);
+STATIC_ASSERT(offsetof(struct ScriptOperands, conditionResult) == 0x57);
+STATIC_ASSERT(offsetof(struct ScriptOperands, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct ScriptOperands, timer) == 0x64);
+STATIC_ASSERT(offsetof(struct ScriptOperands, watchedActor) == 0x68);
+STATIC_ASSERT(offsetof(struct ScriptOperands, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
+
+/// A work value's handler: operation 0 sets the value, 1 adds to it and 2
+/// compares it, into conditionResult.
+typedef void (*OperandFunc)(struct ScriptOperands *operands, s32 operation,
+                            s32 value);
+
+/// The handler for each work value number (map_grid_data.c).
+extern const OperandFunc gActorScript_OperandHandlerTable[41];
+
+s32 ActorScript_Goto(struct Actor *interpreter);
+s32 ActorScript_HideSprites(struct Actor *interpreter);
+s32 ActorScript_ShowSprite(struct Actor *interpreter);
+
+#endif

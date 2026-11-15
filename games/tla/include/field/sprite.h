@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_SPRITE_H
 #define ALCHEMY_SPRITE_H
 
+/// @file
+/// Animated sprites: their layers, the sprite picture caches and the actor
+/// system's work.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
@@ -77,6 +81,9 @@ STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
 
 void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
 
+/// The hardware sprite attributes one part of an animated sprite (its image or
+/// its shadow) is drawn with: the link to the next part queued at its depth,
+/// then the OAM entry's attributes 0 to 3.
 struct AnimationSpritePart {
   u8 unk00[4];
   u16 y : 8;
@@ -94,31 +101,40 @@ struct AnimationSpritePart {
   u8 unk0a[2];
 };
 
+/// An animated sprite: its image, scale, rotation, size, its shadow and up to
+/// four sprite animations.
 struct AnimationObject {
   struct AnimationSpritePart image;
-  struct AnimationSpritePart shadow;
-  s32 scale;
-  u8 slot;
+  s32 scale; ///< 16.16 fixed point, Q16_ONE full size
+  u8 slot;   ///< VRAM cache entry holding its tiles
+  /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;
+  /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 unk1d2 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
+  u8 unusedFlags : 6; ///< no code names them
+  u16 rotation;       ///< 1/65536 turns
+  u8 width;           ///< pixels; zero marks a free sprite
+  u8 height;          ///< pixels
+  s8 offsetX;         ///< pixels
+  s8 offsetY;         ///< pixels
+  /// The animation number last selected, which selecting again skips.
   u8 lastNo;
-  u8 dirty;
+  u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
+  /// bits: 1 outlined in the actor system's edge and fill colours |
+  /// 0 shadow drawn (set when created)
   u8 flags;
-  u8 count;
-  struct AnimationEntry *entries[4];
+  u8 count; ///< layers in use, up to the last one present
+  /// Its shadow, shown while flags bit 0 is set.
+  struct AnimationSpritePart shadow;
+  struct AnimationEntry *entries[4]; ///< its layers; empty ones null
 };
 
 STATIC_ASSERT(sizeof(struct AnimationEntry) == 0x18);
 STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
-STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x18);
-STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x1e);
-STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x20);
+STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x0c);
+STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x12);
+STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x14);
+STATIC_ASSERT(offsetof(struct AnimationObject, shadow) == 0x1c);
 STATIC_ASSERT(sizeof(struct AnimationObject) == 0x38);
 STATIC_ASSERT(offsetof(struct AnimationObject, entries) == 0x28);
 
@@ -131,7 +147,17 @@ enum ActorAnimation {
   ANIM_STAND = 1,
   ANIM_WALK = 2,
   ANIM_NOD = 3,
-  ANIM_SHAKE_HEAD = 4
+  ANIM_SHAKE_HEAD = 4,
+  /// The arrivals and leavings of the animated exits, each four frames of the
+  /// leader turning: an arrival grows from a small figure seen side-on to full
+  /// size facing the player, a leaving turns from his back to side-on as he
+  /// shrinks and is then hidden.
+  ///@{
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26
+  ///@}
 };
 
 #endif

@@ -67,7 +67,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     leader->y.fixed = leader->groundHeight = height;
 }
 
-// Only so the shape store has an alias set of its own; the grid holds bytes.
+/// Only so the shape store has an alias set of its own; the grid holds bytes.
 struct ShapeCell {
   u8 shape;
 };
@@ -80,7 +80,7 @@ struct Actor *Leader_FindActorAhead(void);
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
   u8 *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target;
 
   if (effect != NULL && *(s16 *)(event + 358) != 0)
@@ -117,6 +117,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
 }
 
 // Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
+/// The actor's x.
 static inline s32 ActorX(struct Actor *actor) { return actor->x.fixed; }
 
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the

@@ -11,23 +11,6 @@
 #include "module/tla.h"
 #include "resource_ids.h"
 
-struct EventWorkView {
-  u8 unk000[0x15a];
-  s16 unk15a;
-  s16 unk15c;
-  s16 unk15e;
-  u8 unk160[4];
-  s16 unk164;
-  s16 unk166;
-  u8 unk168[0x1c];
-  s16 blockedSteps;
-  u16 pushKind;
-  u8 unk188[4];
-  u8 settings[8];
-  s32 unk194;
-  s32 unk198;
-};
-
 /// Marks the world map place the party has just entered as visited: sets game
 /// flag 0x180 + flag of the first place whose scene is `id` and whose entrance
 /// is `variant` (or any, for -1). The main routine calls it at every scene
@@ -58,6 +41,9 @@ s32 FlagEntries_GetValue(s32 flag) {
   return 1;
 }
 
+/// Chooses the current scene's encounter zones, one for each kind of ground the
+/// party can stand on (gFieldWork->encounterZones), from the first rule
+/// matching the scene and entrance.
 void Encounter_SelectMapZones(s32 search) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 scene = gMainRoutineWork.next;
@@ -124,6 +110,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
+/// Advances the encounter counter for zone and returns the formation to fight,
+/// or 0 for no battle. steps (16.16) scales how far the counter moves; a
+/// battle starts once it reaches encounterThreshold.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   const struct EncounterZone *entry;
@@ -139,7 +128,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->fieldWork;
-  if (GameFlag_Get(351) == 0) {
+  if (GameFlag_Get(0x15f) == 0) {
     if (GameFlag_Get(FLAG_NO_ENCOUNTERS) != 0 ||
         GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
@@ -189,11 +178,14 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     if (pick < 0)
       break;
   }
-  sum = (u16)entry->enemies[i];
+  sum = (u16)entry->formations[i];
   BattleEffect_SelectBattleCue(zone, i);
   return sum;
 }
 
+/// Rolls a random battle on the encounter zone of the ground underfoot: index
+/// into work->encounterZones; steps, the step weight, is passed on to
+/// Encounter_CountStepsAndSelectFormation.
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = gFieldWork->encounterZones;
 
@@ -232,6 +224,9 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 #endif
 }
 
+/// Chooses the current scene's field music (gMainRoutineWork.cue) from the
+/// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
+/// when none does.
 void Scene_ChooseMusic(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.next;
@@ -264,6 +259,8 @@ void Scene_ChooseMusic(void) {
   gMainRoutineWork.sceneMusic = cue;
 }
 
+/// Returns the area name of sceneId and entrance, from the first rule matching
+/// the scene or its area; 0, the Title's name, when none does.
 s32 Area_GetNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
@@ -360,6 +357,7 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   }
 }
 
+/// Returns the battle background chosen for the current scene.
 s16 BattleBackground_GetSelected(void) {
   return gMainRoutineWork.battleBackground;
 }

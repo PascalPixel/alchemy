@@ -37,7 +37,6 @@
 #undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
 #undef Resource_GetMetadataRecordFarFar
-#undef BattleEffect_DropObjectAtAnchor
 
 #include "field_psynergy/actor_cells.c"
 #include "field_psynergy/step_vector.c"

@@ -13,6 +13,8 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 
+/// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
+/// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -26,12 +28,17 @@ void Event_UpdateDebugSkip(void) {
   }
 }
 
+/// Waits the requested frames through wait(), unless debug fast-forward
+/// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
   if (state->fastForward == 0 && frames != 0)
     wait(frames);
 }
 
+/// Stops the leader where it stands: no horizontal velocity, the normal walking
+/// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
+/// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
@@ -46,6 +53,10 @@ void Leader_StopMoving(void) {
     Actor_SelectAnimationFar(object, 1);
 }
 
+/// Begins an event: closes any area name window, stops the leader, ends the
+/// lasting Psynergy if a trigger is running, resets the message and timing
+/// state, and starts the debug fast-forward task with the leader as the
+/// message speaker.
 void Event_Start(void) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
   AreaNameWindow_HideFar();
@@ -69,6 +80,9 @@ void Event_Start(void) {
   }
 }
 
+/// Ends an event: stops the debug fast-forward task, gives the camera back to
+/// the leader (or to actor 8 while gMainRoutineWork.ownerOverride is set) and
+/// refreshes the Lure Cap's flag (GameFlag_RefreshLureCap).
 void Event_End(void) {
   Task_Remove((u32)Event_UpdateDebugSkip);
   {
@@ -81,10 +95,15 @@ void Event_End(void) {
   }
 }
 
+/// An empty event callback.
 void Event_EmptyCallback(void) {}
 
+/// An empty hook; it does nothing in the released game. Only
+/// Event_RunObjectHookAndWait calls it.
 void Event_EmptyObjectHook(void) {}
 
+/// Rebuilds the leader's actor from its placement row (Actor_ResetForLeader),
+/// waits a frame and returns the leader's actor.
 struct Actor *Event_RunObjectHookAndWait(s32 object) {
   Event_EmptyObjectHook();
   Actor_ResetForLeader(object);
@@ -92,13 +111,17 @@ struct Actor *Event_RunObjectHookAndWait(s32 object) {
   return ObjectTable_Get(Party_GetLeaderActor());
 }
 
+/// Spawns the actors of an actor placement table after the last actor in use.
 void Event_CallWithLastActiveObjectId(s32 event_id) {
   Event_SpawnObjectTable((struct ActorPlacement *)event_id,
                          Actor_FindLastActiveId());
 }
 
+/// Replaces the scene's trigger table with events.
 void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
+/// Adds unit to the party. With announce nonzero it also shows `<name> joined
+/// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 event_id, s32 value) {
   Unit_Get(event_id);
   Party_AddMemberFar(event_id);
@@ -107,12 +130,15 @@ void Event_AddPartyMember(s32 event_id, s32 value) {
   }
 }
 
+/// Adds two units to the party and announces them together.
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
+/// Checks an L or R button shortcut, packed as the party member in bits 10 to
+/// 13 and the Psynergy in bits 0 to 9.
 s32 Party_CheckShortcut(u32 packed_id) {
   s32 group = (packed_id >> 10) & 0xf;
   s32 entry = packed_id & 0x3ff;
@@ -126,6 +152,8 @@ s32 Party_CheckShortcut(u32 packed_id) {
   return 0;
 }
 
+/// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
+/// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
   if (Party_CheckShortcut(gMainRoutineWork.firstShortcut))
     gMainRoutineWork.firstShortcut = 0;
@@ -133,6 +161,8 @@ void Party_ClearUnusableShortcuts(void) {
     gMainRoutineWork.secondShortcut = 0;
 }
 
+/// Takes unit out of the party, fully restoring its HP and PP and curing its
+/// poison.
 void Party_RemoveMemberRestored(s32 unit) {
   struct BattleUnit *vitals;
   s32 partyIndex;
@@ -161,6 +191,8 @@ void Party_RemoveMemberRestored(s32 unit) {
   }
 }
 
+/// Checks whether the party can carry one more of item; when it cannot, says
+/// so and returns -1, else 0.
 s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
@@ -181,6 +213,8 @@ s32 Party_CheckItemLimit(s32 item) {
 #define ITEM_GIVEN_MODE 3
 #endif
 
+/// The event command "give item": gives item to the first party member with
+/// room for it and says so; with no room, the player chooses what to drop.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 saved = work->message;
@@ -270,10 +304,14 @@ s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 owner) {
   return -1;
 }
 
+/// An empty callback.
 void Inventory_NoOpCallback(void) {}
 
+/// An empty callback.
 void Inventory_ReservedNoOp(void) {}
 
+/// Waits, at most 90 frames, for an actor's animation to stop being animation:
+/// the actor has finished a one-off animation such as a nod.
 void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
   struct Actor *obj = ObjectTable_Get(objectId);
 
@@ -344,6 +382,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
+/// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
+/// Returns 0 for yes, 1 for no.
 s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
@@ -393,6 +433,8 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   FieldMessage_ShowFar(MsgAbilityLearned, 3);
 }
 
+/// The event command "open screen": starts the event's screen transition and
+/// sets transitionActive.
 void Event_StartScreenTransition(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -400,6 +442,8 @@ void Event_StartScreenTransition(void) {
   event->transitionActive = 1;
 }
 
+/// The event command "close screen": finishes the event's screen transition
+/// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -407,12 +451,16 @@ void Event_FinishScreenTransition(void) {
   event->transitionActive = 0;
 }
 
+/// The event command "wait for screen": waits as long as the transition runs
+/// (transitionFrames).
 void Event_WaitTransitionFrames(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   wait(event->transitionFrames);
 }
 
+/// Makes the event leave for the given entrance of the given scene: raises the
+/// exit request 999 and writes gMainRoutineWork.next and entrance.
 void Event_SetDestination(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
@@ -423,6 +471,7 @@ void Event_SetDestination(s32 scene, s32 entrance) {
   party->entrance = entrance;
 }
 
+/// Makes the event leave and records scene and entrance as the restart point.
 void Event_SetRestartPoint(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
@@ -433,6 +482,8 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
   party->restartEntrance = entrance;
 }
 
+/// The event command "request exit": sets the field's exit request (999 leaves
+/// for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 frames) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 

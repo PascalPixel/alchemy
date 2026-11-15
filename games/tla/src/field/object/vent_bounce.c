@@ -4,12 +4,12 @@
 /// VENT_WORK, DIFF) and names the two functions: VENT_TOUCHING and
 /// VENT_BOUNCE.
 
-/// Whether object a rests on object b: within 0xc0000 of it in x and 0x80000
-/// in z, and up to 0xfffff above it.
+/// Whether object a rests on object b: within 12 pixels of it in x and 8 in z,
+/// and above it by less than 16 pixels.
 s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
-  if (DIFF(a->x.fixed, b->x.fixed) < 0xc0000) {
-    if ((u32)(a->y.fixed - b->y.fixed - 1) <= 0xffffe) {
-      if (DIFF(a->z.fixed, b->z.fixed) < 0x80000)
+  if (DIFF(a->x.fixed, b->x.fixed) < px(12)) {
+    if ((u32)(a->y.fixed - b->y.fixed - 1) <= px(16) - 2) {
+      if (DIFF(a->z.fixed, b->z.fixed) < px(8))
         return 1;
     }
   }

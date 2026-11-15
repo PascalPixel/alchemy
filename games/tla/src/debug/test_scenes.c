@@ -1,9 +1,11 @@
 /// @file
-/// Overlay 0x6b6's scene: its code, then its tables, in the order the ROM has
-/// them.
+/// The eight test scenes that share one room, whose talk events would give
+/// Flint, Fizz, Forge or Gust; the room places no actors to talk to.
 
 #include "battle/battle.h"
+#include "djinn_ids.h"
 #include "field/field.h"
+#include "flags.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "lib.h"
@@ -13,6 +15,15 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
+
+/// The actors the talk events answer: the first Djinni of each element. The
+/// room's actor list is empty, so none of them is ever there.
+enum TestActorId {
+  ACTOR_FLINT = ACTOR_FIRST_PLACED,
+  ACTOR_FIZZ,
+  ACTOR_FORGE,
+  ACTOR_GUST
+};
 
 void Test_ReceiveFizz(void);
 
@@ -28,28 +39,35 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Gives the first Djinni of an element, then clears its flag so it stays.
+static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
+  Djinn_JoinParty(actorId, element, 0);
+  GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
+}
+
+/// Gives Flint.
 void Test_ReceiveFlint(void) {
-  Djinn_JoinParty(8, 0, 0);
-  GameFlag_Clear(48);
+  Test_GiveDjinniForTesting(ACTOR_FLINT, ELEMENT_VENUS);
 }
 
+/// Gives Fizz.
 void Test_ReceiveFizz(void) {
-  Djinn_JoinParty(9, 1, 0);
-  GameFlag_Clear(68);
+  Test_GiveDjinniForTesting(ACTOR_FIZZ, ELEMENT_MERCURY);
 }
 
+/// Gives Forge.
 void Test_ReceiveForge(void) {
-  Djinn_JoinParty(10, 2, 0);
-  GameFlag_Clear(88);
+  Test_GiveDjinniForTesting(ACTOR_FORGE, ELEMENT_MARS);
 }
 
+/// Gives Gust.
 void Test_ReceiveGust(void) {
-  Djinn_JoinParty(11, 3, 0);
-  GameFlag_Clear(108);
+  Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Nothing to set up.
 s32 Scene_Initialize(void) { return 0; }
 
 s32 Scene_PrepareMap(void) { return 0; }
@@ -70,10 +88,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0, 8, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Test_ReceiveGust)},
+    {TRIGGER_TALK, ACTOR_FLINT, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {TRIGGER_TALK, ACTOR_FIZZ, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
+    {TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
+    {TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT(Test_ReceiveGust)},
     {TRIGGER_TABLE_END},
 };
 

@@ -91,6 +91,8 @@ void Leader_StepAwayFromNearbyActor(void) {
   }
 }
 
+/// Each frame of a found item's picture: one time in ten, a sparkle appears
+/// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -124,7 +126,7 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 }
 
 /// Returns 1 while Reveal is active, else 0.
-s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
+s32 Field_IsRevealActive(struct Actor *interpreter) {
   s32 revealState;
   u32 isActive = 0;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -142,7 +144,7 @@ void Reveal_EmitSparkles(const struct ParticleSource *source);
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
-  struct EmitterWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *picture = work->actors[actor];
   struct Actor *object;
   struct EffectVisual *visual;
@@ -224,6 +226,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   return picture;
 }
 
+/// Releases object unless it is NULL.
 void Actor_ReleaseIfPresent(struct Actor *object) {
   if (object != 0)
     Actor_ReleaseFar(object);
@@ -257,6 +260,9 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   owner->facing = TRIG_TURN / 4;
 }
 
+/// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
+/// above the leader, with waits of 60 and 80 frames around that when both are
+/// set.
 void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
@@ -296,6 +302,8 @@ struct EffectVisual__rising {
   u8 value1b;
 };
 
+/// Shows the picture of item 36 pixels above the party leader for 80 frames;
+/// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -337,6 +345,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
   }
 }
 
+/// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
+/// pixels of it.
 void Reveal_EmitSparkles(const struct ParticleSource *source) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -496,6 +506,10 @@ void FieldEffect_StartWindowHBlankDma(void) {
       (volatile u32 *)channel);
 }
 
+/// Each frame of a window transition: advances its value toward its end (and at
+/// the end turns the windows off, or moves to the next mode), then builds the
+/// next page of window edges, WININ and WINOUT first and then a (left << 8 |
+/// right) pair for each of the 160 lines.
 void ScreenTransition_UpdateScanlineTable(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
@@ -849,6 +863,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   state->page ^= 1;
 }
 
+/// Starts window transition mode at value 0, with no duration: the caller moves
+/// it.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -1279,6 +1295,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   }
 }
 
+/// Starts a dissolve of the given mode and waits 120 frames.
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 
@@ -1291,6 +1308,9 @@ void ScreenTransition_InitializeState(s32 value) {
   wait(0x78);
 }
 
+/// Sets each of the 1344 colour channels of step to the amount to add each
+/// frame for source to reach target in frames frames; with frames 0 or less
+/// step is left as it was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 index;
@@ -1313,12 +1333,15 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
   }
 }
 
+/// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
+/// one step toward its target, packs it into RGB555 and queues it for the BG
+/// and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *add = work->delta;
   s32 i;
 
-  if (GameFlag_Get(0x152) != 0) {
+  if (GameFlag_Get(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
   if (work->duration == 0) {
@@ -1674,6 +1697,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
+/// Sets up the palette fade from the BG and OBJ palettes and starts updating
+/// the palettes from it each frame.
 void PaletteFade_Initialize(void) {
   volatile s32 zero;
   struct PaletteFade *buffer;
@@ -1691,11 +1716,14 @@ void PaletteFade_Initialize(void) {
   Task_Add((s32)PaletteFade_Update, TASK_PASS_VBLANK + 15);
 }
 
+/// Stops the palette fade and frees it.
 void PaletteFade_Release(void) {
   Task_Remove((s32)&PaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
+/// Sets the colours the buffer moves toward (see PaletteFade_Build); does
+/// nothing without a palette fade.
 void PaletteFade_SetTarget(s32 value, s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1704,6 +1732,7 @@ void PaletteFade_SetTarget(s32 value, s32 mode) {
   }
 }
 
+/// Sets the colours the buffer shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 value, s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1712,6 +1741,7 @@ void PaletteFade_SetSource(s32 value, s32 mode) {
   }
 }
 
+/// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void PaletteFade_SetBackdrop(u32 value) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1741,6 +1771,8 @@ void PaletteFade_PackTarget(void) {
   work--;
 }
 
+/// Starts moving the shown colours to the target colours over frames frames:
+/// sets work->duration, clears work->step and fills work->delta.
 void PaletteFade_StartInterpolation(s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1783,9 +1815,9 @@ s32 PaletteFade_ClampShiftedComponent(s32 val) {
   return val;
 }
 
-// Each frame, on the two cells beside the actor
-// where the ground one or two cells south rises above the actor's floor,
-// draws a 16-pixel-wide mark at the height of that ground.
+/// Each frame, on the two cells beside the actor
+/// where the ground one or two cells south rises above the actor's floor,
+/// draws a 16-pixel-wide mark at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
   s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;
@@ -1999,8 +2031,8 @@ void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
   sprite->oam.objectMode = 1;
 }
 
-/// Finds the battle effect definition of id among the first 243 entries; when
-/// none matches it returns entry 243.
+/// Returns the speaker definition of sprite id from gSpeakerDefinitions, or its
+/// last entry (the 244th), the default, when there is none.
 struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
   struct BattleFxDefinition *entry = gSpeakerDefinitions;
   u32 index = 0;
@@ -2016,6 +2048,8 @@ struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
   return entry;
 }
 
+/// Returns the sprite id stored by a live actor's animated sprite, or 0 when
+/// that actor has no animated sprite or its sprite-id pointer is absent.
 s32 Speaker_GetActorSprite(u32 objectId) {
   struct BattleRenderObject *object =
       (struct BattleRenderObject *)ObjectTable_Get(objectId);
@@ -2026,16 +2060,6 @@ s32 Speaker_GetActorSprite(u32 objectId) {
   }
   return *object->animation->value28;
 }
-
-/* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
- * Speaker_GetActorSprite(void); the definition has s32
- * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
- * Speaker_GetActorSprite(u32 objectId), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/field_sequence/screen_transition.c:2049: too few
- * arguments to function `Speaker_GetActorSprite'. */
-extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
-    "Speaker_GetActorSprite");
 
 /// Returns the voice sound of sprite id's messages, its definition's value
 /// plus 0x100, or 0 for none (0xff) or with option 3
@@ -2050,10 +2074,11 @@ s32 Speaker_GetVoice(s32 id) {
   return value + 0x100;
 }
 
-u8 BattleEffect_GetFlags(void) {
-  return Speaker_FindDefinition(
-             BattleEffect_GetAnimationValue__definition_flags())
-      ->flags;
+/// Returns the halted lines of actor id's sprite: the pair of lines
+/// Scene_TalkToActor gives it while Halted, or 0xff when Halt passes it over
+/// (FieldPsynergy_FilterHaltTarget).
+s32 Speaker_GetHaltedLines(s32 id) {
+  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->flags;
 }
 
 extern const s32 gPairTable[];

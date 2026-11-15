@@ -27,6 +27,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 
+/// Creates a field effect actor at (x, y, z) moving at the given velocity: of
+/// sprite 285, or of options' type when flags ask for it, set up by options.
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *options) {

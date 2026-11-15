@@ -122,7 +122,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
 s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
-  struct SpriteAngle *sprite;
+  struct AnimationObject *sprite;
   struct RopeWork *rope;
   s32 bestDistance;
   s32 value;
@@ -209,7 +209,7 @@ s32 Actor_CrossRope(struct Actor *object) {
         slot->amplitude = 0x20000;
       object->watchedActor = (struct Actor *)best;
       SET_POSITION(&position, best->x, best->y, best->z);
-      sprite->angle = best->angle + turn;
+      sprite->rotation = best->angle + turn;
     }
   }
 done:
@@ -237,6 +237,7 @@ done:
   return 1;
 }
 
+/// Turns the actor toward angle, at most a sixteenth of a turn.
 static inline void TurnToward(struct Actor *object, u16 angle) {
   s16 delta = angle - object->facing;
 
@@ -251,7 +252,7 @@ static inline void TurnToward(struct Actor *object, u16 angle) {
 s32 Actor_CrossTightrope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
-  struct ObjectAnimationState *sprite;
+  struct AnimationObject *sprite;
   s32 argument;
   struct TightropeWork *tightrope;
   struct TightropeNode *best;
@@ -331,7 +332,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     argument = 2;
   Actor_SelectAnimation(object, argument);
   Actor_SetAnimationSpeed(object, 8);
-  sprite->unk00[23] = 4;
+  sprite->offsetY = 4;
   if (collisionFlags != 0) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;

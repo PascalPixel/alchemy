@@ -69,9 +69,9 @@ void Animation_SkipToStop(struct ScriptPlayer *player) {
   }
 }
 
-// The sprite object: The Broken Seal's struct Sprite with the shadow after
-// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
-// attributes 0 and 1 as one word.
+/// The sprite object: The Broken Seal's struct Sprite with the shadow after
+/// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
+/// attributes 0 and 1 as one word.
 struct LayeredSprite {
   union {
     struct AnimationSpritePart image;
@@ -98,6 +98,10 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
+/// Advances a sprite's animations by one frame, picks each sprite animation's
+/// picture for the facing dir, and when any picture changed redraws the sprite:
+/// the sprite animations composed by priority into one pixel buffer, an
+/// optional outline, and the result uploaded to the sprite's VRAM tiles.
 s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
@@ -381,6 +385,10 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
     heightCopy;                                                                \
   })
 
+/// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
+/// image centred on screenX and raised height above screenY, the shadow at
+/// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
+/// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale) {
@@ -437,6 +445,7 @@ void Render_ApplyProjectedPlacement__field(
     struct LayeredSprite *object, s32 *pos, s32 *scale,
     s32 mode) __asm__("Render_ApplyProjectedPlacement");
 #define Render_ApplyProjectedPlacement Render_ApplyProjectedPlacement__field
+/// Places a sprite for the scrolling camera and queues it for drawing.
 void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
                                     s32 *scale, s32 mode) {
   s32 matrix;

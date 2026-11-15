@@ -19,7 +19,7 @@
 void Djinn_RunJupiterJoinEffect(s32 id) {
   struct EffectVector position;
   struct MotionObject *object;
-  struct BattleFxScene__motes *scene;
+  struct FieldEffectWork *scene;
   struct FieldParticle *slot;
   s32 scale;
   s32 count;
@@ -50,7 +50,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
   Sound_PlayFar(SE_SCATTER);
-  slot = scene->slots;
+  slot = scene->particles;
   count = 23;
   do {
     FieldParticle_Initialize(slot, 672, position.x, position.z);
@@ -77,6 +77,8 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   FieldEffect_ReleaseSlots();
 }
 
+/// Per-frame update: makes an actor pulse, switching its scale between the two
+/// values of gBattleEffect_PulseScales every 4 frames.
 void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   u32 *vblankCount = &gVBlankCount;
   u32 *table;
@@ -90,6 +92,8 @@ void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   ((struct MotionObject *)object)->scaleY = value;
 }
 
+/// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
+/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
 void FieldEffect_AdvanceAngleWithRamp(void *obj) {
   u32 step;
 
@@ -121,12 +125,17 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
     Actor_ReleaseFar(obj);
 }
 
-struct BattleFxScene__motes;
+struct FieldEffectWork;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define gEffectWork Ram_HeapSlots->fieldEffectWork
 
+/// Field effect sprite callback of a Mars Djinni's sparks: the spark flies 120
+/// pixels up the screen (give or take 3/32 turn) from its origin at up to 5
+/// pixels a frame and starts over, until it stops where it arrives, hidden; 40
+/// frames later it swarms to points within 4 pixels of one 20 pixels over the
+/// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;
   struct EffectVector position;

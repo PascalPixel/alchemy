@@ -52,6 +52,8 @@ struct ReelSprite {
 // counted into the coins a coin a frame (state 4). The dice bounce off the
 // dome's round wall, settle to a face and are drawn back to front with their
 // shadows; palettes of the banners pulse with SuperLuckyDice_BrightenColors.
+
+/// A die of the dice game: its place and velocity, 16.16, and its variant.
 struct DiceParticle {
   s32 x;
   s32 y;
@@ -62,15 +64,19 @@ struct DiceParticle {
   s32 variant;
 };
 
+/// The dice game's four dice.
 struct DiceWork {
   struct DiceParticle particles[4];
 };
 
+/// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
 struct DiceOam {
   volatile u32 attr01;
   volatile u32 attr2;
 };
 
+/// The dice game's work as its drawing reads it: 128 OAM entries and its
+/// coins, bet and help windows.
 struct DiceSprites {
   u8 filler[196];
   struct DiceOam oam[128];
@@ -79,11 +85,13 @@ struct DiceSprites {
   struct RenderInput *helpWindow;
 };
 
+/// The dice games' camera: the eye and the point it looks at, 16.16.
 struct DiceCamera {
   s32 eye[3];
   s32 focus[3];
 };
 
+/// A point, in 16.16 pixels.
 struct EffectVector {
   s32 x;
   s32 y;
@@ -130,7 +138,7 @@ struct ObjectSystemColours {
   u8 fill;
 };
 
-// A party member's unit as the parts read it.
+/// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
   u8 unk00[20];
   s16 hpGauge;
@@ -142,6 +150,8 @@ struct FieldUnit {
   s16 pp;
 };
 
+/// Lucky Dice's work as its drawing reads it: 128 OAM entries and its coins,
+/// winnings and help windows.
 struct LuckyDiceSprites {
   u8 filler[196];
   struct DiceOam oam[128];
@@ -159,6 +169,8 @@ struct BattleFxTransferWork {
   s32 transferPending;
 };
 
+/// A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and
+/// where it stops.
 struct Reel {
   s32 position;
   u8 symbols[21];
@@ -166,6 +178,8 @@ struct Reel {
   s8 stop;
 };
 
+/// Lucky Wheels' effect work: the title letters' particles, the BG and OBJ
+/// shades, and its transfer to the screen.
 struct ReelEffectWork {
   struct Particle particles[REEL_TITLE_LETTERS];
   u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
@@ -180,6 +194,7 @@ struct ReelEffectWork {
   s32 transferPending;
 };
 
+/// The save as Lucky Wheels reads it: the prizes won.
 struct ReelSave {
   u8 unk000[0x140];
   s8 wonPrizes[16];
@@ -398,22 +413,11 @@ struct DepthScene {
   u8 unk02[2];
   s32 x;
   u8 unk08[8];
-  struct Actor *mainObject;
+  struct Actor *mainActor;
   u8 unk14[0x7b4];
   struct DepthSprite sprite;
   s16 vramSlot;
   s16 active;
-};
-
-struct MoveScene {
-  u16 mode;
-  u8 unk02[14];
-  struct Actor *mainObject;
-};
-
-struct SpawnScene {
-  u8 unk00[0x10];
-  struct Actor *mainObject;
 };
 
 /// One rising particle: its sprite, world position, drift and frames left.
@@ -498,12 +502,6 @@ struct DescendingOrbitObject {
   u8 unk14[80];
   u16 timer;
   s16 angle;
-};
-
-struct SpreadPosition {
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 struct CaptureObject {
@@ -850,7 +848,7 @@ void WorldMap_ReloadPendingAreaGraphics(void);
 
 void Event_NoOp(void);
 
-void Actor_ApplyIndexedChildValue(struct Actor *object);
+void Actor_UpdateBlink(struct Actor *object);
 
 extern u32 gScanlineAngle;
 

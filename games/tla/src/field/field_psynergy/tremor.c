@@ -28,24 +28,16 @@ enum {
   SWAY_DONE = 999,
 };
 
-struct ShakeParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer; // -1 when free
-};
-
-struct ShakeWork {
+/// Tremor's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the view's sway, the
+/// picture of the shaken actor and its falling pieces.
+struct TremorWork {
   struct ViewMoveWork view;
   u8 picture[PICTURE_SIZE];
   struct EffectSprite sprites[SHAKE_SPRITE_COUNT];
-  struct ShakeParticle particles[SHAKE_SPRITE_COUNT];
+  struct FieldPsynergyParticle particles[SHAKE_SPRITE_COUNT];
 };
 
-// An object's sprite; the sway shakes it sideways by its offset.
+/// An object's sprite; the sway shakes it sideways by its offset.
 struct TremorSprite {
   u8 unk00[0x12];
   u16 offsetX;
@@ -63,16 +55,16 @@ extern char ResourceId_ShakeTiles;
 
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 
-// Sways the view from side to side around the chosen object, as kind 19 does
-// with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
-// shrinks back to 2 and stops. Past 4 pixels the nearby objects' sprites
-// shake with it. The work also takes the object's picture and 64 sprites of
-// two tiles, which nothing here draws. An object whose picture is larger
-// than 2,048 pixels gets no sway.
+/// Sways the view from side to side around the chosen object, as kind 19 does
+/// with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
+/// shrinks back to 2 and stops. Past 4 pixels the nearby objects' sprites
+/// shake with it. The work also takes the object's picture and 64 sprites of
+/// two tiles, which nothing here draws. An object whose picture is larger
+/// than 2,048 pixels gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
-  struct ShakeWork *work =
+  struct TremorWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->child;
   struct TremorSprite *targetSprite = target->sprite;
@@ -87,7 +79,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   s32 amplitude;
   s32 state;
   s32 frames;
-  struct ShakeParticle *particle;
+  struct FieldPsynergyParticle *particle;
 
   if (target != NULL && targetSprite != NULL &&
       targetSprite->width * targetSprite->height > PICTURE_MAX_PIXELS)
@@ -109,7 +101,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     sprite->depth = 240;
     particle->timer = -1;
   }
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
     FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
@@ -216,15 +208,15 @@ release:
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
 
-// Sways the view from side to side, with a sound every 16 frames: the swing
-// grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
-// field is in control mode 2 the nearby objects' sprites shake with it; when
-// there are any, the hold lasts 50 frames instead of 10. Then the view bounds
-// and the sprites come back.
+/// Sways the view from side to side, with a sound every 16 frames: the swing
+/// grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
+/// field is in control mode 2 the nearby objects' sprites shake with it; when
+/// there are any, the hold lasts 50 frames instead of 10. Then the view bounds
+/// and the sprites come back.
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
@@ -234,7 +226,7 @@ void FieldPsynergy_Tremor(void) {
   s32 frames;
 
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);

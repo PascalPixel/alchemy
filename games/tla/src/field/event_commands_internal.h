@@ -36,7 +36,6 @@
 #include "system/task.h"
 #include "system/sprite_metadata.h"
 #include "system/scene.h"
-#include "field/facing_object.h"
 #include "fixed_math.h"
 #include "hanging_vine.h"
 #include "graphics/display_transition.h"

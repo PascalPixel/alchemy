@@ -1,6 +1,10 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+/// @file
+/// The field's routines and tables other banks call, and the field Psynergy's
+/// reach.
+
 #include "types.h"
 #include "edition.h"
 #include "actor.h"
@@ -24,7 +28,7 @@ void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void ObjectSystem_UpdateCamera(void);
-void ObjectSystem_UpdateCameraFixed(void);
+void ActorSystem_ProjectSprites(void);
 s32 Actor_FindLastActiveId(void);
 void BattleMotion_ProjectPositionFar(s32, s32 *);
 s32 Unit_KnowsPsynergyFar(s32 group, s32 entry);
@@ -35,21 +39,20 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 struct AnimationObject;
 struct ScreenPoint;
 struct Particle;
-struct FacingObject;
 struct Actor;
 struct Actor;
 struct SceneEntrance;
 struct Trigger;
 struct ActorPlacement;
 struct SceneRegion;
-struct ScriptInterpreter;
+struct Actor;
 
 extern u32 gDriftScene_SpawnScript[];
 extern u32 gSceneExits[];
 extern struct Actor gSnapshotObjects[];
 extern u8 gLinkLobby_SlotColumns[];
 extern s32 gLinkLobby_SlotValues[];
-extern const u8 gActor_BlinkChildValues[4];
+extern const u8 gActor_BlinkSpriteColors[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
@@ -69,16 +72,15 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *effect, s32 variant);
 void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
-void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
-                                   struct FacingObject *second);
+void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
 void Field_StartPaletteTransition(s32 mode);
 void FieldPsynergy_RunHandler(s32 kind);
 void FieldPsynergy_RunExtraHandler(void);
 
-s32 Event_PlayCueNearFocusFar(struct ScriptInterpreter *interpreter, s32 value);
+s32 Event_PlayCueNearFocusFar(struct Actor *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
-void BattleEffect_DropObjectAtAnchor(u32 objectId);
+void BattleEffect_DropObjectAtAnchor(s32 actorId);
 void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
@@ -109,6 +111,16 @@ void Scene_SetArrivalFlags(s32 unused);
 s32 Message_OpenWindowFar(s32, s32, s32, s32);
 void AreaNameWindow_HideFar(void);
 s32 Window_IsClosedFar(s32);
+
+/// How far a field Psynergy reaches from its caster, one row a kind in
+/// gData_080eff28, ended by -1: Field_MeasurePsynergyHeight and
+/// Field_MeasurePsynergyReach read it.
+struct FieldPsynergyReach {
+  s16 fieldPsynergy; ///< enum FieldPsynergy; -1 ends the table
+  s16 range;         ///< pixels over the ground
+  s16 height;        ///< pixels above or below the caster
+  s16 width;         ///< either side of the caster's facing, 1/65536 turns
+};
 
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];

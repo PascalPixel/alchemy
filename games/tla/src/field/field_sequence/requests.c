@@ -3,18 +3,20 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "djinn_ids.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 
+/// Sets up a battle with the formation in slot of encounter table zone.
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->encounter = Encounter_GetFormationAtSlot(row, column);
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
+        &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(row, column);
 }
 
@@ -34,6 +36,8 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
 void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
 #define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
+/// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
+/// Djinni's actor, which hops first unless DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;
@@ -41,36 +45,43 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   s32 index;
 
   flags &= 0xff;
-  group = djinn / 20;
-  index = djinn % 20;
+  group = djinn / DJINN_PER_ELEMENT;
+  index = djinn % DJINN_PER_ELEMENT;
 
-  if (index == 19) {
+  if (index == DJINN_PER_ELEMENT - 1) {
     index = gSceneLocalState[group + 0x1950];
     if (index == 0)
       return;
     index--;
   }
-  djinn = group * 20 + index;
+  djinn = group * DJINN_PER_ELEMENT + index;
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinni = (djinn + 300) | noPrepare;
   work->encounter = Encounter_GetDjinnFormation(djinn);
-  if (work->mode == 3)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(0, 0);
 }
 
-void Event_SetAfterBattleDestination(s32 first, s32 second) {
-  gMainRoutineWork.afterBattleScene = first;
-  gMainRoutineWork.afterBattleEntrance = second;
+/// Sets the after-battle destination (gMainRoutineWork.afterBattleScene and
+/// afterBattleEntrance), where the party goes once the coming battle is won.
+void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
+  gMainRoutineWork.afterBattleScene = sceneId;
+  gMainRoutineWork.afterBattleEntrance = entrance;
 }
 
-void Party_SetFields1f2And1f4(s32 first, s32 second) {
-  gMainRoutineWork.defeatScene = first;
-  gMainRoutineWork.defeatEntrance = second;
+/// Sets the defeat destination (gMainRoutineWork.defeatScene and
+/// defeatEntrance), where the party goes if it loses the coming battle.
+void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance) {
+  gMainRoutineWork.defeatScene = sceneId;
+  gMainRoutineWork.defeatEntrance = entrance;
 }
 
+/// Makes the event leave for entrance entrance of scene sceneId: sets
+/// gMainRoutineWork.next and entrance and raises the exit request
+/// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
 void Event_LeaveFor(s16 scene, s16 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -79,39 +90,44 @@ void Event_LeaveFor(s16 scene, s16 entrance) {
   event->exit = 999;
 }
 
+/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for
+/// -1), and remembers soundId for Scene_PlayQueuedMusic in the field work's
+/// queuedSound; -1 is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE
+/// now and nothing later.
 void Scene_QueueMusic(s32 soundId) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 state;
-
-  state = soundId;
-  event->queuedSound = state;
-  if ((s16)state == -1)
-    state = 0x186;
+  gFieldWork->queuedSound = soundId;
+  if ((s16)soundId == -1) {
+    soundId = SOUND_FADE_OUT_ACTION_SE;
+  }
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
-  Sound_PlayFar(state);
+  Sound_PlayFar(soundId);
 }
 
+/// An event that does nothing.
 void Event_NoOp(void) {}
 
+/// Plays the sound Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusic(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work != 0) {
-    s16 cue = *(s16 *)(work + 0xcb8);
+  if (work != NULL) {
+    s16 cue = work->queuedSound;
 
     if (cue != -1)
       Sound_PlayFar(cue);
   }
 }
 
+/// Shows message in an event and clears FLAG_NOTHING_HAPPENS; when someone in
+/// the party has Scoop, the field menu then opens.
 void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_ShowFar(message, 1);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
-  if (Party_FindOwnerWithActionFar(136) != -1)
-    ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
+  if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
+    gFieldWork->fieldMenu = 1;
 }
 
 /* VIEW(event_commands): tag struct EventWork1cc as struct
@@ -127,16 +143,19 @@ struct EventWork1cc {
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
-void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
-  struct CueObject *focus = gFieldWork->camera;
+/// Plays sound when the actor is in view: within 152 pixels across and 112 up
+/// or down the screen of the actor the camera follows.
+void Event_PlayCueNearFocus(struct Actor *actor, s32 sound) {
+  struct Actor *focus = gFieldWork->camera;
 
-  if (object == 0 || focus == 0)
+  if (actor == 0 || focus == 0)
     return;
-  if (ABS(focus->x - object->x) > 0x980000)
+  if (ABS(focus->x.fixed - actor->x.fixed) > px(152))
     return;
-  if (ABS((focus->top - focus->base) - (object->top - object->base)) > 0x700000)
+  if (ABS((focus->z.fixed - focus->y.fixed) -
+          (actor->z.fixed - actor->y.fixed)) > px(112))
     return;
-  Sound_PlayFar(cue);
+  Sound_PlayFar(sound);
 }
 
 /// Counts up the main routine's countedAnswers.

@@ -45,13 +45,13 @@ void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
 /// units faster; every counter advances. The work's flash flag is set on frame
 /// 30 only, and the burst stops being active on frame 112.
 void ParticleBurst_Update(void) {
-  struct BurstWork *work;
+  struct ParticleBurstWork *work;
   struct BurstParticle *particle;
   struct EffectSprite *sprite;
   s32 position[3];
   s32 i;
 
-  work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
+  work = (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   particle = work->particles;
 
   for (i = 0; i < 96; i++, particle++) {
@@ -81,6 +81,8 @@ void ParticleBurst_Update(void) {
   work->frame++;
 }
 
+/// Ends the particle burst (ParticleBurst_Start): stops its task and frees its
+/// tiles.
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleEffect;
 
@@ -88,24 +90,29 @@ void BattleEffect_EndX(void) {
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
 
-struct CarryWork {
-  u8 unk0000[0x1b0c];
-  struct Actor *follower;
-  s16 state;
-  s16 timer;
-  s32 angle;
+/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
+struct CycloneWork {
+  u8 particleBurst[0x1b08];
+  s16 count;
+  u8 unk1b0a[2];
+  struct Actor *follower; ///< the actor carried with the leader
+  s16 state;              ///< the stage of the ride; 999 once it ends
+  s16 timer;              ///< frames into the ride
+  s32 angle;              ///< the whirlwind's turn, 1/65536 turns
   s32 radius;
-  s32 from[3];
-  s32 to[3];
+  s32 from[3]; ///< where the ride starts, 16.16 pixels
+  s32 to[3];   ///< where it ends, 16.16 pixels
+  s8 kind;     ///< nonzero runs the particle burst with it
 };
 
 /// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
 /// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
 /// and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainObject;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
+  struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -137,9 +144,9 @@ void Cyclone_CarryLeader(void) {
 /// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
 /// pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainObject;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
+  struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -179,31 +186,22 @@ void Cyclone_LiftLeader(void) {
   work->follower->z.fixed = owner->z.fixed;
 }
 
+/// Per-frame update: turns an actor 1/16 turn a frame.
 void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += TRIG_TURN / 16;
 }
 
+/// Cyclone cast on a target: runs FieldPsynergy_Cyclone.
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
-struct WhirlWork {
-  u8 unk0000[0x1b08];
-  s16 count;
-  u8 unk1b0a[2];
-  struct Actor *follower;
-  s16 state;
-  s16 timer;
-  s32 angle;
-  s32 radius;
-  s32 from[3];
-  s32 to[3];
-  s8 kind;
-};
-
+/// Cyclone ("Conjure wind to scatter weeds."): the caster spins in a whirlwind
+/// of blue and white drawn on the canvas sprite, and the weeds on the cells
+/// round it (FieldPsynergy_GatherNearbyCells) are scattered.
 void FieldPsynergy_Cyclone(void) {
-  struct WhirlWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
+  struct CycloneWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *owner = effect->mainObject;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
   s32 spread = 0x40000;
   s32 step = 0xe000;
@@ -221,7 +219,7 @@ void FieldPsynergy_Cyclone(void) {
 
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
-  BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
   palette = (u16 *)(OBJ_PLTT + 14 * 16);
@@ -237,9 +235,9 @@ void FieldPsynergy_Cyclone(void) {
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  pos[0] = effect->mainObject->x.fixed;
-  pos[1] = effect->mainObject->y.fixed;
-  pos[2] = effect->mainObject->z.fixed;
+  pos[0] = effect->mainActor->x.fixed;
+  pos[1] = effect->mainActor->y.fixed;
+  pos[2] = effect->mainActor->z.fixed;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -309,7 +307,7 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
-    Actor_SetSpritePriority(effect->firstObjectId, 1);
+    Actor_SetSpritePriority(effect->firstActorId, 1);
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
@@ -412,6 +410,9 @@ void FieldPsynergy_Cyclone(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// The actor leaves in a ring of light (sprite 280): for 128 frames it swings
+/// up and round inside the ring as the screen transition starts, then the
+/// ring vanishes with a whoosh and the camera follows the actor again.
 void Actor_DepartInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
@@ -505,22 +506,15 @@ void Actor_ArriveInRing(s32 actor) {
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
 
-struct SprayParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct SprayWork {
+/// Blaze's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the flame tiles, 16 flames
+/// and 16 smoke puffs with their motion, where the jet starts and where it
+/// points, and the actor it has reached.
+struct BlazeWork {
   u8 unk0000[0x1000];
   struct EffectSprite drops[16];
-  struct SprayParticle dropMotion[16];
+  struct FieldPsynergyParticle dropMotion[16];
   struct EffectSprite puffs[16];
-  struct SprayParticle puffMotion[16];
+  struct FieldPsynergyParticle puffMotion[16];
   s32 origin[3];
   u16 dropTile;
   u16 puffTile;
@@ -535,16 +529,6 @@ struct SprayWork {
   s8 mode;
 };
 
-struct SprayScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *otherObject;
-};
-
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
@@ -557,12 +541,12 @@ struct SprayScene {
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 0x400 a frame.
 void Blaze_UpdateSpray(void) {
-  struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleEffect;
-  struct SprayScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct BlazeWork *work = (struct BlazeWork *)Ram_HeapSlots->battleEffect;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
-  struct SprayParticle *particle;
-  struct SprayParticle *puff;
+  struct FieldPsynergyParticle *particle;
+  struct FieldPsynergyParticle *puff;
   s32 pos[3];
   s32 i;
   s32 j;
@@ -574,10 +558,10 @@ void Blaze_UpdateSpray(void) {
     for (i = 0; i <= 15; i++, particle++) {
       if (particle->timer == -1) {
         sprite = &work->drops[i];
-        if (scene->otherObject != NULL)
-          sprite->depth = BattleEffect_GetObjectDepth(scene->otherObject);
+        if (scene->child != NULL)
+          sprite->depth = BattleEffect_GetObjectDepth(scene->child);
         else
-          sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
+          sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;
@@ -618,8 +602,8 @@ void Blaze_UpdateSpray(void) {
     for (j = 0; j < 80; j++) {
       struct Actor *other = event->actors[j];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainObject &&
-          other != scene->otherObject &&
+          (other->collisionFlags & 1) && other != scene->mainActor &&
+          other != scene->child &&
           FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x.fixed,
                                      other->radius - 2) >= 0) {
         work->hit = 1;
@@ -633,7 +617,7 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;
-      if (MapGrid_CheckCollisionFar(scene->mainObject, pos) > 0)
+      if (MapGrid_CheckCollisionFar(scene->mainActor, pos) > 0)
         particle->timer = -1;
     }
     if (particle->timer == -1 && (i & 1)) {
@@ -669,7 +653,7 @@ void Blaze_UpdateSpray(void) {
     }
   }
 
-  target = scene->angle - TRIG_TURN / 4;
+  target = scene->angle8 - TRIG_TURN / 4;
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {
@@ -683,12 +667,7 @@ void Blaze_UpdateSpray(void) {
   }
 }
 
-struct ControlEvent {
-  u8 unk000[362];
-  u16 cue;
-};
-
 void Teleport_PlaySparks(void);
 
-/// Effect 26 cast on a target: runs the effect, ignoring the target.
+/// Blaze cast on a target: runs FieldPsynergy_Blaze.
 void FieldPsynergy_BlazeOnTarget(void) { FieldPsynergy_Blaze(); }

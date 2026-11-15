@@ -14,6 +14,8 @@
 #include "scene_call.h"
 #include "macros.h"
 
+/// Moves the actor halfway to the actor it watches; a copy of
+/// Actor_MoveHalfwayTowardTarget.
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
   struct Actor *target = object->watchedActor;
 
@@ -50,6 +52,9 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
+/// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
+/// bounces twice and hops three times ever higher, then rises 120 pixels out of
+/// sight trailing eight afterimages.
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;

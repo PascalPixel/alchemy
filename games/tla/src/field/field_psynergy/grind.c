@@ -7,20 +7,12 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct SplashParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct SplashWork {
+/// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
+/// splash particles.
+struct GrindWork {
   u8 unk0000[0x20];
   u8 picture[0x800];
-  struct SplashParticle particles[64];
+  struct FieldPsynergyParticle particles[64];
   struct EffectSprite sprites[64];
 };
 
@@ -46,14 +38,18 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
+/// Grind ("Pulverize large objects."): the screen shakes harder and harder
+/// while spray rises round the target, or round the spot 32 pixels before the
+/// caster. A target of sprite 424 is ground down row by row; otherwise the
+/// place's Grind event runs while the shaking is at its height.
 void FieldPsynergy_GrindOnTarget(void) {
-  struct SplashWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *caster = scene->mainObject;
+  struct GrindWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *caster = scene->mainActor;
   struct Actor *child = scene->child;
   struct SplashAnimation *animation = child->sprite;
   struct EffectSprite *sprite;
-  struct SplashParticle *particle;
+  struct FieldPsynergyParticle *particle;
   void *source;
   u8 *dst;
   s32 angle;
@@ -81,8 +77,9 @@ void FieldPsynergy_GrindOnTarget(void) {
   spraying = 0;
   next = 0;
   mode = 0;
-  selector = Scene_SelectPsynergyTarget(scene->fieldKind);
-  pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind, selector);
+  selector = Scene_SelectPsynergyTarget(scene->fieldPsynergy);
+  pending =
+      Scene_FindPsynergyTrigger(0x50000005, scene->fieldPsynergy, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -93,7 +90,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     scene->x = caster->x.fixed;
     scene->z = caster->z.fixed + 0x80000;
     scene->y = caster->y.fixed;
-    Vector_AddPolarOffset(px(32), scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(32), scene->angle, &scene->x);
   }
   isWaterObject = 0;
   if (Actor_GetSpriteIdFar(child) == 424) {
@@ -262,7 +259,7 @@ end:
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
 void FieldPsynergy_Grind(void) {
-  struct FxScene *scene;
+  struct FieldEffectWork *scene;
   s32 phase;
   s32 amplitude;
   s32 state;
@@ -271,7 +268,7 @@ void FieldPsynergy_Grind(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 

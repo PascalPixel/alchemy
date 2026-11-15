@@ -84,15 +84,6 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
-/* VIEW(event_commands): routine FieldCamera_MoveToActor as void
- * FieldCamera_MoveToActor(s32 id, s32 use_setter); field/event.h has s32
- * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
- * FieldCamera_MoveToActor(s32 id, s32 use_setter), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:159:
- * conflicting types for `FieldCamera_MoveToActor'. */
-void FieldCamera_MoveToActor__event_commands(s32 id, s32 use_setter) __asm__(
-    "FieldCamera_MoveToActor");
-#define FieldCamera_MoveToActor FieldCamera_MoveToActor__event_commands
 void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 

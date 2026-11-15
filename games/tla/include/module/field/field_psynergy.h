@@ -8,6 +8,7 @@
 #include "types.h"
 #include "effect_sprite.h"
 #include "field/field_particle.h"
+#include "field/field_psynergy_work.h"
 
 struct Actor;
 struct AnimationEntry;
@@ -28,25 +29,17 @@ struct ArcGroup {
 
 struct ArcScene {
   u8 unk00[0x10];
-  struct ArcEffectObject__launch *mainObject;
+  struct ArcEffectObject__launch *mainActor;
   u8 unk14[0x6fc];
   s16 arcTileSlot;
 };
 
-struct ScatterParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
+/// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
+/// sprites and particles, the actor it scatters from, and its stage.
 struct ScatterWork {
   u8 tiles[0x1000];
   struct EffectSprite sprites[64];
-  struct ScatterParticle particles[64];
+  struct FieldPsynergyParticle particles[64];
   struct Actor *object;
   s16 phase;
   s16 timer;
@@ -73,7 +66,7 @@ struct LaunchObject {
 
 struct LaunchScene {
   u8 unk00[0x10];
-  struct LaunchObject *mainObject;
+  struct LaunchObject *mainActor;
 };
 
 /// A composite sprite, as far as this reads it.
@@ -123,15 +116,6 @@ struct BowWork {
   s8 arrowMoving;
 };
 
-struct BowScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-};
-
 struct PointWork {
   u8 unk_0[0xcc0];
   s16 points[62];
@@ -161,22 +145,10 @@ struct TimedObject {
   void *update;
 };
 
-/// The effect work, its slots 8 bytes earlier than BattleFxScene has them.
+/// The effect work, its slots 8 bytes earlier than FieldEffectWork has them.
 struct FallbackScene {
   u8 unk00[0x50];
   struct FieldParticle slots[16];
-};
-
-struct FxScene13 {
-  u16 angle;
-  u8 unk02[2];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  u8 unk18[8];
-  s8 enabled;
 };
 
 struct FxPosition13 {

@@ -11,6 +11,9 @@
 
 struct Actor;
 
+/// A rule choosing a scene's field music, ended by id -1: a scene or an area
+/// (byScene), an entrance (-1 for any), a flag that must be set (-1 for none)
+/// and the song.
 struct SceneCueRule {
   s16 id;
   s16 entrance : 15;
@@ -19,6 +22,8 @@ struct SceneCueRule {
   s16 cue;
 };
 
+/// A rule naming the area a scene is in, ended by id -1: a scene or an area
+/// (useSceneId), an entrance (-1 for any) and the area name's index.
 struct SceneAreaNameRule {
   s16 id;
   s16 entrance : 15;
@@ -26,6 +31,9 @@ struct SceneAreaNameRule {
   s32 areaNameIndex;
 };
 
+/// A row of the scene's trigger table as the Psynergy trigger search reads
+/// it: its kind and flags (-1 ends the table), what it answers, its
+/// condition and its value.
 struct TriggerEvent {
   s32 control;
   s16 trigger;
@@ -33,6 +41,9 @@ struct TriggerEvent {
   u32 value;
 };
 
+/// A row of a scene's actor placement table as the field reads it: its
+/// sprite, condition, movement type, position, facing, the facing it takes
+/// to talk and its flags.
 struct ActionDescriptor {
   u16 sprite;
   s16 condition;

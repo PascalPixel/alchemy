@@ -9,6 +9,7 @@
 #include "edition.h"
 #include "static_assert.h"
 #include "system/ram_buffer.h"
+#include "scene_tables.h"
 
 struct ActorPlacement;
 struct Actor;
@@ -93,10 +94,14 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
-  u16 heldKeys; ///< the keys held when a rope or tightrope was raised
+  /// The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
+  /// them, and they are kept when a rope or tightrope was raised.
+  u16 heldKeys;
   u8 unk188[2];
   s8 mode; ///< an enum ActorSystemMode
-  s8 unk18b;
+  /// The area's graphics are to be reloaded on the World Map
+  /// (WorldMap_Freeze, WorldMap_ReloadPendingAreaGraphics).
+  s8 areaGraphicsPending;
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle; 16 * Q16_ONE
@@ -124,9 +129,9 @@ struct FieldWork {
   s32 speaker; ///< the actor speaking; the leader at each event
   struct Window *messageWindow; ///< the open message window, NULL for none
   struct Window *sideWindow;    ///< the speaker's portrait window
-  /// The leader's two-row actor placement table (its row and an end
-  /// row), which Actor_ResetForLeader builds through its offset.
-  u8 leaderPlacements[48];
+  /// The leader's two-row actor placement table (its row and an end row),
+  /// which Actor_ResetForLeader builds.
+  struct ActorPlacement leaderPlacements[2];
   struct Window *noticeWindow; ///< a scene's timed notice
   u16 noticeFrames;
   /// The palette a field Psynergy's tint fades back to, as a palette fade's
@@ -140,9 +145,11 @@ struct FieldWork {
   s16 revealFrames;      ///< the frames Reveal has left
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
-  s8 unkcac; ///< a lasting Psynergy (155) is active
-  s8 unkcad;
-  s16 unkcae;
+  /// Field Psynergy 28's ring is shown (FieldPsynergy_Unnamed28); A, Select,
+  /// Start or a shortcut ends it.
+  s8 ringActive;
+  s8 ringTimerRunning; ///< off while another field Psynergy is cast
+  s16 ringFrames;      ///< frames left of the ring; 0 ends it
   /// The first of the two names the next yes/no choice shows in place of Yes
   /// and No (YesNoMenu_Run), 0 for those.
   s16 choiceMessage;
@@ -160,7 +167,9 @@ struct FieldWork {
   s8 targetX;
   s8 targetY;
   s8 targetZ;
-  s16 unkd34;
+  /// The item Scoop dug up (or its coins, 0x8000 | count), given when the
+  /// leader examines it (actor 79).
+  s16 scoopedItem;
   s8 sceneAttributeLow;
   s8 sceneAttributeHigh;
   s8 unkd38;

@@ -16,10 +16,10 @@
 
 void FieldPsynergy_HaltOnTarget(s32 id);
 void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
-#define FieldPsynergy_SteerPushedTarget FieldPsynergy_SteerPushedTarget
-#define FieldPsynergy_ForceOnTarget FieldPsynergy_ForceOnTarget
-#define FieldPsynergy_DouseOnTarget FieldPsynergy_DouseOnTarget
-#define FieldPsynergy_FrostOnTarget FieldPsynergy_FrostOnTarget
+void FieldPsynergy_SteerPushedTarget(s32 unused);
+void FieldPsynergy_ForceOnTarget(s32 unused);
+void FieldPsynergy_DouseOnTarget(s32 unused);
+void FieldPsynergy_FrostOnTarget(s32 unused);
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
  * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
@@ -43,7 +43,7 @@ void FieldPsynergy_BurstOnTarget(s32 targetId);
 void FieldPsynergy_PoundOnTarget(s32 targetId);
 
 /// Runs the animation's handler for kind: 0 runs it with no target chosen, 1
-/// on the chosen target (secondObjectId), 2 finishes it and 3 runs the kind's
+/// on the chosen target (secondActorId), 2 finishes it and 3 runs the kind's
 /// extra step.
 void FieldPsynergy_RunHandler(s32 kind) {
   if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
@@ -59,10 +59,10 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
 void FieldPsynergy_Run(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 animation = scene->fieldKind;
-  s32 targetId = scene->secondObjectId;
+  s32 animation = scene->fieldPsynergy;
+  s32 targetId = scene->secondActorId;
   s32 objectId;
 
   if (animation == FIELD_PSYNERGY_MOVE)
@@ -132,10 +132,10 @@ void FieldPsynergy_Run(void) {
       FieldPsynergy_ResumeHaltedActor(paused);
       party->haltedActor = -1;
     }
-    objectId = Field_FindNearbyPsynergyTarget(scene->firstObjectId, animation);
+    objectId = Field_FindNearbyPsynergyTarget(scene->firstActorId, animation);
     objectId = FieldPsynergy_FilterHaltTarget(objectId);
     if (Scene_FindActorTalkTrigger(objectId) != 0) {
-      FieldPsynergy_SetupActorPair(scene->firstObjectId, objectId);
+      FieldPsynergy_SetupActorPair(scene->firstActorId, objectId);
       FieldPsynergy_HaltOnTarget(objectId);
       FieldPsynergy_HaltActor(objectId);
       party->haltedActor = objectId;
@@ -146,17 +146,17 @@ void FieldPsynergy_Run(void) {
     // A wave still running from the last cast is reset first.
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
+    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
   }
 }
 
 /// Runs the field Psynergy animation the scene names on the target the player
-/// chose (BattleFxScene.secondObjectId).
+/// chose (FieldEffectWork.secondActorId).
 void FieldPsynergy_Dispatch(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 animation = scene->fieldKind;
-  s32 targetId = scene->secondObjectId;
+  s32 animation = scene->fieldPsynergy;
+  s32 targetId = scene->secondActorId;
 
   scene->enabled = 0;
   if (animation == FIELD_PSYNERGY_MOVE)
@@ -221,9 +221,9 @@ void FieldPsynergy_Dispatch(void) {
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     party = &gMainRoutineWork;
-    if (party->haltedActor != scene->secondObjectId)
+    if (party->haltedActor != scene->secondActorId)
       ((struct Actor *)scene->child)->paused = 1;
-    FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
+    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the target.
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -238,15 +238,17 @@ void FieldPsynergy_Dispatch(void) {
   }
 }
 
+/// Finishes the current field Psynergy when it is Mind Read: ends it and lets
+/// its target move again, unless the target is the actor kept stopped.
 void FieldPsynergy_FinishMindRead(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
 
-  if (scene->fieldKind == FIELD_PSYNERGY_MIND_READ) {
+  if (scene->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     struct PartyPauseView *party;
 
     FieldPsynergy_StopMindReadWave();
     party = (struct PartyPauseView *)&gMainRoutineWork;
-    if (party->pausedObject != scene->secondObjectId)
+    if (party->pausedObject != scene->secondActorId)
       ((struct Actor *)scene->child)->paused = 0;
   }
 }
@@ -254,9 +256,9 @@ void FieldPsynergy_FinishMindRead(void) {
 /// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the unnamed kind
 /// 28: what each does when it ends.
 void FieldPsynergy_RunExtraHandler(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
 
-  switch (scene->fieldKind) {
+  switch (scene->fieldPsynergy) {
   case FIELD_PSYNERGY_REVEAL:
     FieldPsynergy_EndReveal();
     break;
@@ -309,6 +311,7 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
   }
 }
 
+/// Sends the actor toward the point magnitude away from it at angle.
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                s32 magnitude, s32 angle) {
   s32 values[3];
@@ -369,14 +372,14 @@ void BattleEffect_DrawSceneSprite(void) {
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *mainObject;
+  struct Actor *mainActor;
   struct DepthSprite *sprite;
   s32 position[3];
   void *buffer;
   s32 slot;
   s32 tiles;
 
-  mainObject = scene->mainObject;
+  mainActor = scene->mainActor;
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
@@ -396,8 +399,8 @@ void Func_080dba5c(void) {
     sprite->layer = 0;
     sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
-    position[1] = mainObject->y.fixed + 0x1c0000;
-    position[2] = mainObject->z.fixed;
+    position[1] = mainActor->y.fixed + 0x1c0000;
+    position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];

@@ -159,6 +159,8 @@ void Weather_StartRain(s32 withCue) {
 /// Weather_StopRainFar.
 void Weather_StopRain(void) { Task_Remove(Weather_UpdateRain); }
 
+/// The work of the sparkles (heap slot battleEffect): their tiles, 64
+/// sparkles and whether they have stopped.
 struct SparkleWork {
   u8 padding00[4];
   s32 tileBase;
@@ -167,6 +169,7 @@ struct SparkleWork {
   s32 stopped;
 };
 
+/// Task: the sparkles.
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
   u32 spawned;
@@ -203,7 +206,7 @@ void FieldEffect_UpdateSparkles(void) {
     if (sparkle->timer != 0) {
       cameraX = camera[0];
       cameraZ = camera[1];
-      if (GameFlag_Get(0x166) != 0)
+      if (GameFlag_Get(FLAG_WEATHER_HELD) != 0)
         sparkle->timer++;
       frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
@@ -272,6 +275,8 @@ struct DustParticle {
   u8 pad1e[2];
 };
 
+/// The work of the dust (heap slot battleEffect): its VRAM entry, tiles and
+/// 64 particles.
 struct DustWork {
   s32 vramEntry;
   s32 tileBase;
@@ -279,6 +284,8 @@ struct DustWork {
   u8 pad808[12];
 };
 
+/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
+/// clears the 32 sparkles.
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
   struct DustWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
@@ -331,6 +338,9 @@ void FieldEffect_InitializeSparkles(void) {
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 
+/// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
+/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
+/// fade, and arms the first burst to end in 600 frames, repeating.
 void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;
@@ -352,6 +362,7 @@ void Weather_StartLightning(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
+/// Stops the lightning: no flash for 0x7fff frames, and none after.
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -359,6 +370,8 @@ void Weather_StopLightning(void) {
   state->enabled = 0;
 }
 
+/// One last burst of lightning, its first flash two frames from now (timer 12;
+/// Weather_UpdateLightning flashes at 11), then no more.
 void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -366,6 +379,8 @@ void Weather_LastLightning(void) {
   state->enabled = 0;
 }
 
+/// Restarts the lightning: the next burst ends in 128 frames, and bursts
+/// repeat.
 void Weather_ResumeLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -373,6 +388,9 @@ void Weather_ResumeLightning(void) {
   state->enabled = 1;
 }
 
+/// Flashes the palette with the storm's task: one burst of three flashes of
+/// palette to, each fading back to palette from (PaletteFade_Build modes) on
+/// the BG colours, ending 120 frames from now, and no more after.
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;

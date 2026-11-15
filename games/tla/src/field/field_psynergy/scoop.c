@@ -12,18 +12,23 @@
 #include "window.h"
 #include "bg_scroll.h"
 
-struct Work080e6400 {
+/// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
+/// tiles, the picture that ripples as the ground is dug, 64 particles, the
+/// sprite that digs and the one left where it dug, and the stage of the cast.
+struct ScoopWork {
   u8 tiles[0x400];
   u8 picture[0x400];
   struct EffectSprite sprites[64];
-  struct EffectParticle particles[64];
+  struct FieldPsynergyParticle particles[64];
   struct EffectSprite pictureSprite;
-  s16 phase;
-  s16 timer;
+  s16 phase; ///< the stage of the cast; 999 once it ends
+  s16 timer; ///< frames into the stage
   s16 particleTile;
   s16 pictureTile;
-  struct Actor *anchor;
-  struct Actor *other;
+  struct Actor *object; ///< sprite 353, which digs and sinks as it does
+  struct Actor *other;  ///< sprite 354 (355 where lit is set), where it digs
+  /// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in
+  /// sixteen (an item turns up), else 0, or 3 where lit is set.
   s16 mode;
 };
 
@@ -31,18 +36,18 @@ struct Work080e6400 {
 
 /// Task of the Scoop: plays the dig on the anchor phase by phase.
 void Scoop_Update(void) {
-  struct Work080e6400 *work;
+  struct ScoopWork *work;
   struct Actor *anchor;
   struct EffectSprite *sprite;
-  struct EffectParticle *particle;
+  struct FieldPsynergyParticle *particle;
   u8 *vram;
   u8 *picture;
   s16 *phase;
   s32 jitter;
   s32 i;
 
-  work = (struct Work080e6400 *)Ram_HeapSlots->battleEffect;
-  anchor = work->anchor;
+  work = Ram_HeapSlots->battleEffect;
+  anchor = work->object;
   if (work->mode == 0) {
     switch (work->phase) {
     case 0:
@@ -96,7 +101,7 @@ void Scoop_Update(void) {
       break;
     case 1:
       if (work->timer == 8)
-        Actor_SelectAnimationFar(work->anchor, 3);
+        Actor_SelectAnimationFar(work->object, 3);
       if (work->timer <= 15)
         anchor->y.fixed += 0x24ccc;
       if (work->timer == 28)
@@ -131,7 +136,7 @@ void Scoop_Update(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Actor_SelectAnimationFar(work->anchor, 4);
+        Actor_SelectAnimationFar(work->object, 4);
       anchor->y.fixed += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
@@ -149,7 +154,7 @@ void Scoop_Update(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Actor_SelectAnimationFar(work->anchor, 4);
+        Actor_SelectAnimationFar(work->object, 4);
       anchor->y.fixed += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
@@ -171,33 +176,8 @@ void Scoop_Update(void) {
   work->timer++;
 }
 
-/// Effect 20 cast on a target: runs the effect, ignoring the target.
+/// Scoop cast on a target: runs FieldPsynergy_Scoop.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
-
-struct RiseParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct ScoopWork {
-  u8 tiles[0x400];
-  u8 picture[0x400];
-  struct EffectSprite sprites[64];
-  struct RiseParticle particles[64];
-  struct EffectSprite pictureSprite;
-  s16 phase;
-  s16 timer;
-  s16 particleTile;
-  s16 pictureTile;
-  struct Actor *object;
-  struct Actor *other;
-  s16 mode;
-};
 
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
@@ -206,16 +186,20 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
+/// Scoop ("Dig in soft ground."): a giant hand rises before the caster and
+/// digs the cell 16 pixels ahead. With an actor in the way, out of reach or on
+/// ground that cannot be dug it stops with the error sound; else earth (or, in
+/// a lit place, sparkles) is thrown up and the place's Scoop event runs.
 void FieldPsynergy_Scoop(void) {
   struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x193c);
-  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *caster = scene->mainObject;
+  struct Actor *caster = scene->mainActor;
   struct Actor *other = NULL;
   struct Actor *object;
   struct Actor *target;
   struct EffectSprite *sprite;
-  struct RiseParticle *particle;
+  struct FieldPsynergyParticle *particle;
   void *pending;
   void *data;
   s32 particleEntry = 96;
@@ -232,7 +216,7 @@ void FieldPsynergy_Scoop(void) {
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
     SET_POSITION(scene, (caster->x.fixed & 0xfff00000) + 0x80000,
                  caster->y.fixed, (caster->z.fixed & 0xfff00000) + 0x80000);
-    Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(353, 0, 0, 0);
@@ -250,7 +234,7 @@ void FieldPsynergy_Scoop(void) {
   }
   object->facing = caster->facing;
   Actor_SelectAnimationFar(object, 0);
-  alternate = &scene->alternate;
+  alternate = &scene->lit;
   if (*alternate != 0)
     Actor_SetSpriteColorModeFar(object, 6);
   if (*alternate == 0)
@@ -283,7 +267,7 @@ void FieldPsynergy_Scoop(void) {
     target = event->actors[i];
     if (target != NULL && target->script != NULL &&
         (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
-        target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
+        target != scene->mainActor && ((u8 *)target->sprite)[27] != 0 &&
         FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                    target->radius - 2) >= 0) {
       failed = 1;
@@ -292,7 +276,8 @@ void FieldPsynergy_Scoop(void) {
   }
   if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) == 255)
     failed = 4;
-  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
+  if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x) ==
+      -1)
     failed = 2;
   if (MapGrid_CanScoop(scene->x, scene->z, caster->layer) == 0)
     failed = 3;
@@ -397,8 +382,8 @@ void FieldPsynergy_Scoop(void) {
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
     EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
-    sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
-    sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
+    sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
+    sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     pos[0] = object->x.fixed;
@@ -432,9 +417,9 @@ void FieldPsynergy_Scoop(void) {
       frame++;
     }
   } else {
-    pending =
-        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                  Scene_SelectPsynergyTarget(scene->fieldKind));
+    pending = Scene_FindPsynergyTrigger(
+        0x50000005, scene->fieldPsynergy,
+        Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     frame = 0;
     while (work->phase != 999) {
       stage = 0;
@@ -473,23 +458,12 @@ end:
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
-/* VIEW(psynergy): routine BattleEffect_DropObjectAtAnchor as void
- * BattleEffect_DropObjectAtAnchor(s32 id); field/field.h has void
- * BattleEffect_DropObjectAtAnchor(u32 objectId); tried as the definition's void
- * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/scoop.c:494: conflicting types for
- * `BattleEffect_DropObjectAtAnchor'. */
-void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
-    "BattleEffect_DropObjectAtAnchor");
-#define BattleEffect_DropObjectAtAnchor                                        \
-  BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct ModeEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
   struct Actor *object;
 
-  anchor = ((struct AnchorWork *)Ram_HeapSlots->battleEffect)->anchor;
+  anchor = ((struct ScoopWork *)Ram_HeapSlots->battleEffect)->object;
   object = Actor_GetById(id);
   if (anchor != NULL) {
     SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed,
@@ -503,13 +477,8 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   object->gravity = 0x170a;
   wait(50);
-  event->cue = id | 0x1000;
+  event->talk = id | 0x1000;
 }
-
-struct DropEvent {
-  u8 unk000[0xd34];
-  u16 item;
-};
 
 void *Unit_Get(s32 owner);
 extern const u16 gData_080f0fc0[];
@@ -519,7 +488,7 @@ extern const u16 gData_080f0fc0[];
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
 void Scoop_DigUpItem(void) {
-  struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleEffect;
+  struct ScoopWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *anchor;
   struct FieldWork *event;
   struct BattleUnit *unit;
@@ -527,7 +496,7 @@ void Scoop_DigUpItem(void) {
   s32 item;
   s32 id = 79;
 
-  anchor = work->anchor;
+  anchor = work->object;
   event = Ram_HeapSlots->fieldWork;
   unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
@@ -548,6 +517,6 @@ void Scoop_DigUpItem(void) {
   }
   SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
-  ((struct DropEvent *)event)->item = item;
+  event->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }

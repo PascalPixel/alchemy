@@ -156,6 +156,9 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// Where the battle this room starts returns the party, won or lost.
+enum { ENTRANCE_AFTER_THE_FIGHT = 77 };
+
 /// The actors this file moves by number: what the placements put where, and
 /// the people at the fight (gActorPlacements's last rows).
 enum {
@@ -1116,8 +1119,10 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Actor_WalkBy(ACTOR_AGATIO, 24, 0);
   FieldEvent_Wait(20);
   Battle_SetType(BATTLE_TYPE_LOST);
-  FieldEvent_SetAfterBattleDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
-  Event_SetDefeatDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
+  FieldEvent_SetAfterBattleDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M,
+                                       ENTRANCE_AFTER_THE_FIGHT);
+  Event_SetDefeatDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M,
+                             ENTRANCE_AFTER_THE_FIGHT);
   Party_RemoveMember(4);
   Party_RemoveMember(7);
   Party_RemoveMember(5);
@@ -1606,7 +1611,7 @@ s32 Scene_Initialize(void) {
       JupiterLighthouse_PlaceForTheFight();
       if (gMainRoutineWork.entrance == 5) {
         JupiterLighthouse_IsaacAndIvanAreHurt();
-      } else if (gMainRoutineWork.entrance == 77) {
+      } else if (gMainRoutineWork.entrance == ENTRANCE_AFTER_THE_FIGHT) {
         JupiterLighthouse_IsaacAndIvanFall();
         Event_SetFlag(FLAG_ISAAC_AND_IVAN_FELL);
         Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);

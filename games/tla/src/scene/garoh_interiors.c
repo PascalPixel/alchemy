@@ -33,6 +33,9 @@
 #include "scene/scene.h"
 #include "sprite_ids.h"
 
+/// The morning after a night at the inn (GarohInteriors_WakeAtInn).
+enum { ENTRANCE_WAKE_AT_INN = 99 };
+
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
@@ -376,7 +379,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   } else {
     scene = party->next;
     if (scene == houses) {
-      if (party->entrance == 99)
+      if (party->entrance == ENTRANCE_WAKE_AT_INN)
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;
     }
@@ -397,7 +400,7 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_HOUSES) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
-        gMainRoutineWork.entrance == 99) {
+        gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN) {
       Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
       Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
@@ -439,7 +442,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
-    if (gMainRoutineWork.entrance == 99 &&
+    if (gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN &&
         !GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       GarohInteriors_WakeAtInn();
   }

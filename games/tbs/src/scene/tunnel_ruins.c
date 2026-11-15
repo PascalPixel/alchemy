@@ -203,7 +203,7 @@ static inline s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #if TBS_PATCH_1
   return (FIELD_CELL(coordinate) << 4) + 8;
 #else
-  return (s16)(FIELD_PIXEL(coordinate));
+  return (s16)(WHOLE_PIXELS(coordinate));
 #endif
 }
 

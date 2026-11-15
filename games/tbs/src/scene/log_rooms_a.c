@@ -3003,8 +3003,8 @@ static s32 LogRoomsA_IsWithinHalfCellOfStop(s32 x, s32 z, s32 id) {
     targetZ = actor->z.fixed;
   }
 
-  targetX = FIELD_PIXEL(targetX - x);
-  targetZ = FIELD_PIXEL(targetZ - z);
+  targetX = WHOLE_PIXELS(targetX - x);
+  targetZ = WHOLE_PIXELS(targetZ - z);
   if (targetX * targetX + targetZ * targetZ <= 64)
     return 1;
   return 0;
@@ -3023,8 +3023,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   az = actor->targetZ;
   if (az == ACTOR_NO_TARGET)
     az = actor->z.fixed;
-  ax = FIELD_PIXEL(ax - x);
-  az = FIELD_PIXEL(az - z);
+  ax = WHOLE_PIXELS(ax - x);
+  az = WHOLE_PIXELS(az - z);
   if (ax * ax + az * az <= 16 * 16)
     return 1;
   return 0;

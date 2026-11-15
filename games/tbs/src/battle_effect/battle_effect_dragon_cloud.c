@@ -112,10 +112,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
-      puff->x = Q_16_16_TO_INT(Trig_Sin(j) * 24) + 88;
+      puff->x = WHOLE_PIXELS(Trig_Sin(j) * 24) + 88;
     else
-      puff->x = Q_16_16_TO_INT(-(Trig_Sin(j) * 24)) + 16;
-    puff->y = Q_16_16_TO_INT(Trig_Cos(j) * 16) + 40;
+      puff->x = WHOLE_PIXELS(-(Trig_Sin(j) * 24)) + 16;
+    puff->y = WHOLE_PIXELS(Trig_Cos(j) * 16) + 40;
     puff->variant = -(i * 2);
   }
   path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);

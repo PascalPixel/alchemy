@@ -201,8 +201,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
           s32 picture = puff->variant / 6 + 3;
 
           draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
-                  Q_16_16_TO_INT(puff->x) - gRamses_PuffSizes[picture] / 2,
-                  Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[picture] / 2,
+                  WHOLE_PIXELS(puff->x) - gRamses_PuffSizes[picture] / 2,
+                  WHOLE_PIXELS(puff->y) - gRamses_PuffSizes[picture] / 2,
                   gRamses_PuffSizes[picture], gRamses_PuffSizes[picture]);
         }
         Particle_AdvanceWithGravity2D(puff, 60, -px(1) / 4);
@@ -243,8 +243,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, Q_16_16_TO_INT(spark->x),
-                         Q_16_16_TO_INT(spark->y), size);
+        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, WHOLE_PIXELS(spark->x),
+                         WHOLE_PIXELS(spark->y), size);
         Particle_AdvanceWithGravity2D(spark, 62, px(1) / 16);
         spark->variant--;
       }

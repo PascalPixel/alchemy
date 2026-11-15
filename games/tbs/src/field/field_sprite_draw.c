@@ -317,18 +317,18 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
-  x = FIELD_PIXEL(screenX) - halfWidth;
+  x = WHOLE_PIXELS(screenX) - halfWidth;
   // The point is offsetY pixels above the image's bottom edge: the box is
   // raised by half the height less offsetY, scaled and rounded up to a whole
   // pixel.
-  y = FIELD_PIXEL(screenY - height) - halfHeight -
+  y = WHOLE_PIXELS(screenY - height) - halfHeight -
       ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
   // Place the shadow at ground height independently of the raised image.
-  x = FIELD_PIXEL(screenX) - marginX;
-  y = FIELD_PIXEL(screenY - groundHeight) - marginY;
+  x = WHOLE_PIXELS(screenX) - marginX;
+  y = WHOLE_PIXELS(screenY - groundHeight) - marginY;
   shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
@@ -397,20 +397,20 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     depth = 2;
   }
   // Queue the shadow at ground height before the raised image.
-  y = FIELD_PIXEL(screenY - groundHeight) - shadowHalfHeight;
+  y = WHOLE_PIXELS(screenY - groundHeight) - shadowHalfHeight;
   if (sprite->flags & SPRITE_FLAG_SHADOW) {
     if (y < DISPLAY_HEIGHT) {
       part = &sprite->shadow;
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = FIELD_PIXEL(screenX) - shadowHalfWidth;
+      part->x = WHOLE_PIXELS(screenX) - shadowHalfWidth;
       part->y = y;
       Oam_AddSpriteAtDepth(part, depth);
     }
   }
-  x = FIELD_PIXEL(screenX) - halfWidth +
-      FIELD_PIXEL(sprite->offsetX * scaleX + 0xffff);
-  y = FIELD_PIXEL(screenY - height) - halfHeight -
+  x = WHOLE_PIXELS(screenX) - halfWidth +
+      WHOLE_PIXELS(sprite->offsetX * scaleX + 0xffff);
+  y = WHOLE_PIXELS(screenY - height) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.

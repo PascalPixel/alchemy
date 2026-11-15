@@ -145,7 +145,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         if (ang > TRIG_TURN / 2) {
           ang -= TRIG_TURN / 2;
         }
-        wave = Q_16_16_TO_INT(Trig_Sin(ang) * amp);
+        wave = WHOLE_PIXELS(Trig_Sin(ang) * amp);
         if ((frame & 31) == 8) {
           work->shakeFrames = 4;
         }
@@ -172,8 +172,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
       for (i = 0; i != count; i++) {
         s32 ang = i << 10;
-        s32 x = Q_16_16_TO_INT(Trig_Sin(ang) * (grow * 2 + 8)) + grow + 96;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(ang) * (grow * 12 + 48)) + 64;
+        s32 x = WHOLE_PIXELS(Trig_Sin(ang) * (grow * 2 + 8)) + grow + 96;
+        s32 y = WHOLE_PIXELS(Trig_Cos(ang) * (grow * 12 + 48)) + 64;
 
         EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
@@ -196,7 +196,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           s32 size = i % 3 + 1;
 
           blit(canvas, sheet + gBattleEffect_MotePictures[size - 1], fire->x,
-               Q_16_16_TO_INT(fire->y) - size, size, size * 2);
+               WHOLE_PIXELS(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
           fire->velocityY = fire->velocityY * 48 / DAMPING_SCALE;
@@ -275,13 +275,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           if (ang > TRIG_TURN / 2) {
             ang -= TRIG_TURN / 2;
           }
-          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 64);
+          rise = WHOLE_PIXELS(Trig_Sin(ang) * 64);
         } else {
           ang = frame * 2048 + TRIG_TURN / 4;
           if (ang > TRIG_TURN / 2) {
             ang -= TRIG_TURN / 2;
           }
-          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 32);
+          rise = WHOLE_PIXELS(Trig_Sin(ang) * 32);
         }
         chargePlace.groundHeight = 0;
         chargePlace.height = px(255);
@@ -339,8 +339,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           /* LEFTOVER(template): size holds 3, the mote's size. */
           s32 size = 3;
 
-          EFFECT_DRAW_MOTE(blit, canvas, sheet, Q_16_16_TO_INT(burst->x),
-                           Q_16_16_TO_INT(burst->y), size);
+          EFFECT_DRAW_MOTE(blit, canvas, sheet, WHOLE_PIXELS(burst->x),
+                           WHOLE_PIXELS(burst->y), size);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;

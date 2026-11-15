@@ -244,8 +244,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, Q_16_16_TO_INT(dust->x),
-                           Q_16_16_TO_INT(dust->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, WHOLE_PIXELS(dust->x),
+                           WHOLE_PIXELS(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame < GAIA_WALL_SINK_FRAME)
             dust->y = px(96);

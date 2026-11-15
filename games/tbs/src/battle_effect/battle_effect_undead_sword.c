@@ -107,8 +107,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         s32 drawY;
 
         picture = particle->variant / 3;
-        drawX = Q_16_16_TO_INT(particle->x);
-        drawY = Q_16_16_TO_INT(particle->y);
+        drawX = WHOLE_PIXELS(particle->x);
+        drawY = WHOLE_PIXELS(particle->y);
         if (picture > 6)
           picture = 6;
         src = work->sheet + gUndeadSword_SparkPictures[picture] +

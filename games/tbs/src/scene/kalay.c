@@ -1983,7 +1983,7 @@ static void Kalay_PushTunnelStatue(void) {
   direction = FACING_INDEX(leader->facing);
   leaderX = leader->x.part[0].pixel;
   probeStep = gKalay_TileStepByFacing[direction];
-  statue = Actor_FindAtCell((leaderX + (FIELD_PIXEL(probeStep))) >> 4,
+  statue = Actor_FindAtCell((leaderX + (WHOLE_PIXELS(probeStep))) >> 4,
                             (leader->z.part[0].pixel + (s16)probeStep) >> 4);
   if (statue != NULL) {
     statue->layer = 2;

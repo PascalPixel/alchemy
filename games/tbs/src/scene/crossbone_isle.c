@@ -953,8 +953,8 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
 #if TBS_PATCH_1
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIELD_PIXEL(destination.x),
-                        FIELD_PIXEL(destination.z));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, WHOLE_PIXELS(destination.x),
+                        WHOLE_PIXELS(destination.z));
 #else
     {
       s16 *pixelCoordinates = (s16 *)requested;

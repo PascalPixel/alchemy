@@ -402,8 +402,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                    px(gParticleStreams_OrbitPoints[i][1] + frame),
                    px(gParticleStreams_OrbitPoints[i][2] / 2));
         Projection_Point(vector, &spot);
-        spot.x = Q_16_16_TO_INT(spot.x) + 128;
-        spot.y = Q_16_16_TO_INT(spot.y) + 60;
+        spot.x = WHOLE_PIXELS(spot.x) + 128;
+        spot.y = WHOLE_PIXELS(spot.y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              spot.x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
              spot.y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
@@ -439,8 +439,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                work->sheet + PARTICLE_STREAMS_FLAMES +
                    flame->variant * (PARTICLE_STREAMS_FLAME_SIZE *
                                      PARTICLE_STREAMS_FLAME_SIZE),
-               Q_16_16_TO_INT(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
-               Q_16_16_TO_INT(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               WHOLE_PIXELS(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               WHOLE_PIXELS(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
                PARTICLE_STREAMS_FLAME_SIZE, PARTICLE_STREAMS_FLAME_SIZE);
           flame->x -= direction * (px(5) / 4);
           flame->y -= px(5);

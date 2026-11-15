@@ -849,7 +849,7 @@ static void Bilibin_PushStatueOrCrates(void) {
   direction = FACING_INDEX(leader->facing);
   pushed = Actor_FindAtCell(
       (leader->x.part[0].pixel +
-       (FIELD_PIXEL(gPushedActor_DirectionSteps[direction]))) >>
+       (WHOLE_PIXELS(gPushedActor_DirectionSteps[direction]))) >>
           4,
       (leader->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[direction]) >>
           4);

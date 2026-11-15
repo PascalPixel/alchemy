@@ -83,9 +83,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
               FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
-        s32 x = screenPosition.x + Q_16_16_TO_INT(frame * Trig_Sin(i << 12));
-        s32 y = screenPosition.y + Q_16_16_TO_INT(frame * Trig_Cos(i << 12)) -
-                frame;
+        s32 x = screenPosition.x + WHOLE_PIXELS(frame * Trig_Sin(i << 12));
+        s32 y =
+            screenPosition.y + WHOLE_PIXELS(frame * Trig_Cos(i << 12)) - frame;
 
         draw[0](canvas,
                 work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
@@ -178,9 +178,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites,
-                           Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
-                           size);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, WHOLE_PIXELS(chip->x),
+                           WHOLE_PIXELS(chip->y), size);
         }
       }
     }
@@ -381,8 +380,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 half;
 
           spin = (frame << 9) + (i << 14);
-          x = (screen.x + Q_16_16_TO_INT(Trig_Sin(spin) * 16)) + offsetX;
-          y = screen.y + Q_16_16_TO_INT(Trig_Cos(spin) * 16);
+          x = (screen.x + WHOLE_PIXELS(Trig_Sin(spin) * 16)) + offsetX;
+          y = screen.y + WHOLE_PIXELS(Trig_Cos(spin) * 16);
           half = frame / 16;
           draw[half & 1](canvas,
                          work->sheet +

@@ -221,11 +221,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frame);
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = Q_16_16_TO_INT(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                             Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-                         wave) +
+      x = WHOLE_PIXELS(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
+                           Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
+                       wave) +
           40;
-      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
+      y = WHOLE_PIXELS(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +

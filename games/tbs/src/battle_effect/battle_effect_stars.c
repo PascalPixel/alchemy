@@ -255,13 +255,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           for (j = 0; j != 10; j++) {
             trails[i * 10 + j].velocityX =
                 screenPosition.x +
-                Q_16_16_TO_INT(
+                WHOLE_PIXELS(
                     (Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
                      gStar_Radii[j & 1]) /
                     2);
             trails[i * 10 + j].velocityY =
                 screenPosition.y -
-                Q_16_16_TO_INT(
+                WHOLE_PIXELS(
                     Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
                     gStar_Radii[j & 1]);
           }

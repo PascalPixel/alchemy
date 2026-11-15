@@ -96,11 +96,11 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
             s32 size;
 
             size = i % 3 + 1;
-            EFFECT_DRAW_MOTE(draw, canvas, sheet, Q_16_16_TO_INT(shard->x),
-                             Q_16_16_TO_INT(shard->y), size);
+            EFFECT_DRAW_MOTE(draw, canvas, sheet, WHOLE_PIXELS(shard->x),
+                             WHOLE_PIXELS(shard->y), size);
             Particle_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
-            if (shard->velocityY > 0 && Q_16_16_TO_INT(shard->y) > 112)
+            if (shard->velocityY > 0 && WHOLE_PIXELS(shard->y) > 112)
               shard->variant = -1;
           }
           shard++;

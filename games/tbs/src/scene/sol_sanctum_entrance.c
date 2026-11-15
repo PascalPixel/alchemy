@@ -572,7 +572,7 @@ static void SolSanctumEntrance_PushStatue(void) {
   direction = FACING_INDEX(leader->facing);
   statue = Actor_FindAtCell(
       (leader->x.part[0].pixel +
-       (FIELD_PIXEL(gSolSanctumPushSteps[direction]))) >>
+       (WHOLE_PIXELS(gSolSanctumPushSteps[direction]))) >>
           4,
       (leader->z.part[0].pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {

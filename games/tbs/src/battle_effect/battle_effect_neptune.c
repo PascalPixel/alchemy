@@ -237,8 +237,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         flare = &work->particles[i];
         if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
             frame < i / 4 + NEPTUNE_FLARES_FRAME + 32) {
-          s32 fx = Q_16_16_TO_INT(flare->x) + 112;
-          s32 fy = Q_16_16_TO_INT(flare->y) + 62;
+          s32 fx = WHOLE_PIXELS(flare->x) + 112;
+          s32 fy = WHOLE_PIXELS(flare->y) + 62;
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
@@ -393,13 +393,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
           EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
-                           Q_16_16_TO_INT(PARTICLES[i].x),
-                           Q_16_16_TO_INT(PARTICLES[i].y), k);
+                           WHOLE_PIXELS(PARTICLES[i].x),
+                           WHOLE_PIXELS(PARTICLES[i].y), k);
           Particle_AdvanceWithGravity2D(&PARTICLES[i], 62,
                                         gNeptune_Gravity[i & 3]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 &&
-              Q_16_16_TO_INT(PARTICLES[i].y) > 104) {
+              WHOLE_PIXELS(PARTICLES[i].y) > 104) {
             PARTICLES[i].variant = -1;
           }
         }
@@ -503,11 +503,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // Drops fall and bounce.
         PARTICLES[i].variant--;
         Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, px(1) / 4);
-        y = Q_16_16_TO_INT(PARTICLES[i].y);
+        y = WHOLE_PIXELS(PARTICLES[i].y);
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
         } else if (PARTICLES[i].x >= 0 &&
-                   (x = Q_16_16_TO_INT(PARTICLES[i].x)) <= 126 &&
+                   (x = WHOLE_PIXELS(PARTICLES[i].x)) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
           EFFECT_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);

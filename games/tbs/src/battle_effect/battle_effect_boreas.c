@@ -298,8 +298,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
             picture = i & 3;
           }
           drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[picture],
-                  Q_16_16_TO_INT(PARTICLES[i].x),
-                  Q_16_16_TO_INT(PARTICLES[i].y), gBoreas_DebrisWidths[picture],
+                  WHOLE_PIXELS(PARTICLES[i].x), WHOLE_PIXELS(PARTICLES[i].y),
+                  gBoreas_DebrisWidths[picture],
                   gBoreas_DebrisHeights[picture]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
@@ -324,13 +324,13 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           s32 picture = i % 3;
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayPictures[picture],
-                 Q_16_16_TO_INT(PARTICLES[i].x), Q_16_16_TO_INT(PARTICLES[i].y),
+                 WHOLE_PIXELS(PARTICLES[i].x), WHOLE_PIXELS(PARTICLES[i].y),
                  gBoreas_SprayWidths[picture], gBoreas_SprayHeights[picture]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          if (Q_16_16_TO_INT(PARTICLES[i].x) < -16 ||
-              Q_16_16_TO_INT(PARTICLES[i].y) > 120) {
+          if (WHOLE_PIXELS(PARTICLES[i].x) < -16 ||
+              WHOLE_PIXELS(PARTICLES[i].y) > 120) {
             PARTICLES[i].x = px(72);
             PARTICLES[i].y = px(56);
           }
@@ -354,8 +354,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           s32 picture = trail->variant / 2 % 9;
           s32 size = gBattleEffect_SparkleSizes[picture];
           draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-               Q_16_16_TO_INT(trail->x) - size / 2,
-               Q_16_16_TO_INT(trail->y) - size / 2, size, size);
+               WHOLE_PIXELS(trail->x) - size / 2,
+               WHOLE_PIXELS(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
             trail->x = spray->x;
             trail->y = spray->y;
@@ -447,14 +447,14 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
       for (i = 0; i != count; i++) {
         struct Particle *crystal = &work->particles[i];
-        y = Q_16_16_TO_INT(crystal->y);
+        y = WHOLE_PIXELS(crystal->y);
         if (y <= 135) {
           s32 picture = i % 3;
           draw(canvas, work->sheet + gBoreas_FallPictures[picture],
-               Q_16_16_TO_INT(crystal->x), y - gBoreas_FallHeights[picture],
+               WHOLE_PIXELS(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE, px(1));
-          if (Q_16_16_TO_INT(crystal->y) > 120 && crystal->velocityY > px(8)) {
+          if (WHOLE_PIXELS(crystal->y) > 120 && crystal->velocityY > px(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
             crystal->y = px(120);
             work->shakeFrames = 1;
@@ -466,12 +466,12 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame < BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
         draw(canvas, work->sheet,
-             Q_16_16_TO_INT(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
-             Q_16_16_TO_INT(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
+             WHOLE_PIXELS(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
+             WHOLE_PIXELS(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
              BOREAS_CRYSTAL_WIDTH, BOREAS_CRYSTAL_HEIGHT);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
-        if (Q_16_16_TO_INT(work->particles[i].y) > 120 && frame <= 47) {
+        if (WHOLE_PIXELS(work->particles[i].y) > 120 && frame <= 47) {
           work->particles[i].x = px((Random16() & 127) + 64);
           work->particles[i].y = -px(16);
         }

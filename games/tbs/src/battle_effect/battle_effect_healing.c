@@ -235,9 +235,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // The Djinni sways, then rises away.
     if (work->args->prelude == 1) {
       if (doubleWidth == 0) {
-        s32 x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20) + originX +
+        s32 x = WHOLE_PIXELS(Trig_Sin(frame << 11) * 20) + originX +
                 canvasShiftX - 20;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
+        s32 y = WHOLE_PIXELS(Trig_Cos(frame << 11) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -247,8 +247,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
                   DJINNI_WIDTH, DJINNI_HEIGHT);
       } else {
-        s32 x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 10) + originX / 2 - 10;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
+        s32 x = WHOLE_PIXELS(Trig_Sin(frame << 11) * 10) + originX / 2 - 10;
+        s32 y = WHOLE_PIXELS(Trig_Cos(frame << 11) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;

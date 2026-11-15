@@ -12,6 +12,9 @@
 
 /// Whole pixels as 16.16, for arithmetic on a stored position or speed.
 #define px(value) ((value) << 16)
+/// The whole pixels of a 16.16 value, px() undone: an arithmetic shift, so a
+/// negative value rounds down.
+#define WHOLE_PIXELS(value) ((value) >> 16)
 
 /// A whole or decimal number as 16.16, for the macros that take plain pixels
 /// and decimal speeds: Q16(0.8) is 52428. It multiplies where px() shifts, so

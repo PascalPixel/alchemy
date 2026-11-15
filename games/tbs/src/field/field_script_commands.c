@@ -476,8 +476,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   actor->acceleration = watchedActor->acceleration;
   dx = watchedActor->x.fixed - actor->x.fixed;
   dz = watchedActor->z.fixed - actor->z.fixed;
-  deltaXPixels = FIELD_PIXEL(dx);
-  deltaZPixels = FIELD_PIXEL(dz);
+  deltaXPixels = WHOLE_PIXELS(dx);
+  deltaZPixels = WHOLE_PIXELS(dz);
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
   // Further than 16 pixels: aim at the point 16 pixels short of the watched

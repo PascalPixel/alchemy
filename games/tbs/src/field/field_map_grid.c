@@ -501,8 +501,8 @@ void MapGrid_UpdateLayerScroll(void) {
         MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     // MAPGRID_LAYER_GROUND scrolls BG3, MAPGRID_LAYER_OVERHEAD BG1.
-    gBgScroll[3 - layerIndex].x = FIELD_PIXEL(baseX);
-    gBgScroll[3 - layerIndex].y = FIELD_PIXEL(baseY);
+    gBgScroll[3 - layerIndex].x = WHOLE_PIXELS(baseX);
+    gBgScroll[3 - layerIndex].y = WHOLE_PIXELS(baseY);
     layer->x = baseX;
     layer->y = baseY;
   }

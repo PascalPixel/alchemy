@@ -142,8 +142,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         s32 life;
         s32 y;
 
-        y = Q_16_16_TO_INT(flash->y);
-        x = Q_16_16_TO_INT(flash->x) + canvasCenterX;
+        y = WHOLE_PIXELS(flash->y);
+        x = WHOLE_PIXELS(flash->x) + canvasCenterX;
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
@@ -229,8 +229,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
             size += 2;
           }
           EFFECT_SWELL_MOTE(size, frame);
-          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, Q_16_16_TO_INT(dust->x),
-                           Q_16_16_TO_INT(dust->y), size);
+          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, WHOLE_PIXELS(dust->x),
+                           WHOLE_PIXELS(dust->y), size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -239,7 +239,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
           dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
-          if (dust->velocityY > 0 && Q_16_16_TO_INT(dust->y) > 108) {
+          if (dust->velocityY > 0 && WHOLE_PIXELS(dust->y) > 108) {
             dust->variant = -1;
           }
         }
@@ -295,8 +295,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
               size = spark->variant / 5 + 1;
               picture = sheet + gBattleEffect_MotePictures[size - 1];
-              x = Q_16_16_TO_INT(x);
-              y = Q_16_16_TO_INT(y);
+              x = WHOLE_PIXELS(x);
+              y = WHOLE_PIXELS(y);
               x -= size / 2;
               y -= size;
               blitters[0](canvas, picture, x, y, size, size * 2);

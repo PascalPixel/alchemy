@@ -213,7 +213,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
-          y = base.y - Q_16_16_TO_INT(Trig_Cos(angle) * radius) -
+          y = base.y - WHOLE_PIXELS(Trig_Cos(angle) * radius) -
               (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |
@@ -390,14 +390,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         picture = (current->variant / 16) & 7;
         if (picture < 4)
           drawUpright(canvas, work->sheet + (picture << 10),
-                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
-                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
-                      SHEEP_WIDTH, SHEEP_HEIGHT);
+                      WHOLE_PIXELS(current->x) - SHEEP_WIDTH / 2,
+                      WHOLE_PIXELS(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      SHEEP_HEIGHT);
         else
           drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
-                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
-                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
-                      SHEEP_WIDTH, SHEEP_HEIGHT);
+                      WHOLE_PIXELS(current->x) - SHEEP_WIDTH / 2,
+                      WHOLE_PIXELS(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      SHEEP_HEIGHT);
         current->y += current->velocityY;
         current->velocityY += px(1) / 8;
         current->variant += current->z;

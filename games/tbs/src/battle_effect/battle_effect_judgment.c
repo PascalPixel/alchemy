@@ -367,9 +367,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 k = i & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 x =
-            Q_16_16_TO_INT(Trig_Sin(angle) * 16) - gJudgment_ShardWidths[k] / 2;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 16) -
-                gJudgment_ShardHeights[k] / 2;
+            WHOLE_PIXELS(Trig_Sin(angle) * 16) - gJudgment_ShardWidths[k] / 2;
+        s32 y =
+            WHOLE_PIXELS(Trig_Cos(angle) * 16) - gJudgment_ShardHeights[k] / 2;
         draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
                 y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
@@ -405,7 +405,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         blit = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
         for (i = 0; i != JUDGMENT_RING_MOTES; i++) {
           s32 angle = i * (TRIG_TURN / JUDGMENT_RING_MOTES);
-          s32 x = Q_16_16_TO_INT(r * Trig_Sin(angle)) - high / 2;
+          s32 x = WHOLE_PIXELS(r * Trig_Sin(angle)) - high / 2;
           s32 y = (r * Trig_Cos(angle)) >> 17;
           blit(canvas, work->sheet + picture, x + 60, y + 72, high, high * 2);
         }
@@ -701,7 +701,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 size = 10;
       for (i = 0; i != JUDGMENT_FLASH_RING_MOTES; i++) {
         s32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
-        s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * radius) - (size >> 1);
+        s32 x = WHOLE_PIXELS(Trig_Sin(angle) * radius) - (size >> 1);
         s32 y = (Trig_Cos(angle) * radius) >> 17;
         draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
@@ -792,8 +792,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame >= 86 && frame < JUDGMENT_SWEEP_BEACH) {
       s32 angle = -TRIG_TURN / 4;
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
-        s32 x = Q_16_16_TO_INT((frame - 86) * Trig_Sin(angle));
-        s32 y = Q_16_16_TO_INT((frame - 70) * Trig_Cos(angle));
+        s32 x = WHOLE_PIXELS((frame - 86) * Trig_Sin(angle));
+        s32 y = WHOLE_PIXELS((frame - 70) * Trig_Cos(angle));
         draw[0](canvas,
                 work->sheet +
                     ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +

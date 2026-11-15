@@ -122,8 +122,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         s32 ry;
 
         angle = i << 12; // 22.5 degrees apart
-        rx = screen.x + Q_16_16_TO_INT(Trig_Sin(angle) * (frame - 46));
-        ry = Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46)) - frame + 100;
+        rx = screen.x + WHOLE_PIXELS(Trig_Sin(angle) * (frame - 46));
+        ry = WHOLE_PIXELS(Trig_Cos(angle) * (frame - 46)) - frame + 100;
         draw[0](canvas,
                 work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
                 rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
@@ -251,16 +251,16 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[drift < 0](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            Q_16_16_TO_INT(blade->x) - (width >> 1),
-            Q_16_16_TO_INT(blade->y) - (height >> 1), width, height);
+        blit[drift < 0](canvas,
+                        work->sheet + gDeathPlunge_SwordPictures[picture],
+                        WHOLE_PIXELS(blade->x) - (width >> 1),
+                        WHOLE_PIXELS(blade->y) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            Q_16_16_TO_INT(blade->x) -
+            WHOLE_PIXELS(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            Q_16_16_TO_INT(blade->y) -
+            WHOLE_PIXELS(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height);
 #endif
@@ -277,14 +277,14 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         height = gDeathPlunge_SwordHeights[picture];
         blit[drift < 0](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            Q_16_16_TO_INT(blade->x) - (width >> 1),
-            Q_16_16_TO_INT(blade->y) - (height >> 1), width, height - 4);
+            WHOLE_PIXELS(blade->x) - (width >> 1),
+            WHOLE_PIXELS(blade->y) - (height >> 1), width, height - 4);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            Q_16_16_TO_INT(blade->x) -
+            WHOLE_PIXELS(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            Q_16_16_TO_INT(blade->y) -
+            WHOLE_PIXELS(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height - 4);
 #endif
@@ -707,7 +707,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->imageStorage + gDeathPlunge_PiecePictures[i],
-                Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
+                WHOLE_PIXELS(piece->x), WHOLE_PIXELS(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           Particle_AdvanceWithGravity2D(piece, PARTICLE_DAMPING_NONE,
@@ -759,8 +759,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           if (picture > 5)
             picture = 5;
           draw[1](canvas, work->sheet + picture * PICTURE_BYTES(FLASH_BURST),
-                  Q_16_16_TO_INT(piece->x) - FLASH_BURST_WIDTH / 2,
-                  Q_16_16_TO_INT(piece->y) - FLASH_BURST_HEIGHT / 2,
+                  WHOLE_PIXELS(piece->x) - FLASH_BURST_WIDTH / 2,
+                  WHOLE_PIXELS(piece->y) - FLASH_BURST_HEIGHT / 2,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           Particle_AdvanceWithGravity2D(piece, 60, -px(1) / 16);
           piece->variant++;
@@ -904,8 +904,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
         if (mote->variant >= 0 && mote->y > 0) {
           s32 size = (mote->variant >> 3) + 1;
-          s32 x = Q_16_16_TO_INT(mote->y * Trig_Sin(mote->x)) + 64;
-          s32 y = Q_16_16_TO_INT(mote->y * Trig_Cos(mote->x)) + ground.y;
+          s32 x = WHOLE_PIXELS(mote->y * Trig_Sin(mote->x)) + 64;
+          s32 y = WHOLE_PIXELS(mote->y * Trig_Cos(mote->x)) + ground.y;
 
           // DEAD: never true, as the variant is not negative here; the ROM
           // keeps the test and the store.

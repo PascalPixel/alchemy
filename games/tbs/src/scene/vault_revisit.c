@@ -379,7 +379,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((FIELD_PIXEL(jumpingActor->velocityY)) == 0)
+    if ((WHOLE_PIXELS(jumpingActor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);

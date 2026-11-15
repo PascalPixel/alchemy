@@ -302,8 +302,8 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridCell *cell;
   u8 *heightBytes;
 
-  x = FIELD_PIXEL(x);
-  y = FIELD_PIXEL(y);
+  x = WHOLE_PIXELS(x);
+  y = WHOLE_PIXELS(y);
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   if (work != NULL) {
@@ -338,8 +338,8 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   s32 cellY;
   u32 heightAttributeIndex;
 
-  x = FIELD_PIXEL(x);
-  y = FIELD_PIXEL(y);
+  x = WHOLE_PIXELS(x);
+  y = WHOLE_PIXELS(y);
   cells = (struct MapGridCell *)gMapGridCellBuffer;
   if (gridState != 0) {
     cells = gridState->layers[layer & 3].cells;

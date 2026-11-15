@@ -44,14 +44,16 @@
 #include "system/vector3.h"
 #include "module/field/field.h"
 #include "field_event.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
-// Story flags of the mast puzzle and its events.
-#define FLAG_FIRST_BLOCK_SUNK 0x8a0  // actor 10
-#define FLAG_SECOND_BLOCK_SUNK 0x8a1 // actor 11
+/// Story flags of the mast puzzle and its events.
+#define FLAG_FIRST_BLOCK_SUNK 0x8a0  ///< actor 10
+#define FLAG_SECOND_BLOCK_SUNK 0x8a1 ///< actor 11
 #define FLAG_CONE_POUNDED 0x8a2
 #define FLAG_ROPE_LASHED 0x8a3
-#define FLAG_LAST_CRATE_SUNK 0x8a4  // actor 16
-#define FLAG_FIRST_CRATE_SUNK 0x8a5 // actor 17
+#define FLAG_LAST_CRATE_SUNK 0x8a4  ///< actor 16
+#define FLAG_FIRST_CRATE_SUNK 0x8a5 ///< actor 17
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
 #define FLAG_OVERHEARD_WORKERS 0x8a9
@@ -598,8 +600,8 @@ void EasternAlhafra_FillWaveLines(void) {
 }
 
 void EasternAlhafra_StartWave(void) {
-  Task_AddFrame(EasternAlhafra_FillWaveLines, 0x480);
-  Task_AddFrame(EasternAlhafra_StartWaveDma, 0xc80);
+  Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_VBLANK);
+  Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_FRAME);
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
@@ -2769,44 +2771,74 @@ u8 gEasternAlhafra_WaveTableIndex[] = {
 };
 
 s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
-    39, 2, 5, 0, 0, 0x80000,
-    1, 5, 0x100000, 0, 0x100000, 1,
-    5, 0x100000, 0, -0x100000, 1, 5,
-    0, 0, -0x100000, 1, 39, 1,
-    22, 3, 0x8000, 0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, px(8)),
+    SC_SYNC,
+    SC_MOVE_BY(px(16), 0, px(16)),
+    SC_SYNC,
+    SC_MOVE_BY(px(16), 0, -px(16)),
+    SC_SYNC,
+    SC_MOVE_BY(0, 0, -px(16)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
-    39, 2, 5, 0x200000, 0, 0x200000,
-    1, 5, 0x100000, 0, -0x100000, 1,
-    5, 0x20000, 0, -0x60000, 1, 39,
-    1, 22, 3, 0x8000, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(32), 0, px(32)),
+    SC_SYNC,
+    SC_MOVE_BY(px(16), 0, -px(16)),
+    SC_SYNC,
+    SC_MOVE_BY(px(2), 0, -px(6)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gEasternAlhafra_FirstWorkerRunScript[] = {
-    39, 2, 5, 0x300000, 0, 0,
-    1, 4, 0xa80000, 0, 0x2480000, 1,
-    39, 1, 22, 3, 0xe000, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(48), 0, 0),
+    SC_SYNC,
+    SC_MOVE(px(168), 0, px(584)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gEasternAlhafra_SecondWorkerRunScript[] = {
-    39, 2, 5, 0x300000, 0, 0,
-    1, 4, 0xb80000, 0, 0x2480000, 1,
-    39, 1, 22, 3, 0xe000, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(48), 0, 0),
+    SC_SYNC,
+    SC_MOVE(px(184), 0, px(584)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gEasternAlhafra_RunOffScript[] = {
-    39, 2, 4, 0x980000, 0, 0x2800000,
-    1, 5, -0x500000, 0, 0, 1,
-    5, -0x200000, 0, -0x200000, 1, 5,
-    -0x180000, 0, 0, 1, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(640)),
+    SC_SYNC,
+    SC_MOVE_BY(-px(80), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(-px(32), 0, -px(32)),
+    SC_SYNC,
+    SC_MOVE_BY(-px(24), 0, 0),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 
 u32 gEasternAlhafra_PuffScript[] = {
-    38,
+    SC_FREE,
 };

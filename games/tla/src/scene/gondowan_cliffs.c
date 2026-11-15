@@ -13,6 +13,7 @@
 /// shared field effect object links between, and the tables are in
 /// data/gondowan_cliffs.c, which the overlay links after the field's tiles.
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -118,7 +119,7 @@ u32 gFieldEffect_LongScript[] = {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// Set as Frost freezes each puddle into a pillar of ice, for this visit.
+/// Set as Frost freezes each puddle into a pillar of ice, for this visit.
 #define FLAG_FIRST_PUDDLE_FROZEN 0x201
 #define FLAG_SECOND_PUDDLE_FROZEN 0x202
 
@@ -130,7 +131,7 @@ struct MapLayerBits {
   u8 priority : 2;
   u8 unk17High : 4;
 };
-// One rising platform and what rides it.
+/// One rising platform and what rides it.
 struct Geyser {
   s16 id;
   s16 timer;
@@ -238,7 +239,15 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_End();
 }
 
-#include "shared/pillar_set_moved.h"
+/// Marks a pillar moved: it stops and its cell moves.
+void GondowanCliffs_FreezeFirstPuddle(void) {
+  struct Actor *object = Actor_Get(12);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
+  Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
+}
 
 void GondowanCliffs_FreezeSecondPuddle(void) {
   struct Actor *object = Actor_Get(13);
@@ -334,13 +343,13 @@ void GondowanCliffs_SetUpPass(void) {
   Tightrope_Initialize();
   Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
   Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors, 0x05000018, 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
+  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
 }
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-// The scene that asks where the party intends to go, to help recover the black
-// orb.
+/// The scene that asks where the party intends to go, to help recover the black
+/// orb.
 void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -398,16 +407,16 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
-// Gondowan Cliffs' setup: Ov66bRoom2 runs GondowanCliffs_SetUpPass and
-// returns; with flag 0x8f3 set and 0x8ef clear it runs
-// GondowanCliffs_TurnBackToHelpPiers; otherwise in Ov66bRoom1 it starts the
-// room's lists, places or raises actor 14 by flag
-// FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN, copies cells by flags
-// FLAG_FIRST_PUDDLE_FROZEN and FLAG_SECOND_PUDDLE_FROZEN, records the swinging
-// actor 17 (Geyser_Add) and places it by flag FLAG_GONDOWAN_CLIFFS_GEYSER_DUG,
-// sets actor 16's mode, places actor 15 by flag
-// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER, saves four palette colours, schedules
-// GondowanCliffs_CycleWaterColors and sets BG layer priority. Returns 0.
+/// Gondowan Cliffs' setup: Ov66bRoom2 runs GondowanCliffs_SetUpPass and
+/// returns; with flag 0x8f3 set and 0x8ef clear it runs
+/// GondowanCliffs_TurnBackToHelpPiers; otherwise in Ov66bRoom1 it starts the
+/// room's lists, places or raises actor 14 by flag
+/// FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN, copies cells by flags
+/// FLAG_FIRST_PUDDLE_FROZEN and FLAG_SECOND_PUDDLE_FROZEN, records the swinging
+/// actor 17 (Geyser_Add) and places it by flag FLAG_GONDOWAN_CLIFFS_GEYSER_DUG,
+/// sets actor 16's mode, places actor 15 by flag
+/// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER, saves four palette colours, schedules
+/// GondowanCliffs_CycleWaterColors and sets BG layer priority. Returns 0.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
@@ -460,7 +469,7 @@ s32 Scene_Initialize(void) {
   }
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
+  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
   ((struct MapLayerBits *)Ram_HeapSlots->mapGrid)->priority = 1;
 done:
   return 0;
@@ -474,12 +483,12 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-// The whole-pixel half of a 16.16 coordinate.
+/// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
-// The swinging actors' callback, the same as Yampi Desert's platforms: for each
-// of the 16 entries it moves the actor on its timer, writes its height to the
-// collision and cell maps, and carries its rider with a bob.
+/// The swinging actors' callback, the same as Yampi Desert's platforms: for
+/// each of the 16 entries it moves the actor on its timer, writes its height to
+/// the collision and cell maps, and carries its rider with a bob.
 void Geysers_Update(void) {
   struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -557,11 +566,11 @@ void Geysers_Update(void) {
 
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 
-// Draws the swinging actors' ropes and heads (the 16 records of
-// gInventorySnapshot
-// + 0x188 kept by Geyser_Add): for each raised actor, a rope segment every
-// 16 pixels of its height and the bobbing head on top, at most 80 sprites,
-// queued by Oam_AddSpriteAtDepthClamped.
+/// Draws the swinging actors' ropes and heads (the 16 records of
+/// gInventorySnapshot
+/// + 0x188 kept by Geyser_Add): for each raised actor, a rope segment every
+/// 16 pixels of its height and the bobbing head on top, at most 80 sprites,
+/// queued by Oam_AddSpriteAtDepthClamped.
 void Geysers_Draw(void) {
   struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
   struct Geyser *swing = work->entries;
@@ -655,8 +664,8 @@ void Geysers_Start(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  FieldTask_AddFrame((s32)Geysers_Update, 0x48d);
-  FieldTask_AddFrame((s32)Geysers_Draw, 0x480);
+  FieldTask_AddFrame((s32)Geysers_Update, TASK_PASS_VBLANK + 13);
+  FieldTask_AddFrame((s32)Geysers_Draw, TASK_PASS_VBLANK);
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
 }
 
@@ -714,7 +723,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 
 #include "text/msg_ids.h"
 
-// Set as Frost freezes each puddle into a pillar of ice, for this visit.
+/// Set as Frost freezes each puddle into a pillar of ice, for this visit.
 #define FLAG_FIRST_PUDDLE_FROZEN 0x201
 #define FLAG_SECOND_PUDDLE_FROZEN 0x202
 

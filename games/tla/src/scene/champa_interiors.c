@@ -72,11 +72,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gChampaInteriors_ActorPlacements;
 }
 
+/// Champa's shops, as Shop_Run numbers them.
+enum { SHOP_CHAMPA = 25 };
+
+/// Champa's inn, as Inn_CheckIn numbers the inns.
+enum { CHAMPA_INN = 10 };
+
 /// Talking to the artifact merchant across his counter opens his shop.
-void ChampaInteriors_OpenArtifactShop(s32 actor) { Shop_Run(25, actor); }
+void ChampaInteriors_OpenArtifactShop(s32 actor) {
+  Shop_Run(SHOP_CHAMPA, actor);
+}
 
 /// Talking to the innkeeper across his counter opens the inn.
-void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(10, actor); }
+void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(CHAMPA_INN, actor); }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&

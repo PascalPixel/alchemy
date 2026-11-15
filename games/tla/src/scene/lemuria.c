@@ -3,6 +3,7 @@
 /// children, the spring, the vine Growth raises, the treasure Scoop finds, and
 /// the water's rippling scroll and cycling colours.
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "flags.h"
 #include "types.h"
@@ -628,7 +629,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition = 0x201;
-  FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
+  FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_FRAME);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   FieldActor_SetSpritePriority(9, 3);

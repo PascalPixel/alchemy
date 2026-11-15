@@ -8,6 +8,7 @@
 /// it. Douse fills the two pillars that sink on their droplet tiles and open
 /// the way to the engine room, where Piers sets the Black Crystal and the
 /// ship sails.
+#include "system/task.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -902,7 +903,7 @@ void LemurianShip_DrawLightToOrb(void) {
   s32 position[3];
   struct Actor *object;
 
-  SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
+  SET_VECTOR(position, px(808), px(8), px(140));
   Vector_AddPolarOffset(0x200000, Random16(), position);
   object = ((struct Actor *)Import_ActorCreate(0x2a2, position[0], position[1],
                                                position[2]));
@@ -958,7 +959,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Actor_SetSpritePriority(ACTOR_PIERS, 1);
   Event_PlaySound(SE_SHIMMER);
-  Task_Add(LemurianShip_DrawLightToOrb, 0x480);
+  Task_Add(LemurianShip_DrawLightToOrb, TASK_PASS_VBLANK);
   Event_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(20);
@@ -1220,7 +1221,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
 
     object->motionFlags = 0;
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
-                                         206 << 18, px(-32), 144 << 15);
+                                         px(824), px(-32), px(72));
     object->groundHeight = -px(32);
     if (Event_GetFlag((FLAG_PUDDLE_FROZEN + 2)))
       MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
@@ -1311,7 +1312,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     LemurianShip_SetUpRaisedJelly(14);
   }
   FlagBlock_PlaceAll(gLemurianShip_SixJellyRoomPuddles);
-  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, 0x480);
+  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 2))) {
     LemurianShip_MeltJellyIntoPuddle(9, 15);
     Event_ClearFlag((FLAG_JELLY_MELTING + 2));
@@ -1431,7 +1432,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     LemurianShip_SetUpJelly(15);
   }
   FlagBlock_PlaceAll(gLemurianShip_SevenJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, 0x480);
+  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 8))) {
     LemurianShip_MeltJellyIntoPuddle(9, 16);
     Event_ClearFlag((FLAG_JELLY_MELTING + 8));
@@ -1551,7 +1552,7 @@ void LemurianShip_SetUpPillarRoom(void) {
   }
   wait(1);
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, 0x480);
+  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_VBLANK);
   if (!Event_GetFlag(FLAG_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(10)), 15);
   if (!Event_GetFlag((FLAG_PUDDLE_FROZEN + 1)))
@@ -1570,8 +1571,8 @@ void LemurianShip_SetUpEngineRoom(void) {
 s32 gLemurianShip_IntoPassage[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -1600,8 +1601,8 @@ s32 gLemurianShip_HydraSwells[] = {
     SC_WAIT(4),
     SC_LOOP(8, SC_TOP),
     SC_END,
-    SC_ADD(SW_SCALE_X, -512),
-    SC_ADD(SW_SCALE_Y, -512),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 128),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
     SC_WAIT(1),
     SC_LOOP(160, SC_TOP),
     SC_END,

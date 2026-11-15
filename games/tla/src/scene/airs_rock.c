@@ -3,6 +3,7 @@
 /// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
+#include "system/task.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -18,6 +19,8 @@
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set once Move has left the second room's first pillar on its ledge, cell
 /// (16, 43).
@@ -34,14 +37,14 @@
 /// (AirsRock_MoveThirdPillar).
 #define FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED 0x879
 
-// Story flags: the eight barriers the Wind Stones' gusts blow away, in the
-// order of gAirsRock_GustTargets, then the mud blown from the wall, the fog
-// cleared and the way to the top opened.
+/// Story flags: the eight barriers the Wind Stones' gusts blow away, in the
+/// order of gAirsRock_GustTargets, then the mud blown from the wall, the fog
+/// cleared and the way to the top opened.
 #define FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN 0x850
 #define FLAG_AIRS_ROCK_WALL_CLEARED 0x858
 #define FLAG_AIRS_ROCK_FOG_CLEARED 0x87a
 #define FLAG_AIRS_ROCK_TOP_OPENED 0x87b
-// The leader rides a statue's whirlwind.
+/// The leader rides a statue's whirlwind.
 #define FLAG_RIDING_WHIRLWIND FLAG_SCENE_TEMP_50
 #include "graphics/resource.h"
 #include "battle/battle.h"
@@ -219,7 +222,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-// Examining a Wind Stone shows its warning.
+/// Examining a Wind Stone shows its warning.
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -230,7 +233,7 @@ void AirsRock_ExamineWindStone(void) {
 
 s32 Map_ClearLayerEntryFlag();
 
-// Walking into the rock's door: it opens and the leader goes inside.
+/// Walking into the rock's door: it opens and the leader goes inside.
 void AirsRock_EnterTheRock(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -263,9 +266,10 @@ void AirsRock_MoveFirstPillar(void) {
   Event_End();
 }
 
-// Object 11's column sets or clears flag 0x311 and writes the low byte of the
-// cell value MapCell_GetAttributes returns (its high byte 0xff when the object
-// is away) into two places; with the leader 208 pixels up a block copy follows.
+/// Object 11's column sets or clears flag 0x311 and writes the low byte of the
+/// cell value MapCell_GetAttributes returns (its high byte 0xff when the object
+/// is away) into two places; with the leader 208 pixels up a block copy
+/// follows.
 void AirsRock_MoveSecondPillar(void) {
   struct Actor *object;
   struct Actor *leader;
@@ -304,9 +308,9 @@ void AirsRock_MoveThirdPillar(void) {
   Event_End();
 }
 
-// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
-// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
-// pixels on and plays cue 390 again.
+/// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
+/// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
+/// pixels on and plays cue 390 again.
 void AirsRock_ClimbLedge(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 z = leader->z.fixed;
@@ -320,7 +324,7 @@ void AirsRock_ClimbLedge(void) {
   leader->motionFlags |= 2;
   leader->velocityY = px(4);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
-                                z + 0xc0000);
+                                z + px(12));
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH_SOUTHWEST,
@@ -334,7 +338,7 @@ void AirsRock_ClimbLedge(void) {
   leader->motionFlags = 3;
   leader->velocityY = px(3);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
-                                z + 0x100000);
+                                z + px(16));
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -351,8 +355,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAirsRock_Triggers;
 }
 
-// Whirlwind on a Wind Stone or the twister rock: the scene's own effect runs in
-// place of Whirlwind's (AirsRock_TakeOverWhirlwind).
+/// Whirlwind on a Wind Stone or the twister rock: the scene's own effect runs
+/// in place of Whirlwind's (AirsRock_TakeOverWhirlwind).
 void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRock_TakeOverWhirlwind(void) {
@@ -361,8 +365,8 @@ void AirsRock_TakeOverWhirlwind(void) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-// Circles the object around the centre in words 68 and 76, the radius
-// growing with its height, one step of 256 per lap.
+/// Circles the object around the centre in words 68 and 76, the radius
+/// growing with its height, one step of 256 per lap.
 void AirsRock_SpiralGust(struct Actor *object) {
   s32 radius = object->y.fixed;
   s32 step = WORD_AT(object, 48);
@@ -378,8 +382,8 @@ void AirsRock_SpiralGust(struct Actor *object) {
   WORD_AT(object, 48)++;
 }
 
-// The same circle on a smaller radius, twice as wide, blinking the part
-// attribute every other frame.
+/// The same circle on a smaller radius, twice as wide, blinking the part
+/// attribute every other frame.
 void AirsRock_SpiralSpark(struct Actor *object) {
   s32 radius = object->y.fixed;
   s32 step = WORD_AT(object, 48);
@@ -411,15 +415,15 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
-// target and grows, shedding sparks every fourth frame while the target
-// flickers; then it travels in the leader's facing, two cells a step, until
-// MapCell_GetAttributes finds a cell with something on it, throwing leaves as
-// it goes. With nothing there (255) it ends with cue 136; otherwise it stops
-// one and a half cells short and blows the thing found along, copying its cells
-// each fourth frame, and sets that thing's flag
-// (FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + hit - 1) with cue 298. Then the gust
-// shrinks and rises away over 8 frames.
+/// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
+/// target and grows, shedding sparks every fourth frame while the target
+/// flickers; then it travels in the leader's facing, two cells a step, until
+/// MapCell_GetAttributes finds a cell with something on it, throwing leaves as
+/// it goes. With nothing there (255) it ends with cue 136; otherwise it stops
+/// one and a half cells short and blows the thing found along, copying its
+/// cells each fourth frame, and sets that thing's flag
+/// (FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + hit - 1) with cue 298. Then the gust
+/// shrinks and rises away over 8 frames.
 void AirsRock_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectWork *effect =
@@ -596,14 +600,14 @@ void AirsRock_BlowGust(void) {
   Event_End();
 }
 
-// The scroll of the swirling sand, by HBlank lines.
+/// The scroll of the swirling sand, by HBlank lines.
 #define WAVE_SCROLL AirsRock_ScrollWave
 #define WAVE_SCROLL_LINES gAirsRock_WaveLines
 #include "../field/field_effect/wave_scroll.c"
 
-// Moves the object: left of x 320 it speeds up rightward and grows, past it
-// it speeds up leftward and shrinks; its priority follows its direction and
-// its sprite spins.
+/// Moves the object: left of x 320 it speeds up rightward and grows, past it
+/// it speeds up leftward and shrinks; its priority follows its direction and
+/// its sprite spins.
 void AirsRock_SwirlLeaf(struct Actor *object) {
   s32 scale;
 
@@ -632,8 +636,8 @@ struct SpriteParts {
   u8 part : 2;
 };
 
-// Whirlwind on the twister rock of the first slope: the mud is blown from the
-// wall so it can be climbed.
+/// Whirlwind on the twister rock of the first slope: the mud is blown from the
+/// wall so it can be climbed.
 void AirsRock_WhirlwindClearsWall(void) {
   struct MainRoutineWork *work;
   u16 *buffer = Heap_Alloc(0x680);
@@ -714,7 +718,7 @@ row:
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
-  Task_AddFrame(AirsRock_ScrollWave, 0xc80);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
@@ -810,8 +814,8 @@ fade:
   Event_End();
 }
 
-// The leader rides a statue's whirlwind along its path until it fades, landing
-// where it ends.
+/// The leader rides a statue's whirlwind along its path until it fades, landing
+/// where it ends.
 void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
@@ -959,8 +963,8 @@ void AirsRock_RideWhirlwind(void) {
 extern u32 gAirsRock_WhirlwindRisesScript[];
 extern u32 gAirsRock_WhirlwindFadesScript[];
 
-// A statue's whirlwind's update: it travels its way, picks up a leader it
-// touches and fades on a wall or another statue.
+/// A statue's whirlwind's update: it travels its way, picks up a leader it
+/// touches and fades on a wall or another statue.
 void AirsRock_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1042,10 +1046,10 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   }
 }
 
-// A launcher's update, the Air's Rock Inside launcher with a new shot each
-// time: while none of the event work's four busy counters is set it counts
-// frames in its action parameter, and at 240 launches a shot 8 pixels ahead
-// along its angle with a dust effect below it.
+/// A launcher's update, the Air's Rock Inside launcher with a new shot each
+/// time: while none of the event work's four busy counters is set it counts
+/// frames in its action parameter, and at 240 launches a shot 8 pixels ahead
+/// along its angle with a dust effect below it.
 void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
@@ -1087,7 +1091,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
   object->timer++;
 }
 
-// Before a push or Move on a pillar: lifts it and frees the cells beside it.
+/// Before a push or Move on a pillar: lifts it and frees the cells beside it.
 void AirsRock_LiftPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -1104,8 +1108,8 @@ void AirsRock_LiftPillar(void) {
 extern void
 Actor_PlaceMovedBlock__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
-// After it: a pillar left over a gap drops into it with a thump, closing the
-// gap, and sets its flag.
+/// After it: a pillar left over a gap drops into it with a thump, closing the
+/// gap, and sets its flag.
 void AirsRock_PlacePillar(void) {
   struct Actor *object = gFieldWork->movedBlock;
   s32 x, z;
@@ -1141,7 +1145,7 @@ void AirsRock_PlacePillar(void) {
 
 s32 FlagBlock_ApplyFlags();
 
-// Frost on the puddle freezes it into a pillar.
+/// Frost on the puddle freezes it into a pillar.
 void AirsRock_FreezePuddle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1151,7 +1155,7 @@ void AirsRock_FreezePuddle(void) {
 
 extern s32 gAirsRock_RubbleScript[];
 
-// A rock crumbles at x, z into rubble that scatters, shaking the screen.
+/// A rock crumbles at x, z into rubble that scatters, shaking the screen.
 void AirsRock_CrumbleRock(s32 x, s32 z) {
   struct Actor *first, *rock;
   struct EffectOptions options;
@@ -1203,9 +1207,9 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   MapGrid_SetShakeFixed(shakeA, shakeA, shakeC);
 }
 
-// Whirlwind on the purple twister rock (actor 14): it glows, the rocks in the
-// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top opens;
-// sets flag FLAG_AIRS_ROCK_TOP_OPENED.
+/// Whirlwind on the purple twister rock (actor 14): it glows, the rocks in the
+/// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top
+/// opens; sets flag FLAG_AIRS_ROCK_TOP_OPENED.
 void AirsRock_WhirlwindOpensTheTop(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
@@ -1367,8 +1371,8 @@ fade2:
   Event_End();
 }
 
-// The top's fog: its blend breathes between 4 and 8 sixteenths while its lines
-// ripple.
+/// The top's fog: its blend breathes between 4 and 8 sixteenths while its lines
+/// ripple.
 void AirsRock_DriftFog(void) {
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
   s16 *line = gAirsRock_WaveLines;
@@ -1435,8 +1439,8 @@ void AirsRock_LiftFog(void) {
   Dma_Set(table + 1, REG_BG0HOFS, 0xa2600003, (volatile u32 *)channel);
 }
 
-// Whirlwind on the stone in the fog: the fog lifts (AirsRock_LiftFog) and stays
-// clear.
+/// Whirlwind on the stone in the fog: the fog lifts (AirsRock_LiftFog) and
+/// stays clear.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(0x680);
   s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
@@ -1524,7 +1528,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(8);
-  Task_AddFrame(AirsRock_LiftFog, 0xc80);
+  Task_AddFrame(AirsRock_LiftFog, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);
   REG_DISPCNT |= 0x100;
   MapGrid_SetShake(3, 3, 1);
@@ -1536,7 +1540,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     System_Wait(1);
   }
   FieldTask_Remove(AirsRock_LiftFog);
-  Task_AddFrame(AirsRock_ScrollWave, 0xc80);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
   REG_BLDALPHA = 8;
   REG_BLDCNT = 0x3f42;
   for (i = 0; i != 257; i++) {
@@ -1584,8 +1588,8 @@ void AirsRock_WhirlwindClearsFog(void) {
 
 extern s32 gAirsRock_LeaderLevel;
 
-// Sets the ledge's cells for the height the leader climbs to, one of four
-// levels.
+/// Sets the ledge's cells for the height the leader climbs to, one of four
+/// levels.
 void AirsRock_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 level;
@@ -1616,14 +1620,14 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178))
 
-// A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
-// the given count of frames.
+/// A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
+/// the given count of frames.
 #define SWAY(id, phase)                                                        \
   (Actor_GetById(id)->timer = (phase),                                         \
    Actor_GetById(id)->update = AirsRock_StatueBreathesWhirlwind,               \
    Actor_SetSpriteFlags(Actor_GetById(id), 0))
 
-// The same for a statue that hangs at the given height.
+/// The same for a statue that hangs at the given height.
 #define HANG(id, height, phase)                                                \
   (Actor_GetById(id)->motionFlags = 0, Actor_GetById(id)->y.fixed = (height),  \
    SWAY(id, phase))
@@ -1763,7 +1767,7 @@ s32 Scene_Initialize(void) {
     case 1:
     case 2:
     case 3:
-      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, 0x480);
+      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
       Actor_GetById(8)->motionFlags = 0;
       Actor_GetById(8)->y.fixed = 0xfff80000;
       Actor_SetSpritePriority(8, 2);
@@ -1838,7 +1842,7 @@ s32 Scene_Initialize(void) {
         dma = (volatile struct DmaRegisters *)0x040000b0;
         while ((s32)dma->control < 0)
           ;
-        Task_AddFrame(AirsRock_DriftFog, 0xc80);
+        Task_AddFrame(AirsRock_DriftFog, TASK_PASS_FRAME);
         beam = (s32 *)Ram_HeapSlots->mapGrid;
         beam = (s32 *)((u8 *)beam + 0x178);
         beam[6] = 0x4000;
@@ -1935,21 +1939,33 @@ void AirsRock_MoveSecondPillar(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAirsRock_Room2Pillars[] = {
@@ -1963,30 +1979,34 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gAirsRock_WindStoneScript[] = {
-    22,
-    10,
-    0x18000,
-    39,
-    2,
-    46,
-    (s32)AirsRock_ClearScriptedActorSpriteFlags,
-    17,
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_ARG(2),
+    SC_CALL((s32)AirsRock_ClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
 u32 gAirsRock_WhirlwindFadesScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 
 u32 gAirsRock_WhirlwindRisesScript[] = {
-    0, 60, 39, 5, 0, 12,
-    38,
+    SC_WAIT(60),
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 
 s32 gAirsRock_RubbleScript[] = {
-    0, 1, 23, 9, -1310, 23,
-    10, -1310, 13, 32, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, -1310),
+    SC_ADD(SW_SCALE_Y, -1310),
+    SC_LOOP(32, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s16 gAirsRock_FrozenPuddle[] = {

@@ -21,6 +21,8 @@
 #include "system/ram_buffer.h"
 #include "flags.h"
 #include "field/event_inline.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gApojiiIslandsCave_FoliageScript[];
 
@@ -58,9 +60,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
 u32 gApojiiIslandsCave_FoliageScript[] = {
-    22, 26, 0, 22, 22, 0x40000,
-    22, 6, 0x30000, 22, 10, 0x18000,
-    17,
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_GROUND, 0x40000),
+    SC_SET(SW_Y, px(3)),
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_END,
 };
 // clang-format on
 

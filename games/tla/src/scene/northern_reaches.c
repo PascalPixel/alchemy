@@ -28,6 +28,7 @@
 #include "effect_sprite.h"
 #include "graphics/resource.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
 
 struct IceShard;
 struct IceShardSpark;
@@ -514,7 +515,9 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
 }
 
 s32 gNorthernReaches_ShipAtRest[] = {
-    46, (s32)NorthernReaches_ResetAnimationFrame, 39, 7, 17,
+    SC_CALL((s32)NorthernReaches_ResetAnimationFrame),
+    SC_ARG(7),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

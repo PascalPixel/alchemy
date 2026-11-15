@@ -54,11 +54,11 @@
 #include "module/field/field_effect.h"
 #include "text/msg_ids.h"
 
-// Set as each locked door opens to its key.
+/// Set as each locked door opens to its key.
 #define FLAG_RED_DOOR_OPENED 0xa07
 #define FLAG_BLUE_DOOR_OPENED 0xa08
-// Set once Move has set the fifth block on its cell, where it rises to bridge
-// the gap.
+/// Set once Move has set the fifth block on its cell, where it rises to bridge
+/// the gap.
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa06
 
 /// The grey blocks, numbering the rows of gActorPlacements.
@@ -688,7 +688,9 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 
@@ -788,8 +790,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 

@@ -5,6 +5,7 @@
 /// blue statue until Tremor shakes it out (AncientLemuria_CycloneRevealsRime,
 /// AncientLemuria_TremorShakesOutRime).
 
+#include "system/task.h"
 #include "types.h"
 #include "system/io_reg.h"
 #include "flags.h"
@@ -314,7 +315,7 @@ s32 AncientLemuria_CycleWaterColors(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 513;
-  Task_Add(AncientLemuria_CycleWaterColors, 0xc80);
+  Task_Add(AncientLemuria_CycleWaterColors, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance != 1)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   else

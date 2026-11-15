@@ -19,6 +19,8 @@
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct ContigoObject;
 
@@ -348,10 +350,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-void Contigo_SaltJoinsParty(void) { Djinn_JoinParty(16, 0, 14); }
+void Contigo_SaltJoinsParty(void) {
+  Djinn_JoinParty(16, DJINNI_SALT / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SALT));
+}
 
 void Contigo_FreedDjinniJoinsParty(void) {
-  Djinn_JoinParty(17, 2, 15);
+  Djinn_JoinParty(17, DJINNI_SHINE / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SHINE));
   GameFlag_Set(2534);
 }
 
@@ -366,7 +372,27 @@ s32 Lemuria_Distance(s32 *a, s32 *b) {
   return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-#include "shared/actor_is_facing_near.h"
+/// 1 when `other` is within `range` of `self` and `self` faces it, within one
+/// eighth of a turn.
+s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
+  s32 result = 0;
+  s32 *to;
+  s32 *from;
+
+  to = &other->x.fixed;
+  from = &self->x.fixed;
+  if (Lemuria_Distance(to, from) < range) {
+    u32 angle = (u16)ArcTan2(other->z.fixed - self->z.fixed, *to - *from);
+    u32 left = (angle - 0x1000) & 0xf000;
+    u32 right = (angle + 0x1000) & 0xf000;
+    u32 ahead = angle & 0xf000;
+    u32 facing = self->facing & 0xf000;
+
+    if (ahead == facing || right == facing || left == facing)
+      result = 1;
+  }
+  return result;
+}
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -584,8 +610,8 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-// The glow that grows over actor 17 and sinks away again, then the scene goes
-// on.
+/// The glow that grows over actor 17 and sinks away again, then the scene goes
+/// on.
 void Contigo_BabyThinks(void) {
   struct ContigoGlow *effect;
   s32 x = px(706);
@@ -623,7 +649,7 @@ void Contigo_BabyThinks(void) {
     if (i < 28)
       goto grow;
   }
-  Task_Add(Contigo_RaiseMotes, 0x480);
+  Task_Add(Contigo_RaiseMotes, TASK_PASS_VBLANK);
   Event_Wait(120);
   Task_Remove(Contigo_RaiseMotes);
   if (effect != 0) {
@@ -672,9 +698,19 @@ void Inn_CheckIn(s32 a, s32 b);
 
 #include "shared/leader_is_facing_north.h"
 
+/// Contigo's shops, as Shop_Run numbers them.
+enum {
+  SHOP_CONTIGO_WEAPONS = 26,
+  SHOP_CONTIGO_ARMOR = 27,
+  SHOP_CONTIGO_ITEMS = 28
+};
+
+/// Contigo's inn, as Inn_CheckIn numbers the inns.
+enum { CONTIGO_INN = 12 };
+
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(28, 13);
+    Shop_Run(SHOP_CONTIGO_ITEMS, 13);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -690,7 +726,7 @@ void Contigo_TalkToItemMerchant(void) {
 
 void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(26, 18);
+    Shop_Run(SHOP_CONTIGO_WEAPONS, 18);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -706,7 +742,7 @@ void Contigo_TalkToWeaponMerchant(void) {
 
 void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(27, 19);
+    Shop_Run(SHOP_CONTIGO_ARMOR, 19);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -722,7 +758,7 @@ void Contigo_TalkToArmorMerchant(void) {
 
 void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(12, 20);
+    Inn_CheckIn(CONTIGO_INN, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -860,8 +896,8 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_End();
 }
 
-// The bytes of an actor this handler uses. unk63 is the last of the four
-// scene-owned bytes the Broken Seal's actors keep at this place.
+/// The bytes of an actor this handler uses. unk63 is the last of the four
+/// scene-owned bytes the Broken Seal's actors keep at this place.
 struct TalkActor {
   u8 unk00[6];
   u16 angle; ///< 1/65536 turns
@@ -1020,7 +1056,7 @@ void Contigo_ScoopForSalt(void) {
 
     Event_Start();
     Event_ResolvePendingActions(1);
-    Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
+    Actor_SetHorizontalPositionWithTerrain(16, px(664), px(952));
     wait(1);
     Actor_FaceActorById(16, gMainRoutineWork.leaderActorId, 0);
     work->raisedTrigger = 200;
@@ -1050,7 +1086,7 @@ void Contigo_ForceFreesDjinni(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(17, 0x380000, 0x2ba0000);
+  Actor_SetHorizontalPositionWithTerrain(17, px(56), px(698));
   wait(1);
   options.priority = 2;
   Sound_Play(SE_THUMP);
@@ -1106,8 +1142,8 @@ void Contigo_PlaceStatue(s32 id) {
   object->y.fixed = px(64);
 }
 
-// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
-// child and collision flags for 27 to 33.
+/// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
+/// child and collision flags for 27 to 33.
 void Contigo_SetUpStatues(void) {
   Actor_SetModeById(19, 0);
   Actor_SetModeById(20, 1);
@@ -1147,8 +1183,8 @@ void Contigo_SetUpStatues(void) {
 extern void MessageArgument_Push(s32 value, s32 digits);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
-// The lucky wheels attendant: checks the game tickets and free item slots,
-// then sends the player in.
+/// The lucky wheels attendant: checks the game tickets and free item slots,
+/// then sends the player in.
 void Contigo_SendToLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -1239,7 +1275,7 @@ s32 Contigo_PickTopic(s32 topic) {
 
 extern u8 gSceneState[];
 
-// The dice game attendant: the fee is ten coins a level.
+/// The dice game attendant: the fee is ten coins a level.
 void Contigo_SendToLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
@@ -1278,7 +1314,7 @@ void Contigo_SendToLuckyDice(void) {
   Event_End();
 }
 
-// The Super Lucky Dice attendant: the same check without the fee shown.
+/// The Super Lucky Dice attendant: the same check without the fee shown.
 void Contigo_SendToSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
@@ -1367,7 +1403,7 @@ extern u32 gContigo_KradenReunionScript[];
 extern u32 gContigo_IsaacLeavesScript[];
 extern const u8 gContigo_SparkleWork[];
 
-// The reunion scene. It opens with "Glad you kept your promise".
+/// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
   struct ContigoObject *object;
   s32 answer;
@@ -2165,17 +2201,17 @@ void Contigo_KeepPriorityWithLeader(void) {
 
 void MapGrid_CenterOnFollowedPoint(void);
 
-// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
-// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
-// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17 by
-// flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109
-// is set, and while flag 0x200 is set has the camera follow the leader; it ends
-// with Palette_SetColors.
+/// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
+/// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
+/// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17
+/// by flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag
+/// 0x109 is set, and while flag 0x200 is set has the camera follow the leader;
+/// it ends with Palette_SetColors.
 void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
 
-  Task_Add(Contigo_KeepPriorityWithLeader, 0x480);
+  Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
   /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
    * address. */
   zero = 0;
@@ -2452,8 +2488,8 @@ struct CounterBits {
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
-// The sparkle's update: raises two pairs of sprites over the object, each pair
-// starting when its counter is cleared, until both counters pass 31.
+/// The sparkle's update: raises two pairs of sprites over the object, each pair
+/// starting when its counter is cleared, until both counters pass 31.
 void Contigo_RaiseSparkle(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
@@ -2552,8 +2588,8 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
-// hands the object to its update, Contigo_RaiseSparkle.
+/// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
+/// hands the object to its update, Contigo_RaiseSparkle.
 void Contigo_StartSparkle(struct Actor *object,
                           struct SparkleWork__s3e54 *work) {
   struct SparkleSprite__s3e54 *sprite;
@@ -2631,21 +2667,33 @@ s32 gContigo_SparkleTiles[] = {
 };
 
 u32 gContigo_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_Topics[] = {
@@ -2655,8 +2703,11 @@ u32 gContigo_Topics[] = {
 };
 
 s32 gContigo_EnterGameDoorScript[] = {
-    22, 26, 0, 23, 7, -0x8000,
-    0, 1, 13, 24, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
 };
 
 s16 gContigo_PaletteSlots[] = {
@@ -2699,88 +2750,119 @@ u32 gContigo_PacerScript[] = {
   };
 
 u32 gContigo_JennaReunionScript[] = {
-    39, 2, 4, 0xa40000, 0, 0x1680000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 22, 3,
-    0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(164), 0, px(360)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_PiersReunionScript[] = {
-    39, 2, 4, 0xbe0000, 0, 0x1600000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(190), 0, px(352)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_ShebaReunionScript[] = {
-    39, 2, 4, 0xbe0000, 0, 0x1860000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(190), 0, px(390)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_KradenReunionScript[] = {
-    39, 2, 4, 0xb60000, 0, 0x1700000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(182), 0, px(368)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_IsaacLeavesScript[] = {
-    39, 2, 4, 0xa00000, 0, 0x17e0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17, 39, 2, 0,
-    10, 13, 0xffff, 0,
+    SC_ARG(2),
+    SC_MOVE(px(160), 0, px(382)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
+    SC_ARG(2),
+    SC_WAIT(10),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gContigo_Room2WatcherScript[] = {
-    22, 9, 0x10000, 22, 10, 0x10000,
-    23, 9, -0x2800, 23, 10, 0x800,
-    0, 2, 23, 9, 0x1400, 23,
-    10, -1024, 0, 2, 23, 9,
-    0xa00, 23, 10, -512, 0, 2,
-    23, 9, 0xa00, 23, 10, -512,
-    0, 2, 13, 0xffff, 0,
+    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE * 5 / 32),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE * 5 / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gContigo_LeaderVisitsScript[] = {
-    39, 2, 4, 0x800000, 0, 0x17a0000,
-    1, 4, 0x840000, 0, 0x1680000, 1,
-    39, 1, 0, 10, 22, 3,
-    0, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(128), 0, px(378)),
+    SC_SYNC,
+    SC_MOVE(px(132), 0, px(360)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_HostScript[] = {
-    39, 2, 4, 0x840000, 0, 0x1670000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(132), 0, px(359)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gContigo_StatueScript[] = {
-    22,
-    3,
-    0x8000,
-    0,
-    120,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    22,
-    3,
-    0x8000,
-    0,
-    20,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    46,
-    (s32)Contigo_ShowSurprise,
-    0,
-    120,
-    13,
-    0xffff,
-    0,
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(120),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_CALL((s32)Contigo_ShowSurprise),
+    SC_WAIT(120),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gSceneEntrances[] = {

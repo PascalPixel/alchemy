@@ -27,6 +27,8 @@
 #include "module/game/game.h"
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct YallamInteriorsObject {
   u8 unk00[6];
@@ -233,6 +235,16 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
   Event_End();
 }
 
+/// Yallam's shops, as Shop_Run numbers them.
+enum {
+  SHOP_YALLAM_WEAPONS = 20,
+  SHOP_YALLAM_ARMOR = 21,
+  SHOP_YALLAM_ITEMS = 22
+};
+
+/// Yallam's inn, as Inn_CheckIn numbers the inns.
+enum { YALLAM_INN = 7 };
+
 /// Yallam's weapon merchant sells across the counter, and otherwise wishes
 /// Sunshine would work.
 void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
@@ -241,7 +253,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(20, actor);
+    Shop_Run(SHOP_YALLAM_WEAPONS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -260,7 +272,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(21, actor);
+    Shop_Run(SHOP_YALLAM_ARMOR, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -279,7 +291,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(22, actor);
+    Shop_Run(SHOP_YALLAM_ITEMS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -298,7 +310,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(7, actor);
+    Inn_CheckIn(YALLAM_INN, actor);
     Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
     Event_Start();
@@ -553,22 +565,48 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The villager who asks about children's songs wanders between two corners of
 /// the room.
 u32 gYallamInteriors_SongLoverWanders[] = {
-    22, 30, 131, 22, 16, 0x1999,
-    22, 15, 0x4ccc, 0x80010000, 39, 2,
-    4, 0x780000, 0, 0x680000, 1, 4,
-    0x800000, 0, 0x5c0000, 1, 0, 20,
-    39, 1, 0, 20, 39, 2,
-    4, 0x780000, 0, 0x680000, 1, 4,
-    0x580000, 0, 0x680000, 1, 0, 20,
-    39, 1, 0, 20, 13, 0xffff,
-    0xc0010000, 17, 22, 30, 129, 22,
-    16, 0x1999, 22, 15, 0x4ccc, 0x80010000,
-    39, 2, 4, 0x1b50000, 0, 0x7f0000,
-    1, 0, 20, 39, 1, 22,
-    3, 0x2000, 0, 60, 39, 2,
-    4, 0x1c50000, 0, 0x720000, 1, 0,
-    20, 39, 1, 22, 3, 0x2000,
-    0, 60, 13, 0xffff, 0xc0010000, 17,
+    SC_SET(SW_COLLISION, 131),
+    SC_SET(SW_ACCEL, Q16(0.1)),
+    SC_SET(SW_SPEED, Q16(0.3)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(104)),
+    SC_SYNC,
+    SC_MOVE(px(128), 0, px(92)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_WAIT(20),
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(104)),
+    SC_SYNC,
+    SC_MOVE(px(88), 0, px(104)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_ACCEL, Q16(0.1)),
+    SC_SET(SW_SPEED, Q16(0.3)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(437), 0, px(127)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(60),
+    SC_ARG(2),
+    SC_MOVE(px(453), 0, px(114)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

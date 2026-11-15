@@ -13,6 +13,8 @@
 #include "system/iwram_call.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set once Move has left the first inner room's pillar on cell (103, 41) in
 /// half cells.
@@ -42,8 +44,8 @@
 /// Set once Move has left the ninth inner room's pillar on (45, 33).
 #define FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED 0x8d3
 
-// Story flags: the statues of rooms 1 and 2 woken by Whirlwind, and the Reveal
-// tablet read.
+/// Story flags: the statues of rooms 1 and 2 woken by Whirlwind, and the Reveal
+/// tablet read.
 #define FLAG_AIRS_ROCK_ROOM1_STATUE_WOKEN 0x89a
 #define FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
@@ -82,7 +84,7 @@ void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Party_AddPp(s32 a, s32 b);
 void Sound_Play(s32 value);
 
-// The cell stampers keep their last cell and the block they copy.
+/// The cell stampers keep their last cell and the block they copy.
 extern s32 gAirsRockInside_StampedCell;
 extern s32 gAirsRockInside_StampedWidth;
 extern s32 gAirsRockInside_StampedHeight;
@@ -293,7 +295,7 @@ next:
     goto next;
 }
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -349,9 +351,9 @@ extern s32 gAirsRockInside_Room9Placements[];
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
-// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
-// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
-// the previous one and sets mode 9 after action 212, mode 10 otherwise.
+/// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
+/// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
+/// the previous one and sets mode 9 after action 212, mode 10 otherwise.
 void AirsRockInside_ScatterMote(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *self = (struct Actor *)object;
@@ -380,7 +382,7 @@ void AirsRockInside_ScatterMote(struct Actor *object) {
     Actor_SelectAnimation(object, 10);
 }
 
-// A mote's update, stopped while a menu or Psynergy is up.
+/// A mote's update, stopped while a menu or Psynergy is up.
 void AirsRockInside_DriftMote(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -409,8 +411,8 @@ void AirsRockInside_DriftMote(struct Actor *object) {
   object->y.fixed += WORD_AT(object, 48);
 }
 
-// Whirlwind on a twister rock or statue: the scene's own effect runs in place
-// of Whirlwind's.
+/// Whirlwind on a twister rock or statue: the scene's own effect runs in place
+/// of Whirlwind's.
 void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRockInside_TakeOverWhirlwind(void) {
@@ -453,12 +455,12 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   return (cell[2] << 8) | cell[3];
 }
 
-// Sets an object's cells by its flag (its action parameter): when the flag is
-// set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
-// 4 pixels when not on its ground and takes sprite priority 3; otherwise it
-// marks both cells (0xff00 and 0xd480), rises 4 pixels and takes priority 1;
-// then it writes both cells back and moves the object's height
-// (MapGrid_SetCellHeight).
+/// Sets an object's cells by its flag (its action parameter): when the flag is
+/// set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
+/// 4 pixels when not on its ground and takes sprite priority 3; otherwise it
+/// marks both cells (0xff00 and 0xd480), rises 4 pixels and takes priority 1;
+/// then it writes both cells back and moves the object's height
+/// (MapGrid_SetCellHeight).
 void AirsRockInside_SetConeCells(struct Actor *object) {
   s32 x = object->x.fixed >> 20;
   s32 z = object->z.fixed >> 20;
@@ -493,13 +495,13 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
   MapGrid_SetCellHeight(px, pz, object->layer, height);
 }
 
-// One step of two paired objects trading places: the effect work's halfword
-// at 26 names the first, and its partner is the other id of its even and odd
-// pair. On step 0 the partner rises 28 pixels, its sprite tiles are cleared
-// and the first's copied over them; on steps 1 to 5 it sinks and 0x30 words
-// more are copied; through step 7 the first flattens. In mode 1 both settle,
-// the first's flag is set and the partner's cleared, their animations step
-// and their cells are written again (AirsRockInside_SetConeCells).
+/// One step of two paired objects trading places: the effect work's halfword
+/// at 26 names the first, and its partner is the other id of its even and odd
+/// pair. On step 0 the partner rises 28 pixels, its sprite tiles are cleared
+/// and the first's copied over them; on steps 1 to 5 it sinks and 0x30 words
+/// more are copied; through step 7 the first flattens. In mode 1 both settle,
+/// the first's flag is set and the partner's cleared, their animations step
+/// and their cells are written again (AirsRockInside_SetConeCells).
 void AirsRockInside_PoundCone(s32 mode, s32 step) {
   s16 *pair = (s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 26);
   s32 even = *pair - ((*(u16 *)pair & 1) << 1);
@@ -546,10 +548,10 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
   }
 }
 
-// Places the objects of a list ended by 0xffff: each entry (three halfwords)
-// names an object, the first of its three script choices and the flag that
-// picks between them; the object stops moving, loses its solid bit and keeps
-// the flag as its action parameter.
+/// Places the objects of a list ended by 0xffff: each entry (three halfwords)
+/// names an object, the first of its three script choices and the flag that
+/// picks between them; the object stops moving, loses its solid bit and keeps
+/// the flag as its action parameter.
 void AirsRockInside_PlaceCones(u16 *list) {
   struct Actor *object;
   s32 flag, base;
@@ -586,7 +588,7 @@ void AirsRockInside_PlaceCones(u16 *list) {
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 
-// The leader rides a statue's whirlwind along its path until it fades.
+/// The leader rides a statue's whirlwind along its path until it fades.
 void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
@@ -753,13 +755,13 @@ extern u32 gAirsRockInside_WhirlwindRisesScript[];
 
 s32 Trig_Sin(s32 angle);
 
-// AirsRockInside_MovePooledWhirlwind's twin for another shot: it also stops
-// while the render mode is 5, and on a cell of kind 212 it ends with one of two
-// end scripts by its angle; otherwise, the first time it reaches the leader
-// (within 16 pixels on the same height when the leader climbs, else within 8 on
-// the same level) and flag 0x104 is clear, it carries the leader along (counter
-// 0x16a 200, render mode 0); it moves 1.5 pixels a frame along its angle,
-// upward when its angle is 0xc000.
+/// AirsRockInside_MovePooledWhirlwind's twin for another shot: it also stops
+/// while the render mode is 5, and on a cell of kind 212 it ends with one of
+/// two end scripts by its angle; otherwise, the first time it reaches the
+/// leader (within 16 pixels on the same height when the leader climbs, else
+/// within 8 on the same level) and flag 0x104 is clear, it carries the leader
+/// along (counter 0x16a 200, render mode 0); it moves 1.5 pixels a frame along
+/// its angle, upward when its angle is 0xc000.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -825,10 +827,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// A launcher's update with a new shot each time: while none of the event work's
-// four busy counters is set it counts frames in its action parameter, and at
-// 240 launches a shot 8 pixels ahead along its angle with a dust effect below
-// it.
+/// A launcher's update with a new shot each time: while none of the event
+/// work's four busy counters is set it counts frames in its action parameter,
+/// and at 240 launches a shot 8 pixels ahead along its angle with a dust effect
+/// below it.
 void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
@@ -871,7 +873,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
   object->timer++;
 }
 
-// Wakes a statue: it starts breathing whirlwinds after the frames given.
+/// Wakes a statue: it starts breathing whirlwinds after the frames given.
 void AirsRockInside_WakeStatue(struct Actor *object, s16 timer, u8 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     BYTE_AT(object, 90) = 0;
@@ -949,11 +951,12 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   }
 }
 
-// An object's update: while none of the event work's four busy counters (0x15a,
-// 0x15e, 0x166, 0x168) is set it counts frames in its action parameter, and at
-// 240 (playing cue 202 unless flag 0x250 is set) it launches the first free one
-// of objects 13 to 15 from 8 pixels ahead along its angle, with
-// AirsRockInside_MovePooledWhirlwind as its update, and a dust effect below it.
+/// An object's update: while none of the event work's four busy counters
+/// (0x15a, 0x15e, 0x166, 0x168) is set it counts frames in its action
+/// parameter, and at 240 (playing cue 202 unless flag 0x250 is set) it launches
+/// the first free one of objects 13 to 15 from 8 pixels ahead along its angle,
+/// with AirsRockInside_MovePooledWhirlwind as its update, and a dust effect
+/// below it.
 void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
@@ -1086,7 +1089,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   object->scaleY += 0xccc;
 }
 
-// A puff of air rising from a vent.
+/// A puff of air rising from a vent.
 void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
   struct Actor *object = Import_ActorCreate(0x11d, x, y, z);
 
@@ -1104,12 +1107,12 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
   WORD_AT(object, 108) = (s32)AirsRockInside_UpdateVentPuff;
 }
 
-// Every eighth frame pair, while none of the event work's four busy counters
-// is set, starts a drip (AirsRockInside_PuffVent) at a place chosen by scene
-// and frame: in one room one of two spots by
-// FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED, in the other one of six by the
-// leader's position and flags 0x200 to 0x202. Places the two frame arms share
-// are one call, reached by goto from the other arm.
+/// Every eighth frame pair, while none of the event work's four busy counters
+/// is set, starts a drip (AirsRockInside_PuffVent) at a place chosen by scene
+/// and frame: in one room one of two spots by
+/// FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED, in the other one of six by
+/// the leader's position and flags 0x200 to 0x202. Places the two frame arms
+/// share are one call, reached by goto from the other arm.
 void AirsRockInside_PuffVents(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 frame;
@@ -1177,8 +1180,8 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 #define TARGET(effect) ((effect)->target)
 
-// The gust picks up an object it passes over, to drop it at cell `at`
-// (x in the high half, z in the low).
+/// The gust picks up an object it passes over, to drop it at cell `at`
+/// (x in the high half, z in the low).
 #define PICK_UP(object, at)                                                    \
   do {                                                                         \
     (object)->watchedActor = gust;                                             \
@@ -1192,14 +1195,14 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
     carried = (at);                                                            \
   } while (0)
 
-// One shake of the walls (cue 157).
+/// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
   (Sound_Play(SE_GATE_MOVE),                                                   \
    Call3(MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000),                   \
    Call3(MapGrid_SetScreenShake, -1, -1, 0xe666))
 
-// Whirlwind on a twister rock: a gust rises from it and travels ahead of the
-// leader, carrying what it meets.
+/// Whirlwind on a twister rock: a gust rises from it and travels ahead of the
+/// leader, carrying what it meets.
 void AirsRockInside_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectWork *effect =
@@ -1614,9 +1617,9 @@ void AirsRockInside_StartRestoringCells(void) {
   }
 }
 
-// As the leader steps onto a new cell, saves the cells under it and stamps the
-// floor's marked cells in their place; AirsRockInside_RestoreCellBehindLeader
-// puts them back once he has left.
+/// As the leader steps onto a new cell, saves the cells under it and stamps the
+/// floor's marked cells in their place; AirsRockInside_RestoreCellBehindLeader
+/// puts them back once he has left.
 void AirsRockInside_StampCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = actor->x.fixed >> 20;
@@ -1680,8 +1683,8 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
         gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
-// When the controlled object steps onto a new cell, saves the 1 by 3 cells
-// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
+/// When the controlled object steps onto a new cell, saves the 1 by 3 cells
+/// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 #define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
@@ -1714,7 +1717,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// A burst of dust at x, z.
+/// A burst of dust at x, z.
 void AirsRockInside_BurstDust(s32 x, s32 z) {
   struct EffectOptions options;
   struct Vector3 spawn;
@@ -1776,9 +1779,9 @@ void AirsRockInside_SpiralGust(struct Actor *object) {
   WORD_AT(object, 48)++;
 }
 
-// Circles the object around its centre (fields 68 and 76) on an ellipse twice
-// as wide as deep, the radius growing with its height; it rises by field 72
-// each frame and switches its part attribute between 0 and 9 every two frames.
+/// Circles the object around its centre (fields 68 and 76) on an ellipse twice
+/// as wide as deep, the radius growing with its height; it rises by field 72
+/// each frame and switches its part attribute between 0 and 9 every two frames.
 void AirsRockInside_SpiralSpark(struct Actor *object) {
   s32 y = object->y.fixed;
   s32 phase;
@@ -1812,9 +1815,9 @@ void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 
-// Whirlwind on room 1's twister rock (object 11): it glows and the light it
-// sends wakes the statue (object 10), which starts breathing whirlwinds; sets
-// flag 0x89a.
+/// Whirlwind on room 1's twister rock (object 11): it glows and the light it
+/// sends wakes the statue (object 10), which starts breathing whirlwinds; sets
+/// flag 0x89a.
 void AirsRockInside_WakeRoom1Statue(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
@@ -1958,8 +1961,8 @@ fade:
 
 void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
-// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
-// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
+/// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
+/// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
 void AirsRockInside_StepOntoLedge(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 width;
@@ -1998,8 +2001,8 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
   MapGrid_SetCellHeight(x, z, 2, 0);
 }
 
-// Runs each room's list on entering it; room 7 also clears two cells' shapes
-// and room 9 stops object 10's timer.
+/// Runs each room's list on entering it; room 7 also clears two cells' shapes
+/// and room 9 stops object 10's timer.
 void AirsRockInside_StartPushingPillar(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2025,13 +2028,13 @@ void AirsRockInside_StartPushingPillar(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
-// After the pushed object (the event work's object at 0xcbc) comes to rest:
-// if it stopped above the ground it drops onto it with cue 188; then, by
-// room, the place where it stopped sets the flag for that pillar's spot
-// (AirsRockInside1 to 4 and 9), in AirsRockInside7 marks two cells and shows
-// objects 13 and 14 by where objects 9, 10 and 11 stand, and in AirsRockInside8
-// and 9 sets or clears the flags of the spots along its rows and redraws the
-// pillars' cells (MapCell_SetAttributes).
+/// After the pushed object (the event work's object at 0xcbc) comes to rest:
+/// if it stopped above the ground it drops onto it with cue 188; then, by
+/// room, the place where it stopped sets the flag for that pillar's spot
+/// (AirsRockInside1 to 4 and 9), in AirsRockInside7 marks two cells and shows
+/// objects 13 and 14 by where objects 9, 10 and 11 stand, and in
+/// AirsRockInside8 and 9 sets or clears the flags of the spots along its rows
+/// and redraws the pillars' cells (MapCell_SetAttributes).
 void AirsRockInside_FinishPushingPillar(void) {
   struct Actor *pushed = *(struct Actor **)(EVENT_WORK + 0xcbc);
   s32 x, z;
@@ -2120,9 +2123,9 @@ void AirsRockInside_FinishPushingPillar(void) {
 
 #undef EVENT_WORK
 
-// Whirlwind on room 2's twister rock (object 10): BG0 is loaded with the light
-// it sends, which flashes across the room, opens the cells at (68, 84) and
-// wakes the statue (object 8); sets flag 0x899.
+/// Whirlwind on room 2's twister rock (object 10): BG0 is loaded with the light
+/// it sends, which flashes across the room, opens the cells at (68, 84) and
+/// wakes the statue (object 8); sets flag 0x899.
 void AirsRockInside_WakeRoom2Statue(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
@@ -2262,7 +2265,7 @@ fade:
   Event_End();
 }
 
-// The leader jumps down the ledge to the room below.
+/// The leader jumps down the ledge to the room below.
 void AirsRockInside_JumpDownLedge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2275,8 +2278,8 @@ void AirsRockInside_JumpDownLedge(void) {
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 
-// While the leader is no further than z 653, moves the leader to (376, 668)
-// with bit 0 of its byte 90 cleared for the move.
+/// While the leader is no further than z 653, moves the leader to (376, 668)
+/// with bit 0 of its byte 90 cleared for the move.
 void AirsRockInside_StepOffRide(void) {
   u8 *flags;
   u8 bit = 1;
@@ -2294,7 +2297,7 @@ void AirsRockInside_StepOffRide(void) {
   Event_End();
 }
 
-// A stepping stone the leader has crossed fades with a drip and is gone.
+/// A stepping stone the leader has crossed fades with a drip and is gone.
 void AirsRockInside_VanishStone(s32 x, s32 y) {
   struct Actor *marker;
   struct FieldSprite *sprite;
@@ -2337,10 +2340,10 @@ fadeOut:
   REG_DISPCNT &= 0x7fff;
 }
 
-// Reads what the leader stands on (MapCell_GetAttributes, kind 2): on cells 1
-// and 7 it only redraws the marker when flag 0x200 is set; elsewhere it clears
-// (AirsRockInside_StampCellUnderLeader), redraws the marker in the row the
-// event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
+/// Reads what the leader stands on (MapCell_GetAttributes, kind 2): on cells 1
+/// and 7 it only redraws the marker when flag 0x200 is set; elsewhere it clears
+/// (AirsRockInside_StampCellUnderLeader), redraws the marker in the row the
+/// event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
 void AirsRockInside_StepOnVanishingStone(void) {
   u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
@@ -2364,9 +2367,9 @@ void AirsRockInside_StepOnVanishingStone(void) {
   }
 }
 
-// As AirsRockInside_StampTallCellUnderLeader with a 1 by 2 block: saves the
-// cells 64 columns across from the controlled object at (73, 72) and stamps the
-// cells kept at (70, 74) in their place.
+/// As AirsRockInside_StampTallCellUnderLeader with a 1 by 2 block: saves the
+/// cells 64 columns across from the controlled object at (73, 72) and stamps
+/// the cells kept at (70, 74) in their place.
 void AirsRockInside_StampWideCellUnderLeader(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 x = object->x.fixed >> 20;
@@ -2445,7 +2448,7 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   return 1;
 }
 
-// Moves around in a circle.
+/// Moves around in a circle.
 s32 Orbit_Update(struct Orbit *object) {
   s32 z;
 
@@ -2484,7 +2487,7 @@ extern s32 gAirsRockInside_TabletSettleScript[];
 extern s32 gAirsRockInside_ShebaSettleScript[];
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 
-// The tablet rises in a rumble, sparks circle Sheba and she learns Reveal.
+/// The tablet rises in a rumble, sparks circle Sheba and she learns Reveal.
 void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
   struct Actor *b = Actor_GetById(idB);
@@ -2661,8 +2664,8 @@ static inline void Call0(void (*f)()) {
   f();
 }
 
-// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
-// the scene with actor 6 follows, as Magma Rock's tablet does for Blaze.
+/// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
+/// the scene with actor 6 follows, as Magma Rock's tablet does for Blaze.
 void AirsRockInside_ReadRevealTablet(void) {
   struct Actor *object;
 
@@ -2777,7 +2780,7 @@ void AirsRockInside_IgnoreStep(void) {}
  * `AirsRockInside_PoundCone'. */
 void AirsRockInside_PoundCone__pound(void) __asm__("AirsRockInside_PoundCone");
 
-// Move on room 6's statue: its place sets the area flag.
+/// Move on room 6's statue: its place sets the area flag.
 void AirsRockInside_MoveStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2868,8 +2871,8 @@ step:
   Event_End();
 }
 
-// When the event work's warp number (0x154) is set, plays cue 186 and moves
-// the leader to that warp's place (warps 50 to 55), inside an event.
+/// When the event work's warp number (0x154) is set, plays cue 186 and moves
+/// the leader to that warp's place (warps 50 to 55), inside an event.
 void AirsRockInside_RideFaceWarp(void) {
   s16 *warp;
   s32 x, z;
@@ -2935,7 +2938,7 @@ void AirsRockInside_CheckPsynergyStone(void) {
   Event_End();
 }
 
-// The placement table for the current room.
+/// The placement table for the current room.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2962,7 +2965,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAirsRockInside_Room2Triggers;
 }
 
-// The leader rises 80 pixels on a lift into the room.
+/// The leader rises 80 pixels on a lift into the room.
 void AirsRockInside_RiseOnLift(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *prepared, *lift;
@@ -3034,7 +3037,7 @@ void AirsRockInside_RiseOnLift(void) {
   Event_End();
 }
 
-// Eight motes of light drift about the hall.
+/// Eight motes of light drift about the hall.
 void AirsRockInside_SpawnMotes(void) {
   struct Actor *object;
   s32 i = 0;
@@ -3068,7 +3071,7 @@ void AirsRockInside_SpawnMotes(void) {
 
 extern s32 gAirsRockInside_LeaderLevel;
 
-// Sets the hall's ledge cells for the height the leader is at.
+/// Sets the hall's ledge cells for the height the leader is at.
 void AirsRockInside_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 level;
@@ -3216,7 +3219,7 @@ s32 Scene_Initialize(void) {
       wait(1);
     }
     if (gMainRoutineWork.entrance <= 11 || gMainRoutineWork.entrance == 16) {
-      Task_Add(AirsRockInside_SetLedgeCellsByLevel, 0x480);
+      Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
       REG_BLDALPHA = 0x1008;
       REG_BLDCNT = 0x3f10;
       AirsRockInside_SpawnMotes();
@@ -3277,7 +3280,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Task_Add(AirsRockInside_PuffVents, 0x480);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(264), px(632));
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED))
@@ -3401,7 +3404,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Task_Add(AirsRockInside_PuffVents, 0x480);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(280), px(472));
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED))
@@ -3456,21 +3459,33 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAirsRockInside_Room1Pillars[] = {
@@ -3502,12 +3517,16 @@ s16 gAirsRockInside_Room9Pillars[] = {
 };
 
 u32 gAirsRockInside_OrbitSparkScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_RisingSparkScript[] = {
-    5, 0, 0xa00000, 0, 1, 38,
-    17,
+    SC_MOVE_BY(0, px(160), 0),
+    SC_SYNC,
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAirsRockInside_OrbitingSparkScript[] = {                                                               
@@ -3522,23 +3541,33 @@ s32 gAirsRockInside_SeekingSparkScript[] = {
   };
 
 u32 gAirsRockInside_TabletRiseScript[] = {
-    5, 0, 0x180000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 u32 gAirsRockInside_ShebaRiseScript[] = {
-    5, 0, 0x100000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAirsRockInside_TabletSettleScript[] = {
-    22, 26, 0, 5, 0, -0x180000,
-    0, 1, 22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 s32 gAirsRockInside_ShebaSettleScript[] = {
-    22, 26, 0, 5, 0, -0x100000,
-    0, 1, 22, 26, 3, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 3),
+    SC_END,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -3548,22 +3577,33 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 u32 gAirsRockInside_WhirlwindRisesScript[] = {
-    39, 5, 0, 12, 38, 17,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_WhirlwindFadesScript[] = {
-    0, 60, 39, 5, 0, 12,
-    38, 17,
+    SC_WAIT(60),
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_PooledWhirlwindFadesScript[] = {
-    39, 5, 0, 12, 2, 0,
-    0, 0, 0, 1, 17,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gAirsRockInside_StatueScript[] = {
-    22, 10, 0x18000, 22, 31, 0,
-    39, 2, 17,
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_STEERING, 0),
+    SC_ARG(2),
+    SC_END,
 };
 
 u16 gAirsRockInside_Room7Cones[] = {

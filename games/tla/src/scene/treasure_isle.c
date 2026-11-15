@@ -30,6 +30,8 @@
 #include "system/task.h"
 #include "edition.h"
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 
@@ -65,8 +67,8 @@ extern struct ActorPlacement gTreasureIsle_Room4Placements[];
 extern struct ActorPlacement gTreasureIsle_Room5Placements[];
 extern u32 gTreasureIsle_RockDust[];
 
-// Import stubs: Event_Start and Event_End, and the pending
-// actions' resolution.
+/// Import stubs: Event_Start and Event_End, and the pending
+/// actions' resolution.
 void Event_Start(void);
 
 extern struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[];
@@ -158,7 +160,7 @@ s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-// Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
+/// Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   MapGrid_CopyCellsLayered(0, 100, 3, 4, cells[index].x + 0x3f,
                            cells[index].z - 2);
@@ -166,9 +168,9 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   Event_SetFlag(cells[index].flag);
 }
 
-// A spiky rock rises out of the ground at a listed cell: the camera goes to
-// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
-// it standing.
+/// A spiky rock rises out of the ground at a listed cell: the camera goes to
+/// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
+/// it standing.
 void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   struct TreasureIsleCell *cell;
   struct EffectOptions options;
@@ -187,13 +189,13 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + px(8), 0, (cell->z << 20) + px(20), 0, 0,
+                    0, 0x3a0000, &options);
   options.startScaleX = 0x9999;
-  FieldEffect_Spawn((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
-  FieldEffect_Spawn((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) - px(2), 0, (cell->z << 20) + px(8), 0, 0,
+                    0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + px(18), 0, (cell->z << 20) + px(8), 0, 0,
+                    0, 0x3a0000, &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
@@ -202,9 +204,9 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   TreasureIsle_SetSpikyRock(cells, index);
 }
 
-// For each of cells 0 to 3 of gTreasureIsle_Room2SpikyRocks whose flag (0x303
-// to 0x306) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
-// flag; the event is begun before the first and ended after the last.
+/// For each of cells 0 to 3 of gTreasureIsle_Room2SpikyRocks whose flag (0x303
+/// to 0x306) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
+/// flag; the event is begun before the first and ended after the last.
 void TreasureIsle_PressRoom2Button(void) {
   s16 count = 0;
 
@@ -243,9 +245,9 @@ void TreasureIsle_PressRoom2Button(void) {
     Event_End();
 }
 
-// For each of cells 0 to 2 of gTreasureIsle_Room3SpikyRocks whose flag (0x30a
-// to 0x30c) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
-// flag; the event is begun before the first and ended after the last.
+/// For each of cells 0 to 2 of gTreasureIsle_Room3SpikyRocks whose flag (0x30a
+/// to 0x30c) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
+/// flag; the event is begun before the first and ended after the last.
 void TreasureIsle_PressRoom3Button(void) {
   s16 count = 0;
 
@@ -286,10 +288,10 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
   }
 }
 
-// Called through the scene table with an object id: in each of the first
-// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
-// a given x and z in the second room runs TreasureIsle_RaiseLastSpikyRock
-// instead.
+/// Called through the scene table with an object id: in each of the first
+/// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
+/// a given x and z in the second room runs TreasureIsle_RaiseLastSpikyRock
+/// instead.
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -324,14 +326,14 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-// Talking to Gale, the Jupiter Djinni, starts its battle.
+/// Talking to Gale, the Jupiter Djinni, starts its battle.
 void TreasureIsle_FightGale(void) { Field_RequestDjinnBattle(0x17, 0x4d); }
 
-// The Venus Djinni waiting here joins the party without a fight.
+/// The Venus Djinni waiting here joins the party without a fight.
 void TreasureIsle_VenusDjinniJoins(void) { Djinn_JoinParty(9, 0, 0x13); }
 
-// Grind on a spiky rock: it crumbles over three steps and its cell opens
-// again (its flag cleared), the frame passed by the Psynergy.
+/// Grind on a spiky rock: it crumbles over three steps and its cell opens
+/// again (its flag cleared), the frame passed by the Psynergy.
 void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
   struct TreasureIsleCell *cells;
 
@@ -353,7 +355,7 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
   }
 }
 
-// Lift raises one of Room4's rocks out of the way for good (flag n2).
+/// Lift raises one of Room4's rocks out of the way for good (flag n2).
 #define DEFINE_LIFT_ROCK(name, n1, n2)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -381,9 +383,9 @@ DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 15, 0x206)
 
 DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 16, 0x207)
 
-// The guardian of water challenges the party to prove its worth.
-// "I am the guardian of water. If you would claim my power, you must prove
-// your worth."
+/// The guardian of water challenges the party to prove its worth.
+/// "I am the guardian of water. If you would claim my power, you must prove
+/// your worth."
 void TreasureIsle_MeetWaterGuardian(void) {
   s32 t12;
 
@@ -425,13 +427,13 @@ const u8 *Scene_GetTriggers(void) {
   return (const u8 *)gTreasureIsle_Room1Triggers;
 }
 
-// The water colours' cycle frame, -1 until the first frame saves the
-// palettes.
+/// The water colours' cycle frame, -1 until the first frame saves the
+/// palettes.
 extern s32 gTreasureIsle_ColorCycleFrame[];
 extern volatile u16 gTreasureIsle_BgColors[];
 
-// A task: cycles four colours of a background and an object palette every
-// eight frames, saving both palettes the first time.
+/// A task: cycles four colours of a background and an object palette every
+/// eight frames, saving both palettes the first time.
 void TreasureIsle_CycleWaterColors(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 phase;
@@ -472,10 +474,10 @@ void TreasureIsle_CycleWaterColors(void) {
 
 // its code, then the overlay's data.
 
-// Treasure Isle's setup for each of its four rooms: places the objects whose
-// flags are set, schedules TreasureIsle_CycleWaterColors in rooms 2 and 3 and
-// opens again the cells already opened there (TreasureIsle_SetSpikyRock), and
-// in room 4 raises the part priority of objects 9 to 16.
+/// Treasure Isle's setup for each of its four rooms: places the objects whose
+/// flags are set, schedules TreasureIsle_CycleWaterColors in rooms 2 and 3 and
+/// opens again the cells already opened there (TreasureIsle_SetSpikyRock), and
+/// in room 4 raises the part priority of objects 9 to 16.
 s32 Scene_Initialize(void) {
   s32 i;
 
@@ -564,21 +566,33 @@ void TreasureIsle_LiftThirdRock(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gTreasureIsle_RockDust[] = {
@@ -649,7 +663,9 @@ u32 gSceneExits[] = {
 };
 
 u32 gTreasureIsle_PostStill[] = {
-    39, 1, 0, 1, 17,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct ActorPlacement gTreasureIsle_Placements[] = {                                             
@@ -683,8 +699,10 @@ struct ActorPlacement gTreasureIsle_Room3Placements[] = {
 };
 
 u32 gTreasureIsle_LiftRockScale[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    0, 1, 17,
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct ActorPlacement gTreasureIsle_Room4Placements[] = {

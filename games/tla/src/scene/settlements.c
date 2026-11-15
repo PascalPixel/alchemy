@@ -5,6 +5,10 @@
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
+#include "objcmd.h"
+#include "fixed_math.h"
+#include "djinn_ids.h"
 
 #include "../field/field_effect/move.c"
 
@@ -224,11 +228,18 @@ void Settlements_SpawnSplashRing(s32 objectId);
 
 void Settlements_MovePillar(void);
 
-void Settlements_MeetGel(void) { Djinn_JoinParty(10, 1, 14); }
+void Settlements_MeetGel(void) {
+  Djinn_JoinParty(10, DJINNI_GEL / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_GEL));
+}
 
-void Settlements_MeetTinder(void) { Djinn_JoinParty(11, 2, 14); }
+void Settlements_MeetTinder(void) {
+  Djinn_JoinParty(11, DJINNI_TINDER / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_TINDER));
+}
 
-void Settlements_MeetLostJupiterDjinni(void) { Djinn_JoinParty(23, 3, 19); }
+void Settlements_MeetLostJupiterDjinni(void) {
+  Djinn_JoinParty(23, DJINNI_79 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_79));
+}
 
 s32 Settlements_ClearSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -694,7 +705,7 @@ void Settlements_CycleWaterColors(void) {
 
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition = 514;
-  FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
+  FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
   Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
 }
@@ -715,7 +726,16 @@ void Scroll_HBlank(void) {
   }
 }
 
-#include "shared/layer_track_scroll.h"
+/// Follows the third map layer's scroll.
+void Layer_TrackScroll(void) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  s16 y = layer->y >> 16;
+
+  gSettlements_WaterfallLine = 1448 - y;
+  gSettlements_WaterfallScrollAbove = layer->x >> 16;
+  gSettlements_WaterfallScrollBelow =
+      (s16)(layer->x >> 16) - (gFrameCount >> 2);
+}
 
 #include "shared/scroll_start_hblank.h"
 
@@ -1047,21 +1067,33 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gSettlements_FallsObjects[] = {
@@ -1092,31 +1124,26 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSettlements_BobScript[] = {
-    39,
-    3,
-    22,
-    26,
-    0,
-    23,
-    6,
-    -0x100000,
-    46,
-    (s32)Settlements_ClearSpriteFlags,
-    17,
+    SC_ARG(3),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, -px(16)),
+    SC_CALL((s32)Settlements_ClearSpriteFlags),
+    SC_END,
 };
 
 u32 gSettlements_SmokeScript[] = {
-    39, 2, 17,
+    SC_ARG(2),
+    SC_END,
 };
 
 u32 gSettlements_CrateBobScript[] = {
-    22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 s32 gSettlements_CrateDropScript[] = {
-    46,
-    (s32)Actor_Bob,
-    17,
+    SC_CALL((s32)Actor_Bob),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

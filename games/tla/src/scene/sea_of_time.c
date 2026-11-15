@@ -8,6 +8,9 @@
 /// (SeaOfTime_CrossToLemuria).
 
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 #include "flags.h"
@@ -358,19 +361,19 @@ void SeaOfTime_RideCurrent(void) {
     py = object->y.fixed;
     pz = ends[1];
     if (flip) {
-      FieldEffect_Spawn(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] - 0x30000, object->y.fixed, ends[3], -speed, 0,
-                        0, 0xb0000, &spark);
+      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] - px(3), object->y.fixed, ends[3], -speed, 0, 0,
+                        0xb0000, &spark);
     } else {
-      FieldEffect_Spawn(px - 0x30000, py, pz, -speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] + 0x30000, object->y.fixed, ends[3], speed, 0,
-                        0, 0xb0000, &spark);
+      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] + px(3), object->y.fixed, ends[3], speed, 0, 0,
+                        0xb0000, &spark);
     }
   }
 }
 
-// Walks actor 8 along a run of cells in the facing the event work names,
-// throwing sparks from both sides of it every fourth frame.
+/// Walks actor 8 along a run of cells in the facing the event work names,
+/// throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
@@ -439,14 +442,12 @@ void SeaOfTime_FollowChannel(void) {
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          FieldEffect_Spawn(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000,
-                            &spark);
-          FieldEffect_Spawn(pos[2] - 0x40000, actor->y.fixed, pos[3], -0x8000,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -0x8000, 0,
+                            0, 0xb0000, &spark);
         } else {
-          FieldEffect_Spawn(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000,
-                            &spark);
-          FieldEffect_Spawn(pos[2] + 0x40000, actor->y.fixed, pos[3], 0x8000, 0,
+          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], 0x8000, 0,
                             0, 0xb0000, &spark);
         }
       }
@@ -464,8 +465,8 @@ extern u16 gSeaOfTime_LastLapCell;
 extern struct Spots gSeaOfTime_LapSpots;
 extern u8 gSeaOfTime_LapsNeeded[];
 
-// Tracks actor 8 around the ring of cells: counts steps made in one direction,
-// spawning an effect every fourth frame once past 3, and rewards a full count.
+/// Tracks actor 8 around the ring of cells: counts steps made in one direction,
+/// spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(8);
@@ -570,9 +571,9 @@ extern u32 gSeaOfTime_WaveState;
  * Event_End(void); not tried: Event_End's bound declaration was not found. */
 extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
-// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-// channel every 10 frames, then hands the rest of the event to
-// SeaOfTime_TrackWaves's task.
+/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
+/// channel every 10 frames, then hands the rest of the event to
+/// SeaOfTime_TrackWaves's task.
 s32 SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -623,7 +624,7 @@ s32 SeaOfTime_StartWaves(void) {
   } while (changed);
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
-  Task_Add(SeaOfTime_TrackWaves, 0x480);
+  Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
   return Event_EndWithResult();
 }
 
@@ -700,8 +701,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
-// it is done, raises a pair of effects at its two sides every fourth frame.
+/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
+/// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
@@ -742,21 +743,21 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
       y = actor->y.fixed;
       z = sides[1];
       if (alternate) {
-        FieldEffect_Spawn(x + 0x40000, y, z, velocity, 0, 0,
+        FieldEffect_Spawn(x + px(4), y, z, velocity, 0, 0,
                           EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] - 0x40000, actor->y.fixed, sides[3], reverseVelocity, 0, 0,
+            sides[2] - px(4), actor->y.fixed, sides[3], reverseVelocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       } else {
-        FieldEffect_Spawn(x - 0x40000, y, z, reverseVelocity, 0, 0,
+        FieldEffect_Spawn(x - px(4), y, z, reverseVelocity, 0, 0,
                           EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] + 0x40000, actor->y.fixed, sides[3], velocity, 0, 0,
+            sides[2] + px(4), actor->y.fixed, sides[3], velocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       }
@@ -814,7 +815,7 @@ void SeaOfTime_CrossToLemuria(void) {
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(px(352), -1, px(196), 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -891,8 +892,8 @@ sparks:
     s32 z = Random16();
 
     burst.palette = 7;
-    FieldEffect_Spawn(((x & mask) << 16) + 0x1500000, 0,
-                      ((z & mask) << 16) + 0xb00000, 0, 0, 0, 0x10000, &burst);
+    FieldEffect_Spawn(((x & mask) << 16) + px(336), 0,
+                      ((z & mask) << 16) + px(176), 0, 0, 0, 0x10000, &burst);
     wait(1);
   }
 next:
@@ -913,8 +914,8 @@ next:
       rain.startScaleY = 0x18000;
       rain.palette = 7;
       rain.priority = 1;
-      FieldEffect_Spawn(offsetX + 0x1500000, 0, offsetZ + 0xb00000, 0, 0x10000,
-                        0, 0xb0000, &rain);
+      FieldEffect_Spawn(offsetX + px(336), 0, offsetZ + px(176), 0, px(1), 0,
+                        0xb0000, &rain);
       wait(1);
     }
     i++;
@@ -988,9 +989,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSeaOfTime_Triggers;
 }
 
-// The Sea of Time's frame callback: rotates two runs of the background
-// palette, pulses the red of colour 15 (or steps it with the alarm), copies
-// the palette and ripples the layer's horizontal scroll line by line.
+/// The Sea of Time's frame callback: rotates two runs of the background
+/// palette, pulses the red of colour 15 (or steps it with the alarm), copies
+/// the palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
@@ -1085,7 +1086,7 @@ void SeaOfTime_AnimateSea(void) {
 
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetPositionFixed(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
+  Actor_SetPositionFixed(actor, (x << 19) + px(8), (z << 19) + px(8));
   x >>= 1;
   z >>= 1;
   SeaOfTime_SetCellCode(1, x, z, 0xff00);
@@ -1123,9 +1124,9 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-// The Sea of Time's opening: places the camera and the first effects, showers
-// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
-// RGB(11, 6, 23).
+/// The Sea of Time's opening: places the camera and the first effects, showers
+/// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
+/// RGB(11, 6, 23).
 void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
@@ -1143,7 +1144,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);
-  Task_Add(SeaOfTime_AnimateSea, 0xc80);
+  Task_Add(SeaOfTime_AnimateSea, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   Event_Wait(60);
   SeaOfTime_RaiseRock(21, 23, 9);
@@ -1180,7 +1181,7 @@ void SeaOfTime_Open(void) {
       x &= mask;
       x <<= 16;
       x += 0x1500000;
-      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0, 0, 0xb0000,
+      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0, 0xb0000,
                         &params);
       wait(1);
     }
@@ -1197,8 +1198,8 @@ void SeaOfTime_Open(void) {
     x &= mask;
     x <<= 16;
     x += 0x1500000;
-    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0x10000, 0,
-                      0xb0000, &burst);
+    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0, 0xb0000,
+                      &burst);
     wait(1);
   }
   Actor_Release(actor);
@@ -1250,9 +1251,9 @@ void SeaOfTime_Open(void) {
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
 
-// The overlay's start: sets the screen effect, restores the clock and palette
-// in the first room, draws the unlit cells in the second, and schedules the
-// frame callback.
+/// The overlay's start: sets the screen effect, restores the clock and palette
+/// in the first room, draws the unlit cells in the second, and schedules the
+/// frame callback.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_1) {
@@ -1274,7 +1275,7 @@ s32 Scene_Initialize(void) {
         i++;
         offset += 2;
       } while (i != 14);
-      Task_Add(SeaOfTime_TrackWaves, 0x480);
+      Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
     }
   } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_2) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
@@ -1326,21 +1327,33 @@ s32 Scene_PrepareMap(void) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
@@ -1362,9 +1375,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSeaOfTime_ShipRests[] = {
-    46,
-    (s32)SeaOfTime_HideSprite,
-    17,
+    SC_CALL((s32)SeaOfTime_HideSprite),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -5,6 +5,7 @@
 /// Four rope posts make two ropes. The first is tied as the scene starts; the
 /// party ties the second with Lash (OseniaCliffs_LashRope).
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
 #include "battle/battle.h"
@@ -82,7 +83,7 @@ s32 Scene_Initialize(void) {
   map->mode = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
   gFieldWork->transition = 256;
-  Task_Add(OseniaCliffs_CyclePalette, 0x480);
+  Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_VBLANK);
   {
     u8 *flags =
         (u8 *)((void *)Actor_GetById(gMainRoutineWork.leaderActorId)) + 35;

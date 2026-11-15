@@ -54,10 +54,27 @@
 enum MadraCatacombsVillageActorId {
   /// The pillar Move carries onto the upper level to climb by.
   ACTOR_CLIMBABLE_PILLAR = ACTOR_FIRST_PLACED,
+  /// The posts at the two ends of the rope Lash makes taut.
+  ACTOR_VILLAGE_ROPE_LOW_POST,
+  ACTOR_VILLAGE_ROPE_HIGH_POST,
   /// The pillar Move pushes into the hole.
   ACTOR_HOLE_PILLAR = ACTOR_FIRST_PLACED + 3,
   /// The pillar Move pushes onto cell (44, 26).
-  ACTOR_PUSHED_PILLAR
+  ACTOR_PUSHED_PILLAR,
+  /// The puddle Frost freezes into a pillar.
+  ACTOR_VILLAGE_PUDDLE,
+  /// The chest by the rope, drawn over the ledge.
+  ACTOR_VILLAGE_CHEST = 64
+};
+
+/// The tunnel the Champa dug (MadraCatacombs3), by the rows of its table.
+enum MadraCatacombsTunnelActorId {
+  /// The posts at the two ends of the tunnel's rope.
+  ACTOR_TUNNEL_ROPE_EAST_POST = ACTOR_FIRST_PLACED,
+  ACTOR_TUNNEL_ROPE_WEST_POST,
+  /// A Madran exploring the tunnel until Briggs is caught: "I can't believe
+  /// the Champa just stumbled onto this cave accidentally..."
+  ACTOR_TUNNEL_EXPLORER
 };
 
 /// The tablet room's actors: the two halves of the red double door, the five
@@ -392,7 +409,19 @@ void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
     Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
 }
 
-#include "shared/scene_run_if_held.h"
+/// Walking into the climbable pillar while holding it with Move pushes it a
+/// cell on.
+void MadraCatacombs_PushClimbablePillar(void) {
+  struct Actor *object;
+
+  if (Leader_CanPushObjectAhead() != 0) {
+    object = Actor_GetById(
+        Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
+    Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
+    Leader_PushObjectAhead();
+    MadraCatacombs_SettleClimbablePillar(object);
+  }
+}
 
 void MadraCatacombs_StartMovingClimbablePillar(void) {
   Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
@@ -578,13 +607,14 @@ void MadraCatacombs_SetUpVillage(void) {
   struct Actor *object;
 
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
-  Actor_SetSpritePriority(64, 3);
+  Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
   Rope_Initialize();
   b = 0x102;
   a = 1;
   /* FAKEMATCH(barrier): a and b held at an empty asm. */
   __asm__("" : "+r"(a), "+r"(b));
-  Rope_Place(a, b + 255, 9, 10);
+  Rope_Place(a, b + 255, ACTOR_VILLAGE_ROPE_LOW_POST,
+             ACTOR_VILLAGE_ROPE_HIGH_POST);
   Actor_DisableById(ACTOR_HOLE_PILLAR);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED) != 0) {
     MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, 13);
@@ -623,9 +653,10 @@ void MadraCatacombs_SetUpVillage(void) {
 
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
-  Rope_Place(0, 0x200, 8, 9);
+  Rope_Place(0, 0x200, ACTOR_TUNNEL_ROPE_EAST_POST,
+             ACTOR_TUNNEL_ROPE_WEST_POST);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
-    Actor_SetPosition(10, 0, 0);
+    Actor_SetPosition(ACTOR_TUNNEL_EXPLORER, 0, 0);
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);
     MapGrid_CopyCellsTo(50, 74, 50, 75, 2, 1);
     MapGrid_CopyCellAttributes(49, 9, 5, 1, 49, 13);
@@ -683,8 +714,8 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 s32 gMadraCatacombs_WalkIntoDoorway[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -882,15 +913,15 @@ struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 9, 0x201, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_LOW_POST, 0x201, 0},
     {TRIGGER_PUSHED, 10, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HOLE_PILLAR, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, FLAG_MADRA_CATACOMBS_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, FLAG_MADRA_CATACOMBS_PILLAR_PLACED, EVENT(MadraCatacombs_FinishMovingPushedPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(Scene_RunIfHeld)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_PushClimbablePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CLIMBABLE_PILLAR, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingClimbablePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CLIMBABLE_PILLAR, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_FinishMovingClimbablePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(MadraCatacombs_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VILLAGE_PUDDLE, 0x202, EVENT(MadraCatacombs_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_RevealButton)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_HideButton)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
@@ -913,10 +944,11 @@ struct Trigger gMadraCatacombs_Room3Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldCaveFoundByChampa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgFieldWhoDugCave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TUNNEL_ROPE_EAST_POST, 0x200, 0},
+    {TRIGGER_TALK, ACTOR_TUNNEL_EXPLORER, CONDITION_ALWAYS,
+     MSGNO(MsgFieldCaveFoundByChampa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_EXPLORER,
+     CONDITION_ALWAYS, MSGNO(MsgFieldWhoDugCave)},
     {TRIGGER_TABLE_END},
 };
 

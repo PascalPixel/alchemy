@@ -36,6 +36,8 @@
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "version.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// The scene's placed actors. At ENTRANCE_OPENING Felix and Jenna are placed as
 /// the first two rows of gActorPlacementsEntrance99 and keep their own ids.
@@ -263,7 +265,7 @@ void VenusLighthouse_PushBlockOnto(void) {
 
 #include "../field/map/cell_fill_byte.c"
 
-// Unused: does nothing; nothing calls it.
+/// Unused: does nothing; nothing calls it.
 UNUSED void VenusLighthouse_Nothing(void) {}
 
 #define FieldActor_SetSpriteColor ((void (*)(void *, s32))Actor_SetSpriteColor)
@@ -279,7 +281,7 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   return 0;
 }
 
-// Emits a rising particle near the actor every eight frames.
+/// Emits a rising particle near the actor every eight frames.
 s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   struct SceneEffectParams options;
   s32 framePhase, particleX, particleY, riseSpeed;
@@ -294,7 +296,7 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
   riseSpeed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
   FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
-                    0x000b0000, &options);
+                    0xb0000, &options);
 done:
   return 0;
 }
@@ -376,8 +378,8 @@ extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 emote,
                            s32 frames) __asm__("Actor_ShowEmoteById");
 
-// Until the statue has sunk, stepping by it throws the leader
-// back in a flash of sparks.
+/// Until the statue has sunk, stepping by it throws the leader
+/// back in a flash of sparks.
 void VenusLighthouse_RepelLeader(void) {
   s32 leader = Party_GetLeaderActor();
   struct Actor *actor = Actor_GetById(leader);
@@ -444,8 +446,8 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 
 #include "text/msg_ids.h"
 
-// The statue Felix moved sinks into the floor in column 42, and
-// the way past it opens.
+/// The statue Felix moved sinks into the floor in column 42, and
+/// the way past it opens.
 void VenusLighthouse_SinkStatue(void) {
   struct Actor *obj;
   s32 val;
@@ -488,7 +490,7 @@ void VenusLighthouse_ReadTrueHeart(void) {
   Event_End();
 }
 
-// Reveal fades: the paths it showed hide again.
+/// Reveal fades: the paths it showed hide again.
 void VenusLighthouse_HidePaths(void) {
   s32 x;
   s32 y;
@@ -509,7 +511,7 @@ void VenusLighthouse_HidePaths(void) {
   MapGrid_CopyCellsTo(121, 55, 110, 55, a, a);
 }
 
-// Reveal shows the hidden paths.
+/// Reveal shows the hidden paths.
 void VenusLighthouse_RevealPaths(void) {
   s32 x;
   s32 y;
@@ -537,9 +539,9 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 VenusLighthouse_Idle(void) { return 0; }
 
-// Felix casts Move on the statue.
+/// Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
-  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(4, ACTOR_MOVED_STATUE);
   ((struct SetupWork *)Ram_HeapSlots->fieldEffectWork)->idle =
       VenusLighthouse_Idle;
@@ -617,8 +619,8 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
   Exit_PrepareActorAnimation(actor, value);
 }
 
-// The prologue's opening: Felix moves the statue aside with Psynergy and
-// climbs off alone, leaving Jenna and Kraden.
+/// The prologue's opening: Felix moves the statue aside with Psynergy and
+/// climbs off alone, leaving Jenna and Kraden.
 void VenusLighthouse_FelixLeaves(void) {
   struct FieldWork *work;
 
@@ -1171,21 +1173,30 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gPushLeaderSteps[] = {                                                               
@@ -1304,18 +1315,11 @@ s32 gVenusLighthouse_StatueGlows[] = {
 };
 
 s32 gVenusLighthouse_ShrinkAndHide[] = {
-    22,
-    9,
-    0x9999,
-    22,
-    10,
-    0x9999,
-    22,
-    30,
-    0,
-    46,
-    (s32)SceneActor_ClearSingleChildField,
-    17,
+    SC_SET(SW_SCALE_X, 0x9999),
+    SC_SET(SW_SCALE_Y, 0x9999),
+    SC_SET(SW_COLLISION, 0),
+    SC_CALL((s32)SceneActor_ClearSingleChildField),
+    SC_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {

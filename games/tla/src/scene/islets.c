@@ -9,6 +9,7 @@
 /// Stone (Islets_TradeWithBird); and the Sea of Time Islet (Islets5), where
 /// Lonesome George takes the Li'l Turtle and carries the party to his secret
 /// spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
+#include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "battle/battle.h"
@@ -37,6 +38,7 @@
 #include "system/vector3.h"
 #include "shared/tables.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/shrine_of_the_sea_god.h"
 
@@ -240,8 +242,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIslets_Placements;
 }
 
-// Pushing the log off the ice: it falls into the water and makes a way back for
-// Pengulina.
+/// Pushing the log off the ice: it falls into the water and makes a way back
+/// for Pengulina.
 void Islets_PushLogIntoWater(void) {
   struct PushTarget target;
   struct Actor *object = Actor_Get(10);
@@ -473,7 +475,7 @@ void Islets_TradeWithBird(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(452) == -1) {
+  if (FieldPartyInventory_FindMember(ITEM_PRETTY_STONE) == -1) {
     if (Event_GetFlag(0xaa4)) {
       FieldActor_WatchAndSetScript(10, gMainRoutineWork.leaderActorId);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
@@ -502,7 +504,7 @@ void Islets_TradeWithBird(void) {
         FieldActor_Create(0x1e9, leader->x.fixed, px(152), leader->z.fixed);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
-      FieldActor_SetItemIcon(spawned, 453);
+      FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
@@ -510,7 +512,7 @@ void Islets_TradeWithBird(void) {
     FieldPsynergy_RestoreMindReadPalette();
     // "Felix traded his stone for the very fancy neckerchief."
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
-    PartyInventory_Remove(0x1c4);
+    PartyInventory_Remove(ITEM_PRETTY_STONE);
     Party_GiveItem(ITEM_RED_CLOTH, 0);
     FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
@@ -552,12 +554,12 @@ void Islets_TradeWithBird(void) {
     if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);                   \
       given->motionFlags = off;                                                \
-      Actor_SetItemIcon(given, 454);                                           \
+      Actor_SetItemIcon(given, ITEM_MILK);                                     \
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
     FieldPsynergy_RestoreMindReadPalette();                                    \
-    PartyInventory_Remove(453);                                                \
+    PartyInventory_Remove(ITEM_RED_CLOTH);                                     \
     PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
@@ -581,7 +583,7 @@ void Islets_TradeWithCow(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(453) != -1) {
+  if (FieldPartyInventory_FindMember(ITEM_RED_CLOTH) != -1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       FieldCamera_SetSpeed(0.8);
@@ -605,7 +607,7 @@ void Islets_TradeWithCow(void) {
         // Default: the object handed back is set for real in HAND_BACK.
         given = 0;
         if (item != 0) {
-          Actor_SetItemIcon(item, 453);
+          Actor_SetItemIcon(item, ITEM_RED_CLOTH);
           Actor_SetSpriteFlags(item, 0);
           item->motionFlags = 0;
           item->retainSpriteCache = 1;
@@ -639,7 +641,7 @@ void Islets_TradeWithCow(void) {
       STEP(gMainRoutineWork.leaderActorId, 132, 190);
       item = FieldActor_Create(489, px(140), 0, px(190));
       if (item != 0) {
-        Actor_SetItemIcon(item, 453);
+        Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
         zero.v = 0;
@@ -656,7 +658,7 @@ void Islets_TradeWithCow(void) {
       Event_Wait(20);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 98, 168);
       Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
-      Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
+      Actor_SetPositionAndResetMotion(item, px(104), px(24), px(160));
       Event_Wait(10);
       FieldPsynergy_RestoreMindReadPalette();
       Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
@@ -743,7 +745,7 @@ extern s32 gIslets_BirdFliesBackScript[];
    Actor_WalkToAndWait(actor, x, z), FieldEvent_Wait(1),                       \
    Actor_GetById(actor)->steeringFlags |= 1)
 
-// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
+/// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
 void Islets_TradeWithDog(void) {
   struct Actor *leader, *trader, *item, *gift;
   s32 right;
@@ -751,7 +753,7 @@ void Islets_TradeWithDog(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(454) != -1) {
+  if (FieldPartyInventory_FindMember(ITEM_MILK) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     trader = Actor_GetById(11);
     // Default: the trader's zero update stores read it.
@@ -830,7 +832,7 @@ void Islets_TradeWithDog(void) {
     FieldPsynergy_RestoreMindReadPalette();
     // "Felix traded his milk for the dog's turtle!"
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
-    PartyInventory_Remove(454);
+    PartyInventory_Remove(ITEM_MILK);
     Party_GiveItem(giftItem, 0);
     FieldPsynergy_GreyMindReadPalette();
     Actor_GetById(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
@@ -878,7 +880,7 @@ extern struct ActionScript
     gIslets_SpinScript__first __asm__("gIslets_SpinScript");
 #define gIslets_SpinScript gIslets_SpinScript__first
 
-// "At long last, I have a friend! Lonesome George I am no more!"
+/// "At long last, I have a friend! Lonesome George I am no more!"
 void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guide = Actor_Get(9);
@@ -909,7 +911,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   FieldActor_WaitForMove(gift);
   Actor_SelectAnimation(gift, 1);
   gift->update = 0;
-  PartyInventory_Remove(455);
+  PartyInventory_Remove(ITEM_LIL_TURTLE);
   // "Hop on my back!"
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664))[661] = 99;
@@ -969,7 +971,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
     }                                                                          \
   }
 
-// "Oh! You're really going to let me take care of your li'l turtle?"
+/// "Oh! You're really going to let me take care of your li'l turtle?"
 void Islets_GiveTurtle(void) {
   struct Actor *leader, *a, *b, *other;
   const u8 *message;
@@ -977,7 +979,7 @@ void Islets_GiveTurtle(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (PartyInventory_FindMember(455) != -1) {
+  if (PartyInventory_FindMember(ITEM_LIL_TURTLE) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -1119,8 +1121,8 @@ void Islets_GiveTurtle(void) {
 extern u32 gIslets_GeorgeWalksScript[];
 extern u32 gIslets_TurtleWalksScript[];
 
-// "You all set to go back to the island?" Lonesome George carries the party
-// back.
+/// "You all set to go back to the island?" Lonesome George carries the party
+/// back.
 void Islets_RideBackToIsland(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(9);
@@ -1258,10 +1260,10 @@ void Islets_FillWaveLines(void) {
   gIslets_WaveTableIndex ^= 1;
 }
 
-// The water ripples by an HBlank wave on BG1.
+/// The water ripples by an HBlank wave on BG1.
 void Islets_StartWave(void) {
-  Task_AddFrame(Islets_FillWaveLines, 0x480);
-  Task_AddFrame(Islets_StartWaveDma, 0xc80);
+  Task_AddFrame(Islets_FillWaveLines, TASK_PASS_VBLANK);
+  Task_AddFrame(Islets_StartWaveDma, TASK_PASS_FRAME);
 }
 
 /// Once the log carrying Pengulina reaches Pengus, the two and the leader react
@@ -1304,7 +1306,7 @@ void Islets_PengusGivesPrettyStone(void) {
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   item = Actor_GetById(20);
   item->motionFlags = 0;
-  FieldActor_SetItemIcon(item, 452);
+  FieldActor_SetItemIcon(item, ITEM_PRETTY_STONE);
   FieldActor_SetPositionAndResetMotion(
       item, leader->x.fixed, leader->y.fixed + px(24), leader->z.fixed);
   FieldEvent_Wait(20);
@@ -1324,7 +1326,7 @@ void Islets_PlayFootsteps(void) {
     Event_PlaySound(SE_FOOTSTEP);
 }
 
-// Coming near the nest, the bird flies back onto it.
+/// Coming near the nest, the bird flies back onto it.
 void Islets_BirdReturnsToNest(void) {
   struct Actor *object = Actor_Get(10);
 
@@ -1340,7 +1342,7 @@ void Islets_BirdReturnsToNest(void) {
   System_Wait(1);
   object->y.fixed = px(160);
   System_Wait(1);
-  FieldTask_AddFrame(Islets_PlayFootsteps, 0x480);
+  FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_VBLANK);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
   FieldActor_WaitForMove(object);
   FieldTask_Remove(Islets_PlayFootsteps);
@@ -1677,7 +1679,7 @@ void Islets_EnterDoor(void) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-// "Here we are!" Lonesome George's secret spot.
+/// "Here we are!" Lonesome George's secret spot.
 void Islets_ArriveAtSecretSpot(void) {
   struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1831,7 +1833,7 @@ void Islets_InitializeRoom1(void) {
     spawned = FieldActor_Create(489, px(280), 0, px(840));
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      FieldActor_SetItemIcon(spawned, 454);
+      FieldActor_SetItemIcon(spawned, ITEM_MILK);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->retainSpriteCache = 1;
@@ -1840,7 +1842,7 @@ void Islets_InitializeRoom1(void) {
   } else {
     Actor_SetAnimation(11, 5);
   }
-  Task_AddFrame(Islets_SetDockBlocksByHeight, 0x480);
+  Task_AddFrame(Islets_SetDockBlocksByHeight, TASK_PASS_VBLANK);
 }
 
 void Islets_StartIceberg(s32 id) {
@@ -1862,12 +1864,13 @@ void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   FieldActor_SetMoveTargetFixed(object, x, object->y.fixed, z);
 }
 
-// The Islets' marching guards (objects 11 to 18): while the event work is busy
-// or flag 0x218 is set they stand still; once the controlled character drops
-// below height -12 they stand and the event work's counter 0x16a becomes 200;
-// otherwise, for each frame owed (gSceneState's halfword 2) while no event
-// runs, a 260-frame routine sets them walking with their facing steps
-// (Islets_MoveIceberg) at 0, still at 100 and 220, and walking in place at 130.
+/// The Islets' marching guards (objects 11 to 18): while the event work is busy
+/// or flag 0x218 is set they stand still; once the controlled character drops
+/// below height -12 they stand and the event work's counter 0x16a becomes 200;
+/// otherwise, for each frame owed (gSceneState's halfword 2) while no event
+/// runs, a 260-frame routine sets them walking with their facing steps
+/// (Islets_MoveIceberg) at 0, still at 100 and 220, and walking in place at
+/// 130.
 void Islets_DriftIcebergs(void) {
   u16 *step = (u16 *)((u8 *)gSceneState);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1952,7 +1955,7 @@ void Islets_InitializeRoom2(void) {
     *state = 0;
     *next = 0;
   }
-  FieldTask_AddFrame(Islets_DriftIcebergs, 0x480);
+  FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_VBLANK);
   if (Event_GetFlag(0xa2c)) {
     object = Actor_Get(10);
     Actor_SetPosition(10, 176, 168);
@@ -1999,7 +2002,7 @@ void Islets_InitializeRoom3(void) {
     spawned = FieldActor_Create(489, px(104), px(24), px(160));
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      FieldActor_SetItemIcon(spawned, 453);
+      FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->retainSpriteCache = 1;
     }
@@ -2114,13 +2117,13 @@ void Islets_InitializeRoom5(void) {
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPositionFixed(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, px(452));
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2187,13 +2190,13 @@ void Islets_InitializeRoom5(void) {
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPositionFixed(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, px(452));
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2275,7 +2278,7 @@ inner:
 #include "text/msg_ids.h"
 
 void Islets_StartWaterShimmer(void) {
-  Task_AddFrame(&Islets_ShimmerWater, 0x480);
+  Task_AddFrame(&Islets_ShimmerWater, TASK_PASS_VBLANK);
   return;
 }
 
@@ -2559,7 +2562,93 @@ void Actor_StopAtPushTarget(struct Actor *object);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-#include "shared/push_target_push.h"
+/// Pushes an object to its target, the leader following, and moves its cells
+/// with it.
+void PushTarget_Push(struct PushTarget target) {
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *object = Actor_Get(target.id);
+  s32 cell[3];
+  s32 from[3];
+  s32 footprint;
+  s32 width;
+  s32 height;
+  s32 originX;
+  s32 originZ;
+  s32 direction;
+  s32 speed;
+  s32 acceleration;
+
+  direction = leader->facing >> 16;
+  footprint = target.footprint;
+  speed = leader->speedLimit;
+  acceleration = leader->acceleration;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[footprint][0]) +
+           ABS(gPushFootprints[footprint][2])) >>
+          4;
+  height = (ABS(gPushFootprints[footprint][1]) +
+            ABS(gPushFootprints[footprint][3])) >>
+           4;
+  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  System_Wait(15);
+  {
+    s32 deltaX = (target.x - from[0]) >> 17;
+    s32 deltaZ = (target.z - from[2]) >> 17;
+
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
+  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
+  System_Wait(4);
+  if ((u32)(direction - 6) <= 7)
+    Actor_SelectAnimation(object, 3);
+  else
+    Actor_SelectAnimation(object, 2);
+  Event_PlaySound(SE_HEAVY_MOVE);
+  Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
+  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                             (gPushLeaderSteps[direction] << 16) >> 31,
+                             (gPushLeaderSteps[direction] << 16) >> 17);
+  if (target.callback != 0)
+    target.callback();
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+  leader->update = 0;
+  leader->speedLimit = speed;
+  leader->acceleration = acceleration;
+  FieldActor_WaitForMove(object);
+  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_HEAVY_STOP);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
+  Actor_SelectAnimation(object, 1);
+  target.x = target.x + (gPushFootprints[footprint][0] << 16);
+  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x >>= 20;
+  target.z >>= 20;
+  originX = *(s32 *)(map + 328) >> 20;
+  originZ = *(s32 *)(map + 332) >> 20;
+  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
+                             originX + target.x, originZ + target.z);
+  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
+  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
+  originX += cell[0];
+  originZ += cell[2];
+  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
+  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  Event_NoOp();
+}
 
 void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;
@@ -2629,8 +2718,8 @@ u32 gIslets_SpinScript[] = {
 s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -2771,7 +2860,10 @@ s32 gIslets_BirdFliesOffScript[] = {
 };
 
 u32 gSmokeScript[] = {
-    0, 15, 3, 0, 1, 38,
+    SC_WAIT(15),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gIslets_TurtleSwimsScript[] = {                                                               

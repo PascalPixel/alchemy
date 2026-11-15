@@ -53,8 +53,8 @@
 #include "system/io_write.h"
 #include "module/field/field_effect.h"
 
-// Set while the leader stands on the button by the gates, which holds them
-// open.
+/// Set while the leader stands on the button by the gates, which holds them
+/// open.
 #define FLAG_GATES_BUTTON_HELD 0x200
 
 /// The pillar the party pushes onto the button by the gates, after the two
@@ -193,7 +193,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     Counter_Set(0);
-    Task_Add(PaletteCycle_StepAt, 1152);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -311,7 +311,9 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 
@@ -399,8 +401,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 

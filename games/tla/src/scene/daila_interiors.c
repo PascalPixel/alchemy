@@ -6,7 +6,7 @@
 /// of the Sea God, where Frost raises three puddles into pillars of ice
 /// (Scene_RaiseHeldActor, gDailaInteriors_PillarFrozenFlags) up to the Sea
 /// God's Tear (DailaInteriors_TakeSeaGodsTear), and where, once Tavi is
-/// rescued, the drained floor opens the way on (DailaInteriors_Start).
+/// rescued, the drained floor opens the way on (Scene_Initialize).
 
 #include "shared/tables.h"
 #include "field/emote.h"
@@ -22,6 +22,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_event.h"
@@ -42,13 +43,78 @@
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
+/// Reads a game flag.
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
+
+/// The houses, shops and inn of DailaInteriors1, numbering the rows its two
+/// placement tables share.
+enum DailaInteriorsActorId {
+  /// Riki's parents, in the house by entrance 1, scolding the boy who took his
+  /// father's fishing pole.
+  ACTOR_RIKIS_FATHER = ACTOR_FIRST_PLACED,
+  ACTOR_RIKIS_MOTHER,
+  /// Tavi's parents, next door, waiting for him with his three o'clock snack.
+  ACTOR_TAVIS_FATHER,
+  ACTOR_TAVIS_MOTHER,
+  /// An old man who sends boat seekers to Madra.
+  ACTOR_OLD_MAN_ON_MADRA,
+  /// An old woman who tells the way to the Kandorean Temple.
+  ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE,
+  /// "In all my years as mayor, I've never seen a wave like that before..."
+  ACTOR_MAYOR,
+  /// An older woman in the mayor's house, shaken by the noise after the wave.
+  ACTOR_WOMAN_ON_THE_NOISE,
+  /// A man in the mayor's house who heard the rumbling from the southeast.
+  ACTOR_MAN_ON_THE_RUMBLING,
+  /// A woman in the mayor's house on Daila's bad luck with pirates and waves.
+  ACTOR_WOMAN_ON_DAILAS_LUCK,
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_INNKEEPER,
+  /// The innkeeper's one helper, who later practises for the dinner show.
+  ACTOR_INN_WORKER,
+  /// A guest of the inn, a man carrying a pack, who misses Madra's food.
+  ACTOR_TRAVELER_FROM_MADRA,
+  /// A guest of the inn who longs for Madra's seafood.
+  ACTOR_GUEST_ON_MADRAS_SEAFOOD,
+  /// Until Tavi is rescued: the family in the house by entrance 7, whose sons
+  /// try the Sea of Time.
+  ACTOR_WOMAN_ON_THE_CURRENTS,
+  ACTOR_OLD_MAN_ON_THE_RED_ROCKS,
+  ACTOR_OLD_WOMAN_ON_HER_SONS,
+  /// A blank actor on the armor shop's counter, so the merchant behind it
+  /// answers from across it.
+  ACTOR_ARMOR_COUNTER
+};
+
+/// The rows of gDailaInteriors1PlacementsOnceTaviIsRescued after those it
+/// shares with gDailaInteriors1Placements.
+enum DailaInteriorsActorIdAfterRescue {
+  /// The two boys, back home, with their mouths full.
+  ACTOR_RIKI = ACTOR_GUEST_ON_MADRAS_SEAFOOD + 1,
+  ACTOR_TAVI,
+  /// A woman of the inn caught practising for the dinner show.
+  ACTOR_PRACTISING_PERFORMER,
+  ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE,
+  ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE,
+  ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE,
+  ACTOR_ARMOR_COUNTER_AFTER_RESCUE
+};
+
+/// The shops of Daila, as Shop_Run numbers them.
+enum { SHOP_DAILA_WEAPONS = 1, SHOP_DAILA_ARMOR = 2 };
+
+/// Daila's inn, as Inn_CheckIn numbers the inns.
+enum { DAILA_INN = 0 };
 
 /// The sanctuary's actors, numbering the rows of gDailaInteriors2Placements.
 enum DailaSanctuaryActorId {
+  /// The sanctuary's healer, who sends travelers with nowhere to go to Poi at
+  /// the Kandorean Temple, and once that is done heals the party.
+  ACTOR_HEALER = ACTOR_FIRST_PLACED,
   /// An actor with no picture at the pillars' top that holds the Tear: the
   /// game shows the item on it (Actor_SetItemIcon) until it is taken.
-  ACTOR_SEA_GODS_TEAR = ACTOR_FIRST_PLACED + 1,
+  ACTOR_SEA_GODS_TEAR,
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
@@ -113,7 +179,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gDailaInteriors1Placements;
 }
 
-void DailaInteriors_EmptyHook(void) {}
+/// Unused: does nothing.
+UNUSED void DailaInteriors_EmptyHook(void) {}
 
 /// Unused: the practising man shouts and jumps to the other of his two spots.
 UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
@@ -153,27 +220,32 @@ UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-s32 DailaInteriors_TalkScamps(void) {
+/// Mind Read on the armor shop's counter before Tavi is rescued: the merchant
+/// behind it thinks of the two scamps.
+s32 DailaInteriors_ReadArmorMerchantsMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsScamps);
   // "If those two scamps knew there were travelers in town, they'd have a..."
-  Event_ShowMessageAndWait(19, 0);
+  Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
   return 0;
 }
 
-s32 DailaInteriors_TalkMazeTreasure(void) {
+/// Mind Read on the armor shop's counter once Tavi is rescued: the merchant
+/// behind it thinks of hidden treasure.
+s32 DailaInteriors_ReadArmorMerchantsMindAfterRescue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
   // "Maybe they hid treasure here because this town is so mazelike..."
-  Event_ShowMessageAndWait(19, 0);
+  Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
   return 0;
 }
 
-void DailaInteriors_StartLeaderEvent(void) {
+/// Unused: starts an event and draws the leader in front of the counters.
+UNUSED void DailaInteriors_StartLeaderEvent(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
@@ -199,11 +271,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 struct Actor *Actor_GetById(u32 objectId);
 s32 Inn_CheckIn(s32 mode, s32 objectId);
 
+/// The weapon merchant sells across his counter, and otherwise warns of the
+/// roads south.
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(1, actor);
+    Shop_Run(SHOP_DAILA_WEAPONS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -214,11 +288,13 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   }
 }
 
+/// The armor merchant sells across his counter, and otherwise asks what brings
+/// the party to Daila.
 void DailaInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(2, actor);
+    Shop_Run(SHOP_DAILA_ARMOR, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -235,7 +311,7 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
-    Inn_CheckIn(0, actor);
+    Inn_CheckIn(DAILA_INN, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -246,6 +322,9 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
   }
 }
 
+/// The sanctuary's healer, until he has sent the party on, asks whether they
+/// have time and nowhere to go, whatever they answer, and remembers it
+/// (FLAG_DAILA_HEALER_SENT_TO_POI); after that he heals across his counter.
 void DailaInteriors_TalkToHealer(s32 actor) {
   s32 msg;
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
@@ -291,6 +370,8 @@ void DailaInteriors_TalkToHealer(s32 actor) {
   }
 }
 
+/// The sanctuary's healer once Tavi is rescued: he heals across his counter,
+/// and otherwise sends the party to Madra.
 void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -306,11 +387,12 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   }
 }
 
+/// As DailaInteriors_TalkToWeaponMerchant, telling of Daila's pirate past.
 void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(1, actor);
+    Shop_Run(SHOP_DAILA_WEAPONS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -321,11 +403,12 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   }
 }
 
+/// As DailaInteriors_TalkToArmorMerchant, on how spacious the village is.
 void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(2, actor);
+    Shop_Run(SHOP_DAILA_ARMOR, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -341,7 +424,7 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
-    Inn_CheckIn(0, actor);
+    Inn_CheckIn(DAILA_INN, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -352,6 +435,7 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   }
 }
 
+/// The old man asks whether the party is going to Madra once Tavi is rescued.
 void DailaInteriors_AskGoingToMadra(void) {
   s32 msg;
 
@@ -360,7 +444,7 @@ void DailaInteriors_AskGoingToMadra(void) {
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Event_SetMessageId(msg);
   // "Are you going to Madra?"
-  FieldMessage_ShowAtActor(12, 0);
+  FieldMessage_ShowAtActor(ACTOR_OLD_MAN_ON_MADRA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -368,10 +452,11 @@ void DailaInteriors_AskGoingToMadra(void) {
     FieldEvent_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(12, 0);
+  Event_ShowMessageAndWait(ACTOR_OLD_MAN_ON_MADRA, 0);
   Event_End();
 }
 
+/// The mayor asks whether the party is looking for a boat too.
 void DailaInteriors_TalkNoBoats(void) {
   s32 msg;
 
@@ -380,7 +465,7 @@ void DailaInteriors_TalkNoBoats(void) {
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Event_SetMessageId(msg);
   // "Don't tell me you're all looking for a boat, too!"
-  FieldMessage_ShowAtActor(14, 0);
+  FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -388,21 +473,23 @@ void DailaInteriors_TalkNoBoats(void) {
     FieldEvent_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(14, 0);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0);
   Event_End();
 }
 
+/// The performer caught practising for the dinner show hopes no one was
+/// watching.
 void DailaInteriors_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
   // "Er... Aheh heh... You... weren't watching, were you?"
-  Event_ShowMessageAndWait(26, 0);
+  Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
   FieldEvent_Wait(30);
-  Actor_SetModeById(26, 3);
+  Actor_SetModeById(ACTOR_PRACTISING_PERFORMER, 3);
   FieldEvent_Wait(30);
   // "I was just practicing for the show we're putting on tonight."
-  Event_ShowMessageAndWait(26, 0);
+  Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
   Event_End();
 }
 
@@ -421,7 +508,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   s32 item;
 
   saved48 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;
-  item = 458;
+  item = ITEM_SEA_GODS_TEAR;
   saved28 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
   savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
   Event_Start();
@@ -434,16 +521,14 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
-                                           194 << 16);
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(194));
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(MUS_TREASURE_FOUND);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
-                                             196 << 16);
+      Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(196));
       GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
     } else {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
@@ -458,7 +543,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
-      Actor_SetPositionFixed(ACTOR_SEA_GODS_TEAR, 232 << 16, 196 << 16);
+      Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 232, 196);
     }
   }
   Event_End();
@@ -560,7 +645,10 @@ void Map_SetLayerEntryFlag(s32 mode);
 void Actor_SetItemIcon(struct Actor *object, s32 item);
 void FlagBlock_PlaceAll(const s16 *flags);
 
-s32 DailaInteriors_Start(void) {
+/// Sets up the houses (the boys eating once they are home, the armor merchant
+/// behind his counter) or the sanctuary (the Tear on the pillars' top until it
+/// is taken, the puddles until Tavi is rescued, the frozen pillars after).
+s32 Scene_Initialize(void) {
   struct DailaMapWork *map;
   s32 *effect = &gFieldWork->transition;
   s32 value = 0x209;
@@ -571,16 +659,16 @@ s32 DailaInteriors_Start(void) {
       Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
-        Actor_SetModeById(24, 5);
-        Actor_SetSpriteFlags(Actor_GetById(24), 0);
-        Actor_SetModeById(25, 5);
-        Actor_SetSpriteFlags(Actor_GetById(25), 0);
+        Actor_SetModeById(ACTOR_RIKI, 5);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIKI), 0);
+        Actor_SetModeById(ACTOR_TAVI, 5);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
       }
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Actor_GetById(ACTOR_TEAR_SPOT)->priorityFlags |= 32;
-      Actor_GetById(19)->priorityFlags |= 32;
-      Actor_SetSpritePriority(19, 2);
-      Actor_GetById(19)->collisionFlags |= 4;
+      Actor_GetById(ACTOR_ARMOR_MERCHANT)->priorityFlags |= 32;
+      Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+      Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
     }
   } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapGrid;
@@ -589,7 +677,7 @@ s32 DailaInteriors_Start(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
     FieldEffect_StartBlankOverlay(0);
     if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {
-      Actor_SetItemIcon(Actor_GetById(ACTOR_SEA_GODS_TEAR), 458);
+      Actor_SetItemIcon(Actor_GetById(ACTOR_SEA_GODS_TEAR), ITEM_SEA_GODS_TEAR);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
@@ -635,6 +723,7 @@ s16 gDailaInteriors_PillarFrozenFlags[] = {
     -1, 0,
 };
 
+/// Tavi's father's script: he paces his house back and forth.
 s32 gDailaInteriors_PacingScript[] = {
     22, 30,
 #if !TLA_PATCH_1
@@ -652,6 +741,8 @@ s32 gDailaInteriors_PacingScript[] = {
     17,
 };
 
+/// The inn's two performers' script once Tavi is rescued: they turn on the
+/// spot, rehearsing the dinner show.
 s32 gDailaInteriors_LookAroundScript[] = {
     22, 30, 129, 22, 16, 0x1999,
     22, 15, 0x4ccc, (s32)0x80010000, 39, 1,
@@ -694,6 +785,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
+/// Where the houses' doors lead, before Tavi is rescued, out into Daila1.
 s32 gDailaInteriorsExits[] = {
     SCENE_EXITS(DailaInteriors1),
     SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
@@ -708,6 +800,7 @@ s32 gDailaInteriorsExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Where the houses' doors lead once Tavi is rescued, out into Daila2.
 s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
     SCENE_EXITS(DailaInteriors1),
     SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),
@@ -722,6 +815,8 @@ s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
     SCENE_EXITS_END,
 };
 
+/// The houses, shops and inn before Tavi is rescued (enum
+/// DailaInteriorsActorId).
 struct ActorPlacement gDailaInteriors1Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -746,6 +841,7 @@ struct ActorPlacement gDailaInteriors1Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The sanctuary (enum DailaSanctuaryActorId).
 struct ActorPlacement gDailaInteriors2Placements[] = {
     ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 333, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 196, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -756,6 +852,7 @@ struct ActorPlacement gDailaInteriors2Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The houses, shops and inn once Tavi is rescued, with Riki and Tavi home.
 struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -783,6 +880,7 @@ struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[] = {
     {SCENE_TABLE_END},
 };
 
+/// The houses' doors, talk and Mind Read before Tavi is rescued.
 struct Trigger gDailaInteriors1Events[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -791,49 +889,50 @@ struct Trigger gDailaInteriors1Events[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFieldRikisReallyInForItWhen)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFieldThatNoGoodKidOfMine)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderWhereOurLittleTavi)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldTaviNeverMissesThreeOclockSnacksies)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIfYoureLookingForABoat)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouHeadSouthYoullFind)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFieldInAllMyYearsAsMayor)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldTheWaveWasAwfulButThe)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldALotOfFolkSaidThey)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldBetweenThePiratesAndTheTidal)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchant)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToInnkeeper)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgFieldWeRunAVerySmallInn)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFieldIDontKnowWhenIllBe)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgFieldIHearTheSeafoodInMadra)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldRikiTaviWhereAreYouWhat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldThatTavisABadInfluenceOn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIllBetThatWhereverTaviIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldIfTaviIsntHomeSoonWere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderHowTheRoadTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderIfTheHolyMan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldAtLeastNobodySeemsToHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldIStillDontKnowWhatThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFieldWeShouldFindADifferentWay)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFieldNowThatBriggsIsLockedAway)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgFieldImGladImNotGoingTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsScamps)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgFieldWeCantSailAndWeCant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgFieldLookAtAllTheseGuestsWe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgFieldAfterAllThatShakingIWouldnt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgFieldImSoTornDoILike)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkScamps)},
+    {TRIGGER_TALK, ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldRikisReallyInForItWhen)},
+    {TRIGGER_TALK, ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldThatNoGoodKidOfMine)},
+    {TRIGGER_TALK, ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderWhereOurLittleTavi)},
+    {TRIGGER_TALK, ACTOR_TAVIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldTaviNeverMissesThreeOclockSnacksies)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldIfYoureLookingForABoat)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouHeadSouthYoullFind)},
+    {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgFieldInAllMyYearsAsMayor)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_NOISE, CONDITION_ALWAYS, MSGNO(MsgFieldTheWaveWasAwfulButThe)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldALotOfFolkSaidThey)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldBetweenThePiratesAndTheTidal)},
+    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgFieldWeRunAVerySmallInn)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldIDontKnowWhenIllBe)},
+    {TRIGGER_TALK, ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgFieldIHearTheSeafoodInMadra)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CURRENTS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RED_ROCKS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_SONS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
+    {TRIGGER_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldRikiTaviWhereAreYouWhat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldThatTavisABadInfluenceOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldIllBetThatWhereverTaviIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldIfTaviIsntHomeSoonWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderHowTheRoadTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderIfTheHolyMan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgFieldAtLeastNobodySeemsToHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_NOISE, CONDITION_ALWAYS, MSGNO(MsgFieldIStillDontKnowWhatThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldWeShouldFindADifferentWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldNowThatBriggsIsLockedAway)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgFieldImGladImNotGoingTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsScamps)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgFieldWeCantSailAndWeCant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgFieldLookAtAllTheseGuestsWe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldAfterAllThatShakingIWouldnt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgFieldImSoTornDoILike)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CURRENTS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RED_ROCKS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_SONS, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT(DailaInteriors_ReadArmorMerchantsMind)},
     {TRIGGER_TABLE_END},
 };
 
+/// The sanctuary's doors, talk and Mind Read before Tavi is rescued.
 struct Trigger gDailaInteriors2Events[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -841,11 +940,12 @@ struct Trigger gDailaInteriors2Events[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldTravelersWithNowhereToGoThis)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgFieldTravelersWithNowhereToGoThis)},
     {TRIGGER_TABLE_END},
 };
 
+/// The houses' doors, talk and Mind Read once Tavi is rescued.
 struct Trigger gDailaInteriors1EventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -854,55 +954,57 @@ struct Trigger gDailaInteriors1EventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFieldLetMeTellYouKidsAre)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFieldWhoStaysOutsideUntilHesAbsolutely)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldOurLittleOneIsFinallyHome)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldTaviWolfedDownHisSnackAnd)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(DailaInteriors_AskGoingToMadra)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldIThinkMadraIsEastOf)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkNoBoats)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldItsTooDangerousToGoTo)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldWhoWasThatGuyIWonder)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldWhyDidThePirateBriggsPlague)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToInnkeeperOnceTaviIsRescued)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDinnerShowPractice)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodWhen)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsVegetablesAgain)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFieldMmmMmnphDadWasSoMad)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgFieldMmmphMmmmDontTellAnyoneWe)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkCaughtPracticing)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldDarnThatRikiAhImGlad)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldHeeHeeMyRikiIsMommys)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIGuessRikiNextDoorMade)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldOnceTaviFinishesEatingImPutting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldDailaGotHitPrettyHardI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomeoneShouldSeeHowTheRoad)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldHeSaidHedPayMeA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldTheRoadToMadraGoesThrough)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFieldMaybeThatGuyWashedUpOn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFieldBriggsProbablyHasLotsOfMen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgFieldThisTownMayBeDirtPoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsMazeTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsTiredPerformer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDragonKingLine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBadShows)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsGuestDance)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgFieldIStillWantToCatchThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgFieldImSureGladIMadeIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodStory)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkMazeTreasure)},
+    {TRIGGER_TALK, ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldLetMeTellYouKidsAre)},
+    {TRIGGER_TALK, ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldWhoStaysOutsideUntilHesAbsolutely)},
+    {TRIGGER_TALK, ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldOurLittleOneIsFinallyHome)},
+    {TRIGGER_TALK, ACTOR_TAVIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldTaviWolfedDownHisSnackAnd)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_MADRA, CONDITION_ALWAYS, EVENT(DailaInteriors_AskGoingToMadra)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE, CONDITION_ALWAYS, MSGNO(MsgFieldIThinkMadraIsEastOf)},
+    {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkNoBoats)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_NOISE, CONDITION_ALWAYS, MSGNO(MsgFieldItsTooDangerousToGoTo)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldWhoWasThatGuyIWonder)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldWhyDidThePirateBriggsPlague)},
+    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued)},
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToInnkeeperOnceTaviIsRescued)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDinnerShowPractice)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodWhen)},
+    {TRIGGER_TALK, ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsVegetablesAgain)},
+    {TRIGGER_TALK, ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmMmnphDadWasSoMad)},
+    {TRIGGER_TALK, ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmphMmmmDontTellAnyoneWe)},
+    {TRIGGER_TALK, ACTOR_PRACTISING_PERFORMER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkCaughtPracticing)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
+    {TRIGGER_TALK, ACTOR_ARMOR_COUNTER_AFTER_RESCUE, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldDarnThatRikiAhImGlad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldHeeHeeMyRikiIsMommys)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldIGuessRikiNextDoorMade)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldOnceTaviFinishesEatingImPutting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldDailaGotHitPrettyHardI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE, CONDITION_ALWAYS, MSGNO(MsgFieldSomeoneShouldSeeHowTheRoad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgFieldHeSaidHedPayMeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_NOISE, CONDITION_ALWAYS, MSGNO(MsgFieldTheRoadToMadraGoesThrough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldMaybeThatGuyWashedUpOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldBriggsProbablyHasLotsOfMen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgFieldThisTownMayBeDirtPoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsMazeTreasure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsTiredPerformer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDragonKingLine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBadShows)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsGuestDance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldIStillWantToCatchThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldImSureGladIMadeIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRACTISING_PERFORMER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodStory)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER_AFTER_RESCUE, CONDITION_ALWAYS, EVENT(DailaInteriors_ReadArmorMerchantsMindAfterRescue)},
     {TRIGGER_TABLE_END},
 };
 
+/// The sanctuary once Tavi is rescued: Frost on the three puddles, the jumps
+/// between the pillars and the Tear at their top.
 struct Trigger gDailaInteriors2EventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -914,8 +1016,8 @@ struct Trigger gDailaInteriors2EventsOnceTaviIsRescued[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealerOnceTaviIsRescued)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealerOnceTaviIsRescued)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PILLAR, FLAG_DAILA_SANCTUARY_PILLAR_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PILLAR, FLAG_DAILA_SANCTUARY_PILLAR_FROZEN_FIRST + 1, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PILLAR, FLAG_DAILA_SANCTUARY_PILLAR_FROZEN_FIRST + 2, EVENT(Scene_RaiseHeldActor)},

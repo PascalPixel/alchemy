@@ -172,7 +172,25 @@ extern struct MapCell gMapGridCellBuffer[];
 
 #include "shared/map_cell_get.h"
 
-#include "shared/map_cell_swap.h"
+/// Swaps a map cell's collision code and attribute for `value`, returning the
+/// old.
+s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
+  s32 old;
+
+  if (map == NULL)
+    return 0;
+  if (layer <= 2)
+    cell = map->layers[layer].cells;
+  else
+    cell = gMapGridCellBuffer;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
+  return old;
+}
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -1171,10 +1189,11 @@ s32 Scene_Initialize(void) {
       if (entrance == 11) {
         Actor_SetScript(11, gMarsLighthouseEntrance_DragonFaceAtLeft);
         Ride_SetEntryState(0, 3);
-        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, 0x480);
+        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_VBLANK);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
-      Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding, 0x480);
+      Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding,
+                    TASK_PASS_VBLANK);
       Actor_Get(11)->update =
           (void (*)(void))MarsLighthouseEntrance_FlickerDragonFace;
       Ride_SetMode(1);
@@ -1294,7 +1313,22 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/actor_reset_scripted_for.h"
 
-#include "shared/ride_spawn_front.h"
+/// Spawns a ride object moving forward at `speed`.
+void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Import_ActorCreate_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->riseBaseY = speed;
+    Actor_ResetScriptedFor(object, 2);
+    object->update = Flame_UpdateForward;
+    if (mode)
+      object->retainSpriteCache = 2;
+    Actor_SelectAnimation(object, 2);
+  }
+}
 
 #include "shared/ride_update_landing.h"
 
@@ -1306,7 +1340,22 @@ void Ride_UpdateDrift(struct Actor *object);
 /// gScriptedPart_Script. Overlays 6ab, 6ac and 6ad have the same function.
 #include "shared/actor_setup_scripted_part.h"
 
-#include "shared/ride_spawn_back.h"
+/// Spawns a ride object moving back at `speed`.
+void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Import_ActorCreate_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->riseBaseY = -speed;
+    Actor_SetupScriptedPart(object, 3);
+    object->update = Flame_UpdateForward;
+    if (mode)
+      object->retainSpriteCache = 2;
+    Actor_SelectAnimation(object, 2);
+  }
+}
 
 void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1346,7 +1395,23 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-#include "shared/ride_spawn_spark.h"
+/// Spawns a spark thrown up at `speed`.
+void Ride_SpawnSpark(s32 *position, s32 speed) {
+  struct Actor *object = Import_ActorCreate_(285, position[0], position[1],
+                                             position[2] + 0xfffe0000);
+  s32 spin;
+
+  if (object != NULL) {
+    object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->riseBaseY = (u16)(Random16() << 1) + speed;
+    spin = (u16)Random16() + 0xffff8000;
+    object->timer = spin;
+    Actor_SetupScriptedFor(object, 2);
+    object->update = (void (*)(void))Ride_UpdateDrift;
+    Actor_SetBlendMode(object, 1);
+  }
+}
 
 /* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
@@ -1409,7 +1474,95 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-#include "shared/beam_draw_targets.h"
+/// Draws the beam's targets, firing each in turn.
+void FlameThrowers_Puff(void) {
+  s32 saved[2];
+  State *state;
+  Entry *entry;
+  Camera *camera;
+  Position *position;
+  s32 cameraX, cameraZ;
+  s32 v;
+  s32 i;
+
+  state = (State *)(gInventorySnapshot + 0x188);
+  camera = IWRAM->camera;
+  entry = state->entries;
+  position = &camera->position;
+  cameraX = position->x;
+  cameraX &= 0xffff0000;
+  cameraZ = position->z & 0xffff0000;
+  saved[1] = (*(s32 **)camera)[1];
+  saved[0] = IWRAM->unk_6c.word;
+  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
+    state->callback();
+  v = (u16)state->unk_6;
+  state->unk_8 = v;
+  state->unk_6 = 0;
+  for (i = 3; i >= 0; i--, entry++) {
+    Actor *actor;
+    s32 flag, x, y, unk6, value, dx, dz;
+    u8 *mark;
+
+    if (entry->active == 0)
+      continue;
+    actor = entry->actor;
+    if (actor == 0)
+      continue;
+    flag = GameFlag_Get(FLAG_MENU_OPEN);
+    if (*(s16 *)(saved[0] + 358) != 0)
+      flag |= 1;
+    mark = &actor->flag5b;
+    *mark = flag;
+    if (state->unk_e != 0)
+      *mark = GameFlag_Get(FLAG_MENU_OPEN);
+    dx = actor->x;
+    dz = actor->z;
+    dx -= cameraX;
+    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
+     */
+    asm("" : : "r"(dx));
+    y = actor->y;
+    dz -= cameraZ;
+    y = dz - y;
+    unk6 = entry->unk_6;
+    x = dx >> 16;
+    y = (y >> 16) - 8;
+    if (unk6 == 0) {
+      if ((u32)(x + 7) > 334)
+        continue;
+      if (y <= -48)
+        continue;
+      if (y > 239)
+        continue;
+    }
+    y = (u16)entry->timer;
+    if (entry->timer <= 0) {
+      y = entry->flags & 240;
+      switch (y) {
+      case 128:
+        Ride_SpawnSpark__s20ec(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 48:
+        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 32:
+        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 16:
+        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 0:
+        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      }
+      value = 8;
+    } else {
+      value = y - 1;
+    }
+    entry->timer = value;
+  }
+}
 #undef IWRAM
 
 #undef Actor_HoldDuringEvent
@@ -1879,7 +2032,23 @@ extern u16 gMarsLighthouseEntrance_HoleMaskVram;
 
 void Map_CopyPalette(s32 scene, s32 a1);
 
-#include "shared/actor_attach.h"
+/// Attaches an actor to another with a script and an update.
+void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
+  struct Actor *source = Actor_Get(id);
+  struct Actor *object = Actor_Get(target);
+
+  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
+                                       source->z.fixed);
+  Actor_StartScript(object, script);
+  Actor_SetSpriteFlags(object, 0);
+  object->motionFlags = 0;
+  Actor_SelectAnimation(object, 1);
+  object->watchedActor = source;
+  object->timer = 0;
+  object->userValue = a3;
+  BYTE_AT(object, 98) = kind;
+  object->update = Actor_HoldDuringEvent;
+}
 
 #include "shared/actor_launch_ahead.h"
 
@@ -2212,7 +2381,32 @@ extern u16 *gPaletteCycle_FlashColors;
 // Records the four palette lists, writes each listed palette entry from its
 // red, green and blue, then copies two palettes from block32 and starts the
 // blend.
-#include "shared/palette_set_colors_fade.h"
+/// Palette_SetColors, then applies the palette fade.
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->paletteFade;
+
+  gPaletteCycle_Slots = slots;
+  gPaletteCycle_FlashColors = colours;
+  gPaletteCycle_Colors = a;
+  gPaletteCycle_Order = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Teleport_ArriveWhirling();
+}
 
 extern u16 gPaletteCycle_Count;
 
@@ -2312,7 +2506,7 @@ void Teleport_ArriveWhirling(void) {
 
 #include "shared/actors_set_cells_open.h"
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -2822,7 +3016,8 @@ u32 gSceneExits[] = {
 };
 
 u32 gMarsLighthouseEntrance_IceConeScript[] = {
-    39, 7, 17,
+    SC_ARG(7),
+    SC_END,
 };
 
 struct ActorPlacement gMarsLighthouseEntrance_Placements[] = {

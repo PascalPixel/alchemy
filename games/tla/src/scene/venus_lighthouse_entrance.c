@@ -13,6 +13,7 @@
 ///   prologue wakes them by the door, with Alex come back for them
 ///   (VenusLighthouseEntrance_WakeUp).
 
+#include "system/task.h"
 #include "battle/battle.h"
 #include "debug.h"
 #include "field/field.h"
@@ -42,6 +43,8 @@
 #include "system/heap_release.h"
 #include "field_sprite.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
 /// from then on.
@@ -1494,7 +1497,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->height = 0;
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
-  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, 0x480);
+  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
   if (work->stage != 999) {
   wait:
     System_Wait(1);
@@ -1737,12 +1740,19 @@ struct Trigger gSceneEvents[] = {
 
 // clang-format off
 u32 gVenusLighthouseEntrance_BirdLands[] = {
-    1, 0, 1, 39, 2, 0,
-    4, 22, 26, 3, 22, 13,
-    0, 0, 1, 17,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_ARG(2),
+    SC_WAIT(4),
+    SC_SET(SW_MOTION, 3),
+    SC_SET(SW_VELOCITY_Y, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gVenusLighthouseEntrance_BirdFlies[] = {
-    1, 0, 1, 38,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_FREE,
 };
 // clang-format on

@@ -47,6 +47,7 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 enum JupiterLighthouseAerieActorId {
   ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
@@ -420,7 +421,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
     s32 zero = 0;
 
     gPaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -959,7 +960,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   work->unkb02 = 0;
   work->unkb09 = 1;
   work->unkb0a = 0;
-  Task_AddFrame(JupiterLighthouse_UpdateBeam, 0x480);
+  Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_VBLANK);
   while (work->step != 999)
     System_Wait(1);
   FieldTask_Remove(JupiterLighthouse_UpdateBeam);
@@ -1240,7 +1241,9 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gJupiterLighthouse_BeamScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 

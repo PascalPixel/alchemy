@@ -50,6 +50,7 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.
@@ -219,7 +220,46 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
-#include "shared/orbs_spawn_rising.h"
+void Orbs_SpawnRising(void) {
+  struct Actor *center;
+  struct OrbitEffect *effect;
+  struct FieldSprite *sprite;
+  s32 angle;
+
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) == 0 && gFrameCount % 3 != 0)
+    return;
+  center = Actor_Get(ACTOR_LOWER_BEAM);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) != 0) {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
+  } else {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
+  }
+  if (effect != 0) {
+    sprite = effect->sprite;
+    Actor_StartScript(effect, gOrbScript);
+    FieldActor_SetSpriteColor(effect, 1);
+    effect->motionFlags = 0;
+    angle = Random16() & 0xffff000;
+    effect->angle = angle;
+    effect->unk66 = 0;
+    effect->update = (void (*)(struct OrbitEffect *))Orb_Update;
+    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    sprite->nextFrame = 0;
+    sprite->priority = 1;
+  }
+}
 
 /* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseStep as this
  * part declared it; the joined file has another; tried as the definition's
@@ -303,7 +343,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
-  Task_AddFrame(JupiterLighthouse_PulseAscend, 0x480);
+  Task_AddFrame(JupiterLighthouse_PulseAscend, TASK_PASS_VBLANK);
   for (i = 0; i < 20; i++) {
     gJupiterLighthouse_PulseStep = 0;
     System_Wait((20 - i) / 2);
@@ -320,7 +360,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldEvent_Wait(40);
   Bring(ACTOR_LOWER_BEAM);
   Bring(ACTOR_UPPER_BEAM);
-  Task_AddFrame(Orbs_SpawnRising, 0x480);
+  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(0x10000, 0);
@@ -594,12 +634,12 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
+  SET_ACTOR_POSITION(object, px(680), px(32), px(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
   object = Actor_Get(ACTOR_UPPER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
+  SET_ACTOR_POSITION(object, px(680), px(64), px(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
@@ -948,7 +988,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
 
     work->next = zero;
   }
-  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, 0x480);
+  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_VBLANK);
 }
 
 void JupiterLighthouse_EndSparkRing(void) {
@@ -1063,8 +1103,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -1236,7 +1276,9 @@ u32 gPaletteCyclePausesInEvents[] = {
 };
 
 s32 gJupiterLighthouse_OrbScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 

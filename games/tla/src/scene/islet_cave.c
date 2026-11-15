@@ -200,8 +200,8 @@ void PaletteCycle_Fade(void) {
     gPaletteCycleIndex = 0;
 }
 
-// Arriving by Teleport: the water's colours spin fast while the whirl plays,
-// then settle.
+/// Arriving by Teleport: the water's colours spin fast while the whirl plays,
+/// then settle.
 void IsletCave_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
@@ -325,8 +325,8 @@ DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToFirstCircle, 232, 136)
 
 DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
 
-// Darkens the palette by the scale given: each corridor is darker than the
-// last.
+/// Darkens the palette by the scale given: each corridor is darker than the
+/// last.
 void IsletCave_DimPalette(s32 scale) {
   u16 *source = Ram_HeapSlots->paletteFade;
   u16 *channel = (u16 *)((u8 *)source + 0xe00);
@@ -489,14 +489,14 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
   }
 }
 
-// A log the leader steps onto rocks under him.
+/// A log the leader steps onto rocks under him.
 void IsletCave_SettleLog(s32 arg0) {
   Actor_SetModeById(arg0, 1);
   Actor_SetModeById(arg0, 2);
   return;
 }
 
-// Places the seven logs on the water where their flags left them.
+/// Places the seven logs on the water where their flags left them.
 void IsletCave_PlaceLogs(void) {
   ((void (*)())IsletCave_PlaceLogByCellAbove)(8, 27, 0, 136, 0x1f8, 20, 0x280);
   ((void (*)())IsletCave_PlaceLogByCellAbove)(9, 28, 0, 136, 232, 21, 0x281);
@@ -753,8 +753,8 @@ void IsletCave_RideSeventhLogSouth(void) {
    } *)(base))                                                                 \
        ->v)
 
-// At the end of the corridors the guardian of wind is summoned and the Sentinel
-// fights.
+/// At the end of the corridors the guardian of wind is summoned and the
+/// Sentinel fights.
 void IsletCave_SentinelAwaits(void) {
   s32 cue;
   struct Actor *object;
@@ -787,7 +787,7 @@ void IsletCave_SentinelAwaits(void) {
   Event_End();
 }
 
-// Tremor on the shaking spot: Serac drops out.
+/// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
     struct Actor *object = Actor_GetById(9);

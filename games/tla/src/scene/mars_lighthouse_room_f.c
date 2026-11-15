@@ -944,8 +944,8 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       s32 z;
       u8 *cells;
 
-      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + 0x80000,
-                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + 0x80000);
+      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + px(8),
+                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + px(8));
       FieldVector_AddPolarOffset(px(16), angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
@@ -1174,7 +1174,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
     if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
       MarsLighthouseRoomF_MeltIcebergs();
-    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, 0x480);
+    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, TASK_PASS_VBLANK);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_3) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
@@ -1346,7 +1346,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
     s32 zero = 0;
 
     gPaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -2741,8 +2741,8 @@ extern s16 gSlideOnIce_SteerAngles[];
 
 extern s16 gSlideOnIce_AnglesByKey[];
 
-// This room's slides reach Field_CheckSpheresOverlap through the overlay's
-// first import of it, Import_FieldCheckSpheresOverlap.
+/// This room's slides reach Field_CheckSpheresOverlap through the overlay's
+/// first import of it, Import_FieldCheckSpheresOverlap.
 #define Field_CheckSpheresOverlap Import_FieldCheckSpheresOverlap
 #include "shared/leader_slide_on_ice.h"
 
@@ -2830,7 +2830,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 // target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 #include "shared/push_target_find_slide.h"
 
-// The whole-pixel half of a 16.16 coordinate.
+/// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
@@ -2932,10 +2932,10 @@ void PushTarget_Push(struct PushTarget target) {
 /* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
  * another definition; not tried: struct MapLayer__s5048 was not found. */
 
-// Queues the lit actors' sprites: for each listed actor with a position,
-// projects it from the map's view, skips it off screen, and writes a 16 by 16
-// sprite, or a 32 by 64 one when the big switch is set, at its animation
-// picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;

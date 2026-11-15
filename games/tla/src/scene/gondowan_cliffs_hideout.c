@@ -18,6 +18,7 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "field/event_inline.h"
+#include "objcmd.h"
 
 /// The hideout's placed actors: two not yet understood, then the four
 /// Kibombo warriors, named for what each says when spoken to.
@@ -106,9 +107,8 @@ s32 Scene_PrepareMap(void) {
 }
 
 u32 gGondowanCliffsHideout_StandScript[] = {
-    39,
-    0,
-    17,
+    SC_ARG(0),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

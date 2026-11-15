@@ -7,6 +7,8 @@
 /// Its sea, falls and stone cycle their colours.
 #include "flags.h"
 #include "djinn_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
@@ -168,7 +170,10 @@ extern u16 gApojiiIslands_StoneColors[16];
 
 extern u8 Data_0202c001[];
 
-void ApojiiIslands_HazeJoinsParty(void) { Djinn_JoinParty(10, 3, 11); }
+void ApojiiIslands_HazeJoinsParty(void) {
+  Djinn_JoinParty(10, DJINNI_HAZE / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_HAZE));
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -188,7 +193,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gApojiiIslands_Placements;
 }
 
-// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back up).
+/// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back
+/// up).
 void ApojiiIslands_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
@@ -241,7 +247,7 @@ extern u16 gApojiiIslands_SeaCycled[];
 extern u16 gApojiiIslands_ShoreColors[];
 extern u16 gApojiiIslands_ShoreCycled[];
 
-// The sea's and shore's colours cycle every eighth frame.
+/// The sea's and shore's colours cycle every eighth frame.
 void ApojiiIslands_CycleSeaColors(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 busy, phase, k, j;
@@ -290,7 +296,7 @@ extern u16 gApojiiIslands_StoneCycled[16];
 
 s32 __modsi3(s32 a, s32 b);
 
-// The woken Aqua Stone's colours cycle.
+/// The woken Aqua Stone's colours cycle.
 void ApojiiIslands_CycleAquaStoneColors(void) {
   s32 base;
   s32 i;
@@ -327,13 +333,13 @@ static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
 }
 
-// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
-// as its update, cues 78 and 21 play, a sparkle setup
-// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
-// follow; then the screen blends in over six steps while the palette cycle
-// gives way to ApojiiIslands_CycleAquaStoneColors and the cell markers are
-// rebuilt (ApojiiIslands_AddCellMarkers). Flags 0x95f and 0x95e are set and the
-// camera pans through three points before cue 77.
+/// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
+/// as its update, cues 78 and 21 play, a sparkle setup
+/// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
+/// follow; then the screen blends in over six steps while the palette cycle
+/// gives way to ApojiiIslands_CycleAquaStoneColors and the cell markers are
+/// rebuilt (ApojiiIslands_AddCellMarkers). Flags 0x95f and 0x95e are set and
+/// the camera pans through three points before cue 77.
 void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
@@ -390,7 +396,7 @@ blend:
   Import_EventSetExitRequest(77);
 }
 
-// "What... What just happened? That rock couldn't have heard my wishes..."
+/// "What... What just happened? That rock couldn't have heard my wishes..."
 void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -460,8 +466,8 @@ void ApojiiIslands_ClearRoom3Bushes(void) {
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearRoom3SmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
-// Stepping onto a door: the leader walks through it and the scene leaves by
-// the exit of its number.
+/// Stepping onto a door: the leader walks through it and the scene leaves by
+/// the exit of its number.
 void ApojiiIslands_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -530,10 +536,16 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gApojiiIslands_Triggers;
 }
 
+/// The Apojii Islands' shops, as Shop_Run numbers them.
+enum { SHOP_APOJII = 23 };
+
+/// The Apojii Islands' inn, as Inn_CheckIn numbers the inns.
+enum { APOJII_INN = 8 };
+
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Inn_CheckIn(8, actor);
+    Inn_CheckIn(APOJII_INN, actor);
     return;
   }
   Event_Start();
@@ -568,7 +580,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
 void ApojiiIslands_TalkToMerchant(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Shop_Run(23, actor);
+    Shop_Run(SHOP_APOJII, actor);
     return;
   }
   Event_Start();
@@ -608,8 +620,8 @@ void Layer_TrackScroll(void) {
 
 #include "shared/scroll_start_hblank.h"
 
-// The overlay's entry: sets the map mode and screen effect 0x202, then starts
-// each room's own setup.
+/// The overlay's entry: sets the map mode and screen effect 0x202, then starts
+/// each room's own setup.
 s32 Scene_Initialize(void) {
   s32 *effect;
   s16 scene;
@@ -623,7 +635,7 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_APOJII_ISLANDS_2) {
     ApojiiIslands_InitializeRoom2();
   } else if (scene == SCENE_APOJII_ISLANDS_1) {
-    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, 0x480);
+    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
     if (Event_GetFlag(0x95e))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_3) {
@@ -680,7 +692,7 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
 
 #include "shared/actor_emit_water_drop.h"
 
-// In a stream the current carries the leader downstream, splashing.
+/// In a stream the current carries the leader downstream, splashing.
 void ApojiiIslands_FlowWithStream(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.leaderActorId;
@@ -737,7 +749,34 @@ void ApojiiIslands_FlowWithStream(void) {
 
 #include "shared/actor_show_parts.h"
 
-#include "shared/leader_spin_away.h"
+/// The leader spins up and away to `entrance`.
+void Leader_SpinAway(s32 entrance) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 i;
+
+  Event_Start();
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  leader->motionFlags = 0;
+  leader->priorityFlags |= 0x20;
+  Event_PlaySound(SE_SPLASH_SMALL);
+  Actor_SelectAnimation(leader, 18);
+  Event_PlaySound(SE_SPIN_AWAY);
+  for (i = 0; i < 60; i++) {
+    s32 angle;
+
+    if (i == 30)
+      Event_FinishScreenTransition();
+    leader->y.fixed -= 0x4000;
+    angle = leader->facing;
+    leader->facing = angle + 0x1000;
+    if ((i & 7) == 0)
+      ApojiiIslands_SpawnSplash(Actor_Get(15));
+    System_Wait(1);
+  }
+  Event_End();
+  FieldEvent_SetExitRequest(entrance);
+}
 
 // Every other frame, emits particle 7 (5 on every other such frame) from the
 // object, 26 pixels up, swaying with the frame count and drifting by a random
@@ -818,13 +857,13 @@ void ApojiiIslands_DrawCellMarkers(void) {
   }
 }
 
-// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
-// block and no source, then schedules ApojiiIslands_DrawCellMarkers.
+/// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
+/// block and no source, then schedules ApojiiIslands_DrawCellMarkers.
 void ApojiiIslands_StartCellMarkers(void) {
   Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers, 0x1004);
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
   Vram_Load(gApojiiIslands_CellMarkers.block, 0x200, 0);
-  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, 0x480);
+  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_VBLANK);
 }
 
 void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
@@ -886,9 +925,9 @@ extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_draw.h"
 
-// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
-// move them; the overlay's copy of FieldEffect_InitializeSparkles.
+/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
   struct DustWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));
@@ -951,30 +990,45 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gApojiiIslands_SplashScript[] = {
-    0, 20, 38,
+    SC_WAIT(20),
+    SC_FREE,
 };
 
 u32 gWaterDropScript[] = {
-    23, 6, 0x4000, 0, 1, 13,
-    30, 0, 38,
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 
 s16 gGroundParticleFrames[] = {                                                               
@@ -999,60 +1053,30 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gApojiiIslands_PaceScript[] = {
-    22,
-    30,
-    PACE_SCRIPT_THIRD_WORD,
-    22,
-    16,
-    0x3333,
-    22,
-    15,
-    0x9999,
-    (s32)0x80010000,
-    39,
-    2,
-    4,
-    0x1280000,
-    0,
-    0x880000,
-    1,
-    4,
-    0x1280000,
-    0,
-    0x680000,
-    1,
-    39,
-    1,
-    0,
-    60,
-    0,
-    10,
-    0,
-    60,
-    39,
-    2,
-    4,
-    0x1280000,
-    0,
-    0x880000,
-    1,
-    4,
-    0x1180000,
-    0,
-    0x880000,
-    1,
-    39,
-    1,
-    0,
-    60,
-    0,
-    10,
-    0,
-    60,
-    13,
-    0xffff,
-    (s32)0xc0010000,
-    17,
+    SC_SET(SW_COLLISION, PACE_SCRIPT_THIRD_WORD),
+    SC_SET(SW_ACCEL, Q16(0.2)),
+    SC_SET(SW_SPEED, Q16(0.6)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(296), 0, px(136)),
+    SC_SYNC,
+    SC_MOVE(px(296), 0, px(104)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(60),
+    SC_WAIT(10),
+    SC_WAIT(60),
+    SC_ARG(2),
+    SC_MOVE(px(296), 0, px(136)),
+    SC_SYNC,
+    SC_MOVE(px(280), 0, px(136)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(60),
+    SC_WAIT(10),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

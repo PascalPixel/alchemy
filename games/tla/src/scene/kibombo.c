@@ -9,6 +9,7 @@
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
+#include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "field/sprite.h"
@@ -23,15 +24,15 @@
 /// behind (Kibombo_PiersRefusesToLeave).
 #define FLAG_KIBOMBO_PIERS_STAYED_BEHIND 0x92f
 
-// Story flags: the vent Scoop uncovers by the statue, the block Moved for
-// Piers, the ceremony begun and Piers joined.
+/// Story flags: the vent Scoop uncovers by the statue, the block Moved for
+/// Piers, the ceremony begun and Piers joined.
 #define FLAG_KIBOMBO_VENT_UNCOVERED 0x86a
 #define FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS 0x9ea
 #define FLAG_KIBOMBO_CEREMONY_BEGUN 0x8f1
 #define FLAG_PIERS_JOINED 0x8f4
 /// Set once the party has heard of the foreign ceremony.
 #define FLAG_HEARD_OF_THE_FOREIGN_CEREMONY 0x9df
-// For this visit: each of the four markings dug, and the one Scoop is digging.
+/// For this visit: each of the four markings dug, and the one Scoop is digging.
 #define FLAG_FIRST_MARKING_DUG FLAG_SCENE_TEMP_04
 #define FLAG_SECOND_MARKING_DUG FLAG_SCENE_TEMP_05
 #define FLAG_THIRD_MARKING_DUG FLAG_SCENE_TEMP_06
@@ -215,9 +216,19 @@ void Kibombo_AskGoingWest(void) {
 
 #include "shared/leader_is_facing_north.h"
 
+/// Kibombo's shops, as Shop_Run numbers them.
+enum {
+  SHOP_KIBOMBO_WEAPONS = 17,
+  SHOP_KIBOMBO_ARMOR = 18,
+  SHOP_KIBOMBO_ITEMS = 19
+};
+
+/// Kibombo's inn, as Inn_CheckIn numbers the inns.
+enum { KIBOMBO_INN = 6 };
+
 void Kibombo_OpenWeaponShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(17, 20);
+    Shop_Run(SHOP_KIBOMBO_WEAPONS, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -230,7 +241,7 @@ void Kibombo_OpenWeaponShop(void) {
 
 void Kibombo_OpenArmorShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(18, 21);
+    Shop_Run(SHOP_KIBOMBO_ARMOR, 21);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -243,7 +254,7 @@ void Kibombo_OpenArmorShop(void) {
 
 void Kibombo_OpenItemShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(19, 22);
+    Shop_Run(SHOP_KIBOMBO_ITEMS, 22);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -256,7 +267,7 @@ void Kibombo_OpenItemShop(void) {
 
 void Kibombo_OpenInn(void) {
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(6, 23);
+    Inn_CheckIn(KIBOMBO_INN, 23);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -356,7 +367,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
   }
 }
 
-// Frost on the puddle freezes it into a pillar.
+/// Frost on the puddle freezes it into a pillar.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
 
 void Kibombo_UncoverVent(void) {
@@ -370,7 +381,7 @@ void Kibombo_ScoopVent(s32 mode) {
     Kibombo_UncoverVent();
 }
 
-// Digs up the first of the four markings by the statue, as Scoop does.
+/// Digs up the first of the four markings by the statue, as Scoop does.
 void Kibombo_DigFirstMarking(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
   Kibombo_BlendStart(36, 34, 1, 1, 16, 7);
@@ -415,8 +426,8 @@ void Kibombo_ScoopFourthMarking(s32 mode) {
     Kibombo_DigFourthMarking();
 }
 
-// Move on the block Piers cannot reach: it drops into place with a thump, and
-// Piers joins the party.
+/// Move on the block Piers cannot reach: it drops into place with a thump, and
+/// Piers joins the party.
 void Kibombo_MoveBlockForPiers(void) {
   struct Actor *object = Actor_GetById(11);
 
@@ -629,8 +640,8 @@ void Kibombo_CrowdBows(void);
 void Kibombo_CrowdStands(void);
 void Kibombo_EndOffering(void);
 
-// Akafubu raises the Black Crystal before the Great Gabomba while the warriors
-// chant.
+/// Akafubu raises the Black Crystal before the Great Gabomba while the warriors
+/// chant.
 void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_CrowdStands();
   Sound_Play(MUS_SILENCE);
@@ -1441,8 +1452,8 @@ s32 Kibombo_ClampColor(s32 value) {
 
 #include "system/io_reg.h"
 
-// Sets a palette colour from its fire colour, brightened by delta (half for
-// green, a quarter for blue).
+/// Sets a palette colour from its fire colour, brightened by delta (half for
+/// green, a quarter for blue).
 void Kibombo_FlickerColor(s32 index, s32 entry, s32 delta) {
   u16 color = gKibombo_FireColors[entry];
   s16 r = color & 0x1f;
@@ -1516,7 +1527,7 @@ void Kibombo_FlickerStatueFires(void) {
   }
 }
 
-// Creates the Black Crystal, drawn with the item's own icon.
+/// Creates the Black Crystal, drawn with the item's own icon.
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
   s32 zero = 0;
@@ -1541,7 +1552,7 @@ void Kibombo_CreateBlackCrystal(void) {
   }
 }
 
-// On the roof the leader walks over the house; below he walks behind it.
+/// On the roof the leader walks over the house; below he walks behind it.
 void Kibombo_SetRoofByLeaderHeight(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -1554,7 +1565,7 @@ void Kibombo_SetRoofByLeaderHeight(void) {
   }
 }
 
-// Keeps the Black Crystal above the one who holds it.
+/// Keeps the Black Crystal above the one who holds it.
 void Kibombo_CarryBlackCrystal(void) {
   if (gKibombo_BlackCrystal != 0) {
     struct Actor *object = Actor_GetById(27);
@@ -1581,7 +1592,7 @@ void Kibombo_CarryBlackCrystal(void) {
 void Actor_StartScript(struct Actor *object, const void *script);
 extern u32 gKibombo_EmberScript[];
 
-// Embers rise from the statue's fire every fourth frame.
+/// Embers rise from the statue's fire every fourth frame.
 void Kibombo_RaiseEmbers(void) {
   s32 phase = gFrameCount & 3;
 
@@ -1620,7 +1631,7 @@ void Kibombo_RiseSmoke(struct Actor *object) {
     Actor_Release(object);
 }
 
-// Smoke puffs from the fire every 64 frames.
+/// Smoke puffs from the fire every 64 frames.
 void Kibombo_PuffSmoke(void) {
   if ((gFrameCount & 63) == 0) {
     struct Actor *object = Import_ActorCreate(0x11d, px(88), px(16), px(314));
@@ -1661,7 +1672,7 @@ void Kibombo_FlickerFlame(struct Actor *object) {
   }
 }
 
-// A flame that flickers by its own timer.
+/// A flame that flickers by its own timer.
 void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
   struct Actor *object = Import_ActorCreate(0x106, x, y, z);
   struct FieldSprite *sprite;
@@ -1766,9 +1777,9 @@ DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdBows, 5)
 
 DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdStands, 1)
 
-// Akafubu's Psynergy on the Black Crystal.
+/// Akafubu's Psynergy on the Black Crystal.
 void Kibombo_AkafubuCastsOnCrystal(void) {
-  BattleEffect_LoadActionEffectResources(143, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_LIFT, 1);
   FieldPsynergy_SetupActorPair(17, 27);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
@@ -1889,7 +1900,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   }
 }
 
-// Akafubu glows and sparks circle him.
+/// Akafubu glows and sparks circle him.
 void Kibombo_AkafubuChants(void) {
   struct Actor *center = Actor_GetById(17);
   struct Actor *spark;
@@ -1944,7 +1955,7 @@ void Kibombo_EndOffering(void) {
     Kibombo_AkafubuChants();
 }
 
-// Opens or closes the Great Gabomba's mouth, its jaws drawn open or hidden.
+/// Opens or closes the Great Gabomba's mouth, its jaws drawn open or hidden.
 void Kibombo_SetStatueMouth(s32 open, s32 hide) {
   if (open != 0) {
     Kibombo_MapCopy(49, 37, 79, 15, 3, 2);
@@ -1965,7 +1976,7 @@ void Kibombo_SetStatueMouth(s32 open, s32 hide) {
   }
 }
 
-// Puts out the Great Gabomba's tongue, in the pose given, or draws it back.
+/// Puts out the Great Gabomba's tongue, in the pose given, or draws it back.
 void Kibombo_SetStatueTongue(s32 open, s32 mode) {
   if (open != 0) {
     MapGrid_CopyCellPictureIndicesRect(41, 38, 79, 16, 3, 3);
@@ -2005,7 +2016,7 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
   }
 }
 
-// While Scoop is cast, digs the marking the event is scooping.
+/// While Scoop is cast, digs the marking the event is scooping.
 void Kibombo_DigMarkingUnderLeader(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -2030,9 +2041,9 @@ void Kibombo_DigMarkingUnderLeader(void) {
 extern void Task_AddVoid__kibombo(void (*func)(void),
                                   s32 order) __asm__("Task_Add");
 
-// Felix casts Scoop on the marking he stands on.
+/// Felix casts Scoop on the marking he stands on.
 void Kibombo_CastScoop(void) {
-  BattleEffect_LoadActionEffectResources(136, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_SCOOP, 1);
   Task_AddVoid__kibombo(Kibombo_DigMarkingUnderLeader, 0x480);
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   EventObject_Initialize();
@@ -2073,8 +2084,8 @@ void Kibombo_LeaveRoomFading(void) {
   Kibombo_LeaveRoom();
 }
 
-// Walking into a door: the leader centres on it, steps in and the scene leaves
-// by its exit.
+/// Walking into a door: the leader centres on it, steps in and the scene leaves
+/// by its exit.
 void Kibombo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
@@ -2104,8 +2115,8 @@ void Kibombo_EnterDoor(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-// The leader walks to the hole at x, z, drops into it and the scene leaves by
-// its exit.
+/// The leader walks to the hole at x, z, drops into it and the scene leaves by
+/// its exit.
 void Kibombo_DropIntoHole(s32 x, s32 z) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -2131,7 +2142,7 @@ void Kibombo_DropIntoHole(s32 x, s32 z) {
 
 #include "system/input.h"
 
-// Stepping into a hole drops the leader in only while he presses on toward it.
+/// Stepping into a hole drops the leader in only while he presses on toward it.
 void Kibombo_StepIntoFirstHole(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
@@ -2173,8 +2184,8 @@ void Kibombo_EnterVent(void) {
   Kibombo_DropIntoHole(376, 288);
 }
 
-// Fades the screen in and runs Kibombo_FlickerStatueFires each frame for up to
-// 160 frames, or until A, B or Start is held, then fades out.
+/// Fades the screen in and runs Kibombo_FlickerStatueFires each frame for up to
+/// 160 frames, or until A, B or Start is held, then fades out.
 void Kibombo_GazeAtStatue(void) {
   u32 i;
 
@@ -2202,7 +2213,7 @@ done:
   Import_EventSetExitRequest(11);
 }
 
-// Three flashes of light, each with the camera at another place.
+/// Three flashes of light, each with the camera at another place.
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
   Kibombo_FadeTo(0x7fff, 0);
@@ -2236,7 +2247,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  FieldCamera_MoveWithinMapBounds(px(248), -1, 134 << 18, 0);
+  FieldCamera_MoveWithinMapBounds(px(248), -1, px(536), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   PaletteFade_SetTarget(0x10000, 0);
@@ -2491,7 +2502,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Import_EventSetExitRequest(12);
 }
 
-// Fades in on the ceremony with the Great Gabomba's mouth shut.
+/// Fades in on the ceremony with the Great Gabomba's mouth shut.
 void Kibombo_OpenCeremonyScene(void) {
   struct FieldWork *work;
 
@@ -2518,7 +2529,7 @@ void Kibombo_OpenCeremonyScene(void) {
 
 extern s32 gKibombo_CrowdDanceScript[];
 
-// The warriors jump and cheer, then dance.
+/// The warriors jump and cheer, then dance.
 void Kibombo_CrowdCheers(void) {
   FieldCamera_SetSpeed(4.8);
   Kibombo_CamMove(132 << 17, 0, 200 << 17, 1);
@@ -2656,7 +2667,7 @@ void Kibombo_GabombaResponds(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_162);
-  Task_Add(Kibombo_RaiseEmbers, 0x480);
+  Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
   GameFlag_Set(0x8fc);
@@ -2687,8 +2698,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
   object->scaleY = 0x1999;
-  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
-                                  0x1340000);
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), px(264), px(24), px(308));
   wait(1);
   Actor_SetModeById(14, 3);
   for (i = 0; i < 64; i++) {
@@ -2738,8 +2748,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SetStatueMouth(1, 1);
   Kibombo_SetStatueTongue(1, 0);
   Sound_Play(SE_WATER);
-  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
-                                  0x1340000);
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), px(264), px(24), px(308));
   wait(1);
   for (i = 0; i < 8; i++) {
     object->scaleY += Q16_ONE / 8;
@@ -2880,7 +2889,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// The village: the frozen puddles, the rope and the roofs.
+/// The village: the frozen puddles, the rope and the roofs.
 void Kibombo_InitializeVillage(void) {
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
@@ -2926,13 +2935,13 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
   return result;
 }
 
-// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
-// Piers in the party, restores his HP and PP, sets his gauges, clears two of
-// his bytes, marks him as staying behind (FLAG_KIBOMBO_PIERS_STAYED_BEHIND)
-// and removes him from the party; then saves four palette colours, frees
-// actors 30 to 35, sets flags 0x202 and 0x209, places actor 29, places actors
-// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
-// Kibombo_FlickerVillageFires scheduled.
+/// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
+/// Piers in the party, restores his HP and PP, sets his gauges, clears two of
+/// his bytes, marks him as staying behind (FLAG_KIBOMBO_PIERS_STAYED_BEHIND)
+/// and removes him from the party; then saves four palette colours, frees
+/// actors 30 to 35, sets flags 0x202 and 0x209, places actor 29, places actors
+/// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
+/// Kibombo_FlickerVillageFires scheduled.
 void Kibombo_InitializeRoom4(void) {
   struct Actor *actor = Actor_GetById(11);
   u8 *unit;
@@ -3014,8 +3023,8 @@ void Kibombo_InitializeRoom4(void) {
 
 void Kibombo_CreateBlackCrystal(void);
 
-// The grounds before the statue: the Black Crystal, the markings dug, the vent
-// and the block Moved for Piers.
+/// The grounds before the statue: the Black Crystal, the markings dug, the vent
+/// and the block Moved for Piers.
 void Kibombo_InitializeStatueGrounds(void) {
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
@@ -3140,7 +3149,7 @@ void Kibombo_InitializeRoom5(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Add(Kibombo_FlickerCeremonyFires, 0x480);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
   for (i = 0; i <= 7; i++) {
     u8 *field = &Actor_GetById(i + 18)->retainSpriteCache;
     s32 value = 2;
@@ -3272,15 +3281,19 @@ void Kibombo_StopTrackingLeader(void);
 
 // clang-format off
 u32 gKibombo_EmberScript[] = {
-    0, 28, 22, 38, 0, 0,
-    1, 3, 0, 1, 38,
+    SC_WAIT(28),
+    SC_SET(SW_HOOK, 0),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gKibombo_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -3313,8 +3326,8 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_WAIT(1),
     SC_LOOP(10, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -2048),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_CALL(Kibombo_SpinSprite),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
@@ -3322,9 +3335,13 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
 };
 
 u32 gKibombo_PartyGathersScript[] = {
-    39, 2, 4, 0x580000, 0, 0x1880000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(88), 0, px(392)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gKibombo_LeaderStepsUpScript[] = {
@@ -3363,9 +3380,13 @@ u32 gKibombo_ShebaJoinsPiersScript[] = {
   };
 
 u32 gKibombo_PartyFollowsScript[] = {
-    39, 2, 4, 0x380000, 0, 0x1740000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(56), 0, px(372)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gKibombo_JennaAtDeadEndScript[] =                                                                 
@@ -3399,16 +3420,18 @@ u32 gKibombo_PiersAtDeadEndScript[] =
   };
 
 u32 gKibombo_PartyLeavesDeadEndScript[] = {
-    39, 2, 4, 0x11c0000, 0, 0xbc0000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(284), 0, px(188)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gKibombo_JawsSettleScript[] = {
-    46,
-    (s32)Kibombo_KeepShakeCentre,
-    46,
-    (s32)Kibombo_ShakeInPlace,
+    SC_CALL((s32)Kibombo_KeepShakeCentre),
+    SC_CALL((s32)Kibombo_ShakeInPlace),
 };
 
 s32 gKibombo_JawsOpenScript[] = {

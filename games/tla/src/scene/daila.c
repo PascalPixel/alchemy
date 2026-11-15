@@ -33,17 +33,19 @@
 #include "flags.h"
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
-// Daila2's puddles dried by Parch for this visit, one flag each, in the order
-// of the puddles' rows, and frozen into pillars by Frost.
+/// Daila2's puddles dried by Parch for this visit, one flag each, in the order
+/// of the puddles' rows, and frozen into pillars by Frost.
 #define FLAG_DAILA_FIRST_PUDDLE_PARCHED 0x210
 #define FLAG_DAILA_SECOND_PUDDLE_PARCHED 0x211
 #define FLAG_DAILA_THIRD_PUDDLE_PARCHED 0x212
 #define FLAG_DAILA_FOURTH_PUDDLE_PARCHED 0x213
 #define FLAG_DAILA_FIFTH_PUDDLE_PARCHED 0x214
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
-// The first of six flags, one for each of Daila2's puddles that Frost has
-// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
+/// The first of six flags, one for each of Daila2's puddles that Frost has
+/// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
@@ -206,11 +208,14 @@ void Daila_TalkBoat(void) {
   Event_End();
 }
 
+/// Daila's shops, as Shop_Run numbers them.
+enum { SHOP_DAILA_ITEMS = 3 };
+
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(3, keeper);
+    Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -245,7 +250,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(3, keeper);
+    Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -284,7 +289,7 @@ void Daila_MeetAlex(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Event_SetMessageId(msg);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, 472 << 16, 264 << 16);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, px(472), px(264));
   Event_Wait(30);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 504, 296);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
@@ -529,32 +534,62 @@ s16 gDailaInteriors_PillarFrozenFlags[] = {
 };
 
 s32 gDaila_FallenOldManScript[] = {
-    22, 30, 131, 39, 0, (s32)0x80010000,
-    23, 9, -0x4000, 23, 10, 0x2000,
-    0, 2, 23, 9, 0x2000, 23,
-    10, -4096, 0, 2, 23, 9,
-    0x1000, 23, 10, -2048, 0, 2,
-    23, 9, 0x1000, 23, 10, -2048,
-    0, 40, 23, 9, -0x4000, 23,
-    10, 0x2000, 0, 2, 23, 9,
-    0x2000, 23, 10, -4096, 0, 2,
-    23, 9, 0x1000, 23, 10, -2048,
-    0, 2, 23, 9, 0x1000, 23,
-    10, -2048, 0, 5, 23, 9,
-    -0x4000, 23, 10, 0x2000, 0, 2,
-    23, 9, 0x2000, 23, 10, -4096,
-    0, 2, 23, 9, 0x1000, 23,
-    10, -2048, 0, 2, 23, 9,
-    0x1000, 23, 10, -2048, 0, 30,
-    13, 0xffff, (s32)0xc0010000, 17,
+    SC_SET(SW_COLLISION, 131),
+    SC_ARG(0),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(40),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(5),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(30),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 u32 gDaila_PuddleChildScript[] = {
-    22, 30, 129, 22, 16, 0x3333,
-    22, 21, 0x1999, 22, 15, 0x6666,
-    39, 0, 0x80010000, 22, 6, 0x40000,
-    0, 30, 22, 6, 0x40000, 0,
-    60, 13, 0xffff, 0xc0010000, 17,
+    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_ACCEL, Q16(0.2)),
+    SC_SET(SW_GRAVITY, 6553),
+    SC_SET(SW_SPEED, Q16(0.4)),
+    SC_ARG(0),
+    SC_LABEL(1),
+    SC_SET(SW_Y, px(4)),
+    SC_WAIT(30),
+    SC_SET(SW_Y, px(4)),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 struct SceneEntrance gDailaEntrances[] = {

@@ -35,6 +35,7 @@
 #include "version.h"
 #include "shared/tables.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 void GabombaStatueChamber_OpenTheLap(void);
@@ -592,7 +593,7 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
                                                                                \
     if ((gGabombaStatueChamber_ShownItem = object =                            \
              ((struct GabombaStatueChamberObject *)Import_ActorCreate(         \
-                 489, x, 0x120000, z))) != NULL) {                             \
+                 489, x, px(18), z))) != NULL) {                               \
       struct FieldSprite *sprite = object->sprite;                             \
       u8 *block;                                                               \
                                                                                \
@@ -1114,8 +1115,12 @@ u32 gGabombaStatueChamber_WalkOffScript[] = {
 };
 
 u32 gGabombaStatueChamber_AkafubuPath[] = {
-    39, 2, 4, 0x1680000, 0, 0xd80000,
-    1, 39, 1, 3, 17,
+    SC_ARG(2),
+    SC_MOVE(px(360), 0, px(216)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_END,
 };
 
 u32 gGabombaStatueChamber_SpiritRisesScript[] = {
@@ -1137,8 +1142,11 @@ s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
 };
 
 u32 gGabombaStatueChamber_AkafubuLeavesScript[] = {
-    23, 6, 0x20000, 0, 1, 13,
-    80, 0, 3, 17,
+    SC_ADD(SW_Y, px(2)),
+    SC_WAIT(1),
+    SC_LOOP(80, SC_TOP),
+    SC_CMD_03,
+    SC_END,
 };
 
 u32 gGabombaStatueChamber_PartyLeavesScript[] = {                                                               

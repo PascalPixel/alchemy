@@ -9,6 +9,7 @@
 /// Mythril Bag and set in the statue's face, the star turns the lighthouse
 /// back to fire and its ice is gone, here and in every room below.
 
+#include "system/task.h"
 #include "flags.h"
 #include "module/scene/ride.h"
 #include "item_ids.h"
@@ -488,7 +489,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FieldActor_SetSpriteColor(t14, SPRITE_COLOR_WHITE);
   System_Wait(1);
   FieldActor_SetPositionAndResetMotion(v5, FIELD_AT(v5, s32, 8), 0,
-                                       (FIELD_AT(v5, s32, 16) + -0x80000));
+                                       (FIELD_AT(v5, s32, 16) + px(-8)));
   FIELD_AT(v6, u8, 85) = 0;
   FIELD_AT(v6, s32, 24) = 0x4000;
   FIELD_AT(v6, s32, 28) = 0x4000;
@@ -883,7 +884,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(0x10006, 0);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
-  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, 0x480);
+  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
@@ -1066,7 +1067,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(0x10006, 0);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
-  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, 0x480);
+  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
@@ -1647,7 +1648,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       REG_BLDCNT = control;
     }
   }
-  Task_AddFrame(FlameThrowers_Puff, 0x480);
+  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_VBLANK);
 }
 
 s32 Ride_GetEntryValue(s32 index) {
@@ -2504,21 +2505,34 @@ s32 gMarsLighthouseStarRoom_LightRiseScript[] = {
 };
 
 s32 gMarsLighthouseStarRoom_LightSinkScript[] = {
-    23, 9, -2048, 23, 10, -2048,
-    23, 6, 0x4000, 0, 1, 13,
-    24, 0, 3, 0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gMarsLighthouseStarRoom_AgatioDragonShrinkScript[] = {
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 40, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gMarsLighthouseStarRoom_KarstDragonShrinkScript[] = {
-    23, 9, 0x400, 23, 10, -1024,
-    0, 1, 13, 40, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 

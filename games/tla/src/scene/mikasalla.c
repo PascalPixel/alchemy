@@ -27,6 +27,7 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 #include "field/sprite.h"
+#include "djinn_ids.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
@@ -142,7 +143,10 @@ void Mikasalla_EnterDoor(void) {
 
 /// Spark, the Mars Djinni behind the inn, joins the party when spoken to,
 /// without a fight.
-void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
+void Mikasalla_MeetSpark(void) {
+  Djinn_JoinParty(ACTOR_SPARK, DJINNI_SPARK / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SPARK));
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
@@ -215,7 +219,7 @@ s32 Scene_PrepareMap(void) {
   struct Actor *object;
   u8 flags;
 
-  object = Actor_GetById(16);
+  object = Actor_GetById(ACTOR_CHICKEN);
   flags = object->priorityFlags & ~1;
   do {
     party = &gMainRoutineWork;
@@ -274,6 +278,8 @@ void Mikasalla_ClimbDownLadder(void) {
   Event_End();
 }
 
+/// Stepping onto a ladder top facing east: the leader steps up and across onto
+/// the rungs and climbs down.
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -282,6 +288,8 @@ void Mikasalla_StepOntoLadderFacingEast(void) {
   Mikasalla_ClimbDownLadder();
 }
 
+/// Stepping onto a ladder top facing west: the leader steps up and across onto
+/// the rungs and climbs down.
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -291,8 +299,22 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 }
 
 /// Stepping onto a ladder top facing south, the leader turns and climbs down.
-#include "shared/scene_turn_actor_and_run.h"
+/// Turns actor 4, then runs Mikasalla_ClimbDownLadder.
+void Mikasalla_TurnAndClimbDownLadder(void) {
+  s32 id, a;
 
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  a = 192;
+  id = 4;
+  /* FAKEMATCH(barrier): the id held at an empty asm. */
+  __asm__ volatile("" : "+r"(id));
+  Actor_FaceDirectionById(id, a << 8, 0);
+  Mikasalla_ClimbDownLadder();
+}
+
+/// Stepping onto a ladder top facing north: the leader steps onto the rungs
+/// from whichever side of the cell he stands and climbs down.
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].pixel;
 
@@ -309,6 +331,8 @@ void Mikasalla_StepOntoLadderFacingNorth(void) {
   Mikasalla_ClimbDownLadder();
 }
 
+/// Stepping onto a ladder top straight ahead: the leader steps onto the rungs
+/// and climbs down.
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -337,6 +361,8 @@ s16 gMikasalla_WideDoorOpening[] = {
     2, 6, -1, 0,
 };
 
+/// The village's doors that open with a cell animation as the party walks
+/// through.
 struct WarpEntry__mikasalla gMikasalla_Doors[] = {
     {(s32)gMikasalla_DoorOpening, 84, 29},
     {(s32)gMikasalla_DoorOpening, 77, 34},
@@ -350,6 +376,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tunnels' exit regions (Scene_GetExitRegions): two boxes, each with the
+/// exit it leads to.
 s16 gMikasalla_TunnelRegions[] = {
     68, 28, 404, 76, 36, 412, -1, 1,
     244, 28, 100, 252, 36, 108, -1, 2,
@@ -394,37 +422,37 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ARG(2),                                                               
       SC_MOVE(px(72), 0, px(648)),                                      
@@ -436,42 +464,43 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
       SC_END,                                                                  
   };
 
+/// The sheep's script: it wanders its pen.
 s32 gMikasalla_SheepPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_SET(SW_ACCEL, 0x3333),                                                
@@ -487,37 +516,37 @@ s32 gMikasalla_SheepPaces[] = {
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ARG(2),                                                               
       SC_MOVE(px(120), 0, px(680)),                                      
@@ -529,42 +558,43 @@ s32 gMikasalla_SheepPaces[] = {
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
       SC_ADD(SW_SCALE_Y, 0x2000),                                              
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x2000),                                              
-      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(2),                                                              
       SC_ADD(SW_SCALE_X, 0x1000),                                              
-      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
       SC_END,                                                                  
   };
 
+/// The village (enum MikasallaActorId).
 struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -580,12 +610,14 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tunnels under the village (Mikasalla2).
 struct ActorPlacement gMikasalla_TunnelPlacements[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
+/// The village's doors, talk, Mind Read, the ladders, and Spark.
 struct Trigger gMikasalla_VillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
@@ -629,6 +661,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
 };
 // clang-format on
 
+/// The tunnels' exits and the ladders.
 struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},

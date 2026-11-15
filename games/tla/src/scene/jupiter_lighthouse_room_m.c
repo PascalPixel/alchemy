@@ -23,6 +23,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "actor.h"
+#include "item_ids.h"
 
 void Leader_CenterInCell(void);
 #include "system/io_reg.h"
@@ -56,6 +57,7 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// The energy path block pushed into its gap at (63, 15), outside the aerie:
 /// the hover tile beyond it lights.
@@ -304,7 +306,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     Event_PlaySound(SE_HEAVY_IMPACT);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
+    Camera_MoveWithinMapBounds_(px(1016), -1, px(232), 1);
     FieldCamera_WaitForArrival();
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
     x = leader->x.fixed >> 20;
@@ -350,14 +352,14 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldEvent_Wait(40);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(3);
-    Camera_MoveWithinMapBounds_(131 << 19, 0, 174 << 16, 1);
+    Camera_MoveWithinMapBounds_(px(1048), 0, px(174), 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     object->update = 0;
     Event_PlaySound(MUS_PUZZLE_SOLVED);
     Sound_WaitForJingle();
     FieldEvent_Wait(10);
-    Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
+    Camera_MoveWithinMapBounds_(px(984), px(-64), px(248), 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     PaletteCycle_SetPausesInEvents(1);
@@ -382,7 +384,7 @@ void JupiterLighthouse_OpenFloor(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_CHEST_OPEN);
   /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above. */
-  Camera_MoveWithinMapBounds_(194 << 18, -1, px(208), 1);
+  Camera_MoveWithinMapBounds_(px(776), -1, px(208), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(6);
   Sound_Play(SE_FLOOR_SWITCH);
@@ -1556,7 +1558,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldActor_StartRepeatedMotion(ACTOR_ISAAC, 2);
   FieldEvent_Wait(4);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
-  PartyInventory_Remove(0xdf);
+  PartyInventory_Remove(ITEM_MYTHRIL_BAG_JUPITER_STAR);
   PartyInventory_Add(245);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;
@@ -1900,8 +1902,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -1936,15 +1938,21 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 // clang-format off
 u32 gJupiterLighthouse_KarstStepsUpScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioStepsUpScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioTurnsScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioFacesSouthScript[] = {

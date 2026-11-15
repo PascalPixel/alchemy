@@ -15,6 +15,8 @@
 #include "field/field.h"
 #include "shared/tables.h"
 #include "field/sprite.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -142,12 +144,15 @@ void Naribwe_AskGoingToKibombo(void) {
   Event_ShowMessage(19, 0);
 }
 
+/// Naribwe's shops, as Shop_Run numbers them.
+enum { SHOP_NARIBWE_ITEMS = 16 };
+
 /// "No one can see the future. Absolutely no one. Except for our
 /// fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Shop_Run(16, actor);
+    Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
   Event_Start();
@@ -161,7 +166,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Shop_Run(16, actor);
+    Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
   Event_Start();
@@ -312,7 +317,7 @@ extern s16 gNaribwe_DoorOpening[];
 
 void Naribwe_HideStone(void);
 
-// The village's placements, the same before and after the return with Piers.
+/// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
       ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
@@ -364,21 +369,25 @@ s16 gNaribwe_UnusedList[] = {
     26, 512, -1, 0,
 };
 
-// The braziers burn, the fire's flames rising above them.
+/// The braziers burn, the fire's flames rising above them.
 u32 gNaribwe_BrazierBurns[] = {
-    39, 2, 17,
+    SC_ARG(2),
+    SC_END,
 };
 
 u32 gNaribwe_FlameRises[] = {
-    39, 0, 22, 26, 0, 23,
-    6, 0x180000, 17,
+    SC_ARG(0),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, px(24)),
+    SC_END,
 };
 
 u32 gNaribwe_IvyAnimation[] = {
-    39, 3, 17,
+    SC_ARG(3),
+    SC_END,
 };
 
-// The cell animation of the village's doors.
+/// The cell animation of the village's doors.
 s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };

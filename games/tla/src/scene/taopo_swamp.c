@@ -4,6 +4,7 @@
 /// freezes, lava rocks to cool and push, drops falling in the dark rooms, the
 /// Mad Plant in its bush and Flower, the Venus Djinni.
 
+#include "system/task.h"
 #include "flags.h"
 #include "types.h"
 #include "system/system.h"
@@ -24,6 +25,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "module/scene/lemurian_ship.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -125,7 +128,7 @@ void TaopoSwamp_PuffSteam(void);
 void TaopoSwamp_OpenPassage(void);
 void TaopoSwamp_FlickerPool(void);
 
-// DEFINE_TAOPO_SWAMP_FREEZE_SPOT below calls it by this name.
+/// DEFINE_TAOPO_SWAMP_FREEZE_SPOT below calls it by this name.
 static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
                                                      s32 e, s32 f) {
   MapGrid_CopyCellAttributes(a, b, c, d, e, f);
@@ -786,7 +789,7 @@ next:
   if (i >= 0)
     goto burst;
   FieldMapGrid_WaitForShakeToSettle();
-  Task_AddFrame(TaopoSwamp_OpenPassage, 0x480);
+  Task_AddFrame(TaopoSwamp_OpenPassage, TASK_PASS_VBLANK);
   System_Wait(40);
   FieldCamera_SetSpeed(0.9);
   FieldCamera_MoveTo(336, CAMERA_KEEP, 280, 1);
@@ -799,9 +802,9 @@ drain:
   i--;
   if (i > 0)
     goto drain;
-  Task_AddFrame(TaopoSwamp_PuffSteam, 0x480);
+  Task_AddFrame(TaopoSwamp_PuffSteam, TASK_PASS_VBLANK);
   System_Wait(60);
-  Task_AddFrame(TaopoSwamp_FlickerPool, 0x480);
+  Task_AddFrame(TaopoSwamp_FlickerPool, TASK_PASS_VBLANK);
   System_Wait(24);
   FieldEvent_Wait(120);
   Event_End();
@@ -1220,7 +1223,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = Q16_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
-    Task_Add(TaopoSwamp_DripAtRandom, 0x480);
+    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_3) {
@@ -1237,14 +1240,14 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
-      Actor_SetPositionFixed(9, px(280), px(232));
+      Actor_SetPosition(9, 280, 232);
     if (Event_GetFlag(0xa6e))
-      Actor_SetPositionFixed(10, px(472), px(248));
+      Actor_SetPosition(10, 472, 248);
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == SCENE_TAOPO_SWAMP_7) {
     FieldEffect_StartBlankOverlay(0);
-    Task_Add(TaopoSwamp_DripInRoom7, 0x480);
+    Task_Add(TaopoSwamp_DripInRoom7, TASK_PASS_VBLANK);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwamp_Room7Vents, 0,
                             TaopoSwamp_CycleSpotVent);
@@ -1264,7 +1267,7 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
-      Actor_SetPositionFixed(9, px(264), px(424));
+      Actor_SetPosition(9, 264, 424);
       piece->groundHeight = 0;
       piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
@@ -1278,8 +1281,8 @@ s32 Scene_Initialize(void) {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-      FieldTask_AddFrame(TaopoSwamp_DripInRoom8, 0x480);
-      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, 0x480);
+      FieldTask_AddFrame(TaopoSwamp_DripInRoom8, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_VBLANK);
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
@@ -1300,7 +1303,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_39);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3A)) {
       Actor_SetAnimation(8, 3);
-      Actor_SetPositionFixed(8, px(184), px(344));
+      Actor_SetPosition(8, 184, 344);
       Actor_GetById(8)->collisionFlags = 0;
       Actor_GetById(8)->priorityFlags |= 2;
       Actor_SetSpritePriority(8, 3);
@@ -1310,7 +1313,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_3C);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3D)) {
       Actor_SetAnimation(9, 3);
-      Actor_SetPositionFixed(9, px(504), px(184));
+      Actor_SetPosition(9, 504, 184);
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(30, 13, 1, 1, 31, 11);
@@ -1318,9 +1321,9 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_10) {
     piece = Actor_GetById(19);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
-      Actor_SetPositionFixed(19, px(480), px(248));
+      Actor_SetPosition(19, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-        Actor_SetPositionFixed(10, px(440), px(232));
+        Actor_SetPosition(10, 440, 232);
       MapGrid_CopyCells(47, 50, 2, 14, 29, 1);
       MapGrid_CopyCells(50, 59, 13, 5, 18, 15);
     } else {
@@ -1331,7 +1334,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_33)) {
       Actor_SetAnimation(9, 3);
-      Actor_SetPositionFixed(9, px(120), px(248));
+      Actor_SetPosition(9, 120, 248);
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(7, 17, 1, 1, 7, 15);
@@ -1344,7 +1347,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
       if (Event_GetFlag(FLAG_AREA_TEMP_36)) {
         Actor_SetAnimation(10, 3);
-        Actor_SetPositionFixed(10, px(408), px(264));
+        Actor_SetPosition(10, 408, 264);
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         MapGrid_CopyCellAttributes(25, 18, 1, 1, 25, 16);
@@ -1412,7 +1415,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = Q16_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
-    Task_Add(TaopoSwamp_DripAtRandom, 0x480);
+    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_3) {
@@ -1432,9 +1435,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
-      Actor_SetPositionFixed(9, px(280), px(232));
+      Actor_SetPosition(9, 280, 232);
     if (Event_GetFlag(0xa6e))
-      Actor_SetPositionFixed(10, px(472), px(248));
+      Actor_SetPosition(10, 472, 248);
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == SCENE_TAOPO_SWAMP_6) {
@@ -1442,7 +1445,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_7) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
-    Task_Add(TaopoSwamp_DripInRoom7, 0x480);
+    Task_Add(TaopoSwamp_DripInRoom7, TASK_PASS_VBLANK);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwamp_Room7Vents, 0,
                             TaopoSwamp_CycleSpotVent);
@@ -1462,7 +1465,7 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
-      Actor_SetPositionFixed(9, px(264), px(424));
+      Actor_SetPosition(9, 264, 424);
       piece->groundHeight = 0;
       piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
@@ -1477,8 +1480,8 @@ s32 Scene_Initialize(void) {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-      FieldTask_AddFrame(TaopoSwamp_DripInRoom8, 0x480);
-      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, 0x480);
+      FieldTask_AddFrame(TaopoSwamp_DripInRoom8, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_VBLANK);
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
@@ -1521,7 +1524,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
       Actor_SetPosition(19, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-        Actor_SetPositionFixed(10, px(440), px(232));
+        Actor_SetPosition(10, 440, 232);
       MapGrid_CopyCells(47, 50, 2, 14, 29, 1);
       MapGrid_CopyCells(50, 59, 13, 5, 18, 15);
     } else {
@@ -1676,7 +1679,7 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
   TaopoSwamp_FocusMapOn(100, 50);
   Blend_SetAlpha(0xc07);
   if (gMainRoutineWork.entrance == 6)
-    FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, 0x480);
+    FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, TASK_PASS_VBLANK);
 }
 
 /// Points the map's followed point at cell (100, 100).
@@ -1689,8 +1692,8 @@ void TaopoSwamp_ResetMud(void) {
     Iwram_ClearWordsEntry(state, 12);
 }
 
-// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
-// Seal.
+/// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
+/// Seal.
 extern volatile u32 gInput;
 
 /// Each step on the mud sinks the leader deeper; sunk to the top, they are
@@ -1763,8 +1766,8 @@ void TaopoSwamp_RiseOnBubble(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetMoveTargetFixed(
-        object, (object->x.fixed & 0xfff00000) + 0x80000, object->y.fixed,
-        (object->z.fixed & 0xfff00000) + 0x80000);
+        object, (object->x.fixed & 0xfff00000) + px(8), object->y.fixed,
+        (object->z.fixed & 0xfff00000) + px(8));
     FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
@@ -1892,7 +1895,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, 0x480);
+  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
 }
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
@@ -1956,9 +1959,13 @@ u8 gTaopoSwamp_Room7HoleVents[] = {
 
 // clang-format off
 u32 gTaopoSwamp_PuffSteamScript[] = {
-    22, 26, 0, 39, 2, 0x80010000,
-    23, 6, 0x10000, 0, 1, 13,
-    30, 0xc0010000, 38,
+    SC_SET(SW_MOTION, 0),
+    SC_ARG(2),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, px(1)),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TO(1)),
+    SC_FREE,
 };
 
 u32 gTaopoSwamp_TremorPillarScript[] = {
@@ -1972,15 +1979,13 @@ u32 gTaopoSwamp_SparkFades[] = {
 };
 
 s32 gTaopoSwamp_DripAtRandomScript[] = {
-    46,
-    (s32)TaopoSwamp_LandDrop,
-    38,
+    SC_CALL((s32)TaopoSwamp_LandDrop),
+    SC_FREE,
 };
 
 s32 gTaopoSwamp_DripFromCeilingScript[] = {
-    46,
-    (s32)TaopoSwamp_LandDrip,
-    38,
+    SC_CALL((s32)TaopoSwamp_LandDrip),
+    SC_FREE,
 };
 
 s32 gTaopoSwamp_DropFalls[] = {

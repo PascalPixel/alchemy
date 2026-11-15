@@ -120,11 +120,17 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
   }
 }
 
+/// Izumo's shops, as Shop_Run numbers them.
+enum { SHOP_IZUMO = 24 };
+
+/// Izumo's inn, as Inn_CheckIn numbers the inns.
+enum { IZUMO_INN = 9 };
+
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(9, actor);
+    Inn_CheckIn(IZUMO_INN, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -142,7 +148,7 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(24, actor);
+    Shop_Run(SHOP_IZUMO, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -210,7 +216,7 @@ void IzumoInteriors_TalkToUzume(void) {
     Event_SetMessageId((s32)MsgIfYouHave);
     // "If you have time, won't you enjoy a little of our celebratory festival?"
     Event_ShowMessageAndWait(15, 0);
-    if (PartyInventory_FindMember(451) != -1)
+    if (PartyInventory_FindMember(ITEM_DANCING_IDOL) != -1)
       FIELD_AT(work, u16, 346) = 1;
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
@@ -1125,7 +1131,7 @@ s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 
 /// Actor 15 casts Move, with no target.
 void IzumoInteriors_ShowMove(void) {
-  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(15, -1);
   FIELD_AT(Ram_HeapSlots->fieldEffectWork, HandlerFn, 36) =
       IzumoInteriors_FindNoMoveTarget;
@@ -1208,7 +1214,8 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "Please, accept this gift."
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
-  Djinn_JoinParty(24, 2, 11);
+  Djinn_JoinParty(24, DJINNI_COAL / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_COAL));
   Event_End();
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1220,7 +1227,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_UZUME_HAS_THE_DOLL);
-  PartyInventory_Remove(0x1c3);
+  PartyInventory_Remove(ITEM_DANCING_IDOL);
   Event_End();
 }
 
@@ -1540,37 +1547,37 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -4096),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(60),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -4096),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(10),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -4096),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(90),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,

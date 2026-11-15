@@ -7,6 +7,7 @@
 /// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
 /// its rooms (AquaRockInside_FightSteam).
 
+#include "system/task.h"
 #include "types.h"
 #include "window/message_argument.h"
 #include "item_ids.h"
@@ -20,6 +21,8 @@
 #include "field_sprite.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
@@ -327,9 +330,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAquaRockInside_Placements;
 }
 
-// When object 10 reaches row 12, or object 11 column 51, stops its motion,
-// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
-// row 12.
+/// When object 10 reaches row 12, or object 11 column 51, stops its motion,
+/// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
+/// row 12.
 void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -608,11 +611,11 @@ void AquaRockInside_CheckColumn(void) {
   if (!seen) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
-    if (FieldPartyInventory_FindMember(456) != -1)
+    if (FieldPartyInventory_FindMember(ITEM_AQUARIUS_STONE) != -1)
       gFieldWork->fieldMenu = 1;
   } else {
     Message_ShowCentered(message, 1);
-    MessageArgument_Push(0x1c8, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(ITEM_AQUARIUS_STONE, MESSAGE_ARGUMENT_ITEM);
     Message_ShowCentered(message + 2, 1);
   }
   Event_End();
@@ -889,8 +892,8 @@ void AquaRockInside_StartPushingRock(void) {
   MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34);
 }
 
-// When object 10 or 11 arrives, stops both and redraws row 33 at each one's
-// column.
+/// When object 10 or 11 arrives, stops both and redraws row 33 at each one's
+/// column.
 void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
   if ((u32)(id - 10) <= 1) {
     struct Actor *object = Actor_Get(10);
@@ -1044,7 +1047,34 @@ void AquaRockInside_SpawnSpark(struct Actor *object) {
 // takes a second, shrinking step. Returns 1 while it runs. The first push goes
 // through Call3 (directly, its offset pointer is set after the angle's load).
 
-#include "shared/orbiter_spiral.h"
+/// Moves an orbiter two steps inward round its anchor.
+s32 Orbiter_Spiral(struct Orbiter *orbiter) {
+  struct Actor *anchor = orbiter->anchor;
+  s16 *angle;
+
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x.fixed;
+  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->z = anchor->z.fixed;
+  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
+   * sets r2 from r8 before the second push reads it. */
+  angle = &orbiter->angle;
+  if (--orbiter->countdown == 0)
+    return 0;
+  if (orbiter->radius == 0x20000)
+    return 1;
+  AquaRockInside_SpawnSpark(orbiter);
+  orbiter->radius -= 0x40000;
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x.fixed;
+  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->z = anchor->z.fixed;
+  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
+  AquaRockInside_SpawnSpark(orbiter);
+  orbiter->radius -= 0x40000;
+  return 1;
+}
 
 // Moves around in a circle.
 #include "shared/orbit_update.h"
@@ -1482,9 +1512,9 @@ extern u32 gAquaRockInside_SecondOutletLevels[];
 s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
                                 void (*handler)(void));
 
-// Aqua Rock's entry setup: in each room it shows the statues already filled by
-// their flags (or dims those still empty), opens what the story has opened and
-// arms the room's water and cell handlers by entrance.
+/// Aqua Rock's entry setup: in each room it shows the statues already filled by
+/// their flags (or dims those still empty), opens what the story has opened and
+/// arms the room's water and cell handlers by entrance.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1605,11 +1635,11 @@ s32 Scene_Initialize(void) {
 
 void Tightrope_Initialize();
 
-// Aqua Rock's map preparation: for each room and entrance it sets the water
-// level, places the statues and boulders the flags have moved, opens or
-// closes the cells around them, and in the rooms whose water drains it shows
-// the drained state once its flag is set. Room 6 clears its actors' x and z
-// where the other rooms clear terrainHeight and y.
+/// Aqua Rock's map preparation: for each room and entrance it sets the water
+/// level, places the statues and boulders the flags have moved, opens or
+/// closes the cells around them, and in the rooms whose water drains it shows
+/// the drained state once its flag is set. Room 6 clears its actors' x and z
+/// where the other rooms clear terrainHeight and y.
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1988,8 +2018,8 @@ void Leader_SpinAway(s32 entrance) {
 
 #include "shared/leader_rise_from_water.h"
 
-// Draws the scene's pillars: a top sprite for each active one and, when it
-// stands above its base, a column sprite as tall as its height.
+/// Draws the scene's pillars: a top sprite for each active one and, when it
+/// stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
   s32 *view = &Ram_HeapSlots->mapGrid->viewX;
   struct PillarWork *work = &gAquaRockInside_Pillars;
@@ -2089,9 +2119,9 @@ void AquaRockInside_StartPillars(void) {
 
 #define LAYER_S32(layer, off) (*(s32 *)((layer)->unk08 + (off) - 8))
 
-// Adds a water spout on every map cell of the given layer whose spout kind lies
-// in [first, first + 8), at the given heights, and marks those cells as spout
-// cells (120).
+/// Adds a water spout on every map cell of the given layer whose spout kind
+/// lies in [first, first + 8), at the given heights, and marks those cells as
+/// spout cells (120).
 void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = map->layers;
@@ -2204,7 +2234,7 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
   }
 }
 
-// Draws thirty-two sprites that each shake by a random few pixels a frame.
+/// Draws thirty-two sprites that each shake by a random few pixels a frame.
 void AquaRockInside_DrawSplashes(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -2285,11 +2315,11 @@ s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind) {
 
 extern s8 gAquaRockInside_StreamTurns[];
 
-// Advances Aqua Rock's two water streams one cell along the map: each stream
-// follows the turn its cell's kind gives, leaves a splash on every open cell
-// (255) it crosses, stops on a wall kind and counts the cells of the given kind
-// it reaches; then it clears the splashes past the new count and opens the
-// cells under those left.
+/// Advances Aqua Rock's two water streams one cell along the map: each stream
+/// follows the turn its cell's kind gives, leaves a splash on every open cell
+/// (255) it crosses, stops on a wall kind and counts the cells of the given
+/// kind it reaches; then it clears the splashes past the new count and opens
+/// the cells under those left.
 s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   s32 reached = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -2471,7 +2501,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, 0x480);
+  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
 }
 
 s32 AquaRockInside_IsVentActive(s32 index) {
@@ -2500,32 +2530,48 @@ void AquaRockInside_SetVentValue(s32 index, s32 value) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 u32 gAquaRockInside_SparkScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAquaRockInside_TabletGlowScript[] = {
-    5, 0, 0xa00000, 0, 1, 38,
-    17,
+    SC_MOVE_BY(0, px(160), 0),
+    SC_SYNC,
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAquaRockInside_RisingSparkScript[] = {                                                               
@@ -2540,27 +2586,39 @@ s32 gAquaRockInside_RiserScript[] = {
   };
 
 u32 gAquaRockInside_TabletRiseScript[] = {
-    5, 0, 0x180000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 u32 gAquaRockInside_PiersRiseScript[] = {
-    5, 0, 0x100000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAquaRockInside_TabletSettleScript[] = {
-    22, 26, 0, 5, 0, -0x180000,
-    0, 1, 22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 s32 gAquaRockInside_PiersSettleScript[] = {
-    22, 26, 0, 5, 0, -0x100000,
-    0, 1, 22, 26, 3, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 3),
+    SC_END,
 };
 
 u32 gAquaRockInside_SplashScript[] = {
-    0, 1, 13, 30, 0, 38,
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 
 u16 gAquaRockInside_FirstOutletSpots[] = {
@@ -2580,12 +2638,15 @@ u32 gAquaRockInside_SecondOutletLevels[] = {
 };
 
 u32 gAquaRockInside_StreamSplashScript[] = {
-    0, 20, 38,
+    SC_WAIT(20),
+    SC_FREE,
 };
 
 u32 gWaterDropScript[] = {
-    23, 6, 0x4000, 0, 1, 13,
-    30, 0, 38,
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 // clang-format on
 

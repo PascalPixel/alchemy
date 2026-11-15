@@ -27,6 +27,8 @@
 #include "edition.h"
 #include "version.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gShamanVillageCave_GladiatorLeaves[];
 
@@ -720,7 +722,8 @@ s32 gShamanVillageCave_OvergrowthRests[] = {
 
 // clang-format off
 u32 gShamanVillageCave_Settle[] = {
-    22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
@@ -780,9 +783,14 @@ struct Trigger gSceneEvents[] = {
 
 /// The beaten gladiators walk out of the cave, one after another.
 u32 gShamanVillageCave_GladiatorLeaves[] = {
-    39, 2, 48, 0xe80000, 0xe30000, 1,
-    48, 0xd90000, 0xf30000, 1, 48, 0xd90000,
-    0x14e0000, 1, 38,
+    SC_ARG(2),
+    SC_MOVE_XZ(px(232), px(227)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(217), px(243)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(217), px(334)),
+    SC_SYNC,
+    SC_FREE,
 };
 // clang-format on
 

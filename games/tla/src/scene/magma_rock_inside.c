@@ -5,6 +5,7 @@
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
 #include "../field/object/set_sprite_priority.c"
+#include "djinn_ids.h"
 
 #include "../field/object/prepare_object.c"
 
@@ -82,6 +83,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "shared/tundaria_tower.h"
 #include "system/task.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = FieldActor_Create(kind, x, y, z);
@@ -237,8 +239,8 @@ extern s32 gPushLeaderSteps[];
 
 extern struct MapCell gMapGridCellBuffer[];
 
-// Sets the collision code of each cell in a layer rectangle to value.
-// Layers 3 and above use the shared buffer.
+/// Sets the collision code of each cell in a layer rectangle to value.
+/// Layers 3 and above use the shared buffer.
 s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
                                      u32 height, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -262,7 +264,9 @@ s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
 
 void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 
-void MagmaRockInside_MeetDjinni(void) { Djinn_JoinParty(17, 2, 19); }
+void MagmaRockInside_MeetDjinni(void) {
+  Djinn_JoinParty(17, DJINNI_59 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_59));
+}
 
 #include "shared/position_flat_distance.h"
 
@@ -306,9 +310,9 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-// For each id of a list ended by 0xffff: clears the object's mark and, on a
-// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-// the mark.
+/// For each id of a list ended by 0xffff: clears the object's mark and, on a
+/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
+/// the mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *object;
   u8 *blocked;
@@ -579,7 +583,7 @@ s32 Import_BattleEffectStopMainActor(void);
 void MagmaRockInside_PlayBurst(s16 value) {
   struct MainRoutineWork *party;
 
-  BattleEffect_LoadActionEffectResources(151, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_BURST, 1);
   party = &gMainRoutineWork;
   Import_FieldPsynergySetupActorPair(party->leaderActorId, value);
   FieldPsynergy_RunHandler(1);
@@ -593,10 +597,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// An object's update: every fourth frame it spawns an effect of type 403 with
-// its own script at a random point within 4 pixels of the object along z,
-// moving along z at a random speed; every sixteenth frame it also plays sound
-// 136 at the object.
+/// An object's update: every fourth frame it spawns an effect of type 403 with
+/// its own script at a random point within 4 pixels of the object along z,
+/// moving along z at a random speed; every sixteenth frame it also plays sound
+/// 136 at the object.
 void MagmaRockInside_TrailEmbers(struct Actor *object) {
   struct EffectOptions options;
   u32 frame = gFrameCount;
@@ -619,7 +623,13 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
                     0, vz, 0x320001, &options);
 }
 
-#include "shared/actor_flash_color.h"
+/// Flashes an actor in colour 10 on the frames its mask picks.
+void MagmaRockInside_FlashStatue(struct Actor *object) {
+  if (gFrameCount & object->blockMarked)
+    FieldActor_SetSpriteColor(object, 10);
+  else
+    FieldActor_SetSpriteColor(object, 0);
+}
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's
@@ -655,10 +665,10 @@ extern s16 gMagmaRockInside_Room4Statues[];
 
 void MagmaRockInside_FlashStatue(struct Actor *object);
 
-// The cell watch's callback: in modes 2 and 3 it finds the object on the
-// leader's cell in the room's table (room 4 has its own) and sets it blinking
-// (MagmaRockInside_FlashStatue) by frame-count bit 2 in mode 2 or bit 1 in
-// mode 3.
+/// The cell watch's callback: in modes 2 and 3 it finds the object on the
+/// leader's cell in the room's table (room 4 has its own) and sets it blinking
+/// (MagmaRockInside_FlashStatue) by frame-count bit 2 in mode 2 or bit 1 in
+/// mode 3.
 void MagmaRockInside_TargetStatue(s32 mode) {
   u16 *table;
   struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
@@ -1038,7 +1048,7 @@ rise:
   column:
     burstPosition[0] = baseX + ((Random16() % 48) << 16);
     FieldEffect_Spawn(burstPosition[0], burstPosition[1],
-                      burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
+                      burstPosition[2] + (row << 18) + px(8), 0, px(1), 0,
                       0x330000, effectOptions);
     i++;
     if (i != 6)
@@ -1059,7 +1069,7 @@ rise:
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
       FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                        sparkPosition[2] + 0x300000, 0, 0x10000, 0, 0x330000,
+                        sparkPosition[2] + px(48), 0, px(1), 0, 0x330000,
                         effectOptions);
       i++;
       if (i != 4)
@@ -1101,8 +1111,7 @@ last:
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
   FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                    sparkPosition[2] + 0x300000, 0, 0, 0, 0x3b0000,
-                    lastOptions);
+                    sparkPosition[2] + px(48), 0, 0, 0, 0x3b0000, lastOptions);
   if (i != 6)
     goto last;
   MapGrid_SetShake(5, 7, 1);
@@ -1121,12 +1130,12 @@ last:
     MagmaRockInside_PressGateSwitch3();
 }
 
-// A Magma Rock room's opening event: the leader is centred on its cell, the
-// screen shakes, and by room (2, 3 or 5, the last by entrance) it picks the
-// cells to open, the flag that was set (768 to 770, cleared here) and where
-// the effects play. The cells are copied open; if that flag was set, ten rows
-// of six effects rise along the opening while it widens and the blend fades
-// over 64 steps. Then the cells close again and the leader steps back a cell.
+/// A Magma Rock room's opening event: the leader is centred on its cell, the
+/// screen shakes, and by room (2, 3 or 5, the last by entrance) it picks the
+/// cells to open, the flag that was set (768 to 770, cleared here) and where
+/// the effects play. The cells are copied open; if that flag was set, ten rows
+/// of six effects rise along the opening while it widens and the blend fades
+/// over 64 steps. Then the cells close again and the leader steps back a cell.
 void MagmaRockInside_FloodWithLava(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 facing = (leader->facing + 0x2000) & 0xc000;
@@ -1236,8 +1245,8 @@ void MagmaRockInside_FloodWithLava(void) {
 
         p = position;
         p[0] = baseX + ((random % 48) << 16);
-        FieldEffect_Spawn(p[0], p[1], p[2] + (i << 18) + 0x170000, 0, 0x10000,
-                          0, 0x330000, &options);
+        FieldEffect_Spawn(p[0], p[1], p[2] + (i << 18) + px(23), 0, px(1), 0,
+                          0x330000, &options);
       }
       System_Wait(3);
       MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
@@ -1342,7 +1351,7 @@ void MagmaRockInside_ReleaseRocks(void) {
 loop:
   position[0] = ((Random16() & 31) << 16) + (190 << 18);
   position[2] = ((Random16() & 31) << 16) + (128 << 17);
-  FieldEffect_Spawn(position[0], position[1], position[2], 0, 0x10000, 0,
+  FieldEffect_Spawn(position[0], position[1], position[2], 0, px(1), 0,
                     0x3b0000, &options);
   if ((i & 7) == 0)
     Event_PlaySound(SE_POUND);
@@ -1563,10 +1572,10 @@ void MagmaRockInside_StartStepCells(void) {
   FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
 }
 
-// Saves the 1 by 2 cells 64 columns across from the controlled object at
-// (73, 72) and stamps the cells kept at (70, 72) in their place, once per
-// cell; AirsRockInside_StampWideCellUnderLeader is the same with another
-// source.
+/// Saves the 1 by 2 cells 64 columns across from the controlled object at
+/// (73, 72) and stamps the cells kept at (70, 72) in their place, once per
+/// cell; AirsRockInside_StampWideCellUnderLeader is the same with another
+/// source.
 void MagmaRockInside_StampStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x.fixed >> 20;
@@ -1588,7 +1597,7 @@ void MagmaRockInside_StampStepCell(void) {
   }
 }
 
-// As MagmaRockInside_StampStepCell, stamping the cells kept at (71, 72).
+/// As MagmaRockInside_StampStepCell, stamping the cells kept at (71, 72).
 void MagmaRockInside_StampOtherStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x.fixed >> 20;
@@ -1648,10 +1657,10 @@ fadeOut:
   REG_DISPCNT &= 0x7fff;
 }
 
-// Reads what the leader stands on (MapCell_Get, kind 2): on cells
-// 1 and 7 it only redraws the marker when flag 0x200 is set; elsewhere it
-// clears (MagmaRockInside_StampStepCell), redraws the marker in the row the
-// event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
+/// Reads what the leader stands on (MapCell_Get, kind 2): on cells
+/// 1 and 7 it only redraws the marker when flag 0x200 is set; elsewhere it
+/// clears (MagmaRockInside_StampStepCell), redraws the marker in the row the
+/// event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
 void MagmaRockInside_StepOnMarker(void) {
   u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
@@ -1834,7 +1843,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
   position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
   position[2] = object->z.fixed;
-  FieldEffect_Spawn(position[0], position[1], position[2] + 0x40000, 0, 0x8000,
+  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, 0x8000,
                     frame, 0x130000, &options);
 }
 
@@ -2027,8 +2036,8 @@ column:
 
 s32 Actor_MoveToObject();
 
-// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
-// clear) the scene with actor 5 follows.
+/// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
+/// clear) the scene with actor 5 follows.
 void MagmaRockInside_ReadBlazeTablet(void) {
   struct Actor *object;
 
@@ -2782,8 +2791,8 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 #include "shared/particles_update_falling.h"
 
-// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-// ring that next walks round.
+/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
@@ -2793,8 +2802,8 @@ struct RockWork {
   s16 resource;
 };
 
-// Spawns count rocks around (x, y, z), each pushed out at a random angle and
-// thrown up and out along it.
+/// Spawns count rocks around (x, y, z), each pushed out at a random angle and
+/// thrown up and out along it.
 void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
@@ -2863,7 +2872,7 @@ void MagmaRockInside_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 void MagmaRockInside_EndFallingRocks(void) {
@@ -2914,13 +2923,21 @@ s32 gPushLeaderSteps[] = {
   };
 
 u32 gMagmaRockInside_EmberScript[] = {
-    39, 2, 0, 18, 3, 0,
-    1, 38, 17,
+    SC_ARG(2),
+    SC_WAIT(18),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gMagmaRockInside_FlameEmberScript[] = {
-    39, 3, 0, 23, 3, 0,
-    1, 38, 17,
+    SC_ARG(3),
+    SC_WAIT(23),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gMagmaRockInside_PlatformPath1[] = {                                                               
@@ -3043,7 +3060,9 @@ s16 gMagmaRockInside_Room7Pillars[] = {
 };
 
 u32 gMagmaRockInside_FlameScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gMagmaRockInside_TorchScript[] = {                                                               

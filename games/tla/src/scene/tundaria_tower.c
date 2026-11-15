@@ -10,6 +10,9 @@
 /// pillars (room 6), Reveal opens an icy wall and Burst a brown one outside;
 /// Burst on the dead end by the chests (room 7) brings its rocks down.
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/field_effect/move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
@@ -463,7 +466,7 @@ void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
     FieldEffect_Spawn(object->x.fixed,
-                      object->y.fixed - ((arg1 * 3) << 16) + 0x100000,
+                      object->y.fixed - ((arg1 * 3) << 16) + px(16),
                       object->z.fixed, velocityX, 0, 0, 0x5a0000, &options);
     object->scaleY -= 7936;
   }
@@ -986,7 +989,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
       MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     } else {
-      Task_Add(TundariaTower_UpdateLedgeCell, 0x480);
+      Task_Add(TundariaTower_UpdateLedgeCell, TASK_PASS_VBLANK);
     }
     Actor_PlaceBlocks(gTundariaTower_Room7Pillar);
   }
@@ -1046,7 +1049,7 @@ loop:
     goto loop;
 }
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1082,9 +1085,9 @@ top:
 
 #include "shared/actor_set_cell_open.h"
 
-// On entering, sets each listed pillar from its two flags (pushed: moved to
-// its place; else its cell raised and its shape redrawn), then lifts the
-// leader onto the ground under it.
+/// On entering, sets each listed pillar from its two flags (pushed: moved to
+/// its place; else its cell raised and its shape redrawn), then lifts the
+/// leader onto the ground under it.
 UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
@@ -1259,10 +1262,10 @@ void TundariaTower_SetPillarMode3(s32 id) {
   Actor_DisableById(id);
 }
 
-// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
-// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
-// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
-// it copy actor 9's visual attributes.
+/// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
+/// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
+/// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
+/// it copy actor 9's visual attributes.
 UNUSED void TundariaTower_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
@@ -1434,8 +1437,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1556,8 +1558,8 @@ struct RockSprite__s29d0 {
   u8 unk20[8];
 };
 
-// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-// ring that next walks round.
+/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
@@ -1571,8 +1573,8 @@ struct RockWork {
 // thrown up and out along it.
 #include "shared/rocks_spawn.h"
 
-// The falling rocks' setup: loads their picture, sets up 64 small sprites,
-// marks each rock idle and starts the task that spawns them.
+/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
+/// marks each rock idle and starts the task that spawns them.
 void TundariaTower_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -1605,7 +1607,7 @@ void TundariaTower_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(TundariaTower_UpdateFallingRocks, 0x480);
+  Task_AddFrame(TundariaTower_UpdateFallingRocks, TASK_PASS_VBLANK);
 }
 
 void TundariaTower_EndFallingRocks(void) {
@@ -1624,21 +1626,33 @@ void TundariaTower_LiftPillar(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gTundariaTower_Room6Pillars[] = {
@@ -1663,13 +1677,19 @@ s16 gSlideOnIce_AnglesByKey[] = {
 };
 
 u32 gTundariaTower_RubbleScript[] = {
-    0, 33, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gTundariaTower_DustRingScript[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_WAIT(44),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

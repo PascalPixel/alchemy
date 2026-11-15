@@ -8,6 +8,7 @@
 /// Feizhi arrives with a gift (Champa_FeizhiArrives). The getters pick later
 /// tables once Briggs has sailed from Alhafra.
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -34,6 +35,8 @@
 #include "call.h"
 #include "version.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct Actor;
 extern struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[];
@@ -55,7 +58,7 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
     Actor_SetDestination(id, actor->x.part[0].pixel, actor->z.part[0].pixel);
 }
 
-// The town's own story, which no other scene reads.
+/// The town's own story, which no other scene reads.
 #define FLAG_NEAR_THE_CLIFF 0x970 ///< the party walked up to Obaba's cliff
 #define FLAG_TOLD_OF_OBABA 0x972  ///< a villager told of Obaba
 #define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs
@@ -504,7 +507,7 @@ s32 Tightrope_Initialize();
 s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x100;
-  Task_AddFrame((s32)Champa_RotatePaletteColors, 0xc80);
+  Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_FRAME);
   Map_SetLayerEntryFlag(8);
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
@@ -1614,5 +1617,5 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
 };
 
 u32 gChampa_GlareSparkScript[] = {
-    38,
+    SC_FREE,
 };

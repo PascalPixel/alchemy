@@ -43,6 +43,8 @@
 #include "system/task.h"
 #include "macros.h"
 #include "shared/tables.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern s32 gStaffCredit_BeamsLightPalette[];
 
@@ -275,7 +277,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Task_Add(StaffCredit_BlendBeacon, 0x480);
+  Task_Add(StaffCredit_BlendBeacon, TASK_PASS_VBLANK);
   Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
@@ -658,7 +660,7 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     }
     IRQ_UNLOCK(saved);
   }
-  Task_AddFrame(StaffCredit_BlendPicture, 0x480);
+  Task_AddFrame(StaffCredit_BlendPicture, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
@@ -961,15 +963,17 @@ void Gauge_End(void) {
 }
 
 s32 gWorldMap_SparkScript[] = {
-    46,
-    (s32)WorldMap_RiseFromAnchor,
-    38,
+    SC_CALL((s32)WorldMap_RiseFromAnchor),
+    SC_FREE,
 };
 
 // clang-format off
 u32 gWorldMap_ParticleScript[] = {
-    0, 39, 22, 5, 0, 22,
-    7, 0, 0, 1, 38,
+    SC_WAIT(39),
+    SC_SET(SW_X, 0),
+    SC_SET(SW_Z, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gStaffCredit_ColorModes[] = {

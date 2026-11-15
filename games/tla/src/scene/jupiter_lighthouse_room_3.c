@@ -56,9 +56,9 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-// Set once the log has been pushed off the ledge this visit.
+/// Set once the log has been pushed off the ledge this visit.
 #define FLAG_LOG_OFF_LEDGE 0x200
-// Set as Move drops each pillar into its gap.
+/// Set as Move drops each pillar into its gap.
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
@@ -202,7 +202,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPositionFixed(14, px(328), px(584));
+    Actor_SetPosition(14, 328, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
@@ -210,7 +210,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPositionFixed(15, px(520), px(584));
+    Actor_SetPosition(15, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
@@ -249,7 +249,26 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/palette_cycle_step_at.h"
 
-#include "shared/jupiter_lighthouse_load_palettes_zero.h"
+/// JupiterLighthouse_LoadPalettes as the aerie and room 3 compile it.
+void JupiterLighthouse_LoadPalettesZero(s32 mode) {
+  gPaletteCyclePausesInEvents = 1;
+  if (mode != 2) {
+    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
+                         32);
+    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
+                         (void *)&BG_PLTT_COLOR(13, 0), 32);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+    /* FAKEMATCH(temporary): a local holding 0. */
+    s32 zero = 0;
+
+    gPaletteCycleFrame = zero;
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
+  } else {
+    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
+            DMA_COPY_WORDS(2), REG_DMA3);
+  }
+}
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -364,7 +383,93 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 
 void PushTarget_UpdatePusher(struct Actor *object);
 
-#include "shared/push_target_push_fill.h"
+/// PushTarget_Push for the rooms that fill the cells with
+/// Map_FillCellRectByte2.
+void PushTarget_PushFill(struct PushTarget target) {
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *object = Actor_Get(target.id);
+  s32 cell[3];
+  s32 from[3];
+  s32 footprint;
+  s32 width;
+  s32 height;
+  s32 originX;
+  s32 originZ;
+  s32 direction;
+  s32 speed;
+  s32 acceleration;
+
+  direction = leader->facing >> 16;
+  footprint = target.footprint;
+  speed = leader->speedLimit;
+  acceleration = leader->acceleration;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[footprint][0]) +
+           ABS(gPushFootprints[footprint][2])) >>
+          4;
+  height = (ABS(gPushFootprints[footprint][1]) +
+            ABS(gPushFootprints[footprint][3])) >>
+           4;
+  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  System_Wait(15);
+  {
+    s32 deltaX = (target.x - from[0]) >> 17;
+    s32 deltaZ = (target.z - from[2]) >> 17;
+
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
+  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = PushTarget_UpdatePusher;
+  System_Wait(4);
+  if ((u32)(direction - 6) <= 7)
+    Actor_SelectAnimation(object, 3);
+  else
+    Actor_SelectAnimation(object, 2);
+  Event_PlaySound(SE_HEAVY_MOVE);
+  Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
+  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                             (gPushLeaderSteps[direction] << 16) >> 31,
+                             (gPushLeaderSteps[direction] << 16) >> 17);
+  if (target.callback != 0)
+    target.callback();
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+  leader->update = 0;
+  leader->speedLimit = speed;
+  leader->acceleration = acceleration;
+  FieldActor_WaitForMove(object);
+  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
+  Event_PlaySound(SE_HEAVY_STOP);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
+  Actor_SelectAnimation(object, 1);
+  target.x = target.x + (gPushFootprints[footprint][0] << 16);
+  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x >>= 20;
+  target.z >>= 20;
+  originX = *(s32 *)(map + 328) >> 20;
+  originZ = *(s32 *)(map + 332) >> 20;
+  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
+                             originX + target.x, originZ + target.z);
+  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
+  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
+  originX += cell[0];
+  originZ += cell[2];
+  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
+  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  Event_NoOp();
+}
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
@@ -458,8 +563,8 @@ s32 gPushLeaderSteps[] = {
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 extern struct CellTarget gCrackedTiles;
 
 void CrackedTiles_Update(void);
@@ -563,8 +668,8 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 extern u16 gPushKinds[];
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 extern struct CellTarget gCrackedTiles;
 
 #include "shared/cracked_tile_drop_in.h"

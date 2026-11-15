@@ -361,9 +361,9 @@ void JupiterLighthouse_KarstAndAgatioWait(void) {
 
 extern s32 gJupiterLighthouse_BeaconParticleScript[];
 
-// Every third frame, or every frame once flag 0x201 is set, spawns a particle
-// at a random height above object 31 that circles it
-// (JupiterLighthouse_CircleBeacon).
+/// Every third frame, or every frame once flag 0x201 is set, spawns a particle
+/// at a random height above object 31 that circles it
+/// (JupiterLighthouse_CircleBeacon).
 void JupiterLighthouse_SpawnBeaconParticle(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -406,9 +406,9 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
   }
 }
 
-// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
-// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
-// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
+/// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
+/// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
+/// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *object = Actor_Get(36);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -624,7 +624,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       actor32->priorityFlags |= 2;
       Actor_SetScript(31, gJupiterLighthouse_StarFallsScript);
       Actor_SetScript(32, gJupiterLighthouse_StarFallsScript);
-      Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle, 0x480);
+      Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle,
+                    TASK_PASS_VBLANK);
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(10, 0, 0);
       Actor_SetPosition(23, 0, 0);
@@ -705,9 +706,8 @@ void JupiterLighthouse_BeaconIsLit(void) {
   MapGrid_CenterOnFollowedPoint();
   wait_(1);
   JupiterLighthouse_SetMessage(MsgWeHaveIgnited);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, 0x1fc0000, 0x1160000,
-                             facing = 0xc000);
-  Actor_SetPositionAndFacing(ACTOR_PIERS, 0x2140000, 0x1160000, facing);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, px(508), px(278), facing = 0xc000);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, px(532), px(278), facing);
   JupiterLighthouse_PlaySound(141);
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
   Event_StartScreenTransition();
@@ -798,7 +798,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
   Message_ShowCentered(((t102 << 16) >> 16), 5);
-  PartyInventory_Add_(224);
+  PartyInventory_Add_(ITEM_MYTHRIL_BAG);
   for (slot = 0; slot < 15; slot++) {
     if ((((struct UnitItems *)Unit_Get_(4))->items[slot] & 0x1ff) == 224) {
       JupiterLighthouse_Equip(4, slot);
@@ -2149,9 +2149,9 @@ void JupiterLighthouse_WeBeatThem(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
-// the three rows from 72 less the row of z. Nothing in this overlay calls it.
-// As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
+/// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
+/// the three rows from 72 less the row of z. Nothing in this overlay calls it.
+/// As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
   s32 z = zArg;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -2380,7 +2380,7 @@ s32 Scene_Initialize(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(36), 0);
   Actor_SetSpriteFlags(Actor_Get(36), 0);
-  Task_AddFrame((s32)JupiterLighthouse_PulseBeacon, 0x480);
+  Task_AddFrame((s32)JupiterLighthouse_PulseBeacon, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 9) {
     JupiterLighthouse_BeaconIsLit();
 
@@ -2438,7 +2438,7 @@ void JupiterLighthouse_SetCycleFrame(s32 a0) {
 
 extern s32 gPaletteCycleFrame;
 
-// Sets the counter, its value built as a word.
+/// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 #include "shared/palette_cycle_step.h"
@@ -2461,7 +2461,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     Counter_Set(0);
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -2645,10 +2645,10 @@ void JupiterLighthouse_EnergizeAngels(void) {
   struct Actor *rider = Actor_GetById(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPositionFixed(24, 0x2000000, 0xf80000);
-  Actor_SetPositionFixed(23, 0x2000000, 0xf80000);
-  Actor_SetPositionFixed(9, 0x1d80000, 0x1000000);
-  Actor_SetPositionFixed(10, 0x2280000, 0x1000000);
+  Actor_SetPositionFixed(24, px(512), px(248));
+  Actor_SetPositionFixed(23, px(512), px(248));
+  Actor_SetPositionFixed(9, px(472), px(256));
+  Actor_SetPositionFixed(10, px(552), px(256));
   Actor_GetById(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;

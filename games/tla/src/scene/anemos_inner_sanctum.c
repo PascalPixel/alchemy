@@ -40,6 +40,7 @@
 #include "module/scene/scene.h"
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
+#include "objcmd.h"
 
 struct Actor;
 struct CellTarget;
@@ -185,7 +186,15 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     AnemosInnerSanctum_TeleportIn();
 }
 
-#include "shared/palette_cycle_start.h"
+/// Starts a palette cycle's task.
+void PaletteCycle_Start(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 15;
+  gPaletteCycleTimer = 16;
+  gPaletteCycleBright = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void AnemosInnerSanctum_StopPaletteCycle(void) {
   gFieldWork->transition = 0x100;
@@ -323,7 +332,7 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
   s32 radius;
 
   object->timer += object->userValue;
-  SET_ACTOR_POSITION(object, object->bounce, object->gravity, 0x980000);
+  SET_ACTOR_POSITION(object, object->bounce, object->gravity, px(152));
   FieldVector_AddPolarOffset(object->riseBaseY, object->timer,
                              &object->x.fixed);
   radius = object->riseBaseY - 0x10000;
@@ -378,8 +387,8 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
 
   params.kind = 2;
   params.part = *((u8 *)object + 98);
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
-                    0x10000, 0, 0x30000, &params);
+  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, px(1),
+                    0, 0x30000, &params);
   x = (object->bounce >> 20) + 64;
   y = object->gravity >> 20;
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
@@ -812,11 +821,11 @@ void AnemosInnerSanctum_StartMovingBlock(void) {
   }
 }
 
-// An event handler from the sanctum's event table (in s2f48.c),
-// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
-// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
-// running the event at x 67, z 45 of room 3 and moving object 13 to object 12
-// at x 91, z 59 until flag 0xa84 is set.
+/// An event handler from the sanctum's event table (in s2f48.c),
+/// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
+/// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
+/// running the event at x 67, z 45 of room 3 and moving object 13 to object 12
+/// at x 91, z 59 until flag 0xa84 is set.
 void AnemosInnerSanctum_FinishMovingBlock(void) {
   struct Actor *leader = gFieldWork->movedBlock;
   s32 x;
@@ -881,11 +890,11 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
 
 extern s32 gAnemosInnerSanctum_TileGlowScript[];
 
-// An event handler from the sanctum's event table (in s2f48.c):
-// changes the cells at the leader's place, spawns an effect of type 0x15d
-// there and sets the flag the event work's exit selects; once flags 0x200 to
-// 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
-// sets flag 0x207.
+/// An event handler from the sanctum's event table (in s2f48.c):
+/// changes the cells at the leader's place, spawns an effect of type 0x15d
+/// there and sets the flag the event work's exit selects; once flags 0x200 to
+/// 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
+/// sets flag 0x207.
 void AnemosInnerSanctum_StepOnTile(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -936,9 +945,9 @@ void AnemosInnerSanctum_StepOnTile(void) {
   }
 }
 
-// Centres the party leader on its cell and raises actor 8 (in
-// AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
-// more, before the screen transition finishes.
+/// Centres the party leader on its cell and raises actor 8 (in
+/// AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
+/// more, before the screen transition finishes.
 void AnemosInnerSanctum_RaisePlatform(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object;
@@ -1054,11 +1063,11 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit12, 0xc)
 
 extern s32 gAnemosInnerSanctum_DustScript[];
 
-// The update of an object that moves with the leader: once the leader is past
-// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
-// leader's step, raising an effect of type 0x2a0 on each step, and stops where
-// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
-// or 200. unk4c and acceleration hold the leader's last x and z.
+/// The update of an object that moves with the leader: once the leader is past
+/// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
+/// leader's step, raising an effect of type 0x2a0 on each step, and stops where
+/// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
+/// or 200. unk4c and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 next[2];
@@ -1193,8 +1202,8 @@ void AnemosInnerSanctum_RaiseDust(void) {
   Event_End();
 }
 
-// By the entrance taken, sets that entrance's flag, moves its actor to the
-// middle of its cell and copies a cell picture column twice beside it.
+/// By the entrance taken, sets that entrance's flag, moves its actor to the
+/// middle of its cell and copies a cell picture column twice beside it.
 void AnemosInnerSanctum_MarkEntrance(void) {
   struct Actor *object;
   s32 column;
@@ -1297,8 +1306,8 @@ static __inline__ void AnemosInnerSanctum_PlayMapEdit(const void *data, s32 a,
   MapGrid_PlayMapEdit(data, a, b);
 }
 
-// The scene opening: clears the actors' motion flags, plays the entrance's
-// map edit and steps the leader in.
+/// The scene opening: clears the actors' motion flags, plays the entrance's
+/// map edit and steps the leader in.
 void AnemosInnerSanctum_EnterTheRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
@@ -1343,7 +1352,7 @@ void AnemosInnerSanctum_RaiseFirstStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y.fixed = -px(64);
-  Actor_SetPositionFixed(9, px(728), px(120));
+  Actor_SetPosition(9, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -px(48);
   Event_StartScreenTransition();
@@ -1892,25 +1901,39 @@ extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
 u32 gAnemosInnerSanctum_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_TileGlowScript[] = {
-    0, 20, 38, 17,
+    SC_WAIT(20),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_OrbScript[] = {                                                               
@@ -1921,54 +1944,57 @@ s32 gAnemosInnerSanctum_OrbScript[] = {
   };
 
 s32 gAnemosInnerSanctum_DustScript[] = {
-    0x80010000, 23, 9, 0xffffe667, 23, 10,
-    0xffffe667, 0, 1, 13, 8, 0xc0010000,
-    38, 17,
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TO(1)),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_PillarRisesScript[] = {
-    0, 50, 0x80010000, 23, 9, 0x1999,
-    23, 10, 0x1999, 23, 6, 0x30000,
-    0, 2, 13, 10, 0xc0010000, 22,
-    26, 4, 17,
+    SC_WAIT(50),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, 6553),
+    SC_ADD(SW_SCALE_Y, 6553),
+    SC_ADD(SW_Y, px(3)),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_PillarSparkScript[] = {
-    0, 30, 22, 26, 0, (s32)0x80010000,
-    23, 9, (s32)0xffffe667, 23, 10, (s32)0xffffe667,
-    23, 6, -0x30000, 0, 2, 13,
-    10, (s32)0xc0010000, 17,
+    SC_WAIT(30),
+    SC_SET(SW_MOTION, 0),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_ADD(SW_Y, -px(3)),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_MoteScript[] = {
-    0, 3, 38, 17,
+    SC_WAIT(3),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_SparkScript[] = {
-    22,
-    9,
-    0x20000,
-    22,
-    10,
-    0x20000,
-    (s32)0x80010000,
-    23,
-    9,
-    (s32)0xffffe667,
-    23,
-    10,
-    (s32)0xffffe667,
-    0,
-    2,
-    13,
-    10,
-    (s32)0xc0010000,
-    46,
-    (s32)AnemosInnerSanctum_SpiralMover,
-    46,
-    (s32)AnemosInnerSanctum_SpawnOrbitSparks,
-    38,
-    17,
+    SC_SET(SW_SCALE_X, 0x20000),
+    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_CALL((s32)AnemosInnerSanctum_SpiralMover),
+    SC_CALL((s32)AnemosInnerSanctum_SpawnOrbitSparks),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAnemosInnerSanctum_Room2Blocks[] = {
@@ -1990,21 +2016,33 @@ s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
 };
 
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_DurationScripts[] = {
@@ -2035,9 +2073,8 @@ u16 gAnemosInnerSanctum_CycleSlots[] = {
   };
 
 s32 gAnemosInnerSanctum_StatueScript[] = {
-    46,
-    (s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags,
-    17,
+    SC_CALL((s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

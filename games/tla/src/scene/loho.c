@@ -29,7 +29,9 @@
 #include "scene_ids.h"
 #include "graphics/resource.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
+#include "djinn_ids.h"
 
 extern u32 gLoho_VillagerMovesNorth[];
 extern u32 gLoho_VillagerMovesWest[];
@@ -83,7 +85,10 @@ struct LohoSpark {
 
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
 /// when spoken to.
-void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
+void Loho_MeetLull(void) {
+  Djinn_JoinParty(19, DJINNI_LULL / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_LULL));
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -580,19 +585,25 @@ void Loho_ReadInnSign(void) {
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 
+/// Loho's shops, as Shop_Run numbers them.
+enum { SHOP_LOHO = 30 };
+
+/// Loho's inn, as Inn_CheckIn numbers the inns.
+enum { LOHO_INN = 13 };
+
 void Loho_TalkToInnkeeper(void) {
   s32 count = 8;
 
   /* FAKEMATCH(barrier): the empty asm on count. */
   asm("" : "+l"(count));
-  Inn_CheckIn(13, count);
+  Inn_CheckIn(LOHO_INN, count);
 }
 
 /// "Commerce really took off when we started this mining colony in Loho."
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
-    Shop_Run(30, 8);
+    Shop_Run(SHOP_LOHO, 8);
   } else {
     if (Event_GetFlag(0xa5f))
       Event_SetMessageId((s32)MsgLoho51);
@@ -792,14 +803,26 @@ s32 Scene_PrepareMap(void) {
 
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {
-    39, 2, 48, 0x21b0000, 0x1470000, 1,
-    48, 0x2470000, 0x1470000, 1, 48, 0x2470000,
-    0x12c0000, 1, 3, 0, 150, 22,
-    26, 1, 2, 0x2460000, 0, 0x10a0000,
-    4, 0x2460000, 0, 0xf80000, 1, 48,
-    0x23a0000, 0xf80000, 1, 48, 0x23a0000, 0x1160000,
-    1, 39, 1, 22, 3, 0x6000,
-    17,
+    SC_ARG(2),
+    SC_MOVE_XZ(px(539), px(327)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(583), px(327)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(583), px(300)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_WAIT(150),
+    SC_SET(SW_MOTION, 1),
+    SC_POSITION(px(582), 0, px(266)),
+    SC_MOVE(px(582), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(570), px(248)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(570), px(278)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_END,
 };
 
 s32 gLoho_SecondMinerStepsUp[] = {
@@ -823,10 +846,16 @@ s32 gLoho_ThirdMinerStepsUp[] = {
 };
 
 u32 gLoho_FirstMinerWalksBack[] = {
-    39, 2, 4, 0x23a0000, 0, 0xf80000,
-    1, 4, 0x2470000, 0, 0xf80000, 1,
-    4, 0x2460000, 0, 0x10a0000, 1, 3,
-    0, 20, 17,
+    SC_ARG(2),
+    SC_MOVE(px(570), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(583), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(582), 0, px(266)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_WAIT(20),
+    SC_END,
 };
 
 u32 gLoho_FirstMinerFetchesCannon[] = {

@@ -26,7 +26,7 @@
 #include "system/input.h"
 #include "field/sprite.h"
 
-// Talks each person gives once, the first time spoken to.
+/// Talks each person gives once, the first time spoken to.
 #define FLAG_GRUMBLED_ABOUT_THE_MAYOR 0x8ba
 #define FLAG_DEFENDED_THE_MAYOR 0x8bb
 #define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
@@ -266,13 +266,13 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
-    FieldCamera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
+    FieldCamera_MoveWithinMapBounds(px(304), cameraY, cameraZ, 0);
     gFieldWork->transition = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
     FieldCamera_SetSpeed(2);
-    FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
+    FieldCamera_MoveWithinMapBounds(px(144), cameraY, cameraZ, 1);
     while (gInput.held == 0)
       wait(1);
     Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);

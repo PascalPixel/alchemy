@@ -45,6 +45,8 @@
 #include "field_sprite.h"
 #include "field_event.h"
 #include "graphics/vram_tab.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
@@ -1049,8 +1051,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(object, mode);
-  Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
-                      z = (toZ << 20) + 0x80000);
+  Actor_SetMoveTarget(object, (toX << 20) + px(8), 0, z = (toZ << 20) + px(8));
   Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
@@ -1065,7 +1066,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
-    Actor_SetMoveTarget(object, 312 << 16, 0, z);
+    Actor_SetMoveTarget(object, px(312), 0, z);
     Event_Wait(30);
     Actor_SelectAnimation(object, 8);
     Actor_WaitForMove(object);
@@ -1340,8 +1341,8 @@ void TrialRoad_ChallengeMoapa(void) {
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
-// When the object stands in column 8, sets flag 0x9fc, stops its motion and
-// lifts it one pixel.
+/// When the object stands in column 8, sets flag 0x9fc, stops its motion and
+/// lifts it one pixel.
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
@@ -1386,7 +1387,7 @@ void TrialRoad_SetUpPillarStage(void) {
   TrialRoad_BlockCellUnder(17);
   TrialRoad_BlockCellUnder(18);
   TrialRoad_BlockCellUnder(19);
-  Task_Add(TrialRoad_TrackLeaderOnPillars, 0x480);
+  Task_Add(TrialRoad_TrackLeaderOnPillars, TASK_PASS_VBLANK);
 }
 
 void TrialRoad_SetUpTorchStage(void) {
@@ -1484,9 +1485,9 @@ void TrialRoad_SetUpCrumblingStage(void) {
   MagmaRockInside_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
 }
 
-// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
-// their collision flags; then runs TrialRoad_BlockLogs, and
-// TrialRoad_AddPillarTop and TrialRoad_BlockCellUnder for object 15.
+/// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
+/// their collision flags; then runs TrialRoad_BlockLogs, and
+/// TrialRoad_AddPillarTop and TrialRoad_BlockCellUnder for object 15.
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
@@ -1506,7 +1507,7 @@ void TrialRoad_SetUpLogStage(void) {
   TrialRoad_BlockCellUnder(15);
 }
 
-// One of the fountain stage's fountains and the spout drawn over it.
+/// One of the fountain stage's fountains and the spout drawn over it.
 struct TrialRoadFountain {
   s16 id;     ///< its actor; 0 for an empty slot
   s16 phase;  ///< frames into its period
@@ -1523,7 +1524,7 @@ struct TrialRoadFountain {
   struct Actor *spout; ///< drawn over it
 };
 
-// The fountain stage's work, kept in the inventory snapshot's spare room.
+/// The fountain stage's work, kept in the inventory snapshot's spare room.
 struct TrialRoadFountains {
   s16 vramEntry;
   s16 shape; ///< the first of the shape grid's values for the fountains
@@ -1534,11 +1535,11 @@ struct TrialRoadFountains {
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high);
 
-// Sets up the Trial Road room with five movers: objects 16 to 20 in slots 0
-// to 4, the first three over a range of 64 and the last two over 32, each
-// with 240, 120 and 150; objects 16 to 18 are put away
-// (TrialRoad_OpenSpoutCell) once flags 0x363 to 0x365 are set and placed
-// otherwise; then object 15.
+/// Sets up the Trial Road room with five movers: objects 16 to 20 in slots 0
+/// to 4, the first three over a range of 64 and the last two over 32, each
+/// with 240, 120 and 150; objects 16 to 18 are put away
+/// (TrialRoad_OpenSpoutCell) once flags 0x363 to 0x365 are set and placed
+/// otherwise; then object 15.
 void TrialRoad_SetUpFountainStage(void) {
   struct TrialRoadFountain *fountain;
 
@@ -1623,7 +1624,7 @@ void TrialRoad_GaspFlees(void) {
   partner->velocityY = px(10);
   Actor_SetScript(8, gTrialRoad_GaspHopScript);
   y = partner->y.fixed;
-  Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
+  Actor_SetMoveTarget(partner, px(344), y, px(264));
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
@@ -1636,9 +1637,9 @@ extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
     "gTrialRoad_PaletteCycleRunning");
 #define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
 
-// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
-// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
-// TrialRoad_GaspFlees.
+/// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
+/// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
+/// TrialRoad_GaspFlees.
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(123)) {
     struct Actor *object = Actor_GetById(8);
@@ -1652,7 +1653,7 @@ void TrialRoad_SetUpPoolRoom(void) {
       *flags = 3;
       object->y.fixed = 0;
     }
-    Task_Add(TrialRoad_GaspFlees, 0x480);
+    Task_Add(TrialRoad_GaspFlees, TASK_PASS_VBLANK);
   }
 }
 
@@ -1714,7 +1715,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     s32 zero = 0;
 
     gTrialRoad_PaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_StepAt, 0x480);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   }
 }
 
@@ -1729,8 +1730,8 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
 
 void TrialRoad_LeaveMoapaWaiting(void);
 
-// The mountain's peak: after the battle, the victory or the defeat; on
-// arrival, Moapa and his knights wait.
+/// The mountain's peak: after the battle, the victory or the defeat; on
+/// arrival, Moapa and his knights wait.
 void TrialRoad_SetUpPeak(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
@@ -1914,8 +1915,8 @@ extern s8 gTrialRoad_SceneryStages[];
 void *Unit_Get(s32 owner);
 void TrialRoad_StartRival(s32 a);
 
-// Places `layer` `column` cells into the map: its offset (column << 20), its
-// cells and terrain from that column on, and its position from the view.
+/// Places `layer` `column` cells into the map: its offset (column << 20), its
+/// cells and terrain from that column on, and its position from the view.
 #define SET_LAYER(column, x)                                                   \
   words = (s32 *)layer;                                                        \
   words[2] = (column) << 20;                                                   \
@@ -2119,7 +2120,7 @@ s32 Scene_PrepareMap(void) {
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
           TrialRoad_ShowProgress(gMainRoutineWork.leaderActorId, 8);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
-          Task_Add(TrialRoad_UpdateRival, 0x480);
+          Task_Add(TrialRoad_UpdateRival, TASK_PASS_VBLANK);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
           GameFlag_Set(FLAG_SCENE_TEMP_82);
@@ -2147,10 +2148,10 @@ s32 Scene_PrepareMap(void) {
 
 extern s8 gTrialRoad_KeyStages[];
 
-// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
-// eight slots at the start of the stage state, again until both the even and
-// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
-// the random state is restored after.
+/// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
+/// eight slots at the start of the stage state, again until both the even and
+/// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
+/// the random state is restored after.
 void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomSeed;
@@ -2192,14 +2193,14 @@ s32 TrialRoad_GetStage(s32 side) {
 
 s32 TrialRoad_IsMirrored(void) { return gTrialRoadState->mirrored; }
 
-// A pixel x on the mirrored road, the right path's, when the leader took it.
+/// A pixel x on the mirrored road, the right path's, when the leader took it.
 s32 TrialRoad_MirrorX(s32 x) {
   if (TrialRoad_IsMirrored())
     return 512 - x;
   return x;
 }
 
-// A cell x, in pixels, on the mirrored road when the leader took it.
+/// A cell x, in pixels, on the mirrored road when the leader took it.
 s32 TrialRoad_MirrorCellX(s32 x) {
   if (TrialRoad_IsMirrored())
     return (64 - x) << 3;
@@ -2218,8 +2219,8 @@ s32 TrialRoad_MirrorAngle(s32 angle) {
   return angle & 0xffff;
 }
 
-// Places an actor at a pixel position and facing, mirrored when the leader
-// took the right path.
+/// Places an actor at a pixel position and facing, mirrored when the leader
+/// took the right path.
 void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetPositionAndFacing(id, TrialRoad_MirrorX(x) << 16, z << 16,
                              (u16)TrialRoad_MirrorAngle(angle));
@@ -2287,7 +2288,7 @@ void TrialRoad_ReachPeakFirst(void) {
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   FieldActor_SetMoveTargetFixed(object, TrialRoad_MirrorCellX(41) << 16,
-                                object->y.fixed, 264 << 16);
+                                object->y.fixed, px(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Event_PlaySound(SE_JUMP);
@@ -2295,7 +2296,7 @@ void TrialRoad_ReachPeakFirst(void) {
   object->speedLimit = px(3);
   object->acceleration = px(2);
   Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y.fixed,
-                      264 << 16);
+                      px(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
@@ -2670,7 +2671,7 @@ void TrialRoad_ShowTraps(void) {
   Motion_SetModeAndWaitAnimation(14, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
   Event_ShowMessageAndWait(8, 0);
-  FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(px(408), -1, px(120), 1);
   FieldCamera_WaitForArrival();
   // "If Trial Road proves too much for you, press this button."
   Event_ShowMessageAndWait(8, 0);
@@ -2688,12 +2689,12 @@ void TrialRoad_ShowTraps(void) {
 // height and cell attribute byte follow its actor and offset, and its marker
 // actor is placed over it, bobbing on a sine while the offset is not 0.
 
-// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
-// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
-// or -8 a frame until it reaches its high or low offset; its phase counts
-// round its period unless flag 260 is set. Each mover's shape, collision
-// height and cell attribute byte follow its actor and offset, and its marker
-// actor is placed over it, bobbing on a sine while the offset is not 0.
+/// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
+/// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
+/// or -8 a frame until it reaches its high or low offset; its phase counts
+/// round its period unless flag 260 is set. Each mover's shape, collision
+/// height and cell attribute byte follow its actor and offset, and its marker
+/// actor is placed over it, bobbing on a sine while the offset is not 0.
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work =
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
@@ -2782,7 +2783,7 @@ void TrialRoad_UpdateFountains(void) {
 // placing of actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 
-// Queues the Trial Road movers' sprites.
+/// Queues the Trial Road movers' sprites.
 void TrialRoad_DrawFountains(void) {
   struct TrialRoadFountains *base =
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
@@ -2891,8 +2892,8 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   Heap_Release(buffer);
   work->sprites = Heap_AllocEwram(0x3c0);
   work->shape = shape;
-  Task_Add(TrialRoad_UpdateFountains, 0x48d);
-  Task_Add(TrialRoad_DrawFountains, 0x480);
+  Task_Add(TrialRoad_UpdateFountains, TASK_PASS_VBLANK + 13);
+  Task_Add(TrialRoad_DrawFountains, TASK_PASS_VBLANK);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 
@@ -3091,8 +3092,8 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
-// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
-// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
+/// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
+/// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
 void TrialRoad_DriftRubble(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
@@ -3146,8 +3147,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -3236,7 +3236,7 @@ void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
 
 extern u32 gTrialRoad_HexDigits[];
 
-// Writes value as eight hexadecimal digits and a terminating null.
+/// Writes value as eight hexadecimal digits and a terminating null.
 UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
   const u8 *digits = gTrialRoad_HexDigits;
@@ -3275,10 +3275,10 @@ void TrialRoad_WaitForBalanceState(void) {
 
 // The Trial Road rival's per-frame update.
 
-// Updates the Trial Road rival by the scene state's mode: 4 follows the
-// leader's position mirrored across the course; 3 places the rival and its
-// partner from the linked player's record; 1 replays the recorded path; 2
-// records the actor's position.
+/// Updates the Trial Road rival by the scene state's mode: 4 follows the
+/// leader's position mirrored across the course; 3 places the rival and its
+/// partner from the linked player's record; 1 replays the recorded path; 2
+/// records the actor's position.
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
@@ -3455,7 +3455,7 @@ struct TrialRoadLinkWork__s51a0 {
 
 extern const u8 gTrialRoad_ProgressPicture[];
 
-// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
+/// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(576);
 }
@@ -3493,15 +3493,15 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     Oam_AddSpriteAtDepth(entry++, 255);                                        \
   } while (0)
 
-// The Trial Road link display's scheduled callback, which
-// TrialRoad_ShowProgress starts. Its fade state falls during events or while
-// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
-// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
-// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
-// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
-// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
-// the two watched actors, projected at 1/16 scale from their positions and the
-// course side.
+/// The Trial Road link display's scheduled callback, which
+/// TrialRoad_ShowProgress starts. Its fade state falls during events or while
+/// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
+/// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
+/// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
+/// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
+/// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
+/// the two watched actors, projected at 1/16 scale from their positions and the
+/// course side.
 void TrialRoad_DrawProgress(void) {
   struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;
@@ -3616,7 +3616,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
-  Task_Add(TrialRoad_DrawProgress, 0x476);
+  Task_Add(TrialRoad_DrawProgress, TASK_PASS_VBLANK - 10);
   Heap_Release(buffer);
 }
 
@@ -3633,7 +3633,7 @@ void TrialRoad_StartRival(s32 a) {
     control->field04 = value;
     control->field08 = 0;
   }
-  Task_Add(TrialRoad_MoveRival, 0x485);
+  Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);
 }
 
 void TrialRoad_PlayRivalRecording(s32 a) {
@@ -3656,15 +3656,13 @@ s32 TrialRoad_RivalIsWaiting(void) {
 void TrialRoad_DoNothing(void) {}
 
 s32 gTrialRoad_SettleScript[] = {
-    46,
-    (s32)TrialRoad_SettleOnGround,
-    17,
+    SC_CALL((s32)TrialRoad_SettleOnGround),
+    SC_END,
 };
 
 s32 gTrialRoad_PillarTopScript[] = {
-    46,
-    (s32)TrialRoad_FollowPillar,
-    17,
+    SC_CALL((s32)TrialRoad_FollowPillar),
+    SC_END,
 };
 
 u32 gTrialRoad_PoundPartners[] = {
@@ -3673,26 +3671,40 @@ u32 gTrialRoad_PoundPartners[] = {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+    SC_END,
 };
 
 u32 gTrialRoad_GaspHopScript[] = {
-    23, 3, 0x1000, 0, 1, 13,
-    0xffff, 0,
+    SC_ADD(SW_FACING, FACING_EAST_SOUTHEAST),
+    SC_WAIT(1),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 void (*gTrialRoad_StageSetUps[])(void) = {
@@ -3731,63 +3743,117 @@ s8 gTrialRoad_KeyStages[] = {
 };
 
 u32 gTrialRoad_RightKnightEntersScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0x1380000, 22, 7, 0x2a80000,
-    39, 5, 4, 0x1380000, 0, 0x2780000,
-    1, 4, 0x1580000, 0, 0x2680000, 1,
-    4, 0x1980000, 0, 0x2680000, 1, 4,
-    0x1a80000, 0, 0x2580000, 1, 4, 0x1a80000,
-    0, 0x1c80000, 1, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(312)),
+    SC_SET(SW_Z, px(680)),
+    SC_ARG(5),
+    SC_MOVE(px(312), 0, px(632)),
+    SC_SYNC,
+    SC_MOVE(px(344), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(424), 0, px(600)),
+    SC_SYNC,
+    SC_MOVE(px(424), 0, px(456)),
+    SC_SYNC,
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightEntersScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0xe80000, 22, 7, 0x2a80000,
-    39, 5, 4, 0xe80000, 0, 0x2780000,
-    1, 4, 0xc80000, 0, 0x2680000, 1,
-    4, 0x880000, 0, 0x2680000, 1, 4,
-    0x780000, 0, 0x2580000, 1, 4, 0x780000,
-    0, 0x1c80000, 1, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(232)),
+    SC_SET(SW_Z, px(680)),
+    SC_ARG(5),
+    SC_MOVE(px(232), 0, px(632)),
+    SC_SYNC,
+    SC_MOVE(px(200), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(136), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(120), 0, px(600)),
+    SC_SYNC,
+    SC_MOVE(px(120), 0, px(456)),
+    SC_SYNC,
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightToChestScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0x780000, 22, 7, 0x1280000,
-    39, 5, 4, 0x780000, 0, 0xd80000,
-    1, 4, 0x880000, 0, 0xc80000, 1,
-    4, 0xd80000, 0, 0xc80000, 1, 4,
-    0xe80000, 0, 0xb80000, 1, 0, 2,
-    22, 3, 0xc000, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(120)),
+    SC_SET(SW_Z, px(296)),
+    SC_ARG(5),
+    SC_MOVE(px(120), 0, px(216)),
+    SC_SYNC,
+    SC_MOVE(px(136), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(216), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(184)),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightLeavesScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    39, 5, 4, 0xd80000, 0, 0xa80000,
-    1, 4, 0xe80000, 0, 0x980000, 1,
-    4, 0xe80000, 0, 0x880000, 1, 22,
-    5, 0, 22, 7, 0, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_ARG(5),
+    SC_MOVE(px(216), 0, px(168)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(152)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(136)),
+    SC_SYNC,
+    SC_SET(SW_X, 0),
+    SC_SET(SW_Z, 0),
+    SC_END,
 };
 
 u32 gTrialRoad_RightKnightToChestsScript[] = {
-    22, 15, 0x10000, 22, 16, 0x8000,
-    22, 5, 0x1580000, 22, 7, 0xb80000,
-    39, 2, 4, 0x1380000, 0, 0xa80000,
-    1, 39, 1, 0, 2, 22,
-    3, 0x8000, 0, 2, 22, 3,
-    0x6000, 0, 2, 22, 3, 0x4000,
-    17,
+    SC_SET(SW_SPEED, Q16(1)),
+    SC_SET(SW_ACCEL, Q16(0.5)),
+    SC_SET(SW_X, px(344)),
+    SC_SET(SW_Z, px(184)),
+    SC_ARG(2),
+    SC_MOVE(px(312), 0, px(168)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
 };
 
 u32 gTrialRoad_RightKnightLeavesScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    39, 5, 4, 0x1780000, 0, 0xc80000,
-    1, 4, 0x1d80000, 0, 0xc80000, 1,
-    4, 0x1e80000, 0, 0xb80000, 1, 4,
-    0x1e80000, 0, 0x880000, 1, 39, 1,
-    0, 2, 22, 3, 0xa000, 0,
-    2, 22, 3, 0x8000, 0, 2,
-    22, 3, 0x6000, 0, 2, 22,
-    3, 0x4000, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_ARG(5),
+    SC_MOVE(px(376), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(472), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(488), 0, px(184)),
+    SC_SYNC,
+    SC_MOVE(px(488), 0, px(136)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
 };
 // clang-format on
 #undef MARKER

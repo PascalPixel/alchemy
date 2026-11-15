@@ -25,8 +25,8 @@ const struct Scale gEclipse_UnusedScales[2] = {
 /// The comets' unit scale.
 const struct Scale gProcne_UnitScale = UNIT_SCALE;
 
-/// Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90, each
-/// rounded up; nothing reads them.
+/// Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90,
+/// each rounded up; nothing reads them.
 const u32 gProcne_UnusedWords[3] = {0x071c71c8, 0x02d82d83, 0x02d82d83};
 
 const struct Scale gZagan_UnitScale = UNIT_SCALE;

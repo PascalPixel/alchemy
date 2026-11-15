@@ -7,7 +7,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "fixed_math.h"
-#include "actor_view.h"
+#include "field/actor_view.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "gamepak/far_call/field.h"

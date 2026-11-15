@@ -5,10 +5,10 @@
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
-#include "actor.h"
-#include "flag_call.h"
+#include "field/actor.h"
+#include "field/flag_call.h"
 #include "field/event_inline.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))

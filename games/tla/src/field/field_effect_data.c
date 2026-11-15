@@ -1,7 +1,7 @@
 /// @file
 /// The ropes' phases and the field effects' tables.
 
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "types.h"
 #include "field/field_bank.h"
 

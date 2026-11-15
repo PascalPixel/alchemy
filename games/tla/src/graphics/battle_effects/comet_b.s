@@ -1,4 +1,4 @@
-	.include "games/tla/include/ed_asm.h"
+	.include "games/tla/include/edition.inc"
 	.section .rodata
 	.global BattleEffect_CometSheetB
 BattleEffect_CometSheetB:

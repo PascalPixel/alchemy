@@ -8,7 +8,7 @@
 /// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
 /// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "types.h"
@@ -18,14 +18,14 @@
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "types.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "system/input.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct IzumoRuinsAnimation {
   u8 unk00[9];
@@ -92,10 +92,10 @@ void Actor_PlaceBlocks(const void *data);
 void FieldEffect_StartBlankOverlay(s32 value);
 void FlagBlock_PlaceAll(const void *data);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-#include "map.h"
+#include "field/map_grid.h"
 #include "shared/trial_road.h"
 #include "system/system.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "field/field_effect.h"
 #include "flags.h"
@@ -103,13 +103,13 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "call.h"
-#include "objcmd.h"
+#include "field/call.h"
+#include "field/actor_script.h"
 #include "text/msg_ids.h"
 
 struct Actor;

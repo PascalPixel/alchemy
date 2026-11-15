@@ -8,7 +8,7 @@
 /// Scene_SetActorSpritePriority, as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
 #include "system/main_routine_work.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "fixed_math.h"
 

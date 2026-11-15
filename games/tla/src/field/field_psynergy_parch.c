@@ -8,8 +8,8 @@
 #include "macros.h"
 #include "field/field_work.h"
 #include "battle/battle_unit.h"
-#include "window.h"
-#include "bg_scroll.h"
+#include "window/window.h"
+#include "system/bg_scroll.h"
 
 /// Parch cast on a target: runs FieldPsynergy_Parch.
 void FieldPsynergy_ParchOnTarget(void) { FieldPsynergy_Parch(); }

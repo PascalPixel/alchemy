@@ -17,8 +17,8 @@
 #include "field/field_psynergy.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
-#include "scene_call.h"
-#include "flag_call.h"
+#include "field/scene_call.h"
+#include "field/flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "text/msg_ids.h"
 
@@ -1865,7 +1865,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
   }
 }
 
-/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
+/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map_grid.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
  * games/tla/src/field/field_psynergy_radial_effects.c:1834: structure has no

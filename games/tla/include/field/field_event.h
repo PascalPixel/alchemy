@@ -1,11 +1,11 @@
-#ifndef TLA_FIELD_EVENT_H
-#define TLA_FIELD_EVENT_H
+#ifndef ALCHEMY_FIELD_EVENT_H
+#define ALCHEMY_FIELD_EVENT_H
 
 #include "types.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "field/field_sequence_event.h"
 
-#include "actor.h"
+#include "field/actor.h"
 
 /// struct Actor as the two scene routines that keep a flag number at 0x64 read
 /// it: as Actor.timer, the s16, their store of that number compiles

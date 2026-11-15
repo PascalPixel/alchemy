@@ -2,7 +2,7 @@
 /// Stopping an actor where it stands.
 
 #include "types.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "macros.h"
 
 /// Clears all movement targets and velocities and resets the actor timer.

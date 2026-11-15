@@ -13,9 +13,9 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "system/system_bank.h"
-#include "scene_call.h"
+#include "field/scene_call.h"
 #include "macros.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 
 // The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
 // between two posts, coiled at the first post until tied. A tied rope can be

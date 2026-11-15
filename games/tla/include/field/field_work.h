@@ -9,7 +9,7 @@
 #include "edition.h"
 #include "static_assert.h"
 #include "system/ram_buffer.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct ActorPlacement;
 struct Actor;

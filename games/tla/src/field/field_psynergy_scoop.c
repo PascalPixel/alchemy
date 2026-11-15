@@ -9,8 +9,8 @@
 #include "macros.h"
 #include "field/field_work.h"
 #include "battle/battle_unit.h"
-#include "window.h"
-#include "bg_scroll.h"
+#include "window/window.h"
+#include "system/bg_scroll.h"
 
 /// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
 /// tiles, the picture that ripples as the ground is dug, 64 particles, the

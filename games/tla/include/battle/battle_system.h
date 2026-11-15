@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_SYSTEM_H
 
 #include "battle_event.h"
-#include "battle_type.h"
+#include "battle/battle_type.h"
 #include "edition.h"
 
 struct BattleAct *Ability_GetDirect(s32 abilityId);

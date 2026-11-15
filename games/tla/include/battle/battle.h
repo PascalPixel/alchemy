@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 #include "system/vector3.h"
-#include "battle_type.h"
+#include "battle/battle_type.h"
 #include "field/sprite.h"
 
 struct BattleActionRecord;

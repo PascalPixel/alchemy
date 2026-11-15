@@ -9,13 +9,12 @@
 
 #include "types.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
-#include "minigame.h"
 #include "system/system_bank.h"
 #include "sound/sound.h"
 #include "system/system.h"
@@ -31,11 +30,11 @@
 #include "system/scene.h"
 #include "system/main_routine_work.h"
 #include "game/game_flags.h"
-#include "owner_state.h"
+#include "game/owner_state.h"
 #include "game/owner_value.h"
 #include "game/item.h"
-#include "inventory.h"
-#include "battle_type.h"
+#include "game/inventory.h"
+#include "battle/battle_type.h"
 #include "battle/battle_unit.h"
 #include "battle/battle_summon.h"
 #include "battle/battle_random.h"
@@ -67,7 +66,7 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 }
 
 #include "battle/battle_unit.h"
-#include "owner_state.h"
+#include "game/owner_state.h"
 
 /// The rare item counters RareItemStock_Adjust keeps; an index from here on
 /// has no stock.

@@ -9,7 +9,7 @@
 
 #include "../field/actor_set_sprite_priority.c"
 #include "system/task.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 
 #include "../field/actor_prepare.c"
@@ -21,7 +21,7 @@
 #include "system/dma.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/field_effect.h"
 
 struct SeaOfTimeSprite {
@@ -65,17 +65,17 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "field/event_commands.h"
 #include "scene/scene.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_ids.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/ram_buffer.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
@@ -83,7 +83,7 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "system/iwram_call.h"
 #include "system/main_routine_work.h"
 #include "system/io_reg.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);

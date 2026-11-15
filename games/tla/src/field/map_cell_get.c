@@ -4,7 +4,7 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 /* VIEW(cell_get): variable gMapGridCellBuffer as u8 gMapGridCellBuffer[];
  * field/map/cell_fill_byte has struct MapCell gMapGridCellBuffer[]; tried as

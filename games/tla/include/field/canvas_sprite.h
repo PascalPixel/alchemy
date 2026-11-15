@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "effect_sprite.h"
+#include "field/effect_sprite.h"
 
 // The canvas sprite of the field Psynergy scenes: a 64x64 sprite whose
 // pixels an effect draws into a 4 KB canvas (battle_fx_work[1]).

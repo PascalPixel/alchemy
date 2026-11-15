@@ -17,7 +17,7 @@ enum {
   SERIAL_TIMER_RELOAD = 0xc963
 };
 #include "sounds.h"
-#include "actor.h"
+#include "field/actor.h"
 
 /// Hands `command` to the serial work (heap slot HEAP_SLOT_SAVE) and starts it
 /// from the beginning; does nothing without the work.

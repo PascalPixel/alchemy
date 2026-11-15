@@ -5,7 +5,7 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 struct Actor;
 

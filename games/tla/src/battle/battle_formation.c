@@ -4,7 +4,7 @@
 // Part of battle.c.
 
 #include "battle_internal.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 #include "battle/presentation.h"
 
 /// Keeps up to thirty-two eligible formations near the party's adjusted

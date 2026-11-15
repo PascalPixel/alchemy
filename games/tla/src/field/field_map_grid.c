@@ -13,10 +13,10 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 #include "system/io_write.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 #include "system/system_bank.h"
 #include "scene/shared.h"
-#include "bg_scroll.h"
+#include "system/bg_scroll.h"
 #include "field/mapcopy.h"
 #include "game/game_flags.h"
 

@@ -9,7 +9,7 @@
 #include "field/sprite.h"
 #include "graphics/render_input.h"
 #include "scene/mars_lighthouse_aerie.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "system/vector3.h"
 
 struct Actor;

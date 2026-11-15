@@ -10,10 +10,10 @@
 #include "macros.h"
 #include "field/field_work.h"
 #include "battle/battle_unit.h"
-#include "window.h"
-#include "bg_scroll.h"
-#include "map.h"
-#include "view_move.h"
+#include "window/window.h"
+#include "system/bg_scroll.h"
+#include "field/map_grid.h"
+#include "field/view_move.h"
 #include "version.h"
 
 /// The work of field Psynergy 28 (heap slot battleEffect): the sparkle

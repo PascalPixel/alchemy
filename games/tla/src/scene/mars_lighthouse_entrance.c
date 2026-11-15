@@ -28,22 +28,22 @@
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "shared/mars_lighthouse_entrance_room.h"
-#include "map.h"
+#include "field/map_grid.h"
 #include "system/main_routine_work.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "field/field_sequence_event.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 #include "field/field_bank.h"
 #include "scene/shared.h"
 #include "scene_ids.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "system/field_effect.h"
 #include "system/iwram_call.h"
 #include "system/ram_buffer.h"
@@ -51,14 +51,14 @@
 #include "system/task.h"
 #include "system/io_reg.h"
 #include "version.h"
-#include "call.h"
+#include "field/call.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle_unit.h"
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
 #include "system/system_bank.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "macros.h"
 #include "system/input.h"
 #include "system/heap_release.h"
@@ -66,7 +66,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "system/dma.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the dead end cracked the ice sheet a floor below.
@@ -89,7 +89,7 @@
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/frame.h"
-#include "actor.h"
+#include "field/actor.h"
 
 struct RideRow {
   u8 unk00[20];
@@ -1662,7 +1662,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
  * scene/mars_lighthouse_entrance/s2270 has DEFINE_ACTOR_BLINK(Actor_Blink, 10,
  * 4, 0) #undef FlameThrowers_Start #undef Unit_Get // ----
  * scene/mars_lighthouse_entrance/s263c.c ---- /// Scene code of overlay 0x6aa,
- * #include "types.h" #include "call.h" #include "actor.h" #include
+ * #include "types.h" #include "field/call.h" #include "field/actor.h" #include
  * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
  * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
  * #include "field/field_sequence_event.h" #include "field.h" #include

@@ -13,14 +13,14 @@
 #include "system/task.h"
 #include "field/event_inline.h"
 #include "system/system.h"
-#include "actor.h"
-#include "field_sprite.h"
+#include "field/actor.h"
+#include "field/field_sprite.h"
 #include "macros.h"
-#include "actor_view.h"
+#include "field/actor_view.h"
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
-#include "map.h"
-#include "flag_call.h"
+#include "field/map_grid.h"
+#include "field/flag_call.h"
 
 extern struct Actor *gWorldMap_PlacedActors[];
 

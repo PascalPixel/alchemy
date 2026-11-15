@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_BATTLE_DISPLAY_H
-#define ALCHEMY_BATTLE_DISPLAY_H
+#ifndef ALCHEMY_BATTLE_CAMERA_H
+#define ALCHEMY_BATTLE_CAMERA_H
 
 /// @file
 /// The Lost Age's presentation work, which holds nine actors.

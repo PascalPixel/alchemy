@@ -6,7 +6,7 @@
 /// written once.
 
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct Actor;
 struct FieldParticle;

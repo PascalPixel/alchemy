@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_BATTLE_FORMATION_H
-#define ALCHEMY_BATTLE_FORMATION_H
+#ifndef ALCHEMY_FORMATIONS_H
+#define ALCHEMY_FORMATIONS_H
 
 #include "types.h"
 

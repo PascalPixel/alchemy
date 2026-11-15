@@ -1,5 +1,5 @@
-#ifndef TLA_FLAG_CALL_H
-#define TLA_FLAG_CALL_H
+#ifndef ALCHEMY_FLAG_CALL_H
+#define ALCHEMY_FLAG_CALL_H
 
 #include "types.h"
 

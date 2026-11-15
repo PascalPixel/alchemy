@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/system.h"
-#include "actor.h"
+#include "field/actor.h"
 
 struct Sprite;
 struct SpriteAnimation;

@@ -19,7 +19,7 @@
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 
 struct ContigoObject;
@@ -37,15 +37,15 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
 }
 #include "system/task.h"
-#include "actor.h"
-#include "scene_tables.h"
+#include "field/actor.h"
+#include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
 #include "field/field_sequence_event.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 #include "field/event_commands.h"
 #include "field/field_bank.h"
 #include "game/game_bank.h"
@@ -55,7 +55,7 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"

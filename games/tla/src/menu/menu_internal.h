@@ -17,13 +17,12 @@
 /// WindowSprite.motion as the menu sets it: shown, or hidden but kept.
 #define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
-#include "minigame.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "edition.h"
@@ -39,10 +38,10 @@
 #include "system/task.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "game/item.h"
 #include "battle/battle_unit.h"
-#include "window.h"
+#include "window/window.h"
 #include "graphics/uiwindow.h"
 #include "graphics/render_input.h"
 #include "graphics/render_placement.h"
@@ -51,11 +50,11 @@
 #include "static_assert.h"
 #include "text/msg_ids.h"
 #include "system/irq.h"
-#include "owner_state.h"
-#include "inventory.h"
+#include "game/owner_state.h"
+#include "game/inventory.h"
 #include "system/heap_release.h"
 #include "menu/menu_result.h"
-#include "battle_type.h"
+#include "battle/battle_type.h"
 #include "battle/battle_system.h"
 #include "graphics/display_transition.h"
 #include "field/a9_motion.h"
@@ -63,7 +62,7 @@
 #include "menu/djinn_menu.h"
 #include "macros.h"
 #include "graphics/vram_tab.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 
 /// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
 /// windows, the party figures, the items listed and the two choices a command

@@ -7,7 +7,7 @@
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "system/frame.h"

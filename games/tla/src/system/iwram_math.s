@@ -12,7 +12,7 @@
 @ copy-and-test never has.
 @ Why the unnamed routine after IwramSqrt is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-	.include "games/tla/include/ed_asm.h"
+	.include "games/tla/include/edition.inc"
 .syntax unified
 	.thumb
 	.global IwramClearWords

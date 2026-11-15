@@ -44,7 +44,7 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 
 /// Waits for the next VBlank; outside the sound test it first runs the music
 /// ramps and the sound driver's VBlank update, rendering the mix itself when

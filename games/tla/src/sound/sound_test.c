@@ -9,7 +9,7 @@
 #include "sounds.h"
 #include "types.h"
 #include "sound/sound.h"
-#include "sound_driver.h"
+#include "sound/sound_driver.h"
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"

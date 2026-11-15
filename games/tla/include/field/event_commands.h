@@ -5,7 +5,7 @@
 /// What games/tla/src/field/ declares for the files that use it, written once.
 
 #include "types.h"
-#include "effect_sprite.h"
+#include "field/effect_sprite.h"
 #include "field/field_particle.h"
 #include "field/world_map_marker.h"
 

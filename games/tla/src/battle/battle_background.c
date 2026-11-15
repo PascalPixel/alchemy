@@ -5,7 +5,7 @@
 // Part of battle.c.
 
 #include "battle_internal.h"
-#include "battle_effect_work.h"
+#include "battle/battle_effect_work.h"
 #include "fixed_math.h"
 #include "battle/presentation.h"
 #include "system/system_bank.h"

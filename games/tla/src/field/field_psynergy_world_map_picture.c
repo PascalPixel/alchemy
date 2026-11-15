@@ -13,16 +13,16 @@
 #include "edition.h"
 #include "system/dma.h"
 #include "graphics/resource.h"
-#include "bg_scroll.h"
+#include "system/bg_scroll.h"
 #include "field/world_map.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
 #include "scene_ids.h"
 #include "field/field_sequence_event.h"
-#include "actor.h"
-#include "map.h"
+#include "field/actor.h"
+#include "field/map_grid.h"
 #include "field/sprite.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 
 // The world map screen's work, laid out as field/world_map.h has it.
 

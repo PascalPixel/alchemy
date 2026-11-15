@@ -8,11 +8,11 @@
 
 #include "types.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
@@ -29,8 +29,8 @@
 #include "system/frame.h"
 #include "system/input.h"
 #include "system/task.h"
-#include "bg_scroll.h"
-#include "display_scroll.h"
+#include "system/bg_scroll.h"
+#include "menu/display_scroll.h"
 #include "graphics/render_input.h"
 #include "text/msg_ids.h"
 
@@ -81,7 +81,7 @@ extern u8 BattleEffect_Expand2CodeSize[];
 #include "system/system_bank.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 
 extern u8 gDebugTextEnabled;
 

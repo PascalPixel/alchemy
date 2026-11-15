@@ -7,10 +7,10 @@
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "field/event.h"
 #include "system/task.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "system/frame.h"
 
 void GameFlag_Set(s32 flag);

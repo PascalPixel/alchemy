@@ -22,19 +22,19 @@
 #include "scene/garoh.h"
 #include "scene/scene.h"
 #include "system/task.h"
-#include "actor.h"
-#include "scene_tables.h"
+#include "field/actor.h"
+#include "field/scene_tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_ids.h"
 #include "stddef.h"
 #include "shared/tables.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 void IsletCave_TeleportIn(void);
 

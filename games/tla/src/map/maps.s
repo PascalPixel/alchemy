@@ -1,6 +1,6 @@
 @ Every map of the field, in the order the Game Pak holds them: a map's
 @ header, then the tables and pictures it reads, each map in its folder.
-	.include "games/tla/include/ed_asm.h"
+	.include "games/tla/include/edition.inc"
 	.include "games/tla/src/map/macros.inc"
 	.section .rodata
 	.include "games/tla/src/map/map_000/map.inc"

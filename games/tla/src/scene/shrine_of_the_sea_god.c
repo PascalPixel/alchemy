@@ -12,7 +12,7 @@
 /// statue on the island (room 8), whose Sea God's Tear raises the water up to
 /// the Right Prong (rooms 9 to 11).
 #include "../field/actor_set_sprite_priority.c"
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 
 #include "../field/field_effect_move.c"
@@ -235,16 +235,16 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
-#include "call.h"
+#include "field/call.h"
 #include "macros.h"
 #include "system/frame.h"
 #include "field/field_effect.h"

@@ -9,7 +9,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 #include "window/menu_list.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"

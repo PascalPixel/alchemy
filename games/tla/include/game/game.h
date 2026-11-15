@@ -11,7 +11,7 @@
 #include "item.h"
 #include "character_ids.h"
 #include "character.h"
-#include "battle_type.h"
+#include "battle/battle_type.h"
 
 struct ItemDefinition;
 struct SummonDefinition;

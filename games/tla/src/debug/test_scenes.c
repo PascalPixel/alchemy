@@ -8,12 +8,12 @@
 #include "flags.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "field/event_inline.h"
 
 /// The actors the talk events answer: the first Djinni of each element. The

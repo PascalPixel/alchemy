@@ -5,7 +5,7 @@
 
 #include "flags.h"
 #include "scene_ids.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "sounds.h"
 #include "types.h"
 #include "battle/battle_unit.h"

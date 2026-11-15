@@ -5,7 +5,7 @@
 #include "game_internal.h"
 #include "flags.h"
 #include "macros.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "game/game_bank.h"
 #include "gamepak/far_call/window.h"

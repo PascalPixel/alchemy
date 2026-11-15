@@ -7,7 +7,7 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 #include "system/frame.h"
 #include "field/field_bank.h"
 #include "field/object.h"

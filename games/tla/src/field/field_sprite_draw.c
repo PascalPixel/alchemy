@@ -5,7 +5,7 @@
 
 #include "field_internal.h"
 
-#include "actor.h"
+#include "field/actor.h"
 #include "system/affine.h"
 #include "fixed_math.h"
 #include "field/object.h"

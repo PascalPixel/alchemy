@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
-#include "field_event.h"
+#include "field/field_event.h"
 
 /// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
 /// read a third of a turn apart for red, green and blue.

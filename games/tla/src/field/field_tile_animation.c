@@ -7,15 +7,15 @@
 #include "field_internal.h"
 #include "flags.h"
 
-#include "map.h"
+#include "field/map_grid.h"
 #include "graphics/graphics.h"
 #include "field/map.h"
 #include "system/system.h"
 #include "system/frame.h"
 #include "graphics/palette_snapshots.h"
 #include "system/io_write_queue.h"
-#include "flag_call.h"
-#include "curve.h"
+#include "field/flag_call.h"
+#include "field/curve.h"
 #include "edition.h"
 
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];

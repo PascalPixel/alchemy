@@ -1,7 +1,7 @@
 /// @file
 /// The actor scripts the field and its scenes run.
 
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "types.h"
 #include "edition.h"
 #include "fixed_math.h"

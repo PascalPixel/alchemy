@@ -2,16 +2,16 @@
 /// Creating an actor as a black silhouette.
 
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "field_event.h"
+#include "field/field_event.h"
 
 /// Creates an actor of sprite type at (x, y, z) to stand as a silhouette: at
 /// drawing priority 0, still, skipped by target searches, with no outline or

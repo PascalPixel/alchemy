@@ -7,7 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "field_particle.h"
-#include "effect_sprite.h"
+#include "field/effect_sprite.h"
 
 struct Sprite;
 union FieldObject;

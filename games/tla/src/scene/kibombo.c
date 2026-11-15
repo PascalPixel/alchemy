@@ -105,12 +105,12 @@ s32 Kibombo_TurnRandomly(struct Actor *object) {
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -799,7 +799,7 @@ void Kibombo_PiersRefusesToLeave(void) {
 }
 
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 
@@ -1718,7 +1718,7 @@ void Kibombo_LightFlameRow(void) {
   Kibombo_SpawnFlame(x, 0x400000, 0x1920000);
 }
 
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 #include "shared/actor_hide.h"
 
@@ -1788,8 +1788,8 @@ void Kibombo_AkafubuCastsOnCrystal(void) {
 }
 
 #include "types.h"
-#include "actor.h"
-#include "field_sprite.h"
+#include "field/actor.h"
+#include "field/field_sprite.h"
 #include "system/vector3.h"
 #include "field/event_inline.h"
 
@@ -3256,7 +3256,7 @@ void Kibombo_InitializeRoom3(void) {
 void Kibombo_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "text/msg_ids.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 void Kibombo_AskAboutFewerWarriors(void);
 void Kibombo_AskAboutRevenge(void);

@@ -1,5 +1,5 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef ALCHEMY_DEBUG_H
+#define ALCHEMY_DEBUG_H
 
 /// @file
 /// DEBUG

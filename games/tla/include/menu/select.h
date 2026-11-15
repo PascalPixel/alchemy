@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "window.h"
+#include "window/window.h"
 #include "system/affine.h"
 
 /// A selection screen sprite: a list link and its OAM attributes.

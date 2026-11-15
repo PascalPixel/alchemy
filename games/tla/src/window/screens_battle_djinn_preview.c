@@ -91,13 +91,12 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
 /// Display: place an ability icon in a window as a sprite.
 
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
-#include "minigame.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "graphics/render_input.h"

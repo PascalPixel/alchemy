@@ -11,7 +11,7 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "system/system_bank.h"
-#include "scene_call.h"
+#include "field/scene_call.h"
 #include "macros.h"
 
 /// Moves the actor halfway to the actor it watches; a copy of

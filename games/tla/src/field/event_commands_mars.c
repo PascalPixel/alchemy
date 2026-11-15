@@ -11,7 +11,7 @@
 #include "field/object.h"
 #include "system/system_bank.h"
 #include "battle/object_effect_scripts.h"
-#include "scene_call.h"
+#include "field/scene_call.h"
 #include "macros.h"
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,

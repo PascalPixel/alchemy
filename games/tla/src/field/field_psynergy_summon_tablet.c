@@ -6,7 +6,7 @@
 #include "field_psynergy_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "field/field.h"
 
 struct SpritePictures {

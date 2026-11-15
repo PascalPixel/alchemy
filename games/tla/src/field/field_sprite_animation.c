@@ -13,7 +13,7 @@
 #include "field/sprite.h"
 #include "system/sprite_metadata.h"
 #include "system/ram_buffer.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "system/heap_release.h"
 #include "system/io_reg.h"
 #include "system/dma.h"

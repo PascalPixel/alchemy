@@ -8,14 +8,14 @@
 #include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "shared/tables.h"
 #include "field/sprite.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 
 extern u32 gSceneExits[];

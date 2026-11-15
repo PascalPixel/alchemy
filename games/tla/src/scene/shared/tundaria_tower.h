@@ -5,7 +5,7 @@
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "system/frame.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "field/field_sequence_event.h"
@@ -13,7 +13,7 @@
 #include "system/heap_release.h"
 #include "system/field_effect.h"
 
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct TundariaTowerSparkWork {
   u8 unk0000[0x1604];

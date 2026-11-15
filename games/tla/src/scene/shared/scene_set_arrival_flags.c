@@ -3,7 +3,7 @@
 /// calls it and inside Mars Lighthouse room F, at its place in each overlay.
 #include "types.h"
 #include "flags.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 
 void Scene_SetArrivalFlags(s32 unused) {
   GameFlag_Set(FLAG_IN_JUPITER_LIGHTHOUSE);

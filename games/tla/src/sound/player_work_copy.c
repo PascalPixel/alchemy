@@ -2,7 +2,7 @@
 /// Two player routines of an older copy of the sound library that the ROM
 /// keeps beside the driver. Nothing in the build calls them.
 
-#include "sound_driver.h"
+#include "sound/sound_driver.h"
 
 /// Unused: the work copy of MPlayContinue (sound.c).
 void MPlayContinueWorkCopy(struct MusicPlayerInfo *player) {

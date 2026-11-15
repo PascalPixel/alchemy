@@ -4,7 +4,7 @@
 /// scorpion in its way, the stakes Pound sinks and the sand slides Sand slips
 /// under, and its tables of entrances, placements and triggers by room.
 #include "../field/actor_set_sprite_priority.c"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 #include "../field/field_effect_move.c"
 
@@ -27,7 +27,7 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #include "system/task.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "scene_ids.h"
 #include "system/frame.h"
 
@@ -179,11 +179,11 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 /// The stakes Pound sinks, the first rows of the rooms that have them (the
 /// first, third, fourth, fifth and twelfth): stake n is the placed actor
@@ -256,20 +256,20 @@ enum YampiDesertRoom12ActorId {
   ACTOR_ROOM12_LAST_SLIDE = ACTOR_ROOM12_FIRST_SLIDE + 6
 };
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
-#include "map.h"
+#include "field/map_grid.h"
 #include "system/field_effect.h"
 #include "field/field_sequence_event.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 #include "system/heap_release.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 #include "field/event_commands.h"
 #include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
 #include "graphics/resource.h"
-#include "call.h"
+#include "field/call.h"
 #include "system/input.h"
 #include "system/frame.h"
 #include "system/task.h"

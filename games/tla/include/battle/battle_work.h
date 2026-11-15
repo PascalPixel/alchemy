@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "battle_type.h"
+#include "battle/battle_type.h"
 #include "battle/battle_event.h"
 #include "system/ram_buffer.h"
 #include "battle/battle_action.h"

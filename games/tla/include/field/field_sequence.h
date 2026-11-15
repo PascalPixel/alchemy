@@ -7,7 +7,7 @@
 #include "types.h"
 #include "field/encounter_zone.h"
 #include "field/field_bank.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct Actor;
 

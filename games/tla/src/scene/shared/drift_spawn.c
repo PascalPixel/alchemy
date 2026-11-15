@@ -2,12 +2,12 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "field/event.h"
 
 void DriftScene_SpawnObject(x, y, z, value) s32 x, y, z;

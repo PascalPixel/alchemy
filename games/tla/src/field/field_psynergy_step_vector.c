@@ -6,9 +6,9 @@
 #include "field_psynergy_internal.h"
 #include "fixed_math.h"
 #include "system/dma.h"
-#include "window.h"
+#include "window/window.h"
 #include "macros.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 
 /// Moves a 2D point by its velocity, damped and pulled by gravity
 /// (BattleEffect_IntegrateVector2).

@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "battle/battle_unit.h"
-#include "owner_state.h"
+#include "game/owner_state.h"
 #include "flags.h"
 
 struct LevelUpResult;

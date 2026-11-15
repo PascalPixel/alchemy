@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_EFFECT_H
 
 #include "edition.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "vector3.h"
 #include "types.h"
 

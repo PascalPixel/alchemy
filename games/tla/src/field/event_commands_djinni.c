@@ -11,7 +11,7 @@
 #include "field/field_bank.h"
 #include "field/object.h"
 #include "system/system_bank.h"
-#include "scene_call.h"
+#include "field/scene_call.h"
 #include "macros.h"
 
 /// Per-frame update: spins an object 1/8 turn a frame.

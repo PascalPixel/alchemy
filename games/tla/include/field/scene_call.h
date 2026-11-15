@@ -1,5 +1,5 @@
-#ifndef TLA_SCENE_CALL_H
-#define TLA_SCENE_CALL_H
+#ifndef ALCHEMY_SCENE_CALL_H
+#define ALCHEMY_SCENE_CALL_H
 
 /// @file
 /// The routines the scenes' own event inlines call, declared once for the

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 /// Sets the collision code of each cell in a layer rectangle to value.
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,

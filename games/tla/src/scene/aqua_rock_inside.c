@@ -13,15 +13,15 @@
 #include "item_ids.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "system/io_reg.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -31,7 +31,7 @@ void Event_FinishScreenTransition(void);
 s32 VramCache_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-#include "map.h"
+#include "field/map_grid.h"
 
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
@@ -181,15 +181,15 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "version.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/vector3.h"
 #include "field/event_inline.h"
 #include "system/io_write_queue.h"
@@ -197,9 +197,9 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "system/field_effect.h"
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
-#include "call.h"
+#include "field/call.h"
 #include "system/iwram_call.h"
-#include "map.h"
+#include "field/map_grid.h"
 #include "graphics/vram_tab.h"
 #include "macros.h"
 #include "shared/tables.h"

@@ -8,7 +8,7 @@
 #include "field/field_bank.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
-#include "scene_call.h"
+#include "field/scene_call.h"
 #include "macros.h"
 
 s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);

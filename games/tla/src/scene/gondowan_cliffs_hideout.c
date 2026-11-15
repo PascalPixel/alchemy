@@ -7,18 +7,18 @@
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "field/event_inline.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 /// The hideout's placed actors: two not yet understood, then the four
 /// Kibombo warriors, named for what each says when spoken to.

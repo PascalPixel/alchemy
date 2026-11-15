@@ -6,7 +6,7 @@
 /// once, beside field.h until the files that declare these otherwise agree.
 
 #include "types.h"
-#include "bg_scroll.h"
+#include "system/bg_scroll.h"
 #include "field/particle.h"
 #include "field/sprite.h"
 #include "field/event_commands.h"

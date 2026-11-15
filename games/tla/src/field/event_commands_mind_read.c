@@ -10,7 +10,7 @@
 #include "system/io_reg.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
@@ -19,9 +19,9 @@
 #include "edition.h"
 #include "fixed_math.h"
 #include "battle/object_effect_scripts.h"
-#include "field_event.h"
+#include "field/field_event.h"
 #include "field/field_psynergy_work.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field_psynergy_work.h"
 #include "graphics/display_transition.h"
 #include "field/field_sequence_event.h"
@@ -30,7 +30,7 @@
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/object.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 
 // The parts, in ROM order.
 

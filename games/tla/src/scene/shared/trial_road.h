@@ -3,9 +3,9 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 

@@ -1,7 +1,7 @@
 /// @file
 /// The facing tables the animated sprites choose their pictures by.
 
-#include "objcmd.h"
+#include "field/actor_script.h"
 #include "types.h"
 #include "field/object.h"
 #include "resource_ids.h"

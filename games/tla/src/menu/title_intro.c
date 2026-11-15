@@ -24,9 +24,9 @@
 #include "system/input.h"
 #include "system/task.h"
 #include "system/scene.h"
-#include "bg_scroll.h"
+#include "system/bg_scroll.h"
 #include "graphics/palette_buffers.h"
-#include "actor.h"
+#include "field/actor.h"
 
 /// One step of the intro picture's scroll: how many frames it lasts, and for
 /// each of BG1's and BG2's y and x the pixels it moves a frame and the mask of

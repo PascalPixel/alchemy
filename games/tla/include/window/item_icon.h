@@ -1,5 +1,5 @@
-#ifndef TLA_ITEM_ICON_H
-#define TLA_ITEM_ICON_H
+#ifndef ALCHEMY_ITEM_ICON_H
+#define ALCHEMY_ITEM_ICON_H
 
 #include "types.h"
 #include "system/ram_buffer.h"

@@ -5,7 +5,7 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct MarkedBlock {
   u8 unk00[8];

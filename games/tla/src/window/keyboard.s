@@ -1,4 +1,4 @@
-	.include "games/tla/include/ed_asm.h"
+	.include "games/tla/include/edition.inc"
 	.section .rodata
 	.balign 4
 @ The debug warp menu's presets: {name, handler}

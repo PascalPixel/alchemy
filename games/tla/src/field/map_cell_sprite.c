@@ -7,9 +7,9 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
-#include "map.h"
+#include "field/map_grid.h"
 #include "graphics/vram_tab.h"
 #include "field/cell_target.h"
 

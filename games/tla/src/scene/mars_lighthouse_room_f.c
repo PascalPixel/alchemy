@@ -29,12 +29,12 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "field/field_bank.h"
 #include "scene/scene.h"
@@ -45,8 +45,8 @@
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
-#include "actor.h"
-#include "flag_call.h"
+#include "field/actor.h"
+#include "field/flag_call.h"
 #include "field/event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -199,13 +199,13 @@ void MarsLighthouseRoomF_ShootFireballAtWall(void);
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
-#include "field_event.h"
-#include "actor.h"
+#include "field/field_event.h"
+#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
-#include "field_sprite.h"
+#include "field/field_sprite.h"
 #include "system/field_effect.h"
-#include "call.h"
+#include "field/call.h"
 #include "field/field_coordinate.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle_unit.h"
@@ -213,14 +213,14 @@ void MarsLighthouseRoomF_ShootFireballAtWall(void);
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "system/heap_release.h"
-#include "item_icon.h"
+#include "window/item_icon.h"
 #include "field/cell_target.h"
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "system/system_bank.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 struct EffectOptions;
 struct LightOam;
@@ -2328,7 +2328,7 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 #undef WORK
 
 #define MapLayer MapLayer__s2f80
-#include "map.h"
+#include "field/map_grid.h"
 #undef MapLayer
 /* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has
  * another definition; not tried: struct MapLayer__s2f80 was not found. */
@@ -2927,7 +2927,7 @@ void PushTarget_Push(struct PushTarget target) {
 #undef ABS
 
 #define MapLayer MapLayer__s5048
-#include "map.h"
+#include "field/map_grid.h"
 #undef MapLayer
 /* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
  * another definition; not tried: struct MapLayer__s5048 was not found. */

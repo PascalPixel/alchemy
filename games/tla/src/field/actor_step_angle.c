@@ -1,7 +1,7 @@
 /// @file
 /// An actor script call that turns an actor toward an angle a step at a time.
 
-#include "actor.h"
+#include "field/actor.h"
 #include "fixed_math.h"
 
 /// SC_CALL routine that turns an actor toward the angle kept in its timer: the

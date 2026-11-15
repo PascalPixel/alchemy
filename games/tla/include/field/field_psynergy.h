@@ -6,7 +6,7 @@
 /// use it, written once.
 
 #include "types.h"
-#include "effect_sprite.h"
+#include "field/effect_sprite.h"
 #include "field/field_particle.h"
 #include "field/field_psynergy_work.h"
 

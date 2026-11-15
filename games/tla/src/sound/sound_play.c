@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "types.h"
 #include "sound/sound.h"
-#include "sound_driver.h"
+#include "sound/sound_driver.h"
 
 /// Does nothing; the far-call table exports it and nothing calls it.
 void Sound_NoOp(void) {}

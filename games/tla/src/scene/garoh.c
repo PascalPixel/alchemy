@@ -16,8 +16,8 @@
 #include "system/task.h"
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
-#include "flag_call.h"
+#include "field/actor.h"
+#include "field/flag_call.h"
 
 #ifdef MODERN
 void Rope_Lash(s32 a, s32 b, s32 c);
@@ -33,7 +33,7 @@ void Garoh_CheckThirdBlock(void);
 void Garoh_RaiseFourthBlockOnCell(void);
 void Garoh_PuffAround(s32 id);
 #include "field/event_inline.h"
-#include "map.h"
+#include "field/map_grid.h"
 #include "field/field.h"
 #include "field/event_commands.h"
 #include "scene/garoh.h"
@@ -51,19 +51,19 @@ void Garoh_PuffAround(s32 id);
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "lib.h"
+#include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
-#include "actor.h"
-#include "field_sprite.h"
+#include "field/actor.h"
+#include "field/field_sprite.h"
 #include "field/field_effect.h"
-#include "call.h"
-#include "objcmd.h"
+#include "field/call.h"
+#include "field/actor_script.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "map.h"
+#include "field/map_grid.h"
 
 extern struct MapCell gMapGridCellBuffer[];
 

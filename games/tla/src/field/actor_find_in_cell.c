@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "actor.h"
+#include "field/actor.h"
 #include "field/field_sequence_event.h"
 
 /// Returns the first of objects 8 to 63 standing in the same 16-pixel cell

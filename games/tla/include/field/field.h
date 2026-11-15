@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "actor.h"
+#include "field/actor.h"
 
 struct Actor;
 struct ScreenPoint;

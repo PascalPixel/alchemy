@@ -5,7 +5,7 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "game/item.h"
-#include "actor.h"
+#include "field/actor.h"
 
 /// @file
 /// Items: summon-selection menu and battle item-use eligibility.

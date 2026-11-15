@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_H
-#define ALCHEMY_MAP_H
+#ifndef ALCHEMY_MAP_GRID_H
+#define ALCHEMY_MAP_GRID_H
 
 #include "types.h"
 #include "static_assert.h"

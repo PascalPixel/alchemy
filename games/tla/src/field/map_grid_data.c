@@ -6,9 +6,9 @@
 
 #include "types.h"
 #include "field/field_bank.h"
-#include "curve.h"
+#include "field/curve.h"
 #include "field/script_operands.h"
-#include "objcmd.h"
+#include "field/actor_script.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's
@@ -320,7 +320,7 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_End,                          // 0x35
 };
 
-/// The handler of each work value (enum ScriptWork in objcmd.h).
+/// The handler of each work value (enum ScriptWork in actor_script.h).
 const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareScriptAddress,     // 0x00 SW_SCRIPT
     ActorScript_SetOrCompareCursor,            // 0x01 SW_CURSOR

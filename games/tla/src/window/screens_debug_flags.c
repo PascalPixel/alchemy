@@ -4,7 +4,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
-#include "flag_call.h"
+#include "field/flag_call.h"
 
 // The debug selection row's keys: A returns -1 and B -2; Up or Down switches
 // the field, Left and Right step the value (0 to 324) or the second number

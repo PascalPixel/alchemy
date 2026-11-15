@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "scene/scene.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gLemurianShip_Entrances[];
 extern u32 gLemurianShip_Room1Entrances[];

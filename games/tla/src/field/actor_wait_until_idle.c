@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/system.h"
-#include "actor.h"
+#include "field/actor.h"
 
 /// Waits until the actor stops rising or falling, a second at most.
 void OverlayObject_WaitUntilIdle(struct Actor *object) {

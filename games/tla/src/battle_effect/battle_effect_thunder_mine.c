@@ -610,7 +610,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                         LIGHTNING_BOLT_WIDTH, 112);
           }
           if (frame >= start + 10) {
-            for (j = 0; j != 2;) {
+            for (j = 0; j != 2; j++) {
               s32 k = j & 3;
               s32 gx = column + (Random16() & 7) -
                        (gBattleEffect_GlintPictureWidths[k] >> 1);
@@ -624,7 +624,6 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
-              j++;
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
           }

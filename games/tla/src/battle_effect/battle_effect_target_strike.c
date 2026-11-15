@@ -549,15 +549,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        s32 range = 31;
-        s32 radius = Random16() & range;
+        s32 radius = (Random16() & 31) + 4;
         s32 x;
         s32 y;
         u32 flip;
 
-        x = center.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17) -
+        x = center.x / 2 + (Trig_Sin(angle) * radius >> 17) -
             (gBattleEffect_GlintPictureWidths[image] / 2);
-        y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
+        y = center.y - (Trig_Cos(angle) * radius >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
         flip = Random16();
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,

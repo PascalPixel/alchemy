@@ -850,7 +850,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       /* FAKEMATCH(signature): vertices, a pointer, holds the radius 32 through
        * casts; as an s32 radius of its own, 360 of 609 instructions differ in
        * tla-en. */
-      /* FAKEMATCH(dead): both arms set the radius alike. */
+      // Each mode sets its funnel: the length, and a radius that is 32 for
+      // both.
       if (mode == WIND_FUNNEL_WAFT) {
         x = 80;
         vertices = (u8 *)32;

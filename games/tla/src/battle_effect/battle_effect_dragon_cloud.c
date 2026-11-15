@@ -161,8 +161,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       s32 offset;
 
       offset = gBattleEffect_PuffArcPictures[cell];
-      /* LEFTOVER(template): width, read from the puff table as Haures and
-       * Ulysses read it to draw with, and unused here. */
+      /* LEFTOVER(template): width, read from the puff table as
+       * BattleEffect_RunHaures and BattleEffect_RunUlysses read it to draw
+       * with, and unused here; as no width at all, 523 of 1123 instructions
+       * differ in tla-en. */
       width = gBattleEffect_PuffArcPictureWidths[cell];
       draw[0](canvas, &work->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
               56 - gBattleEffect_PuffArcPictureWidths[cell] / 2,

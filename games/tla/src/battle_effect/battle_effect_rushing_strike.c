@@ -405,9 +405,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 blue;
 
         red = max & entry;
-        /* LEFTOVER(template): green, taken and clamped as Coatlicue's and
-         * Judgment's palette loops take all three channels, and left out of
-         * the colour here. */
+        /* LEFTOVER(template): green, taken and clamped as
+         * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
+         * three channels in their palette loops, and left out of the colour
+         * here; as no green at all, 329 of 1034 instructions differ in tla-en.
+         */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
         // DEAD: red and blue are already at most 31; the ROM keeps both

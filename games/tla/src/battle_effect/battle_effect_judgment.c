@@ -339,12 +339,18 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame > 143) {
       s32 y = frame * 16 - 2272;
+      s32 flags;
 
-      DRAW_ALT(3, work->sheet, 36, y, 24, 64);
-      /* FAKEMATCH(dead): a test that is never true. */
-      if (!cells && !canvas)
-        y = 0;
-      DRAW_ALT(7, work->sheet, 60, y, 24, 64);
+      flags = EFFECT_CLIP_BOUNDS;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, work->sheet, 36, y,
+                                                    24, 64);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, work->sheet, 60, y,
+                                                    24, 64);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
     if ((u32)(frame - JUDGMENT_BEAM_FRAME) <= 15) {
@@ -584,18 +590,33 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame <= 63) {
       u8 *sheet;
       s32 top = frame - 4;
-      DrawRectangle *slot;
+      s32 flags;
 
       if ((frame & 7) < 4) {
         sheet = work->sheet + JUDGMENT_SHEET_FLARE_A;
       } else {
         sheet = work->sheet + 0x4240;
       }
-      slot = (DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
-      DRAW_ALT_THROUGH(slot, 19, sheet, 36, top - 24, 24, 24);
-      DRAW_ALT_THROUGH(slot, 23, sheet, 59, top - 24, 24, 24);
-      DRAW_ALT_THROUGH(slot, 27, sheet, 36, top - 1, 24, 24);
-      DRAW_ALT_THROUGH(slot, 31, sheet, 59, top - 1, 24, 24);
+      flags = EFFECT_CLIP_BOUNDS;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 36, top - 24,
+                                                    24, 24);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 59, top - 24,
+                                                    24, 24);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 36, top - 1,
+                                                    24, 24);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 59, top - 1,
+                                                    24, 24);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     if ((u32)(frame - 64) <= 1) {
       EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,

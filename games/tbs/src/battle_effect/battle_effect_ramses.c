@@ -79,7 +79,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Particle *rock = &work->particles[i];
 
-    rock->x = (Random16() & 127) << 16;
+    rock->x = px(Random16() & 127);
     rock->y = i * -px(16);
     rock->velocityX = 0;
     rock->velocityY = 0;

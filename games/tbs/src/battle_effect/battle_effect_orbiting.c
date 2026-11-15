@@ -30,9 +30,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
-    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16);
+    SET_POSITION(star, px((Random16() & 0xff) - 127),
+                 px((Random16() & 0xff) - 127), px((Random16() & 0xff) - 127));
     SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
@@ -164,9 +163,11 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
           s32 y;
 
           x = screen.x +
-              (((Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
+              Q_16_16_TO_INT(
+                  (Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           y = screen.y +
-              (((Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
+              Q_16_16_TO_INT(
+                  (Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           spark->velocityX += TRIG_TURN / 128;
           draw[0](canvas, work->sheet + i * (24 * 24), x - 12, y - 28, 24, 24);
         }

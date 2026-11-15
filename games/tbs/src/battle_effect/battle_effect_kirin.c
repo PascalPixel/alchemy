@@ -142,7 +142,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         if (ang > TRIG_TURN / 2) {
           ang -= TRIG_TURN / 2;
         }
-        wave = (Trig_Sin(ang) * amp) >> 16;
+        wave = Q_16_16_TO_INT(Trig_Sin(ang) * amp);
         if ((frame & 31) == 8) {
           work->shakeFrames = 4;
         }
@@ -169,8 +169,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
       for (i = 0; i != count; i++) {
         s32 ang = i << 10;
-        s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
-        s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
+        s32 x = Q_16_16_TO_INT(Trig_Sin(ang) * (grow * 2 + 8)) + grow + 96;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(ang) * (grow * 12 + 48)) + 64;
 
         EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
@@ -272,13 +272,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           if (ang > TRIG_TURN / 2) {
             ang -= TRIG_TURN / 2;
           }
-          rise = ((Trig_Sin(ang) * 64)) >> 16;
+          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 64);
         } else {
           ang = frame * 2048 + TRIG_TURN / 4;
           if (ang > TRIG_TURN / 2) {
             ang -= TRIG_TURN / 2;
           }
-          rise = ((Trig_Sin(ang) * 32)) >> 16;
+          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 32);
         }
         chargePlace.groundHeight = 0;
         chargePlace.height = px(255);

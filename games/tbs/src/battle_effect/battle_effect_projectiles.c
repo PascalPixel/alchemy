@@ -551,9 +551,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // The prelude's small Djinni circles, then rises away.
       if (work->args->prelude == 1) {
-        s32 x = ((-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) >> 16) +
+        s32 x = Q_16_16_TO_INT(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
                 screenX / 2 - 10;
-        s32 y = ((Trig_Cos(frame * (TRIG_TURN / 32)) * 2) >> 16) + screenY - 24;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) +
+                screenY - 24;
 
         if (frame > 69)
           y = y - frame * 2 + 138;

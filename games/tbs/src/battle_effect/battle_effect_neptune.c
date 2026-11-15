@@ -490,10 +490,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // Drops fall and bounce.
         PARTICLES[i].variant--;
         Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, px(1) / 4);
-        y = PARTICLES[i].y >> 16;
+        y = Q_16_16_TO_INT(PARTICLES[i].y);
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
-        } else if (PARTICLES[i].x >= 0 && (x = PARTICLES[i].x >> 16) <= 126 &&
+        } else if (PARTICLES[i].x >= 0 &&
+                   (x = Q_16_16_TO_INT(PARTICLES[i].x)) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
           EFFECT_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);

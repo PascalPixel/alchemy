@@ -59,8 +59,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
     speed = (Random16() & 0x3ff) + 256;
     angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-    SET_POSITION(spark, 64 << 8, 112 << 8, (Trig_Sin(angle) * speed) >> 16);
-    spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
+    SET_POSITION(spark, 64 << 8, 112 << 8,
+                 Q_16_16_TO_INT(Trig_Sin(angle) * speed));
+    spark->velocityZ = Q_16_16_TO_INT(-(Trig_Cos(angle) * speed * 2));
     spark->variant = 0;
   }
 
@@ -81,8 +82,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
         thrown = 0;
         angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
-        x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
-        y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
+        x = Q_16_16_TO_INT((32 - frame) * Trig_Sin(angle)) + 64;
+        y = -Q_16_16_TO_INT(Trig_Cos(angle) * 8) - 8;
         if (work->args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet +
@@ -130,8 +131,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         if (spark->y > px(120)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-          s32 x = spark->x >> 16;
-          s32 y = spark->y >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 y = Q_16_16_TO_INT(spark->y);
           s32 size = spark->variant / 8 + 1;
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, x, y, size);

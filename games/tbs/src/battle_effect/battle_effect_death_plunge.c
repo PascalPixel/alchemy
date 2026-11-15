@@ -115,8 +115,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         s32 ry;
 
         angle = i << 12; // 22.5 degrees apart
-        rx = screen.x + ((Trig_Sin(angle) * (frame - 46)) >> 16);
-        ry = ((Trig_Cos(angle) * (frame - 46)) >> 16) - frame + 100;
+        rx = screen.x + Q_16_16_TO_INT(Trig_Sin(angle) * (frame - 46));
+        ry = Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46)) - frame + 100;
         draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry,
                 32, 64);
       }
@@ -242,16 +242,16 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[drift < 0](canvas,
-                        work->sheet + gDeathPlunge_SwordPictures[picture],
-                        (blade->x >> 16) - (width >> 1),
-                        (blade->y >> 16) - (height >> 1), width, height);
+        blit[drift < 0](
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
+            Q_16_16_TO_INT(blade->x) - (width >> 1),
+            Q_16_16_TO_INT(blade->y) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) -
+            Q_16_16_TO_INT(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            (blade->y >> 16) -
+            Q_16_16_TO_INT(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height);
 #endif
@@ -266,16 +266,16 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[drift < 0](canvas,
-                        work->sheet + gDeathPlunge_SwordPictures[picture],
-                        (blade->x >> 16) - (width >> 1),
-                        (blade->y >> 16) - (height >> 1), width, height - 4);
+        blit[drift < 0](
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
+            Q_16_16_TO_INT(blade->x) - (width >> 1),
+            Q_16_16_TO_INT(blade->y) - (height >> 1), width, height - 4);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) -
+            Q_16_16_TO_INT(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            (blade->y >> 16) -
+            Q_16_16_TO_INT(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height - 4);
 #endif
@@ -715,8 +715,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
-        piece->x = ((Random16() & 31) + 32) << 16;
-        piece->y = ((Random16() & 31) + 80) << 16;
+        piece->x = px((Random16() & 31) + 32);
+        piece->y = px((Random16() & 31) + 80);
         piece->velocityX = ((Random16() & 0x1ff) - 256) << 12;
         piece->velocityY = 0;
         piece->variant = 0;
@@ -867,8 +867,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
         if (mote->variant >= 0 && mote->y > 0) {
           s32 size = (mote->variant >> 3) + 1;
-          s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
-          s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
+          s32 x = Q_16_16_TO_INT(mote->y * Trig_Sin(mote->x)) + 64;
+          s32 y = Q_16_16_TO_INT(mote->y * Trig_Cos(mote->x)) + ground.y;
 
           // DEAD: never true, as the variant is not negative here; the ROM
           // keeps the test and the store.

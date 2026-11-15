@@ -194,9 +194,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       EFFECT_SHOW_DAMAGE(0);
 
     if (work->args->prelude == 1) {
-      s32 x =
-          ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
+      s32 x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20) + originX +
+              canvasShiftX - 20;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);

@@ -96,7 +96,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // Ripple the canvas line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
+      *row++ = (px(16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =

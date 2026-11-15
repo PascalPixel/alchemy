@@ -43,10 +43,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     x = Random16() & 31;
     seed->y = -px(64);
     if (work->args->side == EFFECT_SIDE_PARTY) {
-      x = ((Random16() & 31) + 80) << 16;
+      x = px((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = ((Random16() & 31) + 8) << 16;
+      x = px((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;

@@ -379,7 +379,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           scrollPos = px(8);
           scrollSpeed = -px(12);
         }
-        REG_BG2X = (scrollPos >> 16) << 8;
+        REG_BG2X = Q_16_16_TO_INT(scrollPos) << 8;
       }
     }
     if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
@@ -562,7 +562,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           s32 base;
           scanline = work->bg2xLines;
           i = 0;
-          base = 4 << 16;
+          base = px(4);
           phase = frame * (TRIG_TURN / 16);
           for (; i != DISPLAY_HEIGHT; i++) {
             s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
@@ -747,9 +747,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             s32 imageX;
             s32 imageY;
             s32 drawFlags;
-            imageX = ((Trig_Sin(angle) << 3) >> 16) + targetPos.x / 2 -
+            imageX = Q_16_16_TO_INT(Trig_Sin(angle) << 3) + targetPos.x / 2 -
                      gBattleEffect_GlintPictureWidths[image] / 2;
-            imageY = ((Trig_Cos(angle) << 5) >> 16) -
+            imageY = Q_16_16_TO_INT(Trig_Cos(angle) << 5) -
                      gBattleEffect_GlintPictureHeights[image] / 2;
             EFFECT_RELEASE_BLITTERS();
             drawFlags = Random16();
@@ -890,10 +890,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 sway;
         // Condemn's reaper and crescent.
         Trig_Sin(frame * (TRIG_TURN / 128));
-        sway = (Trig_Cos(frame * (TRIG_TURN / 128)) << 2) >> 16;
+        sway = Q_16_16_TO_INT(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
         // targetPos.y is in whole pixels, so the shift leaves 0 for any
         // target on the screen: the pictures stand at a fixed height.
-        imageY = (targetPos.y >> 16) + sway + 16;
+        imageY = Q_16_16_TO_INT(targetPos.y) + sway + 16;
         if (frame <= 3) {
           blitters[0](canvas, work->sheet,
                       CASTING_IMPACT_PICTURE_X(work->args->side, 0),
@@ -943,7 +943,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame > 6) {
           scrollSpeed = (scrollSpeed * 48) / 64;
         }
-        REG_BG2X = (scrollPos >> 16) << 8;
+        REG_BG2X = Q_16_16_TO_INT(scrollPos) << 8;
         {
           s32 fade;
           fade = frame - 16;

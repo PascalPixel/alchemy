@@ -82,8 +82,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
               32, 64);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
-        s32 x = screenPosition.x + (frame * Trig_Sin(i << 12) >> 16);
-        s32 y = screenPosition.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
+        s32 x = screenPosition.x + Q_16_16_TO_INT(frame * Trig_Sin(i << 12));
+        s32 y = screenPosition.y + Q_16_16_TO_INT(frame * Trig_Cos(i << 12)) -
+                frame;
 
         draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64), x - 16,
                 y - 64, 32, 64);
@@ -174,8 +175,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
-                           (chip->y >> 16), size);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites,
+                           Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                           size);
         }
       }
     }
@@ -240,7 +242,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = ((6 << 16) - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = (px(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -374,8 +376,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 half;
 
           spin = (frame << 9) + (i << 14);
-          x = (screen.x + (Trig_Sin(spin) * 16 >> 16)) + offsetX;
-          y = screen.y + (Trig_Cos(spin) * 16 >> 16);
+          x = (screen.x + Q_16_16_TO_INT(Trig_Sin(spin) * 16)) + offsetX;
+          y = screen.y + Q_16_16_TO_INT(Trig_Cos(spin) * 16);
           half = frame / 16;
           draw[half & 1](canvas,
                          work->sheet + (frame / 4 - half * 4) * (32 * 32),

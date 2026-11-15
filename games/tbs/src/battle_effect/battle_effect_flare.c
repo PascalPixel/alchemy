@@ -46,8 +46,9 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     s32 angle = i * (TRIG_TURN / 16) - TRIG_TURN / 4;
 
     arcFlame = &work->particles[i];
-    arcFlame->x = ((direction * ((Trig_Sin(angle) * 32) >> 16)) + originX) + 20;
-    arcFlame->y = ((Trig_Cos(angle) * 16) >> 16) + 40;
+    arcFlame->x =
+        ((direction * Q_16_16_TO_INT(Trig_Sin(angle) * 32)) + originX) + 20;
+    arcFlame->y = Q_16_16_TO_INT(Trig_Cos(angle) * 16) + 40;
     arcFlame->variant = -i * 4;
   }
 

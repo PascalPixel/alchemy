@@ -145,8 +145,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   for (i = 0; i != 256; i++) {
     struct Particle *dust = &PARTICLES[i];
 
-    dust->x = ((Random16() & 63) + wallX + 32) << 16;
-    dust->y = ((Random16() & 7) + 96) << 16;
+    dust->x = px((Random16() & 63) + wallX + 32);
+    dust->y = px((Random16() & 7) + 96);
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }

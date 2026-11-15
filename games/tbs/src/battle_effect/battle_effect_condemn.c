@@ -87,8 +87,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame * (TRIG_TURN / 128);
-    screenX = (swayCenter[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
-    screenY = (swayCenter[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
+    screenX = Q_16_16_TO_INT(swayCenter[0]) +
+              Q_16_16_TO_INT(Trig_Sin(spin) * 16) + 48;
+    screenY =
+        Q_16_16_TO_INT(swayCenter[1]) + Q_16_16_TO_INT(Trig_Cos(spin) * 4) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }

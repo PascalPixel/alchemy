@@ -147,8 +147,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
-          s32 x = spark->x >> 16;
-          s32 y = spark->y >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 y = Q_16_16_TO_INT(spark->y);
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
         }

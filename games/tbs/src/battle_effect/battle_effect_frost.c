@@ -41,7 +41,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
-    seed->y = ((Random16() & 31) - 64) << 16;
+    seed->y = px((Random16() & 31) - 64);
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -177,8 +177,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &PARTICLES[i];
 
-        SET_POSITION(chip, (Random16() & 127) << 16,
-                     ((Random16() & 15) + 80) << 16,
+        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
 #ifdef BUGFIX
         chip->velocityX = 0;
@@ -217,11 +216,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *sparkle = &work->particles[i];
 
-        sparkle->velocityX = (Random16() & 127) << 16;
+        sparkle->velocityX = px(Random16() & 127);
         if (highest == lowest)
           sparkle->velocityY = px(lowest);
         else
-          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
         sparkle->variant = (Random16() & 15) + 20;
       }
     }
@@ -253,8 +252,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if ((sparkle->variant == -1 || sparkle->variant == 17) &&
             frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
           sparkle->variant = 17;
-          sparkle->velocityX = (Random16() & 127) << 16;
-          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+          sparkle->velocityX = px(Random16() & 127);
+          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
         }
       }
     }

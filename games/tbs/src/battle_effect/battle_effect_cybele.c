@@ -156,7 +156,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         if (frame >= i + 72 && thorn->y < px(104)) {
           s32 pictureIndex = (frame + i) / 4 % 5;
           s32 x = Q_16_16_TO_INT(thorn->x);
-          s32 y = thorn->y >> 16;
+          s32 y = Q_16_16_TO_INT(thorn->y);
           u8 *picture = work->sheet + gCybele_ThornPictures[pictureIndex];
           u32 width = gCybele_ThornWidths[pictureIndex];
           u32 tall;
@@ -173,8 +173,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       for (i = 0; i != 48; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
 
-        chip->x = (Random16() % 96) << 16;
-        chip->y = ((Random16() & 7) + 88) << 16;
+        chip->x = px(Random16() % 96);
+        chip->y = px((Random16() & 7) + 88);
         chip->velocityX = ((Random16() & 255) - 128) << 11;
         chip->velocityY = -(Random16() & 255) << 11;
         chip->variant = -(Random16() & 15) - 16;
@@ -254,8 +254,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
           if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
-            chip->x = (Random16() % 96) << 16;
-            chip->y = ((Random16() & 7) + 88) << 16;
+            chip->x = px(Random16() % 96);
+            chip->y = px((Random16() & 7) + 88);
             chip->velocityX = ((Random16() & 255) - 128) << 11;
             chip->velocityY = -(Random16() & 255) << 11;
           }

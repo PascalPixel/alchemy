@@ -142,12 +142,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = spark->x >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = spark->y >> 16;
+            y = Q_16_16_TO_INT(spark->y);
             size = spark->variant / 8 + 1;
             EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
           }

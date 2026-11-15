@@ -161,7 +161,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = ((8 << 16) - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = (px(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > totalFrames - 16)
         REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
       EFFECT_VIEW_FROM_CAMERA(camera);

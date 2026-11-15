@@ -574,7 +574,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (flash->variant == 14) {
           flash->y = px(20);
           flash->x = 0;
-          flash->z = ((Random16() & 255) - 127) << 16;
+          flash->z = px((Random16() & 255) - 127);
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
           flash->variant = 0;
         } else {
@@ -587,7 +587,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    grow = (frame << 8) + (2 << 16);
+    grow = (frame << 8) + px(2);
     position.groundHeight = 0;
     position.height = px(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {

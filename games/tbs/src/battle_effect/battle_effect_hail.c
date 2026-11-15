@@ -41,7 +41,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
     angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 128;
-    PARTICLES[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
+    PARTICLES[i].x = px((origin.x / 2 + (Random16() & 0xf)) - 8);
     PARTICLES[i].y = px(origin.y + 8);
     PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     PARTICLES[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
@@ -69,8 +69,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = (((-Trig_Sin(orbit) * 4)) >> 16) + screenX / 2 - 10;
-      y = (((Trig_Cos(orbit) * 2)) >> 16) + screenY - 22;
+      x = Q_16_16_TO_INT(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
+      y = Q_16_16_TO_INT(Trig_Cos(orbit) * 2) + screenY - 22;
       // Never true: the loop ends at frame 63.
       if (frame > 69)
         y = (y - frame * 2) + 138;
@@ -187,8 +187,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
     SET_POSITION(portal, user->x.fixed, px(66), user->z.fixed);
     SET_VELOCITY(portal, (i * px(80)) >> 5,
-                 (s32)(((Random16() & 127) - 64) << 16) >> 6,
-                 (s32)(((Random16() & 255) - 127) << 16) >> 5);
+                 (s32)px((Random16() & 127) - 64) >> 6,
+                 (s32)px((Random16() & 255) - 127) >> 5);
     if (portal->x > 0)
       portal->velocityX = -portal->velocityX;
     portal->variant = 1;
@@ -199,8 +199,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = (((-Trig_Sin(angle) * 4)) >> 16) + screenX / 2 - 10;
-      s32 y = (((Trig_Cos(angle) * 2)) >> 16) + screenY - 22;
+      s32 x = Q_16_16_TO_INT(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 2) + screenY - 22;
 
       if (frame > 16)
         y = y - frame * 2 + 32;

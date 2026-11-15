@@ -61,7 +61,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     struct Particle *base = &work->particles[i];
     s32 x;
 
-    x = ((Random16() & 15) + 72) << 16;
+    x = px((Random16() & 15) + 72);
     base->y = 0;
     base->x = x;
     base->z = px(gVolcano_Depths[work->args->variant][i]);

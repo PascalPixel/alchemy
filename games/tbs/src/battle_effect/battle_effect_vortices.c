@@ -55,9 +55,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   for (i = 0; i != 30; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x.fixed, y, source->z.fixed);
-    SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
-                 ((s32)((Random16() & 127) - 16) << 16) >> 6,
-                 ((s32)((Random16() & 255) - 127) << 16) >> 5);
+    SET_VELOCITY(point, px((s32)((Random16() & 255) - 127)) >> 5,
+                 px((s32)((Random16() & 127) - 16)) >> 6,
+                 px((s32)((Random16() & 255) - 127)) >> 5);
     point->variant = -1;
     flags[i] = 0;
   }
@@ -206,12 +206,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-            wave) >>
-           16) +
+      x = Q_16_16_TO_INT(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
+                             Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
+                         wave) +
           40;
-      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
+      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +

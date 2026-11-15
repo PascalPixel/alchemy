@@ -191,9 +191,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     }
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = ((4 << 16) -
-                ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
-               10;
+      *row++ =
+          (px(4) - ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
+          10;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
@@ -213,7 +213,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
-          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+          y = base.y - Q_16_16_TO_INT(Trig_Cos(angle) * radius) -
               (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS |
@@ -347,7 +347,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
-    current->x = ((Random16() & 63) + 32) << 16;
+    current->x = px((Random16() & 63) + 32);
     current->y = -px(32);
     current->velocityY = Random16() & 0;
     current->z = Random16() & 3;
@@ -382,10 +382,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         picture = (current->variant / 16) & 7;
         if (picture < 4)
           drawUpright(canvas, work->sheet + (picture << 10),
-                      (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - 16,
+                      Q_16_16_TO_INT(current->y) - 16, 32, 32);
         else
           drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
-                      (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - 16,
+                      Q_16_16_TO_INT(current->y) - 16, 32, 32);
         current->y += current->velocityY;
         current->velocityY += px(1) / 8;
         current->variant += current->z;

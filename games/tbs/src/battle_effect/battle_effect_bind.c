@@ -143,8 +143,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      x = ((Trig_Sin(frame << 11) * 20) >> 16) + originX + shift - 20;
-      y = (((Trig_Cos(frame << 11) * 4)) >> 16) + originY - 24;
+      x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20) + originX + shift - 20;
+      y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
       BattleEffect_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;

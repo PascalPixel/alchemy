@@ -111,7 +111,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2)) + 60;
 
       blit[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
       for (i = 0; i != MERCURY_FLAMES; i++) {
@@ -205,7 +205,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 
       if (frame <= 95) {
         s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
-        s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
         blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
       }
@@ -330,8 +330,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   do {
     // The Djinni sways from side to side as it drops.
     if (frame <= 79) {
-      s32 x = (Trig_Sin(angle) * 24) >> 16;
-      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+      s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
@@ -426,8 +426,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   do {
     s32 angle = index << 11;
 
-    step->x = (Trig_Sin(angle) * 24) >> 16;
-    step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+    step->x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+    step->y = Q_16_16_TO_INT(Trig_Cos(angle) * 4) + 52;
     if (index & 1)
       step->x = 32 - step->x;
     else
@@ -435,8 +435,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     step->variant = -(index * 2);
     for (i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
       mote = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
-      mote->x = (((Random16() & 15) + step->x) - 8) << 16;
-      mote->y = ((Random16() & 7) + 96) << 16;
+      mote->x = px(((Random16() & 15) + step->x) - 8);
+      mote->y = px((Random16() & 7) + 96);
       mote->velocityX = ((Random16() & 127) - 64) << 11;
       mote->velocityY = ((Random16() & 127) - 64) << 10;
       mote->z = Random16() & TRIG_ANGLE_MASK;
@@ -509,7 +509,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 x;
 
         size = (index & 1) + 3;
-        x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
+        x = Q_16_16_TO_INT(step->x) + Q_16_16_TO_INT(Trig_Sin(step->z) * 4);
         EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, Q_16_16_TO_INT(step->y),
                          size);
         Particle_AdvanceWithGravity2D(step, 64, -px(1) / 8);

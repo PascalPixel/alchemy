@@ -168,7 +168,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         struct Particle *ember = &PARTICLES[i];
 
         if (ember->variant == -1) {
-          ember->x = ((Random16() & 255) - 32) << 16;
+          ember->x = px((Random16() & 255) - 32);
           ember->y = px(112);
           ember->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                              << 9;
@@ -195,10 +195,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 angle = (Random16() & 0x1fff) + 20000;
 
             if (mode == DRAGON_FIRE_TIAMAT) {
-              spark->x = ((Random16() & 7) + 78) << 16;
+              spark->x = px((Random16() & 7) + 78);
               spark->y = px(70);
             } else {
-              spark->x = ((Random16() & 7) + origin.x - 8) << 16;
+              spark->x = px((Random16() & 7) + origin.x - 8);
               spark->y = px(origin.y);
             }
             spark->velocityX = speed * Trig_Sin(angle) >> 9;

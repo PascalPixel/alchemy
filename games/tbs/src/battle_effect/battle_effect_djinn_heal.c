@@ -44,7 +44,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 speed = (Random16() & 0xff) + 128;
 
-      SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+      SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
       SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
                    (Trig_Cos(heading) * speed) >> 5);
       spark->variant = 0;

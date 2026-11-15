@@ -33,8 +33,9 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 1);
-  if (reuse == 0)
+  if (reuse == 0) {
     *slot = VramCache_FindFreeEntry();
+  }
   *tileOut = VramCache_Load(*slot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
@@ -213,9 +214,9 @@ void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountPsynergyIcons(void);
 
 /// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles.
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
+void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse) {
-  Icon_BuildAbilityIconTiles(Ability_Get(action)->icon, with_base, slot, tile,
+  Icon_BuildAbilityIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                              reuse);
 }
 

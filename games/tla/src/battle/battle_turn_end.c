@@ -272,43 +272,32 @@ s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
 /// Brings the party's recovering Djinn one turn nearer, setting each that is
 /// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
-  struct DjinnRecoveryList *list;
-  struct DjinnRecoveryEntry *timedEntry;
-  struct DjinnRecoveryEntry *expiredEntry;
-  s32 index;
-  s32 removed;
-  s32 initialCount;
+  struct DjinnRecoveryList *list =
+      &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
+  s32 removed = 0;
+  s32 i;
 
-  list = &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
-  initialCount = list->count;
-  index = 0;
-  removed = 0;
-  if (index < initialCount) {
-    timedEntry = list->entries;
-    do {
-      if (timedEntry->turns > 0 && Unit_Get(timedEntry->unitId)->hp != 0) {
-        timedEntry->turns--;
-      }
-      index++;
-      timedEntry++;
-    } while (index < list->count);
+  for (i = 0; i < list->count; i++) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
+
+    if (entry->turns > 0 && Unit_Get(entry->unitId)->hp != 0)
+      entry->turns--;
   }
-  index = 0;
-  if (index < list->count) {
-    expiredEntry = list->entries;
-    do {
-      if (expiredEntry->turns == 0) {
-        u8 id = expiredEntry->unitId;
+  // Removing an entry moves the next one into its place, so i advances only
+  // past entries that stay.
+  for (i = 0; i < list->count;) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-        Djinn_SetFar(id, expiredEntry->element, expiredEntry->index);
-        DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        Unit_CalculateFar(id);
-        removed = 1;
-      } else {
-        expiredEntry++;
-        index++;
-      }
-    } while (index < list->count);
+    if (entry->turns == 0) {
+      u8 unitId = entry->unitId;
+
+      Djinn_SetFar(unitId, entry->element, entry->index);
+      DjinnRecovery_RemoveFar(unitId, entry->element, entry->index);
+      Unit_CalculateFar(unitId);
+      removed = 1;
+    } else {
+      i++;
+    }
   }
   return removed;
 }

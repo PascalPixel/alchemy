@@ -1947,32 +1947,33 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
 /// Places the icon of each worn weapon, armor, shield and helm at x 216, on its
 /// slot's row of ItemMenu_DrawCategory's window; the others stay off screen.
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
-  struct ItemMenuWork *state;
+  struct ItemMenuWork *menu;
   struct WindowSprite *icon;
-  s32 i;
+  s32 slotIndex;
 
-  state = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuWork;
   ItemMenu_PositionCategory();
-  for (i = 0; i < INVENTORY_SLOTS; i++) {
-    if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
-      icon = state->entryIcons[i];
+  for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
+    if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0) {
+      icon = menu->entryIcons[slotIndex];
       if (icon != 0) {
-        switch (Item_GetDirectFar(items[i] & INVENTORY_ITEM_ID_MASK)->type) {
+        switch (Item_GetDirectFar(items[slotIndex] & INVENTORY_ITEM_ID_MASK)
+                    ->type) {
         case ITEM_TYPE_WEAPON:
           icon->x = EQUIPPED_ICON_X;
-          icon->y = 32;
+          icon->y = EQUIPPED_ICON_Y(0);
           break;
         case ITEM_TYPE_ARMOR:
           icon->x = EQUIPPED_ICON_X;
-          icon->y = 80;
+          icon->y = EQUIPPED_ICON_Y(3);
           break;
         case ITEM_TYPE_SHIELD:
           icon->x = EQUIPPED_ICON_X;
-          icon->y = 64;
+          icon->y = EQUIPPED_ICON_Y(2);
           break;
         case ITEM_TYPE_HELM:
           icon->x = EQUIPPED_ICON_X;
-          icon->y = 48;
+          icon->y = EQUIPPED_ICON_Y(1);
           break;
         }
         Icon_PrepareActor(icon);
@@ -1984,19 +1985,19 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 /// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
 /// them out again.
 void ItemMenu_PositionCategory(void) {
-  struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 x = MENU_ICON_HIDDEN_X;
-  struct WindowSprite **entry = state->entryIcons;
+  struct WindowSprite **entry = menu->entryIcons;
   s32 y = MENU_ICON_HIDDEN_Y;
   s32 remaining = MENU_ENTRY_ICONS - 1;
 
   do {
-    struct WindowSprite *icon = *entry++;
+    struct WindowSprite *object = *entry++;
 
-    if (icon != 0) {
-      icon->x = x;
-      icon->y = y;
-      Icon_PrepareActor(icon);
+    if (object != 0) {
+      object->x = x;
+      object->y = y;
+      Icon_PrepareActor(object);
     }
     remaining--;
   } while (remaining >= 0);

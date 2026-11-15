@@ -157,33 +157,34 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
 /// Returns zero if both agree within 30 frames, or -1 on timeout or disconnect.
 /// Returns zero immediately outside a link battle.
 s32 LinkBattle_WaitSync(void) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 *peer;
-  u16 *sig;
-  s32 lost = 0;
+  u16 *signature;
+  s32 missed = 0;
   s32 i;
 
-  if (work->isLink != 0) {
-    u32 other = work->linkSide ^ 1;
+  if (battle->isLink != 0) {
+    u32 other = battle->linkSide ^ 1;
 
+    // gLinkPeerSignatures[other]: a peer's payload holds four bytes before
+    // its signature.
     peer = (u16 *)(gSerialPeerPayloads[other] + 4);
-    sig = (u16 *)gSerialTransfer.payload;
-    if (work->linkPaused == 0) {
-      sig[0] = 'E';
-      sig[1] = 'X';
-      sig[2] = 'E';
-      sig[3] = 'C';
+    signature = (u16 *)gSerialTransfer.payload;
+    if (battle->linkPaused == 0) {
+      // The other console is in step once its second pair reads "EC".
+      signature[0] = 'E';
+      signature[1] = 'X';
+      signature[2] = 'E';
+      signature[3] = 'C';
 
-      for (i = 0; i <= 29; i++) {
-        if ((gLinkStatus & LINK_BOTH_CONNECTED) !=
-            LINK_BOTH_CONNECTED) // The two consoles lost their connection.
-        {
-          lost++;
-          if (lost > LINK_MAX_MISSED_FRAMES)
+      for (i = 0; i < 30; i++) {
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          missed++;
+          if (missed > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
-          lost = 0;
-          if (sig[2] == peer[2] && sig[3] == peer[3])
+          missed = 0;
+          if (signature[2] == peer[2] && signature[3] == peer[3])
             return 0;
         }
         wait(1);

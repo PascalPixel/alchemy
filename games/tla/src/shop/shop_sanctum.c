@@ -48,17 +48,13 @@ s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
 
 /// Counts party members who need the service in shop->action.
 s32 Sanctum_CountMembersInNeed(void) {
-  struct ShopWork *shop;
-  s32 eligibleCount;
-  s32 serviceKind;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  s32 eligibleCount = 0;
+  s32 serviceKind = shop->action;
   s32 memberIndex;
 
-  shop = Ram_HeapSlots->menuWork;
-  eligibleCount = 0;
-  serviceKind = shop->action;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind) !=
-        0)
+    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
       eligibleCount++;
   }
   return eligibleCount;

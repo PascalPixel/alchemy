@@ -643,29 +643,29 @@ s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 /// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
 /// offers such a party member only Trade.
 s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
-  s32 cnt;
-  s32 i;
-  s8 *p;
-  struct DjinnMenuWork *state;
+  s32 tradeCount;
+  s32 memberColumn;
+  s8 *entry;
+  struct DjinnMenuWork *menu;
 
-  state = Ram_HeapSlots->menuWork;
-  cnt = 0;
-  i = 0;
-  if (cnt < state->memberCount) {
-    p = requiresTrade;
+  menu = Ram_HeapSlots->menuWork;
+  tradeCount = 0;
+  memberColumn = 0;
+  if (tradeCount < menu->memberCount) {
+    entry = requiresTrade;
     do {
-      *p = 0;
-      if (i != sourceMemberColumn) {
-        if (Djinn_CheckGiveBalance(sourceMemberColumn, i) == 0) {
-          *p = 1;
-          cnt += 1;
+      *entry = 0;
+      if (memberColumn != sourceMemberColumn) {
+        if (Djinn_CheckGiveBalance(sourceMemberColumn, memberColumn) == 0) {
+          *entry = 1;
+          tradeCount += 1;
         }
       }
-      i += 1;
-      p += 1;
-    } while (i < state->memberCount);
+      memberColumn += 1;
+      entry += 1;
+    } while (memberColumn < menu->memberCount);
   }
-  return cnt;
+  return tradeCount;
 }
 
 void Djinn_CountOwned(u8 *counts);

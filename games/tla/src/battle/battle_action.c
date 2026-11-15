@@ -51,7 +51,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(sideMask, (u16 *)unitIds);
+  unitCount = BattleUnit_ListIds(sideMask, unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
@@ -59,21 +59,17 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   if (counts != 0)
     for (i = ELEMENT_COUNT - 1; i >= 0; i--)
       counts[i] = 0;
-  recoveryIndex = 0;
-  if (list->count != 0) {
-    do {
-      if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        for (i = 0; i < unitCount; i++)
-          if (unitIds[i] == list->entries[recoveryIndex].unitId)
-            break;
-        if (i != unitCount) {
-          if (counts != 0)
-            counts[list->entries[recoveryIndex].element]++;
-          standbyCount++;
-        }
+  for (recoveryIndex = 0; recoveryIndex != list->count; recoveryIndex++) {
+    if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+      for (i = 0; i < unitCount; i++)
+        if (unitIds[i] == list->entries[recoveryIndex].unitId)
+          break;
+      if (i != unitCount) {
+        if (counts != 0)
+          counts[list->entries[recoveryIndex].element]++;
+        standbyCount++;
       }
-      recoveryIndex++;
-    } while (recoveryIndex != list->count);
+    }
   }
   return standbyCount;
 }

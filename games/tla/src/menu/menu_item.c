@@ -817,38 +817,46 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
                            struct RenderInput *window) {
   struct WindowSprite **firstIcons;
   s32 firstSlot;
-  s32 firstY;
   struct WindowSprite **secondIcons;
   s32 secondSlot;
-  s32 secondY;
   struct WindowSprite **remainingIcons;
   s32 remainingSlot;
-  s32 remainingY;
 
   firstSlot = 0;
-  firstY = MENU_ICON_HIDDEN_Y;
-  firstIcons = &menu->entryIcons[0];
-  do {
-    *firstIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, firstY);
-    firstSlot++;
-  } while (firstSlot <= 7);
+  {
+    s32 y = MENU_ICON_HIDDEN_Y;
+
+    firstIcons = &menu->entryIcons[0];
+    do {
+      *firstIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
+      firstSlot++;
+    } while (firstSlot <= 7);
+  }
+
   secondSlot = 8;
-  secondY = MENU_ICON_HIDDEN_Y;
-  secondIcons = &menu->entryIcons[8];
-  do {
-    *secondIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, secondSlot, window, 256, secondY);
-    secondSlot++;
-  } while (secondSlot <= 15);
+  {
+    s32 y = MENU_ICON_HIDDEN_Y;
+
+    secondIcons = &menu->entryIcons[8];
+    do {
+      *secondIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, secondSlot, window, 256, y);
+      secondSlot++;
+    } while (secondSlot <= 15);
+  }
+
   remainingSlot = 16;
-  remainingY = MENU_ICON_HIDDEN_Y;
-  remainingIcons = &menu->entryIcons[16];
-  do {
-    *remainingIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, remainingSlot, window, 256, remainingY);
-    remainingSlot++;
-  } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
+  {
+    s32 y = MENU_ICON_HIDDEN_Y;
+
+    remainingIcons = &menu->entryIcons[16];
+    do {
+      *remainingIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, remainingSlot, window, 256, y);
+      remainingSlot++;
+    } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
+  }
 }
 
 /// Hides all 32 item icons.
@@ -1357,19 +1365,18 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
 /// entries of inventoryEntries, and hides the icons of empty entries. iconStyle
 /// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
 /// equipment view's.
-void ItemMenu_DrawIcons(u16 *items, s32 style) {
-  s32 remaining;
+void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
+  s32 i;
   u16 *entries;
   struct WindowSprite **icons;
   s32 itemId;
 
   icons = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
-  entries = items;
-  remaining = INVENTORY_SLOTS - 1;
-  do {
+  entries = inventoryEntries;
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     itemId = *entries++;
     if (itemId != 0) {
-      if (style == 0) {
+      if (iconStyle == 0) {
         Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, itemId,
                                        (u8)(*icons)->index, 0);
       } else {
@@ -1378,9 +1385,8 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
       }
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
-  Menu_HideEmptyEntryIcons(items);
+  }
+  Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 
 /// Shows party member ownerId's items in the item window, laid out for layout
@@ -1831,42 +1837,39 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
-  s32 disabled;
   s32 useState;
   u32 firstCommandMessage;
 
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
-  disabled = ITEM_COMMAND_STATE_DISABLED;
-  if (useState == disabled)
+  if (useState == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
 
-  firstCommandMessage = (u32)MsgItemCommandUse;
-  // "Use"
-  Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24);
+  firstCommandMessage = MsgItemCommandUse;
+  Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24); // "Use"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
+  if (commandStates[ITEM_COMMAND_EQUIP] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
-  // "Equip"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
-                             ITEM_COMMAND_TEXT_X, 24);
+                             ITEM_COMMAND_TEXT_X,
+                             24); // "Equip"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_GIVE] == disabled)
+  if (commandStates[ITEM_COMMAND_GIVE] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
-  // "Give"
-  Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0, 32);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0,
+                             32); // "Give"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_DROP] == disabled)
+  if (commandStates[ITEM_COMMAND_DROP] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
-  // "Drop"
-  Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80, 32);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80,
+                             32); // "Drop"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
+  if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
-  // "Details"
-  Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80, 24);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80,
+                             24); // "Details"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
+  if (commandStates[ITEM_COMMAND_REMOVE] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,

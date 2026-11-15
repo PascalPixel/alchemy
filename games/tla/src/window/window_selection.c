@@ -579,12 +579,12 @@ extern u8 gMenu_CursorLeftActorTiles[];
 /// VRAM cache entry; later calls only move it and decide whether it shows.
 void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
   struct SelectionSprite *arrow = &state->records[side].sprite;
-  u8 *arrowTiles = 0;
+  const u8 *arrowTiles = 0;
   u32 count;
 
   state->records[side].kind = 0;
   if (side != 0) {
-    u8 *right = gMenu_CursorActorTiles;
+    const u8 *right = gMenu_CursorActorTiles;
 
     count = state->count;
     if (state->top != 0)
@@ -594,6 +594,7 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
       count = 5;
     }
     arrowTiles = right;
+    // Just past the last of the at most five icons shown.
     state->records[1].x =
         state->baseX + SELECTION_ICON_SPACING * (count - 1) + 17;
   } else {

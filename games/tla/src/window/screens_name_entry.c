@@ -183,29 +183,29 @@ s32 Text_SetString(const u8 *str) {
 /// followed in TEXT_COLOR_RED by an underscore for each of the
 /// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
 /// the name and the two-byte colour code before the underscores.
-void NameEntry_DrawName(s32 output, u8 *input) {
+void NameEntry_DrawName(s32 window, u8 *name) {
   u8 text[20];
   s32 length = 0;
 
-  if (*input != 0) {
+  if (*name != 0) {
     do {
-      text[length] = *input;
-      input++;
+      text[length] = *name;
+      name++;
       length++;
-    } while (*input != 0);
+    } while (*name != 0);
   }
 
   text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_RED;
 
   while (length <= 6) {
-    text[length++] = 95;
+    text[length++] = '_';
   }
 
   text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_WHITE;
   text[length] = 0;
-  Text_DrawString(text, output, 0, -2);
+  Text_DrawString(text, window, 0, -2);
 }
 #endif
 

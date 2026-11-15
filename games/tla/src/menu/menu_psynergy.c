@@ -800,23 +800,21 @@ struct PsynergyEntryMenu {
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
-  s32 remaining;
-  struct PsynergyEntryIcon **icons;
+  s32 i;
+  struct WindowSprite **icons;
   u16 *p;
   s32 psynergyId;
 
-  icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuWork)->entryIcons;
+  icons = ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   p = psynergies;
-  remaining = 31;
-  do {
+  for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
-                                     (*icons)->slot, 0);
+                                     (u8)(*icons)->index, 0);
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(psynergies);
 }
 

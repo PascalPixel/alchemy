@@ -12,23 +12,23 @@
 // Seal's 9 bits; its callers would settle it.
 /// Returns an item's rank among the spoils: an indispensable item first, then a
 /// rare one, then the higher item id; 0 for none.
-u32 BattleSpoils_RankItem(u32 value) {
-  u32 bank = 0;
-  u32 base = value & INVENTORY_ITEM_ID_MASK;
-  if (base == 0)
+u32 BattleSpoils_RankItem(u32 inventoryEntry) {
+  u32 priority = 0;
+  u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
+  if (itemId == 0)
     return 0;
   {
-    u8 flags = Item_GetDirectFar(base)->flags;
+    u8 flags = Item_GetDirectFar(itemId)->flags;
 
     if (flags & ITEM_INDISPENSABLE)
-      bank = 1;
-    bank <<= 1;
+      priority = 1;
+    priority <<= 1;
     if (flags & ITEM_RARE)
-      bank++;
-    bank <<= 9;
-    bank += base;
+      priority++;
+    priority <<= 9;
+    priority += itemId;
   }
-  return bank;
+  return priority;
 }
 
 /// Empties the battle's spoils and the party's pending item. Called by

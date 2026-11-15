@@ -285,41 +285,44 @@ void BattleStatus_DrawPageArrows(s32 offset) {
 /// colour 1 drawn as colour 10, then unchanged.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
-  s32 palOffset = 0;
-  s32 dstBank = 0;
+  s32 paletteOffset = 0;
+  s32 destinationBank = 0;
 
+  // bank 0 writes from byte 0, bank 1 from (4 + 1) << 6 = 320, just after
+  // the first ten tiles of 32 bytes. Each "row" is one tile.
   do {
     s32 row = 0;
-    s32 dstOffset = (dstBank + bank) << 6;
+    s32 destinationOffset = (destinationBank + bank) << 6;
 
     do {
-      u16 *out = (u16 *)((u8 *)dst + dstOffset);
-      u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
-      s32 col = 0;
+      u16 *output = (u16 *)((u8 *)dst + destinationOffset);
+      u16 *source =
+          (u16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP + (row << 5));
+      s32 column = 0;
 
       do {
-        u32 packed = *src++;
-        u32 dec = 0;
+        u32 packed = *source++;
+        u32 expanded = 0;
         s32 nibble = 0;
 
         do {
-          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + palOffset]
+          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + paletteOffset]
                       << (nibble * 4);
           nibble++;
           packed >>= 4;
-          dec |= color;
+          expanded |= color;
         } while (nibble <= 3);
 
-        col++;
-        *out++ = dec;
-      } while (col <= 15);
+        column++;
+        *output++ = expanded;
+      } while (column <= 15);
 
       row++;
-      dstOffset += 32;
+      destinationOffset += 32;
     } while (row <= 9);
 
-    palOffset += 16;
-    dstBank += 4;
+    paletteOffset += 16;
+    destinationBank += 4;
     bank++;
   } while (bank <= 1);
 }

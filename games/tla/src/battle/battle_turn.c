@@ -419,51 +419,42 @@ fail:
 /// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
 /// offset: amount added to each RGB component, clamped to 0-31.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
-  s32 n;
-  s32 paletteNumber;
-  s32 col;
-  s32 mask;
-  s32 idx;
+  s32 bank;
+  s32 source = WINDOW_PALETTE;
+  s32 i;
 
-  paletteNumber = 15;
-  n = 0;
-  mask = 31;
-  do {
-    for (col = 0; col <= 15; col++) {
-      u32 color;
-      s32 b;
-      s32 g;
-      s32 r;
-      s32 val;
+  // Palettes 15 and 5, each into the palette before it, 14 and 4.
+  for (bank = 0; bank < 2; bank++) {
+    for (i = 0; i < PALETTE_COLORS; i++) {
+      s32 index = source * PALETTE_COLORS + i;
+      u32 color = ((u16 *)BG_PLTT)[index];
+      s32 blue = RGB_BLUE(color);
+      s32 green = RGB_GREEN(color);
+      s32 red = RGB_RED(color);
+      s32 adjusted;
 
-      idx = paletteNumber * PALETTE_COLORS + col;
-      color = ((u16 *)BG_PLTT)[idx];
-      b = (color >> 10) & mask;
-      g = (color >> 5) & mask;
-      r = color & mask;
-      b += offset;
-      g += offset;
-      r += offset;
-      if (b > RGB_LEVEL_MAX)
-        b = RGB_LEVEL_MAX;
-      if (g > RGB_LEVEL_MAX)
-        g = RGB_LEVEL_MAX;
-      if (r > RGB_LEVEL_MAX)
-        r = RGB_LEVEL_MAX;
-      if (b < 0)
-        b = 0;
-      if (g < 0)
-        g = 0;
-      if (r < 0)
-        r = 0;
-      val = b << 10;
-      val |= g << 5;
-      val |= r;
-      ((s16 *)0x04ffffe0)[idx] = val; // Into the preceding palette.
+      blue += offset;
+      green += offset;
+      red += offset;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
+      if (blue < 0)
+        blue = 0;
+      if (green < 0)
+        green = 0;
+      if (red < 0)
+        red = 0;
+      adjusted = blue << 10;
+      adjusted |= green << 5;
+      adjusted |= red;
+      ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
-    n++;
-    paletteNumber = 5;
-  } while (n <= 1);
+    source = 5;
+  }
 }
 
 /// Builds this turn's actions and sorts them by descending priority: the
@@ -563,25 +554,25 @@ s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
 /// Returns a unit's formation position, or -1 if absent.
 /// Allies use 0x100 | position; enemies use 0x180 | position.
 /// id: unit ID (0-7 allies, all others enemies).
-s32 Battle_FindUnitPlace(u32 id) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
-  s32 i;
-  s16 unit;
+s32 Battle_FindUnitPlace(u32 unitId) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  s32 placeIndex;
+  s16 listedUnit;
 
-  if (id <= ALLY_MAX) {
-    for (i = 0;; i++) {
-      unit = work->partyUnits[i];
-      if (unit == BATTLE_UNIT_LIST_END)
+  if (unitId <= ALLY_MAX) {
+    for (placeIndex = 0;; placeIndex++) {
+      listedUnit = battle->partyUnits[placeIndex];
+      if (listedUnit == BATTLE_UNIT_LIST_END)
         return -1;
-      if (unit != BATTLE_UNIT_REMOVED && unit == id)
-        return i | PLACE_PARTY;
+      if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+        return placeIndex | PLACE_PARTY;
     }
   }
-  for (i = 0;; i++) {
-    unit = work->enemyIds[i];
-    if (unit == BATTLE_UNIT_LIST_END)
+  for (placeIndex = 0;; placeIndex++) {
+    listedUnit = battle->enemyIds[placeIndex];
+    if (listedUnit == BATTLE_UNIT_LIST_END)
       return -1;
-    if (unit != BATTLE_UNIT_REMOVED && unit == id)
-      return i | PLACE_ENEMY;
+    if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+      return placeIndex | PLACE_ENEMY;
   }
 }

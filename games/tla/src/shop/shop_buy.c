@@ -499,66 +499,71 @@ void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
   s32 replacedItemId = -1;
   s32 previewSlot;
   s32 savedEntry;
-  s32 i;
-  s32 without[4];
-  s32 with[4];
+  s32 index;
+  s32 baseStats[4];
+  s32 previewStats[4];
 
   if (window == 0)
     return;
   WindowSprite_PrepareForRedrawFar(window);
   if (!Item_CanUnitEquip(unitId, itemId)) {
-    Text_DrawMessageFar((s32)MsgShopCannotEquip, (s32)window, 8, 24);
+    Text_DrawMessageFar(MsgShopCannotEquip, window, 8, 24);
     return;
   }
   previewSlot = Inventory_FindEquippedFar(unitId, item->type);
+  // With nothing of the type equipped, borrow the first slot that is not
+  // equipped, else the first Psynergy item's, else slot 0.
   if (previewSlot == -1) {
-    for (i = 0; i < INVENTORY_SLOTS; i++) {
-      if (!(unit->inventory[i] & INVENTORY_EQUIPPED))
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         break;
     }
-    if (i == INVENTORY_SLOTS) {
-      for (i = 0; i < INVENTORY_SLOTS; i++) {
-        if (Item_GetDirectFar(unit->inventory[i])->type == ITEM_TYPE_PSYNERGY)
+    if (index == INVENTORY_SLOTS) {
+      for (index = 0; index < INVENTORY_SLOTS; index++) {
+        if (Item_GetDirectFar(unit->inventory[index])->type ==
+            ITEM_TYPE_PSYNERGY)
           break;
       }
-      if (i == INVENTORY_SLOTS)
-        i = 0;
+      if (index == INVENTORY_SLOTS)
+        index = 0;
     }
-    previewSlot = i;
+    previewSlot = index;
   } else {
     replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
   }
+  // Borrow a live slot so Unit_Calculate includes every equipment effect;
+  // restore both the slot and the stats before returning to the counter.
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   Unit_CalculateFar(unitId);
-  with[0] = unit->atk;
-  with[1] = unit->def;
-  with[2] = unit->agi;
-  with[3] = unit->luck;
+  previewStats[0] = unit->atk;
+  previewStats[1] = unit->def;
+  previewStats[2] = unit->agi;
+  previewStats[3] = unit->luck;
   unit->inventory[previewSlot] = savedEntry;
   Unit_CalculateFar(unitId);
-  without[0] = unit->atk;
-  without[1] = unit->def;
-  without[2] = unit->agi;
-  without[3] = unit->luck;
-  for (i = 0; i < 3; i++) {
-    if (without[i] > with[i])
+  baseStats[0] = unit->atk;
+  baseStats[1] = unit->def;
+  baseStats[2] = unit->agi;
+  baseStats[3] = unit->luck;
+  for (index = 0; index <= 2; index++) {
+    if (baseStats[index] > previewStats[index])
       WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
-                             i * 16 - 4)
+                             index * 16 - 4)
           ->kind = 0;
-    else if (without[i] < with[i])
+    else if (baseStats[index] < previewStats[index])
       WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
-                             i * 16 - 4)
+                             index * 16 - 4)
           ->kind = 0;
-    Text_DrawNumberInWindowFar(without[i], 3, (s32)window, 32, i * 16);
-    if (without[i] != with[i])
-      Text_DrawNumberInWindowFar(with[i], 3, (s32)window, 72, i * 16);
-    Text_DrawMessageAsTilesFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
-    Window_DrawDividerLineFar((s32)window, 0, i * 2 + 2, 13, i * 2 + 2);
+    Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
+    if (baseStats[index] != previewStats[index])
+      Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,
+                                 index * 16);
+    Text_DrawMessageAsTilesFar(MsgShopStatLabel + index, window, 0, index * 16);
+    Window_DrawDividerLineFar(window, 0, index * 2 + 2, 13, index * 2 + 2);
   }
   if (replacedItemId != -1)
-    Text_DrawMessageAsTilesFar(replacedItemId + (s32)MsgItemName, window, 0,
-                               48);
+    Text_DrawMessageAsTilesFar(replacedItemId + MsgItemName, window, 0, 48);
 }
 
 /// Shows how many of the item the party member already carries and the party
@@ -768,27 +773,30 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 /// equip it and to sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
-  s32 remaining;
-  s32 addedSlot;
+  s32 remainingQuantity;
+  s32 lastAddedSlot;
   struct ItemDefinition *item;
 
-  remaining = quantity;
+  remainingQuantity = quantity;
   item = Item_GetDirectFar(itemId);
-  addedSlot = 0;
+  lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
+  // Keep each inventory addition, coin debit and shop-credit increment in
+  // order.
   Sound_PlayFar(SE_SHOP_PURCHASE);
-  if (addedSlot < remaining) {
+  if (lastAddedSlot < remainingQuantity) {
     do {
-      addedSlot = Inventory_AddItemFar(unitId, itemId);
-      Party_AdjustCoinsFar(0 - (u16)item->price);
-      remaining -= 1;
-      Party_AdjustShopCreditFar((u16)item->price);
+      lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
+      Party_AdjustCoinsFar(0 - item->price);
+      remainingQuantity--;
+      Party_AdjustShopCreditFar(item->price);
       Shop_DrawMoney();
-    } while (remaining != 0);
+    } while (remainingQuantity != 0);
   }
-  Shop_ShowKeeperMessageHidingCursor((s32)MsgHereYouGo);
-  if (Shop_ConfirmEquip(unitId, addedSlot) != 0)
+  Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
+  if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {
     Shop_SellOld(unitId, replacedSlot);
+  }
 }
 
 /// Offers to equip the item just bought, and warns of a curse. Returns 1 when

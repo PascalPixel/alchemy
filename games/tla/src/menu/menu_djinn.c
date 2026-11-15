@@ -413,13 +413,10 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 copyIndex;
   s32 paletteNumber;
   s32 colorIndex;
-  s32 channelMask;
   s32 paletteIndex;
 
   paletteNumber = WINDOW_PALETTE;
-  copyIndex = 0;
-  channelMask = RGB_LEVEL_MAX;
-  do {
+  for (copyIndex = 0; copyIndex <= 2; copyIndex++) {
     for (colorIndex = 0; colorIndex < PALETTE_COLORS; colorIndex++) {
       u32 color;
       s32 blue;
@@ -429,9 +426,9 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
 
       paletteIndex = paletteNumber * PALETTE_COLORS + colorIndex;
       color = ((u16 *)BG_PLTT)[paletteIndex];
-      blue = (color >> 10) & channelMask;
-      green = (color >> 5) & channelMask;
-      red = color & channelMask;
+      blue = RGB_BLUE(color);
+      green = RGB_GREEN(color);
+      red = RGB_RED(color);
       blue += brightnessDelta;
       green += brightnessDelta;
       red += brightnessDelta;
@@ -447,9 +444,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
         green = 0;
       if (red < 0)
         red = 0;
-      adjustedColor = blue << 10;
-      adjustedColor |= green << 5;
-      adjustedColor |= red;
+      adjustedColor = RGB(red, green, blue);
       ((s16 *)BG_PLTT - PALETTE_COLORS)[paletteIndex] = adjustedColor;
     }
     if (copyIndex == 0) {
@@ -458,8 +453,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       paletteNumber = 7;
       brightnessDelta = -12;
     }
-    copyIndex++;
-  } while (copyIndex <= 2);
+  }
 }
 
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);

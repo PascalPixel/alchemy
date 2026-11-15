@@ -688,7 +688,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   s32 index;
 
   index = 0;
-  slot = (struct WindowSprite **)((u8 *)Ram_HeapSlots->menuWork + 0x4c);
+  slot = ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   scan = slot;
   do {
     if (*scan++ != NULL) {
@@ -696,7 +696,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index <= 0x1F);
+  } while (index < MENU_ENTRY_ICONS);
 }
 
 /// Places the icon in *slot at grid cell index (0 above 31) of a grid of
@@ -734,27 +734,27 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
-  struct WindowSprite *object;
+  struct WindowSprite *icon;
   s32 index;
   s32 originY;
-  s32 base;
+  struct ItemMenuWork *menu;
 
-  base = (s32)Ram_HeapSlots->menuWork;
-  originY = 0x38;
+  menu = Ram_HeapSlots->menuWork;
+  originY = 56;
   if (layout != 1) {
-    originY = 0x28;
+    originY = 40;
   }
-  slot = (struct WindowSprite **)(base + 0x4c);
+  slot = menu->entryIcons;
   index = 0;
   scan = slot;
   do {
-    object = *scan++;
-    if (object != NULL) {
-      ItemMenu_PlaceIcon(slot, index, 0x74, originY, MENU_ITEM_GRID_COLUMNS);
+    icon = *scan++;
+    if (icon != NULL) {
+      ItemMenu_PlaceIcon(slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
     }
     index++;
     slot++;
-  } while (index <= 0xE);
+  } while (index < INVENTORY_SLOTS);
 }
 
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
@@ -827,12 +827,12 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   s32 i;
   s32 count;
   s32 best;
-  s32 best_slot;
-  s32 sorted_count;
+  s32 bestSlot;
+  s32 sortedCount;
   s32 value;
 
-  best_slot = 0;
-  sorted_count = 0;
+  bestSlot = 0;
+  sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
   for (i = 0; i < INVENTORY_SLOTS; i++)
@@ -847,6 +847,8 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   for (i = count; i < INVENTORY_SLOTS; i++)
     sorted[i] = 0;
 
+  // One pass for each entry of the order: move its items across, the highest
+  // id first, until none is left.
   pass = 0;
   while (order[pass] != LIST_ORDER_END) {
     for (;;) {
@@ -862,15 +864,15 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
           continue;
         value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
-          best_slot = i;
+          bestSlot = i;
           best = value;
         }
       }
       if (best == 0)
         break;
-      sorted[sorted_count] = items[best_slot];
-      items[best_slot] = 0;
-      sorted_count++;
+      sorted[sortedCount] = items[bestSlot];
+      items[bestSlot] = 0;
+      sortedCount++;
     }
     pass++;
   }

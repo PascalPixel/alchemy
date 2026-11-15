@@ -298,12 +298,6 @@ u32 __umodsi3(u32 a, u32 b);
 
 #include "shared/tile_sprite_reset.h"
 
-static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
-   * the halves of 0x40000. */
-  return Iwram_MulQ16(a, b);
-}
-
 /// The marker blinks and bobs up and down on a circle.
 // As The Broken Seal's WorldMap_CircleEcho.
 void WorldMap_CircleEcho(struct BobbingMarker *marker) {
@@ -320,7 +314,7 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = px(10120);
-    y = MulQ16(Math_Sin(*angle << 3), 0x40000);
+    y = Math_MulQ16(Math_Sin(*angle << 3), 0x40000);
     z = 0x20a40000;
 
     rise = 0x100000;
@@ -986,14 +980,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_WaitForZoomTransition();
     Actor_WaitForMoveById(ACTOR_FELIX);
     WorldMap_Freeze();
-    {
-      /* FAKEMATCH(barrier): the native copies the angle before the other
-       * arguments. */
-      s32 a3 = north;
-
-      asm volatile("" : "+l"(a3));
-      Actor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, a3);
-    }
+    Actor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, north);
     Actor_WaitForScriptEndById(ACTOR_KRADEN);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, north);
     south = FACING_SOUTH;
@@ -1022,16 +1009,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_THIEF_A, 2);
-    ARM_NORTH(ACTOR_FELIX);
-    {
-      /* FAKEMATCH(barrier): the native copies the angle, loads the 0 and then
-       * the actor. */
-      s32 a1 = north, a2;
-
-      asm volatile("" : "+l"(a1));
-      a2 = 0;
-      Actor_FaceDirectionById(ACTOR_KRADEN, a1, a2);
-    }
+    Actor_FaceDirection(ACTOR_FELIX, north, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, north, 0);
     Event_Wait(5);
     // "Don't play dumb... We all heard you."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);

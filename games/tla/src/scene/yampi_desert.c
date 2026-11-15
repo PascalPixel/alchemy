@@ -667,22 +667,16 @@ done:
 /// collision code 255.
 void YampiDesert_BlockPoundedStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object;
-  /* FAKEMATCH(pin): the limit in r2. */
-  register s32 limit asm("r2");
 
-  goto next;
-  do {
-    /* FAKEMATCH(barrier): the record pointer passed through an empty asm. */
-    asm("" : "+l"(list));
-    object = Actor_GetById(list[0]);
-    if (GameFlag_Get(list[2]))
-      *(u8 *)((u32)map->layers[2].cells + (Actor_GetCellIndex(object) << 2) +
-              2) = 255;
-    list += 3;
-  next:
-    limit = 0xff;
-  } while (list[0] != (limit << 8) + 0xff);
+  for (; *list != 0xffff; list += 3) {
+    struct Actor *object = Actor_GetById(list[0]);
+
+    if (GameFlag_Get(list[2])) {
+      struct MapCell *cell = &map->layers[2].cells[Actor_GetCellIndex(object)];
+
+      cell->collisionCode = 255;
+    }
+  }
 }
 
 /// For each six-byte record up to an actor of 0xffff, the cell under the actor

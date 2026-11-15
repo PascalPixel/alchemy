@@ -604,12 +604,10 @@ void TundariaTower_SetDownPillar(void) {
   }
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6) {
-    /* FAKEMATCH(temporary): the copy makes each column test reload X. */
-    struct Actor *o = object;
-
-    if (o->x.fixed >> 19 == 27)
+    if (object->x.fixed >> 19 == 27)
       GameFlag_Set(FLAG_FIRST_LEDGE_PILLAR_SET);
-    if (o->x.fixed >> 19 == 25 && GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
+    if (object->x.fixed >> 19 == 25 &&
+        GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
       GameFlag_Set(FLAG_SECOND_LEDGE_PILLAR_SET);
   }
   Event_End();

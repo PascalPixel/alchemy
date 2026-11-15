@@ -287,10 +287,12 @@ fade:
   gFieldWork->transitionFrames = 60;
 }
 
-static __inline__ void Decode_(void *source, void *destination) {
-  /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the
-   * buffer address a constant of each call. */
-  Decompress_TaggedLz(source, destination);
+/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
+/// `destination`: the system call layer's inline, as The Broken Seal's
+/// system_call.h has it, which this game's does not yet.
+static inline s32 FieldDecompress_TaggedLz(const void *source,
+                                           void *destination) {
+  return Decompress_TaggedLz(source, destination);
 }
 
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
@@ -314,7 +316,7 @@ static void Title_LoadBackground(void) {
   encodedGraphics = Resource_GetTableEntry(resourceId);
   Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   encodedGraphics += 224 * 2;
-  Decode_(encodedGraphics, Ram_MapCellBuffer);
+  FieldDecompress_TaggedLz(encodedGraphics, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
           REG_DMA3);
 

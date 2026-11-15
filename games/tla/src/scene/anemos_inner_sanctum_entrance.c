@@ -64,7 +64,7 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 #include "../field/field_effect_move.c"
 
-/// The entrance room (gAnemosInnerSanctumEntrance_Room1Placements).
+/// The entrance room (gAnemosInnerSanctumEntrance_HallPlacements).
 enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
@@ -116,11 +116,11 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
-extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
+extern struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_Room1Placements;
+    return gAnemosInnerSanctumEntrance_HallPlacements;
   return gAnemosInnerSanctumEntrance_Placements;
 }
 
@@ -314,11 +314,11 @@ land:
 void AnemosInnerSanctumEntrance_DoNothing(void) {}
 
 extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
-extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
+extern struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_Room1Triggers;
+    return gAnemosInnerSanctumEntrance_HallTriggers;
   return gAnemosInnerSanctumEntrance_Triggers;
 }
 
@@ -602,74 +602,73 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
-    {
-        ACTOR_PLACEMENT(SPRITE_DULLAHAN, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0,
-                        104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 472,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 424,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 456,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0,
-                        FACING_SOUTH, TALK_FACING_KEEP, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0,
-                        168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0,
-                        216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0,
-                        168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0,
-                        216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 696, 0,
-                        240, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 744, 0,
-                        240, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        288, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        232, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0,
-                        768, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        712, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                        (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0,
-                        768, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-        {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_DULLAHAN, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0, 104,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 472,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 424,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 456,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0, 168,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0, 216,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0, 168,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 248, 0, 216,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 696, 0, 240,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 744, 0, 240,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 232,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 288,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 232,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 288,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 712,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 424, 0, 768,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 712,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_StatueScript, 504, 0, 768,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

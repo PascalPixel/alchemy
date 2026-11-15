@@ -30,6 +30,7 @@
 #include "system/frame.h"
 #include "system/heap_slots.h"
 #include "scene/scene.h"
+#include "field/map_grid.h"
 #include "window/screens.h"
 #include "window/window.h"
 #include "system/serial.h"
@@ -153,7 +154,7 @@ void Clear_LoadBackground(void) {
     scroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct ClearWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
+  Ram_HeapSlots->mapGrid->dispcnt = DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 

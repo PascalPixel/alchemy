@@ -161,8 +161,6 @@ void ChampaCliffCaves_FightAvimander(void);
 extern s16 gChampaCliffCaves_DoorFrames[];
 extern s16 gChampaCliffCaves_OtherDoorFrames[];
 
-struct FlashSprite;
-
 void FieldEffect_StartBlankOverlay(s32 a);
 void Field_StartColorTransition(s32 a, s32 b);
 
@@ -565,6 +563,11 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
 }
 
 #include "text/msg_ids.h"
+
+/// The three animations a throw plays.
+struct ThrowAnimations {
+  s32 animations[3];
+};
 
 extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
 void Actor_ShowItemIconById(s32 id, s32 animation);
@@ -1610,12 +1613,19 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_End();
 }
 
+/// ChampaCliffCaves_StartFlash's explosion: its tiles, decompressed into the
+/// heap, and the sprite that shows them.
+struct FlashWork {
+  u8 tiles[0x400];
+  struct EffectSprite sprite;
+};
+
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
-  struct FlashSprite *sprite;
+  struct EffectSprite *sprite;
   s32 position[3];
   s32 i;
   s32 z;
@@ -1638,47 +1648,46 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   slot = VramCache_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
   sprite = &work->sprite;
-  FieldEffectSprite_Init((struct EffectSprite *)sprite, 8, 16, 0x40000000,
-                         tile);
-  sprite->unk1e = 240;
-  sprite->priority = 1;
-  sprite->fullColor = 0;
-  sprite->palette = 15;
+  FieldEffectSprite_Init(sprite, 8, 16, OBJ_SIZE_16X16, tile);
+  sprite->depth = 240;
+  sprite->oam.priority = 1;
+  sprite->oam.fullColor = 0;
+  sprite->oam.palette = 15;
   position[0] = object->x.fixed;
   position[1] = object->y.fixed;
   position[2] = object->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
-  sprite->z = z = position[2];
+  sprite->y = z = position[2];
   if (mode == 1) {
     sprite->scaleX = Q16_ONE * 2;
     sprite->scaleY = Q16_ONE * 2;
-    sprite->z = z + px(10);
+    sprite->y = z + px(10);
   }
   Sound_Play(SE_CRASH);
   for (i = 0; i <= 71; i++) {
     sprite = &work->sprite;
     switch (i) {
     case 6:
-      sprite->tile = tile + 4;
+      sprite->oam.index = tile + 4;
       break;
     case 12:
-      sprite->tile = tile + 8;
+      sprite->oam.index = tile + 8;
       break;
     case 22:
-      sprite->tile = tile + 12;
+      sprite->oam.index = tile + 12;
       break;
     case 32:
-      sprite->tile = tile + 16;
+      sprite->oam.index = tile + 16;
       break;
     case 42:
-      sprite->tile = tile + 20;
+      sprite->oam.index = tile + 20;
       break;
     case 52:
-      sprite->tile = tile + 24;
+      sprite->oam.index = tile + 24;
       break;
     case 62:
-      sprite->tile = tile + 28;
+      sprite->oam.index = tile + 28;
       break;
     }
     EffectSprite_Draw(sprite);

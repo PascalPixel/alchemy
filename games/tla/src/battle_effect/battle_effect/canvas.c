@@ -16,18 +16,6 @@
 
 struct Model;
 
-// A texture for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions,
- * BattleEffect_RunFormChange moves: 1 of 730 instructions in tla-ja. */
-struct ModelTexture__f14153c {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /// The flashes, after the map cells.
@@ -73,9 +61,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s16 list[14];
   s32 place[4];
   struct Scale req;
-  struct ModelTexture__f14153c texture;
-  struct ModelTexture__f14153c texture2;
-  struct ModelTexture__f14153c texture3;
+  struct ModelTexture texture;
+  struct ModelTexture texture2;
+  struct ModelTexture texture3;
   struct RenderModel *model;
   struct Particle *p;
   struct EclipseObject *obj;
@@ -672,7 +660,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->vertices = vertices;
         model->texture = &texture3;
         model->shade = shade;
-        model->unk04 = 3;
+        model->flags = 3;
       }
       {
         s32 s = (frame << 9) + 0x8000;
@@ -694,7 +682,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model->texture = &texture3;
       model->kind = 7;
       model->mesh = mesh2;
-      model->unk04 = shade;
+      model->flags = shade;
       model->vertices = vertices;
       model->scrollU = shade;
       model->scrollV = shade;
@@ -768,7 +756,7 @@ struct ModelDraw__f14153c {
   s32 next;
   const void *model;
   void *corners;
-  struct ModelTexture__f14153c *texture;
+  struct ModelTexture *texture;
   s32 depthBias;
   u8 unk18;
   u8 shade;
@@ -784,7 +772,7 @@ struct ModelDraw__f14153c {
 /// white and restores the scene's view itself.
 void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   struct ScreenPoint center;
-  struct ModelTexture__f14153c texture;
+  struct ModelTexture texture;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];

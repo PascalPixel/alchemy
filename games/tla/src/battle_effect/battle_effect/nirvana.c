@@ -515,27 +515,16 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
- * tla-ja. */
-struct ModelTexture__f16d130 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 /* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
  * tla-ja. */
 struct RenderModel__f16d130 {
   s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f16d130 *texture;
+  s32 flags;
+  const u16 *mesh;
+  s16 *vertices;
+  struct ModelTexture *texture;
   const void *shade;
   u8 scrollU;
   u8 scrollV;
@@ -607,7 +596,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     s32 world[3];
     struct ProjectedPoint point;
     struct ProjectedPoint dropScreen;
-    struct ModelTexture__f16d130 texture;
+    struct ModelTexture texture;
     struct RenderModel__f16d130 *model;
     void *vertices;
     u8 color[1];
@@ -848,7 +837,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           }
         } else {
           model->kind = 2;
-          model->unk04 = 0;
+          model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
           for (i = 0; i != 64; i++) {
@@ -887,7 +876,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = (const u8 *)work->sheet;
           model->kind = 6;
-          model->unk04 = 3;
+          model->flags = 3;
           model->vertices = vertices;
           model->scrollU = 0;
           model->texture = &texture;
@@ -910,7 +899,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = 7;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
-          model->unk04 = 2;
+          model->flags = 2;
           Render_DrawModelList(model);
           Transform_Pop();
 
@@ -921,7 +910,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = 7;
           model->texture = &texture;
           model->mesh = gBattleEffect_CylinderMesh;
-          model->unk04 = 0;
+          model->flags = 0;
           model->vertices = vertices;
           model->scrollU = 0;
           model->scrollV = 0;

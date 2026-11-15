@@ -11,19 +11,6 @@
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunDeathPlunge moves: 1 of 632 instructions in
- * tla-ja. */
-struct ModelTexture__f188714 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
 /* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -34,7 +21,7 @@ struct Model__f188714 {
   s32 next;
   void *mesh;
   void *vertices;
-  struct ModelTexture__f188714 *texture;
+  struct ModelTexture *texture;
   s32 alpha;
   s32 tail;
 };
@@ -66,7 +53,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct ScreenPoint targetScreen;
   s32 point[3];
   struct ScreenPoint screen;
-  struct ModelTexture__f188714 texture;
+  struct ModelTexture texture;
   struct Particle *spark;
   struct Model__f188714 *model;
   void *vertices;

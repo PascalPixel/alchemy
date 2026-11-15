@@ -14,17 +14,6 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunWaterColumn moves: 1 of 1741 instructions
- * in tla-ja. */
-struct ModelTexture__f171bb0 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 // The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
 // function are constants built from the fixed buffer, not their own symbols.
@@ -50,7 +39,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   u8 *unit;
   s32 *target;
   struct RenderModel *model;
-  struct ModelTexture__f171bb0 texture;
+  struct ModelTexture texture;
   s32 columns;
   s32 shade;
   s32 i;

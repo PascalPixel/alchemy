@@ -35,7 +35,7 @@ union BattleBackgroundId {
  * member named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;
-  s32 unk04;
+  s32 flags;
   const u16 *mesh;
   void *vertices;
   struct ModelTexture *texture;

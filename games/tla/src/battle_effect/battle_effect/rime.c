@@ -41,7 +41,7 @@ struct Texture__f173588 {
  * named `brightness'. */
 struct RenderModel__f173588 {
   s32 kind;
-  s32 unk04;
+  s32 flags;
   const void *mesh;
   void *vertices;
   struct Texture__f173588 *texture;

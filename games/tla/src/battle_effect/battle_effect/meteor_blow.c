@@ -11,17 +11,6 @@ struct MeshTriangle;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
- * tla-ja. */
-struct ModelTexture__f18df5c {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // One star of the opening sky: a point on a sphere and its cell kind.
@@ -73,10 +62,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 point[3];
   s32 place[4];
   s32 summonPlace[4];
-  struct ModelTexture__f18df5c waveTexture;
+  struct ModelTexture waveTexture;
   struct Scale summonScale;
   s32 req[2];
-  struct ModelTexture__f18df5c texture;
+  struct ModelTexture texture;
 
   canvas = Ram_HeapSlots->battleCanvas;
   map = gMapGridCellBuffer;

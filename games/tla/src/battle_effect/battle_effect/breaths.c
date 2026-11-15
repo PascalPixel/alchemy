@@ -22,19 +22,6 @@ enum {
   BREATH_BLAST,         // Blast Breath, kind 414: a blast and a jet.
 };
 
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-/* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunBreaths moves: 1 of 1241 instructions in
- * tla-ja. */
-struct ModelTexture__f18bc98 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
 /* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -45,7 +32,7 @@ struct Model__f18bc98 {
   s32 next;
   void *mesh;
   void *vertices;
-  struct ModelTexture__f18bc98 *texture;
+  struct ModelTexture *texture;
   s32 alpha;
   s32 tail;
 };
@@ -68,7 +55,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint user;
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct ModelTexture__f18bc98 texture;
+  struct ModelTexture texture;
   struct Particle *step;
   s32 i;
   s32 j;

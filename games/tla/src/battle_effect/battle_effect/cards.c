@@ -22,19 +22,6 @@ enum {
   CARD_SWORD,  // Sword Card, kind 91: a dagger strikes, and shards fly.
 };
 
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunCards moves: 1 of 1232 instructions in
- * tla-ja. */
-struct ModelTexture__f18ad40 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
 /* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -45,7 +32,7 @@ struct Model__f18ad40 {
   s32 next;
   void *mesh;
   void *vertices;
-  struct ModelTexture__f18ad40 *texture;
+  struct ModelTexture *texture;
   s32 alpha;
   s32 tail;
 };
@@ -70,7 +57,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   struct ScreenPoint card;
   struct ScreenPoint middle;
-  struct ModelTexture__f18ad40 texture;
+  struct ModelTexture texture;
   struct Particle *step;
   struct Model__f18ad40 *model;
   void *vertices;

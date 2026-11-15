@@ -31,20 +31,6 @@ struct Model;
 
 #define KIND123_FRAMES 111
 
-// A model for the ARM renderer (Render_DrawModelList).
-/* VIEW(liquifier): tag struct RenderModel as struct RenderModel__liquifier;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunLiquifier moves: 2 of 892 instructions in
- * tla-ja. */
-struct RenderModel__liquifier {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  u8 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-};
-
 /* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
@@ -215,7 +201,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
     {
       void *projected = Heap_AllocEwram(32);
-      struct RenderModel__liquifier *model = Render_AllocateModelList(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
       void *splash = gData_02014000;
 
       // Eight flashes turn about the caster, each for 16 frames from its

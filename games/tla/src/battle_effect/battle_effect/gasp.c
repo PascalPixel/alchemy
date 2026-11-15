@@ -11,21 +11,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f173aac): tag struct RenderModel as struct RenderModel__f173aac;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunGaspFamily moves: 13 of 4112 instructions in
- * tla-ja. */
-struct RenderModel__f173aac {
-  s32 kind;
-  s32 unk04;
-  const struct ModelFace *mesh;
-  struct ProjectedVertex *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // A second, larger particle table, always reached at its fixed address.
@@ -72,7 +57,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   u8 *sprites = Ram_HeapSlots->battleSheet;
   s32 *camera = Ram_HeapSlots->cameraWork;
   u8 *cells = Ram_MapCellBuffer;
-  struct RenderModel__f173aac *model;
+  struct RenderModel *model;
   void *verts;
   struct ModelTexture texture;
   s32 screen[3];

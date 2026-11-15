@@ -10,27 +10,16 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f17bd88): tag struct ModelTexture as struct ModelTexture__f17bd88;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunFirePuppet moves: 1 of 541 instructions in
- * tla-ja. */
-struct ModelTexture__f17bd88 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 /* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in
  * tla-ja. */
 struct RenderModel__f17bd88 {
   long kind; // long: see the tag at the model's stores
-  s32 unk04;
+  s32 flags;
   const void *mesh;
   void *vertices;
-  struct ModelTexture__f17bd88 *texture;
+  struct ModelTexture *texture;
   long shade; // long: see the tag at the model's stores
   u8 scrollU;
   u8 scrollV;
@@ -68,7 +57,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 *camera;
   struct PuppetTarget *target;
   struct ScreenPoint pos;
-  struct ModelTexture__f17bd88 texture;
+  struct ModelTexture texture;
   struct RenderModel__f17bd88 *model;
   s32 endX;
   s32 endY;

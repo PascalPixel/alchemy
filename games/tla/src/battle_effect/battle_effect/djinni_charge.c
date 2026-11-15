@@ -389,7 +389,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           model->scrollU = (frame / 4) & 63;
           model->scrollV = frame & 63;
           model->shade = shade;
-          model->unk04 = 3;
+          model->flags = 3;
           Render_ProjectVertices(cells, projected, 64);
           Render_DrawModelList(model);
         }

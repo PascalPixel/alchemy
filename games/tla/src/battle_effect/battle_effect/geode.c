@@ -276,7 +276,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       texture.logWidth = 8;
       texture.logHeight = 7;
       texture.pixels = picture;
-      model->unk04 = 3;
+      model->flags = 3;
       model->kind = 8;
       model->texture = &texture;
       model->mesh = mesh;

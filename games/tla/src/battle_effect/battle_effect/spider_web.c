@@ -210,21 +210,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunUlysses moves: 1 of 1912 instructions in
- * tla-ja. */
-struct RenderModel__f15b3b0 {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
     "Render_DrawModelList");
 #define Render_DrawModelList Render_DrawModelList__ability_effects
@@ -545,7 +530,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
     if ((u32)(frame - 133) <= 132) {
       void *verts;
-      struct RenderModel__f15b3b0 *model;
+      struct RenderModel *model;
       struct Particle *sparks;
       u8 *portraits = gMapGridCellBuffer;
       struct Particle *q;
@@ -703,7 +688,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
     if (draw && frame <= 131) {
       void *verts;
-      struct RenderModel__f15b3b0 *model;
+      struct RenderModel *model;
       s32 j;
 
       verts = Heap_AllocEwram(32);

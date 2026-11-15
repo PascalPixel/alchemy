@@ -244,7 +244,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       texture.pixels = (void *)cells;
       model->kind = 7;
       model->texture = &texture;
-      model->unk04 = 0;
+      model->flags = 0;
       model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;

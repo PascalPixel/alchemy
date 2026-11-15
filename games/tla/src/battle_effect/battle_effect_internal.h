@@ -1000,9 +1000,9 @@ extern const u8 gUlysses_ObjectX[];
 extern const u8 gUlysses_ObjectZ[];
 // The burst quad: its face list and its four corners, 64x64 pixels standing
 // on its base.
-extern const u8 gBattleEffect_SquareMesh[];
+extern const u16 gBattleEffect_SquareMesh[];
 // Triple Chomp's jaw quad: its mesh and its four corners.
-extern const u8 gBattleEffect_LargeSquareMesh[];
+extern const u16 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
@@ -1096,12 +1096,12 @@ extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
 extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
 // The geyser: a mesh of sixteen corners and its faces.
 extern const u8 gBattleEffect_OctagonBandCorners[];
-extern const u8 gCastingImpact_BandMesh[];
+extern const u16 gCastingImpact_BandMesh[];
 extern const u8 gBattleEffect_RingCorners[];
-extern const u8 gBattleEffect_RingMesh[];
+extern const u16 gBattleEffect_RingMesh[];
 extern const u8
     gBattleEffect_TaperedBeamCorners[];     // its corners (Thunder Mine)
-extern const u8 gBattleEffect_ColumnMesh[]; // a bolt's mesh
+extern const u16 gBattleEffect_ColumnMesh[]; // a bolt's mesh
 
 // particle_streams.c
 extern char ResourceId_FirePillarSheetA;
@@ -1188,7 +1188,7 @@ extern u8 Data_02010318[];
 extern const u8 gWindFunnel_Counts[]; // the funnels per mode
 extern char ResourceId_CrystalBitmapSheet;
 extern u8 Data_02014e20[]; // gMapGridCellBuffer + 20000, the berg
-extern const u8 gBattleEffect_CylinderMesh[];    // the ripple's mesh
+extern const u16 gBattleEffect_CylinderMesh[];    // the ripple's mesh
 extern const u8 gBattleEffect_CylinderCorners[]; // its corners
 extern const u8 gDiamondBerg_RingStarts[4];      // per ripple: its start,
 extern const u8 gDiamondBerg_RingGrowth[4];      // its growth
@@ -1217,13 +1217,13 @@ extern const s8 gSerac_RowRadii[];    // and radii
 extern const u8 gSerac_RingStarts[];  // each ripple's delay
 extern const u8 gSerac_RingGrowth[];  // its growth
 extern const s8 gSerac_RingHeights[]; // its height
-extern const u8 gBattleEffect_TriangleMesh[];
+extern const u16 gBattleEffect_TriangleMesh[];
 extern const u8 gBattleEffect_TriangleCorners[];
 
 // heavy_divide.c
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
-extern const u8 gHeavyBlow_SwordMesh[];      // the sword's mesh
+extern const u16 gHeavyBlow_SwordMesh[];      // the sword's mesh
 extern const u8 gBattleEffect_BeamCorners[]; // its corners
 extern u8 gHeavyBlow_StrikeFrames[];         // per mode: the strike's frame
 extern u8 gHeavyBlow_ChipCounts[];           // per mode: the chips
@@ -1239,7 +1239,7 @@ extern u16 gCool_SparkPictures[];
 extern u16 gCool_SparkSizes[];
 extern char ResourceId_Data0D8;
 extern const s8 gWyrdCurse_DropBounces[]; // the drops' bounce speeds
-extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // the glow's and the
+extern const u16 gBattleEffect_SmallSquareMeshReversed[]; // the glow's and the
 
 // thunder_mine.c
 extern char ResourceId_VioletPaletteC;
@@ -1272,7 +1272,7 @@ extern char ResourceId_StarCrossSheet;
 
 // gasp.c
 extern const s8 gGaspFamily_StreakSteps[];
-extern const u8 gGaspFamily_StreakMesh[];
+extern const u16 gGaspFamily_StreakMesh[];
 extern const u8 gGaspFamily_Counts[];
 extern const u8 gBattleEffect_LongBeamCorners[];
 extern char ResourceId_LightBurstSheet;
@@ -1339,7 +1339,7 @@ extern u16 Data_02014260[];
 extern char ResourceId_CrossedDaggersSheet;
 // The dagger quad: its face list and its four corners, 32x80 pixels from
 // (-16, -16) to (16, 64), the point down.
-extern const u8 gSabreDance_DaggerMesh[];
+extern const u16 gSabreDance_DaggerMesh[];
 extern const u8 gSabreDance_DaggerCorners[];
 extern char ResourceId_PinkStarSheet;
 
@@ -1358,7 +1358,7 @@ extern char ResourceId_Data181;
 extern char ResourceId_FirePillarSheetB;
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
-extern u8 gBattleEffect_TallMesh[];
+extern const u16 gBattleEffect_TallMesh[];
 // The streak's scale per mode, 16.16.
 extern const s32 gRushingStrike_Scales[];
 
@@ -1386,7 +1386,7 @@ extern u8 gDaedalus_SpritePoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
 extern u16 gDaedalus_ParticleStarts[];
 extern const u8 gDaedalusAlt_StrikeFrames[];     // the seven strike frames
-extern const u8 gBattleEffect_SmallSquareMesh[]; // the rings' mesh
+extern const u16 gBattleEffect_SmallSquareMesh[]; // the rings' mesh
 
 // vengeance.c
 extern char ResourceId_Data0B0;
@@ -1396,8 +1396,8 @@ extern u8 Data_020112e8[];                  // the reaper's raised pose
 extern u8 Data_0201276b[];                  // the blade's texture
 extern u8 Data_0201476b[];                  // the handle's texture
 extern u8 Data_0201576b[];                  // the flash's texture
-extern const u8 gLifeShear_BladeMesh[];     // the blade's mesh
-extern const u8 gLifeShear_HandleMesh[];    // the handle's mesh
+extern const u16 gLifeShear_BladeMesh[];     // the blade's mesh
+extern const u16 gLifeShear_HandleMesh[];    // the handle's mesh
 extern const u8 gLifeShear_ScytheCorners[]; // their corners
 extern char ResourceId_CrossTextureSheet;
 // Per mode: the drops' gravity, and their smallest cel.
@@ -1452,7 +1452,7 @@ extern char ResourceId_WhiteSpikesTiles;
 extern u8 Data_02016000[];
 extern struct Particle Data_02016d00[];
 extern const struct Scale gCatastrophe_UnitScale;
-extern const u8 gCatastrophe_BurstMesh[];
+extern const u16 gCatastrophe_BurstMesh[];
 extern const u16 gCatastrophe_FlashFrames[];
 extern const u16 gCatastrophe_FlashLengths[];
 extern const u8 gCatastrophe_DemonX[];
@@ -1483,8 +1483,8 @@ extern u8 Data_02010fa0[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
-extern const u8 gHaures_BandMesh[];
-extern const u8 gHaures_BurstMesh[];
+extern const u16 gHaures_BandMesh[];
+extern const u16 gHaures_BurstMesh[];
 extern const u8 gHaures_ParticleX[];
 extern s32 gHaures_UnitScale[];
 extern const u8 gHaures_WingShapes[];
@@ -1610,7 +1610,7 @@ extern const struct Scale gIris_UnitScale;
 extern s32 gIris_SplashRadii[];
 extern const u8 gIris_SplashOffsetsY[];
 extern const u8 gIris_ParticleCorners[];
-extern const u8 gIris_ParticleMesh[];
+extern const u16 gIris_ParticleMesh[];
 extern const u8 gIris_PsynergySoundFrames[];
 extern const u16 gIris_DoorSoundFrames[];
 extern const u16 gIris_PowerUpSoundFrames[];
@@ -1630,9 +1630,9 @@ extern const u8 gIris_DropFrames[];
 extern const u8 gIris_DropPictureSteps[];
 extern const u8 gIris_LeftStripCorners[];
 extern const u8 gIris_RightStripCorners[];
-extern const u8 gIris_StripMesh[];
+extern const u16 gIris_StripMesh[];
 extern const u8 gIris_ConeCorners[];
-extern const u8 gIris_ConeMesh[];
+extern const u16 gIris_ConeMesh[];
 extern const u32 BattleEffect_PatchTemplateCode[];
 extern const u32 BattleEffect_Mask[];
 extern const u16 Data_081973f0[];

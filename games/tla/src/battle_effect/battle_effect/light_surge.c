@@ -11,21 +11,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in
- * tla-ja. */
-struct RenderModel__f171430 {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct SurgeTarget {
@@ -68,7 +53,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 head[3];
   struct ScreenPoint center;
   struct ModelTexture texture;
-  struct RenderModel__f171430 *model;
+  struct RenderModel *model;
   struct Particle *fall;
   struct Particle *bolt;
   struct Particle *ring;

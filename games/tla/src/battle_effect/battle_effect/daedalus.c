@@ -1380,21 +1380,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
 struct FxPartyList;
 
-/* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunDaedalusAlt moves: 2 of 572 instructions in
- * tla-ja. */
-struct RenderModel__f17e698 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  s32 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -1583,7 +1568,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
     if ((u32)(frame - 56) <= 35) {
       s32 size;
       s32 grow = frame * 2 - 104;
-      struct RenderModel__f17e698 *model;
+      struct RenderModel *model;
       void *vertices;
       struct Particle *ring;
       u8 *cells;

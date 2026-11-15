@@ -15,21 +15,6 @@ struct Corner {
   s8 z;
 };
 
-/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunFume moves: 2 of 625 instructions in tla-ja.
- */
-struct RenderModel__f17c6ac {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 struct StarTarget {
   u8 unk00[8];
   s32 x;
@@ -84,7 +69,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct ScreenPoint caster;
   struct ScreenPoint target;
   struct ModelTexture texture;
-  struct RenderModel__f17c6ac *model;
+  struct RenderModel *model;
   struct Particle *spark;
   struct Particle *particle;
   s32 i;

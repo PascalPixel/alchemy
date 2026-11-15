@@ -16,9 +16,9 @@ struct StripQuad;
  * tla-ja. */
 struct RenderModel__f178710 {
   s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
+  s32 flags;
+  const u16 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   long shade; // long: its store orders after texture's, as an s32 one does not
   u8 scrollU;

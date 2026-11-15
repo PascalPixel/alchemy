@@ -973,6 +973,21 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+/* VIEW(undead_sword): tag struct RenderModel as struct
+ * RenderModel__undead_sword; render_model.h has another definition; tried with
+ * the definition the rest of the object has, BattleEffect_RunDiamondBerg
+ * moves: 1 of 655 instructions in tla-en. */
+struct RenderModel__undead_sword {
+  s32 kind;
+  s32 flags;
+  const u16 *mesh;
+  u8 *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
+
 #define DIAMOND_BERG_FRAMES 148
 
 // Abilities: Diamond Berg.
@@ -990,7 +1005,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint target;
   struct ModelTexture texture;
-  struct RenderModel *model;
+  struct RenderModel__undead_sword *model;
   s32 centerX;
   s32 top;
   s32 frame;
@@ -1150,7 +1165,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       model->kind = 7;
       model->texture = &texture;
       texture.pixels = cells;
-      model->unk04 = 0;
+      model->flags = 0;
       model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;

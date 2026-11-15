@@ -9,17 +9,6 @@
 
 struct Model;
 
-/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunCrystal moves: 1 of 487 instructions in
- * tla-ja. */
-struct ModelTexture__f16c274 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
 struct BattleObjectPosition {
   u8 unk00[8];
   s32 x;
@@ -46,7 +35,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 center[3];
   s32 other[3];
   struct ScreenPoint screen;
-  struct ModelTexture__f16c274 texture;
+  struct ModelTexture texture;
   s32 frame;
   s32 i;
   s32 size;

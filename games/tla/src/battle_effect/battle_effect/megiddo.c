@@ -23,6 +23,21 @@ struct ModelVertex {
 
 void Render_DrawModelList(struct Model *model);
 
+/* VIEW(megiddo): tag struct RenderModel as struct
+ * RenderModel__megiddo; render_model.h has another definition; tried with
+ * the definition the rest of the object has, BattleEffect_RunMegiddo
+ * moves: 1 of 1354 instructions in tla-en. */
+struct RenderModel__megiddo {
+  s32 kind;
+  s32 flags;
+  const u16 *mesh;
+  u8 *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
+
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
@@ -53,7 +68,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
   s32 m;
-  struct RenderModel *model;
+  struct RenderModel__megiddo *model;
   void *verts;
   struct Particle *p;
   struct ScreenPoint pos;
@@ -401,7 +416,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       model->kind = 7;
       model->mesh = meshB;
       tint = -24;
-      model->unk04 = 3;
+      model->flags = 3;
       model->shade = tint;
       model->scrollV = zero;
       if (frame > 142) {

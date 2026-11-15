@@ -414,7 +414,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               Data_020104f0[i].x = i * 4 - 64;
             }
           }
-          model->unk04 = 0;
+          model->flags = 0;
           model->kind = 1;
           model->mesh = strip;
           model->vertices = buffer;

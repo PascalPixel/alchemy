@@ -11,21 +11,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in
- * tla-ja. */
-struct RenderModel__f1843fc {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
@@ -60,9 +45,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s32 cueIndex;
   void *verts;
   s32 shade;
-  struct RenderModel__f1843fc *model;
-  struct RenderModel__f1843fc *model2;
-  struct RenderModel__f1843fc *model3;
+  struct RenderModel *model;
+  struct RenderModel *model2;
+  struct RenderModel *model3;
   s32 frame;
   s32 i;
   s32 j;

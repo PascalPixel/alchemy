@@ -13,17 +13,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunFlora moves: 2 of 2567 instructions in
- * tla-ja. */
-struct ModelTexture__f179f18 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct FloraObject {
@@ -86,7 +75,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u32 u;
   s32 place[4];
   struct Scale req;
-  struct ModelTexture__f179f18 texture;
+  struct ModelTexture texture;
   struct RenderModel *model;
   void *verts;
   struct Particle *p;

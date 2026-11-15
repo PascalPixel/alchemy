@@ -223,9 +223,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   }
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
-  while (candidateIds[targetIndex] == 254 ||
-         (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
-          ((struct BattleUnit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
+  while (
+      candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
+      (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
+       ((struct BattleUnit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }

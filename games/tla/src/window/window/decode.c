@@ -312,7 +312,7 @@ extern const struct PossessiveTable gLocalizedWord_ItemPossessives;
 extern const s8 gLocalizedWord_ItemGenders[];
 #endif
 #if LANGUAGE == LANGUAGE_GERMAN
-extern const u8 *const gText_NumberWords[];
+extern const u8 *const gLocalizedWord_CountedNouns[];
 #endif
 #endif
 #endif
@@ -702,7 +702,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_LOCALIZED_WORD:
             // A counted noun, singular or plural, by its kind.
             no = decode(messageReader) - 1;
-            for (nameBytes = (u8 *)gText_NumberWords[(no & 7) * 2 + plural];
+            for (nameBytes = (u8 *)gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
                  *nameBytes != 0; nameBytes++) {
               TEXT_APPEND(entry, writePosition, *nameBytes);
             }

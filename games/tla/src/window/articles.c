@@ -41,17 +41,18 @@ const s8 *const gArticle_Table[8] = {
     gArticle_Empty,
 };
 
-// The counted nouns (gText_NumberWords pairs them {singular, plural}).
-const u8 gText_NumberWord0[] = "K\xe4pfe";
-const u8 gText_NumberWord1[] = "Kampf";
-const u8 gText_NumberWord2[] = "Tickets";
-const u8 gText_NumberWord3[] = "Ticket";
-const u8 gText_NumberWord4[] = "Runden";
-const u8 gText_NumberWord5[] = "Runde";
-const u8 gText_NumberWord6[] = "M\xfcnzen";
-const u8 gText_NumberWord7[] = "M\xfcnze";
-const u8 gText_NumberWord8[] = "Punkte";
-const u8 gText_NumberWord9[] = "Punkt";
+/// Counted nouns, each plural before its singular; gLocalizedWord_CountedNouns
+/// (counted_nouns.c) pairs them as {singular, plural}.
+const u8 gLocalizedWord_Battles[] = "K\xe4pfe";
+const u8 gLocalizedWord_Battle[] = "Kampf";
+const u8 gLocalizedWord_Tickets[] = "Tickets";
+const u8 gLocalizedWord_Ticket[] = "Ticket";
+const u8 gLocalizedWord_Rounds[] = "Runden";
+const u8 gLocalizedWord_Round[] = "Runde";
+const u8 gLocalizedWord_Coins[] = "M\xfcnzen";
+const u8 gLocalizedWord_Coin[] = "M\xfcnze";
+const u8 gLocalizedWord_Points[] = "Punkte";
+const u8 gLocalizedWord_Point[] = "Punkt";
 
 static const s8 sPossessiveDein[] = "dein ";
 static const s8 sPossessiveDeine[] = "deine ";

@@ -251,7 +251,8 @@ extern const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[];
 
 extern const u8 gOwnerStatus_LevelString[];
 
-extern const u16 Data_0805f676[];
+/// The ability of each summon, by its number.
+extern const u16 gSummon_Abilities[];
 
 extern const u8 gWindow_PairBobOffsets[];
 

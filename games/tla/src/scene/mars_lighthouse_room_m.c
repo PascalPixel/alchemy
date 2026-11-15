@@ -1764,19 +1764,16 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
- * scene/scene.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1669: redefinition of `struct
- * Work020023c4'. */
-#define Work020023c4 Work020023c4__s2708
-struct Work020023c4 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[4];
-  u16 unk0a;
-  u8 unk0c[0x6c - 0x0c];
-  struct Actor *unk6c;
+/// The ride work as a rolling actor reads it when it reaches the leader:
+/// whether a hit is under way, the step trigger a hit raises, and the actor
+/// that carries the leader off.
+struct RideHitView {
+  u8 beforeActive[4];
+  u16 active;
+  u8 beforeHitTrigger[4];
+  u16 hitTrigger;
+  u8 beforeCar[0x6c - 0x0c];
+  struct Actor *car;
 };
 
 /// An actor rolls forward, crumbling the cells it passes.
@@ -1807,7 +1804,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     struct MapWork *map;
     struct MapCell *cell;
     struct FieldWork *fieldWork;
-    struct Work020023c4 *other;
+    struct RideHitView *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
@@ -1878,14 +1875,14 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
     fieldWork = Ram_HeapSlots->fieldWork;
-    other = (struct Work020023c4 *)RIDE_WORK;
+    other = (struct RideHitView *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
-      other->unk04 = 2;
-      other->unk6c = actor;
-      fieldWork->stepTrigger = other->unk0a + 2;
+      other->active = 2;
+      other->car = actor;
+      fieldWork->stepTrigger = other->hitTrigger + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;
@@ -2127,5 +2124,3 @@ u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
     SC_RELEASE,
 };
 // clang-format on
-
-#undef Work020023c4

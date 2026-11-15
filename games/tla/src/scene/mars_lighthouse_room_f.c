@@ -2007,6 +2007,16 @@ s32 Ride_GetEntryFlags(s32 index) {
 extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
     "MapGrid_CheckCollision");
 
+/// The ride work as the knock-back reads it: whether a hit is under way, and
+/// the way the flame went along x and z, 1, -1 or 0.
+struct RideKnockView {
+  u8 beforeActive[4];
+  u16 active;
+  u8 beforeDirection[0x68 - 6];
+  s16 directionX;
+  s16 directionZ;
+};
+
 /// Hit by the flames: the leader, hurt and blinking, is thrown back the way the
 /// flame went until he meets a wall or drops from a ledge.
 #if TLA_PATCH_1
@@ -2015,7 +2025,7 @@ void MarsLighthouseRoomF_KnockBack(void) {
 s32 MarsLighthouseRoomF_KnockBack(void) {
 #endif
   struct MainRoutineWork *main = &gMainRoutineWork;
-  struct Work020023c4 *work;
+  struct RideKnockView *work;
 #if TLA_PATCH_1
   struct Vector3 position;
 #else
@@ -2038,7 +2048,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
-    work = (struct Work020023c4 *)RIDE_WORK;
+    work = (struct RideKnockView *)RIDE_WORK;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Actor_Blink;
@@ -2054,13 +2064,13 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
            s32 value;
            u16 half;
          } *)&actor->velocityX)
-            ->value = work->unk68 << 17;
-        actor->velocityZ = work->unk6a << 17;
+            ->value = work->directionX << 17;
+        actor->velocityZ = work->directionZ << 17;
         actor->acceleration = Q16_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + (work->unk68 << 19);
+          position.x = actor->x.fixed + (work->directionX << 19);
           position.y = actor->y.fixed;
-          position.z = actor->z.fixed + (work->unk6a << 19);
+          position.z = actor->z.fixed + (work->directionZ << 19);
           if (MapGrid_CheckCollisionOfActor(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -2081,9 +2091,9 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         s32 x, z, off, oldZ;
 #endif
 
-        position.x = actor->x.fixed + (work->unk68 << 19);
+        position.x = actor->x.fixed + (work->directionX << 19);
         position.y = actor->y.fixed;
-        position.z = actor->z.fixed + (work->unk6a << 19);
+        position.z = actor->z.fixed + (work->directionZ << 19);
         result = MapGrid_CheckCollisionOfActor(actor);
         if (result > 0)
           break;
@@ -2109,15 +2119,15 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         }
 #endif
         do {
-          x = actor->x.fixed += work->unk68 << 17;
+          x = actor->x.fixed += work->directionX << 17;
         } while (0);
 #if TLA_PATCH_1
-        z = actor->z.fixed + (work->unk6a << 17);
+        z = actor->z.fixed + (work->directionZ << 17);
 #else
         do {
           oldZ = actor->z.fixed;
         } while (0);
-        z = oldZ + (work->unk6a << 17);
+        z = oldZ + (work->directionZ << 17);
 #endif
         actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
@@ -2132,7 +2142,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
         actor->z.fixed = z - off;
-        work->unk04 = 0;
+        work->active = 0;
         System_Wait(1);
       }
     }
@@ -2142,7 +2152,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     actor->update = NULL;
     Actor_SetSpriteColorMode(actor, 0);
   }
-  work->unk04 = 0;
+  work->active = 0;
 #if !TLA_PATCH_1 && defined(UBFIX)
   return 0;
 #endif
@@ -2350,16 +2360,16 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c
- * has another definition; not tried: struct Work020023c4__s2f80 was not found.
- */
-struct Work020023c4__s2f80 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[4];
-  u16 unk0a;
-  u8 unk0c[0x6c - 0x0c];
-  struct Actor *unk6c;
+/// The ride work as a rolling actor reads it when it reaches the leader:
+/// whether a hit is under way, the step trigger a hit raises, and the actor
+/// that carries the leader off.
+struct RideHitView {
+  u8 beforeActive[4];
+  u16 active;
+  u8 beforeHitTrigger[4];
+  u16 hitTrigger;
+  u8 beforeCar[0x6c - 0x0c];
+  struct Actor *car;
 };
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
@@ -2394,7 +2404,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     struct MapWork *map;
     struct MapCell *cell;
     struct FieldWork *fieldWork;
-    struct Work020023c4__s2f80 *other;
+    struct RideHitView *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
@@ -2465,14 +2475,14 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
     fieldWork = Ram_HeapSlots->fieldWork;
-    other = (struct Work020023c4__s2f80 *)RIDE_WORK;
+    other = (struct RideHitView *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
-      other->unk04 = 2;
-      other->unk6c = actor;
-      fieldWork->stepTrigger = other->unk0a + 2;
+      other->active = 2;
+      other->car = actor;
+      fieldWork->stepTrigger = other->hitTrigger + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;

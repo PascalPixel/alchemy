@@ -65,8 +65,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   pageCounts[1] = 1;
   if (mode <= DJINN_COMPARE_GIVE) {
     u16 *diffWork;
-    u8 *original;
-    u8 *unit;
+    struct Unit *original;
+    struct Unit *unit;
     s32 memberId;
     s32 firstElement;
     s32 firstIndex;
@@ -79,7 +79,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 size;
 
     diffWork = Heap_AllocEwram(96);
-    size = 332;
+    size = sizeof(struct Unit);
     original = Heap_AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
@@ -99,9 +99,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         Djinn_SetFar(memberId, secondElement, secondIndex);
     }
     Unit_CalculateFar(memberId);
-    pageCounts[0] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
+    pageCounts[0] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWordsEntry(unit, original, size);
 
     memberId = menu->shownMember[1];
@@ -113,16 +112,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (firstWasSet != 0)
       Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[1] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
+    pageCounts[1] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWordsEntry(unit, original, size);
     Heap_Release(original);
     Heap_Release(diffWork);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
-    u8 *original;
-    u8 *unit;
+    struct Unit *original;
+    struct Unit *unit;
     s32 memberId;
     s32 firstElement;
     s32 firstIndex;
@@ -131,21 +129,20 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 gainedCount;
 
     diffWork = Heap_AllocEwram(96);
-    original = Heap_AllocEwram(332);
+    original = Heap_AllocEwram(sizeof(struct Unit));
     memberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     applySecond = (mode == DJINN_COMPARE_SET);
     unit = Unit_Get(memberId);
-    Iwram_CopyWordsEntry(original, unit, 332);
+    Iwram_CopyWordsEntry(original, unit, sizeof(struct Unit));
     Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (applySecond != 0)
       Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[0] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
-    Iwram_CopyWordsEntry(unit, original, 332);
+    pageCounts[0] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
+    Iwram_CopyWordsEntry(unit, original, sizeof(struct Unit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
     Heap_Release(original);
@@ -344,11 +341,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         for (index = 0; index < pageCounts[page]; index++) {
           s32 tile;
 
-          tile = 0xf031 + index;
+          tile = WINDOW_TILE('1') + index;
           if (index > 8)
-            tile = 0xf03f;
+            tile = WINDOW_TILE('?');
           if (index == selectedPages[page])
-            tile -= 0x1000;
+            tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
           Window_SetTilemapEntryFar((s32)list, tile,
                                     list->width - pageCounts[page] + index - 2,
                                     -1, 0);
@@ -564,11 +561,11 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     if (counts[side] > 1) {
       window = menu->secondWindow;
       for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
-        tile = 0xf031 + pageIndex;
+        tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 8)
-          tile = 0xf03f;
+          tile = WINDOW_TILE('?');
         if (pageIndex == selected[side])
-          tile -= 0x1000;
+          tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar((s32)window, tile,
                                   window->width - counts[side] + pageIndex - 2,
                                   -1, 0);

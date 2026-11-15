@@ -1878,16 +1878,13 @@ void TaopoSwamp_SaveFirmGround(void) {
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = TaopoSwamp_CreateActor(0x11d, position[0], position[1],
                                                 position[2] - px(2));
-  s32 angle;
 
   if (object != 0) {
     object->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
-    /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the pool
-     * word 0xffff8000. */
-    angle = (u16)Random16() - 0x8000;
-    object->timer = angle;
+    // A spin of up to half a turn a frame, either way.
+    object->timer = Random_Below(TRIG_TURN) - TRIG_TURN / 2;
     Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Vent_Bounce;
     Actor_SetBlendMode(object, 1);

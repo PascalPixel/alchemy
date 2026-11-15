@@ -873,7 +873,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   {
     s32 a0 = ACTOR_JENNA;
 
-    /* FAKEMATCH(dead): an empty once-only block before the angle's load. */
+    /* FAKEMATCH(dead): an empty once-only block before the angle's load; as
+     * the plain call, 2 of 2142 instructions differ in tla-en. */
     do {
     } while (0);
     Actor_FaceDirection(a0, FACING_SOUTH, 0);
@@ -909,7 +910,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
-  /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
+  /* FAKEMATCH(dead): an empty once-only block ends CSE's block; as no
+   * block, 78 of 2142 instructions differ in tla-en. */
   do {
   } while (0);
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;

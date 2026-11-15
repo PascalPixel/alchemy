@@ -82,6 +82,9 @@ enum DisplayControl {
 /// The screen's size in pixels.
 #define DISPLAY_WIDTH 240
 #define DISPLAY_HEIGHT 160
+/// The screen's size in 8-pixel tiles.
+#define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
+#define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
 
 // The two windows' edges, each a WIN_RANGE value in pixels.
 #define REG_WIN0H (*(volatile u16 *)0x04000040) ///< window 0, left and right
@@ -153,8 +156,11 @@ enum DisplayControl {
 #define BLDCNT_TGT2_ALL 0x3f00       ///< second target: every layer
 
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052) ///< the blend's weights
+/// A blend weight's full strength: BLEND_ALPHA(BLEND_WEIGHT_MAX, 0) shows only
+/// the top layer.
+#define BLEND_WEIGHT_MAX 16
 /// A REG_BLDALPHA value: top and bottom are the two targets' weights, out
-/// of 16.
+/// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
 
@@ -176,17 +182,24 @@ enum DisplayControl {
 /// Palette RAM, as pret names it: the background colours, then the sprites'.
 #define PLTT 0x05000000
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
+#define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
+/// Colours in palette RAM: the background's, then the sprites'.
+#define PLTT_COLORS (2 * BG_PLTT_COLORS)
 
 /// Background colour 0, the backdrop shown where no layer draws.
 #define PLTT_BACKDROP (*(volatile u16 *)PLTT)
 
 #define BG_PLTT ((volatile u16 *)PLTT) ///< 16 palettes of 16 colours
+/// Colours in one 16-colour palette.
+#define PALETTE_COLORS 16
 /// Colour `color` of 16-colour background palette `palette`.
-#define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
+#define BG_PLTT_COLOR(palette, color)                                          \
+  (BG_PLTT[(palette) * PALETTE_COLORS + (color)])
 #define OBJ_PLTT                                                               \
   ((volatile u16 *)(PLTT + BG_PLTT_SIZE)) ///< the sprites' 256 colours
 /// Colour `color` of 16-colour sprite palette `palette`.
-#define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
+#define OBJ_PLTT_COLOR(palette, color)                                         \
+  (OBJ_PLTT[(palette) * PALETTE_COLORS + (color)])
 
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
@@ -208,12 +221,15 @@ enum DisplayControl {
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
+/// Tiles in a row of a screen block, whose map is 32 tiles square.
+#define BG_SCREEN_WIDTH 32
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
+#define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
 /// tile.
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)

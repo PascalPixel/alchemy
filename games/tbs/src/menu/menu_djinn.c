@@ -418,9 +418,9 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
 
       paletteIndex = paletteNumber * 16 + colorIndex;
       color = ((u16 *)BG_PLTT)[paletteIndex];
-      blue = (color >> 10) & RGB_LEVEL_MAX;
-      green = (color >> 5) & RGB_LEVEL_MAX;
-      red = color & RGB_LEVEL_MAX;
+      blue = RGB_BLUE(color);
+      green = RGB_GREEN(color);
+      red = RGB_RED(color);
       blue += brightnessDelta;
       green += brightnessDelta;
       red += brightnessDelta;

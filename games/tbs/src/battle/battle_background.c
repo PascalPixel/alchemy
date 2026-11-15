@@ -89,9 +89,9 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
     s32 colorIndex;
 
     for (colorIndex = 0; colorIndex != BATTLE_BG_PALETTE_COLORS; colorIndex++) {
-      s32 red = source[colorIndex] & 31;
-      s32 green = (source[colorIndex] >> 5) & 31;
-      s32 blue = (source[colorIndex] >> 10) & 31;
+      s32 red = RGB_RED(source[colorIndex]);
+      s32 green = RGB_GREEN(source[colorIndex]);
+      s32 blue = RGB_BLUE(source[colorIndex]);
 
       if (red > fade) {
         red -= fade;

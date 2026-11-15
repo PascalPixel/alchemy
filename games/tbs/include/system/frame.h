@@ -13,6 +13,9 @@
 
 #include "types.h"
 
+/// Frames in a second: the screen refreshes about 60 times a second.
+#define FRAMES_PER_SECOND 60
+
 /// Set by wait() once it has built a frame's OAM list; the VBlank handler
 /// then copies the list, the BG scroll and the queued register writes, and
 /// clears it.

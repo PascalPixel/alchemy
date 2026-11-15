@@ -17,19 +17,19 @@ void Palette_UpdatePulseBrightness(void) {
     u32 angle = (gFrameCount * 3U) << 10;
     u32 color = palette[16];
     s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
-    s32 blue = (color >> 10) & 0x1f;
-    s32 green = (color >> 5) & 0x1f;
-    s32 red = color & 0x1f;
+    s32 blue = RGB_BLUE(color);
+    s32 green = RGB_GREEN(color);
+    s32 red = RGB_RED(color);
 
     blue += brightness;
     green += brightness;
     red += brightness;
-    if (blue < 0 || blue > 31)
-      blue = 31;
-    if (green < 0 || green > 31)
-      green = 31;
-    if (red < 0 || red > 31)
-      red = 31;
+    if (blue < 0 || blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
+    if (green < 0 || green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (red < 0 || red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     *palette++ = RGB(red, green, blue);
   }
 }
@@ -509,20 +509,20 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
     for (i = 0; i < 16; i++) {
       s32 index = source * 16 + i;
       u32 color = ((u16 *)BG_PLTT)[index];
-      s32 blue = (color >> 10) & 31;
-      s32 green = (color >> 5) & 31;
-      s32 red = color & 31;
+      s32 blue = RGB_BLUE(color);
+      s32 green = RGB_GREEN(color);
+      s32 red = RGB_RED(color);
       s32 adjusted;
 
       blue += offset;
       green += offset;
       red += offset;
-      if (blue > 31)
-        blue = 31;
-      if (green > 31)
-        green = 31;
-      if (red > 31)
-        red = 31;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
       if (blue < 0)
         blue = 0;
       if (green < 0)

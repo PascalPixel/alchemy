@@ -200,14 +200,15 @@ struct Actor;
 struct FieldSprite;
 union FieldObject;
 
-/// A view of the map work's byte 23.
-struct MapWorkByte23 {
+/// The map work's ground effects byte (MapWork.groundEffects), read as its
+/// bits.
+struct MapGroundEffectsView {
   u8 unk00[0x17];
-  u8 bits0 : 2;
+  u8 lowBits : 2;
   // XXX: what bits 2 and 3 select; the map code that reads them would settle
   // it.
-  u8 bits2 : 2;
-  u8 bits4 : 4;
+  u8 middleBits : 2;
+  u8 highBits : 4;
 };
 
 /// The sprite's priority bits, read as the byte that holds them.
@@ -681,7 +682,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
 
 /// While the party's render mode is 0, clears the map cell flag under the
 /// object.
-#define DEFINE_TRIAL_ROAD_ON_FOOT(name, call1)                                 \
+#define DEFINE_TRIAL_ROAD_ON_FOOT(name, onFoot)                                \
   void name(s32 a, s32 id) {                                                   \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
     u8 mode;                                                                   \
@@ -689,7 +690,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
     mode = party->movementMode;                                                \
                                                                                \
     if (mode == 0)                                                             \
-      call1(id);                                                               \
+      onFoot(id);                                                              \
   }
 
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_UnblockMovedPillar,
@@ -1350,7 +1351,7 @@ void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(0x9b9)) {
     Import_MadPlantLeapAtLeader(249, 72, 152);
-    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b9);
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 4);
   }
@@ -1642,7 +1643,7 @@ void TrialRoad_SetUpFountainStage(void) {
     Actor_SetPosition(ACTOR_EAST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(18);
-  ((struct MapWorkByte23 *)Ram_HeapSlots->mapGrid)->bits2 = 1;
+  ((struct MapGroundEffectsView *)Ram_HeapSlots->mapGrid)->middleBits = 1;
   TrialRoad_AddPillarTop(15);
   TrialRoad_BlockCellUnder(15);
 }
@@ -2086,12 +2087,12 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px + 42, row, 13, 21, x1 + 1, 13);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
         i = 0;
-      hideUnused55:
+      hide_unused:
         if (gTrialRoad_DemoSceneryStages[i] != value)
           Actor_SetPosition(i + 64, 0, 0);
         i++;
         if (i <= 9)
-          goto hideUnused55;
+          goto hide_unused;
         MapGrid_CenterOnFollowedPoint();
       } else {
         s32 x1;
@@ -2355,11 +2356,11 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_WalkTo(ACTOR_WEST_GUARD, TrialRoad_MirrorCellX(37), 248);
   Actor_WalkTo(ACTOR_EAST_GUARD, TrialRoad_MirrorCellX(37), 280);
   Actor_WaitForMoveById(ACTOR_MOAPA);
-  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Actor_WaitForMoveById(ACTOR_WEST_GUARD);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Actor_WaitForMoveById(ACTOR_EAST_GUARD);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You were quite swift! You may prove a challenge yet!"
@@ -2493,13 +2494,13 @@ void TrialRoad_BeatMoapa(void) {
   Event_Wait(5);
   Actor_SetAnimation(ACTOR_MOAPA, 1);
   Event_Wait(15);
-  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Actor_SetAnimation(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Actor_SetAnimation(ACTOR_EAST_GUARD, 1);
   Event_Wait(5);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "As we promised, you will receive the Hover Jade, and we will take..."

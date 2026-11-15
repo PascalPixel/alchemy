@@ -81,13 +81,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// Whirlwind blows away one of the two overgrowths (actors 8 and 10) for good,
 /// opening the cell behind it (flags 0x9a9 and 0x9aa).
-void ShamanVillageCave_BlowAwayOvergrowth(s32 arg0, s32 arg1) {
-  if (arg1 != 8)
+void ShamanVillageCave_BlowAwayOvergrowth(s32 unused, s32 overgrowth) {
+  if (overgrowth != 8)
     goto notFirst;
   Event_SetFlag(0x9a9);
-  MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, arg1);
+  MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, overgrowth);
 notFirst:
-  if (arg1 != 10)
+  if (overgrowth != 10)
     goto done;
   Event_SetFlag(0x9aa);
   MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
@@ -261,12 +261,12 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// The Golden Shirt the gladiators leave goes to the party, if there is room.
 void ShamanVillageCave_TakeGoldenShirt(void) {
-  s32 result0;
+  s32 result;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Value3((s32 (*)())Event_PickUpItem, 22, 0x190, -1);
-  if (result0 != 0)
+  result = Value3((s32 (*)())Event_PickUpItem, 22, 0x190, -1);
+  if (result != 0)
     goto taken;
   Event_ClearFlag(0xa73);
 taken:
@@ -704,16 +704,16 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 result0;
-  s32 result1;
+  s32 firstBlownAway;
+  s32 secondBlownAway;
 
-  result0 = Event_GetFlag(0x9a9);
-  if (result0 == 0)
+  firstBlownAway = Event_GetFlag(0x9a9);
+  if (firstBlownAway == 0)
     goto firstDone;
   MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, 8);
 firstDone:
-  result1 = Event_GetFlag(0x9aa);
-  if (result1 == 0)
+  secondBlownAway = Event_GetFlag(0x9aa);
+  if (secondBlownAway == 0)
     goto done;
   MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
 done:

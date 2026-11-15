@@ -1950,16 +1950,16 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       x = *values++;
       i = 0;
       if (x > 0) {
-      loop2:
+      next_value:
         work->values[i++] = x;
         if (i > 3)
-          goto done2;
+          goto values_done;
         x = *values++;
         if (x > 0)
-          goto loop2;
+          goto next_value;
       }
     }
-  done2:;
+  values_done:;
   }
   work->arg = arg;
   if (REG_BLDCNT == 0) {

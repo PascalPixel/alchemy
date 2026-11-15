@@ -328,7 +328,7 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
     marker->z.fixed = z;
     radius = rise;
     FieldVector_AddPolarOffsetFixed(radius, *angle, &marker->x);
-    marker->facing = *angle + 0x4000;
+    marker->facing = *angle + TRIG_TURN / 4;
     *angle += 0x400;
   }
 }
@@ -787,7 +787,7 @@ void WorldMap_ShowGoldenBoots(void) {
   animation = object->sprite;
   animation[17] |= 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
-  a = 0x4000;
+  a = FACING_SOUTH;
   id = ACTOR_GOLDEN_BOOTS;
   Actor_SetPositionAndFacing(id, px(10168), px(9648), a);
   Event_SetFlag(0xa77);
@@ -953,11 +953,11 @@ void WorldMap_ExplainGivingDjinn(void) {
   Field_RequestBattleFromEncounterTable(9, 5);
 }
 
-#define ARM_WEST(id)                                                           \
+#define ARM_NORTH(id)                                                          \
   do {                                                                         \
     /* FAKEMATCH(barrier): the native copies the angle before it loads the     \
      * actor id. */                                                            \
-    s32 a1 = west;                                                             \
+    s32 a1 = north;                                                            \
                                                                                \
     asm volatile("" : "+l"(a1));                                               \
     Actor_FaceDirection(id, a1, 0);                                            \
@@ -965,13 +965,13 @@ void WorldMap_ExplainGivingDjinn(void) {
 
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.
 void WorldMap_FightBanditAndThieves(s32 entrance) {
-  s32 east, west, east74, eastB, westB;
+  s32 south, north, facingSouth, southB, northB;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   if (entrance == 9) {
-    west = 0xc000;
-    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9000), west);
+    north = FACING_NORTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9000), north);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
@@ -982,25 +982,25 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
     Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 32);
-    Actor_FaceDirection(ACTOR_FELIX, west, 0);
+    Actor_FaceDirection(ACTOR_FELIX, north, 0);
     Event_WaitForZoomTransition();
     Actor_WaitForMoveById(ACTOR_FELIX);
     WorldMap_Freeze();
     {
       /* FAKEMATCH(barrier): the native copies the angle before the other
        * arguments. */
-      s32 a3 = west;
+      s32 a3 = north;
 
       asm volatile("" : "+l"(a3));
       Actor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, a3);
     }
     Actor_WaitForScriptEndById(ACTOR_KRADEN);
-    Actor_FaceDirectionAndWait(ACTOR_KRADEN, west);
-    east = 0x4000;
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, north);
+    south = FACING_SOUTH;
     Event_Wait(10);
-    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9600), east);
-    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10168), px(9600), east);
-    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10168), px(9600), east);
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9600), south);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10168), px(9600), south);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10168), px(9600), south);
     Actor_WalkBy(ACTOR_BANDIT, 0, 16);
     Actor_WalkBy(ACTOR_THIEF_A, -16, 16);
     Actor_WalkByAndWait(ACTOR_THIEF_B, 16, 16);
@@ -1022,11 +1022,11 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_THIEF_A, 2);
-    ARM_WEST(ACTOR_FELIX);
+    ARM_NORTH(ACTOR_FELIX);
     {
       /* FAKEMATCH(barrier): the native copies the angle, loads the 0 and then
        * the actor. */
-      s32 a1 = west, a2;
+      s32 a1 = north, a2;
 
       asm volatile("" : "+l"(a1));
       a2 = 0;
@@ -1057,16 +1057,16 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "You've got a grudge against Isaac, and you're going to take it out..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    ARM_WEST(ACTOR_FELIX);
-    ARM_WEST(ACTOR_KRADEN);
+    ARM_NORTH(ACTOR_FELIX);
+    ARM_NORTH(ACTOR_KRADEN);
     // "Oh yeah, you could call it a grudge... A serious grudge."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
     Actor_WalkBy(ACTOR_FELIX, 8, -8);
     Actor_WalkBy(ACTOR_KRADEN, -8, 8);
     Actor_WaitForMoveById(ACTOR_FELIX);
     Actor_WaitForMoveById(ACTOR_KRADEN);
-    ARM_WEST(ACTOR_FELIX);
-    ARM_WEST(ACTOR_KRADEN);
+    ARM_NORTH(ACTOR_FELIX);
+    ARM_NORTH(ACTOR_KRADEN);
     {
       /* FAKEMATCH(barrier): the native starts 0x102, loads the 30, shifts, and
        * loads the actor last. */
@@ -1098,10 +1098,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Field_RequestBattleFromEncounterTable(102, 3);
   } else if (entrance == 74) {
     Event_ClearFlag(0xa76);
-    east74 = 0x4000;
-    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9616), east74);
-    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9616), east74);
-    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9616), east74);
+    facingSouth = FACING_SOUTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9616), facingSouth);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9616), facingSouth);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9616), facingSouth);
     {
       s32 a3 = 0xe000;
 
@@ -1122,11 +1122,11 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "It looks like Isaac runs with a pretty feeble crowd..."
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
-    Actor_FaceDirectionAndWait(ACTOR_THIEF_A, east74);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_A, facingSouth);
     Event_Wait(10);
     // "Well, we have been working out. Maybe Isaac won't be so tough this..."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
-    Actor_FaceDirectionAndWait(ACTOR_THIEF_B, east74);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_B, facingSouth);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_THIEF_B, 2);
     Event_Wait(5);
@@ -1134,7 +1134,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
     Actor_SetAnimationAndWait(ACTOR_THIEF_A, 3);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(ACTOR_BANDIT, east74);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, facingSouth);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Event_Wait(5);
@@ -1160,13 +1160,13 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     gFieldWork->transition = 0;
   } else {
     Event_ClearFlag(0xa76);
-    eastB = 0x4000;
-    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9632), eastB);
-    westB = 0xc000;
-    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9632), eastB);
-    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9632), eastB);
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(10160), px(9680), westB);
-    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), westB);
+    southB = FACING_SOUTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9632), southB);
+    northB = FACING_NORTH;
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9632), southB);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9632), southB);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(10160), px(9680), northB);
+    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), northB);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
@@ -1204,9 +1204,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "We're not gonna have to go to jail, are we?"
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Actor_FaceDirection(ACTOR_BANDIT, eastB, 0);
-    Actor_FaceDirection(ACTOR_THIEF_A, eastB, 0);
-    Actor_FaceDirection(ACTOR_THIEF_B, eastB, 0);
+    Actor_FaceDirection(ACTOR_BANDIT, southB, 0);
+    Actor_FaceDirection(ACTOR_THIEF_A, southB, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, southB, 0);
     // "You're thieves!"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_SetAnimation(ACTOR_BANDIT, 3);
@@ -1224,7 +1224,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(ACTOR_THIEF_B, FACING_WEST, 0);
     Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Actor_FaceDirectionAndWait(ACTOR_BANDIT, eastB);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, southB);
     Event_Wait(20);
     // "Are you guys, like, wandering sheriffs or something?"
     Event_OpenMessage(20, 0);
@@ -2804,7 +2804,7 @@ u32 gWorldMap_GlowColorModes[] = {
 
 #undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
-#undef ARM_WEST
+#undef ARM_NORTH
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode

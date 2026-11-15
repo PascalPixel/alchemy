@@ -975,9 +975,9 @@ loop_3:
   FieldEvent_Wait(20);
   angle = FACING_SOUTH;
   YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                   232 << 16, 184 << 16, angle);
+                                   px(232), px(184), angle);
   wait(1);
-  YampiDesert_BurstSand(232 << 16, 0, 184 << 16);
+  YampiDesert_BurstSand(px(232), 0, px(184));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   partner->velocityY = px(6);
   partner->priorityFlags &= ~2;
@@ -1382,8 +1382,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
 /// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's
 /// battle.
 struct Actor *YampiDesert_CreateScoopGem(void) {
-  struct Actor *object =
-      Import_ActorCreate(489, 232 << 16, 32 << 16, 200 << 16);
+  struct Actor *object = Import_ActorCreate(489, px(232), px(32), px(200));
   u8 *buffer = 0;
 
   struct YampiDesertVisual *visual;
@@ -1815,11 +1814,11 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
   u8 *state = &object->riseCounter;
 
   switch (*state) {
-    WALK(0, 156 << 17, 166 << 18)
+    WALK(0, px(312), px(664))
     ARRIVE(1, 2)
-    WALK(2, 156 << 17, 182 << 18)
+    WALK(2, px(312), px(728))
     ARRIVE(3, 4)
-    WALK(4, 246 << 16, 182 << 18)
+    WALK(4, px(246), px(728))
   case 5:
     if (YampiDesert_HasArrived(object)) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
@@ -1830,17 +1829,17 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
       }
     }
     break;
-    WALK(6, 184 << 16, 182 << 18)
+    WALK(6, px(184), px(728))
     ARRIVE(7, 8)
-    WALK(8, 184 << 16, 178 << 18)
+    WALK(8, px(184), px(712))
     ARRIVE(9, 10)
-    WALK(10, 140 << 17, 178 << 18)
+    WALK(10, px(280), px(712))
     ARRIVE(11, 12)
-    WALK(12, 140 << 17, 190 << 18)
+    WALK(12, px(280), px(760))
     ARRIVE(13, 14)
-    WALK(14, 232 << 16, 190 << 18)
+    WALK(14, px(232), px(760))
     ARRIVE(15, 16)
-    WALK(16, 232 << 16, 186 << 18)
+    WALK(16, px(232), px(744))
   case 17:
     if (YampiDesert_HasArrived(object)) {
       if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
@@ -1849,7 +1848,7 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
         *state = 32;
     }
     break;
-    WALK(18, 232 << 16, 166 << 18)
+    WALK(18, px(232), px(664))
     ARRIVE(19, 0)
   case 32:
     YampiDesert_ClearRaisedEvent();
@@ -1857,11 +1856,11 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
     *state = 33;
     break;
     ARRIVE(33, 34)
-    WALK(34, 148 << 17, 190 << 18)
+    WALK(34, px(296), px(760))
     ARRIVE(35, 36)
-    WALK(36, 232 << 16, 190 << 18)
+    WALK(36, px(232), px(760))
     ARRIVE(37, 38)
-    WALK(38, 232 << 16, 186 << 18)
+    WALK(38, px(232), px(744))
     ARRIVE(39, 32)
   }
 }
@@ -1891,7 +1890,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags = 3;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                     232 << 16, 664 << 16, 0);
+                                     px(232), px(664), 0);
     leader->riseCounter = 0;
     leader->update = YampiDesert_ScorpionRoamsKingScorpion;
   }
@@ -1928,21 +1927,21 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
   u8 *state = &object->riseCounter;
 
   switch (*state) {
-    WALK(0, 156 << 17, 132 << 17)
+    WALK(0, px(312), px(264))
     ARRIVE(1, 2)
-    WALK(2, 156 << 17, 172 << 17)
+    WALK(2, px(312), px(344))
     ARRIVE(3, 4)
-    WALK(4, 148 << 17, 172 << 17)
+    WALK(4, px(296), px(344))
     ARRIVE_OR(5, 0x202, 32, 6)
-    WALK(6, 168 << 16, 172 << 17)
+    WALK(6, px(168), px(344))
     ARRIVE(7, 8)
-    WALK(8, 168 << 16, 148 << 17)
+    WALK(8, px(168), px(296))
     ARRIVE(9, 10)
-    WALK(10, 184 << 16, 148 << 17)
+    WALK(10, px(184), px(296))
     ARRIVE_OR(11, 0x201, 48, 12)
-    WALK(12, 140 << 17, 148 << 17)
+    WALK(12, px(280), px(296))
     ARRIVE(13, 14)
-    WALK(14, 140 << 17, 164 << 17)
+    WALK(14, px(280), px(328))
   case 15:
     if (YampiDesert_HasArrived(object)) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_02)) {
@@ -1953,29 +1952,29 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
       }
     }
     break;
-    WALK(16, 140 << 17, 180 << 17)
+    WALK(16, px(280), px(360))
     ARRIVE(17, 18)
-    WALK(18, 200 << 16, 180 << 17)
+    WALK(18, px(200), px(360))
     ARRIVE(19, 20)
-    WALK(20, 200 << 16, 156 << 17)
+    WALK(20, px(200), px(312))
     ARRIVE_OR(21, 0x201, 34, 22)
-    WALK(22, 200 << 16, 132 << 17)
+    WALK(22, px(200), px(264))
     ARRIVE(23, 0)
-    WALK_ON(32, 148 << 17, 156 << 17)
+    WALK_ON(32, px(296), px(312))
     ARRIVE(33, 34)
-    WALK_ON(34, 164 << 17, 156 << 17)
+    WALK_ON(34, px(328), px(312))
     ARRIVE(35, 36)
-    WALK(36, 164 << 17, 188 << 17)
+    WALK(36, px(328), px(376))
     ARRIVE(37, 38)
-    WALK(38, 148 << 17, 188 << 17)
+    WALK(38, px(296), px(376))
     ARRIVE(39, 32)
-    WALK_ON(48, 184 << 16, 172 << 17)
+    WALK_ON(48, px(184), px(344))
     ARRIVE(49, 50)
-    WALK(50, 168 << 16, 172 << 17)
+    WALK(50, px(168), px(344))
     ARRIVE(51, 52)
-    WALK(52, 168 << 16, 148 << 17)
+    WALK(52, px(168), px(296))
     ARRIVE(53, 54)
-    WALK(54, 184 << 16, 148 << 17)
+    WALK(54, px(184), px(296))
     ARRIVE(55, 48)
   }
 }
@@ -2009,12 +2008,12 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   if (GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_CORNERED)) {
     angle = FACING_SOUTH;
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                     232 << 16, 168 << 16, angle);
+                                     px(232), px(168), angle);
   } else {
     Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                       200 << 16, 264 << 16, 0);
+                                       px(200), px(264), 0);
       leader->riseCounter = 0;
       leader->update = YampiDesert_ScorpionRoamsToTrap;
     }
@@ -2266,21 +2265,21 @@ void YampiDesert_SetUpOasis(void) {
   } else if (GameFlag_Get(FLAG_YAMPI_DESERT_TRAVELERS_MET)) {
     angleA = FACING_NORTH_NORTHWEST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
-                                     520 << 16, 242 << 16, angleA);
+                                     px(520), px(242), angleA);
     angle = FACING_WEST;
-    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE, 533 << 16,
-                                     271 << 16, angle);
+    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE, px(533),
+                                     px(271), angle);
     angle = FACING_SOUTH_SOUTHEAST;
-    YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, 435 << 16, 232 << 16,
+    YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, px(435), px(232),
                                      angle);
     angle = FACING_SOUTH_SOUTHWEST;
-    YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, 467 << 16,
-                                     248 << 16, angle);
+    YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, px(467), px(248),
+                                     angle);
     angleB = FACING_NORTH_NORTHEAST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
-                                     462 << 16, 340 << 16, angleB);
-    YampiDesert_SetPositionAndFacing(ACTOR_ELDER, 482 << 16, 340 << 16, angleB);
-    YampiDesert_SetPositionAndFacing(ACTOR_MAYOR, 489 << 16, 320 << 16, angleA);
+                                     px(462), px(340), angleB);
+    YampiDesert_SetPositionAndFacing(ACTOR_ELDER, px(482), px(340), angleB);
+    YampiDesert_SetPositionAndFacing(ACTOR_MAYOR, px(489), px(320), angleA);
   }
   if (GameFlag_Get(FLAG_YAMPI_DESERT_LADDER_DUG_UP))
     YampiDesert_OpenLadderPit();

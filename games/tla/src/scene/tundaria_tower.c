@@ -978,7 +978,7 @@ s32 Scene_Initialize(void) {
         union FieldObject **slot = &gTundariaTower_Reflection;
         struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-        effect->riseBaseY = 144 << 18;
+        effect->riseBaseY = px(576);
         effect->update = TundariaTower_ReflectLeader;
         *slot = (union FieldObject *)effect;
         effect->motionFlags = 0;
@@ -990,7 +990,7 @@ s32 Scene_Initialize(void) {
       union FieldObject **slot = &gTundariaTower_Reflection;
       struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-      effect->riseBaseY = 156 << 18;
+      effect->riseBaseY = px(624);
       effect->update = TundariaTower_ReflectLeader;
       *slot = (union FieldObject *)effect;
       effect->motionFlags = 0;

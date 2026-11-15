@@ -2511,23 +2511,23 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-void ShamanVillage_EnterDoor4(void) {
+void ShamanVillage_EnterDoorA(void) {
   ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2);
 }
 
-void ShamanVillage_EnterDoor5(void) {
+void ShamanVillage_EnterDoorB(void) {
   ShamanVillage_EnterDoor(43, 42, 4, 26, 1, 2);
 }
 
-void ShamanVillage_EnterDoor6(void) {
+void ShamanVillage_EnterDoorC(void) {
   ShamanVillage_EnterDoor(43, 42, 27, 21, 1, 2);
 }
 
-void ShamanVillage_EnterDoor7(void) {
+void ShamanVillage_EnterDoorD(void) {
   ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2);
 }
 
-void ShamanVillage_EnterDoor12(void) {
+void ShamanVillage_EnterDoorE(void) {
   ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2);
 }
 
@@ -3494,13 +3494,13 @@ struct Trigger gShamanVillageVillageTriggers[] = {
          TRIGGER_FLAG_FACING | FACING_NORTH,
      3, 0x194d, 3},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoor4)},
+     EVENT(ShamanVillage_EnterDoorA)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoor5)},
+     EVENT(ShamanVillage_EnterDoorB)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, 0x194d,
-     EVENT(ShamanVillage_EnterDoor6)},
+     EVENT(ShamanVillage_EnterDoorC)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, 0x194d,
-     EVENT(ShamanVillage_EnterDoor7)},
+     EVENT(ShamanVillage_EnterDoorD)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
@@ -3508,7 +3508,7 @@ struct Trigger gShamanVillageVillageTriggers[] = {
      10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoor12)},
+     EVENT(ShamanVillage_EnterDoorE)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
      EVENT(ShamanVillage_MeetMoapa)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,

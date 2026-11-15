@@ -100,6 +100,16 @@ enum {
 /// (GaiaRockInside_CheckBlocked).
 #define RAISED_SUSA_BLOCKED 42
 
+/// The lair's entrances: its way in, and where the battle with the Serpent
+/// returns the party: won, lost without the Dancing Idol, and lost holding it
+/// before any stream of Dragonsbane is open (GaiaRockInside_ChallengeSerpent).
+enum {
+  ENTRANCE_LAIR = 9,
+  ENTRANCE_SERPENT_BEATEN = 10,
+  ENTRANCE_BEATEN_BY_SERPENT = 11,
+  ENTRANCE_BEATEN_HOLDING_IDOL = 12
+};
+
 /// The Serpent's lair (SceneId_GaiaRockInsideMaze by entrances 9 to 20).
 enum {
   ACTOR_SERPENT = 8,
@@ -1418,12 +1428,12 @@ void GaiaRockInside_ChallengeSerpent(void) {
     count = a + b + c + Event_GetFlag(FLAG_BUSHES_STREAM_OPEN);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
-    FieldEvent_SetAfterBattleDestination(scene, 10);
+    FieldEvent_SetAfterBattleDestination(scene, ENTRANCE_SERPENT_BEATEN);
     if (FieldPartyInventory_FindMember(ITEM_DANCING_IDOL) != -1) {
       if (count == 0)
-        Event_SetDefeatDestination(scene, 12);
+        Event_SetDefeatDestination(scene, ENTRANCE_BEATEN_HOLDING_IDOL);
     } else {
-      Event_SetDefeatDestination(scene, 11);
+      Event_SetDefeatDestination(scene, ENTRANCE_BEATEN_BY_SERPENT);
     }
     Field_RequestBattleFromEncounterTable(12, count);
   }
@@ -1890,7 +1900,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGaiaRockInside_PlatformsTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
     return gGaiaRockInside_AltarTriggers;
-  if (gMainRoutineWork.entrance == 9)
+  if (gMainRoutineWork.entrance == ENTRANCE_LAIR)
     return gGaiaRockInside_LairTriggers;
   if (gMainRoutineWork.entrance > 9)
     return gGaiaRockInside_SlainLairTriggers;
@@ -2204,7 +2214,7 @@ s32 Scene_Initialize(void) {
     }
     room = &gMainRoutineWork;
     entrance = &room->entrance;
-    if (*entrance == 9) {
+    if (*entrance == ENTRANCE_LAIR) {
       s32 none;
       s32 found;
 
@@ -2403,7 +2413,7 @@ s32 Scene_Initialize(void) {
                                   gGaiaRockInside_SusaWalksOffScript);
         goto end;
       }
-    } else if (*entrance == 10) {
+    } else if (*entrance == ENTRANCE_SERPENT_BEATEN) {
       s32 flag;
       s32 scale;
       struct Actor *susa;
@@ -2593,7 +2603,7 @@ s32 Scene_Initialize(void) {
       }
       BlendScript_Resume();
       Event_End();
-    } else if (*entrance == 11) {
+    } else if (*entrance == ENTRANCE_BEATEN_BY_SERPENT) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Actor_SetPosition(ACTOR_CASK, 0, 0);
@@ -2617,7 +2627,7 @@ s32 Scene_Initialize(void) {
       message = (s32)MsgFieldYouYouCannotFightThe;
       goto leave;
 #endif
-    } else if (*entrance == 12) {
+    } else if (*entrance == ENTRANCE_BEATEN_HOLDING_IDOL) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Actor_SetPosition(ACTOR_CASK, 0, 0);

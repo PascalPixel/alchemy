@@ -280,7 +280,8 @@ void Summon_ShowLearnedMessage(s32 summon) {
   work->dirty = 1;
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
-  MessageArgument_Push(gSummon_Abilities[summon & 31], MESSAGE_ARGUMENT_ABILITY);
+  MessageArgument_Push(gSummon_Abilities[summon & 31],
+                       MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgCanNowSummon);
   // UB: five of Message_Start's six arguments, as above; the flags are the
   // stack word resource takes, which nothing sets. UBFIX passes 0.
@@ -301,7 +302,8 @@ void Summon_ShowLearnedMessage(s32 summon) {
                          TO_SUMMON_WINDOW_HEIGHT, 0);
   if (window == NULL)
     return;
-  MessageArgument_Push(gSummon_Abilities[summon & 31], MESSAGE_ARGUMENT_ABILITY);
+  MessageArgument_Push(gSummon_Abilities[summon & 31],
+                       MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgToSummon);
   djinn = SummonDefinition_Get(summon)->djinnRequired;
   for (i = 0; i < 4; i++)

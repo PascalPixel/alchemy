@@ -702,7 +702,8 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_LOCALIZED_WORD:
             // A counted noun, singular or plural, by its kind.
             no = decode(messageReader) - 1;
-            for (nameBytes = (u8 *)gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
+            for (nameBytes =
+                     (u8 *)gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
                  *nameBytes != 0; nameBytes++) {
               TEXT_APPEND(entry, writePosition, *nameBytes);
             }

@@ -116,14 +116,15 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
-s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
-                                   s32 ability) {
-  s32 slot;
+s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,
+                                   s32 abilityId) {
+  s32 iconSlot;
 
-  slot = VramCache_FindFreeEntry();
-  if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    Resource_LoadIndexedEntryToBuffer(ability, slot);
-    WindowSprite_Create(slot, OUTPUT_SIZE_16X16, input, x, y);
+  iconSlot = VramCache_FindFreeEntry();
+  if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
+    Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
+    // If the sprite pool is full, the creator releases iconSlot itself.
+    WindowSprite_Create(iconSlot, OUTPUT_SIZE_16X16, window, x, y);
   }
 }
 

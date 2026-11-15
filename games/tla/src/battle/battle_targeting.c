@@ -2287,10 +2287,10 @@ done:
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
-  if (abilityId == ABILITY_PSY_DRAIN) // Psy Drain.
+  if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = Ability_Get(abilityId)->ppCost;
-  return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
+  return pp != 0;
 }
 
 #define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)

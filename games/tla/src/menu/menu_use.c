@@ -311,30 +311,41 @@ s32 Item_PlayUseAnimation(s32 item) {
 /// formula 1 twice; otherwise effects 1, 2, 31 and 32 play nothing, effect 5
 /// sound 82, effect 3 sound 84, and every other effect sound 91.
 s32 Ability_PlayUseAnimation(s32 action) {
-  u8 *definition = Ability_Get(action);
+  s32 animationType;
+  u32 targetType;
+  struct AbilityDefinition *actionDefinition;
 
-  switch (definition[1] & 15) {
+  actionDefinition = Ability_Get(action);
+  animationType = ABILITY_FORMULA_MASK & actionDefinition->flags;
+  switch (animationType) {
   case ABILITY_FORMULA_HEAL_HP:
+    // With no break the recovery sound is started twice, both times on music
+    // player 2 (gSongTable's row for it), which Sound_Play never swaps for
+    // another: the second start restarts the first before the sound driver
+    // mixes a frame, so it is heard once.
     Sound_PlayReturnOne(SE_RECOVERY);
+    // Fall through.
   case ABILITY_FORMULA_HEAL_PP:
     Sound_PlayReturnOne(SE_RECOVERY);
-    break;
+    return;
   default:
-    switch (definition[3]) {
-    case 1:
-    case 2:
-    case 31:
-    case 32:
-      break;
-    case 5:
+    targetType = actionDefinition->effect;
+    switch (targetType) {
+    case ABILITY_EFFECT_REVIVE:
       Sound_PlayReturnOne(MUS_REVIVE);
-      break;
+      return;
     case ABILITY_EFFECT_CURE_POISON:
       Sound_PlayReturnOne(MUS_CURE);
-      break;
+      return;
     default:
       Sound_PlayReturnOne(MUS_JINGLE_SMALL);
-      break;
+
+    // The HP and PP restores no ability has (ability_table.c).
+    case ABILITY_EFFECT_RESTORE_HP:
+    case ABILITY_EFFECT_RESTORE_PP:
+    case ABILITY_EFFECT_DRAIN_HP:
+    case ABILITY_EFFECT_DRAIN_PP:
+      return;
     }
     break;
   }

@@ -71,14 +71,14 @@ s32 StatusScreen_SelectMember(s32 slot);
 /// The party member chooser's loop. Returns the chosen party member's id, or
 /// -1.
 s32 PartyMemberChooser_Run(void) {
-  struct StatusScreenWork *work =
-      (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
+  struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the cursor store in a once-only block. */
-  do {
+  /* FAKEMATCH(dead): the slot's clearing in both arms of a test. */
+  if ((s32)work < 0)
     work->selectedSlots[0] = result;
-  } while (0);
+  else
+    work->selectedSlots[0] = result;
   if (StatusScreen_SelectMember(0) == -1)
     result = -1;
   else
@@ -783,13 +783,13 @@ s32 StatusScreen_SelectCommand(void) {
 /// or of the rows below.
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
-  struct StatusScreenWork *state = Ram_HeapSlots->menuWork;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   u32 different;
   s32 count;
   s32 index;
   s32 x;
   s32 y;
-  s32 last;
+  s32 palette;
   u8 width;
 
   if (mode == 0) {
@@ -818,9 +818,10 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     width = 20;
   }
 
+  // Palette 14 (highlighted) when invert is 0, 15 when it is 1.
   different = 1 ^ invert;
-  last = 15 - (((0u - different) | different) >> 31);
-  Render_SetTilemapFlagRect(state->statusWindow, x, y, width, 1, last);
+  palette = 15 - (((0u - different) | different) >> 31);
+  Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
 /// Writes the advice for the selected status (two lines, for example how to
@@ -828,23 +829,23 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 /// member is well when they have no status.
 void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
                                       const u8 *entries) {
-  s32 count = 0;
-  s32 index = 0;
+  s32 labelCount = 0;
+  s32 labelIndex = 0;
 
   do {
-    if (entries[index] != 0) {
-      if (selected == count) {
-        s32 message = (s32)(MsgStatusAdvice + index * 2);
-        Text_DrawMessageFar(message, target, 0, -1);
-        Text_DrawMessageFar(message + 1, target, 0, 15);
+    if (entries[labelIndex] != 0) {
+      if (selected == labelCount) {
+        s32 messageId = MsgStatusAdvice + labelIndex * 2;
+        Text_DrawMessageFar(messageId, target, 0, -1);
+        Text_DrawMessageFar(messageId + 1, target, 0, 15);
       }
-      count++;
+      labelCount++;
     }
-    index++;
-  } while (index <= 4);
+    labelIndex++;
+  } while (labelIndex <= 4);
 
-  if (count == 0)
-    Text_DrawMessageFar((s32)MsgStatusNormal, target, 0, 0);
+  if (labelCount == 0)
+    Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);
 }
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
@@ -1930,17 +1931,17 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// 16x16 cells, columns wide, from (originX, originY), and shows it.
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
-                                s32 originX, s32 originY, s32 phase) {
-  s32 no;
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns) {
+  s32 entryIndex;
 
-  no = index;
-  if (no > (MENU_ENTRY_ICONS - 1)) {
-    no = 0;
+  entryIndex = index;
+  if (entryIndex > MENU_ENTRY_ICONS - 1) {
+    entryIndex = 0;
   }
-  obj->y = no / phase * 0x10 + originY;
-  obj->x = no % phase * 0x10 + originX;
-  Icon_PrepareActor(obj);
+  icon->y = (entryIndex / columns * 16) + originY;
+  icon->x = (entryIndex % columns * 16) + originX;
+  Icon_PrepareActor(icon);
 }
 
 /// Places the icon of each worn weapon, armor, shield and helm at x 216, on its

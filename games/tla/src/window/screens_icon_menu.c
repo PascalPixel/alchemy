@@ -1682,23 +1682,23 @@ s32 Menu_SelectSanctumService(s32 selection) {
 /// message: first name message, or 0 for command names.
 /// w: name window width, or 3 if zero.
 /// selection: initial selection.
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
+s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
   s32 row;
 
   row = 0;
 
   IconMenu_Open();
 
-  if (w == 0) {
-    w = 3;
+  if (labelWidth == 0) {
+    labelWidth = 3;
   }
-  if (low != 0) {
+  if (bottom != 0) {
     row = 17;
   }
 
   IconMenu_AddIcon(COMMAND_ICON_YES);
   IconMenu_AddIcon(COMMAND_ICON_NO);
-  IconMenu_Center(row, w, message);
+  IconMenu_Center(row, labelWidth, message);
 
   selection = IconMenu_Run(selection);
   IconMenu_Close();
@@ -1710,7 +1710,7 @@ s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
 
 /// Selects Yes or No at (x, y). Cancel returns 1 (No).
 s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
-  s32 message = (s32)MsgCommandYes;
+  s32 message = MsgCommandYes;
 
   IconMenu_Open();
   IconMenu_AddIcon(COMMAND_ICON_YES);
@@ -1744,15 +1744,15 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 /// Selects coins or medals from icons 0x20 and 0x21, centred on row 17.
 /// selection: initial selection. Returns the selected position.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
-  s32 ret;
+  s32 result;
 
   IconMenu_Open();
   IconMenu_AddIcon(COMMAND_ICON_COINS);
   IconMenu_AddIcon(COMMAND_ICON_LUCKY_MEDALS);
   IconMenu_Center(17, PAIR_WIDTH, 0);
-  ret = IconMenu_Run(selection);
+  result = IconMenu_Run(selection);
   IconMenu_Close();
-  return ret;
+  return result;
 }
 
 /// Schedules the debug scene and entrance selector;

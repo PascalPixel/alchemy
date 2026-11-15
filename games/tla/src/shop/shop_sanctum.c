@@ -351,12 +351,13 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   } else if (serviceKind == SANCTUM_SERVICE_REPEL_EVIL) {
     unit->haunt = 0;
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
-    s32 slot;
+    s32 inventorySlot;
 
-    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
-        if (Item_GetDirectFar(unit->inventory[slot])->flags & ITEM_CURSED) {
-          unit->inventory[slot] ^= INVENTORY_EQUIPPED;
+    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+        if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
+            ITEM_CURSED) {
+          unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
           Unit_CalculateFar(unitId);
         }
       }

@@ -589,38 +589,36 @@ void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
 
 /// Fills ailments[0..4] with party member memberId's statuses:
 /// down (only when requested is 1), poison or venom, curse and haunt.
-s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
-  struct Unit *state;
-  s32 i;
-  s32 zero;
+s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
+  struct Unit *unit;
+  s32 ailmentIndex;
   s32 count;
-  s32 mode;
+  s32 poison;
 
-  state = Unit_Get(id);
-  zero = 0;
-  for (i = 4; i >= 0; i--)
-    output[i] = zero;
+  unit = Unit_Get(memberId);
+  for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
+    ailments[ailmentIndex] = 0;
 
   count = 0;
-  if (state->hp == 0 && requested == 1) {
-    output[CHARACTER_DOWN] = requested;
+  if (unit->hp == 0 && requested == 1) {
+    ailments[CHARACTER_DOWN] = requested;
     count = 1;
   }
 
-  mode = state->poison;
-  if (mode != 0) {
-    if (mode == 1)
-      output[CHARACTER_POISON] = mode;
+  poison = unit->poison;
+  if (poison != 0) {
+    if (poison == 1) // poison; any other value is venom
+      ailments[CHARACTER_POISON] = poison;
     else
-      output[CHARACTER_VENOM] = 1;
+      ailments[CHARACTER_VENOM] = 1;
     count++;
   }
-  if (state->curse != 0) {
-    output[CHARACTER_CURSE] = 1;
+  if (unit->curse != 0) {
+    ailments[CHARACTER_CURSE] = 1;
     count++;
   }
-  if (state->haunt != 0) {
-    output[CHARACTER_HAUNT] = 1;
+  if (unit->haunt != 0) {
+    ailments[CHARACTER_HAUNT] = 1;
     count++;
   }
   return count;

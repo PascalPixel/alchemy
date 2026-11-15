@@ -151,11 +151,11 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
 }
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
-s32 BattleObject_IsValidId(u32 objectId) {
-  if (objectId <= ALLY_MAX) {
+s32 BattleObject_IsValidId(u32 unitId) {
+  if (unitId <= ALLY_MAX) {
     return 0;
   }
-  if (objectId - 128 <= 5) {
+  if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE) {
     return 0;
   }
   return -1;
@@ -164,29 +164,22 @@ s32 BattleObject_IsValidId(u32 objectId) {
 /// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
 /// when it got away.
 s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
-  s16 party_members[UNIT_MAX];
-  s32 party_size;
-  s32 animated;
-  s32 member_slot;
+  s16 partyMembers[UNIT_MAX];
+  s32 partySize;
+  s32 memberSlot;
 
   (void)action;
-  if (((u32)(Random16() << 4) >> 16) != 0) {
-    party_size =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)party_members);
-    animated = 0;
-    if (party_size != 0) {
-      member_slot = 0;
-      do {
-        BattleMotion_SetupEscapeObject(party_members[member_slot]);
-        animated++;
-        wait(8);
-        member_slot++;
-      } while (animated != party_size);
+  // The roll's top four bits: flee unless all are clear, 15 in 16.
+  if (((Random16() << 4) >> 16) != 0) {
+    partySize = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, partyMembers);
+    for (memberSlot = 0; memberSlot != partySize; memberSlot++) {
+      BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
+      wait(8);
     }
     wait(22);
     return 1;
   }
-  BattleMessage_ShowAndWaitFar((s32)MsgCannotEscape);
+  BattleMessage_ShowAndWaitFar(MsgCannotEscape);
   return 0;
 }
 

@@ -328,14 +328,14 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite.
-void ResetMotionRecordGroup(void *owner) {
-  struct Sprite *object = owner;
-  s32 i;
+void ResetMotionRecordGroup(void *recordGroup) {
+  struct Sprite *record = recordGroup;
+  s32 entryIndex;
 
-  if (object != NULL) {
-    for (i = 0; i < 4; i++) {
-      if (object->entries[i] != NULL)
-        object->entries[i]->script = NULL;
+  if (record != NULL) {
+    for (entryIndex = 0; entryIndex < 4; entryIndex++) {
+      if (record->entries[entryIndex] != NULL)
+        record->entries[entryIndex]->script = NULL;
     }
   }
 }

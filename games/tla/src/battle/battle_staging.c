@@ -581,14 +581,14 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 /// With no targets, only waits for the message to advance.
 /// plan: action and target information.
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
-  s32 i;
+  s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   if (plan->targetCount == 0) {
     BattleMessage_WaitForAdvance();
   } else {
-    for (i = 0; i < plan->targetCount; i++) {
-      BattleAbility_ApplyToTarget(plan, i);
+    for (targetIndex = 0; targetIndex < plan->targetCount; targetIndex++) {
+      BattleAbility_ApplyToTarget(plan, targetIndex);
       BattlePlayback_RunAll();
     }
   }

@@ -54,17 +54,17 @@ void BattleCamera_SetCommandView(s32 pos) {
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
 /// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
-  u16 ids[UNIT_MAX];
+  u16 unitIds[UNIT_MAX];
   s32 count;
-  s32 index;
+  s32 unitIndex;
 
-  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
-  for (index = 0; index < count; index++) {
-    struct Unit *actor;
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  for (unitIndex = 0; unitIndex < count; unitIndex++) {
+    struct Unit *unit;
 
-    actor = Unit_Get(ids[index]);
-    actor->defendLevel = 0;
-    Unit_CalculateFar(ids[index]);
+    unit = Unit_Get(unitIds[unitIndex]);
+    unit->defendLevel = 0;
+    Unit_CalculateFar(unitIds[unitIndex]);
   }
 }
 

@@ -351,10 +351,10 @@ void Window_Close(struct Window *work, s32 release) {
 
 /// Clears a window's contents: redraws it empty and releases the render
 /// window sprites it carries. A text canvas window is left alone.
-void WindowSprite_PrepareForRedraw(struct Window *work) {
-  if (!(WINDOW_FLAG_TEXT_CANVAS & work->flags)) {
-    WindowSprite_RedrawSavedRect(work);
-    WindowSprite_ClearList(work);
+void WindowSprite_PrepareForRedraw(struct Window *window) {
+  if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
+    WindowSprite_RedrawSavedRect(window);
+    WindowSprite_ClearList(window);
   }
 }
 
@@ -366,14 +366,15 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
 
 /// Releases every window sprite in a list and empties it. sprites is the list,
 /// or a window (whose sprite list comes first); NULL is ignored.
-void WindowSprite_ClearList(void *work) {
-  struct WindowSpriteList *list = work;
+void WindowSprite_ClearList(void *sprites) {
+  struct WindowSpriteList *list = sprites;
   struct WindowSprite *node;
   struct WindowSprite *next;
 
   next = NULL;
   if (list != NULL) {
     node = list->head;
+    // Detach the chain before returning its nodes to the shared free pool.
     list->tailLink = &list->head;
     list->head = next;
     while (node != NULL) {
@@ -599,16 +600,13 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
 
 /// Clears the text canvas to transparent.
 s32 Text_ClearCanvas(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
-
-  return fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
+  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
 void Text_FillCanvasBackground(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
-
-  fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
+  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
+                         TEXT_CANVAS_BACKGROUND_WORD);
 }
 
 /// Resets the pen and text style of the first idle message, clearing the canvas

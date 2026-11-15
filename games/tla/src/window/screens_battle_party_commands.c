@@ -13,28 +13,29 @@
 /// 5 revive, 6 cure all ailments.
 /// act: ability data.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
-  s32 val;
-  s32 type;
-  s32 kind;
+  s32 signedEffect;
+  s32 abilityKind;
+  s32 targetKind;
   u8 effect;
 
-  kind = TARGET_HINT_NONE;
-  type = act->flags & ABILITY_FORMULA_MASK;
-  if (type == ABILITY_FORMULA_HEAL_HP) // Restore HP.
-    kind = TARGET_HINT_HP;
-  if (type == ABILITY_FORMULA_HEAL_PP) // Restore PP.
-    kind = TARGET_HINT_PP;
-  val = (s8)act->effect;
-  effect = val;
-  if (effect == ABILITY_EFFECT_CURE_POISON) // Cure poison.
-    kind = TARGET_HINT_CURE_POISON;
-  if (effect == ABILITY_EFFECT_RESTORE) // Cure an ailment.
-    kind = TARGET_HINT_RESTORE;
-  if (effect == ABILITY_EFFECT_CURE_ALL) // Cure all ailments.
-    kind = TARGET_HINT_CURE_ALL;
-  if (Battle_IsReviveEffectFar(act->effect) != 0) // Revive.
-    kind = TARGET_HINT_REVIVE;
-  return kind;
+  targetKind = TARGET_HINT_NONE;
+  abilityKind = act->flags & ABILITY_FORMULA_MASK;
+  if (abilityKind == ABILITY_FORMULA_HEAL_HP)
+    targetKind = TARGET_HINT_HP;
+  if (abilityKind == ABILITY_FORMULA_HEAL_PP)
+    targetKind = TARGET_HINT_PP;
+  /* FAKEMATCH(temporary): the effect copied through a signed word. */
+  signedEffect = (s8)act->effect;
+  effect = signedEffect;
+  if (effect == ABILITY_EFFECT_CURE_POISON)
+    targetKind = TARGET_HINT_CURE_POISON;
+  if (effect == ABILITY_EFFECT_RESTORE)
+    targetKind = TARGET_HINT_RESTORE;
+  if (effect == ABILITY_EFFECT_CURE_ALL)
+    targetKind = TARGET_HINT_CURE_ALL;
+  if (Battle_IsReviveEffectFar(act->effect) != 0)
+    targetKind = TARGET_HINT_REVIVE;
+  return targetKind;
 }
 
 /// Lets the player choose which reserve member takes a party slot in battle,

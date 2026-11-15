@@ -201,104 +201,105 @@ s32 LinkBattle_WaitSync(void) {
 /// or after 25 consecutive frames without a connection. Returns zero on
 /// agreement, or outside a link battle.
 s32 LinkBattle_SyncTurn(void) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 *peer;
-  u16 *sig;
-  s32 lost = 0;
-  // Unused: gives the stack frame its 20 bytes.
+  u16 *signature;
+  s32 missed = 0;
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED u16 spare[10];
 
-  if (work->isLink != 0) {
-    peer = gLinkPeerSignatures[work->linkSide ^ 1];
-    sig = (u16 *)gSerialTransfer.payload;
-    if (work->linkPaused != 0)
+  if (battle->isLink != 0) {
+    peer = gLinkPeerSignatures[battle->linkSide ^ 1];
+    signature = (u16 *)gSerialTransfer.payload;
+    if (battle->linkPaused != 0)
       return -1;
 
-    // "ex" "TU"
-    sig[0] = 'e';
-    sig[1] = 'x';
-    sig[4] = 'T';
-    sig[5] = 'U';
+    // Publish "ex"/"TU" while both sides still agree on the earlier phase.
+    signature[0] = 'e';
+    signature[1] = 'x';
+    signature[4] = 'T';
+    signature[5] = 'U';
     wait(1);
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-        if (++lost > LINK_MAX_MISSED_FRAMES)
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[2] != peer[2] || sig[3] != peer[3])
+        missed = 0;
+        if (signature[2] != peer[2] || signature[3] != peer[3])
           return -1;
-        if (sig[0] == peer[0] && sig[1] == peer[1] && sig[4] == peer[4] &&
-            sig[5] == peer[5])
+        if (signature[0] == peer[0] && signature[1] == peer[1] &&
+            signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
       wait(1);
     }
 
-    // "rn"
-    sig[6] = 'r';
-    sig[7] = 'n';
+    // Advance to "rn" only after the peer has reached "TU".
+    signature[6] = 'r';
+    signature[7] = 'n';
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-        if (++lost > LINK_MAX_MISSED_FRAMES)
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[4] != peer[4] || sig[5] != peer[5])
+        missed = 0;
+        if (signature[4] != peer[4] || signature[5] != peer[5])
           return -1;
-        if (sig[6] == peer[6] && sig[7] == peer[7])
+        if (signature[6] == peer[6] && signature[7] == peer[7])
           break;
       }
       wait(1);
     }
 
-    // "EXEC"
-    sig[0] = 'E';
-    sig[1] = 'X';
-    sig[2] = 'E';
-    sig[3] = 'C';
+    // Confirm "rn" before publishing the execution signature.
+    signature[0] = 'E';
+    signature[1] = 'X';
+    signature[2] = 'E';
+    signature[3] = 'C';
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-        if (++lost > LINK_MAX_MISSED_FRAMES)
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[6] != peer[6] || sig[7] != peer[7])
+        missed = 0;
+        if (signature[6] != peer[6] || signature[7] != peer[7])
           return -1;
-        if (sig[0] == peer[0] && sig[1] == peer[1] && sig[2] == peer[2] &&
-            sig[3] == peer[3])
+        if (signature[0] == peer[0] && signature[1] == peer[1] &&
+            signature[2] == peer[2] && signature[3] == peer[3])
           break;
       }
       wait(1);
     }
 
-    // "tu"
-    sig[4] = 't';
-    sig[5] = 'u';
+    // Confirm the execution signature before acknowledging with "tu".
+    signature[4] = 't';
+    signature[5] = 'u';
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-        if (++lost > LINK_MAX_MISSED_FRAMES)
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[0] != peer[0] || sig[1] != peer[1] || sig[2] != peer[2] ||
-            sig[3] != peer[3])
+        missed = 0;
+        if (signature[0] != peer[0] || signature[1] != peer[1] ||
+            signature[2] != peer[2] || signature[3] != peer[3])
           return -1;
-        if (sig[4] == peer[4] && sig[5] == peer[5])
+        if (signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
       wait(1);
     }
 
-    // "RN": wait for the peer to move on from "rn".
-    sig[6] = 'R';
-    sig[7] = 'N';
+    // "RN": wait for the other console to move on from "rn".
+    signature[6] = 'R';
+    signature[7] = 'N';
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-        if (++lost > LINK_MAX_MISSED_FRAMES)
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
+        missed = 0;
         if (peer[6] != 'r' || peer[7] != 'n')
           break;
       }

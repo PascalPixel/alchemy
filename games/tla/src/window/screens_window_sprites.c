@@ -45,13 +45,13 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
 struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
                                                      struct RenderInput *window,
                                                      s32 x, s32 y) {
-  s32 no;
+  s32 slot;
 
-  no = Resource_LoadByMode(mode, resource);
-  if (no < 0) {
+  slot = Resource_LoadByMode(mode, resource);
+  if (slot < 0) {
     return NULL;
   }
-  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
+  return WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
@@ -59,16 +59,16 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
 struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
                                                struct RenderInput *window,
                                                s32 x, s32 y) {
-  s32 no;
-  struct WindowSprite *result;
+  s32 slot;
+  struct WindowSprite *sprite;
 
-  no = VramCache_FindFreeEntry();
-  result = NULL;
-  if (no != VRAM_CACHE_ENTRY_COUNT) {
-    Icon_CopyResourceToSlot(icon, layers, no);
-    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
+  slot = VramCache_FindFreeEntry();
+  sprite = NULL;
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
+    Icon_CopyResourceToSlot(icon, layers, slot);
+    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
-  return result;
+  return sprite;
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn

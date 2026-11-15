@@ -26,20 +26,18 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// Counts down an Attack change and returns 1 when it ends; a lowered Attack
 /// may recover early.
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
-  if (state->attackTurns != 0) {
-    s32 zero;
-    state->attackTurns--;
-    zero = 0;
-    if ((s8)state->attackTurns == 0) {
-      state->attackStage = zero;
+  if (unit->attackTurns != 0) {
+    unit->attackTurns--;
+    if (unit->attackTurns == 0) {
+      unit->attackStage = 0;
       return 1;
     }
-    if (state->attackStage < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, state->attackTurns, 30) != 0) {
-        state->attackStage = zero;
-        state->attackTurns = zero;
+    if (unit->attackStage < 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
+        unit->attackStage = 0;
+        unit->attackTurns = 0;
         return 1;
       }
     }
@@ -167,40 +165,38 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
 
 /// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
-s32 BattleUnit_CountDownPsynergySeal(s32 id) {
-  s32 next;
-  s32 expired;
+s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
+  s32 decremented;
   u8 remaining;
   s32 turns;
-  s32 packed;
+  s32 sealCounter;
   struct Unit *unit;
 
-  unit = Unit_Get(id);
-  packed = unit->psySeal;
-  turns = packed & 0xFF;
+  unit = Unit_Get(unitId);
+  sealCounter = unit->psySeal;
+  turns = sealCounter & 0xFF;
   if (turns != 0) {
-    if ((u32)turns > 7U) {
+    // In the byte, adding 0xf8 is -8 and adding 0xff is -1.
+    if (turns > 7U) {
       turns += 0xF8;
       unit->psySeal = turns;
-      packed = turns;
+      sealCounter = turns;
     }
-    if (packed & 7) {
-      next = packed + 0xFF;
-      unit->psySeal = next;
-      packed = next;
+    if (sealCounter & 7) {
+      decremented = sealCounter + 0xFF;
+      unit->psySeal = decremented;
+      sealCounter = decremented;
     }
-    expired = 1;
-    remaining = packed;
+    remaining = sealCounter;
     if (remaining == 0)
-      return expired;
-    if ((u32)remaining <= 7U &&
-        BattleUnit_RollCounterEarlyEnd(id, unit->psySeal, 0x1E) != 0) {
+      return 1;
+    if (remaining <= 7U &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 30) != 0) {
       unit->psySeal = 0U;
       return 1;
     }
   }
-  expired = 0;
-  return expired;
+  return 0;
 }
 
 /// While Regenerate lasts, heals the unit by a tenth of its max HP for each
@@ -247,11 +243,11 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 }
 
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
-s32 BattleUnit_CountDownReflect(s32 id) {
-  u8 *value = (u8 *)&Unit_Get(id)->reflect;
-  if (*value != 0) {
-    (*value)--;
-    if (*value == 0) {
+s32 BattleUnit_CountDownReflect(s32 unitId) {
+  u8 *turns = &Unit_Get(unitId)->reflect;
+  if (*turns != 0) {
+    (*turns)--;
+    if (*turns == 0) {
       return 1;
     }
   }
@@ -260,12 +256,12 @@ s32 BattleUnit_CountDownReflect(s32 id) {
 
 /// Counts down an Agility change and returns 1 when it runs out; it never ends
 /// early.
-s32 BattleUnit_CountDownAgilityStage(s32 id) {
-  struct Unit *unit = Unit_Get(id);
-  u8 *value = &unit->agilityTurns;
-  if (*value != 0) {
-    (*value)--;
-    if (*value == 0) {
+s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
+  struct Unit *unit = Unit_Get(unitId);
+  u8 *turns = &unit->agilityTurns;
+  if (*turns != 0) {
+    (*turns)--;
+    if (*turns == 0) {
       unit->agilityStage = 0;
       return 1;
     }
@@ -320,13 +316,10 @@ s32 DjinnRecovery_CountDown(void) {
 /// Runs DjinnRecovery_CountDown twenty times, which sets every recovering
 /// Djinni of a party member with HP; those on standby stay so. Returns 0.
 s32 DjinnRecovery_CountDownTwenty(void) {
-  s32 turns;
+  s32 turn;
 
-  turns = 19;
-  do {
-    turns--;
+  for (turn = 0; turn < 20; turn++)
     DjinnRecovery_CountDown();
-  } while (turns >= 0);
   return 0;
 }
 

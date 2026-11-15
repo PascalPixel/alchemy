@@ -63,28 +63,28 @@ void WindowSprite_RedrawSavedRectFar(struct Window *window);
 /// redrawing its saved rectangle unless flags has 0x100 set.
 /// flags: the low 8 bits select the window type.
 s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
-  s32 cur;
+  struct Window *window;
   s32 style;
 
-  cur = *handle;
-  if (cur != 0) {
+  window = *handle;
+  if (window != 0) {
     if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
-    WindowSprite_RedrawSavedRectFar((struct Window *)cur);
+    WindowSprite_RedrawSavedRectFar(window);
     return 0;
   }
   style = flags & WINDOW_STYLE_MASK;
-  *handle = (s32)Window_CreateFar(x, y, w, h, style);
+  *handle = Window_CreateFar(x, y, w, h, style);
   return 1;
 }
 
 /// Closes *handle's window if present, then sets the handle to NULL.
 /// Although declared with one argument, the caller's second argument stays in
 /// r1 and reaches Window_CloseFar.
-void Window_CloseIfOpen(void **handle, s32 mode) {
+void Window_CloseIfOpen(void **handle, s32 style) {
   if (*handle != NULL) {
-    Window_CloseFar(*handle, mode);
+    Window_CloseFar(*handle, style);
     *handle = NULL;
   }
 }
@@ -703,30 +703,30 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
 /// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
-  struct WindowSprite *object;
+  struct WindowSprite *icon;
 
-  if (index > (MENU_ENTRY_ICONS - 1)) {
+  if (index > MENU_ENTRY_ICONS - 1) {
     index = 0;
   }
-  object = *slot;
-  object->y = (index / columns) * 0x10 + originY;
-  object->x = (index % columns) * 0x10 + originX;
-  Icon_PrepareActor(object);
+  icon = *slot;
+  icon->y = (index / columns) * 16 + originY;
+  icon->x = (index % columns) * 16 + originX;
+  Icon_PrepareActor(icon);
 }
 
 /// Places item i (or 0 if above 15) in a grid with cols columns of
 /// 24x16-pixel cells.
 /// x0, y0: top left of the grid.
-void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
-                        s32 cols) {
-  struct WindowSprite *obj;
+void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
+                        s32 originY, s32 columns) {
+  struct WindowSprite *icon;
 
-  if (i > 15)
-    i = 0;
-  obj = *slot;
-  obj->y = i / cols * 16 + y0;
-  obj->x = i % cols * 24 + x0;
-  Icon_PrepareActor(obj);
+  if (slotIndex > 15)
+    slotIndex = 0;
+  icon = *slot;
+  icon->y = slotIndex / columns * 16 + originY;
+  icon->x = slotIndex % columns * 24 + originX;
+  Icon_PrepareActor(icon);
 }
 
 /// Lays the inventory's 15 item icons out five to a row from (116, y): y is
@@ -1133,12 +1133,12 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
 
 /// Writes the party's coins and the "Coins" label into window: the info
 /// window of the Item and Psynergy screens' party member choice.
-void Menu_DrawCoins(s32 work) {
-  Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
-  Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
-                             0x40, 0);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-  Window_DrawDividerLineFar(work, 12, 0, 12, 2);
+void Menu_DrawCoins(s32 window) {
+  Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, window, 8, 0);
+  Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
+  // Only the Japanese editions draw a vertical divider at tile column 12.
+#if LANGUAGE == LANGUAGE_JAPANESE
+  Window_DrawDividerLineFar(window, 12, 0, 12, 2);
 #endif
 }
 

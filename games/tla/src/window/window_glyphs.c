@@ -189,36 +189,34 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 /// higher characters take ten. Voicing marks 0xde and 0xdf add no width.
 s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
-  u16 *p;
-  u32 c;
+  u16 *cursor;
+  u32 code;
 #if !defined(WIDE_WIDTH_FIXED)
-  u32 idx;
+  u32 glyphIndex;
 #endif
 
-  c = *text;
+  code = *text;
   width = 0;
-  p = text + 1;
-  if (c != 0) {
-    do {
-      if (c == TEXT_SPACE) {
-        width += 4;
-      } else if (c <= TEXT_LAST_FONT_CODE) {
+  cursor = text + 1;
+  while (code != 0) {
+    if (code == TEXT_SPACE) {
+      width += 4;
+    } else if (code <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
-        width += 10;
+      width += 10;
 #else
-        idx = c - TEXT_MARK_VOICED;
-        if (idx > 1U) {
-          idx += TEXT_MARK_VOICED -
-                 TEXT_SPACE; // The font starts at character 0x20.
-          width += FONT_GLYPH(idx)->width;
-        }
-      } else {
-        width += KANJI_WIDTH;
-#endif
+      glyphIndex = code - TEXT_MARK_VOICED;
+      if (glyphIndex > 1U) {
+        // The font starts at the space.
+        glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
+        width += FONT_GLYPH(glyphIndex)->width;
       }
-      c = *p;
-      p += 1;
-    } while (c != 0);
+    } else {
+      width += KANJI_WIDTH;
+#endif
+    }
+    code = *cursor;
+    cursor += 1;
   }
   return width;
 }

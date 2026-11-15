@@ -741,33 +741,33 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
 
 /// Lists the units in the battle on the sides in sideMask, standing or not, and
 /// returns how many.
-s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
-  struct BattleWork *order;
+s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
+  struct BattleWork *battle;
   s32 count;
   s32 i;
 
-  order = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & BATTLE_SIDE_MASK_PARTY) {
-    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->partyUnits[i];
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
+    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->partyUnits[i];
         count++;
       }
     }
   }
-  if (groups & BATTLE_SIDE_MASK_ENEMIES) {
-    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->enemyIds[i];
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->enemyIds[i];
         count++;
       }
     }
   }
-  if (dst != NULL)
-    *dst = BATTLE_UNIT_LIST_END;
+  if (unitIds != NULL)
+    *unitIds = BATTLE_UNIT_LIST_END;
   return count;
 }
 

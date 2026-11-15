@@ -537,25 +537,26 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 
 /// Makes every unit's graphics but except's translucent (OBJ mode 1).
 /// except: unit ID to leave unchanged.
-void BattleHighlight_SetOtherSpriteModes(s32 except) {
-  s16 list[UNIT_MAX];
-  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
-  s32 i;
+void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
+  s16 unitIds[UNIT_MAX];
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  s32 unitIndex;
 
-  for (i = 0; i < cnt; i++) {
-    if (list[i] != except)
-      BattleHighlight_SetSpriteMode(list[i], SPRITE_SEMI_TRANSPARENT);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+    if (unitIds[unitIndex] != selectedUnitId)
+      BattleHighlight_SetSpriteMode(unitIds[unitIndex],
+                                    SPRITE_SEMI_TRANSPARENT);
   }
 }
 
 /// Restores normal rendering (OBJ mode 0) for all units.
 void BattleHighlight_ClearAllSpriteModes(void) {
-  s16 list[UNIT_MAX];
-  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
-  s32 i;
+  s16 unitIds[UNIT_MAX];
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  s32 unitIndex;
 
-  for (i = 0; i < cnt; i++)
-    BattleHighlight_SetSpriteMode(list[i], SPRITE_OPAQUE);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
+    BattleHighlight_SetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
 // Steps the battle highlight's blend.

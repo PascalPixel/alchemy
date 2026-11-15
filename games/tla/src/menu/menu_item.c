@@ -1522,25 +1522,25 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
 
 /// Makes room in memberId's inventory: if no slot is free, removes the whole
 /// stack in the first slot that is not equipped.
-s32 Inventory_RemoveFirstUnflagged(s32 owner) {
-  struct OwnerInventoryState *state = Unit_Get(owner);
+s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
+  struct Unit *unit = Unit_Get(memberId);
   s32 result = 0;
-  s32 i;
+  s32 slotIndex;
 
-  for (i = 0; i < INVENTORY_SLOTS; i++) {
-    if (state->inventory[i] == 0) {
+  for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
+    if (unit->inventory[slotIndex] == 0) {
       result = 1;
       break;
     }
-    if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0) {
-      s32 quantity = state->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
+    if ((unit->inventory[slotIndex] & INVENTORY_EQUIPPED) == 0) {
+      s32 quantity = unit->inventory[slotIndex] >> INVENTORY_QUANTITY_SHIFT;
       s32 count = quantity + 1;
-      s32 cnt;
+      s32 removedCount;
 
       if (quantity == 0)
         count = 1;
-      for (cnt = 0; cnt < count; cnt++)
-        result = Inventory_RemoveFar(owner, i);
+      for (removedCount = 0; removedCount < count; removedCount++)
+        result = Inventory_RemoveFar(memberId, slotIndex);
       if (result != INVENTORY_REMOVE_LAST)
         return 0;
       result = 1;
@@ -2347,27 +2347,28 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 
 /// Writes a signed stat change at (x, y) of window: the number, with a plus or
 /// minus sign just before its first digit.
-void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
+void ItemMenu_DrawStat(s32 statChange, s32 unused, s32 window, s32 x, s32 y) {
   s32 digits;
   s32 magnitude;
 
-  Text_DrawNumberInWindowFar(delta, 3, window, x, y);
+  Text_DrawNumberInWindowFar(statChange, 3, window, x, y);
+  // Count the digits of |statChange| to place the sign.
   digits = 1;
-  magnitude = delta;
-  if (delta < 0) {
-    magnitude = -delta;
+  magnitude = statChange;
+  if (statChange < 0) {
+    magnitude = -statChange;
   }
   if (magnitude > 9) {
     digits = 2;
   }
-  magnitude = delta;
-  if (delta < 0) {
-    magnitude = -delta;
+  magnitude = statChange;
+  if (statChange < 0) {
+    magnitude = -statChange;
   }
   if (magnitude > 99) {
     digits = 3;
   }
-  if (delta > 0) {
+  if (statChange > 0) {
     Text_DrawStringInWindowFar(&gMenu_PlusSignString, window,
                                x - digits * 8 + 16, y);
   } else {

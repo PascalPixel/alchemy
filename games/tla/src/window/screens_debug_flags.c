@@ -82,54 +82,56 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
 /// Shows 16x16 flags per page and takes input until closed, starting on page
 /// 8. Returns 0.
 s32 DebugFlagEditor_Run(void) {
-  u8 obj[12]; // Cursor object.
-  s32 cur[2]; // Cursor column and row.
-  s32 res;
+  struct MenuSprite cursorSprite; // Cursor sprite
+  s32 cursor[2];                  // Cursor column and row
+  s32 cursorSlot;
   s32 page;
-  s32 win;
-  s32 ret;
+  struct Window *window;
+  s32 change;
 
   page = 8;
-  win = 0;
-  cur[0] = win;
-  cur[1] = win;
-  win = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
-  DebugFlagEditor_DrawTable(win, page);
-  MenuArrow_Create(obj, &res);
+  window = 0;
+  cursor[0] = 0;
+  cursor[1] = 0;
+  window = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
+  DebugFlagEditor_DrawTable(window, page);
+  MenuArrow_Create(&cursorSprite, &cursorSlot);
   for (;;) {
     wait(1);
-    ret = DebugFlagEditor_HandleInput(win, &page, cur);
-    if (ret == -1)
-      break; // Close.
-    if (ret == 1)
-      DebugFlagEditor_DrawTable(win, page); // A flag or the page changed.
-    MenuArrow_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
+    change = DebugFlagEditor_HandleInput(window, &page, cursor);
+    // B closes the table; a change of flag or page redraws it.
+    if (change == -1)
+      break;
+    if (change == 1)
+      DebugFlagEditor_DrawTable(window, page);
+    MenuArrow_SetPosition(&cursorSprite, cursor[0] * 8 + 58,
+                          cursor[1] * 8 + 20);
   }
-  MenuArrow_Release(res);
-  Window_Close(win, 2);
+  MenuArrow_Release(cursorSlot);
+  Window_Close(window, 2);
   return 0;
 }
 
 /// Writes the lowest count digits of value (up to five), most significant
 /// first, to out as uppercase hexadecimal, without a terminating zero.
 void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
-  u8 buf[8];
+  u8 digits[8];
   u32 i;
 
   if (count > 5)
     count = 5;
 
   for (i = 0; i != count; i++) {
-    u32 d = value & 15;
-    if (d <= 9)
-      buf[i] = d + '0';
+    u32 digit = value & 15;
+    if (digit <= 9)
+      digits[i] = digit + '0';
     else
-      buf[i] = d + 'A' - 10;
+      digits[i] = digit + 'A' - 10;
     value >>= 4;
   }
 
   for (i = count - 1; (s32)i >= 0; i--)
-    *out++ = buf[i];
+    *out++ = digits[i];
 }
 
 /* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as

@@ -28,26 +28,24 @@
 /// Returns: 0 usable / 1 unusable / 2 unavailable in battle.
 /// unit: character index.
 /// item: carried item value.
-s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
-  s32 ret;
-  struct ItemDefinition *def;
+s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
+  struct ItemDefinition *item;
 
-  if (item == 0) {
+  if (itemId == 0) {
     return 1;
   }
-  def = Item_GetDirectFar(item);
-  ret = 1;
-  if (def->useType == 3) // Equipment that grants Psynergy.
-  {
-    return ret;
+  item = Item_GetDirectFar(itemId);
+  // Equipment that grants Psynergy.
+  if (item->useType == 3) {
+    return 1;
   }
-  if (def->abilityId == 0) {
-    return ret;
+  if (item->abilityId == 0) {
+    return 1;
   }
-  if ((def->type != 0) && (Item_CanUnitEquip(unit, item) == 0)) {
-    return ret;
+  if ((item->type != 0) && (Item_CanUnitEquip(unit, itemId) == 0)) {
+    return 1;
   }
-  if ((BATTLE_OK & Ability_Get(def->abilityId)->flags) == 0) {
+  if ((BATTLE_OK & Ability_Get(item->abilityId)->flags) == 0) {
     return 2;
   }
   return 0;

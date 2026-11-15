@@ -796,15 +796,10 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct Unit *unit = Unit_Get(unitId);
-  u32 inventoryEntry = unit->inventory[slot];
-  s32 itemId;
-  struct ItemDefinition *item;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedSlot;
-  struct RenderInput *window;
-
-  itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= inventoryEntry;
-  item = Item_GetDirectFar(itemId);
+  struct Window *itemWindow;
 
   if (unit->inventory[slot] & INVENTORY_EQUIPPED)
     return 0;
@@ -814,38 +809,33 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   if (replacedSlot != -1) {
-    struct ItemDefinition *replacedItem =
+    struct ItemDefinition *oldInfo =
         Item_GetDirectFar(unit->inventory[replacedSlot]);
 
-    if (replacedItem->flags & ITEM_CANNOT_UNEQUIP)
+    if (oldInfo->flags & ITEM_CANNOT_UNEQUIP)
       return 0;
   }
 
   MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-  Shop_ShowKeeperMessage((s32)MsgEquipNowPrompt);
+  Shop_ShowKeeperMessage(MsgEquipNowPrompt);
   if (Shop_AskYesNo(0) != 0)
     return 0;
 
   Inventory_EquipFar(unitId, slot);
-  window = shop->itemWindow;
-  if (window != 0)
-    Shop_DrawMemberItems(window, unitId);
+  itemWindow = shop->itemWindow;
+  if (itemWindow != 0)
+    Shop_DrawMemberItems(itemWindow, unitId);
 
   if (item->flags & ITEM_CURSED) {
     Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
-    {
-      s32 x = 8;
-      s32 y = 4;
-      s32 flags = 2;
-
-      Message_OpenWindowFar((s32)MsgBecameCursed, x, y, flags);
-    }
-    while (Message_AllTypedFar() == 0)
+    Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
+    while (Message_AllTypedFar() == 0) {
       wait(1);
+    }
   }
 
-  Shop_ShowKeeperMessageHidingCursor((s32)MsgLookBolder);
+  Shop_ShowKeeperMessageHidingCursor(MsgLookBolder);
   return 1;
 }
 
@@ -854,18 +844,18 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct Unit *unit;
   s32 itemId;
-  u32 inventoryEntry;
 
   unit = Unit_Get(unitId);
-  if (slot == -1)
+  if (slot == -1) {
     return 0;
-  inventoryEntry = unit->inventory[slot];
-  itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= inventoryEntry;
-  if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY)
+  }
+  itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+  if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY) {
     return 0;
-  if (Item_GetDirectFar(itemId)->flags & ITEM_INDISPENSABLE)
+  }
+  if (Item_GetDirectFar(itemId)->flags & ITEM_INDISPENSABLE) {
     return 0;
+  }
   Shop_SellItem(unitId, slot, -1);
   return 1;
 }

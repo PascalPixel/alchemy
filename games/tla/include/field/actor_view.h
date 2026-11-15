@@ -62,14 +62,14 @@ struct ActorView {
   void (*update)(struct ActorView *object); ///< per-frame hook
 };
 
-s32 Sprite_StartAnimation(struct ActorSpriteView *, s32);
-void Sprite_SetAnimationSpeed(struct ActorSpriteView *, s32);
-s32 Sprite_ResetAnimations(struct ActorSpriteView *);
-s32 Sprite_AddAnimation(struct ActorSpriteView *, s32);
+s32 Sprite_StartAnimation(struct Sprite *, s32);
+void Sprite_SetAnimationSpeed(struct Sprite *, s32);
+s32 Sprite_ResetAnimations(struct Sprite *);
+s32 Sprite_AddAnimation(struct Sprite *, s32);
 void Actor_StartScript(struct Actor *, const s32 *);
 void Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags);
-void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
-void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
+void Animation_ApplyChildValuesToRecord(struct Sprite *, u32);
+void Animation_ApplyChildValuesToRecordFar(struct Sprite *, u32);
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 void Actor_SetSpriteColorModeFar(struct Actor *, u32);
 void Actor_SetSpritePriorityDirect(struct Actor *, s32);

@@ -744,16 +744,14 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
   }
 }
 
-void Animation_ApplyChildValueToFirst(struct ActorSpriteView *record,
-                                      u32 value) {
+void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   if (record != NULL) {
     record->entries[0]->colorMode = value;
     record->dirty = 1;
   }
 }
 
-void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
-                                        u32 value) {
+void Animation_ApplyChildValuesToRecord(struct Sprite *record, u32 value) {
   s32 i;
 
   if (record != NULL) {

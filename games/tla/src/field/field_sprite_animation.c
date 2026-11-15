@@ -136,52 +136,10 @@ s32 SpritePictureCache_FindByTag(s32 key) {
   return 0;
 }
 
-// actor_view.h's ActorSpriteView, with the bytes this function writes named
-// from the projection draft's layout (field_sprite.h); its other members as
-// the tree has them.
-/* VIEW(resource_slot): tag struct ActorSpriteView as struct
- * ActorSpriteView__resource_slot; actor_view.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sprite_animation.c:158: structure has no
- * member named `width'. */
-struct ActorSpriteView__resource_slot {
-  u8 unk00[5];
-  u8 unk05Low : 2;
-  u8 stateFlags : 2;
-  u8 unk05High : 4;
-  u8 unk06[6];
-  s32 scale;
-  u8 unk10;
-  u8 unk11Low : 1;
-  u8 displayFlag : 1;
-  u8 unk11High : 6;
-  s16 value12;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 unk18;
-  u8 dirty;
-  u8 value1a;
-  u8 count;
-  u8 unk1c[0x0c];
-  struct SpriteAnimation *entries[4];
-};
-/* VIEW(resource_slot): routine Sprite_ResetAnimations as s32
- * Sprite_ResetAnimations(struct ActorSpriteView__resource_slot *state);
- * actor_view.h has s32 Sprite_ResetAnimations(struct ActorSpriteView *); tried
- * as the definition's s32 Sprite_ResetAnimations(struct
- * ActorSpriteView__resource_slot *state), which the object already declares, it
- * does not compile in tla-ja: games/tla/src/field/field_sprite_animation.c:157:
- * conflicting types for `Sprite_ResetAnimations'. */
-s32 InitializeAnimationObjects__resource_slot(
-    struct ActorSpriteView__resource_slot
-        *state) __asm__("Sprite_ResetAnimations");
-#define Sprite_ResetAnimations InitializeAnimationObjects__resource_slot
 /// Resets each sprite animation of a sprite from its animation's metadata: its
 /// facing kind, pictures, scripts and codec, with no picture shown and no
 /// script running.
-s32 Sprite_ResetAnimations(struct ActorSpriteView__resource_slot *state) {
+s32 Sprite_ResetAnimations(struct Sprite *state) {
   s32 index;
   struct SpriteAnimation **slot;
 
@@ -381,20 +339,10 @@ void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
   }
 }
 
-/* VIEW(resource_slot): routine Sprite_StartAnimation as s32
- * Sprite_StartAnimation(struct AnimationGroup *state, s32 flags); actor_view.h
- * has s32 Sprite_StartAnimation(struct ActorSpriteView *, s32); tried as the
- * definition's s32 Sprite_StartAnimation(struct AnimationGroup *state, s32
- * flags), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sprite_animation.c:360: conflicting types for
- * `Sprite_StartAnimation'. */
-s32 Animation_ApplyChildArgument__resource_slot(
-    struct AnimationGroup *state, s32 flags) __asm__("Sprite_StartAnimation");
-#define Sprite_StartAnimation Animation_ApplyChildArgument__resource_slot
 /// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
 /// keeps each sprite animation's place and timer), unless the sprite plays it
 /// already.
-s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags) {
+s32 Sprite_StartAnimation(struct Sprite *state, s32 flags) {
   s32 highBit;
   s32 index;
 

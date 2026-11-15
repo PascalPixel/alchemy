@@ -229,7 +229,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);
-      // A once-only block: it keeps the shake after the sound.
+      /* FAKEMATCH(dead): the shake's store in a once-only block; as the plain
+       * store, 2 of 636 instructions differ in tla-en. */
       do {
         work->shakeFrames = 6;
       } while (0);

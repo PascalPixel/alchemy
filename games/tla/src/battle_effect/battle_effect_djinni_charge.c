@@ -291,8 +291,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           } else {
             x = screen.x / 2 - 46;
           }
-          // The picture's address summed as integers: as cells + picture *
-          // 6000, 2 differ.
+          /* FAKEMATCH(signature): the picture's address summed as integers; as
+           * (u8 *)cells + picture * 6000, 2 of 1216 instructions differ in
+           * tla-en. */
           blit[0](canvas, (u8 *)(picture * 6000 + (s32)cells), x, screen.y - 50,
                   60, 100);
         }

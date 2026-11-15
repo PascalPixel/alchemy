@@ -2484,7 +2484,8 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           uA += duA;
           vA += dvA;
           /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
-           * them again. */
+           * them again; without them, 165 of 966 instructions differ in
+           * tla-en. */
           uB += duB;
           vB += dvB;
         }

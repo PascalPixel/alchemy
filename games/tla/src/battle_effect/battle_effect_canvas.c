@@ -604,7 +604,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 1;
-            // sizeOffsets[n - 1] spelled as a byte offset: plain, 49 differ.
+            /* FAKEMATCH(temporary): the table read at a byte offset held in
+             * off; as sizeOffsets[n - 1], 49 of 2159 instructions differ in
+             * tla-en.
+             */
             s32 off = n * 2 - 2;
 
             blit[0](canvas,

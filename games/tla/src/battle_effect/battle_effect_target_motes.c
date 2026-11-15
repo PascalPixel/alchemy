@@ -771,9 +771,10 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               EffectPosition_ProjectPoint((s32 *)spark, &view);
               view.x >>= 1;
-              /* LEFTOVER(template): the clamp and size by depth, idle here, as
-               * in the twin; as the clamp alone, 448 of 744 instructions differ
-               * in tla-en. */
+              /* LEFTOVER(template): the clamp and size by depth, idle here,
+               * shared with BattleEffect_RunHealingMotes, which uses the size,
+               * as the twin's Djinn Heal keeps it; as the clamp alone, 448 of
+               * 744 instructions differ in tla-en. */
               CLAMP(view.depth, 314, 634);
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;

@@ -240,6 +240,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+        /* FAKEMATCH(dead): the push with an empty once-only block before each
+         * of its three stores (QUEUE_PUSH_PARTED); as IO_WRITE_QUEUE_PUSH, 23
+         * of 2680 instructions differ in tla-en. */
         QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
                           (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
                           DMA_COPY_WORDS(0x100));
@@ -731,8 +734,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             if (dx > 1000)
               top = 0;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites;
+             * without it, 204 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;

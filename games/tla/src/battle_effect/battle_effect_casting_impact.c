@@ -53,7 +53,8 @@ struct DrawFuncs {
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define BLITTER ((DrawFunc)Ram_HeapSlots->ramCode)
 #define ALT_BLITTER ((DrawFunc)Ram_HeapSlots->ramCodePaired)
-/* FAKEMATCH(dead): the second release in a once-only block. */
+/// Both blitters released, the second in a once-only block (tagged where the
+/// effect uses it).
 #define RELEASE_BLITTERS()                                                     \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                                 \
   do {                                                                         \
@@ -1400,6 +1401,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
+            /* FAKEMATCH(dead): RELEASE_BLITTERS releases its second blitter in
+             * a once-only block, here and in the stun bolt below. */
             RELEASE_BLITTERS();
             BattleEffect_BuildBlitter(
                 188, 7, 7, gCastingImpact_SapGlintFlips[Random16() & 3] | 3, 1);

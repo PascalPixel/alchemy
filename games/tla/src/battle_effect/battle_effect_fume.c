@@ -31,12 +31,10 @@ struct Corner {
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: the second word gives the stack frame its 4 bytes (as a plain
-  // local, 106 differ).
-  struct {
-    DrawRectangle draw;
-    s32 unused;
-  } blit;
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter: the frame (sub
+   * sp, #116) reserves it at sp + 68 and no instruction addresses it; as one
+   * DrawRectangle, 74 of 627 instructions differ in tla-en. */
+  DrawRectangle blit[2];
   s32 j;
   s32 frame;
   s32 endX;
@@ -61,7 +59,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  blit.draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   endX = 0;
   endY = 0;
@@ -109,12 +107,12 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       particle = &work->particles[i];
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
-          blit.draw(canvas,
-                    work->sheet + FUME_FLASH_BURST_PICTURES +
-                        ((particle->variant / 4) << 11),
-                    Q_16_16_UPPER_HALF(particle->x) - 16,
-                    Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
-                    FLASH_BURST_HEIGHT);
+          blit[0](canvas,
+                  work->sheet + FUME_FLASH_BURST_PICTURES +
+                      ((particle->variant / 4) << 11),
+                  Q_16_16_UPPER_HALF(particle->x) - 16,
+                  Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
         }
         BattleEffectKernels_IntegrateVector2(
             particle, 60, -gFume_Levels[args->variant][FUME_LIFT]);

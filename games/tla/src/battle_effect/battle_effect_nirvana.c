@@ -480,7 +480,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;
-            // A once-only block around the read of user->x.
+            /* FAKEMATCH(dead): the read of user->x in a once-only block; as the
+             * plain read, 43 of 589 instructions differ in tla-en. */
             do {
               userX = user->x;
             } while (0);
@@ -488,7 +489,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read. */
+             * read; as the bare tests, 37 of 589 instructions differ in
+             * tla-en. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))
               mote->variant = -1;

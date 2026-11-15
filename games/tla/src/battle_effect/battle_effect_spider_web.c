@@ -412,6 +412,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         z = px(33) / 32;
       }
       q16 = 0x1000000 / z;
+      // DEAD: each scale is read before it is stored and the value dropped;
+      // the ROM keeps both loads.
       *(volatile u16 *)&work->bg2pa;
       *(volatile u16 *)&work->bg2pa = q16;
       *(volatile u16 *)&work->bg2pd;
@@ -1054,9 +1056,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both. Each blitter is built, drawn with and released before the next
-    // is built; each once-only block holds a draw, its release and the next
-    // build (as one block per quarter, 12 differ); the last draw needs none.
+    // is built.
     LOAD_QUARTER(CLIP);
+    /* FAKEMATCH(dead): each draw, its release and the next build in a
+     * once-only block, three blocks; as plain statements, 164 of 228
+     * instructions differ in tla-en. */
     do {
       DRAW_QUARTER(33, 41);
       RELEASE_QUARTER();

@@ -142,8 +142,11 @@ enum DisplayControl {
 #define BLDCNT_TGT2_ALL 0x3f00       ///< second target: every layer
 
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052) ///< the blend's weights
+/// A blend weight's full strength: BLEND_ALPHA(BLEND_WEIGHT_MAX, 0) shows only
+/// the top layer.
+#define BLEND_WEIGHT_MAX 16
 /// A REG_BLDALPHA value: top and bottom are the two targets' weights, out
-/// of 16.
+/// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
 
@@ -387,6 +390,8 @@ enum KeyMask {
 #define RGB_BLUE(color) (((color) >> 10) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 /// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB

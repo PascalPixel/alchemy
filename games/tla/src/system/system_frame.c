@@ -82,7 +82,6 @@ void System_WaitForFrameInterrupt(void) {
 }
 
 #define SLEEP_IDLE_FRAMES 10800 ///< three minutes with no key held
-#define RGB_WHITE 0x7fff
 
 /// Restarts the cartridge: marks gCartridgeResetMarker, stops direct sound and
 /// jumps to the cartridge's start with interrupts off.

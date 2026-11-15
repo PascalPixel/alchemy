@@ -98,7 +98,7 @@ Resource_DirectoryTable:
 	resource , Battle_StoneCorridorBackdrop
 	resource , Battle_FaceTempleBackdrop
 	resource , Battle_MistyHillsBackdrop
-	resource , Battle_LavaCaveBackdrop
+	resource LavaCaveBackdrop, Battle_LavaCaveBackdrop
 	resource , Battle_WaterfallGorgeBackdrop
 	resource MossCaveBackdrop, Battle_MossCaveBackdrop
 	resource , Battle_BlueRuinsBackdrop
@@ -114,7 +114,7 @@ Resource_DirectoryTable:
 	resource , Battle_IceHallBackdrop
 	resource , Battle_OrbAltarBackdrop
 	resource , Battle_PurpleCaveBackdrop
-	resource , Battle_BeastWallBackdrop
+	resource BeastWallBackdrop, Battle_BeastWallBackdrop
 	resource DragonHallABackdrop, Battle_DragonHallABackdrop
 	resource DragonHallBBackdrop, Battle_DragonHallBBackdrop
 	resource , Battle_GorgePoolBackdrop

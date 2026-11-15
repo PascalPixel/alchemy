@@ -20,4 +20,9 @@ struct Projection {
 /// The projection the battle and the field draw with (IWRAM).
 extern struct Projection gProjection;
 
+/// Where the battle centres its projection on the screen: across the middle,
+/// and 120 pixels down, below the screen's middle.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+
 #endif

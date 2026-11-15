@@ -8,6 +8,7 @@
 
 #include "../field/actor_prepare.c"
 #include "types.h"
+#include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -807,13 +808,7 @@ fill:
   Heap_Release(tiles);
   work->unk08 = layer->offsetX;
   work->unk0c = layer->offsetY;
-  /* FAKEMATCH(dead): the once-only block builds the value after the stores
-   * before it. */
-  do {
-    s32 winout = 0x1b1f;
-
-    REG_WINOUT = winout;
-  } while (0);
+  Io_Write16(0x1b1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {

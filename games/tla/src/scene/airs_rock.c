@@ -1105,7 +1105,6 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
-      /* FAKEMATCH(wrapper): forwarded. */
       position.x =
           object->x.fixed + Math_MulQ16(px(8), Trig_Cos(object->facing));
       position.z =
@@ -1286,14 +1285,10 @@ row:
           0x2a0, Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->x.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->y.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->z.fixed));
-      {
-        s32 priority =
-            ((s8 *)Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sprite)[9] & 12;
-
-        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
-        cell = spark->sprite;
-        ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
-      }
+      ((struct FieldSprite *)spark->sprite)->priority =
+          ((struct FieldSprite *)Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)
+               ->sprite)
+              ->priority;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;

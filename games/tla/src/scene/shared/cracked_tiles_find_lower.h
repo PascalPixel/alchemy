@@ -60,19 +60,9 @@ s32 CrackedTiles_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           }
           entry++;
           table->count++;
-          /* FAKEMATCH(barrier): an empty asm on the stored count. */
-          asm("" : "=m"(table->count) : "m"(table->count) : "r3");
-          /* FAKEMATCH(barrier): an empty asm on the word over the count. */
-          asm("" : "=m"(*(s32 *)&table->z));
         }
       }
     columnNext:
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */
-      asm("");
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */
-      asm("");
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */
-      asm("");
       i++;
       cell++;
       if (i < width)

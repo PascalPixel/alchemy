@@ -576,11 +576,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
-  Task_Add(func, priority);
-}
-
 void AttekaInlet_SetUpTheHarbour(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *party;
@@ -591,8 +586,8 @@ void AttekaInlet_SetUpTheHarbour(void) {
   map->mode = 1;
   party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
-  Task_Add_(AttekaInlet_RotateWaterColors, 0x480);
-  Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
+  FieldTask_AddFrame(AttekaInlet_RotateWaterColors, 0x480);
+  FieldTask_AddFrame(AttekaInlet_ShareLeadersPriority, 0x480);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_GetById(ACTOR_CANNON)->motionFlags = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {

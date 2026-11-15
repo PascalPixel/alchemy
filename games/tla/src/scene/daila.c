@@ -92,11 +92,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
-static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
-  Actor_ReturnHome(mode, actor, flag);
-}
-
 s32 *Scene_GetExits(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_2)
     return gDailaExits;
@@ -133,7 +128,7 @@ void Daila_EnterDoor(void) {
 
 /// Scoop on the puddle's cell digs up the buried Psy Crystal.
 void Daila_DigUpPsyCrystal(s32 mode) {
-  ReturnHome(mode, ACTOR_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG);
+  Event_DigUpTreasure(mode, ACTOR_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {

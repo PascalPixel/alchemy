@@ -55,7 +55,7 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "field/event_commands.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
-#include "scene/field_map_grid.h"
+#include "scene/event_layer.h"
 #include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "system/system.h"

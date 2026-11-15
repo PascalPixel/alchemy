@@ -461,12 +461,8 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_Wait(5);
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
-      {
-        s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, b, c);
-      }
+      Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE,
+                      30);
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
@@ -476,12 +472,8 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(10);
-      {
-        s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, b, c);
-      }
+      Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE,
+                      30);
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
       FieldEvent_Wait(10);
@@ -669,31 +661,30 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   FieldEvent_Wait(15);
 }
 
-void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 void Portrait_OpenWindow(s32 object, s32 a, s32 b, s32 c);
 
-void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
-                            s32 firstB, s32 secondId, volatile s32 secondX,
-                            s32 secondY, s32 secondA, s32 secondB,
-                            volatile s32 frames) {
-  /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
-   * each use. */
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 first = Actor_GetSpriteById(firstId);
-  s32 second = Actor_GetSpriteById(secondId);
+/// Event_ShowTwoMessagesAndWait's first half, kept in the scene: two actors
+/// speak at once, the second message waiting for the first when delay is
+/// nonzero; Champa_CloseTwoMessages closes them.
+void Champa_ShowTwoMessages(s32 first, s32 firstX, s32 firstY,
+                            s32 firstPortraitX, s32 firstPortraitY, s32 second,
+                            s32 secondX, s32 secondY, s32 secondPortraitX,
+                            s32 secondPortraitY, s32 delay) {
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  s32 firstSprite = Actor_GetSpriteById(first);
+  s32 secondSprite = Actor_GetSpriteById(second);
 
-  Message_OpenWindow(work->message++, firstX, firstY,
-                     Speaker_GetVoice(first) << 16);
-  Portrait_OpenWindow(first, 0, firstA, firstB);
-  if (frames != 0) {
+  Message_OpenWindow((s16)event->message++, firstX, firstY,
+                     Speaker_GetVoice(firstSprite) << 16);
+  Portrait_OpenWindow(firstSprite, 0, firstPortraitX, firstPortraitY);
+  if (delay != 0) {
     while (!Message_AllTyped())
-      System_Wait(frames);
+      System_Wait(delay);
   }
-  /* FAKEMATCH(volatile): the counter's second store and the second x both
-   * volatile. */
-  Message_OpenWindow((*(volatile s16 *)&work->message)++, secondX, secondY,
-                     Speaker_GetVoice(second) << 16);
-  Portrait_OpenWindow(second, 0, secondA, secondB);
+  Message_OpenWindow((s16)event->message++, secondX, secondY,
+                     Speaker_GetVoice(secondSprite) << 16);
+  Portrait_OpenWindow(secondSprite, 0, secondPortraitX, secondPortraitY);
   while (!Message_AllTyped())
     System_Wait(1);
   System_Wait(1);

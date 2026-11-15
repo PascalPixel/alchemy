@@ -12,6 +12,7 @@
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
+#include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -401,8 +402,6 @@ blend:
   GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
   GameFlag_Set(0x95e);
   FieldCamera_SetSpeed(1);
-  /* FAKEMATCH(wrapper): the camera moves forwarded through
-   * ApojiiIslands_CamMove. */
   FieldCamera_MoveTo(360, CAMERA_KEEP, 328, 1);
   Actor_ShowEmoteById(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
@@ -618,10 +617,7 @@ void Scroll_HBlank(void) {
     REG_BLDCNT = 0;
   } else {
     value = gApojiiIslands_LowerScrollX;
-    /* FAKEMATCH(dead): the once-only block orders this statement. */
-    do {
-      REG_BG1HOFS = value;
-    } while (0);
+    Io_Write16(value, &REG_BG1HOFS);
     REG_BLDALPHA = 0x100c;
     REG_BLDCNT = 0x3f42;
   }

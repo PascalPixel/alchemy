@@ -23,7 +23,7 @@
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
-#include "scene/field_map_grid.h"
+#include "scene/event_layer.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -38,7 +38,6 @@
 
 void Pillars_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
-void Field_StartColorTransition(s32 frames, s32 color);
 extern s32 gAlhafranCave_GuardStepsAsideScript[];
 extern u32 gAlhafranCave_VisitorsLeaveScript[];
 void AlhafranCave_OpenWayToJail(void);
@@ -364,8 +363,6 @@ void AlhafranCave_SetUpCave(void) {
   Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    /* FAKEMATCH(wrapper): the three calls forwarded through
-     * MapGrid_CopyCellPictureCellsRect_. */
     MapGrid_CopyCellsLayered(0, 58, 12, 7, 13, 58);
     MapGrid_CopyCellsLayered(0, 58, 2, 9, 25, 66);
     MapGrid_CopyCellsLayered(0, 58, 10, 5, 15, 74);
@@ -484,8 +481,6 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *effect;
   s32 position[3];
 
-  /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3, Call4
-   * and Value3. */
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT) == 0)
     return;
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) == 1)
@@ -563,12 +558,12 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  (void *)Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   eoleo = Actor_Get(ACTOR_EOLEO);
   jailCell = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
-  Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
+  Event_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);

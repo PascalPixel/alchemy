@@ -2346,11 +2346,6 @@ struct RockWork {
 /// thrown up and out along it.
 #include "shared/rocks_spawn.h"
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
-  Task_Add(func, priority);
-}
-
 void EasternAlhafra_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -2381,7 +2376,7 @@ void EasternAlhafra_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  StartTask(Particles_UpdateFalling, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
 }
 
 void EasternAlhafra_EndFallingRocks(void) {

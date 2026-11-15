@@ -192,7 +192,7 @@ extern s32 gAirsRockInside_StampedZ;
 #include "types.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
-#include "scene/field_map_grid.h"
+#include "scene/event_layer.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
 #include "field/map_grid.h"

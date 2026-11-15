@@ -1178,6 +1178,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   struct Actor *leader;
   s32 frame;
   u32 i;
+  s32 y;
 
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -1191,9 +1192,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   for (i = 0; i <= 7; i++) {
     struct Actor *object;
     struct FieldEffect *effect;
-    s32 y;
 
-    /* FAKEMATCH(temporary): the form kept. */
     y = leader->y.fixed - px(((Random16() * 7) << 1) >> 16);
     object = ((struct Actor *)Import_ActorCreate(
         285, (i << 17) + leader->x.fixed - Q16_ONE * 8, y - Q16_ONE * 2,

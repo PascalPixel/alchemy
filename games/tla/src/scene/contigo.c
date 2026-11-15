@@ -1477,9 +1477,6 @@ extern const u8 gContigo_SparkleWork[];
 void Contigo_TheReunion(void) {
   struct Actor *object;
   s32 answer;
-  /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
-   * and copied to r0 in each branch. */
-  register s32 owner __asm__("r5");
   s32 angle;
 
   object = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
@@ -1641,14 +1638,13 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     gFieldWork->message++;
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
@@ -1705,15 +1701,14 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
@@ -2282,15 +2277,11 @@ void MapGrid_CenterOnFollowedPoint(void);
 /// the camera follow the leader; it ends with Palette_SetColors.
 void Contigo_InitializeVillage(void) {
   struct Actor *object = Actor_GetById(ACTOR_WANDERER);
-  s32 zero;
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
-  /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
-   * address. */
-  zero = 0;
   object->riseCounter = 1;
-  object->blockMarked = zero;
-  *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
+  object->blockMarked = 0;
+  object->update = Contigo_FaceTalker;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
     Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);

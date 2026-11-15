@@ -323,7 +323,7 @@ extern s32 gKandoreanTemple_RightTimer;
 
 /// Talking to Fog starts its battle.
 void KandoreanTemple_FightFog(void) {
-  Field_RequestDjinnBattle(11, DJINNI_FOG);
+  Field_RequestDjinnBattle(ACTOR_FOG, DJINNI_FOG);
 }
 
 /// A puff of steam's script step: counts down its life and reports whether any

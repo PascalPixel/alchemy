@@ -2627,7 +2627,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SUSA, 0, 0);
       Actor_WalkToById(*owner, 488, 376);
       Actor_WaitForMoveById(*owner);
-      C3(MapGrid_SetScreenShake, 0x50000, 0x50000, scale);
+      MapGrid_SetShakeFixed(0x50000, 0x50000, scale);
       Sound_Play(SE_TREMOR);
       Event_Wait(30);
       Actor_ShowEmoteById(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2636,7 +2636,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(15);
       other = Actor_GetById(ACTOR_SAND_TABLET);
       alpha = REG_BLDALPHA;
-      C3(MapGrid_SetScreenShake, 0xa0000, 0xa0000, scale);
+      MapGrid_SetShakeFixed(0xa0000, 0xa0000, scale);
       Sound_Play(SE_TREMOR);
       BlendScript_Suspend();
       alpha = *(u8 *)&alpha;

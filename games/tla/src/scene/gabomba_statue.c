@@ -164,8 +164,11 @@ struct Wanderer {
   u16 facingB;
 };
 
+/// Steel, the Djinni waiting in this room.
+enum { ACTOR_STEEL = 33 };
+
 void GabombaStatue_FightSteel(void) {
-  Field_RequestDjinnBattle(33, DJINNI_STEEL);
+  Field_RequestDjinnBattle(ACTOR_STEEL, DJINNI_STEEL);
 }
 /// A wanderer's update: it turns between its two facings at random intervals.
 s32 GabombaStatue_LookAround(struct Wanderer *actor) {

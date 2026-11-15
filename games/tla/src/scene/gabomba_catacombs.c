@@ -88,8 +88,11 @@ void Actor_DepartInRing(s32 id);
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
+/// Mud, the Djinni waiting in this room.
+enum { ACTOR_MUD = 8 };
+
 void GabombaCatacombs_FightMud(void) {
-  Field_RequestDjinnBattle(8, DJINNI_MUD);
+  Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
 
 void GabombaCatacombs_ClearTeleportersBushes(void) {

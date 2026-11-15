@@ -228,13 +228,19 @@ void IsletCave_TeleportIn(void) {
 
 #include "text/msg_ids.h"
 
+/// Meld, the Djinni waiting in this room.
+enum { ACTOR_MELD = 15 };
+
 void IsletCave_FightMeld(void) {
-  Field_RequestDjinnBattle(15, DJINNI_MELD);
+  Field_RequestDjinnBattle(ACTOR_MELD, DJINNI_MELD);
   return;
 }
 
+/// Serac, the Djinni waiting in this room.
+enum { ACTOR_SERAC = 9 };
+
 void IsletCave_FightSerac(void) {
-  Field_RequestDjinnBattle(9, DJINNI_SERAC);
+  Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
   return;
 }
 

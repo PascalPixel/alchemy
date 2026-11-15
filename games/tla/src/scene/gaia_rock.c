@@ -37,6 +37,11 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
+/// The ledge where the party finds Susa beaten (SceneId_GaiaRockSusa): Susa
+/// ("Kushinada's safe... She's safe! Nothing else matters.") and the statue
+/// that blows wind.
+enum { ACTOR_WIND_STATUE = 17, ACTOR_SUSA = 20 };
+
 /// The two pillars Moved into the gaps: the first dropped in at the west end,
 /// the second at (79, 12).
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
@@ -260,9 +265,9 @@ void GaiaRock_SusaRejoices(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(MsgYouReGoing);
-    FieldActor_StartRepeatedMotion(20, 1);
+    FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);
-    Event_AskYesNo(20, 0);
+    Event_AskYesNo(ACTOR_SUSA, 0);
     Event_SetFlag(0x9ab);
     Event_End();
   }
@@ -271,11 +276,11 @@ void GaiaRock_SusaRejoices(void) {
 void GaiaRock_TalkToSusa(void) {
   if (Event_GetFlag(0x9ab)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
-    Event_AskYesNo(20, 0);
+    Event_AskYesNo(ACTOR_SUSA, 0);
   } else {
     FieldEvent_SetMessageId(MsgIfYouRe);
     // "If you're going to Izumo, tell my sister that I'm still alive."
-    Event_ShowMessage(20, 0);
+    Event_ShowMessage(ACTOR_SUSA, 0);
   }
 }
 
@@ -283,11 +288,11 @@ void GaiaRock_MindReadSusa(void) {
   if (Event_GetFlag(0x9ab)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     // "Kushinada's safe... She's safe! Nothing else matters."
-    Event_ShowMessage(20, 0);
+    Event_ShowMessage(ACTOR_SUSA, 0);
   } else {
     FieldEvent_SetMessageId(MsgIReallyGot);
     // "I really got worked over, but as long as Kushinada's safe, it was..."
-    Event_ShowMessage(20, 0);
+    Event_ShowMessage(ACTOR_SUSA, 0);
   }
 }
 
@@ -423,7 +428,7 @@ void GaiaRock_SwingVineHarder(void) {
 void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
 void GaiaRock_StatueBlowsWind(void) {
-  struct Actor *object = Actor_Get(17);
+  struct Actor *object = Actor_Get(ACTOR_WIND_STATUE);
   u8 phase = gFrameCount;
 
   if (phase == 0) {

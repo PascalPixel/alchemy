@@ -298,7 +298,7 @@ extern s8 gPushFootprints[][4];
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
   s16 i = 0;
@@ -325,9 +325,9 @@ s32 PushTarget_FillFootprint(s32 id) {
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
   x = FIELD_CELL(object->x.fixed + px(gPushFootprints[j][0]));
   z = FIELD_CELL(object->z.fixed + px(gPushFootprints[j][1]));
-  mapX = *(s32 *)(map + 328) >> 20;
+  mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
-  mapZ = *(s32 *)(map + 332) >> 20;
+  mapZ = FIELD_CELL(map->layers[1].offsetY);
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
@@ -361,7 +361,8 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 void PushTarget_UpdatePusher(struct Actor *object);
 
 void PushTarget_PushFill(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map =
+      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
@@ -431,8 +432,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
+  originX = FIELD_CELL(map->layers[1].offsetX);
+  originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);

@@ -2090,7 +2090,7 @@ struct MapLayerBits {
 void Islets_StartPaletteCycle(void);
 
 void Islets_InitializeTurtle(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 done;
 
   Event_Start();
@@ -2284,7 +2284,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 /// is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for a shape with
 /// no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
   s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
@@ -2312,10 +2312,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
   x = actor->x.fixed + px(a);
   z = actor->z.fixed + px(b);
-  b = *(s32 *)(map + 0x148) >> 20;
+  b = FIELD_CELL(map->layers[1].offsetX);
   x >>= 20;
   z >>= 20;
-  fromZ = *(s32 *)(map + 0x14c) >> 20;
+  fromZ = FIELD_CELL(map->layers[1].offsetY);
   fromX = (u16)b;
   Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
@@ -2475,7 +2475,8 @@ void Actor_StopAtPushTarget(struct Actor *object);
 /// Pushes an object to its target, the leader following, and moves its cells
 /// with it.
 void PushTarget_Push(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map =
+      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
@@ -2545,8 +2546,8 @@ void PushTarget_Push(struct PushTarget target) {
   target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
+  originX = FIELD_CELL(map->layers[1].offsetX);
+  originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);

@@ -89,7 +89,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
   // Every puff starts free.
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PUFFS[i].variant = -1;
   }
 
@@ -395,6 +395,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 #define THORN_SMALL_PICTURE_WIDTH 32
 #define THORN_SMALL_PICTURE_HEIGHT 64
 
+/// ThornSheet: the big thorn, then the small one.
+#define THORN_BIG_WIDTH 48
+#define THORN_SMALL_PICTURE PICTURE_BYTES(THORN_BIG)
+
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
@@ -490,8 +494,9 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
             lean = 8;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet + 0xf00, gGrowth_X[i] - lean,
-                     108 - height, THORN_SMALL_PICTURE_WIDTH, height);
+            drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
+                     gGrowth_X[i] - lean, 108 - height,
+                     THORN_SMALL_PICTURE_WIDTH, height);
           } else {
             draw(canvas, work->sheet + 0xf00, gGrowth_X[i] + lean, 108 - height,
                  THORN_SMALL_PICTURE_WIDTH, height);

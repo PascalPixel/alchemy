@@ -146,7 +146,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // Copy the picture at 0x06008000 aside, fill it with colour 1, and make
   // colours 6 to 13 white.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -203,7 +203,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     }
 
     if (frame == 4)
-      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0x02020202);
+      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
+                      0x02020202);
 
     // Frames 0 to 3: widen the circle by 32 pixels of radius, brightening
     // its grey.
@@ -298,7 +299,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(piece->x), Q_16_16_UPPER_HALF(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          BattleEffectKernels_IntegrateVector2(piece, 64, px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(piece, PARTICLE_DAMPING_NONE,
+                                               px(1) / 4);
       }
     }
 
@@ -351,7 +353,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
             cell = 5;
           draw[1](canvas, work->sheet + (cell << 11),
                   Q_16_16_UPPER_HALF(piece->x) - 16,
-                  Q_16_16_UPPER_HALF(piece->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(piece->y) - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(piece, 60, -px(1) / 16);
           piece->variant++;
         }
@@ -392,6 +395,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 // Light gathering on the user and bursting, for the scenes.
 
 #define ELEMENT_BURST_FRAMES 56
+
+#define ELEMENT_BURST_SPARK_HEIGHT 32
+#define ELEMENT_BURST_BURST_WIDTH 48
+#define ELEMENT_BURST_BURST_HEIGHT 48
 
 /// Sparks in an element's colours flare at four corners around a unit and motes
 /// spiral in, then a burst of light plays over it.
@@ -472,7 +479,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     // The burst, a picture every three frames.
     if (frame >= 28 && frame <= 48)
       draw[0](canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40,
-              ground.y - 24, 48, 48);
+              ground.y - 24, ELEMENT_BURST_BURST_WIDTH,
+              ELEMENT_BURST_BURST_HEIGHT);
 
     // The corner sparks, each with its own flips.
     if (frame >= 0 && frame <= 14) {
@@ -484,7 +492,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
                                   gElementBurst_GlintFlips[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
-                ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
+                ground.y + gDeathPlunge_Y[i] - 32, 32,
+                ELEMENT_BURST_SPARK_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }

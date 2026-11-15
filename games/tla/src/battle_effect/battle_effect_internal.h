@@ -225,6 +225,17 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// Attribute 2's 16-colour palette, as The Broken Seal's io_reg.h has it.
 #define OBJ_PALETTE(n) ((n) << 12)
 
+/// The map cell buffer as BattleEffect_BuildWindowEdgeTable reads it: window
+/// 0's right edge, how far each of its lines is set in from that edge, and the
+/// right edge it builds for every screen line.
+#define WINDOW_EDGE_RIGHT ((u16 *)gMapGridCellBuffer)
+#define WINDOW_EDGE_INSETS (Ram_MapCellBuffer + 2)
+#define WINDOW_EDGE_INSET_LINES 128
+#define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
+
+/// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
+#define DMA_CONTROL_HALF 5
+
 /// The particles the map cell buffer holds when an effect lays its particles
 /// over it from the start.
 #define PARTICLE_POOL_COUNT 1024

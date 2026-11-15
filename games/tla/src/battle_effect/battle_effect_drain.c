@@ -86,7 +86,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != args->targetCount * 20 + 56; frame++) {
+  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 56;
+       frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
     for (member = 0; member != args->targetCount; member++) {

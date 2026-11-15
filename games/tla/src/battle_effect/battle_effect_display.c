@@ -61,11 +61,11 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
 /// scanline from the map cell buffer.
 void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *dma = REG_DMA0;
-  u16 control = dma[5];
+  u16 control = dma[DMA_CONTROL_HALF];
 
-  dma[5] = control & 0xc5ff; // Clear start timing and repeat.
-  dma[5] &= 0x7fff;          // Stop.
-  (void)dma[5];
+  dma[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  dma[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
+  (void)dma[DMA_CONTROL_HALF];
   Dma_Set(Ram_MapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }

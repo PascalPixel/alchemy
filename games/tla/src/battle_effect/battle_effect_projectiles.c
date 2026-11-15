@@ -505,6 +505,12 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 /// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
 #define PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES 0x65c0
 
+#define PROJECTILE_VOLLEY_COMET_PICTURES 4096 ///< comets: the top half of each
+/// The comets' width, and the shuriken's six pictures.
+#define PROJECTILE_VOLLEY_COMET_WIDTH 32
+#define SHURIKEN_WIDTH 32
+#define SHURIKEN_HEIGHT 24
+
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
@@ -579,13 +585,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       kind = 0;
     if (kind == 0)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                                 1, 1);
     else if (kind == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                                 1, 1);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                                 1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
@@ -1012,9 +1021,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             else
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
-            DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
-                           pos->y - gProjectileVolley_CometHeights[kind], 32,
-                           gProjectileVolley_CometHeights[kind]);
+            DRAW_ALTERNATE(
+                canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                pos->x - 16, pos->y - gProjectileVolley_CometHeights[kind], 32,
+                gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -1024,13 +1034,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                   BLITTER_MAX);
-            DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
-                           32, gProjectileVolley_CometHeights[kind]);
+            DRAW_ALTERNATE(canvas,
+                           work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                           pos->x - 16, pos->y, PROJECTILE_VOLLEY_COMET_WIDTH,
+                           gProjectileVolley_CometHeights[kind]);
             RELEASE_DRAW_BLITTER();
           } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
             if (ABS(shot->x) <= ABS(target->x))
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
-                      pos->y - 12, 32, 24);
+                      pos->y - 12, SHURIKEN_WIDTH, SHURIKEN_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                      mode == PROJECTILE_VOLLEY_BLIZZARD ||
                      mode == PROJECTILE_VOLLEY_ICE_BLESSING ||

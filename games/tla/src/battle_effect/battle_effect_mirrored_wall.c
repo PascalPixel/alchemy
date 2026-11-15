@@ -82,6 +82,9 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 
 #define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
 
+#define DJINN_BEAMS_MOTE_WIDTH 24
+#define DJINN_BEAMS_MOTE_HEIGHT 24
+
 /// With a prelude the Djinni of the mode's element appears, sways and rises
 /// away; then for each target in turn, sixteen frames apart, eight motes drift
 /// down swaying, and from frame 72 a beam of light falls on each target,
@@ -214,7 +217,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 576 +
                             PIC_MOTE,
-                        pos.x - 12, pos.y - 12, 24, 24);
+                        pos.x - 12, pos.y - 12, DJINN_BEAMS_MOTE_WIDTH,
+                        DJINN_BEAMS_MOTE_HEIGHT);
             mote->y -= px(1);
             mote->variant++;
           }

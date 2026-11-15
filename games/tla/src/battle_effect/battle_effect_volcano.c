@@ -12,6 +12,9 @@
 #define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
 #define VOLCANO_TRICKLE 4    ///< and each frame after
 
+/// The flame on odd frames, then on even frames, after the 34x104 column.
+#define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
+
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
 ///
@@ -105,17 +108,20 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll - 104, FIRE_PILLAR_WIDTH,
-                           FIRE_PILLAR_HEIGHT);
+                           screen.y - scroll - FIRE_PILLAR_HEIGHT,
+                           FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
                            screen.y - scroll, 34, scroll);
           if (frame & 1) {
-            draw[0](canvas, work->sheet + 0xdd0, screen.x - 20, screen.y - 24,
+            draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
                     FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
-            draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24,
-                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD, screen.x,
+                    screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
+                    FIRE_PILLAR_FLAME_HEIGHT);
           } else {
-            draw[0](canvas, work->sheet + 0x10b4, screen.x - 20, screen.y - 24,
+            draw[0](canvas, work->sheet + 0x10b4,
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
                     FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
             draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24,
                     FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);

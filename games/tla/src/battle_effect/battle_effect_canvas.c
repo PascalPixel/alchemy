@@ -1042,15 +1042,15 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
     case 1:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), 0x4000);
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
                                        Q16_ONE / 4);
@@ -1105,10 +1105,12 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
+                      BATTLE_BACKGROUND_BYTES);
       break;
     case 1:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
+                      BATTLE_BACKGROUND_BYTES);
       Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
       break;
     case 2:
@@ -1145,10 +1147,12 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
+                      BATTLE_BACKGROUND_BYTES);
       break;
     case 1:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
+                      BATTLE_BACKGROUND_BYTES);
       Iwram_FillWords(source, 0x3c00, work->transferValue);
       break;
     case 2:
@@ -1252,6 +1256,9 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
+/// One step of the background palette fade.
+#define CANVAS_FADE_STEP 1092
+
 void Palette_StepFadeTransfer(void) {
   u8 *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
@@ -1265,7 +1272,7 @@ void Palette_StepFadeTransfer(void) {
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         0x10000 - *step * 1092, 128);
+                         Q16_ONE - *step * CANVAS_FADE_STEP, 128);
     (*framesLeft)--;
   }
 }
@@ -1599,7 +1606,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
       if (col > 15)
         *(volatile u16 *)(0x0600fb00 + off) = 0xff;
       else
-        *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
+        *(volatile u16 *)(0x0600fb00 + off) = row * CANVAS_TILES + 0x100 + col;
     }
   }
   REG_DISPCNT = DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |

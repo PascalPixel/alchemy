@@ -99,7 +99,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(shard->x) - gPrism_ShardWidths[cell] / 2,
                 Q_16_16_UPPER_HALF(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
-            BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 8);
+            BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -109,7 +110,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           draw[i & 1](canvas, work->sheet, Q_16_16_UPPER_HALF(cry->x) - 16,
                       Q_16_16_UPPER_HALF(cry->y), CRYSTAL_WIDTH,
                       CRYSTAL_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(cry, 64, px(1));
+          BattleEffectKernels_IntegrateVector2(cry, PARTICLE_DAMPING_NONE,
+                                               px(1));
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;
             cry->y = GROUND_Y;

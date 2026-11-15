@@ -156,16 +156,19 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       }
       if (frame <= 71) {
         draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                         gCondemn_PictureY[row * 7] + screenY, 57, 98);
+                         gCondemn_PictureY[row * 7] + screenY, 57,
+                         REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 75)
           draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                           gCondemn_PictureY[row * 7] + screenY, 57, 98);
+                           gCondemn_PictureY[row * 7] + screenY, 57,
+                           REAPER_SHEET_RAISED_HEIGHT);
         draw[args->side](canvas, work->sheet + PANEL_B,
                          gCondemn_PictureX[column * 7 + 1],
                          gCondemn_PictureY[row * 7 + 1] + screenY, 99, 69);
         if ((u32)(frame - 72) <= 1)
-          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                               CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if ((u32)(frame - 74) <= 1)
           draw[args->side](canvas, work->sheet + PANEL_C,
                            gCondemn_PictureX[column * 7 + 2],

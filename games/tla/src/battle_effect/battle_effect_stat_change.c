@@ -115,6 +115,10 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
 
 #define STAT_BOOST_PICTURE_FRAME 80
 
+/// When the first target's flares burst and its picture appears, with the
+/// damage; each later target follows 8 frames behind.
+#define STAT_BOOST_BURST_FRAME 52
+
 /// Flares of light swirl in to the centre of each target in turn and burst, and
 /// the mode's picture plays over it.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
@@ -235,7 +239,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    CopyWordsRoutine()((void *)BG_PLTT, palette, 128);
+    CopyWordsRoutine()((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -313,9 +317,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+      draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+              DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+        draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
 
@@ -407,24 +413,26 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       screen.x = screen.x * 4 / 5 + shift;
 
       // The burst: from frame 52, six pictures four frames apart.
-      if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
+      if (frame >= member * 8 + STAT_BOOST_BURST_FRAME &&
+          frame < member * 8 + 76) {
         s32 cel;
 
         /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
-        cel = (frame - member * 8 - 52) / 4 % 6;
+        cel = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
 
         LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
-                screen.x - 20, screen.y - 20, 40, 40);
+                screen.x - 20, screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
       // From frame 80, the mode's picture.
       if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 108) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 7;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
@@ -436,7 +444,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
                  mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
@@ -449,7 +458,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 2 % 6;
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
@@ -470,7 +480,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
-        if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
+        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
@@ -645,7 +656,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
           if (time <= 26)
             callbacks[0](canvas, work->sheet + time / 4 % 7 * 960, x - 12,
-                         y - 20, 24, 40);
+                         y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
         } else {
           if (time <= 23)
             draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20,

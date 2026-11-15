@@ -307,7 +307,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         camera->yaw -= 256;
     }
     if (args->variant == 3 && frame == 4)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     if (kind == SPARK_GROUPS_DYNAMITE || kind == SPARK_GROUPS_RISING) {
       if (frame == 2) {

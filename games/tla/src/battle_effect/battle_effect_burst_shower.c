@@ -41,13 +41,13 @@ enum BurstShowerMode {
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
-  u16 control = channel[5];
+  u16 control = channel[DMA_CONTROL_HALF];
   u32 io;
 
-  channel[5] = control & 0xc5ff;
-  channel[5] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   io = 0x80;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }
@@ -57,13 +57,13 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 void BattleEffect_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
-  u16 control = channel[5];
+  u16 control = channel[DMA_CONTROL_HALF];
   u32 io;
 
-  channel[5] = control & 0xc5ff;
-  channel[5] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   io = 0x80;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }

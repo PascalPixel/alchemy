@@ -171,7 +171,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   cels = FLURRY_WAVE_PICTURES;
   for (row = 0; row != 288; row++) {
     for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
-      s32 dst = row * 20 + col / 2;
+      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
       s32 src = row * YELLOW_ORB_WIDTH + col;
 
       (cels + dst)[0x2e88] = work->sheet[src];
@@ -330,7 +330,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       // The orb: six 20x48 cels, two frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas, FLURRY_FLASH_PICTURES + ((frame - start - 2) / 2) * 960,
-                targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
+                targetPos.x / 2 - 10, targetPos.y - 24, 20,
+                YELLOW_ORB_PACKED_HEIGHT);
     }
     EFFECT_RELEASE_BLITTERS();
 

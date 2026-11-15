@@ -11,6 +11,8 @@
 
 #define SWIRLING_STARS_FRAMES 160
 
+#define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
@@ -50,7 +52,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     Transform_SetLookAt(camera, camera + 3);
     Transform_ApplyPosition(record);
     star = STARS;
-    for (i = 0; i != 64; i++, star++) {
+    for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
@@ -81,8 +83,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
           pos.depth = 0x27a;
         size = 9 - (pos.depth - 250) / 64;
         draw[0](canvas,
-                work->sheet +
-                    ((i & 3) * 770 + gBattleEffect_MotePictures[size - 1]),
+                work->sheet + ((i & 3) * MOTE_SET_BYTES +
+                               gBattleEffect_MotePictures[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(star, 60, 0);
 
@@ -188,11 +190,12 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
-                       screen.x - 12, screen.y - 36, 24, 48);
+                       screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
+                       SMOKE_PUFF_HEIGHT);
           } else {
             BattleEffectKernels_IntegrateVector3(p, 60, 0x200);
             rectangleB(canvas, work->sheet + cel * 0x480, screen.x - 12,
-                       screen.y - 36, 24, 48);
+                       screen.y - 36, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
           p->variant += 1;
         }

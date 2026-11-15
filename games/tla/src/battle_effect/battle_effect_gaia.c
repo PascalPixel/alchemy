@@ -21,6 +21,11 @@
 /// rows, the standing wall's top and foot, then the flames.
 #define GAIA_ROW_HEIGHT 32
 
+/// The wall stands once it has risen, and sinks away a row every three
+/// frames.
+#define GAIA_WALL_STAND_FRAME 88
+#define GAIA_WALL_FOOT_HEIGHT 21
+
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
@@ -212,12 +217,12 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                 wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
                 gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
       }
     }
 
     // It sinks back the same way (frames 160-183).
-    if (frame >= 160 && frame <= 183) {
+    if (frame >= GAIA_WALL_SINK_FRAME && frame <= 183) {
       s32 row = 7 - (frame - GAIA_WALL_SINK_FRAME) / 3;
 
       if (row < 0)
@@ -229,16 +234,18 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                 wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
                 gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
       }
     }
 
     // The standing wall: its top and its foot (frames 88-159).
-    if (frame >= 88 && frame <= 159) {
+    if (frame >= GAIA_WALL_STAND_FRAME && frame <= 159) {
       draw[0](canvas, &work->sheet[0x13c0], wallX + 16, 0, 48, 96);
       draw[1](canvas, &work->sheet[0x13c0], wallX + 64, 0, 48, 96);
-      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, 48, 21);
-      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, 48, 21);
+      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, 48,
+              GAIA_WALL_FOOT_HEIGHT);
+      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, 48,
+              GAIA_WALL_FOOT_HEIGHT);
     }
 
     // The dust (from frame 88): what leaves the top goes back to the foot

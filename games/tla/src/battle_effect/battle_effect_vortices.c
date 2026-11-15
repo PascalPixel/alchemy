@@ -11,6 +11,13 @@
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 ///< the particles that hold each target's seat
 
+/// The vortex's three halves, then the bubble picture.
+#define FROTH_VORTEX_HALF_WIDTH 16
+#define FROTH_VORTEX_HALF_HEIGHT 64
+#define FROTH_BUBBLE_PICTURE_WIDTH 12
+#define FROTH_BUBBLE_PICTURE_HEIGHT 24
+#define FROTH_BUBBLE_PICTURE (3 * PICTURE_BYTES(FROTH_VORTEX_HALF))
+
 /// Bubbles fly out of the top of the user, hang, and home in on the targets;
 /// each that lands bursts into a swirling vortex, knocking back its target,
 /// while the camera swings round.
@@ -95,7 +102,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           pos.depth = 160;
         if (pos.depth > 0x31f)
           pos.depth = 0x31f;
-        draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE, pos.x - 6,
+                pos.y - 12, FROTH_BUBBLE_PICTURE_WIDTH,
+                FROTH_BUBBLE_PICTURE_HEIGHT);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -131,9 +140,11 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       // The splash: three cels, two frames each, drawn as mirrored halves.
       if (point->variant >= 0 && point->variant < 16) {
         draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
-                point->x - 16, point->y - 56, 16, 64);
+                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56, 16,
+                FROTH_VORTEX_HALF_HEIGHT);
         draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
-                point->x, point->y - 56, 16, 64);
+                point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
+                FROTH_VORTEX_HALF_HEIGHT);
         point->variant++;
       }
     }

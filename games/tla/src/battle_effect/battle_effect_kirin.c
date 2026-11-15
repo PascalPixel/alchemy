@@ -131,7 +131,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         amp = 96;
         if (frame <= 104)
           amp = 32;
-        ang = (frame * 1024 - TRIG_TURN / 8) & 0xffff;
+        ang = (frame * 1024 - TRIG_TURN / 8) & TRIG_ANGLE_MASK;
         if (ang > TRIG_TURN / 2)
           ang -= TRIG_TURN / 2;
         wave = Q_16_16_TO_INT(Trig_Sin(ang) * amp);

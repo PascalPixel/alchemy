@@ -132,8 +132,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
                 WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     } else {
       for (i = 0; i != 5; i++)
-        blit[0](canvas, work->sheet, ((i << 5) + (frame / 4 & 31)) - 32,
-                120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
+        blit[0](canvas, work->sheet,
+                ((i << 5) + (frame / 4 & 31)) - WATER_WAVE_WIDTH, 120 - rise,
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
 
     BattleCamera_Shake(4, 8);

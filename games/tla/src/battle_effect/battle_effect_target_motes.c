@@ -274,7 +274,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
-                        screen.y - 20, 40, 40);
+                        screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
@@ -283,7 +283,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                         HEART_WIDTH, HEART_HEIGHT);
               else
                 draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
-                                   screen.x - 12, screen.y - 24, 24, 48);
+                                   screen.x - 12, screen.y - 24, 24,
+                                   VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
               if (DECAYS(mode)) {
@@ -338,6 +339,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define GROUND_Y px(92)
 
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
+
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// Twelve sheep drop onto the targets' side, tumbling, and each target falls
 /// asleep in turn.
@@ -433,11 +437,11 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         if (cel < 4)
           drawA(canvas, work->sheet + (cel << 10) + 0x800,
                 scroll + (Q_16_16_TO_INT(one->x)) - 16,
-                (Q_16_16_TO_INT(one->y)) - 16, 32, 32);
+                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
         else
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
                 scroll + (Q_16_16_TO_INT(one->x)) - 16,
-                (Q_16_16_TO_INT(one->y)) - 16, 32, 32);
+                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
         one->y += one->velocityY;
         one->velocityY += px(1) / 8;
         one->variant += one->z;
@@ -682,7 +686,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       rider[2] = 0;
       EffectPosition_ProjectPoint(rider, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
+      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20,
+              MERCURY_SMALL_DJINNI_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -712,7 +717,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;
     EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
+    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17,
+                 SMALL_DJINNI_WIDTH, 34);
 
     // Each target in turn, eight frames apart: its puffs close in around
     // it, and it flashes from 40 to 64 frames into its turn.
@@ -738,7 +744,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
-          struct Particle *spark = &PARTICLES[member * 64 + i];
+          struct Particle *spark =
+              &PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];
 
           if (frame > start + i / 2) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);

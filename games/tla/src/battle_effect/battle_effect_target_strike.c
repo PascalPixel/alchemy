@@ -186,6 +186,9 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
 
+#define TARGET_STRIKE_BITE_WIDTH 18
+#define TARGET_STRIKE_BITE_HEIGHT 48
+
 /// Strikes the first target with slashes or a bite of closing fangs, with the
 /// extras its flags choose. Each hit flashes and shakes the target and the
 /// battle moves on at the first; the style (enum TargetStrikeStyle) adds smoke,
@@ -228,8 +231,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (RECORD(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 0xc80,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage,
+                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
@@ -288,7 +291,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
     // The motes burst from 20 pixels above the target.
     for (i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
-      struct Particle *step = &gMotes[k * 128 + i];
+      struct Particle *step = &gMotes[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
       SET_POSITION(step, target->x, px(20), target->z);
       step->velocityX = ((Random16() & 255) - 128) << 11;
@@ -481,7 +484,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       BUILD_BLITTER(HEAP_SLOT_RAM_CODE, 7, 7, CLIP,
                     RECORD(mode, TARGET_STRIKE_COMPOSITE));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
-               targetPosition.x / 2 - 18, 56, 18, 48);
+               targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, 56, 18,
+               TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
                                 CLIP | COMPOSITE_FLIP_X,
@@ -490,7 +494,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         /* FAKEMATCH(dead): an empty once-only block. */
       } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
-               56, 18, 48);
+               56, TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
       // The hit, on each column's fourth picture.
@@ -865,6 +869,11 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
 #define ELEMENT_PILLAR_GLOW_HEIGHT 43
 
+/// IceTileSheet: the pillar's half in four pictures, then its glow in three.
+#define ELEMENT_PILLAR_HALF_WIDTH 17
+#define ELEMENT_PILLAR_HALF_HEIGHT 64
+#define ELEMENT_PILLAR_GLOW_WIDTH 24
+
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it.
 void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
@@ -951,20 +960,24 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
        * once-only block. */
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-        draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
+        draw[1](canvas, work->sheet + n * 1088, 47,
+                ground.y - ELEMENT_PILLAR_HALF_HEIGHT,
+                ELEMENT_PILLAR_HALF_WIDTH, ELEMENT_PILLAR_HALF_HEIGHT);
         n = frame / 4 % 3; // a glow picture every 4 frames
       } while (0);
-      draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
-              ELEMENT_PILLAR_GLOW_HEIGHT);
+      draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36,
+              ELEMENT_PILLAR_GLOW_WIDTH, ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       n = frame / 2 % 4;
-      draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
+      draw[1](canvas, work->sheet + n * 1088, 64,
+              ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
+              64);
       n = frame / 4 % 3;
-      draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,
-              ELEMENT_PILLAR_GLOW_HEIGHT);
+      draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36,
+              ELEMENT_PILLAR_GLOW_WIDTH, ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     Transform_Reset();

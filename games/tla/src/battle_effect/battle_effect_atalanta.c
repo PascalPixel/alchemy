@@ -72,6 +72,9 @@ enum SlashSheetPicture {
 
 #define ATALANTA_SHAFTS 16 ///< shafts of light that gather over the field
 
+#define ATALANTA_TRAIL_MOTES 24    ///< motes in each gathering shaft's trail
+#define ATALANTA_FALLING_SHAFTS 24 ///< shafts that rain down on the targets
+
 /// Under a violet sky Atalanta flies across the screen while sixteen shafts of
 /// light gather trails of motes, flash and fly off; then shafts rain down
 /// diagonally on the targets and burst in light, hitting each target as they
@@ -174,13 +177,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     shaft->velocityX = 0;
     shaft->velocityY = 0;
     shaft->variant = 0;
-    for (j = 0; j != 24; j++) {
-      TRAILS[i * 24 + j].x = (Random16() & 15) + 48;
+    for (j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
+      TRAILS[i * ATALANTA_TRAIL_MOTES + j].x = (Random16() & 15) + 48;
       Transform_Reset();
       Transform_ApplyRoll(Random16() & TRIG_ANGLE_MASK);
       Transform_ApplyPitch(Random16() & TRIG_ANGLE_MASK);
       Transform_ApplyYaw(Random16() & TRIG_ANGLE_MASK);
-      Transform_Store(MATRICES + (i * 24 + j) * 48);
+      Transform_Store(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -278,11 +281,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             break;
           }
         } else {
-          for (j = 0; j != 24; j++) {
-            struct Particle *trail = &TRAILS[i * 24 + j];
+          for (j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
+            struct Particle *trail = &TRAILS[i * ATALANTA_TRAIL_MOTES + j];
 
             if (trail->x > 0) {
-              Transform_Load(MATRICES + (i * 24 + j) * 48);
+              Transform_Load(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
               point[0] = trail->x;
               EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;
@@ -331,7 +334,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     shaft->variant = -1;
   }
   for (frame = 0; frame != ATALANTA_FRAMES; frame++) {
-    for (i = 0; i != 24; i++) {
+    for (i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
       struct Particle *shaft = &work->particles[i];
 
       if (frame >= i * 2 || frame > 40) {

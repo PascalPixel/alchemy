@@ -210,7 +210,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
                   FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + PILLAR_SHEET,
                   gNereidCopy_Columns[k * 2] - 17,
-                  gNereidCopy_Columns[k * 2 + 1] - span, 34, span);
+                  gNereidCopy_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
+                  span);
         }
       }
 
@@ -371,6 +372,11 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// the first fragment in work->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
+#define IMPACT_BURST_DRAWN_LARGE 30  ///< large sparks drawn
+#define IMPACT_BURST_DRAWN_SMALL 60  ///< small sparks drawn
+#define IMPACT_BURST_LARGE_SPARKS 64 ///< large sparks thrown
+#define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
+
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
@@ -405,7 +411,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
                              0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -419,11 +425,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
-    work->particles[61 + i].velocityX = (Trig_Sin(i * 0x5555) * 32) >> 6;
-    work->particles[61 + i].velocityY = -((Trig_Cos(i * 0x5555) * 32) >> 5);
+    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
+        (Trig_Sin(i * 0x5555) * 32) >> 6;
+    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
+        -((Trig_Cos(i * 0x5555) * 32) >> 5);
   }
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 32;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     struct Particle *cells = (struct Particle *)Ram_MapCellBuffer;
@@ -457,7 +465,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
           width, height);
     }
 
-    for (i = 0, p = work->particles; i != 30; i++, p++) {
+    for (i = 0, p = work->particles; i != IMPACT_BURST_DRAWN_LARGE; i++, p++) {
       if (frame > i / 2 && p->variant > 0) {
         s32 size;
         s32 px;
@@ -473,7 +481,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       }
     }
 
-    for (i = 0, p = (struct Particle *)Ram_MapCellBuffer; i != 60; i++, p++) {
+    for (i = 0, p = (struct Particle *)Ram_MapCellBuffer;
+         i != IMPACT_BURST_DRAWN_SMALL; i++, p++) {
       if (frame > 35 && p->variant > 0) {
         s32 size;
         s32 px;
@@ -490,14 +499,15 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     }
 
     for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
-      struct Particle *shard = &work->particles[61 + i];
+      struct Particle *shard =
+          &work->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
       if (frame >= 36 && frame <= 63) {
         s32 cell;
         s32 px;
         s32 py;
 
-        BattleEffectKernels_IntegrateVector2(shard, 64, 0);
+        BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE, 0);
         cell = (frame - 36) / 7;
         px = Q_16_16_UPPER_HALF(shard->x);
         py = Q_16_16_UPPER_HALF(shard->y);
@@ -616,10 +626,10 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
-  channel[5] &= 0xc5ff;
-  channel[5] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   palette = 0xa0;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
@@ -808,7 +818,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
 
@@ -989,8 +999,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
-          mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
-          mote->y = (y << 16) - Trig_Cos(angle) * 30 / 65536 * size;
+          mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / Q16_ONE * size;
+          mote->y = (y << 16) - Trig_Cos(angle) * 30 / Q16_ONE * size;
           break;
         }
       }
@@ -1140,10 +1150,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
              work->sheet +
-                 (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
+                 (gBattleEffect_MotePictures[size - 1] +
+                  (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
              point.x - size / 2, point.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(ember, 64, -px(1) / 8);
+        BattleEffectKernels_IntegrateVector3(ember, PARTICLE_DAMPING_NONE,
+                                             -px(1) / 8);
         if (ember->y <= px(20)) {
           ember->x = 0;
           ember->z = 0;
@@ -1163,7 +1175,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
       draw(canvas,
            work->sheet +
-               (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) + 0x3200,
+               (gBattleEffect_MotePictures[size - 1] +
+                (i & 1) * MOTE_SET_BYTES) +
+               0x3200,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)
@@ -1196,7 +1210,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           flash->velocityZ = 0;
           flash->variant = 0;
         } else {
-          BattleEffectKernels_IntegrateVector3(flash, 64, 1);
+          BattleEffectKernels_IntegrateVector3(flash, PARTICLE_DAMPING_NONE, 1);
         }
       }
     }

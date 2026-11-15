@@ -49,6 +49,10 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DJINN_ATTACK_DAMAGE_FRAME 56
 #define MERCURY_MOTE_SLOTS 256
 
+/// The blue flame sheet's flame, after its shaft; Mercury turns both on their
+/// side, and Venus draws the flame as its rising columns.
+#define BLUE_FLAME_SHEET_FLAME PICTURE_BYTES(BLUE_FLAME_COLUMN)
+
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -86,8 +90,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
-  BattleEffect_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+  BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17,
+                             BLUE_FLAME_COLUMN_HEIGHT);
+  BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
+                             work->sheet + 0x990, BLUE_FLAME_SPLASH_WIDTH,
+                             BLUE_FLAME_SPLASH_HEIGHT);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -137,7 +144,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
       s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
 
-      draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
+      draw[1](canvas, work->sheet, x - 10, y - 17, SMALL_DJINNI_WIDTH, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
         // On its launch frame a free flame leaves the Djinn's hand.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
@@ -596,7 +603,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
                 size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 64, -px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                             -px(1) / 8);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)

@@ -136,6 +136,8 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
 
+#define ORBITING_SPIRALS_LIFE 60
+
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
 /// so the player never sees it. Four spirals would circle 40 pixels above each
@@ -187,14 +189,15 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
-      for (i = 0, base = 0x80000, angle = frame << 10; i != 160; i++) {
+      for (i = 0, base = 0x80000, angle = frame << 10; i != DISPLAY_HEIGHT;
+           i++) {
         *row++ = (base - (Trig_Sin(angle) << 3)) >> 10;
         angle += 1024;
       }
     } else {
       s32 angle;
 
-      for (i = 0, angle = frame << 10; i != 160; i++) {
+      for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
         *row++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
         angle += 1024;
       }
@@ -208,7 +211,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         struct MotionObject *target;
 
         target = BattleObject_GetFar(args->targets[member])->object;
-        if (frame > member * 16 && frame < (member * 16) + 60) {
+        if (frame > member * 16 &&
+            frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
           s32 spin;
 
           // Halfway through, the target's flash stops.
@@ -274,6 +278,10 @@ void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 /// The targets' turns, this many frames apart.
 #define GATHERING_LIGHTS_TARGET_FRAMES 20
+
+#define GATHERING_LIGHTS_HIT_FRAME 70
+#define MEMBER_BURST_WIDTH 20
+#define MEMBER_BURST_HEIGHT 32
 
 /// From the caster's body 128 motes a target scatter every way, and from frame
 /// 30 each is pulled toward the middle of its target's body, vanishing once it
@@ -341,7 +349,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
-       frame != gGatheringLights_Counts[mode * 2 + 1] + args->targetCount * 20;
+       frame != gGatheringLights_Counts[mode * 2 + 1] +
+                    args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
        frame++) {
     s32 *row;
     s32 sway;
@@ -366,7 +375,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                   args->targetCount * 20)) *
         16);
     scrollX = gBgScroll[1].x;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       s32 x = (Q_16_16_TO_INT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
 
       if (x < 0)
@@ -379,13 +388,14 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
           BattleObject_GetFar(args->targets[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(args->targets[k]) / 2;
 
-      if (frame == k * 20 + 71) {
+      if (frame == k * GATHERING_LIGHTS_TARGET_FRAMES + 71) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
         else if (mode != GATHERING_LIGHTS_THORNY_GRAVE)
           Sound_PlayFar(SE_IMPACT);
       }
-      if (frame == k * 20 + 70)
+      if (frame ==
+          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
         BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
       if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
@@ -396,7 +406,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * MOTE_CELL, pos.x - 10,
-                    pos.y - 16, 20, 32);
+                    pos.y - 16, MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector3(mote, 62, 0);
 
             // Thirty frames on, the mote is pulled toward the middle of its

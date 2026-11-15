@@ -51,6 +51,12 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 #define CYBELE_RING_HALF_WIDTH 20
 #define CYBELE_RING_HALF_HEIGHT 24
 
+#define CYBELE_VINES 16       ///< vines, from work->particles[0]
+#define CYBELE_SPARKS 16      ///< sparks, from CYBELE_FIRST_SPARK
+#define CYBELE_THORNS 16      ///< thorns, from CYBELE_FIRST_THORN
+#define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
+#define CYBELE_VINE_TIP_HEIGHT 8
+
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
 /// vines grow out of the ground, lifting the targets while sparks flash around
 /// them; then the picture greys and dissolves pixel by pixel, and the targets
@@ -112,7 +118,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   REG_BG2X = -0x2000;
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != CYBELE_VINES; i++) {
     struct Particle *vine = &work->particles[i];
 
     if (i <= 4) {
@@ -126,15 +132,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     vine->variant = (Random16() & 15) + 16;
   }
   // The glints (16-31): a negative variant is the wait before each shows.
-  for (i = 0; i != 16; i++) {
-    struct Particle *spark = &work->particles[16 + i];
+  for (i = 0; i != CYBELE_SPARKS; i++) {
+    struct Particle *spark = &work->particles[CYBELE_FIRST_SPARK + i];
 
     spark->x = (Random16() & 63) + 32;
     spark->y = (Random16() & 31) + 64;
     spark->variant = -(Random16() & 7) - 8;
   }
   // The thorns (32-47) fly in from the upper right.
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != CYBELE_THORNS; i++) {
     struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
     thorn->x = px(128);
@@ -193,7 +199,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
     // The thorns fly in, one a frame.
     if (frame >= 72 && frame <= 127) {
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != CYBELE_THORNS; i++) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (frame >= i + 72 && thorn->y < px(104)) {
@@ -208,14 +214,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           tall = gCybele_ThornHeights[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          BattleEffectKernels_IntegrateVector2(thorn, 64, px(1) / 16);
+          BattleEffectKernels_IntegrateVector2(thorn, PARTICLE_DAMPING_NONE,
+                                               px(1) / 16);
         }
       }
     }
     // Debris (16-63) bursts up from the ground.
     if (frame == 128) {
       for (i = 0; i != CYBELE_CHIPS; i++) {
-        struct Particle *chip = &work->particles[16 + i];
+        struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
 
         chip->x = px(Random16() % 96);
         chip->y = px((Random16() & 7) + 88);
@@ -251,7 +258,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           for (wrap = top; wrap > 184; wrap -= 64)
             ;
           if (wrap <= 119)
-            draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
+            draw[i & 1](canvas, sheet, vine->x,
+                        vine->y - wrap - CYBELE_VINE_TIP_HEIGHT, 24,
+                        CYBELE_VINE_TIP_HEIGHT);
           for (k = 0; k != 3; k++) {
             s32 y = vine->y - wrap + k * 64;
             s32 skip = 0;
@@ -346,7 +355,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         point[2] = object->z;
         EffectPosition_ProjectPoint(point, &screen);
         for (j = 0; j != 6; j++) {
-          struct Particle *spark = &work->particles[16 + i * 6 + j];
+          struct Particle *spark =
+              &work->particles[CYBELE_FIRST_SPARK + i * 6 + j];
 
           if (spark->variant == 0) {
             spark->x = screen.x + (Random16() & 15) - 8;
@@ -483,9 +493,12 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           point[2] = object->z;
           EffectPosition_ProjectPoint(point, &screen);
           screen.x >>= 1;
-          draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
-                  CYBELE_RING_HALF_WIDTH, CYBELE_RING_HALF_HEIGHT);
-          draw[1](canvas, work->sheet + cel * 480, screen.x, screen.y - 24, 20,
+          draw[0](canvas, work->sheet + cel * 480,
+                  screen.x - CYBELE_RING_HALF_WIDTH,
+                  screen.y - CYBELE_RING_HALF_HEIGHT, CYBELE_RING_HALF_WIDTH,
+                  CYBELE_RING_HALF_HEIGHT);
+          draw[1](canvas, work->sheet + cel * 480, screen.x,
+                  screen.y - CYBELE_RING_HALF_HEIGHT, 20,
                   CYBELE_RING_HALF_HEIGHT);
         }
         if (frame >= start + 6) {

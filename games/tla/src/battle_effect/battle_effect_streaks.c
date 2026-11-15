@@ -54,6 +54,12 @@ void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 #define STREAK_HEIGHT 40
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
+/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// grow; the lower half is the upper drawn flipped.
+#define STREAK_WIDTH 20
+#define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
+#define STREAKS_SPACING 6 ///< frames between streaks
+
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
@@ -129,7 +135,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
   source = BattleObject_GetFar(args->user)->object;
   {
-    s32 total = streaks * args->targetCount * 6 + 48;
+    s32 total = streaks * args->targetCount * STREAKS_SPACING + 48;
 
     // Each streak flies from 20 pixels above the user to 20 pixels above
     // its target in 24 frames.
@@ -160,7 +166,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       Transform_SetLookAt(camera->eye, camera->focus);
       for (k = 0; k != args->targetCount; k++) {
         // Each target's streaks set out with the mode's cry.
-        if (frame == k * 32) {
+        if (frame == k * STREAKS_TARGET_DELAY) {
           if (mode == 1)
             Sound_PlayFar(SE_192);
           if (mode == 2)
@@ -174,7 +180,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           for (j = 0; j != streaks; j++) {
             // lift is reused for the streak's start frame; a local of its own
             // differs.
-            lift = k * 32 + j * 6;
+            lift = k * STREAKS_TARGET_DELAY + j * 6;
             if (frame >= lift) {
               struct Particle *streak = &work->particles[k * streaks + j];
               s32 step;
@@ -186,31 +192,39 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (RECORD(mode, RECORD_ANIMATE)) {
-                u8 *cell = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
+                u8 *cell = &work->sheet[step * 800 +
+                                        frame / 2 % 3 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
+                drawUpper(canvas, cell, position.x - 10,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
                           STREAK_HEIGHT);
-                drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
+                drawLower(canvas, cell, position.x - 10, position.y,
+                          STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *cell = &work->sheet[step * 800 + 2 * 4800];
+                u8 *cell = &work->sheet[step * 800 + 2 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
+                drawUpper(canvas, cell, position.x - 10,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
                           STREAK_HEIGHT);
-                drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
+                drawLower(canvas, cell, position.x - 10, position.y,
+                          STREAK_WIDTH, STREAK_HEIGHT);
               }
-              BattleEffectKernels_IntegrateVector3(streak, 64, 0);
+              BattleEffectKernels_IntegrateVector3(streak,
+                                                   PARTICLE_DAMPING_NONE, 0);
               streak->variant++;
             }
           }
 
           // From 6 frames after the hit, tremble the target sideways for
           // 32 frames.
-          if (RECORD(mode, RECORD_SHAKE) && frame >= k * 32 + 30 &&
+          if (RECORD(mode, RECORD_SHAKE) &&
+              frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
-            struck->x += px(gStreaks_Tremble[(frame - k * 32 - 30) % 8]);
+            struck->x += px(
+                gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]);
             if (struck->x > 0)
               struck->x += px(1) / 2;
             else
@@ -233,7 +247,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
           }
-          if (RECORD(mode, RECORD_MOTION) != -1 && frame == k * 32 + 24) {
+          if (RECORD(mode, RECORD_MOTION) != -1 &&
+              frame == k * STREAKS_TARGET_DELAY + 24) {
             work->shakeFrames = 4;
             BattleMotion_ApplyKnockbackFar(args->targets[k],
                                            RECORD(mode, RECORD_MOTION));

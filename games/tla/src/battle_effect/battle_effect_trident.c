@@ -791,10 +791,10 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
-  channel[5] &= 0xc5ff; // clear the start timing and repeat
-  channel[5] &= 0x7fff; // stop the channel
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   palette = 0xa0;
-  (void)channel[5];
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }

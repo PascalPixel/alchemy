@@ -202,7 +202,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 y;
             s32 size;
 
-            BattleEffectKernels_IntegrateVector2(spark, 64, px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > px(108)) {
@@ -392,7 +393,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = frame;
     if (frame == 48)
       work->shakeFrames = 8;
-    if (frame == 60)
+    if (frame == TITAN_BLADE_STRIKE_FRAME)
       work->shakeFrames = 16;
 
     if (frame == 4)
@@ -542,7 +543,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
       x = centerX - 18;
       high = 120;
-      if (frame > 60)
+      if (frame > TITAN_BLADE_STRIKE_FRAME)
         top = frame * 8 - 450;
       else if (frame > 32)
         top = step / 2 + 16;
@@ -567,7 +568,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 y;
           s32 size;
 
-          BattleEffectKernels_IntegrateVector2(spark, 64, 128 << 6);
+          BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
+                                               128 << 6);
           y = spark->y;
           spark->variant--;
           if (y > (216 << 15)) {
@@ -603,7 +605,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                                POSE_DAMAGE, 0, 8);
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
-    if (frame == 60)
+    if (frame == TITAN_BLADE_STRIKE_FRAME)
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
 
     BattleCamera_Shake(16, 16);

@@ -88,7 +88,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
-      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&
+          frame <= 97)
         frame = 98;
       if (frame == 120)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

@@ -167,7 +167,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
-              32, 32);
+              ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
           for (k = 0; k != 32; k++) {
@@ -236,6 +236,10 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
 /// Where BlueBeamSheet is decoded in the effect's pictures.
 #define DOUSE_BLUE_BEAM_PICTURES 0x604
+
+#define DOUSE_DROP_WIDTH 24
+#define DOUSE_DROP_HEIGHT 24
+#define DOUSE_BURST_PICTURE_HEIGHT 42
 
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
 /// bursting into a fountain of falling sparks where it lands, while the targets
@@ -345,7 +349,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       y = drop->y / 8;
       if (drop->variant == -1) {
         // Falling: draw the drop and move it on, or land it.
-        draw[0](canvas, work->sheet + DOUSE_BLUE_BEAM_PICTURES, x, y, 24, 24);
+        draw[0](canvas, work->sheet + DOUSE_BLUE_BEAM_PICTURES, x, y, 24,
+                DOUSE_DROP_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
@@ -377,9 +382,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       } else {
         // Landed: four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          draw[0](canvas, work->sheet + 0x844, x, y, 24, 24);
+          draw[0](canvas, work->sheet + 0x844, x, y, DOUSE_DROP_WIDTH,
+                  DOUSE_DROP_HEIGHT);
         else if (drop->variant <= 7)
-          draw[0](canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
+          draw[0](canvas, work->sheet + 0xa84, x - 9, y - 9, 42,
+                  DOUSE_BURST_PICTURE_HEIGHT);
         if (drop->variant <= 14)
           drop->variant++;
       }

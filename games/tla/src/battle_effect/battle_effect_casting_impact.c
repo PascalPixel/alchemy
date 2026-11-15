@@ -635,7 +635,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           count++;
         }
       }
-      if (kind <= CASTING_IMPACT_LAST_DJINNI && count < 64) {
+      if (kind <= CASTING_IMPACT_LAST_DJINNI && count < CASTING_IMPACT_SPARKS) {
         Transform_Reset();
         Transform_SetLookAt(bg, (u8 *)bg + 12);
         EffectPosition_ProjectPoint(origin, pos);
@@ -782,7 +782,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
     if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
-      REG_BLDALPHA = BLEND_ALPHA(16, 8);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
@@ -972,7 +972,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           kind != CASTING_IMPACT_IMPACT_APOCALYPSE) {
         s32 *w;
         w = work->bg2xLines;
-        for (i = 0; i != 160; i++)
+        for (i = 0; i != DISPLAY_HEIGHT; i++)
           *w++ = (0x40000 - (Trig_Sin((frame << 12) + (i << 11)) << 2)) >> 10;
       }
       switch (kind) {
@@ -1093,11 +1093,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           kind != CASTING_IMPACT_IMPACT_APOCALYPSE &&
           kind != CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
         if (frame >= 4 && frame < 16)
-          drawFuncs.draw[1](screen,
-                            work->sheet + CASTING_IMPACT_ORB_PICTURES +
-                                ((frame - 4) / 2) *
-                                    PICTURE_BYTES(YELLOW_ORB_PACKED),
-                            target[0] / 2 - 8, base[1] - 24, 20, 48);
+          drawFuncs.draw[1](
+              screen,
+              work->sheet + CASTING_IMPACT_ORB_PICTURES +
+                  ((frame - 4) / 2) * PICTURE_BYTES(YELLOW_ORB_PACKED),
+              target[0] / 2 - 8, base[1] - 24, 20, YELLOW_ORB_PACKED_HEIGHT);
         Transform_Reset();
         Transform_SetLookAt(bg, (u8 *)bg + 12);
         if (frame > 3) {
@@ -1265,7 +1265,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                 buffer + GLINT_SET_BYTES +
                                     (((frame + i * 3) / 2) & 3) *
                                         LIGHTNING_BOLT_PICTURE_BYTES,
-                                target[0] / 2 - 8, 0, 24, 104);
+                                target[0] / 2 - 8, 0, LIGHTNING_BOLT_WIDTH,
+                                104);
           }
         } else if (kind == CASTING_IMPACT_IMPACT_BLITZ &&
                    (frame >= 6 && frame < 20)) {
@@ -1420,7 +1421,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           h = RUNE_HALF_HEIGHT;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
-          ALT_BLITTER(screen, buffer, x - 24, h, 24, h);
+          ALT_BLITTER(screen, buffer, x - RUNE_HALF_WIDTH, h, 24, h);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -1459,7 +1460,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                  kind == CASTING_IMPACT_IMPACT_FLARE_BURST) {
         if (frame < 24) {
           p = SPARKS;
-          for (i = 0; i != 16; i++, p++) {
+          for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++, p++) {
             if (frame >= i / 2 + 4) {
               s32 life;
               life = p->variant;
@@ -1674,7 +1675,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 28;
         if (t >= 0 && t < 16)
-          REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
+          REG_BLDALPHA = ((t / 2 + 8) << 8) | (BLEND_WEIGHT_MAX - t);
         if (frame >= 4 && frame < 8)
           Iwram_FillWords(screen, CANVAS_BYTES, CANVAS_FILL_WORD(1));
         if (frame > 3) {
@@ -1900,9 +1901,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             h = 196 - frame * 4;
           else
             h = frame * 16 - 64;
-          if (h > 96)
+          if (h > ROCK_SPIRE_HEIGHT)
             h = ROCK_SPIRE_HEIGHT;
-          drawFuncs.draw[0](screen, buffer, 48, 104 - h, 32, h);
+          drawFuncs.draw[0](screen, buffer, 48, 104 - h, ROCK_SPIRE_WIDTH, h);
         }
       } else if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
         struct Particle *p;
@@ -2485,7 +2486,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             // Unused: this arm runs only for kind 15, so the kind 16 draw never
             // runs; the source keeps it.
             if (kind == CASTING_IMPACT_IMPACT_WHEEZE)
-              drawFuncs.draw[0](screen, buffer, x - 16, y - 16, 32, 32);
+              drawFuncs.draw[0](screen, buffer, x - 16, y - 16,
+                                FALLING_FLAME_WIDTH, 32);
             else
               drawFuncs.draw[0](screen, buffer + m * PICTURE_BYTES(SKULL),
                                 x - SKULL_WIDTH / 2, y - SKULL_HEIGHT / 2,
@@ -2545,7 +2547,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame > 47)
           REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
         p = SPARKS;
-        for (i = 0; i != 16; i++, p++) {
+        for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++, p++) {
           m = i % 3;
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
@@ -2591,7 +2593,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       } else if (kind != CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI) {
         s32 m;
         p = SPARKS;
-        for (i = 0; i != 16; i++, p++) {
+        for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++, p++) {
           if (frame >= i + 4) {
             s32 life;
             life = p->variant;

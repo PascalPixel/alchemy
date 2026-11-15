@@ -232,7 +232,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
           draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
-                  pos.x + shake - 48, pos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
+                  pos.x + shake - WAVE_WIDTH, pos.y - 8, WAVE_WIDTH,
+                  WAVE_HEIGHT);
         else
           draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
                   pos.x + shake, pos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
@@ -242,7 +243,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
           draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
-                  pos.x + shake - 48, pos.y - 40, BLUE_ARC_WIDTH,
+                  pos.x + shake - BLUE_ARC_WIDTH, pos.y - 40, BLUE_ARC_WIDTH,
                   BLUE_ARC_HEIGHT);
         else
           draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
@@ -497,13 +498,14 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     pos.y += 16;
     // The flash: four cels, two frames each.
     if (frame <= 1)
-      draw[0](canvas, work->sheet, 0, 0, 120, 120);
+      draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE, 120);
     else if (frame <= 3)
       draw[0](canvas, Ram_MapCellBuffer, -4, 0, 128, 128);
     else if (frame <= 5)
       draw[0](canvas, Ram_MapCellBuffer + 0x4000, -4, 0, 128, 128);
     else if (frame <= 7)
-      draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->sheet + 0x3840, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     // From frame 4 the sparks fly, two to each particle, through the two

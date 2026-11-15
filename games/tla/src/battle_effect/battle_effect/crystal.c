@@ -33,7 +33,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 offset;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   discOffsets = (u16 *)(work->sheet + 0x2710);
   cells = (s32)gMapGridCellBuffer;

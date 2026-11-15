@@ -21,7 +21,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
@@ -149,7 +149,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   s32 hit;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
@@ -301,7 +301,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -533,7 +533,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   u8 *mistSheet;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   if (args->side == EFFECT_SIDE_ENEMIES) {
     BattleEffect_StartTiledCanvasFilled(0x2000);

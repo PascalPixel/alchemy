@@ -9,8 +9,7 @@
 ///
 /// Abilities: Helm Splitter, Skull Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   struct ScreenPoint position;

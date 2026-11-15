@@ -61,7 +61,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   // Set up: the formation's eight objects, then the order in which the
   // picture is erased: eight shuffled runs of 0..127.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
 

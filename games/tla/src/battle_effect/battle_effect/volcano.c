@@ -28,7 +28,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the pillar sheet, the particle sprites, the
   // variant's palette and two max blitters, the second mirrored.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);

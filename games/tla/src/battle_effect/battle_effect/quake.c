@@ -39,7 +39,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   s32 col;
   s32 y;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   EFFECT_START_NARROW_CANVAS(1); // no horizontal stretch

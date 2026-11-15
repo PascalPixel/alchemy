@@ -46,7 +46,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct Particle *spark;
 
   view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(0x2000);

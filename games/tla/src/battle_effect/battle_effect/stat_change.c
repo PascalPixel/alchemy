@@ -45,8 +45,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
 /// lights), with no prelude Djinni and the fade step cleared.
 void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   work->fadeStep = 0;
   args->prelude = 0;
@@ -98,7 +97,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint screen;
   s32 point[3];
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   start = 0;
   BattleEffect_StartCanvasLayer(0);
@@ -488,7 +487,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 palette;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)

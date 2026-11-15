@@ -743,7 +743,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   s32 u;
   struct RuinObject *obj;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   transition = (s32 *)Ram_HeapSlots->battleBackground;

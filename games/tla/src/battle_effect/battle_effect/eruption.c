@@ -34,7 +34,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -173,8 +173,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 /// slots, each showing its own animation at the given priority (The Broken
 /// Seal's BattleEffect_SpawnObjects).
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 entryIndex = 0;
 
   if (entryCount == 0)

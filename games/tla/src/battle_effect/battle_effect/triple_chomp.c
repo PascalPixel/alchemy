@@ -38,7 +38,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   s32 j;
   u8 *pixels = Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 

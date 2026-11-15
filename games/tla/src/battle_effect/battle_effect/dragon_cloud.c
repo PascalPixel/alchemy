@@ -28,7 +28,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   drift = 0;
   x = 0;

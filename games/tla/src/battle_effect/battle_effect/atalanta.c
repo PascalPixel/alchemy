@@ -49,7 +49,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   presentation = Ram_HeapSlots->battleBackground;
   tiles = Ram_MapCellBuffer;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   scrollX = gBgScroll[1].x;
   EFFECT_START_NARROW_CANVAS(0x2000);

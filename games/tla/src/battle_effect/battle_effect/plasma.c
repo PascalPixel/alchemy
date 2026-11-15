@@ -32,7 +32,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   // Set up: the canvas layer, an additive blitter and a mirrored max one,
   // the pillar sheet and the particle sprites, and a violet palette for all
   // but the strongest variant.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -202,7 +202,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   s32 start;
   struct Particle *sparks;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 

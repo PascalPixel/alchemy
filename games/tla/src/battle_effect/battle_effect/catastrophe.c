@@ -40,6 +40,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   void *verts;
   s32 shade;
   struct RenderModel *model;
+  // XXX: model2 and texture2 draw the second act and model3 and texture3 the
+  // third; what each shows needs a render of Catastrophe to name them.
   struct RenderModel *model2;
   struct RenderModel *model3;
   s32 frame;
@@ -67,7 +69,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s32 rowStep = 8;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;

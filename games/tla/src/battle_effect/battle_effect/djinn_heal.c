@@ -41,7 +41,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 height;
   s32 fade;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
 
@@ -259,7 +259,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   ringPixels = gData_02014000; // the rings' texture, for the whole function
   battle = (u8 *)Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
@@ -617,8 +617,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 /// A task: turns the camera by the effect's delta, the whole
 /// delta on phase 1 and half of it on the frames in between.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
   if (work->cameraPhase == 1) {

@@ -21,8 +21,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint target;
   struct ScreenPoint caster;
   struct ScreenPoint screen;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   s32 *camera = Ram_HeapSlots->cameraWork;

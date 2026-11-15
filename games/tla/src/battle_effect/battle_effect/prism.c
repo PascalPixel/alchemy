@@ -34,7 +34,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the two sheets and the blitter pair.
   shards = (struct Particle *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

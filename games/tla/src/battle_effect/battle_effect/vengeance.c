@@ -39,7 +39,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   s32 mask;
   s32 frames;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   mask = 7;
   BattleEffect_StartTiledCanvas(0);
@@ -326,7 +326,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   struct Scythe *scythe;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   if (args->side == EFFECT_SIDE_ENEMIES) {
     BattleEffect_StartTiledCanvas(0x2001);
@@ -614,8 +614,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   struct Texture__f1811d4 texture;
   DrawRectangle draw[2];
   struct ScreenPoint midpoint;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct Particle *drop;
@@ -831,8 +830,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 /// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
 /// frames later, 72 frames in all.
 void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   s32 member;
@@ -1034,8 +1032,7 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 /// targets flash one by one, eight frames apart, each with the hit sound.
 void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   void *canvas = Ram_HeapSlots->battleCanvas;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 frame;
@@ -1238,7 +1235,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   struct Particle *p;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);

@@ -41,7 +41,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -478,8 +478,7 @@ static inline s32 Nothing(void) {}
 /// frame 12. Human Hunt loads the Mars Djinn's colours into the background
 /// palette and blends its slash more faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   u8 *cells = Ram_MapCellBuffer;
   DrawRectangle draw[2];

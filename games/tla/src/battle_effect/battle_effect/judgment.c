@@ -34,7 +34,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   cells = Ram_MapCellBuffer;

@@ -35,7 +35,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   s32 i;
   u8 *pixels; // The jaw's texture, held for the whole effect.
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX

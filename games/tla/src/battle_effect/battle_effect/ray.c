@@ -32,7 +32,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct ScreenPoint midpoint;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   xOffset = 0;

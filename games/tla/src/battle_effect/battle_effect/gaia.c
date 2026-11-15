@@ -59,7 +59,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);

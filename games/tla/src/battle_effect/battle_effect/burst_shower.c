@@ -8,8 +8,7 @@
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u16 control = channel[5];
   u32 io;
@@ -25,8 +24,7 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 /// BattleEffect_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table
 /// moves layer 1.
 void BattleEffect_ArmBg1HBlankDma(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u16 control = channel[5];
   u32 io;
@@ -186,7 +184,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
   DrawRectangle pair[2];
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   if (mode == 10 || mode == 11 || mode == 13 || mode == 14 || mode == 15 ||
       mode == 17 || mode == 18 || mode == 19)

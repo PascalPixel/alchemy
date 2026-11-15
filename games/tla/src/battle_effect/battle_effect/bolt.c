@@ -33,7 +33,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the bolt and spark sheets, and every spark
   // and particle free.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);

@@ -86,7 +86,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   struct ScreenPoint fadeRingPoint;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   petals = (s32)&gData_02014000;
@@ -871,8 +871,7 @@ struct RenderPrimitive {
 ///
 /// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct DaggerTexture texture;
   struct ScreenPoint target;
   struct Particle *dagger;
@@ -1044,7 +1043,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct Particle *step;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

@@ -36,8 +36,7 @@ struct BurstTexture {
 
 /// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BurstTexture texture;
   struct ScreenPoint target;
   struct RenderPrimitive *quad;
@@ -1396,7 +1395,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   s32 discY;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   REG_WIN0V = WIN_RANGE(16, 128);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

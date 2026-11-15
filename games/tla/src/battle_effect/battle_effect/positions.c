@@ -30,7 +30,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work;
   struct BattleEffectParams *args;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   args = work->args;
 
   // DEAD: nothing uses the held keys read here; their load is in the ROM.
@@ -48,7 +48,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   kind = args->kind;
@@ -98,7 +98,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -339,7 +339,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;

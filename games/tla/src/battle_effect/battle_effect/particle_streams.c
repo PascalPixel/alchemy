@@ -73,7 +73,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   u8 *palette;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -289,8 +289,7 @@ extern const struct Scale gFormationObjects_LargeScale;
 /// formations, the last three (4: eleven objects from signed columns, 5: twelve
 /// in a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct Scale normal = gFormationObjects_Scale;
   struct Scale big = gFormationObjects_LargeScale;
   s32 pos[4];
@@ -368,7 +367,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   orgX = x;
@@ -701,7 +700,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(0x2000);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.

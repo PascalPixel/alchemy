@@ -48,7 +48,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 first;
   s32 slot;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 

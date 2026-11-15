@@ -63,7 +63,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   u8 req[8];
   struct ModelTexture scratchTexture;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   transition = Ram_HeapSlots->battleBackground;

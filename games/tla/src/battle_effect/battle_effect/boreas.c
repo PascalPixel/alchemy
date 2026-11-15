@@ -53,7 +53,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct Scale scale;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sparkleSheet = Ram_HeapSlots->battleSheet;
   edgeSpeed = 1;
   BattleEffect_StartCanvasLayer(0);

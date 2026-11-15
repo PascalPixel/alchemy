@@ -32,7 +32,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   s32 side;
   s32 anchor;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   element = DJINNI_ENTRANCE_ELEMENT(packed);
@@ -502,7 +502,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // Set up: the work, canvas, camera and sprite sheet, the canvas layer and
   // the Djinn's place when it circles first.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;

@@ -91,7 +91,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   DrawRectangle draw[2];
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)

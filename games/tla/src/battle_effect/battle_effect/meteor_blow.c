@@ -79,7 +79,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
   canvas = Ram_HeapSlots->battleCanvas;
   map = gMapGridCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0x2000);

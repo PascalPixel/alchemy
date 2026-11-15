@@ -29,7 +29,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 *camera;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the skull sheet with its palette, the pink burst palette, the
@@ -140,7 +140,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   s32 offsetX;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the spiral sheet with its palette, the two blitters, the wave's
@@ -272,7 +272,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   s32 palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 

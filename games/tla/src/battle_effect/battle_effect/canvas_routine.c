@@ -26,7 +26,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   s32 pos;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 

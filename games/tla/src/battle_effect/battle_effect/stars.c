@@ -41,7 +41,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -220,7 +220,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;

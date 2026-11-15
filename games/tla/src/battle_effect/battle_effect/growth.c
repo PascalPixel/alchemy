@@ -55,7 +55,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   // Set up: the canvas layer, the sheet for the mode, and the canvas moved
   // 112 pixels right for the other side.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;

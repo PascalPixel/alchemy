@@ -72,7 +72,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s32 flatKind;
   u8 *pixels;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -473,7 +473,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(3);
@@ -586,7 +586,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
    * frame's outgoing argument word at sp+0. */
   if (0)
@@ -763,8 +763,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// camera at (120, 120), reloads the battle palette and redraws the battle's
 /// own backdrop over the summon's.
 void Iris_RestoreBattle(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->battleBackground;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;

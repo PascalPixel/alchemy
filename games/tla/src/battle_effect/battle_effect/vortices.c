@@ -35,7 +35,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the vortex sheet and two blitters, the one on
   // the right mirrored.
   landed = (s8 *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
@@ -173,7 +173,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the tornado sheet and two max blitters, the
   // second mirrored.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

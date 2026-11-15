@@ -42,7 +42,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 
@@ -288,7 +288,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   s32 origin;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 

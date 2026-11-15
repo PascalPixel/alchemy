@@ -48,7 +48,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   u8 *tiles;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   tiles = gMapGridCellBuffer;
 

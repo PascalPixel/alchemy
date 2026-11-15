@@ -34,7 +34,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   u32 height;
 
   // Setup: the canvas on BG2, the sheet, a transparent blitter.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;

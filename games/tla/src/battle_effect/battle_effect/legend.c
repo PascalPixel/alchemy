@@ -37,7 +37,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   s32 j;
   u8 *cells = Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -320,7 +320,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   s32 firstHit;
   s32 lastHit;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 

@@ -38,7 +38,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   u8 *buffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
@@ -316,7 +316,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   s32 j;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   pictures = PICTURES;
   BattleEffect_ConfigureEffectDisplay();
@@ -674,7 +674,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   u8 *buffer;
   s32 size;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;

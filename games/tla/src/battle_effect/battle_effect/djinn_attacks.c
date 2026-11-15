@@ -206,7 +206,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 angle;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -471,7 +471,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 diveY;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);

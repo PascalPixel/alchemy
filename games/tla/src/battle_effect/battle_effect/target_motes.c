@@ -62,7 +62,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 i;
 
   // Set up: the canvas layer and the mode's sheet and palette.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   count = 16;
   BattleEffect_StartCanvasLayer(0);
@@ -318,7 +318,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
   sheep = (struct Particle *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
   EFFECT_START_NARROW_CANVAS(1);
@@ -434,7 +434,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Set up: the canvas layer, unscaled; for side 1 the canvas shows the
   // right half of the field.
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
@@ -517,7 +517,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the Djinn and the particle sprites, and the
   // blitter pair for the side the Djinn faces.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);

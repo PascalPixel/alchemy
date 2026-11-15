@@ -28,7 +28,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 rise;
 
   // Setup: the canvas, the blitter pair for the caster's side, the water.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -179,7 +179,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   s32 j;
 
   // Setup: the canvas, a max blitter for the side, the two sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
@@ -360,7 +360,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work;
   s32 *remainingFrames;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   remainingFrames = &work->shakeFrames;
   if (*remainingFrames > 0) {
     s32 randomX = (rangeX - 1) & Random16();

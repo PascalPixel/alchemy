@@ -43,8 +43,7 @@ struct StripQuad;
 /// Boost (15). Mode 1 has no caller. Each mode loads its own sheets, then draws
 /// a canvas layer and a model layer every frame for the mode's length.
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   s32 frames;

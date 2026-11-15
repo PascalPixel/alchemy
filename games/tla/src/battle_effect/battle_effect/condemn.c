@@ -35,7 +35,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   u8 *cells;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   zero = 0;

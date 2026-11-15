@@ -58,7 +58,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up: the max and additive pair, the whirlwind with its palette, the
@@ -557,7 +557,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
 
   // Set up: half-and-half blending, the max and additive pair, the flashes

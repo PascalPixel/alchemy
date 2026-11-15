@@ -181,8 +181,7 @@ void Palette_MirrorBgColors(void) {
 /// 12), and steps the object's animation through cels 7 to 14, seven frames
 /// each.
 void Ulysses_MoveLastParticle(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct SpriteScale scale = gUlysses_ParticleScale;
   struct SpritePlacement place;
 
@@ -240,7 +239,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   s32 mask;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   dmaArmed = 0;
@@ -1019,7 +1018,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(2);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   BattleEffect_GetTargetsMidpoint(&middle);

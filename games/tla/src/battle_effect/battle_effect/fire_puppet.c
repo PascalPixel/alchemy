@@ -59,7 +59,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Data_02012000;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;

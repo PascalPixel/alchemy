@@ -37,7 +37,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   s32 k;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -334,8 +334,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 void Iris_ChangeBackdrop(void) {
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->battleBackground;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s16 list[14];
   u16 *palette;
   s32 i;
@@ -395,7 +394,7 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   s32 i;
   s32 trailY;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
@@ -608,8 +607,7 @@ extern const struct FourSpans gIris_RightStripSpans;
 /// splash's duration, then a smaller pair of rings and a column of spray
 /// rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle drawAlt;
   DrawRectangle draw;
@@ -763,8 +761,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
   struct IrisPoint(*streaks)[10] = Data_02012ef4;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisSparks *sparks = &Data_02011f40;
@@ -2281,7 +2278,7 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
             Iwram_MulQ16(*cx - *ax, *by - *ay) >=
         0) {
-      work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+      work = Ram_HeapSlots->battleEffect;
       Dma_Set(uvs[i], uv, px(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
       *ax += 64 << 16;
       *ay += 64 << 16;

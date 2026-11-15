@@ -74,7 +74,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   s32 stripEnd;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
@@ -774,7 +774,7 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   struct ScreenPoint first;
   struct ScreenPoint last;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   EffectPosition_ProjectBattler(work->args->targets[0], &first);
   EffectPosition_ProjectBattler(
       work->args->targets[work->args->targetCount - 1], &last);

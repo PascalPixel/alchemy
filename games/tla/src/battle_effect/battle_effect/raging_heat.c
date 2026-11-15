@@ -37,7 +37,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -263,8 +263,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   s32 vector[3];
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;

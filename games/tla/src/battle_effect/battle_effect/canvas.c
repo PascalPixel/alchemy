@@ -63,7 +63,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   struct EclipseObject *obj;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
@@ -1031,8 +1031,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 /// The frame callback that copies the effect canvas to BG character block 1
 /// when a transfer is pending, in the way the transfer mode asks for.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *source = Ram_HeapSlots->battleCanvas;
   u32 ime;
 
@@ -1095,8 +1094,7 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
 /// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
 /// to BG character block 2.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *source = Ram_MapCellBuffer;
   u32 ime;
 
@@ -1135,8 +1133,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 
 /// The same for the canvas in the second effect work block.
 void BattleEffect_ProcessPendingBlock2Transfer(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *source;
   u32 ime;
 
@@ -1202,8 +1199,7 @@ void BattleEffect_BuildCanvasTilemap(void) {
 
 /// Writes the window, display and blend registers, all at once.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
@@ -1220,7 +1216,7 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleEffectWork *work asm("r2") =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+      Ram_HeapSlots->battleEffect;
 
   {
     u32 value = work->bg2pa;
@@ -1241,7 +1237,7 @@ void Display_ApplyBg2Affine(void) {
 void Display_ApplyBg2Reference(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleEffectWork *work asm("r2") =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+      Ram_HeapSlots->battleEffect;
   u32 hold;
 
   {
@@ -1320,8 +1316,7 @@ void BattleEffect_SetupCanvasWindows(void) {
 /// Opens the canvas layer on BG2 with control bgControl: the display, the
 /// canvas's tiles and map, the windows and the backdrop's fade.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleBackgroundView *display =
@@ -1399,8 +1394,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 /// 16x16 characters, blended over the battle background, whose palette
 /// starts fading.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleBackgroundView *display =
@@ -1523,8 +1517,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
 /// Closes the effect canvas layer: BG1 back where it was, BG2 and its
 /// characters cleared, then the background palette faded back in.
 void BattleEffect_EndCanvasLayer(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 

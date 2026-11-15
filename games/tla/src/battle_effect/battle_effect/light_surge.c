@@ -53,7 +53,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   u8 *sprites;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);

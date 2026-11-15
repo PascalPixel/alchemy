@@ -276,7 +276,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
         *c++ = RGB(r, g, b);
       }
-      for (; i != 160; i++) {
+      for (; i != DISPLAY_HEIGHT; i++) {
         *c++ = 0;
       }
     }

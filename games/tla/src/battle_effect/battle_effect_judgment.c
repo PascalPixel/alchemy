@@ -49,6 +49,12 @@
 /// Where FireRingTexture is decoded in the map cell buffer.
 #define JUDGMENT_FIRE_RING 0x4000
 
+/// The rings are drawn at JUDGMENT_RING_LEVEL into a square picture at the
+/// sheet's start, cleared each frame.
+#define JUDGMENT_RINGS_WIDTH 120
+#define JUDGMENT_RINGS_HEIGHT 120
+#define JUDGMENT_RING_LEVEL 20
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -420,7 +426,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   sx = 8;
   rings = 2;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Iwram_FillWordsEntry(work->sheet, 0x3840, 0);
+  Iwram_FillWordsEntry(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
 
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != JUDGMENT_FRAMES; frame++) {
@@ -498,14 +504,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       ring = 0;
       rings = 4;
       squash = 8;
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == JUDGMENT_SWEEP_FOREST) {
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -524,7 +530,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == JUDGMENT_SWEEP_RETURN) {
       BattleEffect_SetupBlendedDisplay();
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -685,26 +691,34 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             top = cy - (slope * sx) / 8;
             if (top < 0)
               top = 0;
-            if (bottom > 119)
-              bottom = 119;
+            if (bottom > JUDGMENT_RINGS_HEIGHT - 1)
+              bottom = JUDGMENT_RINGS_HEIGHT - 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
             right = cx + half + 1;
             left = cx - half + 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
 
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
@@ -722,26 +736,34 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             top = cy - (radius * sx) / 8;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
             if (top < 0)
               top = 0;
-            if (bottom > 119)
-              bottom = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (bottom > JUDGMENT_RINGS_HEIGHT - 1)
+              bottom = JUDGMENT_RINGS_HEIGHT - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
             right = cx + halfSlope + 1;
             left = cx - halfSlope + 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
 
             err = err - slope * 2 - 1;
             if (err < 0) {

@@ -176,7 +176,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         // The screen waves, line by line.
         s32 *line = work->bg2xLines;
 
-        for (i = 0; i != 160; i++)
+        for (i = 0; i != DISPLAY_HEIGHT; i++)
           *line++ =
               scroll -
               ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 16)) << 2) >> 10);

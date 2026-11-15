@@ -310,7 +310,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
   Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
-          DMA_COPY_HALFWORDS(PALETTE_COLORS), (volatile u32 *)0x040000d4);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != ATALANTA_PIECES; i++)
     Sprite_DestroyFar(work->sprites[i]);

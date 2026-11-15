@@ -1200,7 +1200,7 @@ struct MeshVertex;
       c = RGB(r_, g_, b_);                                                     \
       *table++ = c;                                                            \
     }                                                                          \
-    for (; i != 160; i++) {                                                    \
+    for (; i != DISPLAY_HEIGHT; i++) {                                         \
       *table++ = 0;                                                            \
     }                                                                          \
   } while (0)

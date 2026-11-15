@@ -259,7 +259,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           g = RGB_LEVEL_MAX;
         *dst++ = RGB(g >> 1, g, b);
       }
-      for (; i != 160; i++) {
+      for (; i != DISPLAY_HEIGHT; i++) {
         *dst++ = 0;
       }
     }

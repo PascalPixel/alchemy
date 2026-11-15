@@ -96,7 +96,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   // shards' fall, then the targets' full width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = (0xf0 - i) | ((0x70 - i) << 8);
       else if (i <= 135)
@@ -106,7 +106,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     }
   } else {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 95)
         line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
       else if (i <= 135)
@@ -305,7 +305,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // drops' fall, then the targets' width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
       else if (i <= 135)
@@ -315,7 +315,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     }
   } else {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
       else if (i <= 135)

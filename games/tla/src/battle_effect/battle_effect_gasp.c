@@ -388,7 +388,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
               SMALL_DJINNI_HEIGHT);
-      BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+      BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                      TRIG_TURN / 3, 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
       struct ScreenPoint target;
 

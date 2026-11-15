@@ -252,7 +252,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     lines = work->bg2xLines;
-    for (i = 0; i != 160; i++)
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
       *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
     if (mode == FLURRY_CRUSHER_GRIP && frame == 8)
       Sound_PlayFar(SE_RISE_WITH_SPARKS);

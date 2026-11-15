@@ -93,8 +93,8 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
 
 /// Returns an enemy's experience with the Djinn bonus: its own plus a
 /// four-sided die for every ten levels and one more, at least 30 percent more.
-static __inline__ s32
-BattleEnemy_CalculateExperienceReward(struct Unit *unit, u16 *reward) {
+static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
+                                                            u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;

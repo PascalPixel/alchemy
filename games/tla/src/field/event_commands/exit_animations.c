@@ -246,8 +246,7 @@ s32 Entrance_PlayArrival(void) {
 /// drawn transparent (SPRITE_COLOR_HIDDEN).
 void Func_080d5fd4(void) {
   struct Actor *object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  u8 *metadata =
-      Sprite_AddAnimationFar(*(void **)((u8 *)object + 0x50), 268);
+  u8 *metadata = Sprite_AddAnimationFar(*(void **)((u8 *)object + 0x50), 268);
 
   metadata[5] = 15;
 }

@@ -47,11 +47,9 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
 
   if (unitId <= ALLY_MAX) {
     for (i = 0; (id = work->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
-      if (id != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(id))->hp != 0) {
+      if (id != BATTLE_UNIT_REMOVED && ((struct Unit *)Unit_Get(id))->hp != 0) {
         if (best == unitId ||
-            (id != unitId &&
-             ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
+            (id != unitId && ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
           best = id;
           bestAttack = ((struct Unit *)Unit_Get(best))->atk;
         }
@@ -59,11 +57,9 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
     }
   } else {
     for (i = 0; (id = work->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
-      if (id != BATTLE_UNIT_REMOVED &&
-          ((struct Unit *)Unit_Get(id))->hp != 0) {
+      if (id != BATTLE_UNIT_REMOVED && ((struct Unit *)Unit_Get(id))->hp != 0) {
         if (best == unitId ||
-            (id != unitId &&
-             ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
+            (id != unitId && ((struct Unit *)Unit_Get(id))->atk > bestAttack)) {
           best = id;
           bestAttack = ((struct Unit *)Unit_Get(best))->atk;
         }

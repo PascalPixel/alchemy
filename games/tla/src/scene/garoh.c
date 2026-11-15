@@ -960,12 +960,12 @@ void Garoh_PuffFrom(s32 id) {
 
 #define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
-    FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);                 \
+    FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);                            \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
     FieldPsynergy_RunHandler(n1);                                              \
     MapGrid_CopyCellsLayered(n2, 5, 3, 3, 19, 5);                              \
     BattleEffect_StopMainActor();                                              \
-    FieldPsynergy_End();                                        \
+    FieldPsynergy_End();                                                       \
   }
 
 DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCaveCrevice, 1, 44)
@@ -3313,8 +3313,8 @@ struct Trigger gGaroh_Room1DayTriggers[] = {
      MSGNO(MsgGaroh25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgGaroh26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_LITTLE_WEREWOLF_THANKED,
-     EVENT(Garoh_LittleWerewolfThanks)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_LITTLE_WEREWOLF_THANKED, EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgGaroh27)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,

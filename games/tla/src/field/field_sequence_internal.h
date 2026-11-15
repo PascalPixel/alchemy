@@ -71,7 +71,6 @@
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 
-
 // The object's functions its parts call before their definitions.
 
 // Outside routines and data the parts had declared each in its own way, with

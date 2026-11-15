@@ -42,8 +42,7 @@ u32 Party_GetAverageLevel(void) {
   if (partySize == 0)
     return 0;
   for (i = 0; i < partySize; i++)
-    totalLevels +=
-        ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->level;
+    totalLevels += ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->level;
   totalLevels /= partySize;
   return totalLevels;
 }
@@ -562,8 +561,7 @@ void MainRoutineWork_InitializeDefaults(void) {
 #endif
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   gSceneLocalState[4] = 0xff;
-  Dma_Fill32Cell(zero, 0, gCharacterUnits,
-                 (PIERS + 1) * sizeof(struct Unit));
+  Dma_Fill32Cell(zero, 0, gCharacterUnits, (PIERS + 1) * sizeof(struct Unit));
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;
   gMainRoutineWork.bKeys = KEY_B;
@@ -1123,7 +1121,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 /// Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
 /// its HP and PP gauges.
 #define UNIT_DEFINE_SET(name, field, maximum)                                  \
-  void name(struct Unit *unit, s32 value) {                              \
+  void name(struct Unit *unit, s32 value) {                                    \
     s32 clamped;                                                               \
                                                                                \
     clamped = Unit_ClampGaugeValue(value, unit->maximum);                      \
@@ -1138,7 +1136,7 @@ UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
 /// maximum, recomputes its gauges and returns the new value, as `type`.
 #define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
   type name(s32 unitId, s32 delta) {                                           \
-    struct Unit *unit = Unit_Get(unitId);                                \
+    struct Unit *unit = Unit_Get(unitId);                                      \
     s32 current = unit->field;                                                 \
     s32 limit = unit->maximum;                                                 \
     s32 value = current + delta;                                               \

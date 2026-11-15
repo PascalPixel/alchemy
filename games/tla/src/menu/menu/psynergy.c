@@ -350,8 +350,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   return ret;
 }
 
-s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions,
-                                s32 mode);
+s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode);
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 
 /// Shows side partySlot's icon, collects the actions of the member chosen
@@ -806,8 +805,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 /// Lists a unit's Psynergy into actions (32 entries, cleared first) and returns
 /// how many: mode 1 those with a field effect, any other mode those first and
 /// then, unless mode is 2, the rest.
-s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions,
-                                s32 mode) {
+s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 i;
   s32 count;
   struct BattleAct *ability;

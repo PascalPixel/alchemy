@@ -362,8 +362,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
            innerIndex++) {
         thisUnit = Unit_Get(unitIds[innerIndex]);
         nextUnit = Unit_Get(unitIds[innerIndex + 1]);
-        if (Enemy_GetDefinitionFar(
-                ((struct Unit *)Unit_Get(userId))->enemyId)
+        if (Enemy_GetDefinitionFar(((struct Unit *)Unit_Get(userId))->enemyId)
                 ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
@@ -1154,8 +1153,7 @@ power_end:
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
             attack = ((struct Unit *)Unit_Get(plan->unitId))->atk;
             if (abilityId == ABILITY_MELD)
-              attack +=
-                  ((struct Unit *)Unit_Get(plan->actorId2))->atk / 4;
+              attack += ((struct Unit *)Unit_Get(plan->actorId2))->atk / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);

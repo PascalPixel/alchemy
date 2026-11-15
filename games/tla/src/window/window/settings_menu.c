@@ -334,7 +334,8 @@ struct RenderInput *SettingsMenu_Open(void) {
 #define SETTINGS_HEADING 8
 #endif
 
-extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[], MsgWindowColorHelp[], MsgKey1161[];
+extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
+    MsgWindowColorHelp[], MsgKey1161[];
 extern const u8 gOptionMenu_FirstColorPresets[],
     gOptionMenu_SecondColorPresets[];
 
@@ -458,7 +459,8 @@ s32 SettingsMenu_Run(void) {
         y += 8;
       MenuCursor_SetFar(&work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
-      Text_DrawMessage(selectedOption + (s32)MsgWindowColorHelp, (s32)helpWindow, 0, 0);
+      Text_DrawMessage(selectedOption + (s32)MsgWindowColorHelp,
+                       (s32)helpWindow, 0, 0);
     }
     MenuTitle_Bob(pair);
     wait(1);

@@ -292,7 +292,8 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
             decodePicture(decoded, pixels, 0);
         }
       } else {
-        decodePicture(layer->pictures[layer->picture], pixels, layer->colorMode);
+        decodePicture(layer->pictures[layer->picture], pixels,
+                      layer->colorMode);
       }
     }
 

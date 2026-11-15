@@ -331,8 +331,8 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 0x26c);
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window);
-void Text_DrawStatComparison(const struct Unit *alt,
-                             const struct Unit *base, s32 work);
+void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
+                             s32 work);
 void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
                                 s32 y);
 

@@ -236,8 +236,8 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       struct BattleAct *action;
 
       Unit_Get(entry->unitId);
-      action = Ability_Get(Djinn_GetAbilityIdFar(
-          (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
+      action = Ability_Get(Djinn_GetAbilityIdFar((entry->parameter) >> 8 & 15,
+                                                 entry->parameter & 0xff));
       if (action->effect == 72 || action->effect == 76 ||
           action->effect == 79 || action->effect == 74 ||
           action->effect == 46 || action->effect == 47 ||

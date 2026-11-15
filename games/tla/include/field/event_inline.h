@@ -27,14 +27,14 @@ static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
   Actor_SetAnimationById(actorId, animation);
 }
 
-/// Actor_SetAnimation as the events that take Actor_SetAnimationById for a routine
-/// returning int make the call.
+/// Actor_SetAnimation as the events that take Actor_SetAnimationById for a
+/// routine returning int make the call.
 static inline void FieldActor_SetAnimation(s32 actorId, s32 animation) {
 #ifdef UBFIX
   Actor_SetAnimationById(actorId, animation);
 #else
-  // UB: Actor_SetAnimationById returns nothing, but these calls are made as to a
-  // routine returning int, which moves their argument registers.
+  // UB: Actor_SetAnimationById returns nothing, but these calls are made as to
+  // a routine returning int, which moves their argument registers.
   ((s32 (*)(u32, s32))Actor_SetAnimationById)(actorId, animation);
 #endif
 }

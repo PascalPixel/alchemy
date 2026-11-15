@@ -450,8 +450,8 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
-void Text_DrawStatComparison(const struct Unit *alt,
-                             const struct Unit *base, s32 work) {
+void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
+                             s32 work) {
   Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
                              0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);

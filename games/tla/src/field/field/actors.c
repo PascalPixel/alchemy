@@ -358,7 +358,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
       Sprite_StartAnimation(((struct ActorSpriteView *)object->sprite),
-                                   argument);
+                            argument);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
@@ -385,7 +385,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
       Sprite_SetAnimationSpeed(((struct ActorSpriteView *)object->sprite),
-                                value);
+                               value);
       return;
     case 2:
       children = ((struct ActorSpriteView **)object->sprite);
@@ -412,9 +412,9 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
       Sprite_StartAnimation(((struct ActorSpriteView *)object->sprite),
-                                   argument);
+                            argument);
       Sprite_SetAnimationSpeed(((struct ActorSpriteView *)object->sprite),
-                                value);
+                               value);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);

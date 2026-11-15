@@ -291,7 +291,7 @@ void AlhafraManor_CountAnswer(void);
   {                                                                            \
     struct Actor *leader_;                                                     \
     Actor_SetSpeed((id), 1.2);                                                 \
-    Actor_SetAnimationById((id), 2);                                                \
+    Actor_SetAnimationById((id), 2);                                           \
     leader_ = Actor_GetById(gMainRoutineWork.leaderActorId);                   \
     if (leader_ != 0)                                                          \
       Actor_SetDestinationById((id), leader_->x.part[0].pixel,                 \
@@ -837,8 +837,8 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManor17)},
     {TRIGGER_TALK, 18, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
      EVENT(AlhafraManor_GrumbleAboutTheMayor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
-     EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_GRUMBLED_ABOUT_THE_MAYOR, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor19)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor20)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
@@ -847,12 +847,12 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManor22)},
     {TRIGGER_TALK, 8, FLAG_DEFENDED_THE_MAYOR,
      EVENT(AlhafraManor_DefendTheMayor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_DEFENDED_THE_MAYOR,
-     EVENT(AlhafraManor_DefendTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_DEFENDED_THE_MAYOR, EVENT(AlhafraManor_DefendTheMayor)},
     {TRIGGER_TALK, 9, FLAG_TOLD_OF_THE_EASTERN_SEA,
      EVENT(AlhafraManor_TellOfTheEasternSea)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TOLD_OF_THE_EASTERN_SEA,
-     EVENT(AlhafraManor_TellOfTheEasternSea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_TOLD_OF_THE_EASTERN_SEA, EVENT(AlhafraManor_TellOfTheEasternSea)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor25)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor26)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,

@@ -341,8 +341,7 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
       ((struct Unit *)Unit_Get(unitId))->enemyId));
 
   if (value == 0) {
-    if (BattleSprite_IsSmall(
-            ((struct Unit *)Unit_Get(unitId))->enemyId) != 0)
+    if (BattleSprite_IsSmall(((struct Unit *)Unit_Get(unitId))->enemyId) != 0)
       value = px(24);
     else
       value = px(48);

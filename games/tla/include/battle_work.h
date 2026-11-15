@@ -66,9 +66,10 @@ struct BattleWork {
   s16 enemyIds[7];   ///< ends with 0xff
   u8 placement[16];  ///< each unit's index in slots; 0xff for none
   struct BattleObject slots[14];
-  struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
-  u8 unk42c[0x124];                      ///< not named by TLA code
-  struct BattleSpoils spoils;            ///< what the battle has won so far
+  struct BattleActionRecord
+      actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
+  u8 unk42c[0x124];                    ///< not named by TLA code
+  struct BattleSpoils spoils;          ///< what the battle has won so far
   /// A queue of two enemies to call in (an ability of effect 87): their
   /// classes and name letters, its head and its length.
   ///@{

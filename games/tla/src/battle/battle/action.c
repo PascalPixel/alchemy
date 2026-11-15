@@ -477,7 +477,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_DJINN:
     abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
-                                             DJINN_INDEX(request->parameter));
+                                      DJINN_INDEX(request->parameter));
     if (!Djinn_IsSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
                         DJINN_INDEX(request->parameter))) {
       if (Djinn_CanSetFar(request->unitId, DJINN_ELEMENT(request->parameter),

@@ -258,8 +258,7 @@ s32 Enemy_IsSeaCreature(s32 enemyId) {
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
 /// for its enemy kind (EnemyDefinition.weakEffects) or class
 /// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
-s32 BattleAbility_IsWeakToEffect(const struct Unit *target,
-                                 s32 effectId) {
+s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *entries;
   s32 i;
 
@@ -337,16 +336,14 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   goto check_restore;
 check_restore_others:
   if (unit->stun == 0 && unit->sleep == 0 &&
-      state[(u32)&((struct Unit *)0)->psySeal] == 0 &&
-      unit->grimReaper == 0) {
+      state[(u32)&((struct Unit *)0)->psySeal] == 0 && unit->grimReaper == 0) {
     return 0;
   }
   goto restore_checked;
 check_restore:
   if (effectId == ABILITY_EFFECT_RESTORE) {
     if (unit->delusion == 0 &&
-        state[(u32)&((struct Unit *)0)->confusion] == 0 &&
-        unit->charm == 0) {
+        state[(u32)&((struct Unit *)0)->confusion] == 0 && unit->charm == 0) {
       goto check_restore_others;
     }
   }

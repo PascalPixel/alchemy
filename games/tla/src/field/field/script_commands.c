@@ -406,7 +406,7 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 /// (Actor_PlaySoundInView).
 s32 ActorScript_PlaySoundInView(struct Actor *interpreter) {
   Actor_PlaySoundInViewFar(interpreter,
-                            interpreter->script[interpreter->scriptCursor + 1]);
+                           interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
 }
@@ -1287,8 +1287,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
     s32 action;
 
     action = 9;
-    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
-        0)
+    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp == 0)
       action = 22;
     Actor_SelectAnimation(actor, action);
   } else {

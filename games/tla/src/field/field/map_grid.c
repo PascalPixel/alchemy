@@ -125,8 +125,9 @@ void Map_CopyPalette(s32 map, void *destination) {
 /// Loads layout index from gMaps: its cell pictures, collision (cleared to -1
 /// first), cells, shapes, tileset animations, blend script and script; sets up
 /// the three background layers' origins, parallax and wrap from the layout
-/// header; loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
-/// loaded; and starts the layer scrolling (MapGrid_UpdateLayerScroll).
+/// header; loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS
+/// says they are loaded; and starts the layer scrolling
+/// (MapGrid_UpdateLayerScroll).
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
   struct MapScrollWork *work;

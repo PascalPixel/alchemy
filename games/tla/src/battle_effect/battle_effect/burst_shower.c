@@ -106,8 +106,7 @@ void BattleEffect_RunStormBreath(struct BattleEffectParams *args) {
 ///
 /// Abilities: Storm Breath.
 void BattleEffect_RunStormBreathStrong(struct BattleEffectParams *args) {
-  BattleEffect_RunBurstShower(args,
-                                    BURST_SHOWER_MODE_STORM_BREATH_STRONG);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_STORM_BREATH_STRONG);
 }
 
 /// Abilities: Evil Blessing.
@@ -238,8 +237,7 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 /// out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
 /// are hit four frames apart and recoil; the blend fades out over the last
 /// eight frames.
-void BattleEffect_RunBurstShower(struct BattleEffectParams *args,
-                                       u32 mode) {
+void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;

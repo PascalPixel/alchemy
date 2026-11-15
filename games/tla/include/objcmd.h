@@ -63,8 +63,8 @@
 #define SC_KEY_COUNT 0x25 ///< Check the configured keys.
 #define SC_RELEASE 0x26   ///< release the object
 #define SC_ANIMATION(v) 0x27, (v)
-#define SC_NOP(v) 0x28, (v) ///< Skip its operand.
-#define SC_SE(n) 0x29, (n)  ///< a sound effect
+#define SC_NOP(v) 0x28, (v)        ///< Skip its operand.
+#define SC_SE(n) 0x29, (n)         ///< a sound effect
 #define SC_SE_IN_VIEW(n) 0x2a, (n) ///< sound n, if the actor is in view
 #define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
 #define SC_HIDE_SPRITES 0x2c ///< Hide the sprites (ACTOR_SPRITE_NONE).

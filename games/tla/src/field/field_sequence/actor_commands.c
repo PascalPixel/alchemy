@@ -489,8 +489,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     actor->frozen = 1;
     actor->update = (void (*)(void))FieldEffect_UpdateDustPuff;
     child->flags = 0;
-    child->image.priority =
-        ((struct Sprite *)source->sprite)->image.priority;
+    child->image.priority = ((struct Sprite *)source->sprite)->image.priority;
   }
 }
 

@@ -1770,7 +1770,7 @@ void Kibombo_HideRoom3Pair(void) {
     u32 i;                                                                     \
                                                                                \
     for (i = 0; i <= 7; i++)                                                   \
-      Actor_SetAnimationById(i + 18, n1);                                           \
+      Actor_SetAnimationById(i + 18, n1);                                      \
   }
 
 DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdBows, 5)

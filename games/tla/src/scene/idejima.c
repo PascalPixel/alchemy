@@ -560,8 +560,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // "What's out here, anyway?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
-                                   ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_SHAKE_HEAD);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     // "That's what we were about to find out!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);

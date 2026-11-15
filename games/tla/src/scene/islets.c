@@ -552,7 +552,7 @@ void Islets_TradeWithBird(void) {
     given = FieldActor_Create(489, leader->x.fixed, leader->y.fixed + px(24),  \
                               leader->z.fixed);                                \
     if (given != 0) {                                                          \
-      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);                   \
+      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);              \
       given->motionFlags = off;                                                \
       Actor_SetItemIcon(given, ITEM_MILK);                                     \
       Event_Wait(20);                                                          \
@@ -563,7 +563,7 @@ void Islets_TradeWithBird(void) {
     PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
-      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);           \
+      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);      \
     }                                                                          \
     FieldPsynergy_GreyMindReadPalette();                                       \
     GameFlag_Set(0xaa3);                                                       \

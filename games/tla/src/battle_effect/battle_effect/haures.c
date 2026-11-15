@@ -319,7 +319,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   wingPlace[0] = p->x;
                   wingPlace[2] = p->y;
                   Sprite_StartAnimationFar(work->sprites[12 + (i & 1)],
-                                                  (p->variant / 6) & 3);
+                                           (p->variant / 6) & 3);
                   Render_ApplyProjectedPlacementFar(work->sprites[12 + (i & 1)],
                                                     wingPlace,
                                                     gHaures_UnitScale, 0);

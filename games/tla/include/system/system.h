@@ -96,7 +96,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
 void BattleMotion_InterpolatePosition(struct BattleObject *start_slot,
-                                      struct BattleObject *end_slot, s32 progress);
+                                      struct BattleObject *end_slot,
+                                      s32 progress);
 #endif
 void LuckyDice_Run(void);
 void Actor_WaitForValue16Far(struct Actor *);

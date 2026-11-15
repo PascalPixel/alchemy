@@ -136,8 +136,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Raises one party member's level by amount, then recalculates that unit.
 void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
-  Unit_LevelUpTo(ownerId,
-                 ((struct Unit *)Unit_Get(ownerId))->level + amount);
+  Unit_LevelUpTo(ownerId, ((struct Unit *)Unit_Get(ownerId))->level + amount);
   Unit_Calculate(ownerId);
 }
 

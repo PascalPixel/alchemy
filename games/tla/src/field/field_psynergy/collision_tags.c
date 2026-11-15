@@ -23,13 +23,13 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
     MapGrid_MarkRaisedIfOpen(object->x.fixed + 0x100000, object->z.fixed,
-                           object->layer, object->groundHeight);
+                             object->layer, object->groundHeight);
     MapGrid_MarkRaisedIfOpen(object->x.fixed - 0x100000, object->z.fixed,
-                           object->layer, object->groundHeight);
+                             object->layer, object->groundHeight);
     MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed + 0x100000,
-                           object->layer, object->groundHeight);
+                             object->layer, object->groundHeight);
     MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed - 0x100000,
-                           object->layer, object->groundHeight);
+                             object->layer, object->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
       GameFlag_Clear(flag);
@@ -39,8 +39,8 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   }
   FlagBlock_ApplyFlags(first);
   owner = Actor_GetById(Party_GetLeaderActor());
-  if (MapGrid_GetTerrainHeightAboveFar(owner->x.fixed, owner->z.fixed, owner->layer,
-                             owner->groundHeight))
+  if (MapGrid_GetTerrainHeightAboveFar(owner->x.fixed, owner->z.fixed,
+                                       owner->layer, owner->groundHeight))
     owner->groundHeight = owner->y.fixed = MapGrid_GetTerrainHeightFar(
         owner->layer, owner->x.fixed, owner->z.fixed);
 }

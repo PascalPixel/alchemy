@@ -109,7 +109,6 @@ enum PaletteTint {
   PALETTE_TINT_SPLIT = 0x800000
 };
 
-
 /// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
 /// colours.
 #define TITLE_PALETTE_FADE_CHANNELS (512 * 3)

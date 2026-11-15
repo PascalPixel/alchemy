@@ -1,13 +1,13 @@
 /// @file
 /// The Lemurian Ship below deck, at the East Indra Shore, in two scenes
-/// (SceneId_LemurianShip1 and SceneId_LemurianShipAquaHydra) whose rooms are told apart
-/// by the entrance used. Aqua Jellies fill the cabins: each one beaten melts
-/// into a puddle Frost turns to ice to stand on, and crates are pushed between
-/// them. A frightened jelly flees down the lift; the last one calls the others
-/// together into the Aqua Hydra, whose fall floods the hold until Parch dries
-/// it. Douse fills the two pillars that sink on their droplet tiles and open
-/// the way to the engine room, where Piers sets the Black Crystal and the
-/// ship sails.
+/// (SceneId_LemurianShip1 and SceneId_LemurianShipAquaHydra) whose rooms are
+/// told apart by the entrance used. Aqua Jellies fill the cabins: each one
+/// beaten melts into a puddle Frost turns to ice to stand on, and crates are
+/// pushed between them. A frightened jelly flees down the lift; the last one
+/// calls the others together into the Aqua Hydra, whose fall floods the hold
+/// until Parch dries it. Douse fills the two pillars that sink on their droplet
+/// tiles and open the way to the engine room, where Piers sets the Black
+/// Crystal and the ship sails.
 #include "system/task.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
@@ -721,7 +721,7 @@ void LemurianShip_SetDownPillar(void) {
 #define DEFINE_DOUSE_PILLAR(name, n1, n2)                                      \
   void name(void) {                                                            \
     Sound_Play(SE_DRIP);                                                       \
-    Actor_SetAnimationById(n1, 2);                                                  \
+    Actor_SetAnimationById(n1, 2);                                             \
     GameFlag_Set(n2);                                                          \
     LemurianShip_CheckPillarsOnDroplets();                                     \
   }

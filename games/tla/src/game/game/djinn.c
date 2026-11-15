@@ -103,8 +103,8 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
-  s32 set = ((struct Unit *)Unit_Get(unitId))->djinnSet[element] &
-            (1 << djinnIndex);
+  s32 set =
+      ((struct Unit *)Unit_Get(unitId))->djinnSet[element] & (1 << djinnIndex);
 
   return NONZERO(set);
 }

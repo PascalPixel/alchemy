@@ -129,8 +129,7 @@ s32 Scene_HasPsynergyTrigger(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
-void BattleEffect_RunBurstShower(struct BattleEffectParams *effect,
-                                       u32 mode);
+void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
 void FieldEffect_SnapScaleToFull(struct Actor *object);
 void PaletteFade_StartInterpolation(s32 frames);

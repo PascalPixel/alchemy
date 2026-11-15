@@ -168,7 +168,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         Sprite_StartAnimationFar(work->sprites[3], left);
       }
       Sprite_StartAnimationFar(work->sprites[4],
-                                      gCybele_ObjectPoses[pose * 2 + 1]);
+                               gCybele_ObjectPoses[pose * 2 + 1]);
     }
 
     // The thorns fly in, one a frame.

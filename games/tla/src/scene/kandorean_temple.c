@@ -1,6 +1,7 @@
 /// @file
 /// The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
-/// share this overlay (SceneId_KandoreanTempleLifts to SceneId_KandoreanTemplePoi).
+/// share this overlay (SceneId_KandoreanTempleLifts to
+/// SceneId_KandoreanTemplePoi).
 ///
 /// Its gate is shut for the meditation (KandoreanTemple_StartGate): Kraden
 /// spots a suspicious wall and the party finds a hidden way in through a cave
@@ -83,8 +84,8 @@ enum KandoreanTempleLiftRoomActorId {
   ACTOR_EAST_LIFT_COLUMN
 };
 
-/// The Chestbeaters' room's actors (SceneId_KandoreanTempleChestbeaters), numbering the
-/// rows of gKandoreanTemple_ChestbeaterRoomPlacements.
+/// The Chestbeaters' room's actors (SceneId_KandoreanTempleChestbeaters),
+/// numbering the rows of gKandoreanTemple_ChestbeaterRoomPlacements.
 enum KandoreanTempleChestbeaterRoomActorId {
   /// The pot of boiling water Move chucks aside
   /// (gKandoreanTemple_PillarActors).
@@ -138,8 +139,8 @@ enum KandoreanTempleFogRoomActorId {
   ACTOR_FOG
 };
 
-/// The temple gate's actors (SceneId_KandoreanTempleGate), numbering the rows of
-/// gKandoreanTemple_GatePlacements.
+/// The temple gate's actors (SceneId_KandoreanTempleGate), numbering the rows
+/// of gKandoreanTemple_GatePlacements.
 enum KandoreanTempleGateActorId {
   /// The bush over the cave, which Whirlwind blows away.
   ACTOR_BUSH_OVER_THE_CAVE = ACTOR_FIRST_PLACED,
@@ -2446,8 +2447,8 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       *flags = c;                                                              \
     }                                                                          \
     second->scaleY = 0x400;                                                    \
-    Actor_SetAnimationById(n1, 4);                                                  \
-    Actor_SetAnimationById(n2, 2);                                                  \
+    Actor_SetAnimationById(n1, 4);                                             \
+    Actor_SetAnimationById(n2, 2);                                             \
     gFieldWork->transition = 521;                                              \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
@@ -3671,12 +3672,12 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskAboutPoi)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TellOfTheMeditation)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_ASKED_ABOUT_POI,
-     EVENT(KandoreanTemple_ReadTheGateStudent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_ASKED_ABOUT_POI, EVENT(KandoreanTemple_ReadTheGateStudent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TOLD_OF_THE_MEDITATION,
-     EVENT(KandoreanTemple_ReadTheGuard)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10 | TRIGGER_SUBJECT_OWN_EFFECT,
+     FLAG_TOLD_OF_THE_MEDITATION, EVENT(KandoreanTemple_ReadTheGuard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgFieldIWasHopingToHearMaster)},
     {TRIGGER_TALK, 11, FLAG_MET_POI, MSGNO(MsgFieldIHopeToEnterTheTemple)},

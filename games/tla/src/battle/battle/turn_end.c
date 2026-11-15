@@ -678,7 +678,8 @@ again:
       if (announce) {
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni + ABILITY_DJINNI_FIRST);
+                                                       djinni +
+                                                       ABILITY_DJINNI_FIRST);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnOnStandby);
         return;
       }
@@ -729,7 +730,8 @@ again:
         s32 message;
 
         BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni + ABILITY_DJINNI_FIRST);
+                                                       djinni +
+                                                       ABILITY_DJINNI_FIRST);
         message = (u32)&MsgDjinnDrained;
         if (unitId < 0 || unitId > ALLY_MAX)
           message++;

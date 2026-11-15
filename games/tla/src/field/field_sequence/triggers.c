@@ -408,7 +408,8 @@ s32 Scene_TalkToActor(s32 id) {
         return result;
       if (talk->result >= 0x10000) {
         Event_RunMessage(id, Speaker_GetHaltedLines(id) * 2 +
-                                 ((Random16() << 1) >> 16) + (s32)&MsgPonderEllipsis);
+                                 ((Random16() << 1) >> 16) +
+                                 (s32)&MsgPonderEllipsis);
         goto resume;
       }
       goto check;
@@ -597,16 +598,16 @@ s32 Field_RunPushCell(s32 attributes) {
 // The search command. Collision codes 242 to 247 show their pair of messages
 // from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind 3)
 // of the cell runs: its "checked the ..." message, then its message or
-// callback, or the matching "found nothing" message. MsgTileChecked is the base of
-// the "X checked the Y..." lines, MsgTileResult the base of the "found nothing"
-// lines.
+// callback, or the matching "found nothing" message. MsgTileChecked is the base
+// of the "X checked the Y..." lines, MsgTileResult the base of the "found
+// nothing" lines.
 
 /// The search command. Collision codes 242 to 247 show their pair of messages
 /// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind
 /// 3) of the cell runs: its "checked the ..." message, then its message or
-/// callback, or the matching "found nothing" message. MsgTileChecked is the base of
-/// the "X checked the Y..." lines, MsgTileResult the base of the "found nothing"
-/// lines.
+/// callback, or the matching "found nothing" message. MsgTileChecked is the
+/// base of the "X checked the Y..." lines, MsgTileResult the base of the "found
+/// nothing" lines.
 s32 Field_ExamineCell(s32 id) {
   struct Trigger *event;
   s32 index;

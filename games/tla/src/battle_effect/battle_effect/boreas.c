@@ -167,7 +167,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame > 208)
       Sprite_StartAnimationFar(work->sprites[2],
-                                      gBoreas_Animations[(frame / 4) & 3]);
+                               gBoreas_Animations[(frame / 4) & 3]);
 
     // DEAD: stores of the 1.0 the copy of gBoreas_UnitScale already holds; the
     // ROM keeps the stores.

@@ -617,8 +617,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             nameBytes =
-                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))
-                    ->name;
+                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1061,8 +1060,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             nameBytes =
-                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))
-                    ->name;
+                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->name;
             nameOutput = name;
             i = 0;
             do {

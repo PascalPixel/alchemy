@@ -277,13 +277,13 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         entry->colorMode = battleObject->palette;
         entry->priority = 1;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           battleObject->animationEntry = entry;
           SpriteAnimation_StartFar(entry, 0);
           entry->priority = 3;
@@ -291,8 +291,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
             spriteId = 687;
-          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           battleObject->shadowEntry = entry;
           entry->priority = 0;
           record->flags = 0;
@@ -424,8 +424,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel ==
-            4)
+        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -453,8 +452,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel ==
-            4)
+        if (((struct Unit *)Unit_Get(unitIds[unitIndex]))->defendLevel == 4)
           record->flags |= 2;
         else
           record->flags &= ~2;

@@ -44,7 +44,8 @@ extern char SceneId_KandoreanTemple2;
 #define SCENE_KANDOREAN_TEMPLE_2 ((s32)&SceneId_KandoreanTemple2)
 /// The Kandorean Temple room where the Chestbeaters are fought.
 extern char SceneId_KandoreanTempleChestbeaters;
-#define SCENE_KANDOREAN_TEMPLE_CHESTBEATERS ((s32)&SceneId_KandoreanTempleChestbeaters)
+#define SCENE_KANDOREAN_TEMPLE_CHESTBEATERS                                    \
+  ((s32)&SceneId_KandoreanTempleChestbeaters)
 extern char SceneId_KandoreanTemple4;
 #define SCENE_KANDOREAN_TEMPLE_4 ((s32)&SceneId_KandoreanTemple4)
 extern char SceneId_KandoreanTemple5;
@@ -108,7 +109,8 @@ extern char SceneId_AirsRockInside4;
 #define SCENE_AIRS_ROCK_INSIDE_4 ((s32)&SceneId_AirsRockInside4)
 /// The room inside Air's Rock with the tablet that teaches Reveal.
 extern char SceneId_AirsRockInsideRevealTablet;
-#define SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ((s32)&SceneId_AirsRockInsideRevealTablet)
+#define SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET                                   \
+  ((s32)&SceneId_AirsRockInsideRevealTablet)
 extern char SceneId_AirsRockInside6;
 #define SCENE_AIRS_ROCK_INSIDE_6 ((s32)&SceneId_AirsRockInside6)
 extern char SceneId_AirsRockInside7;
@@ -119,7 +121,8 @@ extern char SceneId_AirsRockInside9;
 #define SCENE_AIRS_ROCK_INSIDE_9 ((s32)&SceneId_AirsRockInside9)
 /// The room inside Air's Rock with a Psynergy Stone.
 extern char SceneId_AirsRockInsidePsynergyStone;
-#define SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE ((s32)&SceneId_AirsRockInsidePsynergyStone)
+#define SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE                                  \
+  ((s32)&SceneId_AirsRockInsidePsynergyStone)
 /// Alhafra itself, the town's one outdoor scene.
 extern char SceneId_Alhafra;
 #define SCENE_ALHAFRA ((s32)&SceneId_Alhafra)
@@ -275,7 +278,8 @@ extern char SceneId_MagmaRockInside7;
 #define SCENE_MAGMA_ROCK_INSIDE_7 ((s32)&SceneId_MagmaRockInside7)
 /// The room inside Magma Rock with the tablet that teaches Blaze.
 extern char SceneId_MagmaRockInsideBlazeTablet;
-#define SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET ((s32)&SceneId_MagmaRockInsideBlazeTablet)
+#define SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET                                   \
+  ((s32)&SceneId_MagmaRockInsideBlazeTablet)
 extern char SceneId_TundariaTower1;
 #define SCENE_TUNDARIA_TOWER_1 ((s32)&SceneId_TundariaTower1)
 extern char SceneId_TundariaTower2;
@@ -305,7 +309,8 @@ extern char SceneId_ShrineOfTheSeaGod4;
 #define SCENE_SHRINE_OF_THE_SEA_GOD_4 ((s32)&SceneId_ShrineOfTheSeaGod4)
 /// The Shrine of the Sea God room where Breath is chased and fought.
 extern char SceneId_ShrineOfTheSeaGodBreath;
-#define SCENE_SHRINE_OF_THE_SEA_GOD_BREATH ((s32)&SceneId_ShrineOfTheSeaGodBreath)
+#define SCENE_SHRINE_OF_THE_SEA_GOD_BREATH                                     \
+  ((s32)&SceneId_ShrineOfTheSeaGodBreath)
 extern char SceneId_ShrineOfTheSeaGod6;
 #define SCENE_SHRINE_OF_THE_SEA_GOD_6 ((s32)&SceneId_ShrineOfTheSeaGod6)
 extern char SceneId_ShrineOfTheSeaGod7;
@@ -374,7 +379,8 @@ extern char SceneId_AquaRockInside1;
 #define SCENE_AQUA_ROCK_INSIDE_1 ((s32)&SceneId_AquaRockInside1)
 /// The room inside Aqua Rock with the tablet that teaches Parch.
 extern char SceneId_AquaRockInsideParchTablet;
-#define SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET ((s32)&SceneId_AquaRockInsideParchTablet)
+#define SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET                                    \
+  ((s32)&SceneId_AquaRockInsideParchTablet)
 extern char SceneId_IzumoInteriors;
 #define SCENE_IZUMO_INTERIORS ((s32)&SceneId_IzumoInteriors)
 extern char SceneId_Izumo;
@@ -396,7 +402,8 @@ extern char SceneId_AquaRockInside6;
 #define SCENE_AQUA_ROCK_INSIDE_6 ((s32)&SceneId_AquaRockInside6)
 /// The room inside Aqua Rock with a Psynergy Stone.
 extern char SceneId_AquaRockInsidePsynergyStone;
-#define SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE ((s32)&SceneId_AquaRockInsidePsynergyStone)
+#define SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE                                  \
+  ((s32)&SceneId_AquaRockInsidePsynergyStone)
 extern char SceneId_AquaRockInside8;
 #define SCENE_AQUA_ROCK_INSIDE_8 ((s32)&SceneId_AquaRockInside8)
 extern char SceneId_AquaRockInside9;
@@ -430,12 +437,14 @@ extern char SceneId_MarsLighthouseEntrance1;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_1 ((s32)&SceneId_MarsLighthouseEntrance1)
 /// The Mars Lighthouse room where Fugue is fought.
 extern char SceneId_MarsLighthouseEntranceFugue;
-#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE ((s32)&SceneId_MarsLighthouseEntranceFugue)
+#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE                                   \
+  ((s32)&SceneId_MarsLighthouseEntranceFugue)
 extern char SceneId_MarsLighthouseEntrance3;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_3 ((s32)&SceneId_MarsLighthouseEntrance3)
 /// The Mars Lighthouse room where Balm is fought.
 extern char SceneId_MarsLighthouseEntranceBalm;
-#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_BALM ((s32)&SceneId_MarsLighthouseEntranceBalm)
+#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_BALM                                    \
+  ((s32)&SceneId_MarsLighthouseEntranceBalm)
 extern char SceneId_MarsLighthouseEntrance5;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_5 ((s32)&SceneId_MarsLighthouseEntrance5)
 extern char SceneId_MarsLighthouseEntrance6;
@@ -444,8 +453,7 @@ extern char SceneId_MarsLighthouseEntrance7;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_7 ((s32)&SceneId_MarsLighthouseEntrance7)
 /// Mars Lighthouse's room of the Mars Star.
 extern char SceneId_MarsLighthouseStarRoom;
-#define SCENE_MARS_LIGHTHOUSE_STAR_ROOM                                      \
-  ((s32)&SceneId_MarsLighthouseStarRoom)
+#define SCENE_MARS_LIGHTHOUSE_STAR_ROOM ((s32)&SceneId_MarsLighthouseStarRoom)
 extern char SceneId_MarsLighthouseRoomM1;
 #define SCENE_MARS_LIGHTHOUSE_ROOM_M_1 ((s32)&SceneId_MarsLighthouseRoomM1)
 extern char SceneId_MarsLighthouseRoomM2;
@@ -561,7 +569,8 @@ extern char SceneId_ChampaCliffCaves3;
 #define SCENE_CHAMPA_CLIFF_CAVES_3 ((s32)&SceneId_ChampaCliffCaves3)
 /// The Champa cliff cave where the Avimander is fought and the Trident taken.
 extern char SceneId_ChampaCliffCavesAvimander;
-#define SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER ((s32)&SceneId_ChampaCliffCavesAvimander)
+#define SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER                                     \
+  ((s32)&SceneId_ChampaCliffCavesAvimander)
 extern char SceneId_AnkohlRuins1;
 #define SCENE_ANKOHL_RUINS_1 ((s32)&SceneId_AnkohlRuins1)
 extern char SceneId_AnkohlRuins2;

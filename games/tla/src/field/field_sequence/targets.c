@@ -83,8 +83,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return best;
 }
 
-/// Returns the row of gFieldPsynergy_Reach for a field Psynergy kind: its range,
-/// height and facing width. A kind not found returns the -1 terminator.
+/// Returns the row of gFieldPsynergy_Reach for a field Psynergy kind: its
+/// range, height and facing width. A kind not found returns the -1 terminator.
 const struct FieldPsynergyReach *Field_GetPsynergyReach(s32 id) {
   const struct FieldPsynergyReach *entry = gFieldPsynergy_Reach;
 

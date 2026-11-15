@@ -1,9 +1,9 @@
 /// @file
 /// Atteka Inlet, where the party's ship lies on the southern continent, in two
 /// scenes that share this overlay: the harbour with the ship
-/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInletGeode). Piers
-/// asks whether to set sail (AttekaInlet_AskPiersToSetSail). After Jupiter
-/// Lighthouse the shipwrights stop the party to see their handiwork fly
+/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInletGeode).
+/// Piers asks whether to set sail (AttekaInlet_AskPiersToSetSail). After
+/// Jupiter Lighthouse the shipwrights stop the party to see their handiwork fly
 /// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
 /// (AttekaInlet_HammaShowsTheWings), and in a game linked with The Broken Seal
 /// a messenger brings Master Hammet's gift

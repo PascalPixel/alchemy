@@ -269,8 +269,7 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
  * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:248:
  * conflicting types for `Sprite_AddAnimation'. */
 s32 ResourceMetadata_Register__resource_slot(
-    struct MetadataSlotState *state,
-    s32 id) __asm__("Sprite_AddAnimation");
+    struct MetadataSlotState *state, s32 id) __asm__("Sprite_AddAnimation");
 #define Sprite_AddAnimation ResourceMetadata_Register__resource_slot
 /// Adds a sprite animation of animation id to a sprite, in the first of its
 /// four slots that is free; returns it, 0 when none could be taken, or -1 when
@@ -390,8 +389,7 @@ void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
  * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:360:
  * conflicting types for `Sprite_StartAnimation'. */
 s32 Animation_ApplyChildArgument__resource_slot(
-    struct AnimationGroup *state,
-    s32 flags) __asm__("Sprite_StartAnimation");
+    struct AnimationGroup *state, s32 flags) __asm__("Sprite_StartAnimation");
 #define Sprite_StartAnimation Animation_ApplyChildArgument__resource_slot
 /// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
 /// keeps each sprite animation's place and timer), unless the sprite plays it
@@ -501,16 +499,14 @@ void ActorSystem_Configure(s32 mode) {
   volatile u32 zero;
 
   if (mode == 3) {
-    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
-                                  ANIMATION_OBJECT_COUNT *
-                                      sizeof(struct Sprite));
+    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, ANIMATION_OBJECT_COUNT *
+                                                         sizeof(struct Sprite));
     layers = HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
                                  ANIMATION_OBJECT_COUNT *
                                      sizeof(struct SpriteAnimation));
   } else {
-    sprites =
-        HeapSlot_Alloc(HEAP_SLOT_SPRITES,
-                       ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
+    sprites = HeapSlot_Alloc(HEAP_SLOT_SPRITES,
+                             ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
     layers =
         HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
                        ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnimation));

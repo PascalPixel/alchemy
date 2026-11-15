@@ -261,7 +261,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       if (command == 0) {
         if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
-                                       INVENTORY_ITEM_ID_MASK) != 0) {
+                                    INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
           *ownerOut = menu->sideMember[0];
           *targetOut = command;
@@ -1788,7 +1788,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   }
 
   if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
-                                 INVENTORY_ITEM_ID_MASK) != 0)
+                              INVENTORY_ITEM_ID_MASK) != 0)
     commandStates[0] = COMMAND_AVAILABLE;
 
   if (menu->partyCount <= 1)

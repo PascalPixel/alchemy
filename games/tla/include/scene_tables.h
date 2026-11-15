@@ -241,8 +241,8 @@ enum ExitStyle {
 
 /// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4,
 /// as The Broken Seal's, with the pond added. Target n shows message
-/// MsgTileChecked + n, "<leader> checked the ...", as the leader checks it, unless
-/// the trigger has TRIGGER_SUBJECT_OWN_EFFECT; target 0 shows nothing.
+/// MsgTileChecked + n, "<leader> checked the ...", as the leader checks it,
+/// unless the trigger has TRIGGER_SUBJECT_OWN_EFFECT; target 0 shows nothing.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,
   EXAMINE_CHEST = 1,

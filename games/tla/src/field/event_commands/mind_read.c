@@ -108,8 +108,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         object->speedLimit = 0xa3d7;
         object->acceleration = 0xa3d7;
         object->facing = ArcTan2(from.z - to.z, from.x - to.x);
-        object->update =
-            (void (*)(void))FieldEffect_ReleaseOnArrival;
+        object->update = (void (*)(void))FieldEffect_ReleaseOnArrival;
         sprite->palette = 0;
         sprite->mode = 1;
         Actor_SetMoveTargetFar(object, from.x, from.y, from.z);

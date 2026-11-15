@@ -1436,15 +1436,15 @@ static void TolbiShipDeck_MonstersBoard(void) {
                            SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2,
                            SPRITE_COLOR_BGR);
-  do {
+  // The door opens once the first monster has leapt aboard.
+  for (;;) {
     wait(1);
-  } while (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
-  TolbiShipDeck_OpenFirstDoor();
-  /* FAKEMATCH(dead): the walk in a once-only block loads its actor id straight
-   * after the call above. */
-  do {
-    Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
-  } while (0);
+    if (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer != 0) {
+      TolbiShipDeck_OpenFirstDoor();
+      break;
+    }
+  }
+  Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
   Actor_WaitForScriptEndById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();

@@ -421,12 +421,13 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   work.effect.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&work.effect);
   work.effect.kind = 0;
-  BattleEffect_RunFromTableFar(&work.effect);
+  /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
+   * and RunPsynergyCast make, under their test of the kind, which is 0 here. */
+  if (work.effect.kind)
+    BattleEffect_RunByIdRangeFar(&work.effect);
+  else
+    BattleEffect_RunFromTableFar(&work.effect);
   Actor_SelectAnimationFar(object, POSE_STANDING);
-  /* FAKEMATCH(dead): an empty once-only loop ends CSE's knowledge of work's
-   * address. */
-  do {
-  } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   BattleMotion_ReturnToSpot(work.effect.user);

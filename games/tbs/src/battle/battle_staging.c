@@ -904,20 +904,16 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  /* FAKEMATCH(dead): a once-only block round the label loop. */
-  do {
-    i = 0;
-  again:
+  for (i = 0;; i++) {
     listedUnit = battle->enemyIds[i];
     if (listedUnit == unitId) {
       battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
-    i++;
     if (listedUnit == BATTLE_UNIT_LIST_END)
-      return;
-    goto again;
-  } while (0);
+      break;
+  }
+  return;
 
 removed:
   // Free the letter that told the enemy apart from others of its class.

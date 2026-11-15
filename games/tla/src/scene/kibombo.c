@@ -215,9 +215,19 @@ void Kibombo_AskGoingWest(void) {
 
 #include "shared/leader_is_facing_north.h"
 
+/// Kibombo's shops, as Shop_Run numbers them.
+enum {
+  SHOP_KIBOMBO_WEAPONS = 17,
+  SHOP_KIBOMBO_ARMOR = 18,
+  SHOP_KIBOMBO_ITEMS = 19
+};
+
+/// Kibombo's inn, as Inn_CheckIn numbers the inns.
+enum { KIBOMBO_INN = 6 };
+
 void Kibombo_OpenWeaponShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(17, 20);
+    Shop_Run(SHOP_KIBOMBO_WEAPONS, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -230,7 +240,7 @@ void Kibombo_OpenWeaponShop(void) {
 
 void Kibombo_OpenArmorShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(18, 21);
+    Shop_Run(SHOP_KIBOMBO_ARMOR, 21);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -243,7 +253,7 @@ void Kibombo_OpenArmorShop(void) {
 
 void Kibombo_OpenItemShop(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(19, 22);
+    Shop_Run(SHOP_KIBOMBO_ITEMS, 22);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -256,7 +266,7 @@ void Kibombo_OpenItemShop(void) {
 
 void Kibombo_OpenInn(void) {
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(6, 23);
+    Inn_CheckIn(KIBOMBO_INN, 23);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);

@@ -585,19 +585,25 @@ void Loho_ReadInnSign(void) {
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 
+/// Loho's shops, as Shop_Run numbers them.
+enum { SHOP_LOHO = 30 };
+
+/// Loho's inn, as Inn_CheckIn numbers the inns.
+enum { LOHO_INN = 13 };
+
 void Loho_TalkToInnkeeper(void) {
   s32 count = 8;
 
   /* FAKEMATCH(barrier): the empty asm on count. */
   asm("" : "+l"(count));
-  Inn_CheckIn(13, count);
+  Inn_CheckIn(LOHO_INN, count);
 }
 
 /// "Commerce really took off when we started this mining colony in Loho."
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
-    Shop_Run(30, 8);
+    Shop_Run(SHOP_LOHO, 8);
   } else {
     if (Event_GetFlag(0xa5f))
       Event_SetMessageId((s32)MsgLoho51);

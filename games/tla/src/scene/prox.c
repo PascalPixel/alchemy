@@ -467,6 +467,12 @@ void Prox_AskAboutIgloos(void) {
 
 #include "shared/leader_is_facing_north.h"
 
+/// Prox's shops, as Shop_Run numbers them.
+enum { SHOP_PROX = 0 };
+
+/// Prox's inn, as Inn_CheckIn numbers the inns.
+enum { PROX_INN = 0 };
+
 void Prox_TalkAboutParents(void) {
 
   if (Leader_IsFacingNorth()) {

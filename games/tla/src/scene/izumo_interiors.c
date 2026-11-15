@@ -120,11 +120,17 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
   }
 }
 
+/// Izumo's shops, as Shop_Run numbers them.
+enum { SHOP_IZUMO = 24 };
+
+/// Izumo's inn, as Inn_CheckIn numbers the inns.
+enum { IZUMO_INN = 9 };
+
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(9, actor);
+    Inn_CheckIn(IZUMO_INN, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -142,7 +148,7 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(24, actor);
+    Shop_Run(SHOP_IZUMO, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);

@@ -116,6 +116,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gGarohInteriors_NoActorPlacements;
 }
 
+/// Garoh's shops, as Shop_Run numbers them.
+enum { SHOP_GAROH_WEAPONS = 10, SHOP_GAROH_ARMOR = 11, SHOP_GAROH_ITEMS = 12 };
+
+/// Garoh's inn, as Inn_CheckIn numbers the inns.
+enum { GAROH_INN = 3 };
+
 /// The weapon merchant: across the counter, once the secret is shared, his
 /// shop; else what he says.
 void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
@@ -124,7 +130,7 @@ void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
-    Shop_Run(10, actor);
+    Shop_Run(SHOP_GAROH_WEAPONS, actor);
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "What do you think? I'll bet these weapons suit you better than any
@@ -147,7 +153,7 @@ void GarohInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
-    Shop_Run(11, actor);
+    Shop_Run(SHOP_GAROH_ARMOR, actor);
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "When we change form, it's best to be unclothed."
@@ -168,7 +174,7 @@ void GarohInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH) {
-    Shop_Run(12, actor);
+    Shop_Run(SHOP_GAROH_ITEMS, actor);
   } else if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     // "I've heard stories about other mountains like our own Air's Rock..."
     Event_SetMessageId((s32)MsgGarohInteriors56);
@@ -200,7 +206,7 @@ void GarohInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH) {
-    Inn_CheckIn(3, actor);
+    Inn_CheckIn(GAROH_INN, actor);
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "If you can pass the tests of Air's Rock, you can do anything!"

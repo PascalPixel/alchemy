@@ -208,11 +208,14 @@ void Daila_TalkBoat(void) {
   Event_End();
 }
 
+/// Daila's shops, as Shop_Run numbers them.
+enum { SHOP_DAILA_ITEMS = 3 };
+
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(3, keeper);
+    Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -247,7 +250,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(3, keeper);
+    Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);

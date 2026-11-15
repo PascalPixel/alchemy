@@ -536,10 +536,16 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gApojiiIslands_Triggers;
 }
 
+/// The Apojii Islands' shops, as Shop_Run numbers them.
+enum { SHOP_APOJII = 23 };
+
+/// The Apojii Islands' inn, as Inn_CheckIn numbers the inns.
+enum { APOJII_INN = 8 };
+
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Inn_CheckIn(8, actor);
+    Inn_CheckIn(APOJII_INN, actor);
     return;
   }
   Event_Start();
@@ -574,7 +580,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
 void ApojiiIslands_TalkToMerchant(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Shop_Run(23, actor);
+    Shop_Run(SHOP_APOJII, actor);
     return;
   }
   Event_Start();

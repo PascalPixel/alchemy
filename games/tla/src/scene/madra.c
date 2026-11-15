@@ -203,12 +203,15 @@ next:
   Event_End();
 }
 
+/// Madra's shops, as Shop_Run numbers them.
+enum { SHOP_MADRA_WEAPONS = 4, SHOP_MADRA_ARMOR = 5, SHOP_MADRA_ITEMS = 6 };
+
 /// Madra's weapon merchant sells across the counter (stock row 4). Spoken to
 /// from elsewhere, she talks of the raid, then of the Kibombo's weapons.
 void Madra_TalkToWeaponMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Shop_Run(4, arg);
+    Shop_Run(SHOP_MADRA_WEAPONS, arg);
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
@@ -226,7 +229,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
 void Madra_TalkToArmorMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Shop_Run(5, arg);
+    Shop_Run(SHOP_MADRA_ARMOR, arg);
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
@@ -244,7 +247,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
 void Madra_TalkToItemMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Shop_Run(6, arg);
+    Shop_Run(SHOP_MADRA_ITEMS, arg);
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))

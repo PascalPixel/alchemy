@@ -144,12 +144,15 @@ void Naribwe_AskGoingToKibombo(void) {
   Event_ShowMessage(19, 0);
 }
 
+/// Naribwe's shops, as Shop_Run numbers them.
+enum { SHOP_NARIBWE_ITEMS = 16 };
+
 /// "No one can see the future. Absolutely no one. Except for our
 /// fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Shop_Run(16, actor);
+    Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
   Event_Start();
@@ -163,7 +166,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Shop_Run(16, actor);
+    Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
   Event_Start();

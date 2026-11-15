@@ -868,12 +868,18 @@ s32 ShamanVillage_IsFacingCounter(void) {
 u32 Inn_QuoteRoomPrice(s32 shop);
 void Inn_PlaySleep(s32 roomPrice);
 
+/// The Shaman Village's shops, as Shop_Run numbers them.
+enum { SHOP_SHAMAN_VILLAGE = 29 };
+
+/// The Shaman Village's inn, as Inn_CheckIn numbers the inns.
+enum { SHAMAN_VILLAGE_INN = 11 };
+
 /// Across the counter the inn's card asks for coins until Moapa is beaten, and
 /// the innkeeper serves after.
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
-      Inn_CheckIn(11, 13);
+      Inn_CheckIn(SHAMAN_VILLAGE_INN, 13);
     } else {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -973,7 +979,7 @@ void ShamanVillage_TalkToMoapa(void) {
 /// Across the counter the shop; elsewhere a welcome for the hero.
 void ShamanVillage_TalkToShopkeeper(void) {
   if (ShamanVillage_IsFacingCounter()) {
-    Shop_Run(29, 12);
+    Shop_Run(SHOP_SHAMAN_VILLAGE, 12);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);

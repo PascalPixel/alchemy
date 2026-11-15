@@ -154,9 +154,12 @@ void Alhafra_EnterDoor(s32 index) {
 
 s32 Shop_Run();
 
-void Alhafra_OpenWeaponShop(s32 a0) { Shop_Run(7, a0); }
+/// Alhafra's shops, as Shop_Run numbers them.
+enum { SHOP_ALHAFRA_WEAPONS = 7, SHOP_ALHAFRA_ARMOR = 8 };
 
-void Alhafra_OpenArmorShop(s32 a0) { Shop_Run(8, a0); }
+void Alhafra_OpenWeaponShop(s32 a0) { Shop_Run(SHOP_ALHAFRA_WEAPONS, a0); }
+
+void Alhafra_OpenArmorShop(s32 a0) { Shop_Run(SHOP_ALHAFRA_ARMOR, a0); }
 
 void Alhafra_AskWhetherIndraMoved(s32 actor) {
   s32 msg;

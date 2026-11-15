@@ -78,11 +78,17 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gNaribweInteriors_Triggers;
 }
 
+/// Naribwe's shops, as Shop_Run numbers them.
+enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
+
+/// Naribwe's inn, as Inn_CheckIn numbers the inns.
+enum { NARIBWE_INN = 5 };
+
 void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(14, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -97,7 +103,7 @@ void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(14, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -112,7 +118,7 @@ void NaribweInteriors_SendToFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(15, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -127,7 +133,7 @@ void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(15, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -143,7 +149,7 @@ void NaribweInteriors_TalkAboutCooking(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(5, actor);
+    Inn_CheckIn(NARIBWE_INN, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -158,7 +164,7 @@ void NaribweInteriors_TalkAboutTravelers(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(5, actor);
+    Inn_CheckIn(NARIBWE_INN, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);

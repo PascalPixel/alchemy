@@ -140,12 +140,18 @@ void AlhafraInteriors_MeetAlex(void) {
   Event_End();
 }
 
+/// Alhafra's shops, as Shop_Run numbers them.
+enum { SHOP_ALHAFRA_ITEMS = 9 };
+
+/// Alhafra's inn, as Inn_CheckIn numbers the inns.
+enum { ALHAFRA_INN = 2 };
+
 /// The merchant: across the counter, his shop; else what he says.
 void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(9, actor);
+    Shop_Run(SHOP_ALHAFRA_ITEMS, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors14);
     // "Don't mention the tidal wave to the other merchants... It did a lot..."
@@ -158,7 +164,7 @@ void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(2, actor);
+    Inn_CheckIn(ALHAFRA_INN, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors16);
     // "Maybe you've noticed, but a lot of folk here lost their homes in the..."

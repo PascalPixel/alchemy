@@ -235,6 +235,16 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
   Event_End();
 }
 
+/// Yallam's shops, as Shop_Run numbers them.
+enum {
+  SHOP_YALLAM_WEAPONS = 20,
+  SHOP_YALLAM_ARMOR = 21,
+  SHOP_YALLAM_ITEMS = 22
+};
+
+/// Yallam's inn, as Inn_CheckIn numbers the inns.
+enum { YALLAM_INN = 7 };
+
 /// Yallam's weapon merchant sells across the counter, and otherwise wishes
 /// Sunshine would work.
 void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
@@ -243,7 +253,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(20, actor);
+    Shop_Run(SHOP_YALLAM_WEAPONS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -262,7 +272,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(21, actor);
+    Shop_Run(SHOP_YALLAM_ARMOR, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -281,7 +291,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(22, actor);
+    Shop_Run(SHOP_YALLAM_ITEMS, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -300,7 +310,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(7, actor);
+    Inn_CheckIn(YALLAM_INN, actor);
     Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
     Event_Start();

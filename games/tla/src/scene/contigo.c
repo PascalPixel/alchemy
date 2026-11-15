@@ -698,9 +698,19 @@ void Inn_CheckIn(s32 a, s32 b);
 
 #include "shared/leader_is_facing_north.h"
 
+/// Contigo's shops, as Shop_Run numbers them.
+enum {
+  SHOP_CONTIGO_WEAPONS = 26,
+  SHOP_CONTIGO_ARMOR = 27,
+  SHOP_CONTIGO_ITEMS = 28
+};
+
+/// Contigo's inn, as Inn_CheckIn numbers the inns.
+enum { CONTIGO_INN = 12 };
+
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(28, 13);
+    Shop_Run(SHOP_CONTIGO_ITEMS, 13);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -716,7 +726,7 @@ void Contigo_TalkToItemMerchant(void) {
 
 void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(26, 18);
+    Shop_Run(SHOP_CONTIGO_WEAPONS, 18);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -732,7 +742,7 @@ void Contigo_TalkToWeaponMerchant(void) {
 
 void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(27, 19);
+    Shop_Run(SHOP_CONTIGO_ARMOR, 19);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -748,7 +758,7 @@ void Contigo_TalkToArmorMerchant(void) {
 
 void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(12, 20);
+    Inn_CheckIn(CONTIGO_INN, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);

@@ -168,10 +168,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
@@ -300,10 +300,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 

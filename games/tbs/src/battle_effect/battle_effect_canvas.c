@@ -233,7 +233,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
@@ -247,7 +247,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -255,7 +255,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
@@ -266,7 +266,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
   {
     s32 offset = 0;
@@ -302,7 +302,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
@@ -313,14 +313,14 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
@@ -332,7 +332,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   wait(1);
 
   {
@@ -387,7 +387,7 @@ void BattleEffect_EndCanvasLayer(void) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   REG_BLDCNT = 0;
   wait(1);
 
@@ -402,7 +402,7 @@ void BattleEffect_EndCanvasLayer(void) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
 }
 

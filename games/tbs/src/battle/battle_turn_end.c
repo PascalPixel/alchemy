@@ -95,11 +95,11 @@ DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownResistanceStage, resistanceTurns,
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownDelusion, delusion, 30)
 
 /// Counts down confusion, which may end early at bias 60;
-/// Battle_ProcessTurnEnd shows `MsgConscious` when it returns 1.
+/// Battle_ProcessTurnEnd shows `MsgConfusionConscious` when it returns 1.
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownConfusion, confusion, 60)
 
 /// Counts down charm, which may end early at bias 70; Battle_ProcessTurnEnd
-/// shows `MsgConscious2` when it returns 1.
+/// shows `MsgCharmConscious` when it returns 1.
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownCharm, charm, 70)
 /// Counts down stun, which may end early at bias 40; Battle_ProcessTurnEnd
 /// shows `MsgCureStun` when it returns 1.
@@ -394,13 +394,13 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
         if (BattleUnit_CountDownConfusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-          BattleMessage_ShowAndWaitFar(MsgConscious);
+          BattleMessage_ShowAndWaitFar(MsgConfusionConscious);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_CountDownCharm(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-          BattleMessage_ShowAndWaitFar(MsgConscious2);
+          BattleMessage_ShowAndWaitFar(MsgCharmConscious);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_CountDownStun(unitId) != 0) {

@@ -116,10 +116,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // Motes sink, swaying.
     EFFECT_FOR_EACH_TARGET(k, work->args) {

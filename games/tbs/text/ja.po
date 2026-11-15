@@ -8756,11 +8756,11 @@ msgctxt "MsgUnableToMove"
 msgid "02178"
 msgstr "{argument_actor_name:234} みうごきが とれない!"
 
-msgctxt "MsgAura"
+msgctxt "MsgDefendAura"
 msgid "02179"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
-msgctxt "MsgAura2"
+msgctxt "MsgTotalDefenseAura"
 msgid "02180"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
@@ -8792,7 +8792,7 @@ msgctxt "MsgAgiNormal"
 msgid "02187"
 msgstr "{argument_actor_name:233} すばやさが もどった!"
 
-msgctxt "MsgConscious"
+msgctxt "MsgConfusionConscious"
 msgid "02188"
 msgstr "{argument_actor_name:234} われにかえった!"
 
@@ -8808,7 +8808,7 @@ msgctxt "MsgCureStun"
 msgid "02191"
 msgstr "{argument_actor_name:233} しびれがきえた!"
 
-msgctxt "MsgConscious2"
+msgctxt "MsgCharmConscious"
 msgid "02192"
 msgstr "{argument_actor_name:234} われにかえった!"
 
@@ -17781,7 +17781,7 @@ msgstr ""
 "{argument_item_name:150}゙あたりました!\n"
 "おうけとりください。{end_wait}"
 
-msgctxt "MsgTolbiWonItemGo2"
+msgctxt "MsgTolbiAndYouWonItem"
 msgid "04025"
 msgstr ""
 "さらに {argument_item_name:243}\n"
@@ -25700,7 +25700,7 @@ msgstr ""
 "いま時の わかいモノに\n"
 "見ならってほしいですよ。{end_wait}"
 
-msgctxt "MsgVaultRuffRrruff2"
+msgctxt "MsgVaultRuffRrruffAfterCapture"
 msgid "05323"
 msgstr "ワンッ!{pause_20_skippable} ワンッ!{end_wait}"
 
@@ -28488,7 +28488,7 @@ msgctxt "message"
 msgid "05747"
 msgstr "いそぎましょう {actor_name:1}。{end_wait}"
 
-msgctxt "MsgKolimaSilence2"
+msgctxt "MsgKolimaSilenceAfterTretDefeated"
 msgid "05748"
 msgstr "・・・・・・。{end_wait}"
 
@@ -40956,7 +40956,7 @@ msgstr ""
 "たくましくなったから\n"
 "見ちがえちまったぜ!{end_wait}"
 
-msgctxt "MsgValeCameBack2"
+msgctxt "MsgValeOhItsYouCameBack"
 msgid "07581"
 msgstr ""
 "あら {actor_name:1}じゃない\n"
@@ -41031,7 +41031,7 @@ msgstr ""
 "このまま かわらないから\n"
 "いつでも かえってきてね。{end_wait}"
 
-msgctxt "MsgValeHey2"
+msgctxt "MsgValeHeyEllipsis"
 msgid "07591"
 msgstr "なあ・・・。{end_wait}"
 
@@ -44658,7 +44658,7 @@ msgstr ""
 "モンスターをたおして\n"
 "なかまをたすけてくれ!{end_wait}"
 
-msgctxt "MsgTolbiShipMonsters2"
+msgctxt "MsgTolbiShipMonstersExclaimed"
 msgid "08146"
 msgstr "モンスターだ!{end_wait}"
 
@@ -54790,7 +54790,7 @@ msgstr ""
 "そうだ だれも入れない・・・ぞ!\n"
 "かえった かえった!{end_wait}"
 
-msgctxt "MsgLunpaWho2"
+msgctxt "MsgLunpaWhoAreYou"
 msgid "09622"
 msgstr "だれだ お前!{end_wait}"
 
@@ -55069,7 +55069,7 @@ msgstr ""
 "わたしたち かえしてもらえる・・・\n"
 "はやくげんきになってほしいわ。{end_wait}"
 
-msgctxt "MsgLunpaWho3"
+msgctxt "MsgLunpaWhoAreYouShouted"
 msgid "09665"
 msgstr "なんだ お前!{end_wait}"
 

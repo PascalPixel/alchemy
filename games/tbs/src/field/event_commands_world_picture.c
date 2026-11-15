@@ -387,9 +387,9 @@ void WorldPicture_UpdateMarkers(void) {
 
   // Pulse the markers' transparency: they weigh blend sixteenths against the
   // picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
@@ -451,7 +451,7 @@ void WorldPicture_Show(s32 picture) {
     WorldPicture_Release();
     Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
     WorldMap_LoadAreaGraphicsFar();
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_HALFWORD);
     layer = gridState->animations;
     for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
       layer->paused = savedFlags[i];

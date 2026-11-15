@@ -74,7 +74,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
   }
 
   // The battle windows' second text palette takes the first sprite palette's

@@ -57,10 +57,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   blitters[0] =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blitters[1] =
-      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_2);
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_PAIRED);
 
   Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
                              work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);

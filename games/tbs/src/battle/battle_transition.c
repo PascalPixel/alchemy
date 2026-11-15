@@ -303,7 +303,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
                             DISPCNT_WIN1_ON,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     wait(1);
     {
       s32 start = 0;

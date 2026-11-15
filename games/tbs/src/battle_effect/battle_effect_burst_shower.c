@@ -115,10 +115,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   } else {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }

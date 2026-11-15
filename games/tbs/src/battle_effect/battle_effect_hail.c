@@ -217,17 +217,17 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       if (frame > 16)
         y = y - frame * 2 + 32;
       if (work->args->side == EFFECT_SIDE_PARTY)
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
       else
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
-        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
             canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
             SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
               SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
@@ -267,9 +267,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             s32 crackleX;
             s32 crackleY;
 
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, crackle->velocityY,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, crackle->velocityY,
                                 COMPOSITE_LIGHTEN);
-            draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+            draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
             if (crackle->velocityY & 4)
               crackleX = x - gHail_PortalWidths[crackle->velocityX] -
                          gHail_PortalX[crackle->velocityX] + 24;
@@ -284,7 +284,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                     work->sheet + gHail_PortalPictures[crackle->velocityX],
                     crackleX, crackleY, gHail_PortalWidths[crackle->velocityX],
                     gHail_PortalHeights[crackle->velocityX]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           }
           portal->x += portal->velocityX;
           portal->y += portal->velocityY;

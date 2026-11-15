@@ -180,10 +180,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   blit = draw;
   Resource_LoadAndDecompress(RESOURCE_SWORD_SLASH_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -388,9 +388,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       u8 *glow;
 
       n = frame / 2 % 4;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       draw[1](canvas, work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
               ELEMENT_PILLAR_HALF_HEIGHT);
@@ -399,18 +399,18 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
              ELEMENT_PILLAR_GLOW;
       draw[1](canvas, glow, 40, ground.y - 36, ELEMENT_PILLAR_GLOW_WIDTH,
               ELEMENT_PILLAR_GLOW_HEIGHT);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
               ELEMENT_PILLAR_HALF_HEIGHT);
       draw[1](canvas, glow, 64, ground.y - 36, ELEMENT_PILLAR_GLOW_WIDTH,
               ELEMENT_PILLAR_GLOW_HEIGHT);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     // DEAD: a lookup whose result is dropped; the ROM keeps the call.
     GetBattleObjectSlotFar(work->args->user);
@@ -532,7 +532,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, work->imageStorage,
@@ -541,9 +541,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
   // The pieces fly out from the middle.
   startY = gDeathPlunge_PieceStartY;
@@ -575,7 +575,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256,
                   RGB_WHITE << 16 | RGB_WHITE);
   Sound_PlayFar(SE_POWER_UP);
@@ -783,7 +783,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -884,18 +884,18 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
       DrawRectangle *slot =
-          &((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
+          &((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_PAIRED];
 
       for (i = 0; i != 4; i++) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             gDeathPlunge_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         draw[1](canvas,
                 work->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
                 gDeathPlunge_X[i] + 32, ground.y + gDeathPlunge_Y[i] - 32,
                 ELEMENT_BURST_SPARK_WIDTH, ELEMENT_BURST_SPARK_HEIGHT);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
     if (frame >= 0) {

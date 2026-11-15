@@ -215,25 +215,25 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
           y = base.y - Q_16_16_TO_INT(Trig_Cos(angle) * radius) -
               (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |
                                   gTargetMotes_GlintFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   TARGET_MOTES_GLINT_PICTURES,
               x, y + 16, gBattleEffect_GlintPictureWidths[frame & 3],
               gBattleEffect_GlintPictureHeights[frame & 3]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
       Transform_ApplyPosition(point);
@@ -348,9 +348,9 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   drawUpright = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_TRANSPARENT);
-  drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];

@@ -452,7 +452,7 @@ s32 Scene_Initialize(void) {
             if (prizeIndex == 0) {
               Event_SetMessageId(MsgTolbiWonItemGo);
             } else {
-              Event_SetMessageId(MsgTolbiWonItemGo2);
+              Event_SetMessageId(MsgTolbiAndYouWonItem);
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);

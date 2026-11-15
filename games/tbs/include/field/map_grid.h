@@ -20,8 +20,8 @@ enum CellBehavior {
   CELL_BEHAVIOR_EVENT_FIRST = 1,
   CELL_BEHAVIOR_EVENT_LAST = 239,
   /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
-  CELL_BEHAVIOR_ENCOUNTER_GROUND_1 = 240,
-  CELL_BEHAVIOR_ENCOUNTER_GROUND_2 = 241,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_A = 240,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_B = 241,
   /// 242 to 247: examine triggers with lines of their own, the same on every
   /// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets).
   CELL_BEHAVIOR_JAR = 242,

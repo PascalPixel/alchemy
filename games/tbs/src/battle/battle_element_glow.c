@@ -131,7 +131,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   }
   // The rings, 32 by 32, with the other blitter: each shows its four pictures
   // eight frames apiece, then is no longer drawn.
-  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_PAIRED];
   for (ring = work->rings, ringIndex = STAR_FIELD_RINGS - 1; ringIndex >= 0;
        ringIndex--, ring++) {
     ring->x += ring->velocityX;
@@ -263,7 +263,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
-  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, 3, 2);
   Task_Add(STAR_FIELD_UPDATE_FUNC, TASK_PASS_FRAME);
   return Task_Add(STAR_FIELD_UPLOAD_FUNC, TASK_PASS_FRAME);
 }
@@ -271,7 +271,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 /// Ends a star field and turns BG2 off.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

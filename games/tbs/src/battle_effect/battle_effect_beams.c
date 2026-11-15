@@ -55,7 +55,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
     } else {
@@ -63,7 +63,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
@@ -72,13 +72,13 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
     }
@@ -87,7 +87,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     DrawRectangle *blitters = EFFECT_BLITTERS;
 
     draw[0] = blitters[HEAP_SLOT_RAM_CODE];
-    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
   }
   wait(1);
   if (kind == BEAM_WAVE) {
@@ -286,13 +286,13 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
   }
@@ -300,7 +300,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     DrawRectangle *blitters = EFFECT_BLITTERS;
 
     draw[0] = blitters[HEAP_SLOT_RAM_CODE];
-    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
   }
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);

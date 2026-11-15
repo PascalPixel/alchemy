@@ -793,15 +793,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                      gBattleEffect_GlintPictureHeights[image] / 2;
             EFFECT_RELEASE_BLITTERS();
             drawFlags = Random16();
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 gCastingImpact_GlintDrawFlags[drawFlags & 3] |
                                     EFFECT_CLIP_BOUNDS,
                                 COMPOSITE_LIGHTEN);
-            EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+            EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                 canvas, pictures + gBattleEffect_GlintPictures[image], imageX,
                 imageY + 56, gBattleEffect_GlintPictureWidths[image],
                 gBattleEffect_GlintPictureHeights[image]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
           }
         }
@@ -825,24 +825,24 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             fall = 0;
           while (scroll > BLUE_FLAME_COLUMN_HEIGHT)
             scroll -= BLUE_FLAME_COLUMN_HEIGHT;
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
           draw = (DrawRectangle *)gHeapSlots;
-          draw += HEAP_SLOT_RAM_CODE_2;
+          draw += HEAP_SLOT_RAM_CODE_PAIRED;
           columnX = originX - 8;
           columnY = fall + scroll;
           top = columnY - BLUE_FLAME_COLUMN_HEIGHT;
           width = BLUE_FLAME_COLUMN_WIDTH;
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, columnX, top,
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(canvas, pictures, columnX, top,
                                                width, BLUE_FLAME_COLUMN_HEIGHT);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
               canvas, pictures, columnX, columnY, width,
               BLUE_FLAME_COLUMN_HEIGHT - scroll);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
               canvas, pictures + PICTURE_BYTES(BLUE_FLAME_COLUMN),
               originX - width, fall + 47, BLUE_FLAME_SPLASH_WIDTH,
               BLUE_FLAME_SPLASH_HEIGHT);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           if (frame == 8) {
             work->shakeFrames = frame;
           }
@@ -872,19 +872,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame >= 4 && frame <= 23) {
           pairX = targetPos.x / 2;
           height = RUNE_HALF_HEIGHT;
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
           slotDraw = (DrawRectangle *)gHeapSlots;
-          slotDraw[HEAP_SLOT_RAM_CODE_2](canvas, pictures,
+          slotDraw[HEAP_SLOT_RAM_CODE_PAIRED](canvas, pictures,
                                          pairX - RUNE_HALF_WIDTH, 48,
                                          RUNE_HALF_WIDTH, height);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_LIGHTEN);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, pairX, 48,
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(canvas, pictures, pairX, 48,
                                                RUNE_HALF_WIDTH, height);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
         BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
       } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {

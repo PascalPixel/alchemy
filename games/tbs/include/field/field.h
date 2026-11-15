@@ -31,10 +31,10 @@ struct Actor;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it.
-extern s32 gCamera_UnreadWord1;
+extern s32 gCamera_UnreadWordA;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
 /// With no reader to give them a role, the two are numbered in IWRAM order.
-extern s32 gCamera_UnreadWord2;
+extern s32 gCamera_UnreadWordB;
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an

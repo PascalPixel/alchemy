@@ -54,7 +54,7 @@
 ///
 /// Melting turns encounter ground into a jump across. The cell behaviors of
 /// cells (36, 22) and (36, 24), north and south of the puddle, go from
-/// CELL_BEHAVIOR_ENCOUNTER_GROUND_1 to CELL_BEHAVIOR_JUMP_FORWARD.
+/// CELL_BEHAVIOR_ENCOUNTER_GROUND_A to CELL_BEHAVIOR_JUMP_FORWARD.
 ///
 /// FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there,

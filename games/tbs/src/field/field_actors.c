@@ -148,8 +148,8 @@ void ActorSystem_Initialize(s32 controlMode) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
   } else {
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_FRAME);
-    gCamera_UnreadWord2 = 0;
-    gCamera_UnreadWord1 = 0;
+    gCamera_UnreadWordB = 0;
+    gCamera_UnreadWordA = 0;
   }
   system->edge = 15;
   system->fill = 0;

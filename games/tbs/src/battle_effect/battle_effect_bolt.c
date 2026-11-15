@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 
 /// The second blitter, made anew for each glint with its random flip.
-#define BOLT_GLINT_BLITTER EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)
+#define BOLT_GLINT_BLITTER EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)
 
 /// The columns of a gBolt_Counts row.
 enum {
@@ -123,7 +123,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           x -= spread / 2;
           x -= (gBattleEffect_GlintPictureWidths[kind] >> 1);
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               gBolt_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->args->variant]);
@@ -131,7 +131,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                              work->sheet + gBattleEffect_GlintPictures[kind], x,
                              y, gBattleEffect_GlintPictureWidths[kind],
                              gBattleEffect_GlintPictureHeights[kind]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
     }

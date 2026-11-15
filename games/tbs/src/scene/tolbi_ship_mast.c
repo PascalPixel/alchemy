@@ -634,7 +634,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
   Sound_Play(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  Event_SetMessageId(MsgTolbiShipMonsters2);
+  Event_SetMessageId(MsgTolbiShipMonstersExclaimed);
   // "Monsters!"
   Event_ShowMessageThenWait(ACTOR_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

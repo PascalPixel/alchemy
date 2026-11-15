@@ -199,7 +199,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
-  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_2), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
+  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
 
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.

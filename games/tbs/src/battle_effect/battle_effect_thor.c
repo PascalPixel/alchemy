@@ -247,13 +247,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         level = 7;
       }
       if (frame <= 139) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
       } else {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
       }
       dotCount = count;
       if (dotCount > 128) {
@@ -274,7 +274,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
     if (frame >= THOR_BEAM_FRAME && frame <= 167) {
@@ -300,19 +300,19 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
           canvas, work->sheet, 32, (frame - THOR_BEAM_FRAME) * 20 - 12,
           THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
           canvas, work->sheet, 64, (frame - THOR_BEAM_FRAME) * 20 - 12,
           THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -416,12 +416,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             if (frame < i * 2 + THOR_BOLTS_FRAME + 2) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+              EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
                   canvas, work->sheet + i % 3 * PICTURE_BYTES(THOR_BOLT), boltX,
                   boltY, THOR_BOLT_WIDTH, THOR_BOLT_HEIGHT);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             if (frame == i * 2 + THOR_BOLTS_FRAME) {
               THOR_LAUNCH_SPARKS(spark, j, px(16), px(80),
@@ -444,32 +444,32 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           mirrorX = moteX + 72;
           moteY = 32 - Q_16_16_TO_INT(Trig_Cos(angle) * radius);
         }
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED], canvas,
                             work->sheet, THOR_MOTE_PICTURE, moteX + 60,
                             moteY - 24);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);
-        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED], canvas,
                             work->sheet, THOR_MOTE_PICTURE, mirrorX,
                             moteY - 24);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                             COMPOSITE_LIGHTEN);
-        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED], canvas,
                             work->sheet, THOR_MOTE_PICTURE, moteX + 60, moteY);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                                 COMPOSITE_FLIP_Y,
                             COMPOSITE_LIGHTEN);
-        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED], canvas,
                             work->sheet, THOR_MOTE_PICTURE, mirrorX, moteY);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         // Sparks fly off the bolts.
         j = 0;
         for (i = 0; i != THOR_SPARK_COUNT; i++) {
@@ -489,13 +489,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       {
         // Sparks slow and bounce off the ground, shrinking as they die.
-        DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
+        DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
         struct Particle *spark;
         for (i = 0; i != THOR_SPARK_COUNT; i++) {
           spark = &THOR_PARTICLES[i];
@@ -513,7 +513,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       // Thor stands over the targets, then is pushed back.
       if (frame > 15) {
@@ -538,16 +538,16 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                   (gBattleEffect_GlintPictureWidths[glint] >> 1);
           s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 40) -
                   (gBattleEffect_GlintPictureHeights[glint] >> 1);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |
                                   gThor_CrackleFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
-          EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+          EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
               canvas,
               Ram_MapGridCellBuffer + gBattleEffect_GlintPictures[glint], x,
               y + 56, gBattleEffect_GlintPictureWidths[glint],
               gBattleEffect_GlintPictureHeights[glint]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
       if (frame <= 31) {

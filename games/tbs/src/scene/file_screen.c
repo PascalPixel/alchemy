@@ -207,9 +207,9 @@ static void FileScreen_UpdateBlend(void) {
                       BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(level, 16 - level),
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   if (level >= 16)
     Task_Remove(FileScreen_UpdateBlend);
 }

@@ -63,7 +63,7 @@ struct PaletteFade {
   u8 page;        ///< the packed page queued this frame
   s8 duration;    ///< frames; 0 when the colours are not moving
   s8 step;        ///< frames
-  u8 padding2a03; ///< never named
+  u8 padding; ///< never named
 };
 
 STATIC_ASSERT(sizeof(struct PaletteFade) == 0x2a04);

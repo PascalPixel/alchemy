@@ -836,7 +836,7 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
       Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (Event_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
-        Event_SetMessageId(MsgValeCameBack2);
+        Event_SetMessageId(MsgValeOhItsYouCameBack);
         // "Oh, it's you, Isaac. You came back, huh?"
         Event_ShowMessage(ACTOR_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);

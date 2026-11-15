@@ -8762,11 +8762,11 @@ msgctxt "MsgUnableToMove"
 msgid "02176"
 msgstr "{argument_actor_name:1} is unable to move!"
 
-msgctxt "MsgAura"
+msgctxt "MsgDefendAura"
 msgid "02177"
 msgstr "A protective aura encircles {argument_actor_name:1}!"
 
-msgctxt "MsgAura2"
+msgctxt "MsgTotalDefenseAura"
 msgid "02178"
 msgstr "A protective aura encircles {argument_actor_name:1}!"
 
@@ -8798,7 +8798,7 @@ msgctxt "MsgAgiNormal"
 msgid "02185"
 msgstr "{argument_actor_name:1}'s Agility returns to normal!"
 
-msgctxt "MsgConscious"
+msgctxt "MsgConfusionConscious"
 msgid "02186"
 msgstr "{argument_actor_name:1} regains consciousness!"
 
@@ -8814,7 +8814,7 @@ msgctxt "MsgCureStun"
 msgid "02189"
 msgstr "{argument_actor_name:1} is no longer stunned!"
 
-msgctxt "MsgConscious2"
+msgctxt "MsgCharmConscious"
 msgid "02190"
 msgstr "{argument_actor_name:1} regains consciousness!"
 
@@ -15618,7 +15618,7 @@ msgstr ""
 "You won {argument_item_name:2}!\n"
 "Here you go.{end_wait}"
 
-msgctxt "MsgTolbiWonItemGo2"
+msgctxt "MsgTolbiAndYouWonItem"
 msgid "03632"
 msgstr ""
 "And you won\n"
@@ -24104,7 +24104,7 @@ msgstr ""
 "would learn from your\n"
 "humility.{end_wait}"
 
-msgctxt "MsgVaultRuffRrruff2"
+msgctxt "MsgVaultRuffRrruffAfterCapture"
 msgid "04930"
 msgstr "Ruff!{pause_20_skippable} Rrruff!!{end_wait}"
 
@@ -27064,7 +27064,7 @@ msgctxt "message"
 msgid "05354"
 msgstr "Hurry, {actor_name:1}.{end_wait}"
 
-msgctxt "MsgKolimaSilence2"
+msgctxt "MsgKolimaSilenceAfterTretDefeated"
 msgid "05355"
 msgstr ""
 ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
@@ -40126,7 +40126,7 @@ msgstr ""
 "I almost didn't\n"
 "recognize you!{end_wait}"
 
-msgctxt "MsgValeCameBack2"
+msgctxt "MsgValeOhItsYouCameBack"
 msgid "07188"
 msgstr ""
 "Oh, it's you, {actor_name:1}.\n"
@@ -40202,7 +40202,7 @@ msgstr ""
 "so you can come\n"
 "home whenever you like.{end_wait}"
 
-msgctxt "MsgValeHey2"
+msgctxt "MsgValeHeyEllipsis"
 msgid "07198"
 msgstr "Hey...{end_wait}"
 
@@ -44038,7 +44038,7 @@ msgstr ""
 "{actor_name:1}? Slay the beasts\n"
 "and save my mates!{end_wait}"
 
-msgctxt "MsgTolbiShipMonsters2"
+msgctxt "MsgTolbiShipMonstersExclaimed"
 msgid "07753"
 msgstr "Monsters!{end_wait}"
 
@@ -54593,7 +54593,7 @@ msgstr ""
 "allowed in! Off with you\n"
 "now! Off, I say!{end_wait}"
 
-msgctxt "MsgLunpaWho2"
+msgctxt "MsgLunpaWhoAreYou"
 msgid "09229"
 msgstr "Who are you?{end_wait}"
 
@@ -54877,7 +54877,7 @@ msgstr ""
 "I hope he gets\n"
 "better soon!{end_wait}"
 
-msgctxt "MsgLunpaWho3"
+msgctxt "MsgLunpaWhoAreYouShouted"
 msgid "09272"
 msgstr "Who are you!?{end_wait}"
 

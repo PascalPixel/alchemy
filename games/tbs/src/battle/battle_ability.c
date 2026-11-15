@@ -1188,14 +1188,14 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
     // The guards: the message shows either way, but a guard is never lowered.
     case ABILITY_EFFECT_DEFEND:
-      PUSH_MESSAGE(MsgAura);
+      PUSH_MESSAGE(MsgDefendAura);
       if (target->defendLevel > 0)
         break;
       target->defendLevel = DEFEND_NORMAL;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      PUSH_MESSAGE(MsgAura2);
+      PUSH_MESSAGE(MsgTotalDefenseAura);
       if (target->defendLevel > DEFEND_NORMAL)
         break;
       target->defendLevel = DEFEND_TOTAL;

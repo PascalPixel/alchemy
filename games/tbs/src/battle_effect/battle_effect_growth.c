@@ -99,11 +99,11 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   rectangle[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   {
-    DrawRectangle mirroredBlitter = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    DrawRectangle mirroredBlitter = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
     draw = rectangle;
     rectangle[1] = mirroredBlitter;
@@ -286,10 +286,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   column = work->particles;
   for (i = 0; i != VINE_COLUMNS; i++) {
     column[i].x = gGrowth_ColumnOffsets[i] + 64;
@@ -359,12 +359,12 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  drawFlip = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  drawFlip = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   frameCount = gGrowth_Counts[work->args->variant] * 8 + 56;
 

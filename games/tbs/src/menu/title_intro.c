@@ -360,7 +360,7 @@ s32 Title_ShowIntro(s32 prompt) {
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   TitlePaletteFade_Start(60);
   Task_Add(Title_UpdateIntroSprites, TASK_PASS_VBLANK);
 

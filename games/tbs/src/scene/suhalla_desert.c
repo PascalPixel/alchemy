@@ -376,7 +376,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     if (hazeShown == 0) {
       weight = frame + 1;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(weight, 16 - weight),
-                          IO_WRITE_16);
+                          IO_WRITE_HALFWORD);
     }
     wait(1);
   }
@@ -807,14 +807,14 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
       actor->sprite->flags = 0;
     }
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
   // The haze at full weight once a storm has risen, else not at all.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }
 
 /// The second scene's storms on entry, as the first scene's.
@@ -860,14 +860,14 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
   // The haze at full weight once a storm has risen, else not at all.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }
 
 #include "shared/field_effect_duration_scripts.c"

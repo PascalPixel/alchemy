@@ -61,17 +61,17 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 64; i++) {
@@ -576,19 +576,19 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (frame > 69)
           y = y - frame * 2 + 138;
         if (work->args->side == EFFECT_SIDE_PARTY)
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_ADDITIVE);
         else
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_ADDITIVE);
-        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
 
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -716,33 +716,33 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
                 mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
               if (work->args->side == EFFECT_SIDE_PARTY)
-                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                     COMPOSITE_LIGHTEN);
               else
-                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                     COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
                   position.y - gProjectileVolley_CometHeights[comet],
                   PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
               if (work->args->side == EFFECT_SIDE_PARTY)
-                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                     COMPOSITE_LIGHTEN);
               else
-                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2, position.y,
                   PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               if (ABS(shot->x) <= ABS(target->x.fixed))
                 draw[0](canvas,
@@ -791,30 +791,30 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 step = flash->z / 2;
 
             if (!(i & 1)) {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
                   flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
                       gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             } else {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
@@ -822,11 +822,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   flash->y - gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step],
                   gProjectileVolley_FlashWidths[step]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
@@ -834,7 +834,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                       gProjectileVolley_FlashRises[step],
                   flash->y, gProjectileVolley_FlashHeights[step],
                   gProjectileVolley_FlashWidths[step]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             flash->z++;
             if (flash->z == 12)

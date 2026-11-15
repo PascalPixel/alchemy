@@ -494,7 +494,7 @@ static void Vault_AskWhoCapturedThieves(void) {
 /// In Vault after the thieves are jailed, the dog barks.
 static void Vault_TalkToDogAfterCapture(void) {
   Event_Start();
-  Event_SetMessageId(MsgVaultRuffRrruff2);
+  Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);

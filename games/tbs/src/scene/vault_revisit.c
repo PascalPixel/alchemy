@@ -537,7 +537,7 @@ static void VaultRevisit_RevealPassage(void) {
 /// The dog barks.
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
-  Event_SetMessageId(MsgVaultRuffRrruff2);
+  Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STILL);
   Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);

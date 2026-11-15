@@ -134,7 +134,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  lower = (DrawRectangle *)&HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  lower = (DrawRectangle *)&HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
   particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
@@ -411,14 +411,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             (gBattleEffect_GlintPictureWidths[image] / 2);
         y = targetPosition.y - (Trig_Cos(angle) * radius >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
         (*lower)(canvas, work->sheet + gBattleEffect_GlintPictures[image], x, y,
                  gBattleEffect_GlintPictureWidths[image],
                  gBattleEffect_GlintPictureHeights[image]);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
 
@@ -426,7 +426,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */

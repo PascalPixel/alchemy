@@ -210,9 +210,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags ^ COMPOSITE_FLIP_X,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + STAT_BOOST_DJINNI, x, y, DJINNI_WIDTH,
@@ -242,9 +242,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       if (frame > member * 8) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
         draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags,
                             COMPOSITE_ADDITIVE);
-        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         if (mode == STAT_BOOST_IMPACT) {
           Transform_ApplyPitch(-frame << 10);
         } else if (mode == STAT_BOOST_GUARD) {
@@ -335,9 +335,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
-          draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+          draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
           draw[0](canvas,
                   work->sheet + picture * PICTURE_BYTES(WISP) +
                       STAT_BOOST_PICTURE,

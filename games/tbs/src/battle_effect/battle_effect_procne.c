@@ -67,10 +67,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
                                           HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
-                                          HEAP_SLOT_RAM_CODE_2);
+                                          HEAP_SLOT_RAM_CODE_PAIRED);
 
   resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);

@@ -226,12 +226,12 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       fullEncounterRate = 1;
       work->encounter =
           Encounter_RollWorldMap((s32)&leader->x.fixed, encounterSpeed);
-    } else if (event == CELL_BEHAVIOR_ENCOUNTER_GROUND_1 ||
-               event == CELL_BEHAVIOR_ENCOUNTER_GROUND_2) {
+    } else if (event == CELL_BEHAVIOR_ENCOUNTER_GROUND_A ||
+               event == CELL_BEHAVIOR_ENCOUNTER_GROUND_B) {
       fullEncounterRate =
-          work->encounterZones[event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_1 - 1)];
+          work->encounterZones[event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_A - 1)];
       work->encounter = Encounter_RollMapStep(
-          event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
+          event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_A - 1), encounterSpeed);
     } else {
       fullEncounterRate = work->encounterZones[0];
       work->encounter = Encounter_RollMapStep(0, encounterSpeed);

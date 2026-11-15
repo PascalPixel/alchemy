@@ -333,7 +333,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);

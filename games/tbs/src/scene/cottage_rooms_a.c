@@ -570,7 +570,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH_NORTHEAST, 20);
-  Event_SetMessageId(MsgValeHey2);
+  Event_SetMessageId(MsgValeHeyEllipsis);
   // "Hey..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                      ACTOR_GARETS_FATHER,

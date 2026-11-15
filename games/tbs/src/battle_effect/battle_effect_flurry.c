@@ -182,19 +182,19 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                           COMPOSITE_LIGHTEN);
     }
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     for (i = 0; i != bursts; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
@@ -260,10 +260,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     for (i = 0; i != FLURRY_DRAWN_MOTES; i++) {
       struct Particle *mote = &PARTICLES[i];
 

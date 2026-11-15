@@ -1469,7 +1469,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->page = 0;
   palette->duration = 1;
   palette->step = 1;
-  palette->padding2a03 = 1;
+  palette->padding = 1;
   Io_Write16(0, &PLTT_BACKDROP);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

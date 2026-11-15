@@ -242,7 +242,7 @@ static void KolimaForestTree_TalkToTret(void) {
     if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
       KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET,
                                    FACE_GESTURE_OPEN_EYES);
-      Event_SetMessageId(MsgKolimaSilence2);
+      Event_SetMessageId(MsgKolimaSilenceAfterTretDefeated);
       // "..."
       Event_ShowMessage(ACTOR_TRET, 0);
       KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET,

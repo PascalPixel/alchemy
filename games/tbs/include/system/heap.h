@@ -143,7 +143,7 @@ enum HeapSlot {
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair whose first is in
   /// HEAP_SLOT_RAM_CODE.
-  HEAP_SLOT_RAM_CODE_2 = 47,
+  HEAP_SLOT_RAM_CODE_PAIRED = 47,
   /// Copied field row drawer or window tile decoder, released after each call.
   HEAP_SLOT_RAM_CODE_TEMP = 49,
   /// The message decoder routine (Text_DecodeSymbol), copied here to run for

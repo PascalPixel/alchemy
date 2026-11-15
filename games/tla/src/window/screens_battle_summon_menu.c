@@ -154,7 +154,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
         Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
-                             window->width - 2, 1, 15);
+                             window->width - 2, 1, WINDOW_PALETTE);
       }
       Text_FillCanvasBackground();
       {
@@ -240,16 +240,16 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
       if (count > 4) {
         for (index = 0; index < (count + 3) / 4; index++) {
-          tile = index + 0xf301;
+          tile = index + LIST_TILE_PAGE_NUMBER;
           if (index == firstEntry / 4)
-            tile = index + 0xf30b;
+            tile = index + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -285,15 +285,16 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
     if (count > 4) {
       for (index = 0; index < (count + 3) / 4; index++) {
-        tile = index + 0xf301;
+        tile = index + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
-          tile = index + 0xf30b;
+          tile = index + LIST_TILE_PAGE_NUMBER_LIT;
         Window_SetTilemapEntry(
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }
-      Window_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 3) / 4 - 3, -1, 0);
-      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
+                             -1, 0);
       do {
         work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);

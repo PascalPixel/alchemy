@@ -61,16 +61,17 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 #define SUMMARY_DRAW_PAGE_MARKS(window, count, rowBase)                        \
   {                                                                            \
     for (j = 0; j < ((count) + 3) / 4; j++) {                                  \
-      s32 tile = 0xf301 + j;                                                   \
+      s32 tile = LIST_TILE_PAGE_NUMBER + j;                                    \
                                                                                \
       if (j == (rowBase) / 4)                                                  \
-        tile = 0xf30b + j;                                                     \
+        tile = LIST_TILE_PAGE_NUMBER_LIT + j;                                  \
       Window_SetTilemapEntry(                                                  \
           window, tile, (window)->width - ((count) + 3) / 4 + j - 10, 7, 0);   \
     }                                                                          \
-    Window_SetTilemapEntry(window, 0xf336,                                     \
+    Window_SetTilemapEntry(window, STATUS_TILE_PAGES_LEFT,                     \
                            (window)->width - ((count) + 3) / 4 - 11, 7, 0);    \
-    Window_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);        \
+    Window_SetTilemapEntry(window, STATUS_TILE_PAGES_RIGHT,                    \
+                           (window)->width - 10, 7, 0);                        \
   }
 
 /// Runs the Status screen for party member `member` until B is pressed or
@@ -133,7 +134,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   djinnList = Heap_AllocEwram(84 * sizeof(*djinnList));
   itemCount = psynergyCount = djinnCount = 0;
   shownMember = figureList[0] = list[0];
-  figureList[1] = 255;
+  figureList[1] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(figureList, 1);
   portraitSlot = VramCache_AllocEntry(0x200);
   navigation = NAVIGATION;
@@ -181,7 +182,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   for (;;) {
     keys = gInput.repeat;
     sprite = &nameSprite;
-    BattleStatus_DrawPageArrows(0x060066c0);
+    BattleStatus_DrawPageArrows(STATUS_PAGE_ARROW_VRAM);
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
     sprite->oam.word.attr01 =
@@ -193,7 +194,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     sprite->oam.f.tile = gVramCacheEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
     sprite->oam.f.y = 24;
-    sprite->oam.f.palette = 14;
+    sprite->oam.f.palette = PORTRAIT_PALETTE;
     Oam_AddSpriteAtDepth(sprite, 240);
 
     switch (cursor.helpEntry) {
@@ -227,7 +228,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       break;
     }
     Window_HighlightRect((s16)statusWindow->x, (s16)statusWindow->y,
-                         statusWindow->width, statusWindow->height, 15);
+                         statusWindow->width, statusWindow->height,
+                         WINDOW_PALETTE);
 
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & KEY_A) {
@@ -402,7 +404,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.row = stop->row;
       Window_HighlightRect((s16)statusWindow->x + stop->highlightColumn + 1,
                            (s16)statusWindow->y + stop->highlightRow + 1,
-                           stop->highlightWidth, 1, 14);
+                           stop->highlightWidth, 1, HIGHLIGHT_PALETTE);
     } else if (cursor.group == 1) {
       cursor.helpEntry =
           gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
@@ -425,10 +427,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               .row;
       if (statusKinds[0] == 0)
         Window_HighlightRect((s16)statusWindow->x + 15,
-                             (s16)statusWindow->y + 1, 10, 1, 14);
+                             (s16)statusWindow->y + 1, 10, 1,
+                             HIGHLIGHT_PALETTE);
       else
         Window_HighlightRect((s16)statusWindow->x + cursor.column + 1,
-                             (s16)statusWindow->y + cursor.row + 1, 2, 2, 14);
+                             (s16)statusWindow->y + cursor.row + 1, 2, 2,
+                             HIGHLIGHT_PALETTE);
     } else if (cursor.group == 3 || cursor.group == 5) {
       s8 position = cursor.groupPositions[cursor.group];
 
@@ -438,14 +442,16 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       else
         cursor.column = -1;
       Window_HighlightRect((s16)statusWindow->x + 1,
-                           (s16)statusWindow->y + cursor.row + 1, 20, 1, 14);
+                           (s16)statusWindow->y + cursor.row + 1, 20, 1,
+                           HIGHLIGHT_PALETTE);
     } else {
       s32 position = cursor.groupPositions[4];
 
       cursor.row = (s8)(position % 3) * 2 + 9;
       cursor.column = (s8)(position / 3) * 7 - 2;
       Window_HighlightRect((s16)statusWindow->x + cursor.column + 3,
-                           (s16)statusWindow->y + cursor.row + 1, 7, 1, 14);
+                           (s16)statusWindow->y + cursor.row + 1, 7, 1,
+                           HIGHLIGHT_PALETTE);
     }
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
       cursor.drawnHelpEntry = cursor.helpEntry;
@@ -457,7 +463,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // The member's battle figure, respawned when L or R changes the member.
     if (shownMember != member) {
       spawnList[0] = member;
-      spawnList[1] = 255;
+      spawnList[1] = BATTLE_UNIT_LIST_END;
       ReleaseBattleObjectRecordsFar(shownMember);
       shownMember = member;
       BattleObject_SpawnObjectsForListFar(spawnList, 1, 0);
@@ -518,13 +524,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       count = 0;
       j = -1;
-      for (index = 0; index != 15 && (item = unit->inventory[index]) != 0;
+      for (index = 0;
+           index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
            index++) {
         Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) == 0)
           entries[count++] = item;
       }
-      for (index = 0; index != 15 && (item = unit->inventory[index]) != 0;
+      for (index = 0;
+           index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
            index++) {
         Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) != 0)
@@ -593,7 +601,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       for (index = 0; index != 32 && (id = unit->psynergy[index].encodedAction &
                                            PSYNERGY_ABILITY_MASK) != 0;
            index++) {
-        if (Ability_Get(id)->flags & 0x80)
+        if (Ability_Get(id)->flags & ABILITY_USABLE_IN_BATTLE)
           entries[count++] = id;
       }
       entries[count] = 0;
@@ -606,7 +614,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         work->holdTilemapUpload = 1;
         Text_FillCanvasBackground();
         if (count != 0)
-          SUMMARY_TEXT_COPY((entries[rowBase + row] & 0x3fff) +
+          SUMMARY_TEXT_COPY((entries[rowBase + row] & PSYNERGY_ABILITY_MASK) +
                                 (s32)MsgAbilityDescription,
                             psynergyText, SUMMARY_PSYNERGY_TEXT_LENGTH);
         else
@@ -628,7 +636,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                    12, j * 2 + 8, 0);
             iconSprites[j].oam.f.tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
-            if (!(ability->flags & 0x80))
+            if (!(ability->flags & ABILITY_USABLE_IN_BATTLE))
               Text_SetColor(TEXT_COLOR_YELLOW);
             else if (ability->ppCost > unit->pp)
               Text_SetColor(TEXT_COLOR_RED);
@@ -641,7 +649,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
             Text_SetColor(TEXT_COLOR_WHITE);
-            work->textPalette = 15;
+            work->textPalette = WINDOW_PALETTE;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow,
                                      ELEMENT_ICON_TILE + ability->element, 15,

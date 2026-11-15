@@ -287,7 +287,7 @@ void PartyStatus_Draw(s32 flags) {
       work->textPalette = 5;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->textPalette = 15;
+    work->textPalette = WINDOW_PALETTE;
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
@@ -318,7 +318,7 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
 
   if (work->battleMode != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;

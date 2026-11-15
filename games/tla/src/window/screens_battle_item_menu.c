@@ -174,7 +174,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + drawnRow * 2 + 1, window->width - 2,
-                           1, 15);
+                           1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
@@ -213,34 +213,35 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       }
       if (count > 5) {
         for (i = 0; i < (count + 4) / 5; i++) {
-          iconTile = i + 0xf301;
+          iconTile = i + LIST_TILE_PAGE_NUMBER;
           if (i == firstEntry / 5)
-            iconTile = i + 0xf30b;
+            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
 
     if (count > 5) {
       for (i = 0; i < (count + 4) / 5; i++) {
-        iconTile = i + 0xf301;
+        iconTile = i + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / 5)
-            iconTile = i + 0xf30b;
+            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
         }
         Window_SetTilemapEntry(window, iconTile,
                                window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
       pageTile = -1;
-      Window_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 4) / 5 - 3, pageTile, 0);
-      Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
+                             pageTile, 0);
       do {
         work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);

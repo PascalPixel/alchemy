@@ -156,8 +156,36 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s16 DebugSceneSelect_Run(void);
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);
 
-/// The battle lists' two page arrow tiles in VRAM, tiles 820 and 821, which
-/// Link_DrawPageArrows draws each frame.
-#define LIST_PAGE_ARROW_VRAM ((s32)BG_CHAR_BLOCK(0) + 820 * TILE_SIZE_4BPP)
+/// The first of the 20 digit tiles Graphics_ExpandVramTilesByColorTable
+/// builds for the battle lists' page numbers: the UI digits '0' to '9' with
+/// colour 1 drawn as 10, then the same digits in their own colours.
+#define LIST_PAGE_DIGITS_TILE 768
+
+/// Tiles the battle lists draw over their window's top edge: the page numbers
+/// and arrows.
+enum {
+  /// Page n's number: + n gives digit n + 1, from LIST_PAGE_DIGITS_TILE + 1,
+  /// the UI digits with colour 1 drawn as 10.
+  LIST_TILE_PAGE_NUMBER = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 1),
+  /// The current page's number, the same digits in their own colours.
+  LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 10 + 1),
+  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
+  LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821), ///< Right arrow, tile 821
+  /// The Status screen's own two arrows, tiles 822 and 823, which
+  /// BattleStatus_DrawPageArrows slides.
+  STATUS_TILE_PAGES_LEFT = WINDOW_TILE(822),
+  STATUS_TILE_PAGES_RIGHT = WINDOW_TILE(823)
+};
+
+/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
+#define LIST_PAGE_ARROW_VRAM                                                   \
+  ((s32)BG_CHAR_BLOCK(0) +                                                     \
+   (LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
+/// The Status screen's arrow tiles in VRAM.
+#define STATUS_PAGE_ARROW_VRAM                                                 \
+  ((s32)BG_CHAR_BLOCK(0) +                                                     \
+   (STATUS_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
 
 #endif

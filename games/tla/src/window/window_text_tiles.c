@@ -67,8 +67,8 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     } while (n < 128);
     work->textTileState[slot] = 1;
     slot |= 0x80;
-    *entry = slot | 0xf000;
-    *mirror = slot | 0xf000;
+    *entry = WINDOW_TILE(slot);
+    *mirror = WINDOW_TILE(slot);
   }
   Dma_Set(pixels, (void *)(0x06000000 + slot * 32), DMA_COPY_WORDS(8),
           REG_DMA3);
@@ -123,7 +123,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
-  if (attr == 0xF000) {
+  if (attr == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;
     Iwram_FillWords(canvas, 0x800, 0x04040404);
@@ -241,9 +241,10 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
 
     if (work->extraTextTiles != 0)
       mask = 255;
-    tile = *tiles & 0x3FF;
-    if ((tile < 0x80 || tile > 0xFF) &&
-        (work->extraTextTiles == 0 || tile < 0x200 || tile > 0x27F)) {
+    tile = *tiles & TILE_NUMBER_MASK;
+    if ((tile < TEXT_TILE_FIRST || tile > TEXT_TILE_FIRST + TEXT_TILES - 1) &&
+        (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
+         tile > TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
       tile = work->nextTextTile & mask;
       for (j = 0; j <= mask && work->textTileState[tile] != 0; j++)
         tile = (tile + 1) & mask;
@@ -284,7 +285,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     u32 column;
 
     for (column = 0; column < width; column++) {
-      u32 tile = *cursor++ & 0x3ff;
+      u32 tile = *cursor++ & TILE_NUMBER_MASK;
 
       if ((tile - 0x80) <= 0x7f ||
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {

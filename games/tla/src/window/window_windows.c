@@ -81,7 +81,7 @@ void WindowSystem_InitField(void) {
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
   FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
             WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
@@ -109,7 +109,7 @@ void WindowSystem_InitBattle(s32 kind) {
   work->dirty = 1;
   work->glyphResource = 99;
   work->battleMode = 1;
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();

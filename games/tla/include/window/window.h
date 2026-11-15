@@ -128,6 +128,12 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 
+/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
+/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+#define TEXT_TILE_FIRST 128
+#define TEXT_TILES 128
+#define TEXT_EXTRA_TILE_FIRST 512
+
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255
 

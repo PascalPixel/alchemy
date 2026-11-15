@@ -175,7 +175,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       *&work->holdTilemapUpload = 1;
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + drawnRow * 2 + 1,
-                           listWindow->width - 2, 1, 15);
+                           listWindow->width - 2, 1, WINDOW_PALETTE);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
         messageWindow =
@@ -294,39 +294,39 @@ s32 BattleDjinnMenu_Run(s32 member) {
         s32 listPages;
 
         for (j = 0; j < (listPages = (djinnCount + 4) / 5); j++) {
-          s32 tile = j + 0xf301;
+          s32 tile = j + LIST_TILE_PAGE_NUMBER;
 
           if (j == firstEntry / 5)
-            tile = j + 0xf30b;
+            tile = j + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(listWindow, tile,
                                  listWindow->width - listPages + j - 2, -1, 0);
         }
       }
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + selectedRow * 2 + 1,
-                           listWindow->width - 2, 1, 14);
+                           listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
 
     if (djinnCount > 5) {
       for (j = 0; j < (djinnCount + 4) / 5; j++) {
-        s32 tile = j + 0xf301;
+        s32 tile = j + LIST_TILE_PAGE_NUMBER;
 
         if ((gInput.held & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == firstEntry / 5)
-            tile = j + 0xf30b;
+            tile = j + LIST_TILE_PAGE_NUMBER_LIT;
         }
         Window_SetTilemapEntry(listWindow, tile,
                                listWindow->width - (djinnCount + 4) / 5 + j - 2,
                                -1, 0);
       }
       if ((gInput.held & KEY_R) == 0) {
-        Window_SetTilemapEntry(listWindow, 0xf334,
+        Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_LEFT,
                                listWindow->width - (djinnCount + 4) / 5 - 3, -1,
                                0);
-        Window_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
-                               0);
+        Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
+                               listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(listWindow, 0xf011,
                                listWindow->width - (djinnCount + 4) / 5 - 3, -1,
@@ -409,18 +409,18 @@ s32 BattleDjinnMenu_Run(s32 member) {
       } else if (held & KEY_R) {
         if (previewWindow != NULL) {
           for (i = 0; i < previewPages; i++) {
-            s32 tile = i + 0xf301;
+            s32 tile = i + LIST_TILE_PAGE_NUMBER;
 
             if ((gFrameCount & 15) <= 11 && i == previewPage - 1)
-              tile = previewPage + 0xf30a;
+              tile = previewPage + LIST_TILE_PAGE_NUMBER_LIT - 1;
             Window_SetTilemapEntry(previewWindow, tile,
                                    previewWindow->width - previewPages + i - 2,
                                    -1, 0);
           }
-          Window_SetTilemapEntry(previewWindow, 0xf334,
+          Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_LEFT,
                                  previewWindow->width - previewPages - 3, -1,
                                  0);
-          Window_SetTilemapEntry(previewWindow, 0xf335,
+          Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
           DJINN_MENU_MARK_ROW(work, (s16)previewWindow->y);
         }
@@ -535,7 +535,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
 
     if (owner->flags & 2)
       Window_HighlightRect((s16)owner->window->x + 1, (s16)owner->window->y + 1,
-                           4, 4, 15);
+                           4, 4, WINDOW_PALETTE);
   }
   VramCache_FreeEntry(cursorSlot);
   Window_Close(messageWindow, 1);

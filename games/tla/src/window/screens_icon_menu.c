@@ -132,7 +132,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
+  Graphics_ExpandVramTilesByColorTable(
+      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
@@ -429,7 +430,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
         if (entryValue != 0) {
           do {
-            if (Ability_Get(entryValue)->flags & 0x80) {
+            if (Ability_Get(entryValue)->flags & ABILITY_USABLE_IN_BATTLE) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
@@ -473,7 +474,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityName, commandWindow,
                                 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->textPalette = 15;
+        work->textPalette = WINDOW_PALETTE;
         Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,

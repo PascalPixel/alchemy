@@ -398,7 +398,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 j;
 
   count = BattleUnit_ListIdsFar(1, 0);
-  Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
+  Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   if (ids[0] != 0xff) {
   next_id:
@@ -409,7 +409,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
       }
     }
     if (j != 4)
-      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, 14);
+      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
     if (++i < 4 && ids[i] != 0xff)
       goto next_id;
   }

@@ -572,14 +572,14 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + 0x80000;
-  z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + 0x80000;
+  x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+  z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
   leader->speedLimit = px(1);
   leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, 27);
-  x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + 0x80000;
-  z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + 0x80000;
+  x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
+  z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);

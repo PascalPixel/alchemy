@@ -209,7 +209,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);

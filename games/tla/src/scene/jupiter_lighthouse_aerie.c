@@ -530,9 +530,9 @@ void Whirlwind_Update(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
@@ -541,7 +541,7 @@ void Whirlwind_Update(struct Actor *self) {
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
@@ -706,9 +706,9 @@ void JupiterLighthouse_UpdateBeam(void) {
   switch (work->step) {
   case 0:
     work->duration = 30;
-    aside = work->side == 0 ? 0xa0000 : -0xa0000;
+    aside = work->side == 0 ? px(10) : -px(10);
     a[0] = work->from[0] - aside;
-    a[1] = work->from[1] + 0x180000;
+    a[1] = work->from[1] + px(24);
     a[2] = work->from[2];
     b[0] = work->from[0];
     b[1] = work->from[1];
@@ -716,7 +716,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->pointA[0] = LERP(a[0], b[0], t, work->duration);
     work->pointA[1] = LERP(a[1], b[1], t, work->duration);
     work->pointA[2] = LERP(a[2], b[2], t, work->duration);
-    a[1] = work->from[1] - 0x180000;
+    a[1] = work->from[1] - px(24);
     work->pointB[0] = LERP(a[0], b[0], t, work->duration);
     work->pointB[1] = LERP(a[1], b[1], t, work->duration);
     work->pointB[2] = LERP(a[2], b[2], t, work->duration);
@@ -727,7 +727,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     break;
   case 1:
     work->duration = 60;
-    aside = work->side == 0 ? 0x1e0000 : -0x1e0000;
+    aside = work->side == 0 ? px(30) : -px(30);
     a[0] = work->from[0];
     a[1] = work->from[1];
     a[2] = work->from[2];
@@ -750,7 +750,7 @@ void JupiterLighthouse_UpdateBeam(void) {
   case 2:
     if (work->frame == 0)
       work->still = 1;
-    aside = work->side == 0 ? 0x8000 : -0x8000;
+    aside = work->side == 0 ? px(1) / 2 : -px(1) / 2;
     work->pointA[0] += aside;
     work->pointB[0] += aside;
     if (work->frame == 14) {
@@ -768,7 +768,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->carried[2] = LERP(work->from[2], work->to[2], t, 96);
     Actor_SetPositionAndResetMotion(carrier, work->carried[0], work->carried[1],
                                     work->carried[2]);
-    aside = work->side == 0 ? 0x100000 : -0x100000;
+    aside = work->side == 0 ? px(16) : -px(16);
     work->pointA[0] = work->carried[0] - aside;
     work->pointA[1] = work->carried[1];
     work->pointA[2] = work->carried[2];
@@ -936,17 +936,17 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   large->scaleY = 0;
   if (side == 0) {
     work->from[0] = px(152);
-    work->from[1] = 0x200000;
+    work->from[1] = px(32);
     work->from[2] = px(164);
     work->to[0] = px(470);
-    work->to[1] = 0x200000;
+    work->to[1] = px(32);
     work->to[2] = px(164);
   } else {
     work->from[0] = px(872);
-    work->from[1] = 0x200000;
+    work->from[1] = px(32);
     work->from[2] = px(164);
-    work->to[0] = 0x2260000;
-    work->to[1] = 0x200000;
+    work->to[0] = px(550);
+    work->to[1] = px(32);
     work->to[2] = px(164);
   }
   work->carried[0] = work->from[0];

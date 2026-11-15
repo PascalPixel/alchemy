@@ -192,7 +192,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     leader->y.fixed += -px(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->y.fixed = leader->y.fixed + -px(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
@@ -251,7 +251,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     leader->y.fixed += px(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->y.fixed = leader->y.fixed + -px(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
@@ -326,7 +326,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   s32 y;
 
   y = object->y.fixed;
-  if (y >= 0x200000) {
+  if (y >= px(32)) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
@@ -566,7 +566,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);

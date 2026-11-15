@@ -317,7 +317,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   from[2] = leader->z.fixed;
   to[0] = px(680);
   to[1] = 0;
-  to[2] = 0x23e0000;
+  to[2] = px(574);
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
@@ -447,7 +447,7 @@ void JupiterLighthouse_AlexAppears(void) {
   p->kind = 5;
   p->tile = 0x2a0;
   p->spread = 0x6666;
-  p->rise = 0x30000;
+  p->rise = px(3);
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -458,7 +458,7 @@ void JupiterLighthouse_AlexAppears(void) {
       scaled += random;
       x = actor->x;
       x += (((scaled << 3) >> 16) << 16);
-      x += -0xc0000;
+      x += -px(12);
       random2 = Random16();
       y = actor->y;
       FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + px(32),
@@ -693,9 +693,9 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
@@ -704,7 +704,7 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
@@ -867,7 +867,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
     do {
       spark = &work->sparks[work->next];
       angle = ((Random16() * 3) >> 2) + 0x6000;
-      radius = 0x400000;
+      radius = px(64);
       speed = ((Random16() << 4) >> 16) + 16;
       spark->dx = Iwram_MulQ16(Trig_Cos(angle), radius) >> 16;
       spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;

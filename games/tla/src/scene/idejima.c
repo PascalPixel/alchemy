@@ -987,9 +987,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  DriftScene_SpawnObject(0xee0000, 0x300000, 0xac0000, 0xe000);
+  DriftScene_SpawnObject(px(238), px(48), px(172), 0xe000);
   FieldEvent_Wait(10);
-  DriftScene_SpawnObject(0xf60000, 0x300000, 0xac0000, 0x2000);
+  DriftScene_SpawnObject(px(246), px(48), px(172), 0x2000);
   FieldEvent_Wait(30);
   // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);

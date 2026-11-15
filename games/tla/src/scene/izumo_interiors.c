@@ -57,11 +57,11 @@ extern s32 gIzumoInteriors_RockingScript[];
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    if ((u32)(object->x.fixed - n2) <= 0x80000) {                              \
+    if ((u32)(object->x.fixed - n2) <= px(8)) {                                \
       s32 z = object->z.fixed;                                                 \
                                                                                \
-      if (z >= 0x26c0000) {                                                    \
-        if (z <= 0x2740000)                                                    \
+      if (z >= px(620)) {                                                      \
+        if (z <= px(628))                                                      \
           return 0;                                                            \
       }                                                                        \
     }                                                                          \

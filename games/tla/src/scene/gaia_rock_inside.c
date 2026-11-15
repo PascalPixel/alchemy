@@ -1133,7 +1133,7 @@ second:
     *angle = (Random16() & 0x7fff) + 0x8000;
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
-    spark->riseBaseY = 0x7a0000;
+    spark->riseBaseY = px(122);
     spark->watchedActor = b;
     spark->riseCounter = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
@@ -2563,8 +2563,8 @@ s32 Scene_Initialize(void) {
         /* FAKEMATCH(pin): z in r5 and x in r6. */
         register s32 z asm("r5");
 
-        x = 0x1d00000;
-        z = 0x15c0000;
+        x = px(464);
+        z = px(348);
         object = OverlayObject_PrepareObject(x, -px(32), z, SPRITE_SLATE);
         Actor_SetHorizontalPositionWithTerrain(ACTOR_SAND_TABLET, x, z);
       }

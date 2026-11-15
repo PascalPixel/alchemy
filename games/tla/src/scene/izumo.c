@@ -280,7 +280,7 @@ void Izumo_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(1) / 2, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);

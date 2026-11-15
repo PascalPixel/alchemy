@@ -1904,7 +1904,7 @@ static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
 }
 
 void Kibombo_LightFlameRow(void) {
-  s32 x = 0x1b80000;
+  s32 x = px(440);
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -2753,12 +2753,12 @@ void Kibombo_CrowdCheers(void) {
   Actor_FaceDirection(ACTOR_WARRIOR_G, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_WARRIOR_H, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Event_ShowMessage(0x8000 + 17, 0);
-  Event_ShowMessage(0x8000 + 17, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
-  Event_ShowMessage(0x8000 + 17, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Actor_Jump(ACTOR_AKAFUBU, 4, 10);
-  Event_ShowMessageAndWait(0x8000 + 17, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
 }
 
 void Kibombo_GabombaStillNotPleased(void) {

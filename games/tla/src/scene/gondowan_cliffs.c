@@ -574,12 +574,12 @@ void Geysers_Update(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y.fixed = object->y.fixed + -0x100000;
+      rider->y.fixed = object->y.fixed + -px(16);
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
+      wave = Iwram_MulQ16(px(2), Trig_Sin(entry->phase)) + -px(14);
       rider->y.fixed = object->y.fixed + px(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
@@ -654,7 +654,7 @@ void Geysers_Draw(void) {
     x = FIELD_PIXEL(x) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
     screenY =
-        ((screenY + Math_MulQ16(-0x20000, Trig_Sin(swing->phase)) + -0x20000) >>
+        ((screenY + Math_MulQ16(-px(2), Trig_Sin(swing->phase)) + -px(2)) >>
          16) -
         4;
     depth = FIELD_PIXEL(y + z) + 58;

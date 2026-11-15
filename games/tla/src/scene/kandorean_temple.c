@@ -1378,9 +1378,9 @@ void KandoreanTemple_WatchLifts(void) {
 
   if (leader->y.fixed > px(16))
     return;
-  if ((u32)(x - 0x1900000) > 0xf00000)
+  if ((u32)(x - px(400)) > px(240))
     return;
-  if ((u32)(z - 0xb40000) > 0x640000)
+  if ((u32)(z - px(180)) > px(100))
     return;
   if (cellX == 27 && cellZ == 12) {
     struct Actor *lift = Actor_GetById(ACTOR_WEST_LIFT);

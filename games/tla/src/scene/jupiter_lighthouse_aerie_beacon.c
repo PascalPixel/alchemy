@@ -329,7 +329,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     rise = px(Random_Below(80));
     effect =
         FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                          center->y.fixed - rise + 0xfff80000, center->z.fixed);
+                          center->y.fixed - rise + -px(8), center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gJupiterLighthouse_BeaconSparkScript);
@@ -445,12 +445,12 @@ void JupiterLighthouse_PulseBeacon(void) {
         ->unk05 = 1;
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 512, 264);
-      Actor_Get(ACTOR_BEACON_ORB)->y.fixed = 0x6f8000;
+      Actor_Get(ACTOR_BEACON_ORB)->y.fixed = px(223) / 2;
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;
       Actor_Get(ACTOR_BEACON_ORB)->scaleY = Q16_ONE;
     } else {
       Actor_SetPosition(ACTOR_BEACON_ORB, 512, 264);
-      Actor_Get(ACTOR_BEACON_ORB)->y.fixed = 0x688000;
+      Actor_Get(ACTOR_BEACON_ORB)->y.fixed = px(209) / 2;
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE * 13 / 10;
       Actor_Get(ACTOR_BEACON_ORB)->scaleY = Q16_ONE * 13 / 10;
     }
@@ -2138,7 +2138,7 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
     if ((i & 3) == 3)
       speed += 0x1999;
     if (speed > 0x17fff)
-      speed = 0x18000;
+      speed = px(3) / 2;
     System_Wait(1);
     if (mode == 0) {
       if (i == 40)
@@ -2174,7 +2174,7 @@ extern s32 gJupiterLighthouse_BeamRiders[];
 
 void JupiterLighthouse_ScrollBeam(s32 mode) {
   struct MapLayer *beam = &Ram_HeapSlots->mapGrid->layers[2];
-  s32 speed = 0x18000;
+  s32 speed = px(3) / 2;
   u32 count = 0;
   u32 i;
   s32 *ids = gJupiterLighthouse_BeamRiders;
@@ -2186,7 +2186,7 @@ void JupiterLighthouse_ScrollBeam(s32 mode) {
   if (mode != 0) {
     Event_PlaySound(SE_LIFT);
     i = 0;
-    beam->offsetY += 0x18000;
+    beam->offsetY += px(3) / 2;
     while (beam->offsetY < gJupiterLighthouse_BeamLevel) {
       u32 j;
 
@@ -2332,7 +2332,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -2457,7 +2457,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
             distance = object->y - leader->y.fixed;
           near = 0;
           if (Position_FlatDistance(&leader->x.fixed, &object->x) <= 12 &&
-              distance < 0xc0000)
+              distance < px(12))
             near = 1;
           if (near != 0 && Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
             leader->watchedActor = (struct Actor *)object;

@@ -163,7 +163,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     SET_VECTOR(position, px(200), px(-32), px(164));
     radius = Random16();
     angle = Random16();
-    FieldVector_AddPolarOffsetFixed((radius << 5) + 0x80000, angle, position);
+    FieldVector_AddPolarOffsetFixed((radius << 5) + px(8), angle, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
   }
   object->userValue = object->timer;
@@ -219,8 +219,8 @@ void JupiterLighthouse_SpawnSparks(void) {
 
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->speedLimit = (i << 12) + 0x8000;
-    object->acceleration = (i << 12) + 0x8000;
+    object->speedLimit = (i << 12) + px(1) / 2;
+    object->acceleration = (i << 12) + px(1) / 2;
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
@@ -309,7 +309,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + 0x200000;
+  object->y.fixed = height + px(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -376,7 +376,7 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = FIELD_PIXEL(y + z) + 58;

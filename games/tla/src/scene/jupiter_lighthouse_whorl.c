@@ -360,7 +360,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(object)) {
         object->motionFlags = 4;
-        object->y.fixed = 0x208000;
+        object->y.fixed = px(65) / 2;
       }
     } while (++i <= 5);
   }
@@ -790,9 +790,9 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > px(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -px(32))
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
@@ -801,7 +801,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < px(12))
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;

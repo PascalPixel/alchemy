@@ -356,11 +356,10 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
       s32 position[3];
 
       position[0] = source->x;
-      position[1] = source->y + i * 0xcccc + 0x40000;
+      position[1] = source->y + i * 0xcccc + px(4);
       position[2] = source->z;
       radius = Random16();
-      FieldVector_AddPolarOffsetFixed(radius * 5 + 0x30000, Random16(),
-                                      position);
+      FieldVector_AddPolarOffsetFixed(radius * 5 + px(3), Random16(), position);
       effect = (struct OrbitEffect *)Value4(
           (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
       if (effect != NULL) {
@@ -522,13 +521,13 @@ s32 Scene_Initialize(void) {
       GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      GaiaRock_PlaceStatue(17, 0x2fc0000, -0x1870000, 0x1a80000);
+      GaiaRock_PlaceStatue(17, px(764), -px(391), px(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      GaiaRock_PlaceStatue(18, 0x3150000, -0xf80000, 0x1a80000);
+      GaiaRock_PlaceStatue(18, px(789), -px(248), px(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
+      GaiaRock_PlaceStatue(19, px(778), -px(119), px(424));
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(FIELD_TREASURE_ACTOR);
@@ -550,7 +549,7 @@ s32 Scene_PrepareMap(void) {
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapGrid->layers[1];
 
-    layer[2] = -0x800000;
+    layer[2] = -px(128);
     layer[3] = 0x4480000;
   }
   return 0;

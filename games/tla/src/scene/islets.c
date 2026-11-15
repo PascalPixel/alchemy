@@ -1289,9 +1289,9 @@ void Islets_PengusGivesPrettyStone(void) {
   if (object->x.fixed < px(228) || object->x.fixed > px(236))
     return;
   z = object->z.fixed;
-  if (z < 0xa40000)
+  if (z < px(164))
     return;
-  if (z > 0xac0000)
+  if (z > px(172))
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2106,7 +2106,7 @@ void Islets_InitializeTurtle(void) {
     Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
     Actor_Get(ACTOR_LIL_TURTLE)->motionFlags = done;
     {
-      s32 a1 = 0x1280000;
+      s32 a1 = px(296);
 
       Actor_SetPositionFixed(ACTOR_LONESOME_GEORGE, a1, px(452));
     }

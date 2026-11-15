@@ -145,7 +145,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
     System_Wait(5);
     Event_PlaySound(SE_HEAVY_IMPACT);
     object->motionFlags = 2;
-    for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
+    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
@@ -242,7 +242,7 @@ s32 Scene_PrepareMap(void) {
   PushTarget_FillFootprint(10);
   PushTarget_FillFootprint(11);
   if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
-    for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
+    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)

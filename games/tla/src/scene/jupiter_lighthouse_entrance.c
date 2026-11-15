@@ -204,7 +204,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
 
   Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
+  position.z = source->z + Iwram_MulQ16(px(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                    source->y, position.z));
   Import_ActorSelectAnimation(object, 2);

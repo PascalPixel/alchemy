@@ -1,6 +1,6 @@
 /// @file
-/// Cruel Ruin and the light-streak backdrop with its halved canvas and dimming
-/// background, and two effects not yet understood.
+/// Cruel Ruin, the shattering opening and the element burst, and the
+/// light-streak backdrop with its halved canvas and dimming background.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -26,6 +26,8 @@
 
 #define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
 #define SHATTERING_OPENING_PIECES 33  ///< pieces the picture breaks into
+#define SHATTERING_OPENING_DISC_X 96  ///< the centre of the opening disc
+#define SHATTERING_OPENING_DISC_Y 60  ///< the centre of the opening disc
 
 /// The screen turns white and the picture breaks into 33 pieces that fly apart
 /// and fall, while a grey disc grows over it and the battle background's
@@ -202,8 +204,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       v = frame * 4 + 8;
       rmax = frame * 32;
       BG_PLTT_COLOR(0, 2) = RGB(v, v, v);
-      cx = 96;
-      cy = 60;
+      cx = SHATTERING_OPENING_DISC_X;
+      cy = SHATTERING_OPENING_DISC_Y;
       for (; r != rmax; r++) {
         // The midpoint circle: plot each eighth by symmetry.
         px = r;
@@ -384,11 +386,14 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
 // Light gathering on the user and bursting, for the scenes.
 
-#define ELEMENT_BURST_FRAMES 56
+#define ELEMENT_BURST_FRAMES 56 ///< frames of the element burst
 
+/// CyanSparkSheet: five small sparks, then the burst's pictures.
+#define ELEMENT_BURST_SPARK_WIDTH 32
 #define ELEMENT_BURST_SPARK_HEIGHT 32
 #define ELEMENT_BURST_BURST_WIDTH 48
 #define ELEMENT_BURST_BURST_HEIGHT 48
+#define ELEMENT_BURST_BURST (5 * PICTURE_BYTES(ELEMENT_BURST_SPARK))
 
 /// Sparks in an element's colours flare at four corners around a unit and motes
 /// spiral in, then a burst of light plays over it.
@@ -468,8 +473,11 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
     // The burst, a picture every three frames.
     if (frame >= 28 && frame <= 48)
-      draw[0](canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40,
-              ground.y - 24, ELEMENT_BURST_BURST_WIDTH,
+      draw[0](canvas,
+              work->sheet +
+                  (frame - 28) / 3 * PICTURE_BYTES(ELEMENT_BURST_BURST) +
+                  ELEMENT_BURST_BURST,
+              40, ground.y - 24, ELEMENT_BURST_BURST_WIDTH,
               ELEMENT_BURST_BURST_HEIGHT);
 
     // The corner sparks, each with its own flips.
@@ -481,9 +489,10 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
         BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                   gElementBurst_GlintFlips[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-        draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
-                ground.y + gDeathPlunge_Y[i] - 32, 32,
-                ELEMENT_BURST_SPARK_HEIGHT);
+        draw[1](canvas,
+                work->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
+                gDeathPlunge_X[i] + 32, ground.y + gDeathPlunge_Y[i] - 32,
+                ELEMENT_BURST_SPARK_WIDTH, ELEMENT_BURST_SPARK_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
@@ -600,7 +609,7 @@ void BattleEffect_DrawStreaks(void) {
 }
 
 /// Each frame while frames are left, darkens the battle background's 128
-/// colours by one more step of 1092 into BG palette 0x050000c0.
+/// colours by one more CANVAS_FADE_STEP into BG palettes 6 to 13.
 void BattleEffect_DimBackgroundStep(void) {
   struct BattleFxFadeWork *work =
       (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
@@ -609,7 +618,8 @@ void BattleEffect_DimBackgroundStep(void) {
   if (work->framesLeft > 0) {
     work->step++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         0x10000 - work->step * 1092, 128);
+                         Q16_ONE - work->step * CANVAS_FADE_STEP,
+                         BATTLE_BACKGROUND_COLORS);
     work->framesLeft--;
   }
 }

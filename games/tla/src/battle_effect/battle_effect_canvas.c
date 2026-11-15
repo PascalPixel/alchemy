@@ -1250,9 +1250,6 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
-/// One step of the background palette fade.
-#define CANVAS_FADE_STEP 1092
-
 void Palette_StepFadeTransfer(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
@@ -1266,7 +1263,8 @@ void Palette_StepFadeTransfer(void) {
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         Q16_ONE - *step * CANVAS_FADE_STEP, 128);
+                         Q16_ONE - *step * CANVAS_FADE_STEP,
+                         BATTLE_BACKGROUND_COLORS);
     (*framesLeft)--;
   }
 }

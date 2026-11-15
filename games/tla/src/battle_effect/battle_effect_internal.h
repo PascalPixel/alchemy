@@ -298,6 +298,9 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS 128
+/// One step of the battle background's fade, about a sixtieth of the full
+/// colour.
+#define CANVAS_FADE_STEP 1092
 /// The bytes of one 16-colour palette.
 #define PALETTE_BANK_BYTES 32
 /// A word of two palette entries, both `color`, to fill a palette a word at a

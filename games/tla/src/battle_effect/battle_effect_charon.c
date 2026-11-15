@@ -1316,7 +1316,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame == 120) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       ColorBuffer_ScaleFar(battle->palette, (u16 *)&BG_PLTT_COLOR(6, 0), 0x99a0,
-                           128);
+                           BATTLE_BACKGROUND_COLORS);
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 

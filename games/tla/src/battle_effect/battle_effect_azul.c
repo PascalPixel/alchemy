@@ -149,7 +149,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       s32 fade = 24 - frame * 3;
 
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           0x10000 - fade * 1092, 128);
+                           Q16_ONE - fade * CANVAS_FADE_STEP,
+                           BATTLE_BACKGROUND_COLORS);
     }
     if (frame == 186) {
       base.x = px(48);

@@ -370,7 +370,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     if ((u32)(frame - 63) <= 4) {
       battle->brightness = (frame << 13) - 0x7c000;
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           battle->brightness, 128);
+                           battle->brightness, BATTLE_BACKGROUND_COLORS);
     }
     if (frame == 48) {
       work->shakeFrames = 16;

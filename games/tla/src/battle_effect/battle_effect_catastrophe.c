@@ -496,7 +496,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 554) <= 31 && !((frame - 554) & 1)) {
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           0x10000 - ((frame - 554) << 10), 128);
+                           0x10000 - ((frame - 554) << 10),
+                           BATTLE_BACKGROUND_COLORS);
     }
     if (swapped == 0) {
       if (frame == 339) {

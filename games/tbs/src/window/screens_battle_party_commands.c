@@ -9,10 +9,8 @@
 /// do on a party member and, for the curing and reviving hints, starts on one
 /// who needs it.
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
-  s32 signedEffect;
   s32 abilityKind;
   s32 targetKind;
-  u8 effect;
 
   targetKind = TARGET_HINT_NONE;
   abilityKind = act->flags & ABILITY_FORMULA_MASK;
@@ -20,14 +18,11 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  /* FAKEMATCH(temporary): the effect copied through a signed word. */
-  signedEffect = (s8)act->effect;
-  effect = signedEffect;
-  if (effect == ABILITY_EFFECT_CURE_POISON)
+  if (act->effect == ABILITY_EFFECT_CURE_POISON)
     targetKind = TARGET_HINT_CURE_POISON;
-  if (effect == ABILITY_EFFECT_RESTORE)
+  if (act->effect == ABILITY_EFFECT_RESTORE)
     targetKind = TARGET_HINT_RESTORE;
-  if (effect == ABILITY_EFFECT_CURE_ALL)
+  if (act->effect == ABILITY_EFFECT_CURE_ALL)
     targetKind = TARGET_HINT_CURE_ALL;
   if (Battle_IsReviveEffectFar(act->effect) != 0)
     targetKind = TARGET_HINT_REVIVE;

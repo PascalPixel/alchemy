@@ -40,7 +40,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   result = 0;
   redraw = 1;
   frame = 0;
-  page = 2;
+  page = DJINN_COMPARE_PAGE_BOTH;
   help = menu->helpWindow;
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[0] = 0;

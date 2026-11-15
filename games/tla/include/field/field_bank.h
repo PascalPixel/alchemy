@@ -490,40 +490,6 @@ struct DescendingOrbitObject {
   s16 angle;
 };
 
-struct CaptureObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 baseY;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[8]; ///< no code names it
-  s32 gravity;
-  u8 unusedAfterGravity[4]; ///< no code names it
-  s32 speed;
-  u8 unusedAfterSpeed[33]; ///< no code names it
-  u8 mode;
-  u8 unusedAfterMode[5]; ///< no code names it
-  u8 visible;
-  u8 unusedAfterVisible[2]; ///< no code names it
-  u16 lifetime;
-  u8 unusedAfterLifetime[4]; ///< no code names it
-  u16 timer;
-  u16 angle;
-  u8 unusedAfterAngle[4]; ///< no code names it
-  void *callback;
-};
-
-struct LinkedCaptureObject {
-  u8 padding000[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 padding014[84];
-  struct LinkedCaptureObject *target;
-};
-
 struct ContextSprite {
   u8 unused[0xc]; ///< no code names it
   s32 scale;
@@ -586,16 +552,6 @@ struct DjinniObject {
   u16 timer;
   u8 unusedAfterTimer[6]; ///< no code names it
   void *update;
-};
-
-struct CaptureSprite {
-  u8 unused[40]; ///< no code names it
-  s16 *resource;
-};
-
-struct CaptureResource {
-  u8 unused[16]; ///< no code names it
-  u8 id;
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on

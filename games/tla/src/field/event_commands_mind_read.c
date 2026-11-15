@@ -1282,8 +1282,8 @@ void FieldPsynergy_Force(void) {
     copy = copies[i] =
         Actor_Spawn(278, object->x.fixed, object->y.fixed, object->z.fixed);
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
       copy->facing = scene->angle;
       copy->speedLimit = px(4);
       copy->acceleration = px(4);

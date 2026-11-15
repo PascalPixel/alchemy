@@ -14,6 +14,8 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
+#define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
+
 /// Moves the actor halfway to the actor it watches; a copy of
 /// Actor_MoveHalfwayTowardTarget.
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
@@ -24,42 +26,14 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
   object->z.fixed += (target->z.fixed - object->z.fixed) / 2;
 }
 
-/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;
- * event_commands.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_mercury.c:73: structure has no member
- * named `sprite'. */
-struct CaptureObject__f0d8740 {
-  u8 unused[6]; ///< no code names it
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[3]; ///< no code names it
-  u8 priorityFlags;
-  u8 unusedAfterPriorityFlags[44]; ///< no code names it
-  struct CaptureSprite *sprite;
-  u8 unk54;
-  u8 mode;
-  u8 unusedAfterMode[4]; ///< no code names it
-  u8 collisionFlags;
-  u8 visible;
-  u8 unusedAfterVisible[12]; ///< no code names it
-  struct CaptureObject__f0d8740 *linked;
-  void *callback;
-};
-
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out of
 /// sight trailing eight afterimages.
-void Djinn_RunMercuryJoinEffect(s32 arg) {
-  struct CaptureObject__f0d8740 *djinni;
-  struct CaptureObject__f0d8740 *copy;
+void Djinn_RunMercuryJoinEffect(s32 djinniId) {
+  struct Actor *djinni;
+  struct Actor *copy;
   struct Actor *previous;
-  struct CaptureResource *resource;
+  struct Sprite *resource;
   void *effectSlots;
   struct Actor **cursor;
   struct Actor **list;
@@ -68,14 +42,14 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   s32 kind;
   s32 remaining;
   s32 resourceId;
-  struct CaptureObject__f0d8740 *copies[8];
+  struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
   struct {
     s32 x;
     s32 y;
     s32 z;
   } position;
 
-  djinni = Actor_GetById(arg);
+  djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -83,49 +57,51 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   effectSlots = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
   wait(30);
-  djinni->visible = 0;
+  // Unpause the Djinni, so its script and motion run.
+  djinni->paused = 0;
   Sound_PlayFar(SE_NOTE_LOW);
-  Actor_RunRepeatedMotion(arg, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Actor_RunRepeatedMotion(arg, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   wait(20);
   Sound_PlayFar(SE_JUMP);
-  Actor_Jump(arg, 3, 14);
+  Actor_Jump(djinniId, 3, 14);
   Sound_PlayFar(SE_JUMP);
-  Actor_Jump(arg, 5, 16);
+  Actor_Jump(djinniId, 5, 16);
   Sound_PlayFar(SE_JUMP);
-  Actor_Jump(arg, 7, 18);
+  Actor_Jump(djinniId, 7, 18);
   wait(20);
 
-  kind = *djinni->sprite->resource;
+  kind = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
   resource = NULL;
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Actor_CreateFar(kind, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
+                           djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
-      copy->mode = 0;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
+      copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      copy->collisionFlags |= 1;
-      copy->callback = (void *)Actor_MoveHalfwayTowardTargetCopy;
+      copy->steeringFlags |= ACTOR_FACES_MOTION;
+      copy->update = (void (*)(void))Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
-      copy->linked = previous;
+      copy->watchedActor = previous;
       previous = copy;
     }
   }
 
-  resourceId = resource->id;
+  resourceId = resource->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
-  djinni->mode = 0;
+  djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
-    djinni->y += px(8);
+    djinni->y.fixed += px(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);
@@ -137,10 +113,11 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   wait(10);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
-  SET_POSITION(&position, djinni->x, djinni->y, djinni->z);
+  SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
   Camera_WorldToScreen(&position.x);
 
   slot = (u8 *)effectSlots + 80;

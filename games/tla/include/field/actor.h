@@ -145,10 +145,22 @@ struct Actor {
       u8 blockMarked;
     };
   };
-  /// The parameter its action script reads (a follow distance or an angle to
-  /// face).
-  s16 timer;
-  s16 userValue; ///< the side of the player's next footprint, or scene scratch
+  /// Two halfwords whose meaning depends on what runs the actor.
+  union {
+    struct {
+      /// The parameter its action script reads (a follow distance or an
+      /// angle to face).
+      s16 timer;
+      /// The side of the player's next footprint, or scene scratch.
+      s16 userValue;
+    };
+    /// A Venus Djinni's falling motes
+    /// (FieldEffect_UpdateDescendingOrbitActor).
+    struct {
+      u16 orbitFrames; ///< frames left of the spiral, 100 at the start
+      s16 orbitAngle;  ///< its start on the circle, 1/65536 turns
+    };
+  };
   /// The object its action script follows or faces.
   struct Actor *watchedActor;
   void (*update)(void); ///< the object's per-frame hook

@@ -128,8 +128,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     // DEAD: nothing reads copies; the source keeps the store.
     copies[i] = copy;
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= ACTOR_FACES_MOTION;

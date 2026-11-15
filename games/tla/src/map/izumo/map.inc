@@ -24,7 +24,7 @@ Field_Izumo:
 	.incbin "games/tla/src/map/izumo/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Izumo_ANIMATION:
-	.incbin "games/tla/src/map/map_126/animation.script.lz"
+	.incbin "games/tla/src/map/islets_1/animation.script.lz"
 	.balign 4, 0
 .LField_Izumo_BLEND:
 	.incbin "games/tla/src/map/izumo/blend.script.lz"
@@ -32,21 +32,21 @@ Field_Izumo:
 .LField_Izumo_SCENE:
 	.incbin "games/tla/src/map/izumo/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set73Palette
-Tileset_Set73Palette:
-	.incbin "games/tla/src/graphics/tileset/set_73/palette.gbapal.lz"
+	.global Tileset_IzumoPalette
+Tileset_IzumoPalette:
+	.incbin "games/tla/src/graphics/tileset/izumo/palette.gbapal.lz"
 	.byte 0xf3	@ PACKER: left in the buffer by Field_Izumo+0x18f
-	.global Tileset_Set73TilesA
-Tileset_Set73TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_73/tiles_a.4bpp.mtf"
-	.global Tileset_Set73TilesB
-Tileset_Set73TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_73/tiles_b.4bpp.mtf"
-	.global Tileset_Set73TilesC
-Tileset_Set73TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_73/tiles_c.4bpp.mtf"
-	.byte 0x91, 0x81, 0x07	@ PACKER: left in the buffer by Tileset_Set73TilesB+0x21a5
-	.global Tileset_Set73TilesD
-Tileset_Set73TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_73/tiles_d.4bpp.mtf"
-	.byte 0x10	@ PACKER: left in the buffer by Tileset_Set73TilesB+0x27d3
+	.global Tileset_IzumoTilesA
+Tileset_IzumoTilesA:
+	.incbin "games/tla/src/graphics/tileset/izumo/tiles_a.4bpp.mtf"
+	.global Tileset_IzumoTilesB
+Tileset_IzumoTilesB:
+	.incbin "games/tla/src/graphics/tileset/izumo/tiles_b.4bpp.mtf"
+	.global Tileset_IzumoTilesC
+Tileset_IzumoTilesC:
+	.incbin "games/tla/src/graphics/tileset/izumo/tiles_c.4bpp.mtf"
+	.byte 0x91, 0x81, 0x07	@ PACKER: left in the buffer by Tileset_IzumoTilesB+0x21a5
+	.global Tileset_IzumoTilesD
+Tileset_IzumoTilesD:
+	.incbin "games/tla/src/graphics/tileset/izumo/tiles_d.4bpp.mtf"
+	.byte 0x10	@ PACKER: left in the buffer by Tileset_IzumoTilesB+0x27d3

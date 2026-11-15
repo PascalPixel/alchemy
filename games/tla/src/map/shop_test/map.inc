@@ -24,7 +24,7 @@ Field_ShopTest:
 	.incbin "games/tla/src/map/shop_test/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ShopTest_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LField_ShopTest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

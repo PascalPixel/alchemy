@@ -24,7 +24,7 @@ Field_AlhafraJail:
 	.incbin "games/tla/src/map/alhafra_jail/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AlhafraJail_ANIMATION:
-	.incbin "games/tla/src/map/map_021/animation.script.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_8/animation.script.lz"
 	.balign 4, 0
 .LField_AlhafraJail_SCENE:
 	.incbin "games/tla/src/map/alhafra_jail/scene.scene.lz"

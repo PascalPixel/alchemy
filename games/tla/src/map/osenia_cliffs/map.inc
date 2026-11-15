@@ -42,7 +42,7 @@ Tileset_OseniaCliffsTilesA:
 	.global Tileset_OseniaCliffsTilesB
 Tileset_OseniaCliffsTilesB:
 	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_b.4bpp.mtf"
-	.byte 0x5a, 0x14	@ PACKER: left in the buffer by Tileset_Set29TilesC+0x2336
+	.byte 0x5a, 0x14	@ PACKER: left in the buffer by Tileset_MadraDrawbridgeTilesC+0x2336
 	.global Tileset_OseniaCliffsTilesC
 Tileset_OseniaCliffsTilesC:
 	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_c.4bpp.mtf"

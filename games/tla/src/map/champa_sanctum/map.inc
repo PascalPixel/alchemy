@@ -24,10 +24,10 @@ Field_ChampaSanctum:
 	.incbin "games/tla/src/map/champa_sanctum/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ChampaSanctum_ANIMATION:
-	.incbin "games/tla/src/map/map_041/animation.script.lz"
+	.incbin "games/tla/src/map/madra_interiors_2/animation.script.lz"
 	.balign 4, 0
 .LField_ChampaSanctum_BLEND:
-	.incbin "games/tla/src/map/map_010/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
 	.balign 4, 0
 .LField_ChampaSanctum_SCENE:
 	.incbin "games/tla/src/map/champa_sanctum/scene.scene.lz"

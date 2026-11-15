@@ -28,7 +28,7 @@ Field_Naribwe:
 	.incbin "games/tla/src/map/naribwe/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Naribwe_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LField_Naribwe_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
@@ -40,28 +40,28 @@ Field_Naribwe:
 	.incbin "games/tla/src/map/naribwe/scene.scene.lz"
 	.endif
 	.balign 4, 0
-	.global Tileset_Set46Palette
-Tileset_Set46Palette:
-	.incbin "games/tla/src/graphics/tileset/set_46/palette.gbapal.lz"
+	.global Tileset_NaribwePalette
+Tileset_NaribwePalette:
+	.incbin "games/tla/src/graphics/tileset/naribwe/palette.gbapal.lz"
 	.byte 0x29, 0xc7	@ PACKER: left in the buffer by Field_Naribwe+0x132
-	.global Tileset_Set46TilesA
-Tileset_Set46TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_46/tiles_a.4bpp.mtf"
-	.byte 0x94, 0xc6	@ PACKER: left in the buffer by Tileset_Set45TilesA+0x276a
-	.global Tileset_Set46TilesB
-Tileset_Set46TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_46/tiles_b.4bpp.mtf"
-	.byte 0xc8, 0x02, 0x58	@ PACKER: left in the buffer by Tileset_Set46TilesA+0x1dd1
-	.global Tileset_Set46TilesC
-Tileset_Set46TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_46/tiles_c.4bpp.mtf"
-	.global Tileset_Set46TilesD
-Tileset_Set46TilesD:
+	.global Tileset_NaribweTilesA
+Tileset_NaribweTilesA:
+	.incbin "games/tla/src/graphics/tileset/naribwe/tiles_a.4bpp.mtf"
+	.byte 0x94, 0xc6	@ PACKER: left in the buffer by Tileset_AlhafranCaveTilesA+0x276a
+	.global Tileset_NaribweTilesB
+Tileset_NaribweTilesB:
+	.incbin "games/tla/src/graphics/tileset/naribwe/tiles_b.4bpp.mtf"
+	.byte 0xc8, 0x02, 0x58	@ PACKER: left in the buffer by Tileset_NaribweTilesA+0x1dd1
+	.global Tileset_NaribweTilesC
+Tileset_NaribweTilesC:
+	.incbin "games/tla/src/graphics/tileset/naribwe/tiles_c.4bpp.mtf"
+	.global Tileset_NaribweTilesD
+Tileset_NaribweTilesD:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "games/tla/src/graphics/tileset/set_46/tiles_d_ja.4bpp.mtf"
+	.incbin "games/tla/src/graphics/tileset/naribwe/tiles_d_ja.4bpp.mtf"
 	.else
-	.incbin "games/tla/src/graphics/tileset/set_46/tiles_d.4bpp.mtf"
+	.incbin "games/tla/src/graphics/tileset/naribwe/tiles_d.4bpp.mtf"
 	.endif
 	.ifdef TLA_EDITION_JA
-	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set46TilesC+0x13f
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_NaribweTilesC+0x13f
 	.endif

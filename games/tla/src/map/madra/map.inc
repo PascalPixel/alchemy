@@ -31,23 +31,23 @@ Field_Madra:
 	.balign 4, 0
 .LField_Madra_SCENE:
 	.incbin "games/tla/src/map/madra/scene.scene.lz"
-	.global Tileset_Set22Palette
-Tileset_Set22Palette:
-	.incbin "games/tla/src/graphics/tileset/set_22/palette.gbapal.lz"
+	.global Tileset_MadraPalette
+Tileset_MadraPalette:
+	.incbin "games/tla/src/graphics/tileset/madra/palette.gbapal.lz"
 	.byte 0x12, 0x05, 0x08	@ PACKER: left in the buffer by Field_Madra+0x14d
-	.global Tileset_Set22TilesA
-Tileset_Set22TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_22/tiles_a.4bpp.mtf"
-	.byte 0x00, 0x02	@ PACKER: left in the buffer by Field_Map034+0x288a
-	.global Tileset_Set22TilesB
-Tileset_Set22TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_22/tiles_b.4bpp.mtf"
-	.byte 0x08, 0x04	@ PACKER: left in the buffer by Tileset_Set22TilesA+0x27ee
-	.global Tileset_Set22TilesC
-Tileset_Set22TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_22/tiles_c.4bpp.mtf"
-	.byte 0x41, 0xf2	@ PACKER: left in the buffer by Tileset_Set22TilesB+0xf9e
-	.global Tileset_Set22TilesD
-Tileset_Set22TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_22/tiles_d.4bpp.mtf"
-	.byte 0x03, 0x86, 0xc0	@ PACKER: left in the buffer by Tileset_Set22TilesB+0x2151
+	.global Tileset_MadraTilesA
+Tileset_MadraTilesA:
+	.incbin "games/tla/src/graphics/tileset/madra/tiles_a.4bpp.mtf"
+	.byte 0x00, 0x02	@ PACKER: left in the buffer by Field_DehkanPlateau3+0x288a
+	.global Tileset_MadraTilesB
+Tileset_MadraTilesB:
+	.incbin "games/tla/src/graphics/tileset/madra/tiles_b.4bpp.mtf"
+	.byte 0x08, 0x04	@ PACKER: left in the buffer by Tileset_MadraTilesA+0x27ee
+	.global Tileset_MadraTilesC
+Tileset_MadraTilesC:
+	.incbin "games/tla/src/graphics/tileset/madra/tiles_c.4bpp.mtf"
+	.byte 0x41, 0xf2	@ PACKER: left in the buffer by Tileset_MadraTilesB+0xf9e
+	.global Tileset_MadraTilesD
+Tileset_MadraTilesD:
+	.incbin "games/tla/src/graphics/tileset/madra/tiles_d.4bpp.mtf"
+	.byte 0x03, 0x86, 0xc0	@ PACKER: left in the buffer by Tileset_MadraTilesB+0x2151

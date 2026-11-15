@@ -27,26 +27,26 @@ Field_MikasallaInteriors:
 	.incbin "games/tla/src/map/mikasalla_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_MikasallaInteriors_BLEND:
-	.incbin "games/tla/src/map/map_010/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
 	.balign 4, 0
 .LField_MikasallaInteriors_SCENE:
 	.incbin "games/tla/src/map/mikasalla_interiors/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set33Palette
-Tileset_Set33Palette:
-	.incbin "games/tla/src/graphics/tileset/set_33/palette.gbapal.lz"
-	.global Tileset_Set33TilesA
-Tileset_Set33TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_33/tiles_a.4bpp.mtf"
+	.global Tileset_MikasallaInteriorsPalette
+Tileset_MikasallaInteriorsPalette:
+	.incbin "games/tla/src/graphics/tileset/mikasalla_interiors/palette.gbapal.lz"
+	.global Tileset_MikasallaInteriorsTilesA
+Tileset_MikasallaInteriorsTilesA:
+	.incbin "games/tla/src/graphics/tileset/mikasalla_interiors/tiles_a.4bpp.mtf"
 	.byte 0x40, 0x4e, 0x01	@ PACKER: left in the buffer by Field_MikasallaInteriors+0x20ed
-	.global Tileset_Set33TilesB
-Tileset_Set33TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_33/tiles_b.4bpp.mtf"
-	.byte 0x43, 0x23	@ PACKER: left in the buffer by Tileset_Set33TilesA+0x1a1a
-	.global Tileset_Set33TilesC
-Tileset_Set33TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_33/tiles_c.4bpp.mtf"
-	.byte 0x6e	@ PACKER: left in the buffer by Tileset_Set33TilesB+0x110b
-	.global Tileset_Set33TilesD
-Tileset_Set33TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_33/tiles_d.4bpp.mtf"
+	.global Tileset_MikasallaInteriorsTilesB
+Tileset_MikasallaInteriorsTilesB:
+	.incbin "games/tla/src/graphics/tileset/mikasalla_interiors/tiles_b.4bpp.mtf"
+	.byte 0x43, 0x23	@ PACKER: left in the buffer by Tileset_MikasallaInteriorsTilesA+0x1a1a
+	.global Tileset_MikasallaInteriorsTilesC
+Tileset_MikasallaInteriorsTilesC:
+	.incbin "games/tla/src/graphics/tileset/mikasalla_interiors/tiles_c.4bpp.mtf"
+	.byte 0x6e	@ PACKER: left in the buffer by Tileset_MikasallaInteriorsTilesB+0x110b
+	.global Tileset_MikasallaInteriorsTilesD
+Tileset_MikasallaInteriorsTilesD:
+	.incbin "games/tla/src/graphics/tileset/mikasalla_interiors/tiles_d.4bpp.mtf"

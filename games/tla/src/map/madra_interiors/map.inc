@@ -27,27 +27,27 @@ Field_MadraInteriors:
 	.incbin "games/tla/src/map/madra_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_MadraInteriors_BLEND:
-	.incbin "games/tla/src/map/map_010/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
 	.balign 4, 0
 .LField_MadraInteriors_SCENE:
 	.incbin "games/tla/src/map/madra_interiors/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set23Palette
-Tileset_Set23Palette:
-	.incbin "games/tla/src/graphics/tileset/set_23/palette.gbapal.lz"
-	.global Tileset_Set23TilesA
-Tileset_Set23TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_23/tiles_a.4bpp.mtf"
+	.global Tileset_MadraInteriorsPalette
+Tileset_MadraInteriorsPalette:
+	.incbin "games/tla/src/graphics/tileset/madra_interiors/palette.gbapal.lz"
+	.global Tileset_MadraInteriorsTilesA
+Tileset_MadraInteriorsTilesA:
+	.incbin "games/tla/src/graphics/tileset/madra_interiors/tiles_a.4bpp.mtf"
 	.byte 0x9e	@ PACKER: left in the buffer by Field_MadraInteriors+0x1bdf
-	.global Tileset_Set23TilesB
-Tileset_Set23TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_23/tiles_b.4bpp.mtf"
+	.global Tileset_MadraInteriorsTilesB
+Tileset_MadraInteriorsTilesB:
+	.incbin "games/tla/src/graphics/tileset/madra_interiors/tiles_b.4bpp.mtf"
 	.byte 0x62, 0xf8, 0x54	@ PACKER: left in the buffer by Field_MadraInteriors+0x1e1d
-	.global Tileset_Set23TilesC
-Tileset_Set23TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_23/tiles_c.4bpp.mtf"
-	.byte 0x69, 0xd7, 0x36	@ PACKER: left in the buffer by Tileset_Set23TilesB+0x1ad9
-	.global Tileset_Set23TilesD
-Tileset_Set23TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_23/tiles_d.4bpp.mtf"
-	.byte 0x0c, 0xbc	@ PACKER: left in the buffer by Tileset_Set23TilesC+0x15e6
+	.global Tileset_MadraInteriorsTilesC
+Tileset_MadraInteriorsTilesC:
+	.incbin "games/tla/src/graphics/tileset/madra_interiors/tiles_c.4bpp.mtf"
+	.byte 0x69, 0xd7, 0x36	@ PACKER: left in the buffer by Tileset_MadraInteriorsTilesB+0x1ad9
+	.global Tileset_MadraInteriorsTilesD
+Tileset_MadraInteriorsTilesD:
+	.incbin "games/tla/src/graphics/tileset/madra_interiors/tiles_d.4bpp.mtf"
+	.byte 0x0c, 0xbc	@ PACKER: left in the buffer by Tileset_MadraInteriorsTilesC+0x15e6

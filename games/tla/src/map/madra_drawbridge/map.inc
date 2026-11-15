@@ -29,21 +29,21 @@ Field_MadraDrawbridge:
 .LField_MadraDrawbridge_SCENE:
 	.incbin "games/tla/src/map/madra_drawbridge/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set29Palette
-Tileset_Set29Palette:
-	.incbin "games/tla/src/graphics/tileset/set_29/palette.gbapal.lz"
+	.global Tileset_MadraDrawbridgePalette
+Tileset_MadraDrawbridgePalette:
+	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/palette.gbapal.lz"
 	.byte 0x70, 0x28	@ PACKER: left in the buffer by Field_MadraDrawbridge+0x16a
-	.global Tileset_Set29TilesA
-Tileset_Set29TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_29/tiles_a.4bpp.mtf"
+	.global Tileset_MadraDrawbridgeTilesA
+Tileset_MadraDrawbridgeTilesA:
+	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_a.4bpp.mtf"
 	.byte 0x3e	@ PACKER: left in the buffer by Field_MadraInteriors+0x2e4f
-	.global Tileset_Set29TilesB
-Tileset_Set29TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_29/tiles_b.4bpp.mtf"
-	.byte 0xcf, 0xde	@ PACKER: left in the buffer by Tileset_Set29TilesA+0x27be
-	.global Tileset_Set29TilesC
-Tileset_Set29TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_29/tiles_c.4bpp.mtf"
-	.global Tileset_Set29TilesD
-Tileset_Set29TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_29/tiles_d.4bpp.mtf"
+	.global Tileset_MadraDrawbridgeTilesB
+Tileset_MadraDrawbridgeTilesB:
+	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_b.4bpp.mtf"
+	.byte 0xcf, 0xde	@ PACKER: left in the buffer by Tileset_MadraDrawbridgeTilesA+0x27be
+	.global Tileset_MadraDrawbridgeTilesC
+Tileset_MadraDrawbridgeTilesC:
+	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_c.4bpp.mtf"
+	.global Tileset_MadraDrawbridgeTilesD
+Tileset_MadraDrawbridgeTilesD:
+	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_d.4bpp.mtf"

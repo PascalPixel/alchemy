@@ -24,30 +24,30 @@ Field_EasternAlhafraShip:
 	.incbin "games/tla/src/map/eastern_alhafra_ship/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_BLEND:
-	.incbin "games/tla/src/map/map_010/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_SCENE:
 	.incbin "games/tla/src/map/eastern_alhafra_ship/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set44Palette
-Tileset_Set44Palette:
-	.incbin "games/tla/src/graphics/tileset/set_44/palette.gbapal.lz"
-	.global Tileset_Set44TilesA
-Tileset_Set44TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_44/tiles_a.4bpp.mtf"
+	.global Tileset_EasternAlhafraShipPalette
+Tileset_EasternAlhafraShipPalette:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra_ship/palette.gbapal.lz"
+	.global Tileset_EasternAlhafraShipTilesA
+Tileset_EasternAlhafraShipTilesA:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra_ship/tiles_a.4bpp.mtf"
 	.byte 0xa0, 0x32, 0x14	@ PACKER: left in the buffer by Tileset_EasternAlhafraTilesB+0x245d
-	.global Tileset_Set44TilesB
-Tileset_Set44TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_44/tiles_b.4bpp.mtf"
-	.byte 0x9a, 0xa6, 0xe3	@ PACKER: left in the buffer by Tileset_Set44TilesA+0x1ce9
-	.global Tileset_Set44TilesC
-Tileset_Set44TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_44/tiles_c.4bpp.mtf"
-	.byte 0x88, 0xf0, 0x05	@ PACKER: left in the buffer by Tileset_Set44TilesB+0x16fd
-	.global Tileset_Set44TilesD
-Tileset_Set44TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_44/tiles_d.4bpp.mtf"
-	.byte 0xf6, 0x81, 0x3a	@ PACKER: left in the buffer by Tileset_Set44TilesC+0x1579
+	.global Tileset_EasternAlhafraShipTilesB
+Tileset_EasternAlhafraShipTilesB:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra_ship/tiles_b.4bpp.mtf"
+	.byte 0x9a, 0xa6, 0xe3	@ PACKER: left in the buffer by Tileset_EasternAlhafraShipTilesA+0x1ce9
+	.global Tileset_EasternAlhafraShipTilesC
+Tileset_EasternAlhafraShipTilesC:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra_ship/tiles_c.4bpp.mtf"
+	.byte 0x88, 0xf0, 0x05	@ PACKER: left in the buffer by Tileset_EasternAlhafraShipTilesB+0x16fd
+	.global Tileset_EasternAlhafraShipTilesD
+Tileset_EasternAlhafraShipTilesD:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra_ship/tiles_d.4bpp.mtf"
+	.byte 0xf6, 0x81, 0x3a	@ PACKER: left in the buffer by Tileset_EasternAlhafraShipTilesC+0x1579

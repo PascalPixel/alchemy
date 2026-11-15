@@ -24,7 +24,7 @@ Field_JupiterLighthouseRoom1:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_1/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseRoom1_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseRoom1_SCENE:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_1/scene.scene.lz"
@@ -35,7 +35,7 @@ Tileset_JupiterLighthouseRoomPalette:
 	.global Tileset_JupiterLighthouseRoomTilesA
 Tileset_JupiterLighthouseRoomTilesA:
 	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_a.4bpp.mtf"
-	.byte 0xf1, 0x6c, 0x88	@ PACKER: left in the buffer by Tileset_Set103TilesC+0x1f3d
+	.byte 0xf1, 0x6c, 0x88	@ PACKER: left in the buffer by Tileset_JupiterLighthouseEntranceTilesC+0x1f3d
 	.global Tileset_JupiterLighthouseRoomTilesB
 Tileset_JupiterLighthouseRoomTilesB:
 	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_b.4bpp.mtf"

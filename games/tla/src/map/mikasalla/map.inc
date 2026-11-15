@@ -31,17 +31,17 @@ Field_Mikasalla:
 	.balign 4, 0
 .LField_Mikasalla_SCENE:
 	.incbin "games/tla/src/map/mikasalla/scene.scene.lz"
-	.global Tileset_Set31Palette
-Tileset_Set31Palette:
-	.incbin "games/tla/src/graphics/tileset/set_31/palette.gbapal.lz"
+	.global Tileset_MikasallaPalette
+Tileset_MikasallaPalette:
+	.incbin "games/tla/src/graphics/tileset/mikasalla/palette.gbapal.lz"
 	.byte 0x2f, 0x43, 0x0e	@ PACKER: left in the buffer by Field_Mikasalla+0x159
-	.global Tileset_Set31TilesA
-Tileset_Set31TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_31/tiles_a.4bpp.mtf"
+	.global Tileset_MikasallaTilesA
+Tileset_MikasallaTilesA:
+	.incbin "games/tla/src/graphics/tileset/mikasalla/tiles_a.4bpp.mtf"
 	.byte 0x08, 0x80	@ PACKER: left in the buffer by Tileset_OseniaCliffsTilesB+0x21de
-	.global Tileset_Set31TilesB
-Tileset_Set31TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_31/tiles_b.4bpp.mtf"
+	.global Tileset_MikasallaTilesB
+Tileset_MikasallaTilesB:
+	.incbin "games/tla/src/graphics/tileset/mikasalla/tiles_b.4bpp.mtf"
 	.ifdef TLA_EDITION_EN
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif

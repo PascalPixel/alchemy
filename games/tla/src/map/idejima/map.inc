@@ -42,7 +42,7 @@ Tileset_IdejimaTilesA:
 	.global Tileset_IdejimaTilesB
 Tileset_IdejimaTilesB:
 	.incbin "games/tla/src/graphics/tileset/idejima/tiles_b.4bpp.mtf"
-	.byte 0x04, 0x92, 0x9e	@ PACKER: left in the buffer by Tileset_Set04TilesC+0x1c7d
+	.byte 0x04, 0x92, 0x9e	@ PACKER: left in the buffer by Tileset_SuhallaGate3TilesC+0x1c7d
 	.global Tileset_IdejimaTilesC
 Tileset_IdejimaTilesC:
 	.incbin "games/tla/src/graphics/tileset/idejima/tiles_c.4bpp.mtf"

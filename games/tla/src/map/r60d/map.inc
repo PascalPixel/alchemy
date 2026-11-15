@@ -15,7 +15,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/r60d/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LResource_Data60D_SHAPES:
-	.incbin "games/tla/src/map/map_230/shapes.table.lz"
+	.incbin "games/tla/src/map/anemos_inner_sanctum_4/shapes.table.lz"
 	.balign 4, 0
 .LResource_Data60D_GRID:
 	.incbin "games/tla/src/map/r60d/map.grid.lz"
@@ -24,7 +24,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/r60d/shape_grid.plane.lz"
 	.balign 4, 0
 .LResource_Data60D_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LResource_Data60D_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
@@ -32,21 +32,21 @@ Resource_Data60D:
 .LResource_Data60D_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set120Palette
-Tileset_Set120Palette:
-	.incbin "games/tla/src/graphics/tileset/set_120/palette.gbapal.lz"
-	.global Tileset_Set120TilesA
-Tileset_Set120TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_120/tiles_a.4bpp.mtf"
-	.global Tileset_Set120TilesB
-Tileset_Set120TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_120/tiles_b.4bpp.mtf"
-	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesA+0x13f
-	.global Tileset_Set120TilesC
-Tileset_Set120TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_120/tiles_c.4bpp.mtf"
-	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesB+0x13f
-	.global Tileset_Set120TilesD
-Tileset_Set120TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_120/tiles_d.4bpp.mtf"
-	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesC+0x13f
+	.global Tileset_R60dPalette
+Tileset_R60dPalette:
+	.incbin "games/tla/src/graphics/tileset/r60d/palette.gbapal.lz"
+	.global Tileset_R60dTilesA
+Tileset_R60dTilesA:
+	.incbin "games/tla/src/graphics/tileset/r60d/tiles_a.4bpp.mtf"
+	.global Tileset_R60dTilesB
+Tileset_R60dTilesB:
+	.incbin "games/tla/src/graphics/tileset/r60d/tiles_b.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_R60dTilesA+0x13f
+	.global Tileset_R60dTilesC
+Tileset_R60dTilesC:
+	.incbin "games/tla/src/graphics/tileset/r60d/tiles_c.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_R60dTilesB+0x13f
+	.global Tileset_R60dTilesD
+Tileset_R60dTilesD:
+	.incbin "games/tla/src/graphics/tileset/r60d/tiles_d.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_R60dTilesC+0x13f

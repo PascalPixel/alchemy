@@ -27,7 +27,7 @@ Field_GarohInteriors:
 	.incbin "games/tla/src/map/mikasalla_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_GarohInteriors_BLEND:
-	.incbin "games/tla/src/map/map_010/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
 	.balign 4, 0
 .LField_GarohInteriors_SCENE:
 	.incbin "games/tla/src/map/garoh_interiors/scene.scene.lz"
@@ -36,6 +36,6 @@ Field_GarohInteriors:
 Tileset_PaletteGarohInteriors:
 	.incbin "games/tla/src/graphics/tileset/palettes/garoh_interiors.gbapal.lz"
 	.byte 0xf3, 0xff	@ PACKER: left in the buffer by Field_GarohInteriors+0x1c2
-	.global Tileset_Palette09
-Tileset_Palette09:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_09.gbapal.lz"
+	.global Tileset_PaletteGarohInteriorsB
+Tileset_PaletteGarohInteriorsB:
+	.incbin "games/tla/src/graphics/tileset/palettes/garoh_interiors_b.gbapal.lz"

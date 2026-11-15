@@ -15,7 +15,7 @@ Field_MtAlephSummit:
 	.incbin "games/tla/src/map/mt_aleph_summit/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_SHAPES:
-	.incbin "games/tla/src/map/map_179/shapes.table.lz"
+	.incbin "games/tla/src/map/sea_of_time_1/shapes.table.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_GRID:
 	.incbin "games/tla/src/map/mt_aleph_summit/map.grid.lz"
@@ -30,7 +30,7 @@ Field_MtAlephSummit:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_SCENE:
-	.incbin "games/tla/src/map/map_236/scene.scene.lz"
+	.incbin "games/tla/src/map/trial_road_2/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_MtAlephSummitPalette
 Tileset_MtAlephSummitPalette:
@@ -38,7 +38,7 @@ Tileset_MtAlephSummitPalette:
 	.global Tileset_MtAlephSummitTilesA
 Tileset_MtAlephSummitTilesA:
 	.incbin "games/tla/src/graphics/tileset/mt_aleph_summit/tiles_a.4bpp.mtf"
-	.byte 0x0e, 0x59, 0x80	@ PACKER: left in the buffer by Tileset_Set117TilesD+0x167d
+	.byte 0x0e, 0x59, 0x80	@ PACKER: left in the buffer by Tileset_Caverns2TilesD+0x167d
 	.global Tileset_MtAlephSummitTilesB
 Tileset_MtAlephSummitTilesB:
 	.incbin "games/tla/src/graphics/tileset/mt_aleph_summit/tiles_b.4bpp.mtf"

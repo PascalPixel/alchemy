@@ -28,15 +28,15 @@ Field_MarsLighthouseAerie:
 	.balign 4, 0
 .LField_MarsLighthouseAerie_SCENE:
 	.incbin "games/tla/src/map/mars_lighthouse_aerie/scene.scene.lz"
-	.global Tileset_Set110Palette
-Tileset_Set110Palette:
-	.incbin "games/tla/src/graphics/tileset/set_110/palette.gbapal.lz"
+	.global Tileset_MarsLighthouseAeriePalette
+Tileset_MarsLighthouseAeriePalette:
+	.incbin "games/tla/src/graphics/tileset/mars_lighthouse_aerie/palette.gbapal.lz"
 	.byte 0xc7, 0xba	@ PACKER: left in the buffer by Field_MarsLighthouseAerie+0x16e
-	.global Tileset_Set110TilesA
-Tileset_Set110TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_110/tiles_a.4bpp.mtf"
-	.byte 0x04, 0x07, 0x1a	@ PACKER: left in the buffer by Field_Map257+0x23a5
-	.global Tileset_Set110TilesB
-Tileset_Set110TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_110/tiles_b.4bpp.mtf"
-	.byte 0xc1, 0xc3	@ PACKER: left in the buffer by Tileset_Set110TilesA+0x6e6
+	.global Tileset_MarsLighthouseAerieTilesA
+Tileset_MarsLighthouseAerieTilesA:
+	.incbin "games/tla/src/graphics/tileset/mars_lighthouse_aerie/tiles_a.4bpp.mtf"
+	.byte 0x04, 0x07, 0x1a	@ PACKER: left in the buffer by Field_Prox4+0x23a5
+	.global Tileset_MarsLighthouseAerieTilesB
+Tileset_MarsLighthouseAerieTilesB:
+	.incbin "games/tla/src/graphics/tileset/mars_lighthouse_aerie/tiles_b.4bpp.mtf"
+	.byte 0xc1, 0xc3	@ PACKER: left in the buffer by Tileset_MarsLighthouseAerieTilesA+0x6e6

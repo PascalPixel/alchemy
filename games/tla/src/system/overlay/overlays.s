@@ -8,22 +8,22 @@
 Resource_Overlay649:
 	.incbin "overlays/resource_649.lz"
 	.ifdef TLA_EDITION_JA
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.ifdef TLA_EDITION_EN
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.ifdef TLA_EDITION_DE
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.ifdef TLA_EDITION_ES
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.ifdef TLA_EDITION_FR
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_Map299+0x48d
+	.byte 0x00, 0x01, 0xff	@ PACKER: left in the buffer by Field_TestScenes8+0x48d
 	.endif
 	.balign 4, 0
 

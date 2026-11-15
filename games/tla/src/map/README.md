@@ -79,12 +79,13 @@ is drawn with, each a resource of its own
 ([Graphics](../graphics/README.md#tilesets)). Many scenes share a map, and
 many maps share tiles.
 
-A folder is named for the one place that uses it, as its scene or the
-scene's code names it, when no other map shares that name. The rest, the
-rooms of a place with several maps and a map that several places share,
-keep their number among the maps' resources, where each map is followed
-by the tile sheets it brings, so that number rarely matches its row in
-`gMaps`. Daila is row 9 and folder `map_008/`.
+A folder is named for the scene that uses it, as The Broken Seal's are:
+the first in the scene table, when several share it. Daila is row 9 of
+`gMaps` and folder `daila_1/`, for the scene `Daila1`; a room keeps its
+scene's number until the scene has a better name. Two keep their number
+among the maps' resources: `map_000/`, which the scene table gives the
+title, the World Map, the credits and the debug level room, and
+`map_290/`, which no scene names.
 
 When the party arrives, the grid, the cell pictures, the shapes, the tile
 animation, the blend script and the scene's own part of the map are

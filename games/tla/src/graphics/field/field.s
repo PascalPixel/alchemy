@@ -4,7 +4,7 @@
 @ background tiles 0x140 and 0x160. Overlays 663 and 696 unpack them, copy
 @ each row to its place and draw them with Field_WhirlwindMap less 0xc0.
 @ Overlay 696 shows every tile in background palette 1, and the picture
-@ carries that row of its first map's tileset palette (Tileset_Set100Palette).
+@ carries that row of its first map's tileset palette (Tileset_TrialRoad1Palette).
 	.global Field_WhirlwindTiles
 Field_WhirlwindTiles:
 	.incbin "games/tla/src/graphics/field/whirlwind_tiles.4bpp.lz"
@@ -18,7 +18,7 @@ Field_WhirlwindMap:
 @ Overlays 663, 664 and 6a3 unpack them to background tiles 0 to 63 and draw
 @ them with that map, its tile numbers less 0x200, in background palette 2;
 @ the picture carries that row of the tileset palette of overlay 663's first
-@ map (Tileset_Set40Palette).
+@ map (Tileset_AirsRockInside1Palette).
 	.global Field_LightningTiles
 Field_LightningTiles:
 	.incbin "games/tla/src/graphics/field/lightning_tiles.parts.lz"

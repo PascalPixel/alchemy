@@ -24,24 +24,24 @@ Field_JupiterLighthouseEntrance:
 	.incbin "games/tla/src/map/jupiter_lighthouse_entrance/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseEntrance_ANIMATION:
-	.incbin "games/tla/src/map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseEntrance_SCENE:
 	.incbin "games/tla/src/map/jupiter_lighthouse_entrance/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set103Palette
-Tileset_Set103Palette:
-	.incbin "games/tla/src/graphics/tileset/set_103/palette.gbapal.lz"
-	.global Tileset_Set103TilesA
-Tileset_Set103TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_103/tiles_a.4bpp.mtf"
-	.global Tileset_Set103TilesB
-Tileset_Set103TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_103/tiles_b.4bpp.mtf"
-	.global Tileset_Set103TilesC
-Tileset_Set103TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_103/tiles_c.4bpp.mtf"
-	.global Tileset_Set103TilesD
-Tileset_Set103TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_103/tiles_d.4bpp.mtf"
-	.byte 0x44, 0x16	@ PACKER: left in the buffer by Tileset_Set103TilesC+0xac2
+	.global Tileset_JupiterLighthouseEntrancePalette
+Tileset_JupiterLighthouseEntrancePalette:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_entrance/palette.gbapal.lz"
+	.global Tileset_JupiterLighthouseEntranceTilesA
+Tileset_JupiterLighthouseEntranceTilesA:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_entrance/tiles_a.4bpp.mtf"
+	.global Tileset_JupiterLighthouseEntranceTilesB
+Tileset_JupiterLighthouseEntranceTilesB:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_entrance/tiles_b.4bpp.mtf"
+	.global Tileset_JupiterLighthouseEntranceTilesC
+Tileset_JupiterLighthouseEntranceTilesC:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_entrance/tiles_c.4bpp.mtf"
+	.global Tileset_JupiterLighthouseEntranceTilesD
+Tileset_JupiterLighthouseEntranceTilesD:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_entrance/tiles_d.4bpp.mtf"
+	.byte 0x44, 0x16	@ PACKER: left in the buffer by Tileset_JupiterLighthouseEntranceTilesC+0xac2

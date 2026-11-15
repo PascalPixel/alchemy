@@ -39,7 +39,7 @@ Tileset_GondowanCliffsHideoutPalette:
 	.global Tileset_GondowanCliffsHideoutTilesA
 Tileset_GondowanCliffsHideoutTilesA:
 	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_a.4bpp.mtf"
-	.byte 0x7e, 0xa7	@ PACKER: left in the buffer by Tileset_Set17TilesC+0x1cbe
+	.byte 0x7e, 0xa7	@ PACKER: left in the buffer by Tileset_DehkanPlateau3TilesC+0x1cbe
 	.global Tileset_GondowanCliffsHideoutTilesB
 Tileset_GondowanCliffsHideoutTilesB:
 	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_b.4bpp.mtf"

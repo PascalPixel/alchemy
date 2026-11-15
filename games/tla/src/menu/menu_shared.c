@@ -1040,9 +1040,9 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        Window_SetTilemapEntryFar(window, tile, x, -1, 2);
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
       else
-        Window_SetTilemapEntryFar(window, tile, x, -1, 3);
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_WINDOW);
       tile++;
       x++;
     }

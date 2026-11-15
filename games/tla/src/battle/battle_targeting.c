@@ -2495,7 +2495,7 @@ select_again:
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      request->command = COMMAND_DEFEND2;
+      request->command = COMMAND_TOTAL_DEFENSE;
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
@@ -2512,7 +2512,7 @@ select_again:
     if (retry == 0) {
       switch (request->command) {
       case COMMAND_DEFEND:
-      case COMMAND_DEFEND2:
+      case COMMAND_TOTAL_DEFENSE:
         break;
       default:
         goto done;
@@ -2532,7 +2532,8 @@ select_again:
     command = request->command;
     if (command == COMMAND_FLEE && (u8)unit->challenge != 0)
       goto next_candidate;
-    if (retry != 0 && (command == COMMAND_DEFEND || command == COMMAND_DEFEND2))
+    if (retry != 0 &&
+        (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE))
       goto next_candidate;
 
     if (command == COMMAND_ABILITY) {

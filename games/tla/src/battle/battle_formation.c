@@ -602,7 +602,7 @@ assigned:
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
 /// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
-  u32 kind = gSummon_EntryTable[index].layoutKind;
+  u32 kind = gSummon_EntryTable[index].defeatSound;
 
   if ((s32)kind > 4)
     kind = -1U;
@@ -621,7 +621,7 @@ s32 BattleSprite_GetSprite(s32 index) {
 s32 BattleSprite_GetPalette(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].layoutBits1;
+  return gSummon_EntryTable[index].palette;
 }
 
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
@@ -634,7 +634,7 @@ s32 BattleSprite_IsSmall(s32 index) {
   if ((u32)index > 386)
     return 0;
   result = 0;
-  flags = gSummon_EntryTable[index].spriteBit0;
+  flags = gSummon_EntryTable[index].isSmall;
   if (flags)
     result = 1;
   return result;
@@ -647,7 +647,7 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
 
   if (index > 386)
     return 1;
-  value = gSummon_EntryTable[index].spriteBits1;
+  value = gSummon_EntryTable[index].attackEffect;
   return value ? value : 1;
 }
 
@@ -658,7 +658,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 
   if (index > 386)
     return 0;
-  value = gSummon_EntryTable[index].spriteBits5;
+  value = gSummon_EntryTable[index].attackHop;
   return value ? value : 0;
 }
 
@@ -667,7 +667,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if ((u32)index > 386)
     return 0;
-  return gSummon_EntryTable[index].layoutBit0;
+  return gSummon_EntryTable[index].heavyImpact;
 }
 
 /// Returns the height an animation is drawn at over a class, in pixels, or 0

@@ -392,7 +392,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   } break;
 
   case COMMAND_DEFEND:
-  case COMMAND_DEFEND2:
+  case COMMAND_TOTAL_DEFENSE:
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
     return ACTION_REPORTED;

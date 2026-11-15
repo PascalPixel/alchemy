@@ -390,14 +390,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   }
 }
 
-enum {
-  TILEMAP_ENTRY_PLAIN,
-  TILEMAP_ENTRY_NONE,
-  TILEMAP_ENTRY_PALETTE_14,
-  TILEMAP_ENTRY_PALETTE_15,
-  TILEMAP_ENTRY_PALETTE_1
-};
-
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
@@ -421,14 +413,14 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     return;
 
   switch (mode) {
-  case TILEMAP_ENTRY_PALETTE_15:
-    palette = 0xf000;
+  case TILEMAP_ENTRY_WINDOW:
+    palette = BG_TILE_PALETTE(WINDOW_PALETTE);
     break;
-  case TILEMAP_ENTRY_PALETTE_14:
-    palette = 0xe000;
+  case TILEMAP_ENTRY_HIGHLIGHT:
+    palette = BG_TILE_PALETTE(HIGHLIGHT_PALETTE);
     break;
-  case TILEMAP_ENTRY_PALETTE_1:
-    palette = 0x1000;
+  case TILEMAP_ENTRY_ICONS:
+    palette = BG_TILE_PALETTE(1);
     break;
   default:
     palette = 0;
@@ -439,9 +431,9 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;
-  case TILEMAP_ENTRY_PALETTE_14:
-  case TILEMAP_ENTRY_PALETTE_15:
-  case TILEMAP_ENTRY_PALETTE_1:
+  case TILEMAP_ENTRY_HIGHLIGHT:
+  case TILEMAP_ENTRY_WINDOW:
+  case TILEMAP_ENTRY_ICONS:
     index = ((s16)window->y + y) * TILEMAP_WIDTH + ((s16)window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;

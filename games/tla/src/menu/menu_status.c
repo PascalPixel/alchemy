@@ -928,10 +928,10 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   }
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
-    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
+    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICONS);
+    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICONS);
+    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICONS);
+    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICONS);
   }
   if (hasDjinn)
     Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
@@ -1277,7 +1277,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + FIRST_TILE_ROW, 4);
+                                  row * 2 + FIRST_TILE_ROW,
+                                  TILEMAP_ENTRY_ICONS);
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
                                   WINDOW_PALETTE);
         Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
@@ -1581,7 +1582,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       mask = INVENTORY_ITEM_ID_MASK;
       mask &= entry;
       item = Item_GetDirectFar(mask);
-      if (item->element != 4) {
+      if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   0);
         Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
@@ -1595,9 +1596,9 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       mask = INVENTORY_ITEM_ID_MASK;
       mask &= entry;
       item = Item_GetDirectFar(mask);
-      if (item->element != 4) {
+      if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
-                                  4);
+                                  TILEMAP_ENTRY_ICONS);
         Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
                                   WINDOW_PALETTE);
       } else {

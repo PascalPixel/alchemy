@@ -197,6 +197,18 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
+/// How Window_SetTilemapEntry writes its value: as it is, not at all, or as a
+/// tile in one of three palettes.
+enum TilemapEntryMode {
+  TILEMAP_ENTRY_PLAIN = 0,
+  TILEMAP_ENTRY_NONE = 1,
+  TILEMAP_ENTRY_HIGHLIGHT = 2, ///< in HIGHLIGHT_PALETTE
+  TILEMAP_ENTRY_WINDOW = 3,    ///< in WINDOW_PALETTE
+  /// In palette 1, which the Status screens fill with the basic sprite
+  /// colours for their element icons.
+  TILEMAP_ENTRY_ICONS = 4
+};
+
 /// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
 /// the four elements follow it in order (enum Element).
 #define ELEMENT_ICON_TILE (BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1)

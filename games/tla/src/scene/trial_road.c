@@ -4,47 +4,47 @@
 /// right path through each, the blue chests that open each stage's door for
 /// the weight of the party's equipment, and the battle at the peak; after the
 /// race, the summit's cave and pools and Gasp the Djinni.
-#include "sprite_ids.h"
-#include "flags.h"
 #include "djinn_ids.h"
+#include "fixed_math.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "sprite_ids.h"
+#include "types.h"
 #include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_event.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/map_grid.h"
+#include "field/object.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
 #include "menu/menu.h"
+#include "scene/scene.h"
 #include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/object.h"
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "macros.h"
-#include "system/vector3.h"
-#include "field/field_sequence_event.h"
-#include "window/window.h"
-#include "field/map_grid.h"
+#include "system/dma.h"
 #include "system/field_effect.h"
-#include "field/actor.h"
 #include "system/frame.h"
 #include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "system/serial.h"
-#include "system/task.h"
 #include "system/heap_slots.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
 #include "system/io_reg.h"
-#include "field/field_sprite.h"
-#include "field/field_event.h"
-#include "graphics/vram_tab.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/serial.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/vector3.h"
+#include "window/item_icon.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
 
 #include "shared/trial_road.h"
@@ -727,7 +727,7 @@ s32 TrialRoad_FollowPillar(struct Actor *object) {
   struct Actor *owner = object->watchedActor;
 
   SET_ACTOR_POSITION(object, owner->x.fixed,
-                     owner->y.fixed + (PILLAR_TOP_HEIGHT(object) << 16),
+                     owner->y.fixed + px(PILLAR_TOP_HEIGHT(object)),
                      owner->z.fixed);
   object->groundHeight = owner->groundHeight;
   return 1;
@@ -1265,8 +1265,8 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
 
-    object->x.fixed = object->timer << 16;
-    object->z.fixed = (s16)object->userValue << 16;
+    object->x.fixed = px(object->timer);
+    object->z.fixed = px((s16)object->userValue);
     height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     object->groundHeight = height;
     object->y.fixed = height;
@@ -1410,8 +1410,8 @@ void TrialRoad_DriftWithStream(void) {
   if (leader->velocityZ == 0 && leader->velocityX == 0)
     return;
   options.update = Effect_AdvanceMotionAtLeaderPriority;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 8 / 10;
+  options.startScaleY = Q16_ONE * 8 / 10;
   velocity[1] = 0;
   velocity[2] = Q16_ONE;
   velocity[0] = 0;
@@ -2412,7 +2412,7 @@ void TrialRoad_ReachPeakFirst(void) {
   wait(12);
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
-  FieldActor_SetMoveTargetFixed(object, TrialRoad_MirrorCellX(41) << 16,
+  FieldActor_SetMoveTargetFixed(object, px(TrialRoad_MirrorCellX(41)),
                                 object->y.fixed, px(264));
   FieldActor_WaitForMove(object);
   wait(6);
@@ -2420,7 +2420,7 @@ void TrialRoad_ReachPeakFirst(void) {
   object->velocityY = px(6);
   object->speedLimit = px(3);
   object->acceleration = px(2);
-  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y.fixed,
+  Actor_SetMoveTarget(object, px(TrialRoad_MirrorCellX(37)), object->y.fixed,
                       px(264));
   FieldActor_WaitForMove(object);
   wait(6);
@@ -2896,8 +2896,8 @@ void TrialRoad_UpdateFountains(void) {
         marker->y.fixed = actor->y.fixed - px(16);
       } else {
         s32 wave;
-        mover->bob += 0x1000;
-        wave = Iwram_MulQ16(0x20000, Trig_Sin(mover->bob)) - 0xe0000;
+        mover->bob += TRIG_TURN / 16;
+        wave = Iwram_MulQ16(px(2), Trig_Sin(mover->bob)) - px(14);
         marker->y.fixed = actor->y.fixed + px(mover->height) + wave;
       }
       marker->x.fixed = actor->x.fixed;
@@ -2942,7 +2942,7 @@ void TrialRoad_DrawFountains(void) {
   tile = gVramCacheEntries[base->vramEntry].offset >> 5;
   entry = base->sprites;
   count = 0;
-  rise = -0x20000;
+  rise = -px(2);
   map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
   viewX = view[0] & FIELD_PIXEL_MASK;
@@ -3420,12 +3420,12 @@ void TrialRoad_MoveRival(void) {
   if (state->mode == RIVAL_MIRROR) {
     x = leader->x.fixed;
     z = leader->z.fixed;
-    if ((u32)(z - 0x1000000) > 0x1300000)
-      x = 0x2100000 - (x & FIELD_PIXEL_MASK);
+    if ((u32)(z - px(256)) > px(304))
+      x = px(528) - (x & FIELD_PIXEL_MASK);
     if (gMainRoutineWork.entrance & 1)
-      x += 0x1300000;
+      x += px(304);
     else
-      x -= 0x1300000;
+      x -= px(304);
     if (rival->x.fixed != x || rival->z.fixed != z) {
       dx = x - rival->x.fixed;
       dz = z - rival->z.fixed;
@@ -3463,14 +3463,14 @@ void TrialRoad_MoveRival(void) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
       if (work->originX < rival->x.fixed)
-        x = work->originX + 0xc0000;
+        x = work->originX + px(12);
       else
-        x = work->originX - 0xc0000;
+        x = work->originX - px(12);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
-        z = work->originZ + 0x100000;
+        z = work->originZ + px(16);
         rival->timer = work->rivalTimers[1];
       } else {
-        z = work->originZ - 0x100000;
+        z = work->originZ - px(16);
         rival->timer = work->rivalTimers[0];
       }
       rival->acceleration = px(1) / 4;
@@ -3514,12 +3514,12 @@ void TrialRoad_MoveRival(void) {
     }
     x <<= 16;
     z <<= 16;
-    if (state->mirrored != 0 && (u32)(z - 0x1000000) > 0x1300000)
-      x = 0x2100000 - x;
+    if (state->mirrored != 0 && (u32)(z - px(256)) > px(304))
+      x = px(528) - x;
     if (gMainRoutineWork.entrance & 1)
-      x += 0x1300000;
+      x += px(304);
     else
-      x -= 0x1300000;
+      x -= px(304);
     if (rival->x.fixed != x || rival->z.fixed != z) {
       dx = x - rival->x.fixed;
       dz = z - rival->z.fixed;

@@ -3,51 +3,51 @@
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
-#include "sprite_ids.h"
-#include "resource_ids.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
-#include "system/io_write.h"
 #include "djinn_ids.h"
+#include "edition.h"
+#include "fixed_math.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "window/window.h"
 #include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field/field_event.h"
-#include "system/frame.h"
 #include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_event.h"
+#include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
 #include "game/item.h"
-#include "window/item_icon.h"
-#include "system/task.h"
-#include "system/affine.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
 #include "graphics/vram_tab.h"
-#include "system/io_write_queue.h"
-#include "edition.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/affine.h"
+#include "system/dma.h"
+#include "system/field_effect.h"
+#include "system/frame.h"
 #include "system/heap_release.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
 #include "system/ram_buffer.h"
-#include "scene_ids.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
-#include "field/field_sequence_event.h"
-#include "field/field.h"
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -300,8 +300,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -438,12 +438,12 @@ void ShamanVillage_WaveWhirlwindLines(void) {
 void ShamanVillage_ScrollSandLayer(void) {
   s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
 
-  view[2] -= 0x20000;
+  view[2] -= px(2);
 
-  view[3] += 0x20000;
-  if (view[3] > 0x4100000) {
+  view[3] += px(2);
+  if (view[3] > px(1040)) {
     view[2] = 0;
-    view[3] = 0x4000000;
+    view[3] = px(1024);
   }
 }
 
@@ -463,7 +463,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
   s32 step = WORD_AT(object, 48);
 
   radius >>= 2;
-  radius += 0xc0000;
+  radius += px(12);
   object->x.fixed = WORD_AT(object, 68) +
                     Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z.fixed =
@@ -582,7 +582,7 @@ row:
   FieldCamera_WaitForArrival();
   Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_FRAME);
   Event_PlaySound(SE_RUSH);
-  REG_BLDALPHA = 0xf00;
+  REG_BLDALPHA = BLEND_ALPHA(0, 15);
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
@@ -596,7 +596,7 @@ rise:
     goto rise;
   Event_Wait(60);
   MapGrid_SetShake(3, 3, 1);
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
   REG_BLDCNT = 0x3f42;
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
   MapGrid_CopyCellsTo(64, 64, 2, 83, 16, 16);
@@ -604,7 +604,7 @@ rise:
   Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_VBLANK);
   i = 0;
 swirl:
-  REG_BLDALPHA = ((16 - (i >> 2)) << 8) | (i >> 2);
+  REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
   OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
@@ -619,7 +619,7 @@ swirl:
   Io_Write16(BGCNT_SCREEN_BASE(6) | BGCNT_PRIORITY(2), &REG_BG2CNT);
   Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
           REG_DMA3);
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0xa44;
   i = 0;
 stage:
@@ -635,7 +635,7 @@ frame:
     options.priority = 1;
     options.update = ShamanVillage_SwirlSandGrain;
     v[0] = 0;
-    v[2] = -0x20000;
+    v[2] = -px(2);
     v[1] = 0;
     {
       s32 x = ((Random16() & 127) << 16) + (208 << 15);
@@ -644,7 +644,7 @@ frame:
                         v[2], 0x1020001, &options);
     }
   }
-  REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
+  REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
   OBJ14_BYTE(98) = Random16() & 7;
   wait(1);
   j++;
@@ -652,7 +652,7 @@ frame:
     goto frame;
   Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
           REG_DMA3);
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   i++;
   if (i != 8)
     goto stage;
@@ -668,11 +668,11 @@ frame:
 
     MapGrid_CopyCellsTo(47, 19, 38, 19, width, height);
   }
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0x3f42;
   i = 0;
 clear:
-  REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
+  REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
   OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
@@ -683,7 +683,7 @@ clear:
   REG_BG1CNT |= 1;
   MapGrid_CopyCellsTo(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
-  REG_BLDALPHA = 15;
+  REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   OBJ14_BYTE(98) = 6;
@@ -692,7 +692,7 @@ fade:
   {
     u32 q = i >> 2;
 
-    REG_BLDALPHA = (q << 8) | (16 - q);
+    REG_BLDALPHA = (q << 8) | (BLEND_WEIGHT_MAX - q);
   }
   Event_Wait(1);
   i++;
@@ -1633,12 +1633,12 @@ void ShamanVillage_ShowShamansRod(void) {
   // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   {
-    s32 y = 0x500000;
-    s32 z = 0xf20000;
+    s32 y = px(80);
+    s32 z = px(242);
 
-    DriftScene_SpawnObject(0x740000, y, z, 0xe000);
+    DriftScene_SpawnObject(px(116), y, z, 0xe000);
     Event_Wait(10);
-    DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
+    DriftScene_SpawnObject(px(124), y, z, 0x2000);
     Event_Wait(30);
     FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
@@ -2035,7 +2035,8 @@ commands:
     break;
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend, 0x20000);
 }
 
 /// Starts the mode task: keeps the mode and its parameter, schedules
@@ -2501,7 +2502,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     cell = FIELD_PIXEL(object->x.fixed);
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+    Actor_SetMoveTarget(object, px(8 - cell % 16) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -2730,8 +2731,8 @@ void ShamanVillage_SetUpAromaRoom(void) {
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
   object = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
   object->collisionFlags = ACTOR_NOT_TARGETED;
-  object->scaleX = 0xcccc;
-  object->scaleY = 0xcccc;
+  object->scaleX = Q16_ONE * 8 / 10;
+  object->scaleY = Q16_ONE * 8 / 10;
   Actor_SetSpriteFlags(
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
@@ -2741,7 +2742,7 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;
@@ -2822,7 +2823,7 @@ void ShamanVillage_SetUpVillage(void) {
   Rope_Place(0, 0x204, 19, 20);
   if (Event_GetFlag(FLAG_SCENE_TEMP_05))
     ShamanVillage_GrowVine();
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   FieldTask_AddFrame(ShamanVillage_LayerVillageActors, TASK_PASS_VBLANK);
   FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, TASK_PASS_VBLANK);

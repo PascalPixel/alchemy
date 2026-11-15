@@ -4,46 +4,46 @@
 /// its travelers, the scorpion in its way, the stakes Pound sinks and the sand
 /// slides Sand slips under, and its tables of entrances, placements and
 /// triggers by room.
-#include "sprite_ids.h"
-#include "field/actor_script.h"
-#include "types.h"
-#include "item_ids.h"
-#include "system/io_reg.h"
-#include "flags.h"
-#include "system/task.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/field_event.h"
-#include "scene_ids.h"
-#include "system/frame.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
 #include "djinn_ids.h"
+#include "fixed_math.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
+#include "types.h"
+#include "version.h"
+#include "battle/battle.h"
 #include "field/actor.h"
-#include "field/map_grid.h"
-#include "system/field_effect.h"
-#include "field/field_sequence_event.h"
-#include "field/flag_call.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
+#include "field/actor_script.h"
+#include "field/call.h"
 #include "field/event.h"
 #include "field/event_commands.h"
+#include "field/field.h"
 #include "field/field_effect.h"
-#include "scene/scene.h"
+#include "field/field_event.h"
+#include "field/field_sequence_event.h"
+#include "field/flag_call.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "graphics/resource.h"
-#include "field/call.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/field_effect.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
 #include "system/input.h"
-#include "fixed_math.h"
-#include "version.h"
+#include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "macros.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
 #include "text/msg_ids.h"
 
 #include "../field/actor_set_sprite_priority.c"
@@ -90,11 +90,11 @@
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
 #define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
 
-extern s16 gYampiDesertGuardianRingChestStakes[];
-extern s16 gYampiDesertBlitzStakes[];
-extern s16 gYampiDesertPsynergyStoneStakes[];
-extern s16 gYampiDesertKingScorpionStakes[];
-extern s32 gYampiDesertBlowMaceChestStakes[];
+extern u16 gYampiDesertGuardianRingChestStakes[];
+extern u16 gYampiDesertBlitzStakes[];
+extern u16 gYampiDesertPsynergyStoneStakes[];
+extern u16 gYampiDesertKingScorpionStakes[];
+extern u16 gYampiDesertBlowMaceChestStakes[];
 extern s32 gYampiDesert_RaisedEvent;
 
 /// The triggers the scene raises through gYampiDesert_RaisedEvent while the
@@ -187,6 +187,11 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 /// STAKE(n), and FLAG_STAKE_POUNDED(n) is set once Pound has sunk it.
 #define STAKE(n) (ACTOR_FIRST_PLACED + (n))
 #define FLAG_STAKE_POUNDED(n) (FLAG_SCENE_TEMP_00 + (n))
+/// A row of a room's stake list, as Pound_SinkTarget and Actor_SetCellOpen read
+/// it: the stake, its kind of poses (0, a stake's) and its flag. A list ends at
+/// STAKE_LIST_END.
+#define STAKE_ROW(n) STAKE(n), 0, FLAG_STAKE_POUNDED(n)
+#define STAKE_LIST_END 0xffff
 
 /// The travelers from Madra resting by the oasis (SceneId_YampiDesertOasis), by
 /// the rows of gYampiDesertOasisActorPlacements and
@@ -393,7 +398,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Scoop on the treasure pit's room's treasure pit digs it up.
 void YampiDesert_ScoopTreasurePit(s32 a) {
-  YampiDesert_ReturnHome(a, 64, FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP);
+  YampiDesert_ReturnHome(a, ACTOR_HIDDEN_TREASURE,
+                         FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP);
 }
 
 extern struct Trigger gYampiDesert_Triggers[];
@@ -556,7 +562,7 @@ void YampiDesert_StepOntoStakeTops(void) {
     list = gYampiDesertKingScorpionStakes;
   if (list == NULL)
     return;
-  while (*list != 0xffff) {
+  while (*list != STAKE_LIST_END) {
     struct Actor *object = Actor_GetById(*list);
 
     list += 2;
@@ -597,7 +603,7 @@ void YampiDesert_StepOffStakeTops(void) {
     list = gYampiDesertKingScorpionStakes;
   if (list == NULL)
     return;
-  if (*list == 0xffff)
+  if (*list == STAKE_LIST_END)
     goto done;
 next:
   {
@@ -627,19 +633,19 @@ next:
     }
   }
   list++;
-  if (*list != 0xffff)
+  if (*list != STAKE_LIST_END)
     goto next;
 done:
   GameFlag_Clear(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
 }
 
-/// For each six-byte record (actor, unused, flag) up to an actor of 0xffff:
+/// For each six-byte record (actor, unused, flag) up to STAKE_LIST_END:
 /// when the record's flag is set, the cell under the actor in map layer 2 takes
 /// collision code 255.
 void YampiDesert_BlockPoundedStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
-  for (; *list != 0xffff; list += 3) {
+  for (; *list != STAKE_LIST_END; list += 3) {
     struct Actor *object = Actor_GetById(list[0]);
 
     if (GameFlag_Get(list[2])) {
@@ -650,14 +656,14 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
   }
 }
 
-/// For each six-byte record up to an actor of 0xffff, the cell under the actor
+/// For each six-byte record up to STAKE_LIST_END, the cell under the actor
 /// in map layer 2 takes collision code 232.
 void YampiDesert_UnblockStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
   s32 collisionCode;
 
-  if (*list != 0xffff) {
+  if (*list != STAKE_LIST_END) {
   loop:
     cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
     collisionCode = 232;
@@ -666,7 +672,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
       list += 3;
     } while (0);
     cell->collisionCode = collisionCode;
-    if (*list != 0xffff)
+    if (*list != STAKE_LIST_END)
       goto loop;
   }
 }
@@ -678,13 +684,13 @@ void YampiDesert_CastSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST)
-    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesertGuardianRingChestStakes);
+    YampiDesert_BlockPoundedStakes(gYampiDesertGuardianRingChestStakes);
   else if (scene == SCENE_YAMPI_DESERT_BLITZ)
-    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesertBlitzStakes);
+    YampiDesert_BlockPoundedStakes(gYampiDesertBlitzStakes);
   else if (scene == SCENE_YAMPI_DESERT_PSYNERGY_STONE)
-    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesertPsynergyStoneStakes);
+    YampiDesert_BlockPoundedStakes(gYampiDesertPsynergyStoneStakes);
   else if (scene == SCENE_YAMPI_DESERT_KING_SCORPION)
-    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesertKingScorpionStakes);
+    YampiDesert_BlockPoundedStakes(gYampiDesertKingScorpionStakes);
 }
 
 /// The leader rises out of the sand.
@@ -695,13 +701,13 @@ void YampiDesert_EndSand(void) {
   leader->layer = 0;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST)
-    YampiDesert_UnblockStakes((u16 *)gYampiDesertGuardianRingChestStakes);
+    YampiDesert_UnblockStakes(gYampiDesertGuardianRingChestStakes);
   else if (scene == SCENE_YAMPI_DESERT_BLITZ)
-    YampiDesert_UnblockStakes((u16 *)gYampiDesertBlitzStakes);
+    YampiDesert_UnblockStakes(gYampiDesertBlitzStakes);
   else if (scene == SCENE_YAMPI_DESERT_PSYNERGY_STONE)
-    YampiDesert_UnblockStakes((u16 *)gYampiDesertPsynergyStoneStakes);
+    YampiDesert_UnblockStakes(gYampiDesertPsynergyStoneStakes);
   else if (scene == SCENE_YAMPI_DESERT_KING_SCORPION)
-    YampiDesert_UnblockStakes((u16 *)gYampiDesertKingScorpionStakes);
+    YampiDesert_UnblockStakes(gYampiDesertKingScorpionStakes);
 }
 
 /// The camera follows the buried King Scorpion until it stops roaming.
@@ -748,14 +754,15 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// A burst of sand at (x, y, z), sixteen grains flying outward.
+/// A burst of sand at (x, y, z): seventeen grains thrown east, south, west and
+/// north in turn, each a little off at random.
 void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
   u32 i;
 
   options.update = Effect_AdvanceMotionAtLeaderPriority;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 8 / 10;
+  options.startScaleY = Q16_ONE * 8 / 10;
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
 
@@ -763,10 +770,10 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 14);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((u32)(Random16() << 17) >> 16) + -0x10000;
-    velocity[2] += (u16)Random16() + -0x8000;
+    velocity[0] += ((u32)(Random16() << 17) >> 16) - px(1);
+    velocity[2] += (u16)Random16() - px(1) / 2;
     FieldEffect_Spawn(x, y, z, velocity[0], velocity[1], velocity[2],
-                      0x01000001, &options);
+                      EFFECT_USE_UPDATE | 1, &options);
   }
 }
 
@@ -788,7 +795,7 @@ void YampiDesert_StirScorpion(void) {
   wait(1);
   Actor_SetPosition(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(40);
-  YampiDesert_BurstSand(0x1600000, 0, 0xf80000);
+  YampiDesert_BurstSand(px(352), 0, px(248));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->velocityY = px(6);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION),
@@ -911,22 +918,22 @@ void YampiDesert_TrapKingScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
 rippleShrinks:
-  OBJ(gYampiDesert_SandRipple)->scaleX += -0x147a;
-  OBJ(gYampiDesert_SandRipple)->scaleY += -0x147a;
+  OBJ(gYampiDesert_SandRipple)->scaleX -= Q16_ONE * 8 / 100;
+  OBJ(gYampiDesert_SandRipple)->scaleY -= Q16_ONE * 8 / 100;
   wait(1);
-  if (0xcccb < OBJ(gYampiDesert_SandRipple)->scaleX)
+  if (OBJ(gYampiDesert_SandRipple)->scaleX >= Q16_ONE * 8 / 10)
     goto rippleShrinks;
 rippleGrows:
-  OBJ(gYampiDesert_SandRipple)->scaleX += 0x1999;
-  OBJ(gYampiDesert_SandRipple)->scaleY += 0x1999;
+  OBJ(gYampiDesert_SandRipple)->scaleX += Q16_ONE / 10;
+  OBJ(gYampiDesert_SandRipple)->scaleY += Q16_ONE / 10;
   wait(1);
-  if (0x1cccc >= OBJ(gYampiDesert_SandRipple)->scaleX)
+  if (OBJ(gYampiDesert_SandRipple)->scaleX <= Q16_ONE * 18 / 10)
     goto rippleGrows;
 rippleFades:
-  OBJ(gYampiDesert_SandRipple)->scaleX += -0xa3d;
-  OBJ(gYampiDesert_SandRipple)->scaleY += -0xa3d;
+  OBJ(gYampiDesert_SandRipple)->scaleX -= Q16_ONE * 4 / 100;
+  OBJ(gYampiDesert_SandRipple)->scaleY -= Q16_ONE * 4 / 100;
   wait(1);
-  if (0x3332 < OBJ(gYampiDesert_SandRipple)->scaleX)
+  if (OBJ(gYampiDesert_SandRipple)->scaleX >= Q16_ONE * 2 / 10)
     goto rippleFades;
   Actor_SetPosition(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(20);
@@ -969,8 +976,8 @@ rippleFades:
   Sound_Play(SE_DUST_PUFF);
   i = 0;
 leaderSinks:
-  leader->scaleX += -0x400;
-  leader->scaleY += -0x400;
+  leader->scaleX -= Q16_ONE / 64;
+  leader->scaleY -= Q16_ONE / 64;
   leader->y.fixed += -px(2);
   wait(1);
   i++;
@@ -986,8 +993,8 @@ leaderSinks:
   Sound_Play(SE_DUST_PUFF);
   i = 0;
 scorpionSinks:
-  partner->scaleX += -0x800;
-  partner->scaleY += -0x800;
+  partner->scaleX -= Q16_ONE / 32;
+  partner->scaleY -= Q16_ONE / 32;
   partner->y.fixed += -px(7);
   wait(1);
   i++;
@@ -1133,9 +1140,11 @@ void YampiDesert_SetSlideActorsShown(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
-    YampiDesert_SetActorsHidden(show, 11, 2);
+    YampiDesert_SetActorsHidden(show, ACTOR_WHIP_CHEST_ROOM_FIRST_SLIDE, 2);
   else if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
-    YampiDesert_SetActorsHidden(show, 9, 7);
+    YampiDesert_SetActorsHidden(show, ACTOR_MACE_CHEST_ROOM_FIRST_SLIDE,
+                                ACTOR_MACE_CHEST_ROOM_LAST_SLIDE -
+                                    ACTOR_MACE_CHEST_ROOM_FIRST_SLIDE + 1);
 }
 
 /// Shows the sand slide's actors.
@@ -1193,8 +1202,10 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
                       FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ELDER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
+  /* FAKEMATCH(temporary): the leader's id read through a word pointer into
+   * the work. */
   owner = (s32 *)&gMainRoutineWork;
-  owner += 133;
+  owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
   FieldActor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(*owner, FACING_WEST, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
@@ -1211,12 +1222,12 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_Jump(ACTOR_MAYOR, 4, 40);
   Actor_SetAnimationAndWait(ACTOR_ELDER, 3);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
-  Actor_WatchAndSetScript(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 14);
-  Actor_WatchAndSetScript(ACTOR_TRAVELER_SEEKING_EVIDENCE, 14);
-  Actor_WatchAndSetScript(ACTOR_DIZZY_TRAVELER, 14);
-  Actor_WatchAndSetScript(ACTOR_PARCHED_TRAVELER, 14);
-  Actor_WatchAndSetScript(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 14);
-  Actor_WatchAndSetScript(ACTOR_ELDER, 14);
+  Actor_WatchAndSetScript(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_TRAVELER_SEEKING_EVIDENCE, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_DIZZY_TRAVELER, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_PARCHED_TRAVELER, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_ELDER, ACTOR_MAYOR);
   Actor_SetSpeed(ACTOR_ELDER, 1);
   Actor_SetMovementTypeById(ACTOR_MAYOR, (s32)gYampiDesert_FinderRunsAhead);
   FieldCamera_SetSpeed(0.8);
@@ -1272,7 +1283,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetSpeed(ACTOR_PARCHED_TRAVELER, 1.6);
   Actor_SetSpeed(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 1.6);
   Actor_SetSpeed(ACTOR_ELDER, 1.6);
-  Actor_WatchAndSetScript(*owner, 13);
+  Actor_WatchAndSetScript(*owner, ACTOR_ELDER);
   {
     s32 path = (s32)gYampiDesert_TravelersFollow;
 
@@ -1476,14 +1487,14 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
     if (!(gInput.held & KEYS_DPAD)) {
       s32 z = FIELD_PIXEL(object->z.fixed);
 
-      object->z.fixed += ((8 - z % 16) << 16) >> 3;
+      object->z.fixed += px(8 - z % 16) >> 3;
     }
   } else {
     object->z.fixed += dz;
     if (!(gInput.held & KEYS_DPAD)) {
       s32 x = FIELD_PIXEL(object->x.fixed);
 
-      object->x.fixed += ((8 - x % 16) << 16) >> 3;
+      object->x.fixed += px(8 - x % 16) >> 3;
     }
   }
 }
@@ -1731,8 +1742,8 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   object = Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   *followed = (struct Actor *)object;
-  object->scaleX = 0x14ccc;
-  object->scaleY = 0x14ccc;
+  object->scaleX = Q16_ONE * 13 / 10;
+  object->scaleY = Q16_ONE * 13 / 10;
   Actor_DisableById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
   (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 3);
@@ -1833,8 +1844,8 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   object = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   *followed = (struct Actor *)object;
-  object->scaleX = 0x14ccc;
-  object->scaleY = 0x14ccc;
+  object->scaleX = Q16_ONE * 13 / 10;
+  object->scaleY = Q16_ONE * 13 / 10;
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
@@ -1950,8 +1961,8 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  object->scaleX = 0x14ccc;
-  object->scaleY = 0x14ccc;
+  object->scaleX = Q16_ONE * 13 / 10;
+  object->scaleY = Q16_ONE * 13 / 10;
   *followed = (struct Actor *)object;
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
@@ -1999,14 +2010,14 @@ void YampiDesert_ScorpionUsesScoop(void) {
 
 #include "shared/actor_hide.h"
 
-/// Runs YampiDesert_HideSlideActors unless flag 0x20d is set, setting it when
-/// the party keeps its place.
+/// Runs YampiDesert_HideSlideActors unless FLAG_YAMPI_DESERT_SLIDE_ACTORS_SHOWN
+/// is set, setting it when the party keeps its place.
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (GameFlag_Get(0x20d) == 0)
+    if (GameFlag_Get(FLAG_YAMPI_DESERT_SLIDE_ACTORS_SHOWN) == 0)
       YampiDesert_HideSlideActors();
   } else {
-    GameFlag_Set(0x20d);
+    GameFlag_Set(FLAG_YAMPI_DESERT_SLIDE_ACTORS_SHOWN);
   }
 }
 
@@ -2143,7 +2154,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Actor_SetAnimationById(ACTOR_KING_SCORPION, 3);
   FieldEvent_Wait(20);
   actor8->velocityY = Q16_ONE * 8;
-  actor8->gravity = 0xe666;
+  actor8->gravity = px(9) / 10;
   Actor_SetSpeed(ACTOR_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -2362,8 +2373,8 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
   if (object != NULL)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
   object = Actor_GetById(ACTOR_SIGNPOST);
-  object->scaleX = 0xb333;
-  object->scaleY = 0xb333;
+  object->scaleX = Q16_ONE * 7 / 10;
+  object->scaleY = Q16_ONE * 7 / 10;
   object->radius = 8;
   YampiDesert_SetUpTrainersWhipChestSlideActors();
   Task_Add(YampiDesert_UpdateSandSlide, TASK_PASS_VBLANK);
@@ -2440,7 +2451,7 @@ void YampiDesert_SetUpBlowMaceChest(void) {
 void YampiDesert_PlaceStakes(const void *script) {
   const u16 *entry;
 
-  if (*(const u16 *)script == 0xffff)
+  if (*(const u16 *)script == STAKE_LIST_END)
     return;
   entry = script;
 loop:
@@ -2455,7 +2466,7 @@ loop:
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
   }
-  if (entry[0] != 0xffff)
+  if (entry[0] != STAKE_LIST_END)
     goto loop;
 }
 #undef WALK
@@ -2563,7 +2574,7 @@ void YampiDesert_UpdateRisingSand(void) {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
+      wave = Iwram_MulQ16(px(2), Trig_Sin(entry->phase)) - px(14);
       rider->y.fixed = object->y.fixed + px(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
@@ -2590,7 +2601,7 @@ void YampiDesert_DrawRisingSand(void) {
   u32 *p;
 
   viewX = view[0];
-  viewX &= 0xffff0000;
+  viewX &= FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
   for (i = 15; i >= 0; i--, entry++) {
@@ -2634,9 +2645,7 @@ void YampiDesert_DrawRisingSand(void) {
     z = object->z.fixed - viewZ - originY;
     sy = z - y;
     x = FIELD_PIXEL(x) - 8;
-    sy = ((sy + Math_MulQ16(-0x20000, Trig_Sin(entry->phase)) + -0x20000) >>
-          16) -
-         4;
+    sy = ((sy + Math_MulQ16(-px(2), Trig_Sin(entry->phase)) - px(2)) >> 16) - 4;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
@@ -2818,32 +2827,27 @@ LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
     1, 17,
 };
 
-LATE_DATA s16 gYampiDesertGuardianRingChestStakes[] = {
-    8, 0, 512, 9, 0, 513, 10, 0,
-    514, 11, 0, 515, 12, 0, 516, 13,
-    0, 517, -1,
+LATE_DATA u16 gYampiDesertGuardianRingChestStakes[] = {
+    STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3),
+    STAKE_ROW(4), STAKE_ROW(5), STAKE_LIST_END,
 };
 
-LATE_DATA s16 gYampiDesertBlitzStakes[] = {
-    8, 0, 512, 9, 0, 513, 10, 0,
-    514, 11, 0, 515, 12, 0, 516, 13,
-    0, 517, 14, 0, 518, 15, 0, 519,
-    16, 0, 520, 17, 0, 521, 18, 0,
-    522, -1,
+LATE_DATA u16 gYampiDesertBlitzStakes[] = {
+    STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3),
+    STAKE_ROW(4), STAKE_ROW(5), STAKE_ROW(6), STAKE_ROW(7),
+    STAKE_ROW(8), STAKE_ROW(9), STAKE_ROW(10), STAKE_LIST_END,
 };
 
-LATE_DATA s16 gYampiDesertPsynergyStoneStakes[] = {
-    8, 0, 512, 9, 0, 513, 10, 0,
-    514, 11, 0, 515, -1,
+LATE_DATA u16 gYampiDesertPsynergyStoneStakes[] = {
+    STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3), STAKE_LIST_END,
 };
 
-LATE_DATA s16 gYampiDesertKingScorpionStakes[] = {
-    8, 0, 512, 9, 0, 513, 10, 0,
-    514, -1,
+LATE_DATA u16 gYampiDesertKingScorpionStakes[] = {
+    STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_LIST_END,
 };
 
-LATE_DATA s32 gYampiDesertBlowMaceChestStakes[] = {
-    8, -0xfe00,
+LATE_DATA ALIGNED(4) u16 gYampiDesertBlowMaceChestStakes[] = {
+    STAKE_ROW(0), STAKE_LIST_END,
 };
 
 LATE_DATA s32 gYampiDesert_RaisedEvent = 0;

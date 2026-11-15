@@ -3,30 +3,30 @@
 /// ground, vents whose gusts throw it about, puddles Douse fills and Frost
 /// freezes, lava rocks to cool and push, drops falling in the dark rooms, the
 /// Mad Plant in its bush and Flower, the Venus Djinni.
-#include "system/task.h"
+#include "djinn_ids.h"
+#include "fixed_math.h"
 #include "flags.h"
 #include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/scene_tables.h"
-#include "system/iwram_call.h"
-#include "field/field_sprite.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "system/vector3.h"
 #include "version.h"
-#include "field/field_sequence_event.h"
-#include "field/call.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "scene/scene.h"
-#include "scene/lemurian_ship.h"
+#include "field/actor.h"
 #include "field/actor_script.h"
-#include "fixed_math.h"
+#include "field/call.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/scene_tables.h"
+#include "graphics/graphics.h"
+#include "scene/lemurian_ship.h"
+#include "scene/scene.h"
+#include "system/frame.h"
 #include "system/io_write.h"
-#include "djinn_ids.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/vector3.h"
 
 void Rope_Initialize(void);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
@@ -517,13 +517,13 @@ sink:
     s32 limit = 0x10001;
 
     if (slip >= limit)
-      slip = 0x10000;
+      slip = px(1);
     limit = -0x10001;
     if (slip <= limit)
-      slip = -0x10000;
+      slip = -px(1);
   }
   leader->x.fixed -= slip;
-  leader->facing += 0x1000;
+  leader->facing += TRIG_TURN / 16;
   System_Wait(1);
 test:
   position.x = leader->x.fixed;
@@ -550,7 +550,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   FieldCamera_WaitForArrival();
   Actor_SetAttachedEffect(ACTOR_FLOWER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  speed = 0x8000;
+  speed = px(1) / 2;
   i = 2;
   do {
     object->velocityY = px(2);
@@ -817,7 +817,7 @@ void TaopoSwamp_TremorPillar(void) {
   rock->update = TaopoSwamp_SpinBoulder;
   Actor_SetSpeed(ACTOR_TREMOR_BOULDER, 2);
   Actor_SetDestination(ACTOR_TREMOR_BOULDER, 492, 246);
-  rock->gravity = 0xcccc;
+  rock->gravity = px(4) / 5;
   rock->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   rock->layer = 0;
   FieldActor_WaitForMoveById(ACTOR_TREMOR_BOULDER);

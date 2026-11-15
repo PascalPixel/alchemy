@@ -1,49 +1,49 @@
 /// @file
-#include "flags.h"
 #include "djinn_ids.h"
-#include "sprite_ids.h"
+#include "fixed_math.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #include "version.h"
-#include "field/map_grid.h"
-#include "field/event_inline.h"
 #include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/frame.h"
-#include "system/iwram_call.h"
 #include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/call.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/field_coordinate.h"
-#include "game/owner_state.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/call.h"
-#include "system/task.h"
-#include "fixed_math.h"
-#include "system/input.h"
-#include "window/item_icon.h"
-#include "field/event_commands.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "game/owner_state.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
+#include "menu/menu.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
-#include "window/window.h"
-#include "scene_ids.h"
+#include "sound/sound.h"
+#include "system/bg_scroll.h"
+#include "system/frame.h"
+#include "system/input.h"
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
-#include "graphics/resource.h"
-#include "system/bg_scroll.h"
-#include "field/sprite.h"
-#include "graphics/vram_tab.h"
-#include "macros.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
-#include "field/actor_script.h"
 
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void WorldMap_LoadTidalWave(void);
@@ -309,7 +309,7 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = px(10120);
-    y = Math_MulQ16(Math_Sin(*angle << 3), 0x40000);
+    y = Math_MulQ16(Math_Sin(*angle << 3), px(4));
     z = px(8356);
 
     rise = px(16);
@@ -794,7 +794,8 @@ void WorldMap_GazeIntoPond(void) {
 void WorldMap_PickUpGoldenBoots(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, 0x198, -1) == 0)
+  if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS,
+             -1) == 0)
     Event_ClearFlag(0xa77);
   Event_End();
 }
@@ -2479,7 +2480,8 @@ void WorldMap_LoadTidalWave(void) {
   IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
                       DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
   IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f41);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1010);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA,
+                       BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX));
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, 0xc200, 0x20000);
@@ -2504,7 +2506,7 @@ void WorldMap_LoadTidalWave(void) {
   mode = 0;
   PaletteFade_ApplyTarget(RGB_WHITE, mode);
   PaletteFade_Interpolate(1);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1000);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);

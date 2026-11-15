@@ -12,37 +12,37 @@
 ///   (VenusLighthouseEntrance_RuffianWaitsForBackup). A lost battle in the
 ///   prologue wakes them by the door, with Alex come back for them
 ///   (VenusLighthouseEntrance_WakeUp).
-#include "system/task.h"
+#include "fixed_math.h"
+#include "scene_ids.h"
+#include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
 #include "field/actor.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "gamepak/far_call/system.h"
-#include "window/item_icon.h"
-#include "field/event_commands.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "scene_ids.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "field/call.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "field/field_sprite.h"
-#include "field/effect_sprite.h"
-#include "text/msg_ids.h"
 #include "field/actor_script.h"
-#include "fixed_math.h"
+#include "field/call.h"
+#include "field/effect_sprite.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "gamepak/far_call/system.h"
+#include "graphics/graphics.h"
+#include "graphics/resource.h"
+#include "menu/menu.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "window/item_icon.h"
+#include "text/msg_ids.h"
 
 void Field_StartColorTransition(s32 frames, s32 color);
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id);
@@ -1396,7 +1396,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + px(y) + 0x80000;
+      state->y = work->y + px(y) + px(8);
       state->z = work->z;
       sprite = &work->sprites[i];
       state->frame++;

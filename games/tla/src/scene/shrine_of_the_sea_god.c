@@ -12,38 +12,38 @@
 /// and the fallen pillars (the pillar hole and the pillars), the party reaches
 /// the island, whose Sea God's Tear raises the water to the statue room, and
 /// climbs the ladders to the Right Prong.
-#include "field/actor_script.h"
-#include "fixed_math.h"
-#include "types.h"
-#include "item_ids.h"
-#include "field/emote.h"
-#include "field/speaker.h"
-#include "flags.h"
 #include "djinn_ids.h"
+#include "fixed_math.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "scene_ids.h"
 #include "sounds.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "scene/shrine_of_the_sea_god.h"
+#include "types.h"
 #include "battle/battle.h"
+#include "field/actor_script.h"
+#include "field/call.h"
+#include "field/emote.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_sequence_event.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/math_table.h"
 #include "menu/menu.h"
+#include "scene/scene.h"
+#include "scene/shrine_of_the_sea_god.h"
 #include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "scene_ids.h"
+#include "system/frame.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
-#include "field/call.h"
-#include "macros.h"
-#include "system/frame.h"
-#include "field/field_effect.h"
-#include "field/field.h"
+#include "system/main_routine_work.h"
+#include "system/math_table.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 
 void Rope_Initialize(void);
@@ -249,7 +249,7 @@ void ShrineOfTheSeaGod_FightBreath(void) {
   if ((u8)(*state - 4) > 1)
     return;
   y = leader->y.fixed;
-  if (y > 0xc0000) {
+  if (y > px(12)) {
     GameFlag_Set(FLAG_FIGHTING_BREATH);
     if (*state == 4)
       GameFlag_Set(FLAG_BREATH_TRAPPED_EAST);
@@ -415,14 +415,14 @@ void ShrineOfTheSeaGod_LiftWithWater(void) {
   struct Actor *secondLog = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
   struct Actor *thirdLog = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
 
-  water->offsetY += -0x8000;
-  ground->offsetY += 0x8000;
-  groundTop->offsetY += 0x8000;
-  leader->z.fixed += -0x8000;
-  camera->y.fixed += -0x8000;
-  firstLog->z.fixed += -0x8000;
-  secondLog->z.fixed += -0x8000;
-  thirdLog->z.fixed += -0x8000;
+  water->offsetY -= px(1) / 2;
+  ground->offsetY += px(1) / 2;
+  groundTop->offsetY += px(1) / 2;
+  leader->z.fixed -= px(1) / 2;
+  camera->y.fixed -= px(1) / 2;
+  firstLog->z.fixed -= px(1) / 2;
+  secondLog->z.fixed -= px(1) / 2;
+  thirdLog->z.fixed -= px(1) / 2;
   wait(4);
 }
 
@@ -530,14 +530,14 @@ void ShrineOfTheSeaGod_LowerWithWater(void) {
   struct Actor *secondLog = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
   struct Actor *thirdLog = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
 
-  water->offsetY += 0x8000;
-  ground->offsetY += -0x8000;
-  groundTop->offsetY += -0x8000;
-  leader->z.fixed += 0x8000;
-  camera->y.fixed += 0x8000;
-  firstLog->z.fixed += 0x8000;
-  secondLog->z.fixed += 0x8000;
-  thirdLog->z.fixed += 0x8000;
+  water->offsetY += px(1) / 2;
+  ground->offsetY -= px(1) / 2;
+  groundTop->offsetY -= px(1) / 2;
+  leader->z.fixed += px(1) / 2;
+  camera->y.fixed += px(1) / 2;
+  firstLog->z.fixed += px(1) / 2;
+  secondLog->z.fixed += px(1) / 2;
+  thirdLog->z.fixed += px(1) / 2;
   wait(4);
 }
 
@@ -740,8 +740,8 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
   MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   i = 0;
 loop:
-  object->y.fixed -= 0x8000;
-  object->groundHeight -= 0x8000;
+  object->y.fixed -= px(1) / 2;
+  object->groundHeight -= px(1) / 2;
   layer->offsetY -= px(1) / 2;
   wait(2);
   if (i == 90) {
@@ -871,9 +871,9 @@ void ShrineOfTheSeaGod_LayerPuddles(void) {
   s32 z;
 
   y = leader->y.fixed;
-  if (y < 0x100000) {
+  if (y < px(16)) {
     z = leader->z.fixed;
-    if (z < 0x1280000) {
+    if (z < px(296)) {
       Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 1);
       Actor_SetSpritePriority(ACTOR_SECOND_PUDDLE, 1);
       Actor_SetSpritePriority(ACTOR_THIRD_PUDDLE, 2);
@@ -1069,7 +1069,7 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
                       leader->z.fixed, velocity[0], velocity[1], velocity[2],
                       0x01090001, &options);
   }
-  leader->velocityY = 0x40000;
+  leader->velocityY = px(4);
   wait(2);
   MapGrid_SetShakeFixed(-1, -1, 9 * Q16_ONE / 10);
   Task_Remove(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader);
@@ -2187,7 +2187,7 @@ void ShrineOfTheSeaGod_SetUpFlatProp(s32 id) {
   Actor_DisableById(id);
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
-  object->scaleX = 0xcccc;
+  object->scaleX = Q16_ONE * 8 / 10;
   object->scaleY = 0xe666;
 }
 

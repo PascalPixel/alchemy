@@ -166,7 +166,11 @@ void Window_CloseAll(void) {
   }
 }
 
-/// Loads frame `offset` of the flash border picture
+/// The flash border's frames: eight tiles each, shown in tiles 8 to 15.
+#define FLASH_FRAME_BYTES (8 * TILE_SIZE_4BPP)
+#define FLASH_FRAME_TILES (BG_CHAR_BLOCK(0) + 8 * TILE_SIZE_4BPP)
+
+/// Loads the flash border frame `offset` bytes into its picture
 /// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
 /// rectangle with it.
 void Window_ShowFlashFrame(struct Window **window, s32 offset) {
@@ -178,7 +182,8 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   s32 width = rect->width;
   s32 height = rect->height;
 
-  Dma_Set(source, (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(source, (void *)FLASH_FRAME_TILES,
+          DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4), REG_DMA3);
   Window_DrawFlashBorder(x, y, width, height);
 }
 
@@ -189,15 +194,15 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
 void Window_StepSwellEffect(struct UiChannelSlot *window) {
   if (window->work->animation == WINDOW_ANIMATION_SWELL) {
     if (window->countdown == 10)
-      Window_ShowFlashFrame(&window->work, 0x300);
+      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
     else if (window->countdown == 9)
-      Window_ShowFlashFrame(&window->work, 0x200);
+      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
     else if (window->countdown == 8)
-      Window_ShowFlashFrame(&window->work, 0x100);
+      Window_ShowFlashFrame(&window->work, 1 * FLASH_FRAME_BYTES);
     else if (window->countdown == 6)
-      Window_ShowFlashFrame(&window->work, 0x200);
+      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
     else if (window->countdown == 4)
-      Window_ShowFlashFrame(&window->work, 0x300);
+      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
     if (window->countdown == 2) {
       struct Window *rect = window->work;
 
@@ -206,7 +211,8 @@ void Window_StepSwellEffect(struct UiChannelSlot *window) {
     window->countdown--;
     if (window->countdown == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
-              (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
+              (void *)FLASH_FRAME_TILES, DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4),
+              REG_DMA3);
       window->work->animation = 0;
     }
   }
@@ -408,6 +414,10 @@ void Message_DecodeAppend(s32 message) {
   Message_Decode(message, 1);
 }
 
+/// The story crawl's canvas, one byte a pixel: a line of 24 tiles of the
+/// credits' tile ring.
+#define CRAWL_CANVAS_WIDTH 192
+
 // The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen of
 // the European fonts' fifteen.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -431,7 +441,7 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
       bits <<= 1;
       p++;
     }
-    dst += 192;
+    dst += CRAWL_CANVAS_WIDTH;
   }
 }
 
@@ -465,13 +475,14 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
     width = KANJI_WIDTH;
     rows = (const u16 *)(gFont_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
   }
-  canvas += x + row * 192;
-  Text_PlotGlyphRows((u16 *)rows, canvas + 3 * 192 + 1, 1);
+  canvas += x + row * CRAWL_CANVAS_WIDTH;
+  Text_PlotGlyphRows((u16 *)rows, canvas + 3 * CRAWL_CANVAS_WIDTH + 1, 1);
   if (mark != NULL)
-    Text_PlotGlyphRows((u16 *)mark, canvas + 192 + 8, 1);
-  Text_PlotGlyphRows((u16 *)rows, canvas + 2 * 192, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + CRAWL_CANVAS_WIDTH + 8, 1);
+  Text_PlotGlyphRows((u16 *)rows, canvas + 2 * CRAWL_CANVAS_WIDTH,
+                     TEXT_COLOR_WHITE);
   if (mark != NULL) {
-    Text_PlotGlyphRows((u16 *)mark, canvas + 7, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + 7, TEXT_COLOR_WHITE);
     width++;
   }
   return width;
@@ -480,13 +491,14 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
 s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
   u16 *glyph = (u16 *)((u8 *)gFont_Glyphs + (((ch & 0xff) - 32) << 5));
   s32 width = *glyph;
-  u8 *dst = canvas + (x + row * 192);
+  u8 *dst = canvas + (x + row * CRAWL_CANVAS_WIDTH);
   u8 *rows;
 
   glyph++;
-  rows = dst + 3 * 192 + 1;
+  rows = dst + 3 * CRAWL_CANVAS_WIDTH + 1;
   Text_PlotGlyphRows(glyph, rows, 1);
-  Text_PlotGlyphRows(glyph, rows = dst + 2 * 192, 15);
+  Text_PlotGlyphRows(glyph, rows = dst + 2 * CRAWL_CANVAS_WIDTH,
+                     TEXT_COLOR_WHITE);
   return width;
 }
 #endif
@@ -525,38 +537,38 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
     return 1;
 #endif
   }
-  x = (192 - width) / 2;
+  x = (CRAWL_CANVAS_WIDTH - width) / 2;
   code = *text++;
   while (code != 0) {
     if (code <= 30) {
       switch (code) {
-      case 8:
+      case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
-      case 9:
+      case TEXT_OUTLINE:
         work->outline = *text;
         text++;
         break;
-      case 10:
+      case TEXT_LINE_SPACING:
         work->lineSpacing = *text;
         text++;
         break;
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
       skip:
         text++;
         break;
-      case 7:
+      case TEXT_COLORS_RESET:
         Text_ResetStyle();
         break;
-      case 3:
+      case TEXT_NEWLINE:
         x = 0;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case 15:
+      case TEXT_WINDOW_STATE:
       case 28:
         text++;
         goto skip;

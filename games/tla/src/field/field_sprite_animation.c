@@ -260,49 +260,51 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
 
 /// Removes the sprite animation handle from a sprite and clears it, trimming
 /// the sprite's animation count when no later sprite animation remains.
-void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
-  s32 count;
-  u32 slot;
+void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
+  s32 laterLayers;
+  u32 index;
   u32 i;
 
-  if (state != NULL && handle != 0) {
-    SpriteAnimation_Clear((void *)handle);
-    for (slot = 0; slot <= 3; slot++) {
-      if (handle == state->slots[slot])
+  if (sprite != NULL && layer != 0) {
+    SpriteAnimation_Clear((struct SpriteAnimation *)layer);
+    // Locate the handle, then trim only empty slots at the end of the list.
+    for (index = 0; index < ANIM_LAYER_COUNT; index++) {
+      if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (slot != 4) {
-      state->slots[slot] = 0;
-      count = 0;
-      for (i = slot + 1; i <= 3; i++) {
-        if (state->slots[i] != 0)
-          count++;
+    if (index != ANIM_LAYER_COUNT) {
+      sprite->entries[index] = 0;
+      laterLayers = 0;
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+        if (sprite->entries[i] != 0)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = slot;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
 /// Removes and clears a sprite's animation number no (0-3), trimming the
 /// sprite's animation count when no later sprite animation remains.
-void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
-  s32 slot;
-  s32 count;
+void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
+  struct SpriteAnimation *layer;
+  s32 laterLayers;
   u32 i;
 
-  if (state != NULL && no <= 3) {
-    slot = state->slots[no];
-    if (slot != 0) {
-      SpriteAnimation_Clear((void *)slot);
-      state->slots[no] = 0;
-      count = 0;
-      for (i = no + 1; i <= 3; i++) {
-        if (state->slots[i] != 0)
-          count++;
+  if (sprite != NULL && index < ANIM_LAYER_COUNT) {
+    layer = sprite->entries[index];
+    if (layer != NULL) {
+      SpriteAnimation_Clear(layer);
+      sprite->entries[index] = NULL;
+      laterLayers = 0;
+      // Interior holes stay available; only trailing holes reduce the count.
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+        if (sprite->entries[i] != NULL)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = no;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }

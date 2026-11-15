@@ -416,9 +416,9 @@ again:
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
-          goto hit2;
+          goto blocked;
       } else if (entry->y.fixed - position[1] <= 0x7ffff) {
-      hit2:
+      blocked:
         canJump = 0;
         break;
       }

@@ -421,9 +421,9 @@ UNUSED void ScreenTransition_SuspendCallbacks(void) {
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
 /// clears it.
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
-  struct ScreenTransitionState *state =
-      HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+  struct ScreenTransitionState *state;
 
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   return state;
 }

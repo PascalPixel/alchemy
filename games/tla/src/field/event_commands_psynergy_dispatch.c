@@ -233,15 +233,13 @@ void FieldPsynergy_Dispatch(void) {
 /// Finishes the current field Psynergy when it is Mind Read: ends it and lets
 /// its target move again, unless the target is the actor kept stopped.
 void FieldPsynergy_FinishMindRead(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
 
-  if (scene->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
-    struct PartyPauseView *party;
-
+  if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    party = (struct PartyPauseView *)&gMainRoutineWork;
-    if (party->pausedObject != scene->secondActorId)
-      ((struct Actor *)scene->child)->paused = 0;
+    if (gMainRoutineWork.haltedActor != effectWork->secondActorId) {
+      ((struct Actor *)effectWork->child)->paused = 0;
+    }
   }
 }
 

@@ -620,24 +620,27 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 /// stopping on arrival, with a random value and z lifting the sprite.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
-  s32 unit;
-  struct Sprite *object;
-  volatile u32 zero;
+  struct Sprite *animation;
 
-  Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct Sprite *)Sprite_CreateFar(kind);
-  effect->object = object;
-  if (object != NULL)
-    object->image.priority = 0;
+  Dma_Fill32(0, effect, sizeof *effect);
+  animation = Sprite_CreateFar(kind);
+  effect->object = animation;
+  if (animation != NULL)
+    animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
-  unit = 0x10000;
+  effect->scaleX = Q16_ONE;
   effect->maxSpeed = px(2);
-  effect->acceleration = effect->scaleY = effect->scaleX = unit;
+  effect->scaleY = Q16_ONE;
+  effect->acceleration = Q16_ONE;
   effect->originX = x;
   effect->originZ = z;
-  // The sprite flags (nextFrame), through a byte pointer: as a field of
-  // struct Sprite the origin stores move after it.
-  ((s8 *)effect->object)[26] = 0;
+  // BUG: Sprite_CreateFar can return NULL, but this and the animation
+  // setup below still require a sprite. Callers also immediately use it, so
+  // guarding this store alone would not establish allocation-failure recovery.
+  {
+    struct Sprite *sprite = effect->object;
+    sprite->flags = 0;
+  }
   effect->stopAtTarget = 1;
   effect->limitTurnStep = 1;
   effect->updateMotion = 1;
@@ -649,8 +652,8 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 }
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
-void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
-  if (slot->object)
-    Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);
-  Dma_Fill32(0, slot, sizeof *slot);
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
+  if (effect->object)
+    Sprite_DestroyFar(effect->object);
+  Dma_Fill32(0, effect, sizeof *effect);
 }

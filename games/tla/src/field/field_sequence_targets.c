@@ -195,20 +195,20 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
 
 /// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
 /// frames later, shows itemId in front of actor with sparkles.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
-                                               s32 mode) {
-  s32 object;
-  s32 result;
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
+                                               s32 itemId) {
+  void *targetActor;
+  s32 emitter;
 
-  object = (s32)Actor_GetById(target);
-  result = 0;
-  if (object != 0) {
+  targetActor = Actor_GetById(target);
+  emitter = 0;
+  if (targetActor != 0) {
     Sound_PlayFar(SE_CHEST_OPEN);
-    Actor_SelectAnimationFar(object, 4);
+    Actor_SelectAnimationFar(targetActor, 4);
     wait(12);
-    result = (s32)ItemDisplay_ShowItemInFront(effect, mode);
+    emitter = (s32)ItemDisplay_ShowItemInFront(actorId, itemId);
   }
-  return result;
+  return emitter;
 }
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

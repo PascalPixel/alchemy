@@ -12,62 +12,68 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
-/// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
-/// circle and then close on the current owner, which turns and takes mode 28.
-void Djinn_RunJupiterJoinEffect(s32 id) {
+/// A Jupiter Djinni joins the party: it bounces three times, spins and leaps
+/// away, leaving 24 light particles that circle and then close on the leader,
+/// who turns to the camera and raises its arms.
+void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
-  struct MotionObject *object;
-  struct FieldEffectWork *scene;
-  struct FieldParticle *slot;
+  struct Actor *djinni;
+  struct FieldEffectWork *effectWork;
+  struct FieldParticle *effect;
   s32 scale;
-  s32 count;
+  s32 remainingParticles;
 
-  object = Actor_GetById(id);
-  if (object == NULL)
+  djinni = Actor_GetById(djinniId);
+  if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
-  scene = Ram_HeapSlots->fieldEffectWork;
-  Shop_SaveAndTintFieldPaletteFar(0x20118c);
+  effectWork = Ram_HeapSlots->fieldEffectWork;
+  // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
-  Actor_RunRepeatedMotion(id, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_MID);
-  Actor_RunRepeatedMotion(id, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Actor_RunRepeatedMotion(id, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   wait(20);
 
   // Spin, then leap high.
   Sound_PlayFar(SE_SPIN);
-  object->update = BattleEffect_AdvanceSpinAngle;
+  djinni->update = (void (*)(void))BattleEffect_AdvanceSpinAngle;
   wait(40);
   Sound_PlayFar(SE_HIGH_JUMP);
-  Actor_Jump(id, 12, 22);
+  Actor_Jump(djinniId, 12, 22);
 
-  // 24 sparks from the object's place on screen, one a frame.
-  SET_POSITION(&position, object->x, object->y, object->z);
+  // 24 light particles from where the Djinni is on screen.
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
-  Actor_ReleaseFar(object);
+  Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
-  slot = scene->particles;
-  count = 23;
+  effect = effectWork->particles;
+  remainingParticles = 23;
+  // One a frame, each with a random sprite param of 0 to 6.
   do {
-    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
-    FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(slot->object, Random_Below(7));
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
+    FieldParticle_SetActorMode(effect, 7);
+    Animation_ApplyChildValuesToRecordFar(effect->object,
+                                          (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
-    slot->scaleY = scale;
-    slot->scaleX = scale;
-    count--;
+    effect->scaleY = scale;
+    effect->scaleX = scale;
+    remainingParticles--;
     wait(1);
-    slot++;
-  } while (count >= 0);
+    effect++;
+  } while (remainingParticles >= 0);
 
-  // The current owner turns to 0x4000 and takes mode 28.
   wait(60);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   wait(40);
   Sound_PlayFar(SE_SCATTER);
   wait(100);

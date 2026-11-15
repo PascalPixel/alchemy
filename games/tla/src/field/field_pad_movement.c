@@ -195,9 +195,10 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys) and
 /// steps the script on. Returns 1.
-s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
+
   Field_CheckConfiguredKeys();
-  interpreter->scriptCursor++;
+  actor->scriptCursor++;
   return 1;
 }
 

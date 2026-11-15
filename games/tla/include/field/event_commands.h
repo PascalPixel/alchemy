@@ -135,8 +135,6 @@ struct SparklePicture {
   u16 tile;
 };
 
-void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
 extern const s32 Data_080f085c[];
 extern const s32 Data_080f0874[];
 
@@ -342,12 +340,6 @@ struct Effect05Sprite {
   u32 unk09_4 : 4;
 };
 
-struct FallVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct FxPosition {
   s32 x;
   s32 y;
@@ -540,33 +532,6 @@ struct WaveFxScroll {
   u8 delay;
 };
 
-struct ItemBreakFragmentPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ItemBreakFragmentSource {
-  u8 unused[6]; ///< no code names them
-  u16 angle;    ///< Facing angle (0x10000 is one turn).
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unusedAfterZ[70]; ///< no code names them
-  u8 flag5a;
-  u8 unusedB[13];                         ///< no code names them
-  struct ItemBreakFragmentSource *target; ///< Facing target.
-};
-
-struct ItemBreakFragmentObject {
-  u8 unused[72]; ///< no code names them
-  s32 field48;   ///< Gravity (same offset as gravity).
-  u8 unusedB[9]; ///< no code names them
-  u8 mode55;     ///< Same offset as motionFlags.
-  u8 unusedC[8]; ///< no code names them
-  u16 field5e;
-};
-
 struct Output_08097f80 {
   s32 x;
   s32 y;
@@ -608,15 +573,6 @@ struct SparkObject {
   s16 phase;
   u8 unusedAfterPhase[6]; ///< no code names it
   void (*update)(struct SparkObject *);
-};
-
-struct OwnerObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  u8 unusedAfterX[4]; ///< no code names it
-  s32 z;
-  u8 unk14[14];
-  u8 layer;
 };
 
 extern const u8 gBattleEffect_HeavyImpactScript[];

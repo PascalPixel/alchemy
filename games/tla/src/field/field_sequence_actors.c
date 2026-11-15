@@ -36,7 +36,7 @@ s32 Party_GetCharacterSprite(s32 character) {
 }
 
 /// Does nothing; nothing calls Actor_ReservedNoOpFar.
-void Actor_ReservedNoOp(void) {}
+UNUSED void Actor_ReservedNoOp(void) {}
 
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.

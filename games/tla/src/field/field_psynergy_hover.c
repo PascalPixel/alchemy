@@ -50,7 +50,8 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-#define OBJ_PALETTE_14 ((u16 *)&OBJ_PLTT_COLOR(14, 0))
+/// The glow's colours: sprite palette 14.
+#define HOVER_GLOW_PALETTE ((u16 *)&OBJ_PLTT_COLOR(14, 0))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.
@@ -111,7 +112,7 @@ void HoverGlow_Update(void) {
   }
 
   // Cycle the glow's colours; the last takes the 15th's level.
-  palette = OBJ_PALETTE_14;
+  palette = HOVER_GLOW_PALETTE;
   for (i = 0; i < 16; i++) {
     Io_Write16(HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
                                   i == 15 ? 14 : i),
@@ -144,7 +145,7 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef SWAY_PEAK
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
-#undef OBJ_PALETTE_14
+#undef HOVER_GLOW_PALETTE
 #undef GLOW_FULL
 #undef GLOW_SPENT_CUE
 

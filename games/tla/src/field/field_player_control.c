@@ -390,12 +390,22 @@ s32 Field_CheckConfiguredKeys(void) {
 
 /// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
 /// radii radius_a and radius_b (pixels); -1 otherwise.
-s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a++ - *b++) >> 16;
-  s32 dz = (*a - *b) >> 16;
-  s32 radius = radius_a + radius_b;
+s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
+                              s32 *secondPosition, s32 radiusB) {
+  const struct FieldPosition *firstPoint =
+      (const struct FieldPosition *)firstPosition;
+  const struct FieldPosition *secondPoint =
+      (const struct FieldPosition *)secondPosition;
+  const s32 *firstCoordinate = &firstPoint->x;
+  const s32 *secondCoordinate = &secondPoint->x;
+  s32 dx = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
+  s32 dy = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
+  s32 dz = FIELD_PIXEL(*firstCoordinate - *secondCoordinate);
+  s32 radius = radiusA + radiusB;
 
+  // The bound is 64 pixels in 16.16, the units before the shift, but dx and dz
+  // are already whole pixels (at most 32768), so these tests always pass and
+  // only the distance decides.
   if (!(dx > px(64)) && !(dz > px(64)) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;

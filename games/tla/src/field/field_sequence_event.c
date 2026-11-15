@@ -31,9 +31,9 @@ void Event_UpdateDebugSkip(void) {
 /// Waits the requested frames through wait(), unless debug fast-forward
 /// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  if (state->fastForward == 0 && frames != 0)
+  if (gFieldWork->fastForward == 0 && frames != 0) {
     wait(frames);
+  }
 }
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
@@ -155,9 +155,9 @@ s32 Party_CheckShortcut(u32 packed_id) {
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
 /// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut))
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
     gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut))
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
     gMainRoutineWork.secondShortcut = 0;
 }
 
@@ -298,9 +298,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 /// inventory is full.
 /// item: item ID.
 /// owner: recipient character ID.
-s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 owner) {
-  if (Inventory_AddItemFar(owner, item) >= 0)
-    return owner;
+s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
+  if (Inventory_AddItemFar(unit, item) >= 0)
+    return unit;
   return -1;
 }
 
@@ -384,7 +384,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
 
 /// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
 /// Returns 0 for yes, 1 for no.
-s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
+s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets
@@ -436,39 +436,31 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The event command "open screen": starts the event's screen transition and
 /// sets transitionActive.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
-  ScreenTransition_Start(event->transition, event->transitionFrames);
-  event->transitionActive = 1;
+  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 1;
 }
 
 /// The event command "close screen": finishes the event's screen transition
 /// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
-  ScreenTransition_Finish(event->transition, event->transitionFrames);
-  event->transitionActive = 0;
+  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 0;
 }
 
 /// The event command "wait for screen": waits as long as the transition runs
 /// (transitionFrames).
-void Event_WaitTransitionFrames(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  wait(event->transitionFrames);
-}
+void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
 /// exit request 999 and writes gMainRoutineWork.next and entrance.
-void Event_SetDestination(s32 scene, s32 entrance) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party;
-
-  event->exit = EXIT_KEEP_DESTINATION;
-  party = &gMainRoutineWork;
-  party->next = scene;
-  party->entrance = entrance;
+void Event_SetDestination(s32 sceneId, s32 entrance) {
+  gFieldWork->exit = EXIT_KEEP_DESTINATION;
+  gMainRoutineWork.next = sceneId;
+  gMainRoutineWork.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart point.
@@ -484,8 +476,7 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
 
 /// The event command "request exit": sets the field's exit request (999 leaves
 /// for gMainRoutineWork's next and entrance).
-void Event_SetExitRequest(u16 frames) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  event->exit = frames;
+void Event_SetExitRequest(u16 request) {
+  struct FieldWork *state = gFieldWork;
+  state->exit = request;
 }

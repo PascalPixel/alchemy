@@ -893,7 +893,7 @@ void ActorSystem_PlaceSprites(void) {
 // own.
 
 /// Unused: returns 1.
-s32 ActorCamera_ReturnTrue(void) { return 1; }
+UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
@@ -983,24 +983,24 @@ s32 ActorScript_Goto(struct Actor *interpreter) {
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
 s32 ActorScript_HideSprites(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = 0;
+  interpreter->spriteStorageKind = ACTOR_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
 /// Shows one sprite (spriteStorageKind 1) and advances to the next command.
 s32 ActorScript_ShowSprite(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = 1;
+  interpreter->spriteStorageKind = ACTOR_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
 /// Waits up to 600 frames for a field object's movement target to be unset.
-void Actor_WaitForMove(void *fieldObject) {
+void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
   waitedFrames = 0;
-  while (waitedFrames < 600 && Actor_IsTargetUnset(fieldObject) == 0) {
+  while (waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0) {
     wait(1);
     waitedFrames++;
   }

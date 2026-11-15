@@ -300,7 +300,7 @@ void Weather_StartLightning(void) {
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  state->timer = 0x7fff;
+  state->timer = 0x7FFF;
   state->enabled = 0;
 }
 

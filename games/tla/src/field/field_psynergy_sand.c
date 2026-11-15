@@ -60,7 +60,7 @@ void FieldPsynergy_WatchSandGround(void) {
 }
 
 // How a picture is stored.
-#define PICTURE_FORMAT_TYPE01 1 ///< one type-01 stream
+#define PICTURE_FORMAT_TAGGED_LZ 1 ///< one tagged LZ stream
 #define PICTURE_FORMAT_COMPRESSED                                              \
   3 ///< compressed, then run through the decoder
 
@@ -105,7 +105,7 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
   }
 
   Iwram_ClearWordsEntry(buffer, size);
-  if (source->format == PICTURE_FORMAT_TYPE01) {
+  if (source->format == PICTURE_FORMAT_TAGGED_LZ) {
     Decompress_TaggedLz(source->pictures[source->picture], buffer);
   } else if (source->format == PICTURE_FORMAT_COMPRESSED) {
     const void *stream =
@@ -123,7 +123,7 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
 #undef ACTOR_FIRST_LAYER
 #undef SCRIPT_OBJECT_COUNT
 #undef EVENT_MODE_NO_CELL_TEST
-#undef PICTURE_FORMAT_TYPE01
+#undef PICTURE_FORMAT_TAGGED_LZ
 #undef PICTURE_FORMAT_COMPRESSED
 
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:

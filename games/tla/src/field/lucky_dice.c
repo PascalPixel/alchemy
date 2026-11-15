@@ -127,7 +127,9 @@ s32 Math_MulQ8(s32 a, s32 b) {
 }
 
 /// Unused: divides two 8.8 fixed-point values.
-s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
+UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
+  return (numerator * 256) / denominator;
+}
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }

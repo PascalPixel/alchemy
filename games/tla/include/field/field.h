@@ -602,16 +602,7 @@ struct DescendingOrbitObject {
   s16 angle;
 };
 
-struct DmaFxPage {
-  u32 lines[0x1e0];
-};
-
-struct DmaFxPages {
-  struct DmaFxPage pages[2];
-  u8 page;
-};
-
-struct DisplayScrollWork {
+struct LineScrollWork {
   struct BgScroll rows[2][160][3];
   u8 page;
   u8 mode;
@@ -623,32 +614,6 @@ struct DisplayScrollWork {
   s32 stepY;
   s32 ampX;
   s32 ampY;
-};
-
-struct DmaFxWork {
-  u8 unused[0xf01]; ///< no code names it
-  u8 kind;
-  u8 unusedAfterKind[6]; ///< no code names it
-  s32 unkf08;
-  s32 unkf0c;
-  s32 unkf10;
-  s32 unkf14;
-  s32 unkf18;
-  s32 unkf1c;
-};
-
-struct DjinniObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[68]; ///< no code names it
-  u16 timer;
-  u8 unusedAfterTimer[6]; ///< no code names it
-  void *update;
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on

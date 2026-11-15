@@ -11,16 +11,17 @@
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.
 void LineScroll_ArmDma(void) {
-  struct DmaFxPages *work = Ram_HeapSlots->lineScroll;
-  u32 *line = work->pages[work->page].lines;
+  struct LineScrollWork *work = Ram_HeapSlots->lineScroll;
+  u32 *line = (u32 *)work->rows[work->page];
   volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   volatile u32 *target;
 
   if (event != NULL) {
-    if (*(s8 *)(event + 0xca4) != 0)
+    // Not while Reveal shows or a battle's transition runs.
+    if (event->revealActive != 0)
       return;
-    if (*(s16 *)(event + 0x164) != 0)
+    if (event->encounter != 0)
       return;
   }
   {
@@ -28,7 +29,7 @@ void LineScroll_ArmDma(void) {
     u16 control;
 
     control = dma[5];
-    dma[5] = control & 0xc5ff; // Clear start timing and repeat.
+    dma[5] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
     dma[5] &= ~DMA_ENABLE;
     target = dest;
     (void)dma[5];
@@ -48,7 +49,7 @@ void LineScroll_ArmDma(void) {
 /// BG2 and BG1 offsets, the scroll plus a sine wave for x and for y (an axis
 /// with no step stays flat), then shows that page.
 void LineScroll_BuildPage(void) {
-  struct DisplayScrollWork *work = Ram_HeapSlots->lineScroll;
+  struct LineScrollWork *work = Ram_HeapSlots->lineScroll;
   u8 mode = work->mode;
   s32 x1 = (s16)gBgScroll[1].x;
   s32 y1 = (s16)gBgScroll[1].y;
@@ -175,8 +176,8 @@ void LineScroll_BuildPage(void) {
 }
 
 /// Waits for a DMA channel to finish.
-static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
-  while ((channel->control & DMA_ENABLE << 16) != 0) {
+static inline void WaitDma(volatile u32 *channel) {
+  while (channel[2] & 0x80000000) {
   }
 }
 
@@ -186,22 +187,19 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// send each frame's line offsets.
 void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
                          s32 stepY, s32 ampY) {
-  struct DmaFxWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_LINE_SCROLL, sizeof(struct DmaFxWork));
-  volatile u32 zero;
+  struct LineScrollWork *work;
 
-  zero = 0;
-  Dma_Set((void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
-          REG_DMA3);
+  work =
+      HeapSlot_AllocEwram(HEAP_SLOT_LINE_SCROLL, sizeof(struct LineScrollWork));
+  Dma_Fill32(0, work, sizeof(struct LineScrollWork));
   WaitDma((volatile struct DmaRegisters *)&REG_DMA3SAD);
-  work->kind = mode;
-  work->unkf08 = freqX;
-  work->unkf0c = freqY;
-  work->unkf18 = ampX;
-  work->unkf1c = ampY;
-  work->unkf10 = stepX;
-  work->unkf14 = stepY;
+  work->mode = mode;
+  work->freqX = freqX;
+  work->freqY = freqY;
+  work->ampX = ampX;
+  work->ampY = ampY;
+  work->stepX = stepX;
+  work->stepY = stepY;
   Task_Add(LineScroll_BuildPage, TASK_PASS_VBLANK);
   Task_Add(LineScroll_ArmDma, TASK_PASS_FRAME);
 }

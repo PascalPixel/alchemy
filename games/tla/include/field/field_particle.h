@@ -57,4 +57,23 @@ void FieldParticle_SetActorMode(struct FieldParticle *, s32);
 void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback);
 void FieldParticle_Update(struct FieldParticle *);
 
+/// Sets newState on every field particle of work->member still in use,
+/// walking their state bytes with cursor and counting down count.
+#define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
+                                         newState)                             \
+  {                                                                            \
+    s32 state_ = (newState);                                                   \
+    (cursor) = (void *)(work);                                                 \
+    (cursor) += offsetof(__typeof__(*(work)), member) +                        \
+                offsetof(struct FieldParticle, state);                         \
+    (count) = sizeof((work)->member) / sizeof(struct FieldParticle) - 1;       \
+    do {                                                                       \
+      if (((s8 *)(cursor))[offsetof(struct FieldParticle, active) -            \
+                           offsetof(struct FieldParticle, state)] != 0)        \
+        *(cursor) = state_;                                                    \
+      (count)--;                                                               \
+      (cursor) += sizeof(struct FieldParticle);                                \
+    } while ((count) >= 0);                                                    \
+  }
+
 #endif

@@ -314,14 +314,12 @@ void BattleEffect_AgeAndCueAtEighty(struct Actor *object) {
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct FieldEffectWork *effectWork;
   struct Vector3 pos;
-  s8 *st;
   s16 angle;
   s32 state;
 
   effectWork = Ram_HeapSlots->fieldEffectWork;
-  st = &effect->state;
 top:
-  state = *st;
+  state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
     pos.x = effect->originX;
     pos.z = effect->originZ;
@@ -332,24 +330,26 @@ top:
     effect->acceleration = px(4);
     effect->maxSpeed = px(4);
     effect->limitTurnStep = state;
-    *st = *st + 1;
+    effect->state++;
     return;
   }
   if (state == OUT_AND_BACK_FLYING_OUT) {
     if (FieldParticle_HasPendingTarget(effect) != 0)
       return;
-    *st = *st + 1;
+    effect->state++;
     goto top;
   }
   if (state == OUT_AND_BACK_AIM_BACK) {
-    SET_POSITION(&pos, effectWork->x, effectWork->y + px(8), effectWork->z);
+    pos.x = effectWork->x;
+    pos.y = effectWork->y + px(8);
+    pos.z = effectWork->z;
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(px(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = TRIG_TURN / 16;
     effect->limitTurnStep = 1;
-    *st = *st + 1;
+    effect->state++;
     return;
   }
   if (state == OUT_AND_BACK_FLYING_BACK &&
@@ -358,7 +358,7 @@ top:
 }
 
 /// Pauses the target (effectWork->child) and runs FieldPsynergy_Halt.
-void FieldPsynergy_HaltOnTarget(void) {
+void FieldPsynergy_HaltOnTarget(s32 unused) {
   struct Actor *target =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
 
@@ -388,9 +388,12 @@ void FieldPsynergy_Halt(void) {
 
   // From 16 pixels above the caster to 8 pixels above the Psynergy's position.
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&from, caster->x.fixed, caster->y.fixed + px(16),
-               caster->z.fixed);
-  SET_POSITION(&to, effectWork->x, effectWork->y + px(8), effectWork->z);
+  from.x = caster->x.fixed;
+  from.y = caster->y.fixed + px(16);
+  from.z = caster->z.fixed;
+  to.x = effectWork->x;
+  to.y = effectWork->y + px(8);
+  to.z = effectWork->z;
   // Steps 0 to 10: the orb arrives on the 11th frame, grown to full size.
   for (;;) {
     s32 steps = 11;
@@ -425,16 +428,20 @@ void FieldPsynergy_Halt(void) {
   // position.
   effect = &effectWork->particles[0];
   for (i = 0; i < 16; i++) {
-    SET_POSITION(&pos, orb->x.fixed, orb->y.fixed + px(8), orb->z.fixed);
-    Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(px(4), Random16(), &pos);
+    pos.x = orb->x.fixed;
+    pos.y = orb->y.fixed + px(8);
+    pos.z = orb->z.fixed;
+    Camera_WorldToScreen((struct Vector3 *)&pos.x);
+    Vector_AddPolarOffset(px(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
     Animation_ApplyChildValuesToRecordFar(effect->object, SPRITE_COLOR_WHITE);
     effect++;
   }
 
-  SET_POSITION(&pos, orb->x.fixed, orb->y.fixed + px(8), orb->z.fixed);
+  pos.x = orb->x.fixed;
+  pos.y = orb->y.fixed + px(8);
+  pos.z = orb->z.fixed;
   wait(8);
   Actor_ReleaseFar(orb);
   wait(4);
@@ -817,31 +824,27 @@ void FieldPsynergy_Lash(void) {
 /// Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
 /// (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
-void FieldEffect_UpdateSpinAngle(struct Actor *object) {
+void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
   u32 step;
 
-  step = object->timer * 0x50;
-  object->facing += step + FACING_STEP;
-  if (step < 0x1000)
-    object->timer++;
+  step = actor->timer * 80;
+  actor->facing = actor->facing + step + FACING_STEP;
+  if (step < FACING_STEP)
+    actor->timer = actor->timer + 1;
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 /// frame; released once its scale falls below 0x3000.
-void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
+void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
   u32 scale;
-  u32 scaleX;
-  s32 step = -0x280;
 
-  obj->scaleY += step;
-  scaleX = obj->scaleX;
-  scale = scaleX + step;
-  obj->facing += TRIG_TURN / 8;
-  obj->y.fixed += px(1);
-  obj->scaleX = scale;
-  if ((s32)scale < 0x3000) {
-    obj->spriteStorageKind = 0;
-  }
+  actor->scaleY -= 640;
+  scale = actor->scaleX - 640;
+  actor->facing += TRIG_TURN / 8;
+  actor->y.fixed += px(1);
+  actor->scaleX = scale;
+  if ((s32)scale < Q16_ONE * 3 / 16)
+    actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
 /// Field effect sprite callback: a particle flies 120 pixels from the main
@@ -1029,7 +1032,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
   s32 arcIndex;
-  u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
@@ -1038,17 +1040,16 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     if (actor == NULL)
       continue;
     actor->groundHeight = source->groundHeight;
-    sprite = actor->sprite;
+    sprite = (struct DescendingArcSprite *)actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
-    zero = 0;
     actor->watchedActor = source;
     actor->scaleY = Q16_ONE * 2 / 5;
     actor->scaleX = Q16_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
-    Sprite_StartAnimationFar(sprite, 0);
-    sprite->flags = zero;
+    Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
+    sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->arcTileSlot;
     sprite->retainCacheEntry = 1;
@@ -1056,7 +1057,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite->fullColor = 0;
     sprite->shape = 1;
     sprite->size = 2;
-    sprite->firstEntry->picture = zero;
+    sprite->firstEntry->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   actors[0]->update =

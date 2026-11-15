@@ -94,14 +94,14 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
 
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
-void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
-  s32 r;
+void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
+  s32 drift;
 
-  object->y.fixed -= px(3) / 10;
-  r = Random16();
-  object->x.fixed += r - Random16();
-  if (object->y.fixed <= object->groundHeight) {
-    Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
+  particle->y.fixed -= px(3) / 10;
+  drift = Random16();
+  particle->x.fixed += drift - Random16();
+  if (particle->y.fixed <= particle->groundHeight) {
+    Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
   }
 }
 
@@ -109,7 +109,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// The value step tenths of the way from start to end.
-static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
+static __inline__ s32 InterpolateTenths(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
@@ -179,7 +179,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = Lerp10(Q16_ONE / 4, Q16_ONE, i);
+    scale = InterpolateTenths(Q16_ONE / 4, Q16_ONE, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -265,7 +265,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = Lerp10(Q16_ONE, Q16_ONE / 4, i);
+    scale = InterpolateTenths(Q16_ONE, Q16_ONE / 4, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -275,30 +275,26 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Each frame: one falling particle 8 to 24 pixels above the lifted object,
-/// 0 to 48 pixels out in a random direction.
+/// Task while Carry holds its target: drops one particle a frame round the
+/// lifted actor, 8 to 24 pixels above it and 0 to 48 pixels away in a random
+/// direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
-  struct Actor *src;
-  struct FallVector pos;
-  struct Actor *obj;
-  u32 dist;
+  struct Actor *liftedActor;
+  struct Vector3 position;
+  struct Actor *fragment;
+  u32 radius;
 
-  src = ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
-  SET_POSITION(&pos, src->x.fixed, src->y.fixed - Random16() * 16 + px(24),
-               src->z.fixed);
+  liftedActor =
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
+  position.x = liftedActor->x.fixed;
+  position.y = liftedActor->y.fixed - Random16() * 16 + px(24);
+  position.z = liftedActor->z.fixed;
 
-  dist = Random16() * 3;
-  Vector_AddPolarOffset(dist * 16, Random16(), &pos);
+  radius = Random16() * 3;
+  Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
-  obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-  if (obj != 0) {
-    obj->motionFlags = 2;
-    obj->gravity = 0x1999;
-    Actor_SelectAnimationFar(obj, 0);
-    obj->wait = 12;
-    Actor_StartScriptFar((struct Actor *)obj,
-                         gBattleEffect_SharedParticleScript);
-  }
+  fragment = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  FieldEffect_InitializeFallingFragment(fragment);
 }
 
 void FieldEffect_SpawnRadialParticleRing(struct Actor *object);

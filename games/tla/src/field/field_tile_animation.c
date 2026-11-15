@@ -468,26 +468,27 @@ void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.
 UNUSED void PaletteCycle_Initialize(void) {
-  struct PaletteCycleWork *queue;
-  struct PaletteCycle *entry;
-  u16 i;
-  u16 j;
+  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycle *cycle;
+  u16 cycleIndex;
+  u16 colorIndex;
 
-  queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                              sizeof(struct PaletteCycleWork));
-  entry = queue->entries;
-  for (i = 0; i != 4; i++) {
-    entry->source = 0;
-    entry->position = 0;
-    entry->timer = 0;
-    entry->delay = 0;
-    entry->count = 0;
-    for (j = 0; j != 16; j++) {
-      entry->colors[j] = 0;
+  paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                                      sizeof(struct PaletteCycleWork));
+  cycle = paletteCycles->entries;
+  // Four cycles of up to 16 saved colours each.
+  for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
+    cycle->source = 0;
+    cycle->position = 0;
+    cycle->timer = 0;
+    cycle->delay = 0;
+    cycle->count = 0;
+    for (colorIndex = 0; colorIndex != 16; colorIndex++) {
+      cycle->colors[colorIndex] = 0;
     }
-    entry++;
+    cycle++;
   }
-  queue->count = 0;
+  paletteCycles->count = 0;
 }
 
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)

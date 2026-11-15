@@ -40,6 +40,10 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// Waits until a START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
+/// The bytes of a part's first sector that its SaveSectorHeader takes, before
+/// the payload.
+#define SAVE_HEADER_BYTES sizeof(struct SaveSectorHeader)
+
 extern const u8 gSave_HeaderTemplate[];
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
@@ -204,8 +208,8 @@ s32 Save_WritePart(s32 partId, void *source) {
   sector = Save_SelectWriteSector(partId);
   if (sector >= SAVE_SECTOR_COUNT)
     return 1;
-  SAVE_START_DMA(source, work->slot + 16,
-                 DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
+  SAVE_START_DMA(source, work->slot + SAVE_HEADER_BYTES,
+                 DMA_COPY_WORDS((sizeof(work->slot) - SAVE_HEADER_BYTES) / 4));
   WAIT_DMA();
   SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
@@ -248,8 +252,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
   Save_ReadSector(index);
-  SAVE_START_DMA(work->slot + 16, destination,
-                 DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
+  SAVE_START_DMA(work->slot + SAVE_HEADER_BYTES, destination,
+                 DMA_COPY_WORDS((sizeof(work->slot) - SAVE_HEADER_BYTES) / 4));
   WAIT_DMA();
   return 0;
 }
@@ -280,14 +284,14 @@ s32 Save_ChecksumSector(void) {
   offset = 0;
   limit = SAVE_CHECKSUM_BYTES - 1;
   do {
-    sum += work->slot[16 + offset + 0];
-    sum += work->slot[16 + offset + 1];
-    sum += work->slot[16 + offset + 2];
-    sum += work->slot[16 + offset + 3];
-    sum += work->slot[16 + offset + 4];
-    sum += work->slot[16 + offset + 5];
-    sum += work->slot[16 + offset + 6];
-    sum += work->slot[16 + offset + 7];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 0];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 1];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 2];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 3];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 4];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 5];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 6];
+    sum += work->slot[SAVE_HEADER_BYTES + offset + 7];
     offset += 8;
   } while (offset <= limit);
   return sum;

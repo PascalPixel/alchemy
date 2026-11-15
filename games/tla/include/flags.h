@@ -182,6 +182,11 @@
 /// lesson then takes its second set of messages, opening "You look like you
 /// already know a little about us, huh?" (MsgDjinnGiveTutorialB and its kin).
 #define FLAG_ALREADY_KNOWS_DJINN 0x175
+/// Set while the party sails the ship on the World Map: world_map.c sets it as
+/// the party boards, and the main routine keeps it while an actor other than
+/// the leader is the one events control (MainRoutineWork.ownerOverride). The
+/// World Map takes MUS_LEMURIAN_SHIP while it is set.
+#define FLAG_SAILING 0x176
 /// With FLAG_DJINN_LESSON set, this and FLAG_DJINN_LESSON_PART_B choose the
 /// part of the lesson the Djinn menu plays.
 #define FLAG_DJINN_LESSON_PART_A 0x16f

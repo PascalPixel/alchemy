@@ -54,8 +54,8 @@ enum SoundId {
   /// The field music of Yallam and a Mikasalla house.
   MUS_YALLAM,
   /// Plays as Yallam's children start their song game ("If you want to go to
-  /// the stars..."), and as Echo is met on the World Map once flag 0x175 is
-  /// set.
+  /// the stars..."), and as Echo is met on the World Map once
+  /// FLAG_ALREADY_KNOWS_DJINN is set.
   MUS_017,
   MUS_018,
   /// The field music of Air's Rock.
@@ -88,7 +88,7 @@ enum SoundId {
   /// Agatio wakes in the Mars Star room.
   MUS_034 = 34,
   /// Plays as Briggs steals the ship in Eastern Alhafra, and as Echo is met on
-  /// the World Map before flag 0x175 is set.
+  /// the World Map before FLAG_ALREADY_KNOWS_DJINN is set.
   MUS_035,
   /// Plays as a foe confronts the party: Karst in Madra, the challenger before
   /// the Avimander in the Champa cliff caves, the Jupiter Star cast at the
@@ -107,7 +107,7 @@ enum SoundId {
   /// MUS_TITLE.
   MUS_TITLE,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
-  /// World Map once flag 0x176 is set.
+  /// World Map once FLAG_SAILING is set.
   MUS_LEMURIAN_SHIP,
   /// The field music of the World Map, Osenia Cliffs, Gondowan Cliffs and
   /// Atteka Inlet.

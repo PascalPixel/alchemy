@@ -369,9 +369,9 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_Clear(FLAG_NO_PLACE_TO_SAVE);
     GameFlag_Clear(FLAG_IN_BATTLE_ARENA);
     if (gMainRoutineWork.ownerOverride != 0)
-      GameFlag_Set(0x176);
+      GameFlag_Set(FLAG_SAILING);
     else
-      GameFlag_Clear(0x176);
+      GameFlag_Clear(FLAG_SAILING);
     gMainRoutineWork.returnMusic = -1;
   }
   gMainRoutineWork.area = area;

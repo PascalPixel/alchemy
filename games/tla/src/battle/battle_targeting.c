@@ -492,9 +492,9 @@ void BattleMessage_WaitForAdvance(void) {
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
     window = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->window;
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->offset;
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
@@ -502,7 +502,7 @@ void BattleMessage_WaitForAdvance(void) {
     // Bob up and down by up to 2 pixels, once every 16 frames.
     prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                 (offset->y >> 8) + 6;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
     if ((gInput.held & KEY_B) || (gInput.pressed & KEY_ADVANCE) ||
@@ -532,15 +532,15 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = 0x40000000;
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
+    ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     if (gInput.pressed & KEY_ADVANCE)
       break;
     wait(1);

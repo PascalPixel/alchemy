@@ -223,7 +223,7 @@ void PartyStatus_Draw(s32 flags) {
   u16 members[5];
   u8 standbyDjinn[4];
 
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
@@ -245,7 +245,7 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->battleMode == 0 || Func_08118130__screens(0, 0) == 0)
+  if (work->battleMode == WINDOW_FIELD || Func_08118130__screens(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -281,9 +281,9 @@ void PartyStatus_Draw(s32 flags) {
       Text_SetColor(TEXT_COLOR_YELLOW);
     else
       Text_SetColor(TEXT_COLOR_WHITE);
-    work->textPalette = 14;
-    if (work->battleMode != 0)
-      work->textPalette = 5;
+    work->textPalette = HIGHLIGHT_PALETTE;
+    if (work->battleMode != WINDOW_FIELD)
+      work->textPalette = BASIC_COLORS_PALETTE;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
     work->textPalette = WINDOW_PALETTE;
@@ -300,9 +300,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->textPalette = 14;
-      if (work->battleMode != 0)
-        work->textPalette = 5;
+      work->textPalette = HIGHLIGHT_PALETTE;
+      if (work->battleMode != WINDOW_FIELD)
+        work->textPalette = BASIC_COLORS_PALETTE;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -319,7 +319,7 @@ void PartyStatus_Draw(s32 flags) {
   }
   work->textPalette = WINDOW_PALETTE;
 
-  if (work->battleMode != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
+  if (work->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
     /* FAKEMATCH(dead): i set to a 0 never read. */

@@ -103,8 +103,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct MenuSprite cursor;
   struct MenuSprite *iconSprite;
   u16 messageText[64];
-  s32 iconSlots[5];
-  struct MenuSprite sprites[5];
+  s32 iconSlots[BATTLE_LIST_ROWS];
+  struct MenuSprite sprites[BATTLE_LIST_ROWS];
   s32 glyph;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -115,11 +115,12 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   messageWindow = Window_Create(0, 5, 30, 4,
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
-  iconCount = 5;
+  iconCount = BATTLE_LIST_ROWS;
   MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH, 11, 6);
+  window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH,
+                         BATTLE_LIST_ROWS * 2 + 1, 6);
 
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;
     u32 t = 0;
 
@@ -134,7 +135,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
@@ -153,7 +154,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                            1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0)
-        CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & 0x3fff) +
+        CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & ACTION_ID_MASK) +
                              (s32)MsgAbilityDescription,
                          messageText, CURSOR_TEXT_LENGTH);
       else
@@ -162,7 +163,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
         WindowSprite_RedrawSavedRect(window);
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < BATTLE_LIST_ROWS; i++) {
           struct BattleAct *action;
 
           encodedAction = actions[firstEntry + i];
@@ -176,23 +177,23 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           Ability_LoadGlyph(encodedAction & PSYNERGY_ABILITY_MASK, 0,
                             &iconSlots[i], &glyph, 1);
           sprites[i].oam.f.tile = glyph;
-          if ((action->flags & 0x80) == 0)
+          if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0)
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (action->ppCost > unit->pp)
             Text_SetColor(TEXT_COLOR_RED);
           else if (unit->psySeal != 0)
             Text_SetColor(TEXT_COLOR_PINK);
-          work->textPalette = 5;
+          work->textPalette = BASIC_COLORS_PALETTE;
           Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityName, window,
                                   16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           work->textPalette = WINDOW_PALETTE;
-          if (action->element != 4)
+          if (action->element != ELEMENT_NONE)
             Window_SetTilemapEntry(window, action->element + ELEMENT_ICON_TILE,
                                    RANGE_COLUMN, i * 2, 0);
           rangePattern = action->range;
-          if (rangePattern == 255)
+          if (rangePattern == ABILITY_RANGE_ALL)
             rangePattern = 11;
           else
             rangePattern--;
@@ -202,13 +203,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         iconCount = i;
         drawnFirstEntry = firstEntry;
       }
-      if (count > 5) {
-        for (i = 0; i < (count + 4) / 5; i++) {
+      if (count > BATTLE_LIST_ROWS) {
+        for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
           iconTile = i + LIST_TILE_PAGE_NUMBER;
-          if (i == firstEntry / 5)
+          if (i == firstEntry / BATTLE_LIST_ROWS)
             iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(
-              window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
+              window, iconTile,
+              window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
         }
       }
       Window_HighlightRect((s16)window->x + 1,
@@ -218,26 +220,28 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       work->holdTilemapUpload = 0;
     }
 
-    if (count > 5) {
-      for (i = 0; i < (count + 4) / 5; i++) {
+    if (count > BATTLE_LIST_ROWS) {
+      for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
         iconTile = i + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11) {
-          if (i == firstEntry / 5)
+          if (i == firstEntry / BATTLE_LIST_ROWS)
             iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
         }
-        Window_SetTilemapEntry(window, iconTile,
-                               window->width - (count + 4) / 5 + i - 2, -1, 0);
+        Window_SetTilemapEntry(
+            window, iconTile,
+            window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
       }
       pageTile = -1;
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
-                             window->width - (count + 4) / 5 - 3, pageTile, 0);
+                             window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
+                             pageTile, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              pageTile, 0);
       WINDOW_MARK_TILEMAP_ROW(work, (s16)window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++)
-      Oam_AddSpriteAtDepth(&sprites[i], 240);
+      Oam_AddSpriteAtDepth(&sprites[i], OAM_DEPTH_WINDOW);
 
     cursorPosition.x = (s16)window->x * 8 - 4;
     cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
@@ -248,14 +252,15 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Oam_AddSpriteAtDepth(iconSprite, 242);
+      Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW + 2);
 
     MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = NAVIGATION;
     if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((Ability_Get(actions[result])->flags & 0x80) == 0) {
+        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) ==
+            0) {
           // Not usable in battle: the menu stays open.
         } else {
           break;
@@ -274,31 +279,32 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       if (gInput.repeat & KEY_DOWN) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
-        if (selectedRow == 5 || firstEntry + selectedRow == count)
+        if (selectedRow == BATTLE_LIST_ROWS ||
+            firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (gInput.repeat & KEY_UP) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
-          if (firstEntry == (count - 1) / 5 * 5)
+          if (firstEntry == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS)
             selectedRow = count - firstEntry - 1;
           else
-            selectedRow = 4;
+            selectedRow = BATTLE_LIST_ROWS - 1;
         }
         preferredRow = selectedRow;
       } else if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
-        if (firstEntry + 5 >= count) {
+        if (firstEntry + BATTLE_LIST_ROWS >= count) {
           if (firstEntry != 0) {
             firstEntry = 0;
             selectedRow = preferredRow;
           }
         } else {
-          firstEntry += 5;
+          firstEntry += BATTLE_LIST_ROWS;
           selectedRow = preferredRow;
-          if (firstEntry == (count - 1) / 5 * 5) {
+          if (firstEntry == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
             selectedRow = count - firstEntry - 1;
             if (selectedRow > preferredRow)
               selectedRow = preferredRow;
@@ -311,7 +317,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           firstEntry -= 5;
           selectedRow = preferredRow;
         } else {
-          firstEntry = (count - 1) / 5 * 5;
+          firstEntry = (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS;
           selectedRow = preferredRow;
           if (firstEntry != 0) {
             selectedRow = count - firstEntry - 1;
@@ -327,7 +333,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
   wait(1);
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < BATTLE_LIST_ROWS; i++)
     VramCache_FreeEntry(iconSlots[i]);
   VramCache_FreeEntry(cursorHandle);
   wait(1);

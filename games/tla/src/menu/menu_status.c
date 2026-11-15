@@ -715,13 +715,13 @@ s32 StatusScreen_SelectCommand(void) {
       wait(1);
       if (gInput.repeat & KEYS_DPAD)
         StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
-      if (KEYS_PRESSED & 1) {
+      if (KEYS_PRESSED & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
-      if (KEYS_PRESSED & 2) {
+      if (KEYS_PRESSED & KEY_B) {
         Sound_PlayFar(SE_MENU_CANCEL);
         done = 1;
         result = -1;
@@ -1929,7 +1929,7 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
   s32 no;
 
   no = index;
-  if (no > 0x1F) {
+  if (no > (MENU_ENTRY_ICONS - 1)) {
     no = 0;
   }
   obj->y = no / phase * 0x10 + originY;
@@ -1981,7 +1981,7 @@ void ItemMenu_PositionCategory(void) {
   s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = state->entryIcons;
   s32 y = MENU_ICON_HIDDEN_Y;
-  s32 remaining = 31;
+  s32 remaining = MENU_ENTRY_ICONS - 1;
 
   do {
     struct WindowSprite *icon = *entry++;

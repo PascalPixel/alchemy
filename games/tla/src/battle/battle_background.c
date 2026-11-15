@@ -41,7 +41,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
             REG_DMA3);
   } else {
     ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                      screen->brightness = 0x10000 - level * 1092, 128);
+                      screen->brightness = Q16_ONE - level * 1092, 128);
   }
   {
     u32 saved = *slot;
@@ -57,17 +57,17 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
-  if (transition->mode == 0)
+  if (transition->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   transition->mode = mode;
 
-  if (mode == 1)
+  if (mode == BATTLE_BACKGROUND_FIXED)
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                         BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                             BGCNT_PRIORITY(3),
                         IO_WRITE_16);
 
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
 
@@ -198,14 +198,16 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   wrap = 0;
   ratio = Q16_ONE;
   if (scale >= ratio) {
-    wrap = 0x2000;
+    wrap = BGCNT_WRAP;
     horizon = 0x6800 + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
-  if ((view->mode == 1 || view->secondMode == 1) && view->busy == 0)
+  if ((view->mode == BATTLE_BACKGROUND_FIXED ||
+       view->secondMode == BATTLE_BACKGROUND_FIXED) &&
+      view->busy == 0)
     gBgScroll[1].x = horizon >> 8;
-  if (view->mode != 2)
+  if (view->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
   line = scanlines->lines[scanlines->page ^ 1];
   ratio = Iwram_RatioMulQ14(scale, ratio);
@@ -232,7 +234,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
     *line++ = wrap | 0x478a;
   for (; scanline < 136; scanline++)
     *line++ = wrap | 0x478e;
-  for (; scanline < 160; scanline++)
+  for (; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ = 0x3f8e;
   scanlines->page ^= 1;
 }
@@ -262,7 +264,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
@@ -313,7 +315,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
@@ -748,7 +750,7 @@ void ElementGlow_UpdateStarField(void) {
         mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
-          step = mul(mul(-*pos >> 8, scale), 0x13000);
+          step = mul(mul(-*pos >> 8, scale), Q16_ONE * 19 / 16);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
           *pos += pos[3];
           pos++;
@@ -892,7 +894,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   work->frames = 0;
   work->ready = 0;
   work->originPending = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas, 0x4000);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas,
+                        STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
@@ -918,10 +921,10 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     REG_BG2X = zero;
     REG_BG2Y = zero;
   } while (0);
-  Io_Write16(0x100, &REG_BG2PA);
+  Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
-  Io_Write16(0x100, &REG_BG2PD);
+  Io_Write16(Q_8_8(1), &REG_BG2PD);
   /* FAKEMATCH(dead): a never-taken five-argument call. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
@@ -936,7 +939,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -973,17 +976,21 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct ScreenPoint *pos;
 
   wait(1);
-  BattleBackground_SetMode(1, session->background, 0);
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
-  IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x3741);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, session->background, 0);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
+  IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                              DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                                              DISPCNT_WIN0_ON);
   IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f44);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   wait(1);
   Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
-  if (mode == 0) {
+  if (mode == GLOW_STAR_FIELD) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
@@ -992,27 +999,27 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
         ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                          *brightness = 0x10000 - frame * 1092, 128);
+                          *brightness = Q16_ONE - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
-      work->originX = (64 - pos->x) << 8;
-      work->originY = (64 - pos->y) << 8;
+      work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
+      work->originY = (STAR_FIELD_CENTER - pos->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->originX,
                               DMA_COPY_WORDS(2));
       work->originPending = 1;
       wait(1);
     }
     ElementGlow_End(kind);
-  } else if (mode == 1) {
+  } else if (mode == GLOW_STREAKS) {
     BattleEffect_StartElementStreaksFar(kind);
     for (frame = 0; frame < 40; frame++) {
       BattleMotion_ProjectScaledPosition(unit, (s32 *)&streakPosition);
-      origin[0] = (64 - streakPosition.x) << 8;
-      origin[1] = (64 - streakPosition.y) << 8;
+      origin[0] = (STAR_FIELD_CENTER - streakPosition.x) << 8;
+      origin[1] = (STAR_FIELD_CENTER - streakPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (u32)origin, DMA_COPY_WORDS(2));
       wait(1);
     }
     BattleEffect_EndElementStreaksFar();
-  } else if (mode == 2) {
+  } else if (mode == GLOW_PILLAR) {
     pillarLaunch.flags = 0;
     pillarLaunch.kind = kind;
     pillarLaunch.variant = variant;
@@ -1061,17 +1068,17 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   enemyCount = 0;
   levelTotal = 0;
   record = &gFormations[recordId];
-  for (memberIndex = 0; memberIndex < 5; memberIndex++) {
+  for (memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
     if (record->minimumCounts[memberIndex] != 0)
       break;
   }
-  if (memberIndex == 5)
+  if (memberIndex == FORMATION_MEMBERS)
     return -1;
-  for (memberIndex = 0; memberIndex < 5; memberIndex++) {
+  for (memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
     if (record->maximumCounts[memberIndex] == 0)
       continue;
     enemyId = record->memberIds[memberIndex];
-    enemy = Enemy_GetDefinitionFar(enemyId + 8);
+    enemy = Enemy_GetDefinitionFar(enemyId + ENEMY_ID_FIRST);
     if (enemy == 0)
       continue;
     if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&

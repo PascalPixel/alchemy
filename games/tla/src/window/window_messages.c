@@ -76,10 +76,10 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
       break;
     case MESSAGE_TEXT_COLOR:
     case MESSAGE_TEXT_EFFECT:
-    case 10:
+    case MESSAGE_LINE_SPACING:
     case 11:
     case 12:
-    case 15:
+    case MESSAGE_WINDOW_EFFECT:
 #if defined(DECODE_EUROPEAN)
     case MESSAGE_ARTICLE_CLASS:
 #endif
@@ -232,10 +232,10 @@ void MessageArgument_ClearAll(void) {
 void MessageArgument_Push(u32 value, u32 kind) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 no = 0;
-  u32 limit = 8;
+  u32 limit = MESSAGE_ARGUMENT_COUNT;
 
   do {
-    if (work->argumentKinds[no] == 0) {
+    if (work->argumentKinds[no] == MESSAGE_ARGUMENT_NONE) {
       work->argumentValues[no] = value;
       work->argumentKinds[no] = kind;
       break;

@@ -505,7 +505,8 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
             Sound_PlayFar(SE_POWER_UP);
             if (BattleUnit_IsListed(unitId)) {
-              Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+              Actor_SelectAnimationFar(BattleObject_Get(unitId)->object,
+                                       POSE_CAST);
               Actor_SetAnimationSpeedFar(
                   (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
@@ -515,7 +516,7 @@ void Battle_ProcessTurnEnd(void) {
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
             if (BattleUnit_IsListed(unitId))
-              ElementGlow_Play(unitId, element, 3, 0);
+              ElementGlow_Play(unitId, element, GLOW_BURST, 0);
             BattlePlayback_WaitForReady();
           }
         } else {
@@ -525,7 +526,8 @@ void Battle_ProcessTurnEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
-  BattleBackground_SetMode(2, Ram_HeapSlots->battleWork->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED,
+                           Ram_HeapSlots->battleWork->background, 0);
   {
     s32 *groupList;
     struct BattleGroupOrder order = gBattleParty_TurnEndSideOrder;
@@ -534,8 +536,8 @@ void Battle_ProcessTurnEnd(void) {
     s32 unitIndex;
 
     if (battle->isLink != 0 && battle->linkSide != 0) {
-      order.group[0] = 2;
-      order.group[1] = 1;
+      order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
+      order.group[1] = BATTLE_SIDE_MASK_PARTY;
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {

@@ -293,13 +293,14 @@ s32 BattleDjinnMenu_Run(s32 member) {
         redrawList = 0;
 #endif
       }
-      if (djinnCount > 5) {
+      if (djinnCount > BATTLE_LIST_ROWS) {
         s32 listPages;
 
-        for (j = 0; j < (listPages = (djinnCount + 4) / 5); j++) {
+        for (j = 0; j < (listPages = (djinnCount + 4) / BATTLE_LIST_ROWS);
+             j++) {
           s32 tile = j + LIST_TILE_PAGE_NUMBER;
 
-          if (j == firstEntry / 5)
+          if (j == firstEntry / BATTLE_LIST_ROWS)
             tile = j + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(listWindow, tile,
                                  listWindow->width - listPages + j - 2, -1, 0);
@@ -312,12 +313,12 @@ s32 BattleDjinnMenu_Run(s32 member) {
       work->holdTilemapUpload = 0;
     }
 
-    if (djinnCount > 5) {
-      for (j = 0; j < (djinnCount + 4) / 5; j++) {
+    if (djinnCount > BATTLE_LIST_ROWS) {
+      for (j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
         s32 tile = j + LIST_TILE_PAGE_NUMBER;
 
         if ((gInput.held & KEY_R) || (gFrameCount & 15) <= 11) {
-          if (j == firstEntry / 5)
+          if (j == firstEntry / BATTLE_LIST_ROWS)
             tile = j + LIST_TILE_PAGE_NUMBER_LIT;
         }
         Window_SetTilemapEntry(listWindow, tile,
@@ -325,15 +326,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                -1, 0);
       }
       if ((gInput.held & KEY_R) == 0) {
-        Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_LEFT,
-                               listWindow->width - (djinnCount + 4) / 5 - 3, -1,
-                               0);
+        Window_SetTilemapEntry(
+            listWindow, LIST_TILE_PAGES_LEFT,
+            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
         Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
                                listWindow->width - 2, -1, 0);
       } else {
-        Window_SetTilemapEntry(listWindow, 0xf011,
-                               listWindow->width - (djinnCount + 4) / 5 - 3, -1,
-                               0);
+        Window_SetTilemapEntry(
+            listWindow, 0xf011,
+            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
         Window_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
                                0);
       }
@@ -396,14 +397,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
       if (repeated & KEY_DOWN) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
-        if (selectedRow == 5 || firstEntry + selectedRow == djinnCount)
+        if (selectedRow == BATTLE_LIST_ROWS ||
+            firstEntry + selectedRow == djinnCount)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (repeated & KEY_UP) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
-          if (firstEntry == (djinnCount - 1) / 5 * 5)
+          if (firstEntry == (djinnCount - 1) / 5 * BATTLE_LIST_ROWS)
             selectedRow = djinnCount - firstEntry - 1;
           else
             selectedRow = 4;
@@ -462,15 +464,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
       } else if (repeated & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
-        if (firstEntry + 5 >= djinnCount) {
+        if (firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
           if (firstEntry != 0) {
             firstEntry = 0;
             selectedRow = preferredRow;
           }
         } else {
-          firstEntry += 5;
+          firstEntry += BATTLE_LIST_ROWS;
           selectedRow = preferredRow;
-          if (firstEntry == (djinnCount - 1) / 5 * 5) {
+          if (firstEntry == (djinnCount - 1) / 5 * BATTLE_LIST_ROWS) {
             selectedRow = djinnCount - firstEntry - 1;
             if (selectedRow > preferredRow)
               selectedRow = preferredRow;
@@ -480,10 +482,10 @@ s32 BattleDjinnMenu_Run(s32 member) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
-          firstEntry -= 5;
+          firstEntry -= BATTLE_LIST_ROWS;
           selectedRow = preferredRow;
         } else {
-          firstEntry = (djinnCount - 1) / 5 * 5;
+          firstEntry = (djinnCount - 1) / 5 * BATTLE_LIST_ROWS;
           selectedRow = preferredRow;
           if (firstEntry != 0) {
             selectedRow = djinnCount - firstEntry - 1;
@@ -506,7 +508,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
     sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->oam.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
-      Oam_AddSpriteAtDepth(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     partyStatus = Ram_HeapSlots->partyStatus;
     blinkPhase = gFrameCount & 4;

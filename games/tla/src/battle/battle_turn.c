@@ -137,7 +137,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   if (battle->firstStrike == FIRST_STRIKE_PARTY)
     return 0;
 
-  unitCount = BattleUnit_ListLiving(2, unitIds);
+  unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   if (unitCount == 0)
     return 0;
 
@@ -193,7 +193,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       }
 
       if (unit->sleep != 0 || unit->stun != 0) {
-        entry->command = 8;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = 0x100;
       } else {

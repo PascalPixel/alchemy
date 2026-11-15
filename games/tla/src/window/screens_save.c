@@ -533,17 +533,19 @@ s32 Save_ToChosenFile(void) {
   struct SaveWorkspace *work;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    slot = FileList_SelectFile(gSaveSlot, 0);
+    slot = FileList_SelectFile(gSaveSlot, FILE_LIST_SAVE);
     if (slot == -1) {
       result = slot;
     } else {
       work = Ram_HeapSlots->saveWork;
       if (work->summary[slot].level != 0) {
-        FieldMessage_Show((s32)&MsgOverwriteConfirm, 13);
+        FieldMessage_Show((s32)&MsgOverwriteConfirm,
+                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
+                              FIELD_MESSAGE_LOWER);
         while (Message_AllTyped() == 0)
           wait(1);
         if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
@@ -560,10 +562,11 @@ s32 Save_ToChosenFile(void) {
       SaveProgress_Close((struct Window *)token);
       Message_CloseFinishedWindows();
       if (found != 0) {
-        FieldMessage_Show((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = -3;
       } else {
-        FieldMessage_Show((s32)&MsgGameSaved, 9);
+        FieldMessage_Show((s32)&MsgGameSaved,
+                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
       }
     }
   }
@@ -746,15 +749,15 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     width += x;
     x = 0;
   }
-  if (x + width > 29)
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1))
+    width = DISPLAY_TILE_WIDTH - x;
 
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29)
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
     s32 yOffset = y << 6;
@@ -786,7 +789,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
         (struct FieldSprite *)Sprite_CreateFar(descriptor->party[i]);
 
     if (object != 0) {
-      Sprite_StartAnimationFar(object, 1);
+      Sprite_StartAnimationFar(object, ANIM_STAND);
       object->nextFrame = 0;
       object->priority = 0;
     }
@@ -842,7 +845,7 @@ void FileList_PlacePartySprites(void) {
       request[2] = px(state->partyMemberY[index]) + px(500);
       request[3] = 0;
       Render_ApplyProjectedPlacementFar((struct ScaledSprite *)handle, request,
-                                        source, 0x4000);
+                                        source, FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {

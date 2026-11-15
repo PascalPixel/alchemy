@@ -270,7 +270,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     sprite = (struct MenuSprite *)&cursorStorage;
-    Oam_AddSpriteAtDepth(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     {
       s32 element, tile, blink;

@@ -35,7 +35,7 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
   Icon_Decode(work, 1);
   if (reuse == 0)
     *slot = VramCache_FindFreeEntry();
-  *tileOut = VramCache_Load(*slot, 128, work->tiles);
+  *tileOut = VramCache_Load(*slot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
@@ -83,7 +83,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   if (reuse == 0)
     *cacheSlot = VramCache_FindFreeEntry();
 
-  *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
@@ -93,18 +93,6 @@ extern u8 *gIcon_MarkPointers[];
 extern u8 *gIcon_DigitPointers[];
 
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
-
-// The layers ItemIcon_Compose draws over an item's icon.
-#define ICON_BASE 1            ///< the base under the icon
-#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
-#define ICON_COUNT 4           ///< the count, always
-/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
-#define ICON_BROKEN 8
-/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
-#define ICON_EQUIPPED 16
-/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
-/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
-#define ICON_ARTIFACT 32
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
@@ -185,7 +173,7 @@ s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   ItemIcon_Compose(inventoryCode, layers);
-  VramCache_Load(cacheSlot, 0x80, work->tiles);
+  VramCache_Load(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
@@ -195,7 +183,7 @@ s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawMisc(no);
-  VramCache_Load(slot, 0x80, work->tiles);
+  VramCache_Load(slot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
@@ -261,7 +249,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   if (reuse == 0)
     *cacheSlot = VramCache_FindFreeEntry();
 
-  *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
@@ -302,7 +290,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   Icon_Decode(work, 0);
   if (reuse == 0)
     *slot = VramCache_FindFreeEntry();
-  *tile = VramCache_Load(*slot, 0x200, work->tiles);
+  *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),
           REG_DMA3);
@@ -336,10 +324,3 @@ void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
                                          (u16)glyph->width, (u16)glyph->height);
   Heap_Release(code);
 }
-
-#undef ICON_BASE
-#undef ICON_COUNT_ABOVE_ONE
-#undef ICON_COUNT
-#undef ICON_EQUIPPED
-#undef ICON_BROKEN
-#undef ICON_ARTIFACT

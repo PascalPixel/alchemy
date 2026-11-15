@@ -745,15 +745,15 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
@@ -765,7 +765,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
         do {
           u32 tile = *p;
 
-          if (((tile >> 12) & 15) == 15) {
+          if (((tile >> 12) & 15) == WINDOW_PALETTE) {
             tile &= ~0xf000;
             tile |= palette;
             *p = tile;
@@ -847,8 +847,9 @@ s32 DjinnMenu_ShowHelp(void) {
     Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0, 0);
     channel =
         Message_OpenDecodedFar(helpWindow, selection + (s32)MsgDjinnInfoText);
-    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
-    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
+    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, WINDOW_PALETTE);
+    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1,
+                                     HIGHLIGHT_PALETTE);
     previous = selection;
     for (;;) {
       MenuCursor_Position(-12, ((s16)list->y + selection) * 8 + 8);
@@ -882,9 +883,9 @@ s32 DjinnMenu_ShowHelp(void) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
-    if (render->glyphResource != 99) {
+    if (render->glyphResource != NO_GLYPH_RESOURCE) {
       VramCache_FreeEntry(render->glyphResource);
-      render->glyphResource = 99;
+      render->glyphResource = NO_GLYPH_RESOURCE;
     }
     ((struct WindowWork *)Ram_HeapSlots->windowWork)->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);

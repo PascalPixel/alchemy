@@ -141,7 +141,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
   battle = Ram_HeapSlots->battleWork;
   targetCount = 0;
-  redraw = 0xffff;
+  redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null computed from selection. */
   conditionWindow = (struct RenderInput *)((u32)(u16)selection >> 16);
@@ -252,7 +252,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       drawCursors = 0;
       BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                  &selectedPosition);
-      ((u32 *)firstSprite)[1] = 0x40002000;
+      ((u32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
       ((u32 *)firstSprite)[2] = 0;
     } while (0);
     firstSprite->tile =
@@ -287,11 +287,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->y = selectedPosition.y - 16;
     Oam_AddSpriteAtDepth__menus(firstSprite, OAM_DEPTH_WINDOW);
     if (spread == ABILITY_RANGE_ALL) {
-      effect.scaleX = 256;
-      effect.scaleY = 256;
+      effect.scaleX = Q_8_8(1);
+      effect.scaleY = Q_8_8(1);
     } else {
-      effect.scaleX = 176;
-      effect.scaleY = 176;
+      effect.scaleX = Q_8_8(11.0 / 16);
+      effect.scaleY = Q_8_8(11.0 / 16);
     }
     effect.angle = 0;
     matrix = OamMatrix_AllocFromTransform(&effect);
@@ -346,15 +346,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             helpColumn = anchor - 4;
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
-              if (anchor + 6 > 29)
+              if (anchor + 6 > (DISPLAY_TILE_WIDTH - 1))
                 helpColumn = 20;
               conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-              if (anchor + 7 > 29)
+              if (anchor + 7 > (DISPLAY_TILE_WIDTH - 1))
                 helpColumn = 19;
               conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
             } else {
-              if (anchor + 5 > 29)
+              if (anchor + 5 > (DISPLAY_TILE_WIDTH - 1))
                 helpColumn = 21;
               conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }

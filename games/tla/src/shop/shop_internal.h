@@ -216,8 +216,8 @@ struct ShopWork {
   u8 menuIcons[0x48]; ///< ItemMenuWork's five menu icons; not named here
   /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
   /// cache slot (ICON_NONE when empty) for each inventory slot.
-  struct IconSprite iconSprites[ICON_COUNT];
-  u16 iconSlots[ICON_COUNT];
+  struct IconSprite iconSprites[INVENTORY_SLOTS];
+  u16 iconSlots[INVENTORY_SLOTS];
   s8 iconsVisible;  ///< nonzero while ItemIconGrid_Draw queues the icons
   void *listWindow; ///< the party row's window at the sell and forge counters
 };

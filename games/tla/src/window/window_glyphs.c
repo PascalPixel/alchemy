@@ -208,7 +208,8 @@ s32 Text_GetWideStringWidth(u16 *text) {
 #else
         idx = c - TEXT_MARK_VOICED;
         if (idx > 1U) {
-          idx += 0xbe; // The font starts at character 0x20.
+          idx += TEXT_MARK_VOICED -
+                 TEXT_SPACE; // The font starts at character 0x20.
           width += FONT_GLYPH(idx)->width;
         }
       } else {
@@ -387,34 +388,34 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
       if (c <= 30 || c == 176) {
 #endif
         switch (c) {
-        case 3:
+        case TEXT_NEWLINE:
           x = start;
           y++;
           break;
         case 14:
-        case 15:
+        case TEXT_WINDOW_STATE:
         case 28:
           text++;
-        case 7:
-        case 8:
-        case 9:
-        case 10:
+        case TEXT_COLORS_RESET:
+        case TEXT_COLOR:
+        case TEXT_OUTLINE:
+        case TEXT_LINE_SPACING:
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           text++;
           break;
         }
       } else {
-        Window_PutGlyph(window, c, x, y, 0);
+        Window_PutGlyph(window, c, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
-        if ((u16)(c - 0xde) > 1)
+        if ((u16)(c - TEXT_MARK_VOICED) > 1)
           x++;
 #endif
       }
@@ -458,11 +459,11 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   }
 
   offset = 0;
-  buffer[13] = offset;
+  buffer[NUMBER_DIGITS + 1] = offset;
   spaceCharacter = ' ';
   offset = 1;
   minusCharacter = '-';
-  for (leading = buffer; offset != 13; leading++, offset++) {
+  for (leading = buffer; offset != NUMBER_DIGITS + 1; leading++, offset++) {
     if (leading[1] == '0') {
       if (offset != NUMBER_DIGITS)
         leading[1] = spaceCharacter;
@@ -489,7 +490,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
 
   if ((u32)width > NUMBER_DIGITS)
     width = NUMBER_DIGITS;
-  return buffer + 13 - width;
+  return buffer + NUMBER_DIGITS + 1 - width;
 }
 
 #undef Iwram_ExpandBitRuns

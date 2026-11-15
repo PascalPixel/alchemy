@@ -124,11 +124,11 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   attr = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
   if (attr == BG_TILE_PALETTE(WINDOW_PALETTE)) {
-    pens[1] = gText_ColourPens[work->colour & 15];
+    pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
     Iwram_FillWords(canvas, 0x800, 0x04040404);
   } else {
-    pens[1] = (u8)work->colour & 15;
+    pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
     Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
   }
@@ -142,7 +142,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         switch (c) {
         case TEXT_COLOR:
           work->colour = *script++;
-          pens[1] = gText_ColourPens[work->colour & 15];
+          pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
           break;
         case TEXT_COLORS_RESET:
         case TEXT_OUTLINE:
@@ -235,12 +235,12 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   }
 
   for (i = 0; i < count; i++) {
-    u32 mask = 127;
+    u32 mask = TEXT_TILES - 1;
     u32 tile;
     u32 *p;
 
     if (work->extraTextTiles != 0)
-      mask = 255;
+      mask = 2 * TEXT_TILES - 1;
     tile = *tiles & TILE_NUMBER_MASK;
     if ((tile < TEXT_TILE_FIRST || tile > TEXT_TILE_FIRST + TEXT_TILES - 1) &&
         (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
@@ -250,8 +250,8 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         tile = (tile + 1) & mask;
       work->nextTextTile = (tile + 1) & mask;
       work->textTileState[tile] = 1;
-      if (tile > 127)
-        tile += 0x180;
+      if (tile > (TEXT_TILES - 1))
+        tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
         tile |= 0x80;
       *tiles = attr | tile;
@@ -287,11 +287,12 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     for (column = 0; column < width; column++) {
       u32 tile = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tile - TEXT_TILE_FIRST) <= 0x7f ||
-          (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
-        u32 index = ((tile & 0xff) ^ 0x80);
+      if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
+          (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
+           tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
+        u32 index = ((tile & 0xFF) ^ 0x80);
 
-        ((struct WindowWork *)base)->textTileState[index] &= 0xfc;
+        ((struct WindowWork *)base)->textTileState[index] &= 0xFC;
       }
     }
     cursor += BG_SCREEN_WIDTH - width;
@@ -312,8 +313,9 @@ void Window_MarkVisibleTextTiles(void) {
     for (x = 0; x < width; x++) {
       u32 tile = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tile - TEXT_TILE_FIRST) <= 0x7f ||
-          (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
+      if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
+          (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
+           tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
         ((struct WindowWork *)base)->textTileState[index] |= 2;
@@ -321,7 +323,7 @@ void Window_MarkVisibleTextTiles(void) {
     }
   }
 
-  for (row = 0; row < 256; row++, base++) {
+  for (row = 0; row < 2 * TEXT_TILES; row++, base++) {
     if (((struct WindowWork *)base)->textTileState[0] == 1)
       ((struct WindowWork *)base)->textTileState[0] = 0;
   }
@@ -353,7 +355,7 @@ void Text_UseExtraTiles(s32 alt) {
   } else {
     work->alt = 0;
     fill = 0;
-    p = work->table + 128;
+    p = work->table + TEXT_TILES;
     for (i = 0; i < 128; i++)
       *p++ = fill;
   }
@@ -700,7 +702,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
 /// window's HP; the PP label for variant 1, its PP.
 void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
                                      s32 offsetX, s32 offsetY, s32 variant) {
-  u8 formatted[16];
+  u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   u16 output[8];
   u8 *text;
   s32 index;
@@ -728,7 +730,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   output[6] = 0;
   cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
          ((s16)work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 0x280) {
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     vram = 0x06002000;
     cell *= 2;
     dst = vram + cell;

@@ -272,7 +272,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
-  if (targetId > 0x7f) {
+  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
     u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + FIRST_ENEMY_UNIT;
@@ -393,7 +393,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.firstTarget = action->target;
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
-  if (work.firstTarget > 127)
+  if (work.firstTarget > (FIRST_ENEMY_UNIT - 1))
     work.count =
         BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
   else
@@ -509,7 +509,7 @@ void BattleMotion_PlayFall(s32 unitId) {
     Sprite_StartAnimationFar(animation, POSE_DAMAGE);
     entry = animation->entry;
     entry->colorMode = SPRITE_COLOR_GREY;
-    entry->picture = 0xff;
+    entry->picture = 0xFF;
     wait(4);
     SpriteDissolve_RunFar(animation);
     BattleObject_MarkForRelease(unitId);
@@ -532,7 +532,7 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
     return targetId;
   }
 
-  if (targetId > 0x7F) {
+  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
   } else {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);

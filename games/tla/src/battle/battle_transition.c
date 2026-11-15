@@ -44,7 +44,9 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   bg3cnt = *++reg;
   *reg = bg3cnt | BGCNT_MOSAIC;
   reg += 0x21;
-  *reg = 0x3eee;
+  *reg = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_BD |
+         BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
+         BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
 
   ScreenFade_ToBlack(16);
   for (i = 0; i <= 15; i++) {

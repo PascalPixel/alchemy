@@ -219,7 +219,7 @@ s32 Battle_Run(s32 enemyGroup) {
   transition->flag = 1;
   transition->unk18 = 0;
   transition->unk1c = 0;
-  *(volatile u16 *)0x04000000 = 1;
+  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   GameFlag_Set(0x169);
   Transform_Reset();
@@ -255,11 +255,11 @@ s32 Battle_Run(s32 enemyGroup) {
       gBattleRandomSeed = 0;
     } while (0);
     for (linkWaitFrames = 0;;) {
-      if ((gLinkStatus & 3) == 3)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
       wait(1);
       linkWaitFrames++;
-      if (linkWaitFrames > 24) {
+      if (linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
         battle->linkPaused = 1;
         break;
       }
@@ -289,17 +289,17 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
-  if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
+  if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
     battle->partyStatus = 3;
   else
     battle->partyStatus = 1;
   if (enemyGroup == 75 || enemyGroup == 76)
     ScriptedBattle_RestoreUnits();
-  PartyStatus_CreateWindowFar(9);
+  PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
-  BattleBackground_Load(1, battle->background, 0);
+  BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
@@ -307,16 +307,16 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleSpoils_Clear();
   battle->promptSlot = VramCache_AllocEntry(128);
 
-  battle->encounterMode = 0;
+  battle->encounterMode = FIRST_STRIKE_NONE;
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
-    battle->encounterMode = 1;
+    battle->encounterMode = FIRST_STRIKE_PARTY;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
-      battle->encounterMode = 1;
+      battle->encounterMode = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST) {
-    battle->encounterMode = 2;
+    battle->encounterMode = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
@@ -328,11 +328,11 @@ s32 Battle_Run(s32 enemyGroup) {
       BattleParty_SwapInReserves();
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
-    if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
+    if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
       battle->partyStatus = 3;
     else
       battle->partyStatus = 1;
-    transition->targetYaw = 0x2800;
+    transition->targetYaw = TRIG_TURN * 5 / 32;
     transition->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
@@ -363,9 +363,9 @@ s32 Battle_Run(s32 enemyGroup) {
         goto party_lost;
       if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
         goto party_lost;
-      if (BattleUnit_ListLiving(1, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
-      if (BattleUnit_ListLiving(2, 0) == 0) {
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
         if (enemyGroup == 78 || enemyGroup == 79) {
           Battle_PlayFormChange(enemyGroup++);
           break;
@@ -415,7 +415,7 @@ s32 Battle_Run(s32 enemyGroup) {
 #endif
     battle->extraCount = battle->nextExtraCount;
     battle->nextExtraCount = 0;
-    battle->encounterMode = 0;
+    battle->encounterMode = FIRST_STRIKE_NONE;
     Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
@@ -454,10 +454,10 @@ won_scripted:
       if (battle->defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= DEFEAT_SEVERAL) {
-          BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
-                            26);
+          BattleUnit_SetFar(FIRST_ENEMY_UNIT,
+                            battle->enemyClasses[battle->firstDefeated], 26);
           MessageArgument_ClearAllFar();
-          MessageArgument_PushFar(128, MESSAGE_ARGUMENT_ACTOR);
+          MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
@@ -476,7 +476,7 @@ aborted:
 aborted_scripted:
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
-  *(volatile u16 *)0x04000000 = 1;
+  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
   result = battle->defeated;
   GameFlag_Set(FLAG_AREA_TEMP_E8);
   goto finished;
@@ -779,7 +779,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
 
   order = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & 1) {
+  if (groups & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(order->partyUnits[i])->hp != 0) {
@@ -789,7 +789,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
       }
     }
   }
-  if (groups & 2) {
+  if (groups & BATTLE_SIDE_MASK_ENEMIES) {
     for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(order->enemyIds[i])->hp != 0) {
@@ -800,6 +800,6 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
     }
   }
   if (dst != NULL)
-    *dst = 255;
+    *dst = BATTLE_UNIT_LIST_END;
   return count;
 }

@@ -165,7 +165,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
   }
 
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
-  screen->baseX = 100 - rowPosition * 8;
+  screen->baseX = 100 - rowPosition * SELECTION_ICON_SPACING / 2;
   screen->baseY = 140;
   // The count is reused as a pixel offset while the row is placed.
   for (previous = screen->head, rowPosition = 0; previous != 0;
@@ -334,7 +334,7 @@ void SelectionMenu_Draw(void) {
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       te->mode = 1;
     }
-    Oam_AddSpriteAtDepth((s32 *)te, 248);
+    Oam_AddSpriteAtDepth((s32 *)te, OAM_DEPTH_WINDOW + 8);
   }
   SelectionMenu_DrawArrow(state, 0);
   SelectionMenu_DrawArrow(state, 1);
@@ -407,7 +407,7 @@ void SelectionMenu_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Oam_AddSpriteAtDepth((s32 *)cursorEntry, 248);
+    Oam_AddSpriteAtDepth((s32 *)cursorEntry, OAM_DEPTH_WINDOW + 8);
   }
   state->status += 1;
 }
@@ -445,7 +445,7 @@ void SelectionMenu_DrawArrow(struct SelectionScreen *state, s32 side) {
     else
       arrow->mode = 0;
   }
-  Oam_AddSpriteAtDepth(arrow, 238);
+  Oam_AddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
   if (state->records[side].base != 0)
     state->records[side].base--;
 }
@@ -861,7 +861,7 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
       }
     } else {
       node = state->head;
-      i = 64;
+      i = SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {
@@ -991,18 +991,18 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
       return;
     SelectionMenu_SetupIcon(kind, base, p, 0);
     y = screen->baseX;
-    p->x = y + 80;
+    p->x = y + (SELECTION_LAST_PLACE + 1) * SELECTION_ICON_SPACING;
     z = screen->baseY;
-    p->targetX = y + 64;
+    p->targetX = y + SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
     p->y = z;
     p->dx = -2;
     p->targetY = z;
-    p->scaleStep = 32;
-    p->scale = 32;
-    p->scaleEnd = 256;
+    p->scaleStep = Q_8_8(1) / 8;
+    p->scale = Q_8_8(1) / 8;
+    p->scaleEnd = Q_8_8(1);
     last = p;
     p = screen->head;
-    p->scaleStep = -32;
+    p->scaleStep = -Q_8_8(1) / 8;
     p->scaleEnd = 0;
     for (;;) {
       p->targetX = p->x - SELECTION_ICON_SPACING;
@@ -1035,10 +1035,10 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     p->y = screen->baseY;
     p->targetY = p->y;
     p->dx = 2;
-    p->scale = 32;
-    p->scaleStep = 32;
+    p->scale = Q_8_8(1) / 8;
+    p->scaleStep = Q_8_8(1) / 8;
     p->targetX = p->x + SELECTION_ICON_SPACING;
-    p->scaleEnd = 256;
+    p->scaleEnd = Q_8_8(1);
     first = p;
     p = screen->head;
     p->prev = first;
@@ -1054,7 +1054,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
       p = p->next;
     }
     p->scaleEnd = 0;
-    p->scaleStep = -32;
+    p->scaleStep = -Q_8_8(1) / 8;
     p = screen->head;
     do {
       wait(1);
@@ -1075,15 +1075,16 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
   s32 result = -1;
 
   switch (mode) {
-  case 1:
-  case 6:
+  case ICON_KIND_COMMAND:
+  case ICON_KIND_YES_NO:
     Icon_BuildCommandIconTiles(value, 0, &result, &output, 0);
     break;
-  case 2:
+  case ICON_KIND_ITEM:
     result = VramCache_FindFreeEntry();
-    if (result == 96)
+    if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    Icon_CopyResourceToSlot(value, 0x1a, result);
+    Icon_CopyResourceToSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case 4:
     Ability_LoadGlyph(value, 1, &result, &output, 0);
@@ -1110,10 +1111,14 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
-    Icon_CopyResourceToSlot(value, 58, result);
+    Icon_CopyResourceToSlot(value,
+                            ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN |
+                                ICON_ARTIFACT,
+                            result);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
-    Icon_CopyResourceToSlot(value, 42, result);
+    Icon_CopyResourceToSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_ARTIFACT, result);
     break;
   case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, option, &result, &output, 1);
@@ -1250,8 +1255,8 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   other->homeY = node->homeY;
   other->dx = 0;
   other->dy = 0;
-  other->scale = 0x100;
-  other->scaleEnd = 0x100;
+  other->scale = Q_8_8(1);
+  other->scaleEnd = Q_8_8(1);
   sprite = &other->sprite;
   sprite->mode = 0;
   sprite->colors = 0;

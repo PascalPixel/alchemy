@@ -80,7 +80,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->bounce = 0;
   start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, z);
-  Actor_SelectAnimationFar(start, 2);
+  Actor_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's actor back to its spot. Nothing in the source calls it.

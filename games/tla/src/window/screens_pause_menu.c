@@ -50,15 +50,15 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {

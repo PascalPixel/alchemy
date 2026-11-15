@@ -217,7 +217,7 @@ void Credits_BuildBackgroundTilemap(u32 *table) {
   u32 value;
   u32 step;
 
-  value = 0x01ff01ff;
+  value = 0x01FF01FF;
   step = 0x10000;
   for (i = 0; i < 32; i++)
     *table++ = value;

@@ -49,7 +49,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 #if !TLA_PATCH_1
     if (work->mindRead != 0) {
       *pw += 2;
-      limit = 29;
+      limit = DISPLAY_TILE_WIDTH - 1;
     }
 #endif
   }
@@ -140,7 +140,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   width = 0;
-  height = 15;
+  height = TEXT_LINE_HEIGHT;
   lines = 0;
   lineWidth = 0;
   count = 0;
@@ -149,13 +149,13 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code > 31 && code != 176) {
-      if (code == 32) {
+      if (code == TEXT_SPACE) {
         lineWidth += 5;
         count++;
       } else {
-        glyph = gFont_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         style = work->outline;
-        if (style == 1 || style == 5)
+        if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
       }
@@ -168,16 +168,16 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     if (code > 31) {
       if (code - 222 <= 1) {
         lineWidth += 1;
-      } else if (code == 165) {
+      } else if (code == TEXT_JAPANESE_MIDDLE_DOT) {
         lineWidth += 6;
       } else if (code == 32) {
         lineWidth += 7;
       } else {
         glyph = 10;
         if (code <= TEXT_LAST_FONT_CODE)
-          glyph = gFont_Glyphs[code - 32].width;
+          glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         style = work->outline;
-        if (style == 1 || style == 5)
+        if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
       }
@@ -210,22 +210,22 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         lines++;
       count = 0;
       lineWidth = 0;
-      height += 15;
+      height += TEXT_LINE_HEIGHT;
       break;
-    case 1:
+    case TEXT_PAGE:
       Text_ResetStyle();
     case 0:
       goto done;
     case 14:
     case 28:
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-    case 8:
-    case 10:
-    case 15:
-    case 17:
+    case TEXT_COLOR:
+    case TEXT_LINE_SPACING:
+    case TEXT_WINDOW_STATE:
+    case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
-    case 9:
+    case TEXT_OUTLINE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
@@ -323,21 +323,21 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #if TLA_PATCH_1 && !TLA_PATCH_2
   maxWidth = 0;
 #endif
-  pageHeights[0] = 15;
-  pageHeights[1] = 15;
-  pageHeights[2] = 15;
-  pageHeights[3] = 15;
-  pageHeights[4] = 15;
-  pageHeights[5] = 15;
-  pageHeights[6] = 15;
-  pageHeights[7] = 15;
-  pageHeights[8] = 15;
-  pageHeights[9] = 15;
-  pageHeights[10] = 15;
-  pageHeights[11] = 15;
-  pageHeights[12] = 15;
-  pageHeights[13] = 15;
-  pageHeights[14] = 15;
+  pageHeights[0] = TEXT_LINE_HEIGHT;
+  pageHeights[1] = TEXT_LINE_HEIGHT;
+  pageHeights[2] = TEXT_LINE_HEIGHT;
+  pageHeights[3] = TEXT_LINE_HEIGHT;
+  pageHeights[4] = TEXT_LINE_HEIGHT;
+  pageHeights[5] = TEXT_LINE_HEIGHT;
+  pageHeights[6] = TEXT_LINE_HEIGHT;
+  pageHeights[7] = TEXT_LINE_HEIGHT;
+  pageHeights[8] = TEXT_LINE_HEIGHT;
+  pageHeights[9] = TEXT_LINE_HEIGHT;
+  pageHeights[10] = TEXT_LINE_HEIGHT;
+  pageHeights[11] = TEXT_LINE_HEIGHT;
+  pageHeights[12] = TEXT_LINE_HEIGHT;
+  pageHeights[13] = TEXT_LINE_HEIGHT;
+  pageHeights[14] = TEXT_LINE_HEIGHT;
   pageHeights[15] = 15;
 #if !TLA_PATCH_1 || TLA_PATCH_2
   maxWidth = 0;
@@ -351,13 +351,13 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code >= 32 && code != 176) {
-      if (code == 32) {
+      if (code == TEXT_SPACE) {
         width += 5;
         count++;
       } else {
-        glyph = gFont_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         outline = work->outline;
-        if (outline == 1 || outline == 5)
+        if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
       }
@@ -370,16 +370,16 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     if (code >= 32) {
       if (code - 222 <= 1) {
         width += 1;
-      } else if (code == 165) {
+      } else if (code == TEXT_JAPANESE_MIDDLE_DOT) {
         width += 6;
       } else if (code == 32) {
         width += 7;
       } else {
         glyph = 10;
         if (code <= TEXT_LAST_FONT_CODE)
-          glyph = gFont_Glyphs[code - 32].width;
+          glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         outline = work->outline;
-        if (outline == 1 || outline == 5)
+        if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
       }
@@ -388,7 +388,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
 #endif
     switch (code) {
-    case 3:
+    case TEXT_NEWLINE:
 #if LANGUAGE != LANGUAGE_JAPANESE
       // Outside Japanese, count is the line's spaces plus one, its words.
       count++;
@@ -401,9 +401,9 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         line++;
       count = 0;
       width = 0;
-      pageHeights[page] += 15;
+      pageHeights[page] += TEXT_LINE_HEIGHT;
       break;
-    case 0:
+    case TEXT_END:
 #if LANGUAGE != LANGUAGE_JAPANESE
       count++;
 #endif
@@ -413,7 +413,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         maxWidth = width;
       page++;
       goto done;
-    case 1:
+    case TEXT_PAGE:
 #if LANGUAGE != LANGUAGE_JAPANESE
       count++;
 #endif
@@ -427,13 +427,13 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case 14:
     case 28:
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-    case 8:
-    case 10:
-    case 15:
-    case 17:
+    case TEXT_COLOR:
+    case TEXT_LINE_SPACING:
+    case TEXT_WINDOW_STATE:
+    case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
-    case 9:
+    case TEXT_OUTLINE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;

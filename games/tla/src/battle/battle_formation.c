@@ -285,7 +285,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
     if (w->channels[i] < 0) {
       w->channels[i] = 1;
       w->usedMasks[i] = 3;
-      return 0x8001;
+      return ENEMY_LETTER_FIRST_TOO | 1;
     }
     for (; retry <= 31; retry++) {
       w->channels[i] = (w->channels[i] + 1) % CH_CNT;
@@ -386,7 +386,7 @@ next_object:
 /// Returns the class of a random member of the formation that may appear.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
-  s32 choices[5];
+  s32 choices[FORMATION_MEMBERS];
   struct Formation *record;
   s32 *choiceCursor;
   u8 *maximumCount;
@@ -429,9 +429,9 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   s32 enemyCount;
   s32 levelAdjustment;
   u16 listBuffer[UNIT_MAX];
-  s32 extraCounts[5];
-  s32 memberCounts[5];
-  s32 memberOrder[5];
+  s32 extraCounts[FORMATION_MEMBERS];
+  s32 memberCounts[FORMATION_MEMBERS];
+  s32 memberOrder[FORMATION_MEMBERS];
   s32 changed;
   s32 additionalRoom;
   s32 spriteSlots;
@@ -456,7 +456,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
        memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
-  if (memberIndex == 5)
+  if (memberIndex == FORMATION_MEMBERS)
     record = &gFormations[1];
 
   freeSpriteSlots = 6;
@@ -499,7 +499,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     changed = 0;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      classId = record->memberIds[memberOrEnemyIndex] + 8;
+      classId = record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
       if (extraCounts[memberOrEnemyIndex] != 0) {
         spriteSlots = 2 - (BattleSprite_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
@@ -516,7 +516,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
 
   battle->layout = record->layout;
   switch (battle->layout) {
-  case 0:
+  case FORMATION_LAYOUT_SHUFFLED:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
@@ -534,10 +534,10 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       s32 slot = memberOrder[memberOrEnemyIndex];
 
       for (copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
-        enemyClasses[enemyCount++] = record->memberIds[slot] + 8;
+        enemyClasses[enemyCount++] = record->memberIds[slot] + ENEMY_ID_FIRST;
     }
     break;
-  case 1:
+  case FORMATION_LAYOUT_INTERLEAVED:
     for (;;) {
       remainingKinds = 0;
       for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
@@ -548,7 +548,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       if (remainingKinds == 0)
         break;
       spriteSlots = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] = record->memberIds[spriteSlots] + 8;
+      enemyClasses[enemyCount++] =
+          record->memberIds[spriteSlots] + ENEMY_ID_FIRST;
       memberCounts[spriteSlots]--;
     }
     break;
@@ -556,14 +557,17 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
       for (copies = 0; copies < memberCounts[memberOrEnemyIndex]; copies++)
-        enemyClasses[enemyCount++] = record->memberIds[memberOrEnemyIndex] + 8;
+        enemyClasses[enemyCount++] =
+            record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
     }
     break;
   }
   enemyClasses[enemyCount] = 0;
-  battle->firstDefeated = 6;
+  battle->firstDefeated = ENEMY_BATTLE_SIZE;
   battle->defeatState = DEFEAT_ONE;
-  for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
+  for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
+       memberOrEnemyIndex < (FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE);
+       memberOrEnemyIndex++)
     Iwram_ClearWordsEntry(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;

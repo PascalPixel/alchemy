@@ -174,8 +174,8 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created =
-        Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 0x102);
+    created = Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
+                                    WINDOW_KEEP_EXISTING | 2);
   window = state->statusWindow;
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
@@ -707,7 +707,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *object;
 
-  if (index > 0x1F) {
+  if (index > (MENU_ENTRY_ICONS - 1)) {
     index = 0;
   }
   object = *slot;
@@ -780,7 +780,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
-                              0x102) == 0)
+                              WINDOW_KEEP_EXISTING | 2) == 0)
       Window_SetBounds(menu->modalWindow, x, y, width, height);
     window = menu->modalWindow;
   } else {
@@ -1008,22 +1008,22 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 blue;
 
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
-  blue = palette[4] >> 10;
-  green = (palette[4] >> 5) & 31;
-  red = palette[4] & 31;
+  blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
+  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
+  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
   blue += 9;
-  if (blue > 31)
-    blue = 31;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   green += 9;
-  if (green > 31)
-    green = 31;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
   red += 9;
-  if (red > 31)
-    red = 31;
-  palette[4] = RGB(red, green, blue);
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
 }
 
 #define PAGE_LABEL_FIRST 49
@@ -1072,15 +1072,15 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {

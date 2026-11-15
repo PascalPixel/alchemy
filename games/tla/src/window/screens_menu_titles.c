@@ -347,7 +347,8 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   u8 *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  ItemIcon_Compose(resource, 0x1a);
+  ItemIcon_Compose(resource,
+                   ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
   result = VramCache_Reload(index, (s32)(work + 0x400));
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
@@ -533,7 +534,7 @@ void CommandRow_PutBg1InFront(void) {
 /// handler at line 136. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
-  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 }
 
 #undef Resource_DecodeByteLzInRam

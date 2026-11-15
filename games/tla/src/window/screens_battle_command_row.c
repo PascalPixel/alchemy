@@ -121,8 +121,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
                               selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
-  selectionUi->affine.scaleX = 320;
-  selectionUi->affine.scaleY = 304;
+  selectionUi->affine.scaleX = Q_8_8(1.25);
+  selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
   selectionUi->affine.angle = 0;
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
@@ -132,12 +132,12 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].positionY = 136;
+      selectionUi->entries[entryIndex].positionY = COMMAND_ROW_TOP * 8;
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
   Task_Add(CommandRow_PutBg1Behind, 0xc80);
-  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
@@ -231,7 +231,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         entry->objMode = 3;
         entry->x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Oam_AddSpriteAtDepth(entry, 241);
+        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
       } else {
         entry->x = entry->positionX;
         entry->y = entry->positionY;
@@ -317,7 +317,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       command = selectionUi->commandKinds[0];
       break;
     }
-    IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x1741);
+    IoWriteQueue_Store16((u32)&REG_DISPCNT,
+                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
     work->holdTilemapUpload = 0;
     wait(1);
   }
@@ -347,7 +349,10 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   wait(1);
   Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(IRQ_VCOUNT, 0, 0);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
+                      0x20000);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);

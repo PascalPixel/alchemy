@@ -10,6 +10,7 @@
 #include "types.h"
 #include "sprite_ids.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "game/owner_state.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"

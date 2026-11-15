@@ -669,15 +669,16 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     s32 targetYaw;
 
     if (actorId <= ALLY_MAX)
-      targetYaw = angle - 0x1800;
+      targetYaw = angle - TRIG_TURN * 3 / 32;
     else
-      targetYaw = angle + 0x1800;
+      targetYaw = angle + TRIG_TURN * 3 / 32;
     targetYaw = (s16)targetYaw;
     targetYaw += ((actorId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
                   targetYaw) *
                  3 / 4;
     if (!((actorId <= ALLY_MAX) ^ (target <= ALLY_MAX)))
-      targetYaw = actorId <= ALLY_MAX ? 0x2400 : -0x2400;
+      targetYaw =
+          actorId <= ALLY_MAX ? TRIG_TURN * 9 / 64 : -(TRIG_TURN * 9 / 64);
     if (transition->targetYaw != targetYaw)
       transition->targetYaw = targetYaw;
   }
@@ -690,7 +691,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
 
   BattleStaging_BuildTargetList(plan, &work);
-  isDjinni = mode & 1;
+  isDjinni = mode & CAST_DJINNI;
   if (isDjinni)
     work.flags = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -701,14 +702,14 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   Sound_PlayFar(SE_CAST);
-  if (mode & 2)
-    ElementGlow_Play(work.actor, plan->element, 1, 0);
+  if (mode & CAST_ENEMY)
+    ElementGlow_Play(work.actor, plan->element, GLOW_STREAKS, 0);
   else if (!isDjinni)
-    ElementGlow_Play(work.actor, plan->element, 0, 0);
+    ElementGlow_Play(work.actor, plan->element, GLOW_STAR_FIELD, 0);
   if (plan->targetIds[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
 
   for (targetIndex = 0; targetIndex != work.count; targetIndex++) {
     struct CastAnimation *animation =
@@ -719,8 +720,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       work.params[targetIndex][entryIndex] =
           animation->entries[entryIndex]->param;
   }
-  if (plan->failure != 0) {
-    if (plan->failure == 1) {
+  if (plan->failure != ACTION_FAILURE_NONE) {
+    if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgPsynergyBlocked);
     } else {
@@ -734,7 +735,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     if (work.kind) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & 0x4000)
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
         BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
@@ -747,7 +748,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     }
     if (((s32 *)plan)[25] == 0)
       BattlePlayback_WaitForReady();
-    Actor_SelectAnimationFar(object, 1);
+    Actor_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
       BattleMotion_ReturnToSpot(work.actors[targetIndex]);
   }

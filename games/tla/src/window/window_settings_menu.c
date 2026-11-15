@@ -603,9 +603,9 @@ struct RenderInput *PauseMenu_Open(void) {
     rows += PAUSE_MENU_DEBUG_ROWS;
   top = 8 - rows;
   height = rows * 3 + 1;
-  if (top + height > 19) {
+  if (top + height > (DISPLAY_TILE_HEIGHT - 1)) {
     top = 1;
-    height = 19;
+    height = DISPLAY_TILE_HEIGHT - 1;
   }
   win = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
@@ -615,8 +615,9 @@ struct RenderInput *PauseMenu_Open(void) {
     msg = (s32)MsgSaveYourQuest;
     Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, 4);
     msg++;
-    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, 28);
-    y = 52;
+    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X,
+                     4 + PAUSE_MENU_ROW_HEIGHT);
+    y = 4 + 2 * PAUSE_MENU_ROW_HEIGHT;
   }
   Text_DrawMessage((s32)MsgChangeSettings, (s32)win, PAUSE_MENU_TEXT_X, y);
   y += PAUSE_MENU_ROW_HEIGHT;
@@ -690,7 +691,7 @@ s32 PauseMenu_Choose(s32 initial) {
 
   redraw = -1;
   selected = initial;
-  rows = 3;
+  rows = PAUSE_MENU_ROWS;
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
@@ -700,10 +701,10 @@ s32 PauseMenu_Choose(s32 initial) {
   pair = MenuTitle_Create(7, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;
-    first = 2;
+    first = PAUSE_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0)
-    rows += 3;
+    rows += PAUSE_MENU_DEBUG_ROWS;
   for (;;) {
     if (redraw != 0) {
       selected = (selected + rows) % rows;
@@ -737,7 +738,7 @@ s32 PauseMenu_Choose(s32 initial) {
     }
     MenuTitle_Bob(pair);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       result = selected;
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;

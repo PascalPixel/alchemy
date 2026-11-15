@@ -215,7 +215,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   if (releaseOthers) {
     for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
       if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
-        releasedUnitId = unitIndex + 120;
+        releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
         if (unitIndex <= ALLY_MAX)
           releasedUnitId = unitIndex;
         ReleaseBattleObjectRecords(releasedUnitId);
@@ -652,7 +652,7 @@ struct BattleObject *BattleObject_Get(s32 objectId) {
     objectId -= 0x78;
   }
   index = objectId;
-  if (work->placement[index] == 0xFF) {
+  if (work->placement[index] == BATTLE_OBJECT_NONE) {
     return NULL;
   }
   return &slots[work->placement[index]];

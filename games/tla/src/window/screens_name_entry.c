@@ -86,8 +86,8 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
       vram++;
       map++;
     }
-    vram += 32 - window->width;
-    map += 32 - window->width;
+    vram += BG_SCREEN_WIDTH - window->width;
+    map += BG_SCREEN_WIDTH - window->width;
   }
   Heap_Release(buffer);
 }
@@ -103,15 +103,15 @@ void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
@@ -340,7 +340,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyRow = NAME_FINISH_ROW;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
-    output = WindowSprite_Create(vramSlot, 0x40000000,
+    output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
@@ -354,7 +354,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
-    output = WindowSprite_Create(vramSlot, 0x40000000,
+    output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
     output->sentinel = 255;
@@ -362,9 +362,10 @@ s32 NameEntry_EditMemberName(s32 member) {
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8), REG_DMA3);
-  palette[4] = 0x6318;
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
+          REG_DMA3);
+  palette[WINDOW_BACKGROUND_COLOR] = 0x6318;
   end = (u8 *)(byteCount + (s32)editedName) - 1;
   while (1) {
     s32 width = 1;
@@ -628,7 +629,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyColumn = NAME_COMMAND_COLUMN;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
-    output = WindowSprite_Create(vramSlot, 0x40000000,
+    output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
@@ -642,7 +643,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
-    output = WindowSprite_Create(vramSlot, 0x40000000,
+    output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
     output->sentinel = 255;
@@ -650,9 +651,10 @@ s32 NameEntry_EditMemberName(s32 member) {
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);
   }
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8), REG_DMA3);
-  palette[4] = 0x6318;
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
+          REG_DMA3);
+  palette[WINDOW_BACKGROUND_COLOR] = 0x6318;
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {
     s32 width = 1;

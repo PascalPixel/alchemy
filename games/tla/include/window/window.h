@@ -464,6 +464,18 @@ void Text_FillCanvasBackground(void);
 
 void PartyStatus_OpenAndWait(void);
 
+// The layers ItemIcon_Compose draws over an item's icon.
+#define ICON_BASE 1            ///< the base under the icon
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
+#define ICON_BROKEN 8
+/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
+#define ICON_EQUIPPED 16
+/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
+/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
+#define ICON_ARTIFACT 32
+
 /// An action's id in its encoded list entry, below its flags.
 #define ACTION_ID_MASK 0x3fff
 

@@ -167,12 +167,12 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   tile = 240;
   bottom = y + height;
   tile <<= 8;
-  if (bottom > 20)
-    height = 20 - y;
+  if (bottom > DISPLAY_TILE_HEIGHT)
+    height = DISPLAY_TILE_HEIGHT - y;
   if (width <= 1)
     width = 2;
-  if (width > 30)
-    width = 30;
+  if (width > DISPLAY_TILE_WIDTH)
+    width = DISPLAY_TILE_WIDTH;
   if (height <= 1)
     height = 2;
   if (height > 30)
@@ -199,7 +199,7 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
         } while (column < width);
       }
       row++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     } while (row < height);
   }
   canvas->dirty = 1;
@@ -426,11 +426,11 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   ((s32 (*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
                                                              height);
 #endif
-  tiles = work->tilemap[0] + top * 32 + left;
+  tiles = work->tilemap[0] + top * BG_SCREEN_WIDTH + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)
       *tiles++ = WINDOW_TILE_WINDOW_FILL;
-    tiles += 32 - width;
+    tiles += BG_SCREEN_WIDTH - width;
   }
   work->dirty = 1;
 }

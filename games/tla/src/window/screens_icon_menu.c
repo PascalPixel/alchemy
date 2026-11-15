@@ -1325,7 +1325,7 @@ s32 FileList_SelectAction(void) {
     return 0;
   if (type == 3)
     group = 1;
-  else if (type == 103)
+  else if (type == SAVE_SCAN_ALL_CLEARED + 3)
     group = 2;
   else if (type > SAVE_SCAN_ALL_CLEARED)
     group = 3;

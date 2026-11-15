@@ -372,13 +372,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_PushFar(actor->inventory[request->parameter],
                             MESSAGE_ARGUMENT_ITEM);
-    if (item->useType == 2 || item->useType == 0) {
+    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
       switch (item->type) {
-      case 1:
-      case 3:
-      case 6:
+      case ITEM_TYPE_WEAPON:
+      case ITEM_TYPE_SHIELD:
+      case ITEM_TYPE_PSYNERGY:
       case 7:
-      case 8:
+      case ITEM_TYPE_RING:
         BattleMessage_ShowAndWaitFar((s32)&MsgActorRaisesItem);
         break;
       default:
@@ -490,19 +490,21 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
-                            DJINN_ELEMENT(request->parameter) * 20 +
-                                DJINN_INDEX(request->parameter) + 300);
-        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(
+            PLAYBACK_ABILITY_NAME,
+            DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
+                DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
+        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
+                                 POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
-        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter), 3,
-                         0);
+        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
+                         GLOW_BURST, 0);
         BattlePlayback_WaitForReady();
         return ACTION_NOTHING_TO_SHOW;
       }
@@ -533,7 +535,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     const struct SummonDefinition *summon;
     struct DjinnRecoveryListDraft *list;
     s32 side;
-    u8 counts[4];
+    u8 counts[ELEMENT_COUNT];
     s32 index;
 
     summon = SummonDefinition_Get(request->parameter);
@@ -542,10 +544,10 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             ? request->unitId
             : 0,
         counts);
-    side = 0;
+    side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX &&
         ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink)
-      side = 1;
+      side = DJINN_RECOVERY_OPPONENT;
     list = (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(
                                                  side) +
                                              8);

@@ -848,7 +848,7 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
     *remainingIcons++ = WindowSprite_CreateFromResourceFar(
         ICON_KIND_ITEM, remainingSlot, window, 256, remainingY);
     remainingSlot++;
-  } while (remainingSlot <= 31);
+  } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
 }
 
 /// Hides all 32 item icons.
@@ -1416,7 +1416,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       Item_GetDirectFar(entry & INVENTORY_ITEM_ID_MASK);
 
   if (mode == 1)
-    style = 0x100;
+    style = STATUS_PANEL_LOWER_ONLY;
   switch (item->type) {
   case 0:
   case 11:
@@ -1455,22 +1455,22 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       Heap_Release(buffer);
     }
     break;
-  case 1:
-  case 2:
-  case 3:
-  case 4:
-  case 5:
+  case ITEM_TYPE_WEAPON:
+  case ITEM_TYPE_ARMOR:
+  case ITEM_TYPE_SHIELD:
+  case ITEM_TYPE_HELM:
+  case ITEM_TYPE_BOOTS:
   case 7:
-  case 8:
-  case 9:
+  case ITEM_TYPE_RING:
+  case ITEM_TYPE_SHIRT:
     if (owner == target) {
-      style |= 2;
+      style |= STATUS_PANEL_EQUIP;
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
       unit = Unit_Get(target);
-      size = 332;
+      size = BATTLE_UNIT_SIZE;
       buffer = Heap_Alloc(size);
       Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -1478,7 +1478,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         entry &= ~INVENTORY_EQUIPPED;
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
-          style |= 2;
+          style |= STATUS_PANEL_EQUIP;
           StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
           StatusPanel_Draw(menu->statusWindow, target, slot, style);
@@ -1490,22 +1490,22 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       Heap_Release(buffer);
     }
     break;
-  case 6:
+  case ITEM_TYPE_PSYNERGY:
     if (target == owner) {
-      style |= 4;
+      style |= STATUS_PANEL_LEARN;
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
       unit = Unit_Get(target);
-      size = 332;
+      size = BATTLE_UNIT_SIZE;
       buffer = Heap_Alloc(size);
       Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
-          style |= 4;
+          style |= STATUS_PANEL_LEARN;
           StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
           StatusPanel_Draw(menu->statusWindow, target, slot, style);
@@ -2806,7 +2806,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
   page = state->page;
   menu = Ram_HeapSlots->menuWork;
   window = menu->infoWindow;
-  combined = page * 5;
+  combined = page * LIST_PAGE_SIZE;
   combined += state->row;
   state->selectedIndex = combined;
 
@@ -2975,12 +2975,12 @@ s32 ItemMenu_RunList(s32 pane) {
                                   0, menu->sideMember[pane]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->motion = 9;
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animStep = 0;
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++)
-          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
       }
 
       if ((gFrameCount & 31) == 0) {
@@ -2990,14 +2990,14 @@ s32 ItemMenu_RunList(s32 pane) {
               Item_CanUnitEquip(slot, INVENTORY_ITEM_ID_MASK &
                                           menu->items[state.selectedIndex]) !=
                   0)
-            Sprite_StartAnimationFar(menu->memberSprites[i], 3);
+            Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_NOD);
         }
       }
 
       wait(1);
       previous = state.selectedIndex;
-      moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
-                                    &state.page);
+      moved = PagedList_HandleInput(0, state.entryCount, LIST_PAGE_SIZE,
+                                    &state.row, &state.page);
       if (moved == 1) {
         redraw = 1;
         changed = 1;

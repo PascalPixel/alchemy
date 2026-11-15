@@ -2,7 +2,7 @@
 /// Gaia Rock's inside, the rooms of this overlay near Izumo: the party places
 /// the doll on the altar by the entrance and on the altars deeper in
 /// (GaiaRockInside_PlaceDollOnFirstAltar to
-/// GaiaRockInside_PlaceDollOnRoom5Altar), each one weakening the Serpent, and
+/// GaiaRockInside_PlaceDollOnAltarAltar), each one weakening the Serpent, and
 /// clears overgrowth and cobwebs with Cyclone. In the Serpent's lair Susa
 /// fights to save Kushinada (GaiaRockInside_MeetSusa); examining the Serpent
 /// starts the battle with it (GaiaRockInside_ChallengeSerpent). Felix reads
@@ -160,9 +160,9 @@ extern s32 gGaiaRockInside_SerpentTurnRightScript[];
 
 extern struct ActorPlacement gGaiaRockInside_Placements[];
 extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
-extern struct ActorPlacement gGaiaRockInside_Room3Placements[];
-extern struct ActorPlacement gGaiaRockInside_Room4Placements[];
-extern struct ActorPlacement gGaiaRockInside_Room5Placements[];
+extern struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[];
+extern struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[];
+extern struct ActorPlacement gGaiaRockInside_AltarActorPlacements[];
 extern s32 gGaiaRockInside_PlatformUpScript[];
 
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -208,7 +208,7 @@ void GaiaRockInside_CycloneStartsPlatforms(void);
 
 void GaiaRockInside_CycloneMadPlant(void);
 
-void GaiaRockInside_ClearRoom4SmallBushes(void);
+void GaiaRockInside_ClearPlatformsSmallBushes(void);
 
 void GaiaRockInside_CycloneClearsCobweb(void);
 
@@ -229,7 +229,7 @@ void GaiaRockInside_CheckAltar(void);
 void GaiaRockInside_PlaceDollOnFirstAltar(void);
 void GaiaRockInside_PlaceDollOnWestAltar(void);
 void GaiaRockInside_PlaceDollOnEastAltar(void);
-void GaiaRockInside_PlaceDollOnRoom5Altar(void);
+void GaiaRockInside_PlaceDollOnAltarAltar(void);
 
 void GaiaRockInside_StepOnFirstStatueSpot(void);
 
@@ -568,7 +568,7 @@ void GaiaRockInside_CountClash(struct Counted *object) {
   }
 }
 
-extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
+extern struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[];
 
 extern s32 gGaiaRockInside_PlatformFrame;
 extern s32 gGaiaRockInside_PlatformDownScript[];
@@ -576,13 +576,13 @@ extern s32 gGaiaRockInside_PlatformDownScript[];
 /// Return the table for the current room.
 const void *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
-    return gGaiaRockInside_Room2Placements;
+    return gGaiaRockInside_FirstAltarActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
-    return gGaiaRockInside_Room3Placements;
+    return gGaiaRockInside_TwinAltarsActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
-    return gGaiaRockInside_Room4Placements;
+    return gGaiaRockInside_PlatformsActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
-    return gGaiaRockInside_Room5Placements;
+    return gGaiaRockInside_AltarActorPlacements;
   if (gMainRoutineWork.entrance > 8)
     return gGaiaRockInside_LairPlacements;
   return gGaiaRockInside_Placements;
@@ -695,11 +695,11 @@ void GaiaRockInside_CycloneMadPlant(void) {
   }
 }
 
-void GaiaRockInside_ClearRoom4Bushes(void) {
+void GaiaRockInside_ClearPlatformsBushes(void) {
   Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4);
 }
 
-void GaiaRockInside_ClearRoom4SmallBushes(void) {
+void GaiaRockInside_ClearPlatformsSmallBushes(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
 }
 
@@ -1788,7 +1788,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   }
 }
 
-void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
+void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1921,21 +1921,21 @@ void GaiaRockInside_StepOnThirdStatueSpot(void) {
 extern struct Trigger gGaiaRockInside_Triggers[];
 extern struct Trigger gGaiaRockInside_LairTriggers[];
 extern struct Trigger gGaiaRockInside_MazeTriggers[];
-extern struct Trigger gGaiaRockInside_Room2Triggers[];
-extern struct Trigger gGaiaRockInside_Room3Triggers[];
-extern struct Trigger gGaiaRockInside_Room4Triggers[];
-extern struct Trigger gGaiaRockInside_Room5Triggers[];
+extern struct Trigger gGaiaRockInside_FirstAltarTriggers[];
+extern struct Trigger gGaiaRockInside_TwinAltarsTriggers[];
+extern struct Trigger gGaiaRockInside_PlatformsTriggers[];
+extern struct Trigger gGaiaRockInside_AltarTriggers[];
 
 /// Returns the current room's table.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
-    return gGaiaRockInside_Room2Triggers;
+    return gGaiaRockInside_FirstAltarTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
-    return gGaiaRockInside_Room3Triggers;
+    return gGaiaRockInside_TwinAltarsTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
-    return gGaiaRockInside_Room4Triggers;
+    return gGaiaRockInside_PlatformsTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
-    return gGaiaRockInside_Room5Triggers;
+    return gGaiaRockInside_AltarTriggers;
   if (gMainRoutineWork.entrance == 9)
     return gGaiaRockInside_LairTriggers;
   if (gMainRoutineWork.entrance > 9)
@@ -4166,7 +4166,7 @@ void GaiaRockInside_StartWallTriggers(void) {
 #include "text/msg_ids.h"
 
 void GaiaRockInside_CycloneClearsHallBushes(void);
-void GaiaRockInside_ClearRoom4Bushes(void);
+void GaiaRockInside_ClearPlatformsBushes(void);
 
 extern u32 gGaiaRockInside_IdleScript[];
 extern u32 gGaiaRockInside_RockScript[];
@@ -4566,7 +4566,7 @@ u32 gGaiaRockInside_RockScript[] = {
     SC_END,
 };
 
-struct ActorPlacement gGaiaRockInside_Room2Placements[] = {
+struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (s32)gGaiaRockInside_RockScript, 920, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -4576,7 +4576,7 @@ struct ActorPlacement gGaiaRockInside_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaiaRockInside_Room3Placements[] = {
+struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -4585,7 +4585,7 @@ struct ActorPlacement gGaiaRockInside_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaiaRockInside_Room4Placements[] = {                                             
+struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[] = {                                             
       {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
       {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
       {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
@@ -4598,7 +4598,7 @@ struct ActorPlacement gGaiaRockInside_Room4Placements[] = {
       {SCENE_TABLE_END},                                                       
   };
 
-struct ActorPlacement gGaiaRockInside_Room5Placements[] = {
+struct ActorPlacement gGaiaRockInside_AltarActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -4698,7 +4698,7 @@ struct Trigger gGaiaRockInside_MazeTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaiaRockInside_Room2Triggers[] = {
+struct Trigger gGaiaRockInside_FirstAltarTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4717,7 +4717,7 @@ struct Trigger gGaiaRockInside_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaiaRockInside_Room3Triggers[] = {
+struct Trigger gGaiaRockInside_TwinAltarsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4729,7 +4729,7 @@ struct Trigger gGaiaRockInside_Room3Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), -1, 0, 0},
 };
 
-struct Trigger gGaiaRockInside_Room4Triggers[] = {
+struct Trigger gGaiaRockInside_PlatformsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4737,7 +4737,7 @@ struct Trigger gGaiaRockInside_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaiaRockInside_Room5Triggers[] = {
+struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},
@@ -4750,10 +4750,10 @@ struct Trigger gGaiaRockInside_Room5Triggers[] = {
     {TRIGGER_STEP, 31, FLAG_AREA_TEMP_04, EVENT(GaiaRockInside_StepOnSecondStatueSpot)},
     {TRIGGER_STEP, 32, FLAG_AREA_TEMP_05, EVENT(GaiaRockInside_StepOnThirdStatueSpot)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
-    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 0x409, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnRoom5Altar)},
+    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 0x409, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnAltarAltar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(GaiaRockInside_ClearRoom4Bushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(GaiaRockInside_ClearRoom4SmallBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(GaiaRockInside_ClearPlatformsBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(GaiaRockInside_ClearPlatformsSmallBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneMadPlant)},

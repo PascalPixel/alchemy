@@ -23,7 +23,34 @@
 #include "gamepak/far_call/system.h"
 #include "scene/scene.h"
 #include "system/system_bank.h"
-#include "shared/gabomba_statue_chamber.h"
+#include "types.h"
+#include "system/system.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
+#include "field/field_sprite.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "system/frame.h"
+
+void FieldPsynergy_RunHandler(s32 type);
+
+#include "field/field_sequence_event.h"
+
+void Actor_MoveToObject(s32 actor, s32 target);
+
+void GabombaStatueChamber_DropIntoHole(s32 x, s32 z);
+
+extern struct ActorPlacement gGabombaStatueChamber_IdolActorPlacements[];
+extern struct ActorPlacement gGabombaStatueChamber_WitchDoctorActorPlacements[];
+extern struct ActorPlacement gGabombaStatueChamber_Placements[];
+extern struct Trigger gGabombaStatueChamber_IdolTriggers[];
+extern struct Trigger gGabombaStatueChamber_LiftTriggers[];
+extern struct Trigger gGabombaStatueChamber_WitchDoctorTriggers[];
+extern struct Trigger gGabombaStatueChamber_Triggers[];
+extern u32 gGabombaStatueChamber_IdolExitRegions[];
+
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
@@ -42,10 +69,10 @@
 void GabombaStatueChamber_OpenTheLap(void);
 
 void GabombaStatueChamber_KeepItemWithStatue();
-void GabombaStatueChamber_InitializeRoom1(void);
-void GabombaStatueChamber_InitializeRoom2(void);
+void GabombaStatueChamber_InitializeIdol(void);
+void GabombaStatueChamber_InitializeLift(void);
 
-void GabombaStatueChamber_InitializeRoom3(void);
+void GabombaStatueChamber_InitializeWitchDoctor(void);
 
 void GabombaStatueChamber_ArriveByLift(void);
 void GabombaStatueChamber_GabombaNamesWitchDoctor(void);
@@ -63,7 +90,7 @@ u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
-    return gGabombaStatueChamber_Room1Regions;
+    return gGabombaStatueChamber_IdolExitRegions;
   return 0;
 }
 
@@ -73,9 +100,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
-    return gGabombaStatueChamber_Room1Placements;
+    return gGabombaStatueChamber_IdolActorPlacements;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
-    return gGabombaStatueChamber_Room3Placements;
+    return gGabombaStatueChamber_WitchDoctorActorPlacements;
   return gGabombaStatueChamber_Placements;
 }
 
@@ -83,11 +110,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
-    return gGabombaStatueChamber_Room1Triggers;
+    return gGabombaStatueChamber_IdolTriggers;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
-    return gGabombaStatueChamber_Room2Triggers;
+    return gGabombaStatueChamber_LiftTriggers;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
-    return gGabombaStatueChamber_Room3Triggers;
+    return gGabombaStatueChamber_WitchDoctorTriggers;
   return gGabombaStatueChamber_Triggers;
 }
 
@@ -404,9 +431,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
 
 void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct GabombaStatueChamberObject *object =
-      ((struct GabombaStatueChamberObject *)Actor_GetById(
-          gMainRoutineWork.leaderActorId));
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -415,9 +440,7 @@ void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
-  Actor_SetSpriteFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
-                           gMainRoutineWork.leaderActorId)),
-                       0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTarget(object, x, -12, z);
   Actor_WaitForMove(object);
@@ -433,11 +456,9 @@ void GabombaStatueChamber_StepIntoFirstHole(void) {
 }
 
 void GabombaStatueChamber_StepIntoSecondHole(void) {
-  struct GabombaStatueChamberObject *leader =
-      ((struct GabombaStatueChamberObject *)Actor_GetById(
-          gMainRoutineWork.leaderActorId));
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  s32 x = leader->x.fixed >> 20;
+  s32 z = leader->z.fixed >> 20;
 
   if (x == 26) {
     if (z == 5 && (gInput.held & KEY_DOWN) == 0)
@@ -582,18 +603,16 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
 
 #define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
   void name(void) {                                                            \
-    struct GabombaStatueChamberObject *leader =                                \
-        ((struct GabombaStatueChamberObject *)Actor_GetById(8));               \
-    s32 x = leader->x;                                                         \
-    s32 z = leader->z;                                                         \
+    struct Actor *leader = Actor_GetById(8);                                   \
+    s32 x = leader->x.fixed;                                                   \
+    s32 z = leader->z.fixed;                                                   \
     /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,  \
      * set before the null test. */                                            \
     s32 zero = 0;                                                              \
-    struct GabombaStatueChamberObject *object;                                 \
+    struct Actor *object;                                                      \
                                                                                \
-    if ((gGabombaStatueChamber_ShownItem = object =                            \
-             ((struct GabombaStatueChamberObject *)Import_ActorCreate(         \
-                 489, x, px(18), z))) != NULL) {                               \
+    if ((gGabombaStatueChamber_ShownItem = object = ((                         \
+             struct Actor *)Import_ActorCreate(489, x, px(18), z))) != NULL) { \
       struct FieldSprite *sprite = object->sprite;                             \
       u8 *block;                                                               \
                                                                                \
@@ -601,7 +620,7 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
       sprite->palette = 0;                                                     \
       sprite->priority = 2;                                                    \
       object->motionFlags = zero;                                              \
-      object->field5c = 1;                                                     \
+      object->retainSpriteCache = 1;                                           \
       object->update = GabombaStatueChamber_KeepItemWithStatue;                \
       sprite->nextFrame = zero;                                                \
       sprite->unk1b[0] = zero;                                                 \
@@ -978,21 +997,21 @@ s32 Scene_Initialize(void) {
 
   work = Ram_HeapSlots->fieldWork;
   work->transition = 521;
-  ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
-      ->priorityFlags |= 0x20;
+  ((struct Actor *)Actor_GetById(Party_GetLeaderActor()))->priorityFlags |=
+      0x20;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
-    GabombaStatueChamber_InitializeRoom1();
+    GabombaStatueChamber_InitializeIdol();
   else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
-    GabombaStatueChamber_InitializeRoom2();
+    GabombaStatueChamber_InitializeLift();
   else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
-    GabombaStatueChamber_InitializeRoom3();
+    GabombaStatueChamber_InitializeWitchDoctor();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void GabombaStatueChamber_InitializeRoom1(void) {
+void GabombaStatueChamber_InitializeIdol(void) {
   Actor_DisableById(8);
   Actor_DisableById(9);
   Actor_DisableById(10);
@@ -1026,7 +1045,7 @@ void GabombaStatueChamber_InitializeRoom1(void) {
   }
 }
 
-void GabombaStatueChamber_InitializeRoom2(void) {
+void GabombaStatueChamber_InitializeLift(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_07)) {
       struct GabombaStatueChamberMapWork *map =
@@ -1062,7 +1081,7 @@ void GabombaStatueChamber_InitializeRoom2(void) {
 /// carried, or else the place of the Black Crystal; arriving by entrance 2,
 /// Retreat leads back to the statue's top or to the chamber's first room, by
 /// the way the party came.
-void GabombaStatueChamber_InitializeRoom3(void) {
+void GabombaStatueChamber_InitializeWitchDoctor(void) {
   u32 i;
   char *scene;
 
@@ -1167,7 +1186,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gGabombaStatueChamber_Room1Regions[] = {
+u32 gGabombaStatueChamber_IdolExitRegions[] = {
     0x1001d0, 0x1e00090, 0xa00020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -1189,7 +1208,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gGabombaStatueChamber_Room1Placements[] = {
+struct ActorPlacement gGabombaStatueChamber_IdolActorPlacements[] = {
     ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 256, FACING_EAST, TALK_FACING_KEEP, 1),
@@ -1202,7 +1221,7 @@ struct ActorPlacement gGabombaStatueChamber_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaStatueChamber_Room3Placements[] = {
+struct ActorPlacement gGabombaStatueChamber_WitchDoctorActorPlacements[] = {
     ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
@@ -1236,7 +1255,7 @@ struct ActorPlacement gGabombaStatueChamber_Placements[] = {
 };
 // clang-format on
 
-struct Trigger gGabombaStatueChamber_Room1Triggers[] = {
+struct Trigger gGabombaStatueChamber_IdolTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepIntoFirstHole)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1244,7 +1263,7 @@ struct Trigger gGabombaStatueChamber_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaStatueChamber_Room2Triggers[] = {
+struct Trigger gGabombaStatueChamber_LiftTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, FLAG_SCENE_TEMP_06,
@@ -1254,7 +1273,7 @@ struct Trigger gGabombaStatueChamber_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGabombaStatueChamber_Room3Triggers[] = {
+struct Trigger gGabombaStatueChamber_WitchDoctorTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepIntoSecondHole)},

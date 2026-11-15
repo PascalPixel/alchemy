@@ -82,9 +82,9 @@ void Islets_LeaveByStep(void);
 void Islets_DropThroughHole(void);
 void Islets_JumpForward(void);
 
-extern u32 gIslets_Room1WanderScript[];
+extern u32 gIslets_DogWanderScript[];
 extern u32 gIslets_GullScript[];
-extern u32 gIslets_Room4PaceScript[];
+extern u32 gIslets_PierPaceScript[];
 extern s16 gIslets_DoorFrames[];
 extern s16 gIslets_NoDoorFrames[];
 
@@ -150,18 +150,18 @@ void Islets_FillWaveLines(void);
 
 extern u32 gSmokeScript[];
 extern struct Trigger gIslets_Triggers[];
-extern struct Trigger gIslets_Room1Triggers[];
-extern struct Trigger gIslets_Room2Triggers[];
-extern struct Trigger gIslets_Room3Triggers[];
-extern struct Trigger gIslets_Room4Triggers[];
-extern struct Trigger gIslets_Room5Triggers[];
+extern struct Trigger gIslets_DogTriggers[];
+extern struct Trigger gIslets_PrettyStoneTriggers[];
+extern struct Trigger gIslets_CowTriggers[];
+extern struct Trigger gIslets_PierTriggers[];
+extern struct Trigger gIslets_TurtleTriggers[];
 extern u16 gSceneState[];
 
-void Islets_InitializeRoom1(void);
-void Islets_InitializeRoom2(void);
-void Islets_InitializeRoom3(void);
-void Islets_InitializeRoom4(void);
-void Islets_InitializeRoom5(void);
+void Islets_InitializeDog(void);
+void Islets_InitializePrettyStone(void);
+void Islets_InitializeCow(void);
+void Islets_InitializePier(void);
+void Islets_InitializeTurtle(void);
 
 struct IsletsMapFlags {
   u8 unk00[0x17];
@@ -187,11 +187,11 @@ struct PushTarget {
 };
 
 extern struct ActorPlacement gIslets_Placements[];
-extern struct ActorPlacement gIslets_Room1Placements[];
-extern struct ActorPlacement gIslets_Room2Placements[];
-extern struct ActorPlacement gIslets_Room3Placements[];
-extern struct ActorPlacement gIslets_Room4Placements[];
-extern struct ActorPlacement gIslets_Room5Placements[];
+extern struct ActorPlacement gIslets_DogActorPlacements[];
+extern struct ActorPlacement gIslets_PrettyStoneActorPlacements[];
+extern struct ActorPlacement gIslets_CowActorPlacements[];
+extern struct ActorPlacement gIslets_PierActorPlacements[];
+extern struct ActorPlacement gIslets_TurtleActorPlacements[];
 extern s32 gIslets_SecondCrateZ;
 extern s32 gIslets_FirstCrateZ;
 extern s32 gIslets_SecondCrateX;
@@ -227,17 +227,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLETS_DOG)
-    return gIslets_Room1Placements;
+    return gIslets_DogActorPlacements;
   if (scene == SCENE_ISLETS_PRETTY_STONE)
-    return gIslets_Room2Placements;
+    return gIslets_PrettyStoneActorPlacements;
   if (scene == SCENE_ISLETS_COW)
-    return gIslets_Room3Placements;
+    return gIslets_CowActorPlacements;
   if (scene == SCENE_ISLETS_4)
-    return gIslets_Room4Placements;
+    return gIslets_PierActorPlacements;
   if (scene == SCENE_ISLETS_TURTLE) {
     if (Event_GetFlag(0xaa5))
-      gIslets_Room5Placements[1].talkFacing = 1;
-    return gIslets_Room5Placements;
+      gIslets_TurtleActorPlacements[1].talkFacing = 1;
+    return gIslets_TurtleActorPlacements;
   }
   return gIslets_Placements;
 }
@@ -273,15 +273,15 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLETS_DOG)
-    return gIslets_Room1Triggers;
+    return gIslets_DogTriggers;
   if (scene == SCENE_ISLETS_PRETTY_STONE)
-    return gIslets_Room2Triggers;
+    return gIslets_PrettyStoneTriggers;
   if (scene == SCENE_ISLETS_COW)
-    return gIslets_Room3Triggers;
+    return gIslets_CowTriggers;
   if (scene == SCENE_ISLETS_4)
-    return gIslets_Room4Triggers;
+    return gIslets_PierTriggers;
   if (scene == SCENE_ISLETS_TURTLE)
-    return gIslets_Room5Triggers;
+    return gIslets_TurtleTriggers;
   return gIslets_Triggers;
 }
 
@@ -1797,15 +1797,15 @@ s32 Scene_Initialize(void) {
   work->transition = 0x100;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ISLETS_DOG)
-    Islets_InitializeRoom1();
+    Islets_InitializeDog();
   else if (scene == SCENE_ISLETS_PRETTY_STONE)
-    Islets_InitializeRoom2();
+    Islets_InitializePrettyStone();
   else if (scene == SCENE_ISLETS_COW)
-    Islets_InitializeRoom3();
+    Islets_InitializeCow();
   else if (scene == SCENE_ISLETS_4)
-    Islets_InitializeRoom4();
+    Islets_InitializePier();
   else if (scene == SCENE_ISLETS_TURTLE)
-    Islets_InitializeRoom5();
+    Islets_InitializeTurtle();
   return 0;
 }
 
@@ -1819,7 +1819,7 @@ void Islets_SetDockBlocksByHeight(void) {
   }
 }
 
-void Islets_InitializeRoom1(void) {
+void Islets_InitializeDog(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapGrid;
   struct Actor *spawned;
 
@@ -1935,7 +1935,7 @@ void Islets_DriftIcebergs(void) {
 extern u32 gIslets_PenguinsHopScript[];
 
 /// The room's setup: flags, the objects' places and the scene state.
-void Islets_InitializeRoom2(void) {
+void Islets_InitializePrettyStone(void) {
   struct Actor *object;
   struct Actor *other;
   u16 *state;
@@ -1991,7 +1991,7 @@ void Islets_InitializeRoom2(void) {
   }
 }
 
-void Islets_InitializeRoom3(void) {
+void Islets_InitializeCow(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 3)
@@ -2016,7 +2016,7 @@ void Islets_InitializeRoom3(void) {
 // A room's setup.
 
 /// Sets up the room's actors and map work.
-void Islets_InitializeRoom4(void) {
+void Islets_InitializePier(void) {
   struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(10);
   struct Actor *last;
@@ -2084,12 +2084,12 @@ void Islets_StartPaletteCycle(void);
  * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
  * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
  * PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count), which the object
- * already declares, Islets_InitializeRoom5 moves: 2 of 145 instructions in
+ * already declares, Islets_InitializeTurtle moves: 2 of 145 instructions in
  * tla-en. */
 void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
                               s32 d) __asm__("PaletteCycle_Add");
 
-void Islets_InitializeRoom5(void) {
+void Islets_InitializeTurtle(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 done;
 
@@ -2171,7 +2171,7 @@ void Islets_StartPaletteCycle(void);
 s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
                              s16 count) __asm__("PaletteCycle_Add");
 
-void Islets_InitializeRoom5(void) {
+void Islets_InitializeTurtle(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 done;
 
@@ -2743,7 +2743,7 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
-u32 gIslets_Room1WanderScript[] = {
+u32 gIslets_DogWanderScript[] = {
 #if !TLA_PATCH_1
     22, 30, 131, 22, 16, 0x6666,
 #else
@@ -2904,7 +2904,7 @@ u32 gIslets_TurtleWalksScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIslets_Room4PaceScript[] = {
+u32 gIslets_PierPaceScript[] = {
     39, 2, 4, 0xb80000, 0, 0x3a80000,
     1, 39, 1, 1, 80, 39,
     2, 4, 0x580000, 0, 0x3a80000, 1,
@@ -2962,16 +2962,16 @@ struct ActorPlacement gIslets_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIslets_Room1Placements[] = {
+struct ActorPlacement gIslets_DogActorPlacements[] = {
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 744, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 920, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, (s32)gIslets_Room4PaceScript, 88, 0, 936, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, (s32)gIslets_PierPaceScript, 88, 0, 936, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 856, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIslets_Room2Placements[] = {
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, (s32)gIslets_Room1WanderScript, 376, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+struct ActorPlacement gIslets_PrettyStoneActorPlacements[] = {
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, (s32)gIslets_DogWanderScript, 376, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(399, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 176, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(402, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2988,7 +2988,7 @@ struct ActorPlacement gIslets_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIslets_Room3Placements[] = {
+struct ActorPlacement gIslets_CowActorPlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 184, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(80, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 176, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2996,7 +2996,7 @@ struct ActorPlacement gIslets_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIslets_Room4Placements[] = {
+struct ActorPlacement gIslets_PierActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 296, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(405, CONDITION_ALWAYS, (s32)gIslets_GullScript, 360, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3007,7 +3007,7 @@ struct ActorPlacement gIslets_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIslets_Room5Placements[] = {
+struct ActorPlacement gIslets_TurtleActorPlacements[] = {
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 168, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(162, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(163, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3021,7 +3021,7 @@ struct Trigger gIslets_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIslets_Room1Triggers[] = {
+struct Trigger gIslets_DogTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Islets_EnterDoor)},
@@ -3042,7 +3042,7 @@ struct Trigger gIslets_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIslets_Room2Triggers[] = {
+struct Trigger gIslets_PrettyStoneTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Islets_OpenDoorAndEnter)},
@@ -3075,7 +3075,7 @@ struct Trigger gIslets_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIslets_Room3Triggers[] = {
+struct Trigger gIslets_CowTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3110,7 +3110,7 @@ struct Trigger gIslets_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIslets_Room4Triggers[] = {
+struct Trigger gIslets_PierTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
@@ -3142,7 +3142,7 @@ struct Trigger gIslets_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIslets_Room5Triggers[] = {
+struct Trigger gIslets_TurtleTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Islets_LeaveByStep)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Islets_LeaveByStep)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},

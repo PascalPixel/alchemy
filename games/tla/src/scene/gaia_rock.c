@@ -44,21 +44,21 @@
 
 struct Actor;
 
-extern s16 gGaiaRock_Room1Regions[];
-extern u32 gGaiaRock_Room2Regions[];
+extern s16 gGaiaRock_SusaExitRegions[];
+extern u32 gGaiaRock_StatueSpotsExitRegions[];
 
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag);
 
 extern struct ActorPlacement gGaiaRock_Placements[];
-extern struct ActorPlacement gGaiaRock_Room1Placements[];
+extern struct ActorPlacement gGaiaRock_SusaActorPlacements[];
 
-extern struct ActorPlacement gGaiaRock_Room2Placements[];
-extern s16 gGaiaRock_Room3Placements[];
+extern struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[];
+extern s16 gGaiaRock_DancingIdolActorPlacements[];
 
 void Scene_TalkToActor(s32 a);
 
-extern struct Trigger gGaiaRock_Room1Triggers[];
-extern struct Trigger gGaiaRock_Room2Triggers[];
+extern struct Trigger gGaiaRock_SusaTriggers[];
+extern struct Trigger gGaiaRock_StatueSpotsTriggers[];
 extern struct Trigger gGaiaRock_Triggers[];
 extern u32 gGaiaRock_LeafScript[];
 
@@ -76,23 +76,23 @@ extern u32 gGaiaRock_CrateScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct ActorPlacement *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
-    return (const struct ActorPlacement *)gGaiaRock_Room1Regions;
+    return (const struct SceneRegion *)gGaiaRock_SusaExitRegions;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-    return (const struct ActorPlacement *)gGaiaRock_Room2Regions;
+    return (const struct SceneRegion *)gGaiaRock_StatueSpotsExitRegions;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct Trigger *Scene_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
-    return (const struct Trigger *)gGaiaRock_Room1Placements;
+    return (const struct ActorPlacement *)gGaiaRock_SusaActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-    return (const struct Trigger *)gGaiaRock_Room2Placements;
+    return (const struct ActorPlacement *)gGaiaRock_StatueSpotsActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL)
-    return (const struct Trigger *)gGaiaRock_Room3Placements;
+    return (const struct ActorPlacement *)gGaiaRock_DancingIdolActorPlacements;
   return (const struct Trigger *)gGaiaRock_Placements;
 }
 
@@ -293,9 +293,9 @@ void GaiaRock_MindReadSusa(void) {
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
-    return gGaiaRock_Room1Triggers;
+    return gGaiaRock_SusaTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-    return gGaiaRock_Room2Triggers;
+    return gGaiaRock_StatueSpotsTriggers;
   return gGaiaRock_Triggers;
 }
 
@@ -686,13 +686,13 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s16 gGaiaRock_Room1Regions[] = {
+s16 gGaiaRock_SusaExitRegions[] = {
     771, -28, 484, 779, -20, 492, -1, 2,
     771, 180, 707, 779, 188, 715, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gGaiaRock_Room2Regions[] = {
+u32 gGaiaRock_StatueSpotsExitRegions[] = {
     0x12800c3, 0xcb0143, 0x14b0130, 0x2ffff, 0xfdd602c3, 0x2cb01c4,
     0x1ccfdde, 0x3ffff, 0xffff, 0, 0, 0,
 };
@@ -723,7 +723,7 @@ struct ActorPlacement gGaiaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaiaRock_Room1Placements[] = {
+struct ActorPlacement gGaiaRock_SusaActorPlacements[] = {
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -740,7 +740,7 @@ struct ActorPlacement gGaiaRock_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaiaRock_Room2Placements[] = {
+struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[] = {
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -756,7 +756,7 @@ struct ActorPlacement gGaiaRock_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gGaiaRock_Room3Placements[] = {
+s16 gGaiaRock_DancingIdolActorPlacements[] = {
     272, -1, 1, 0, 0, 216, 0, 0,
     0, 232, 0x4000, 2, 272, -1, 1, 0,
     0, 680, 0, 0, 0, 216, 0x4000, 258,
@@ -775,7 +775,7 @@ s16 gGaiaRock_Room3Placements[] = {
     -1, -1, 0, 0, 0, 0,
 };
 
-struct Trigger gGaiaRock_Room1Triggers[] = {
+struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -798,7 +798,7 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaiaRock_Room2Triggers[] = {
+struct Trigger gGaiaRock_StatueSpotsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 20, FLAG_AREA_TEMP_00, EVENT(GaiaRock_StepOnFirstStatueSpot)},

@@ -55,7 +55,6 @@
 #include "system/iwram_call.h"
 #include "system/vector3.h"
 #include "system/input.h"
-#include "shared/gabomba_statue_chamber.h"
 #include "system/task.h"
 #include "shared/tables.h"
 #include "system/heap_release.h"
@@ -189,28 +188,28 @@ s32 GabombaStatue_LookAround(struct Wanderer *actor) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern s16 gGabombaStatue_Room7Regions[];
-extern u32 gGabombaStatue_Room1Regions[];
-extern s16 gGabombaStatue_Room2Regions[];
-extern s16 gGabombaStatue_Room3Regions[];
-extern u32 gGabombaStatue_Room4Regions[];
-extern u32 gGabombaStatue_Room5Regions[];
+extern s16 gGabombaStatue_PinionExitRegions[];
+extern u32 gGabombaStatue_BoneArmletChestExitRegions[];
+extern s16 gGabombaStatue_ElixirChestExitRegions[];
+extern s16 gGabombaStatue_SteelExitRegions[];
+extern u32 gGabombaStatue_TurntableExitRegions[];
+extern u32 gGabombaStatue_CogsExitRegions[];
 
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_GABOMBA_STATUE_PINION)
-    return gGabombaStatue_Room7Regions;
+    return gGabombaStatue_PinionExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    return gGabombaStatue_Room1Regions;
+    return gGabombaStatue_BoneArmletChestExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    return gGabombaStatue_Room2Regions;
+    return gGabombaStatue_ElixirChestExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_STEEL)
-    return gGabombaStatue_Room3Regions;
+    return gGabombaStatue_SteelExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    return gGabombaStatue_Room4Regions;
+    return gGabombaStatue_TurntableExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_COGS)
-    return gGabombaStatue_Room5Regions;
+    return gGabombaStatue_CogsExitRegions;
   return NULL;
 }
 
@@ -323,32 +322,32 @@ s32 GabombaStatue_CircleOwner(struct Actor *object) {
 }
 
 extern struct ActorPlacement gGabombaStatue_Placements[];
-extern struct ActorPlacement gGabombaStatue_Room1Placements[];
-extern struct ActorPlacement gGabombaStatue_Room2Placements[];
-extern struct ActorPlacement gGabombaStatue_Room3Placements[];
-extern struct ActorPlacement gGabombaStatue_Room4Placements[];
-extern struct ActorPlacement gGabombaStatue_Room5Placements[];
-extern struct ActorPlacement gGabombaStatue_Room6Placements[];
-extern struct ActorPlacement gGabombaStatue_Room7Placements[];
+extern struct ActorPlacement gGabombaStatue_BoneArmletChestActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_ElixirChestActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_SteelActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_TurntableActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_CogsActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_ArrowsActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_PinionActorPlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Placements;
 
   if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    table = gGabombaStatue_Room1Placements;
+    table = gGabombaStatue_BoneArmletChestActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    table = gGabombaStatue_Room2Placements;
+    table = gGabombaStatue_ElixirChestActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
-    table = gGabombaStatue_Room3Placements;
+    table = gGabombaStatue_SteelActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    table = gGabombaStatue_Room4Placements;
+    table = gGabombaStatue_TurntableActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_COGS)
-    table = gGabombaStatue_Room5Placements;
+    table = gGabombaStatue_CogsActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
-    table = gGabombaStatue_Room6Placements;
+    table = gGabombaStatue_ArrowsActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_PINION)
-    table = gGabombaStatue_Room7Placements;
+    table = gGabombaStatue_PinionActorPlacements;
   return table;
 }
 #undef REG_BLDALPHA
@@ -891,32 +890,32 @@ void GabombaStatue_HearTheOffering(void) {
 }
 
 extern struct Trigger gGabombaStatue_Triggers[];
-extern struct Trigger gGabombaStatue_Room1Triggers[];
-extern struct Trigger gGabombaStatue_Room2Triggers[];
-extern struct Trigger gGabombaStatue_Room3Triggers[];
-extern struct Trigger gGabombaStatue_Room4Triggers[];
-extern struct Trigger gGabombaStatue_Room5Triggers[];
-extern struct Trigger gGabombaStatue_Room6Triggers[];
-extern struct Trigger gGabombaStatue_Room7Triggers[];
+extern struct Trigger gGabombaStatue_BoneArmletChestTriggers[];
+extern struct Trigger gGabombaStatue_ElixirChestTriggers[];
+extern struct Trigger gGabombaStatue_SteelTriggers[];
+extern struct Trigger gGabombaStatue_TurntableTriggers[];
+extern struct Trigger gGabombaStatue_CogsTriggers[];
+extern struct Trigger gGabombaStatue_ArrowsTriggers[];
+extern struct Trigger gGabombaStatue_PinionTriggers[];
 
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Triggers;
 
   if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    table = gGabombaStatue_Room1Triggers;
+    table = gGabombaStatue_BoneArmletChestTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    table = gGabombaStatue_Room2Triggers;
+    table = gGabombaStatue_ElixirChestTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
-    table = gGabombaStatue_Room3Triggers;
+    table = gGabombaStatue_SteelTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    table = gGabombaStatue_Room4Triggers;
+    table = gGabombaStatue_TurntableTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_COGS)
-    table = gGabombaStatue_Room5Triggers;
+    table = gGabombaStatue_CogsTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
-    table = gGabombaStatue_Room6Triggers;
+    table = gGabombaStatue_ArrowsTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_PINION)
-    table = gGabombaStatue_Room7Triggers;
+    table = gGabombaStatue_PinionTriggers;
   return table;
 }
 
@@ -924,8 +923,7 @@ const u8 *Scene_GetTriggers(void) {
 /// exit.
 void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct GabombaStatueChamberObject *object =
-      Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -962,8 +960,8 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
     GabombaStatue_DropIntoHole(n6, n7);                                        \
   }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoRoom1Hole, 11, 18,
-                                     20, 19, 12, 312, 180)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
+                                     11, 18, 20, 19, 12, 312, 180)
 
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8)                  \
@@ -986,10 +984,10 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoRoom1Hole, 11, 18,
     GabombaStatue_DropIntoHole(n7, n8);                                        \
   }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoRoom2Hole, 29,
-                                          11, 13, 12, 28, 30, 472, 196)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoElixirChestHole,
+                                          29, 11, 13, 12, 28, 30, 472, 196)
 
-void GabombaStatue_StepIntoFirstRoom3Hole(void) {
+void GabombaStatue_StepIntoFirstSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
   s32 z = leader->z.fixed >> 20;
@@ -1003,7 +1001,7 @@ void GabombaStatue_StepIntoFirstRoom3Hole(void) {
   GabombaStatue_DropIntoHole(536, 112);
 }
 
-void GabombaStatue_StepIntoSecondRoom3Hole(void) {
+void GabombaStatue_StepIntoSecondSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
   s32 z = leader->z.fixed >> 20;
@@ -1022,7 +1020,7 @@ void GabombaStatue_StepIntoSecondRoom3Hole(void) {
   GabombaStatue_DropIntoHole(104, 208);
 }
 
-void GabombaStatue_StepIntoThirdRoom3Hole(void) {
+void GabombaStatue_StepIntoThirdSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
   s32 z = leader->z.fixed >> 20;
@@ -1038,13 +1036,13 @@ void GabombaStatue_StepIntoThirdRoom3Hole(void) {
   GabombaStatue_DropIntoHole(680, 208);
 }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstRoom4Hole, 7,
-                                     23, 25, 24, 8, 392, 112)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstTurntableHole,
+                                     7, 23, 25, 24, 8, 392, 112)
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondRoom4Hole, 9,
-                                     5, 7, 6, 10, 104, 146)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondTurntableHole,
+                                     9, 5, 7, 6, 10, 104, 146)
 
-void GabombaStatue_StepIntoThirdRoom4Hole(void) {
+void GabombaStatue_StepIntoThirdTurntableHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
   s32 z = leader->z.fixed >> 20;
@@ -1056,7 +1054,7 @@ void GabombaStatue_StepIntoThirdRoom4Hole(void) {
   GabombaStatue_DropIntoHole(680, 146);
 }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoRoom5Hole, 27,
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
                                           17, 19, 18, 26, 28, 440, 288)
 
 /// Jumps down the hole.
@@ -1263,9 +1261,9 @@ void GabombaStatue_RestoreHiddenActors(void) {
     GabombaStatue_RestoreHiddenActors();                                       \
   }
 
-DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimRoom1Actors, 8, 1)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimBoneArmletChestActors, 8, 1)
 
-DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimRoom2Actors, 29, 2)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimElixirChestActors, 29, 2)
 /// While a menu or Psynergy is up the cogs and wanderers stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
   s32 value = 16;
@@ -2042,18 +2040,18 @@ s32 Scene_Initialize(void) {
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
-    GabombaStatue_InitializeRoom1();
+    GabombaStatue_InitializeBoneArmletChest();
   } else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
-    GabombaStatue_InitializeRoom2();
+    GabombaStatue_InitializeElixirChest();
   } else if (scene == SCENE_GABOMBA_STATUE_STEEL) {
-    GabombaStatue_InitializeRoom3();
+    GabombaStatue_InitializeSteel();
   } else if (scene == SCENE_GABOMBA_STATUE_COGS) {
-    GabombaStatue_InitializeRoom5();
+    GabombaStatue_InitializeCogs();
   } else if (scene == SCENE_GABOMBA_STATUE_ARROWS) {
-    GabombaStatue_InitializeRoom6();
+    GabombaStatue_InitializeArrows();
   } else if (scene == SCENE_GABOMBA_STATUE_PINION) {
-    GabombaStatue_InitializeRoom7();
+    GabombaStatue_InitializePinion();
   }
   return 0;
 }
@@ -2069,16 +2067,18 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void GabombaStatue_InitializeRoom1(void) { GabombaStatue_DimRoom1Actors(); }
+void GabombaStatue_InitializeBoneArmletChest(void) {
+  GabombaStatue_DimBoneArmletChestActors();
+}
 
 static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
   GabombaStatue_PlaceRope(index, flag, a, b);
 }
 
-void GabombaStatue_InitializeRoom2(void) {
+void GabombaStatue_InitializeElixirChest(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    Actor_SetScript(27, gGabombaStatue_Room2GuardScript);
-    Actor_SetScript(28, gGabombaStatue_Room2GuardScript);
+    Actor_SetScript(27, gGabombaStatue_ElixirChestGuardScript);
+    Actor_SetScript(28, gGabombaStatue_ElixirChestGuardScript);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
   GabombaStatue_PlaceSwitchActors(gGabombaStatue_ConePillars);
@@ -2088,10 +2088,10 @@ void GabombaStatue_InitializeRoom2(void) {
   Rope_Initialize();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);
-  GabombaStatue_DimRoom2Actors();
+  GabombaStatue_DimElixirChestActors();
 }
 
-void GabombaStatue_InitializeRoom3(void) {
+void GabombaStatue_InitializeSteel(void) {
   Rope_Initialize();
   GabombaStatue_PlaceRope(0, 513, 31, 32);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2104,7 +2104,7 @@ void GabombaStatue_InitializeRoom3(void) {
   }
 }
 
-void GabombaStatue_InitializeRoom5(void) {
+void GabombaStatue_InitializeCogs(void) {
   Rope_Initialize();
   ((s32 (*)(s32, s32, s32))GabombaStatue_CoilRope)(0, 8, 9);
 }
@@ -2128,7 +2128,7 @@ s32 GabombaStatue_GetPuzzleSeed(void) {
        ->v)
 void GabombaStatue_CheckOfferingClock();
 
-void GabombaStatue_InitializeRoom6(void) {
+void GabombaStatue_InitializeArrows(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
@@ -2270,7 +2270,7 @@ struct SceneState {
 extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
 #define gSceneState gSceneState__s2394
 
-void GabombaStatue_InitializeRoom7(void) {
+void GabombaStatue_InitializePinion(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (gMainRoutineWork.entrance == 1) {
     Event_SetFlag(0xa27);
@@ -3599,7 +3599,7 @@ s8 gGabombaStatue_CogAnimations[] = {
     0,
 };
 
-u32 gGabombaStatue_Room2GuardScript[] = {
+u32 gGabombaStatue_ElixirChestGuardScript[] = {
     SC_RELEASE,
 };
 
@@ -3611,8 +3611,8 @@ u32 gGabombaStatue_Room2GuardScript[] = {
 void GabombaStatue_FightSteel(void);
 void GabombaStatue_LashRope(void);
 void GabombaStatue_RideTurntable(void);
-void GabombaStatue_StepIntoSecondRoom3Hole(void);
-void GabombaStatue_StepIntoThirdRoom4Hole(void);
+void GabombaStatue_StepIntoSecondSteelHole(void);
+void GabombaStatue_StepIntoThirdTurntableHole(void);
 void GabombaStatue_ConeChimes(void);
 
 // clang-format off
@@ -3738,37 +3738,37 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gGabombaStatue_Room7Regions[] = {
+LATE_DATA s16 gGabombaStatue_PinionExitRegions[] = {
     784, 16, 80, 800, 32, 96, -1, 1,
     80, 48, 368, 96, 64, 384, -1, 2,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA u32 gGabombaStatue_Room1Regions[] = {
+LATE_DATA u32 gGabombaStatue_BoneArmletChestExitRegions[] = {
     0x1001d0, 0x1e000f0, 0x1000020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
 
-LATE_DATA s16 gGabombaStatue_Room2Regions[] = {
+LATE_DATA s16 gGabombaStatue_ElixirChestExitRegions[] = {
     528, 16, 64, 544, 32, 80, -1, 2,
     96, 16, 160, 112, 32, 176, -1, 3,
     672, 16, 160, 688, 32, 176, -1, 4,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA s16 gGabombaStatue_Room3Regions[] = {
+LATE_DATA s16 gGabombaStatue_SteelExitRegions[] = {
     384, 16, 112, 400, 32, 128, -1, 4,
     96, 16, 144, 112, 32, 160, -1, 5,
     672, 16, 144, 688, 32, 160, -1, 6,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA u32 gGabombaStatue_Room4Regions[] = {
+LATE_DATA u32 gGabombaStatue_TurntableExitRegions[] = {
     0x1001b0, 0x1c001c0, 0x1d00020, 0x4ffff, 0xffff, 0,
     0, 0,
 };
 
-LATE_DATA u32 gGabombaStatue_Room5Regions[] = {
+LATE_DATA u32 gGabombaStatue_CogsExitRegions[] = {
     0x100130, 0x1400090, 0xa00020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -3827,12 +3827,12 @@ LATE_DATA s32 gGabombaStatue_LookAroundScript[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room1Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_BoneArmletChestActorPlacements[] = {
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room2Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_ElixirChestActorPlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 88, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gGabombaStatue_LookAroundScript, 328, 0, 88, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3859,7 +3859,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room3Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_SteelActorPlacements[] = {
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_WEST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
@@ -3889,7 +3889,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room4Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_TurntableActorPlacements[] = {
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 184, FACING_WEST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 168, FACING_WEST, TALK_FACING_KEEP, 1),
@@ -3925,7 +3925,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room5Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_CogsActorPlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3940,7 +3940,7 @@ LATE_DATA s32 gGabombaStatue_ChargeScript[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_ArrowsActorPlacements[] = {
     ACTOR_PLACEMENT(376, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(374, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(374, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3964,7 +3964,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_Room7Placements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_PinionActorPlacements[] = {
     ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 288, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 336, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 392, FACING_EAST, TALK_FACING_KEEP, 1),
@@ -3984,13 +3984,13 @@ LATE_DATA s8 gGabombaStatue_RopeStopSteps[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room1Triggers[] = {
-    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoRoom1Hole)},
+LATE_DATA struct Trigger gGabombaStatue_BoneArmletChestTriggers[] = {
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoBoneArmletChestHole)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
-    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoRoom2Hole)},
+LATE_DATA struct Trigger gGabombaStatue_ElixirChestTriggers[] = {
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoElixirChestHole)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderNorth)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_01, EVENT(GabombaStatue_LashRope)},
@@ -4001,10 +4001,10 @@ LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
-    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstRoom3Hole)},
-    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondRoom3Hole)},
-    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdRoom3Hole)},
+LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstSteelHole)},
+    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondSteelHole)},
+    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdSteelHole)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(GabombaStatue_RideTurntable)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4018,10 +4018,10 @@ LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room4Triggers[] = {
-    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstRoom4Hole)},
-    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondRoom4Hole)},
-    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdRoom4Hole)},
+LATE_DATA struct Trigger gGabombaStatue_TurntableTriggers[] = {
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstTurntableHole)},
+    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondTurntableHole)},
+    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdTurntableHole)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(GabombaStatue_RideTurntable)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4034,8 +4034,8 @@ LATE_DATA struct Trigger gGabombaStatue_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
-    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoRoom5Hole)},
+LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoCogsHole)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(GabombaStatue_RideTurntable)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4050,7 +4050,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
+LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
     {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_JumpDownHole)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(GabombaStatue_RedrawArrowA)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(GabombaStatue_LowerArrowA)},
@@ -4069,7 +4069,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_Room7Triggers[] = {
+LATE_DATA struct Trigger gGabombaStatue_PinionTriggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeader)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionThrowsLeader)},
     {TRIGGER_TABLE_END},

@@ -276,21 +276,20 @@ static __inline__ void KandoreanTemple_CopyTouchedCells(s32 a, s32 b, s32 c,
 #define FLAG_LASH_RECEIVED 0x84a
 #define FLAG_LADDER_LOWERED 0x92d
 
-/// The map work as the steam rooms write it: a mode in bits 2 and 3 of the byte
-/// after wideTiles, which they set to 1.
-/// XXX: what the mode does to the map; a render of the fifth room with it
-/// left at 0 would settle it.
-struct MapWork17 {
+/// The map work as the stream and steam rooms write it: MapWork.groundEffects
+/// as its two fields, the footprints and the kind of wading, which they set
+/// to 1.
+struct MapWorkGroundEffects {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;
   u16 flags;
   u8 wideTiles;
-  u8 bits0 : 2;
-  u8 mode : 2;
+  u8 footprints : 2;
+  u8 wading : 2;
 };
 
-extern u32 gKandoreanTemple_Room5Regions[];
+extern u32 gKandoreanTemple_StreamRoomRegions[];
 extern struct ActorPlacement gKandoreanTemple_GatePlacements[];
 extern struct ActorPlacement gKandoreanTemple_PoisHallPlacements[];
 extern s16 gKandoreanTemple_Room2Events[];
@@ -397,14 +396,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u32 gKandoreanTemple_ChestbeaterRoomRegions[];
 
 /// The regions of the rooms whose exits are rectangles: the Chestbeaters' room
-/// and the fifth room.
+/// and the stream room.
 u32 *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     return gKandoreanTemple_ChestbeaterRoomRegions;
   if (scene == SCENE_KANDOREAN_TEMPLE_5)
-    return gKandoreanTemple_Room5Regions;
+    return gKandoreanTemple_StreamRoomRegions;
   return 0;
 }
 
@@ -800,23 +799,23 @@ void KandoreanTemple_CastLash(void) {
   FieldPsynergy_End();
 }
 
-#define DEFINE_KANDOREAN_TEMPLE_VENT(name, data1, n1, n2, n3, n4)              \
+#define DEFINE_KANDOREAN_TEMPLE_VENT(name, blowing, period, x, z, strength)    \
   void name(void) {                                                            \
     s32 position[3];                                                           \
                                                                                \
-    if (data1 != 0 && gFrameCount % n1 == 0) {                                 \
-      SET_VECTOR(position, n2, 0, n3);                                         \
-      KandoreanTemple_BlowSteam(position, n4);                                 \
+    if (blowing != 0 && gFrameCount % period == 0) {                           \
+      SET_VECTOR(position, x, 0, z);                                           \
+      KandoreanTemple_BlowSteam(position, strength);                           \
     }                                                                          \
   }
 
 DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowLeftVent,
-                             gKandoreanTemple_LeftVentBlowing, 9, 0x1280000,
-                             0xb00000, 0x20000)
+                             gKandoreanTemple_LeftVentBlowing, 9, px(296),
+                             px(176), px(2))
 
 DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowRightVent,
-                             gKandoreanTemple_RightVentBlowing, 5, 0x1580000,
-                             0xa00000, 0x40000)
+                             gKandoreanTemple_RightVentBlowing, 5, px(344),
+                             px(160), px(4))
 
 /// The lift room's task: a cloud of steam from the stream every fifth frame.
 void KandoreanTemple_BlowStream(void) {
@@ -1933,15 +1932,15 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_KANDOREAN_TEMPLE_LIFTS)
     KandoreanTemple_StartLiftRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_MIMIC)
-    KandoreanTemple_StartRoom2();
+    KandoreanTemple_StartMimicRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     KandoreanTemple_StartChestbeaterRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     KandoreanTemple_StartVentRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_5)
-    KandoreanTemple_StartRoom5();
+    KandoreanTemple_StartStreamRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
-    KandoreanTemple_StartRoom6();
+    KandoreanTemple_StartSteamRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     KandoreanTemple_StartFogRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_GATE)
@@ -1997,7 +1996,7 @@ void KandoreanTemple_StartLiftRoom(void) {
 }
 
 /// Sets up the second room.
-void KandoreanTemple_StartRoom2(void) {
+void KandoreanTemple_StartMimicRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 1)
@@ -2238,19 +2237,19 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-#define SINK_PLATFORM(n1, n2, n3, n4, n5)                                      \
+#define SINK_PLATFORM(top, upper, middle, lower, foot)                         \
   do {                                                                         \
     leader->y.fixed += -0x6c000;                                               \
     statue->y.fixed += -0x6c000;                                               \
     ride->y.fixed += -0x2b333;                                                 \
     limit = 0x1800;                                                            \
-    KandoreanTemple_ShrinkColumn(n1, 0x30000, limit);                          \
-    KandoreanTemple_ShrinkColumn(n2, 0x24000, limit);                          \
-    KandoreanTemple_ShrinkColumn(n3, 0x18000, limit);                          \
-    KandoreanTemple_ShrinkColumn(n4, 49152, limit);                            \
-    KandoreanTemple_ShrinkColumn(n5, 0, limit);                                \
+    KandoreanTemple_ShrinkColumn(top, 0x30000, limit);                         \
+    KandoreanTemple_ShrinkColumn(upper, 0x24000, limit);                       \
+    KandoreanTemple_ShrinkColumn(middle, 0x18000, limit);                      \
+    KandoreanTemple_ShrinkColumn(lower, 49152, limit);                         \
+    KandoreanTemple_ShrinkColumn(foot, 0, limit);                              \
     wait(1);                                                                   \
-  } while (Actor_GetById(n5)->scaleY > limit);
+  } while (Actor_GetById(foot)->scaleY > limit);
 
   SINK_PLATFORM(ACTOR_WEST_COLUMN_TOP, ACTOR_WEST_COLUMN_UPPER_PIECE,
                 ACTOR_WEST_COLUMN_MIDDLE_PIECE, ACTOR_WEST_COLUMN_LOWER_PIECE,
@@ -2352,13 +2351,13 @@ void KandoreanTemple_LeaveBySteam(void) {
 }
 
 /// Rises on the west vent's steam to the room above.
-void KandoreanTemple_LeaveBySteamExit3(void) {
+void KandoreanTemple_LeaveByWestVent(void) {
   KandoreanTemple_LeaveBySteam();
   Import_EventSetExitRequest(3);
 }
 
 /// Rises on the east vent's steam to the room above.
-void KandoreanTemple_LeaveBySteamExit4(void) {
+void KandoreanTemple_LeaveByEastVent(void) {
   KandoreanTemple_LeaveBySteam();
   Import_EventSetExitRequest(4);
 }
@@ -2410,12 +2409,13 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   Import_EventSetExitRequest(5);
 }
 
-/// The leader and actor 13 rise into view while actor 15 scales.
-#define DEFINE_KANDOREAN_TEMPLE_RISE(name, n1, n2, n3, n4, n5, n6, n7, data1)  \
+/// The leader rises into view on a lift while its column grows under it.
+#define DEFINE_KANDOREAN_TEMPLE_RISE(name, liftId, columnId, x, z, liftZ,      \
+                                     cellX, cellZ, timer)                      \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);      \
-    struct Actor *first = Actor_GetById(n1);                                   \
-    struct Actor *second = Actor_GetById(n2);                                  \
+    struct Actor *first = Actor_GetById(liftId);                               \
+    struct Actor *second = Actor_GetById(columnId);                            \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
@@ -2424,16 +2424,15 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
     FieldActor_SetPositionAndResetMotion(                                      \
-        Actor_GetById(gMainRoutineWork.leaderActorId), px(n3), px(-20),        \
-        px(n4));                                                               \
+        Actor_GetById(gMainRoutineWork.leaderActorId), px(x), px(-20), px(z)); \
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.leaderActorId),  \
                                0);                                             \
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(n1), px(n3), px(-20),   \
-                                         px(n5));                              \
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(n2), px(n3), px(-20),   \
-                                         px(n4));                              \
-    Actor_SetSpritePriority(n1, 2);                                            \
-    Actor_SetSpritePriority(n2, 3);                                            \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(liftId), px(x),         \
+                                         px(-20), px(liftZ));                  \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(columnId), px(x),       \
+                                         px(-20), px(z));                      \
+    Actor_SetSpritePriority(liftId, 2);                                        \
+    Actor_SetSpritePriority(columnId, 3);                                      \
     {                                                                          \
       u8 *flags = &second->priorityFlags;                                      \
       s32 c = 2 | *flags;                                                      \
@@ -2441,33 +2440,35 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       *flags = c;                                                              \
     }                                                                          \
     second->scaleY = 0x400;                                                    \
-    Actor_SetAnimationById(n1, 4);                                             \
-    Actor_SetAnimationById(n2, 2);                                             \
+    Actor_SetAnimationById(liftId, 4);                                         \
+    Actor_SetAnimationById(columnId, 2);                                       \
     gFieldWork->transition = 521;                                              \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
-    /* A goto loop, as in KandoreanTemple_RideWestLiftUp. */                   \
   rise:                                                                        \
     first->y.fixed += px(4);                                                   \
     leader->y.fixed += px(4);                                                  \
-    KandoreanTemple_GrowColumn(n2, 19660, 0x4ccc);                             \
+    KandoreanTemple_GrowColumn(columnId, 19660, 0x4ccc);                       \
     wait(1);                                                                   \
     if (first->y.fixed < 0)                                                    \
       goto rise;                                                               \
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, n6, n7);                            \
-    data1 = 2000;                                                              \
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, cellX, cellZ);                      \
+    timer = 2000;                                                              \
     gFieldWork->transition = 516;                                              \
     Event_End();                                                               \
   }
 
-DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnWestLift, 13, 15, 440, 200,
-                             204, 27, 12, gKandoreanTemple_LeftTimer)
+DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnWestLift, ACTOR_WEST_LIFT,
+                             ACTOR_WEST_LIFT_COLUMN, 440, 200, 204, 27, 12,
+                             gKandoreanTemple_LeftTimer)
 
-// As KandoreanTemple_ArriveOnWestLift, for actors 14 and 16 at another place.
-DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, 14, 16, 600, 232,
-                             236, 37, 14, gKandoreanTemple_RightTimer)
+// As KandoreanTemple_ArriveOnWestLift, for the east lift.
+DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, ACTOR_EAST_LIFT,
+                             ACTOR_EAST_LIFT_COLUMN, 600, 232, 236, 37, 14,
+                             gKandoreanTemple_RightTimer)
 
-/// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
+/// The west lift rises out of view on its growing column, then the scene moves
+/// on.
 void KandoreanTemple_RideWestLiftUp(void) {
   struct Actor *object = Actor_GetById(ACTOR_WEST_LIFT);
 
@@ -2503,12 +2504,14 @@ void KandoreanTemple_RideEastLiftUp(void) {
   Import_EventSetExitRequest(7);
 }
 
-/// Sets up the fifth room, whose current of steam pushes the party.
-void KandoreanTemple_StartRoom5(void) {
-  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapGrid;
+/// Sets up the stream room, where the party wades and the current of steam
+/// pushes it.
+void KandoreanTemple_StartStreamRoom(void) {
+  struct MapWorkGroundEffects *map =
+      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
 
   gKandoreanTemple_SteamCounter = 0;
-  map->mode = 1;
+  map->wading = 1;
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
@@ -2516,13 +2519,14 @@ void KandoreanTemple_StartRoom5(void) {
 #endif
 }
 
-/// Sets up the sixth room, with the rush of its steam.
-void KandoreanTemple_StartRoom6(void) {
-  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapGrid;
+/// Sets up the steam room, with the rush of its steam.
+void KandoreanTemple_StartSteamRoom(void) {
+  struct MapWorkGroundEffects *map =
+      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
 
   gKandoreanTemple_SteamCounter = 0;
   Scene_QueueMusic(SE_170);
-  map->mode = 1;
+  map->wading = 1;
   FieldEffect_StartBlankOverlay(0);
 }
 
@@ -3403,7 +3407,7 @@ u32 gKandoreanTemple_ChestbeaterRoomRegions[] = {
     0, 0,
 };
 
-u32 gKandoreanTemple_Room5Regions[] = {
+u32 gKandoreanTemple_StreamRoomRegions[] = {
     0x2a0200, 0x2100110, 0x120003a, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -3587,8 +3591,8 @@ struct Trigger gKandoreanTemple_VentRoomEvents[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VENT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VENT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveBySteamExit3)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveBySteamExit4)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByWestVent)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByEastVent)},
     {TRIGGER_TABLE_END},
 };
 

@@ -82,6 +82,14 @@ enum FieldMenuCommand {
 /// The places of the transfer method menu.
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
 
+/// The places of the password level menu: how much of the game a password
+/// carries.
+enum PasswordLevel {
+  PASSWORD_LEVEL_GOLD = 0,   ///< levels, Djinn, stats, items and coins
+  PASSWORD_LEVEL_SILVER = 1, ///< levels, Djinn and stats
+  PASSWORD_LEVEL_BRONZE = 2  ///< levels and Djinn
+};
+
 /// What IconMenu_ChooseSendOption offers.
 enum ResourceLayoutMode {
   RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable

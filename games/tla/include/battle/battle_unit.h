@@ -8,10 +8,7 @@
 #include "edition.h"
 #include "static_assert.h"
 
-enum {
-  BATTLE_UNIT_SIZE = 0x14c,
-  PSYNERGY_ABILITY_MASK = 0x3fff
-};
+enum { BATTLE_UNIT_SIZE = 0x14c, PSYNERGY_ABILITY_MASK = 0x3fff };
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
 /// and marks for an action its class or an equipped item gave.

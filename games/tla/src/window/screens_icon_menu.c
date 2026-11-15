@@ -1367,8 +1367,10 @@ void Menu_DrawModeLabel(void) {
     state->previousMode = state->selection;
     Window_ClearInteriorTiles(state->lowerWindow, 8, 40, LABEL_RIGHT, 80);
 
+    // The lines of what each password carries, from "Levels"
+    // (MsgPasswordLevel).
     switch (state->selection) {
-    case 0: {
+    case PASSWORD_LEVEL_GOLD: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
@@ -1379,7 +1381,7 @@ void Menu_DrawModeLabel(void) {
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 72);
       break;
     }
-    case 1: {
+    case PASSWORD_LEVEL_SILVER: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
@@ -1388,7 +1390,7 @@ void Menu_DrawModeLabel(void) {
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 56);
       break;
     }
-    case 2: {
+    case PASSWORD_LEVEL_BRONZE: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text++, state->lowerWindow, 8, 40);
@@ -1438,7 +1440,7 @@ void Menu_DrawModeIndicator(void) {
     *shown = *current;
     WindowSprite_PrepareForRedraw(state->lowerWindow);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-    if (*current == 0) {
+    if (*current == TRANSFER_METHOD_PASSWORD) {
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X,
                        4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow,
@@ -1453,12 +1455,12 @@ void Menu_DrawModeIndicator(void) {
     }
 #else
     switch (*current) {
-    case 0:
+    case TRANSFER_METHOD_PASSWORD:
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
       break;
-    case 1:
+    case TRANSFER_METHOD_CABLE:
       Text_DrawMessage((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
                        16);

@@ -646,31 +646,38 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_WOBBLE:
         if (gVBlankCount & 1)
           output->animationStep++;
-        sprite->x =
-            output->x + gWindowSprite_WobbleOffsets[output->animationStep % 20][0];
+        sprite->x = output->x +
+                    gWindowSprite_WobbleOffsets[output->animationStep % 20][0];
         sprite->y = output->y +
-                    gWindowSprite_WobbleOffsets[output->animationStep % 20][1] - 2;
+                    gWindowSprite_WobbleOffsets[output->animationStep % 20][1] -
+                    2;
         break;
       case WINDOW_SPRITE_MOTION_HOP_UP:
         output->animationStep++;
-        sprite->y = output->y - gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->y =
+            output->y - gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
         output->animationStep++;
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->y =
+            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_LEFT:
         output->animationStep++;
-        sprite->x = output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->x =
+            output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_RIGHT:
         output->animationStep++;
-        sprite->x = output->x + gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->x =
+            output->x + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
         output->animationStep++;
-        sprite->x = output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->x =
+            output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->y =
+            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_SWELL:
       case WINDOW_SPRITE_MOTION_SWELL_HALF:

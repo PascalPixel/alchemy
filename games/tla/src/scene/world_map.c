@@ -747,31 +747,29 @@ void WorldMap_GazeIntoPond(void) {
   if (roll == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 slot = ACTOR_POND_COINS;
-    struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
+    struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
     struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
     s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
-    /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
-    register struct Actor *object asm("r6");
 
     // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
-    position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed;
-    position[2] = leader->z.fixed;
-    FieldVector_AddPolarOffset(16, leader->facing, position);
-    object = Actor_Get(ACTOR_POND_COINS);
+    position[0] = actor->x.fixed;
+    position[1] = actor->y.fixed;
+    position[2] = actor->z.fixed;
+    FieldVector_AddPolarOffset(16, actor->facing, position);
+    actor = Actor_Get(ACTOR_POND_COINS);
     x = position[0];
-    if (object == NULL) {
-      object = FieldActor_Create(0x1e9, x, position[1], position[2]);
-      if (object == NULL)
+    if (actor == NULL) {
+      actor = FieldActor_Create(0x1e9, x, position[1], position[2]);
+      if (actor == NULL)
         return;
-      work->actors[slot] = object;
+      work->actors[slot] = actor;
     } else {
-      object->x.fixed = x;
-      object->y.fixed = position[1];
-      object->z.fixed = position[2];
+      actor->x.fixed = x;
+      actor->y.fixed = position[1];
+      actor->z.fixed = position[2];
     }
     FieldActor_ShowItemIconById(ACTOR_POND_COINS, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block. */

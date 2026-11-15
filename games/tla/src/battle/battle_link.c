@@ -110,11 +110,8 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the copy in a one-pass loop, a scheduling barrier. */
-  do {
-    Iwram_CopyWordsEntry(buffer,
-                         Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY), size);
-  } while (0);
+  IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
+                   size);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count;) {
     list->entries[j].unitId = work->opponentSlots[list->entries[j].unitId];

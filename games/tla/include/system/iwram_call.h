@@ -104,6 +104,14 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
     Iwram_FillWords(destination, size, value);                                 \
   } while (0)
 
+/// Iwram_CopyWords as a statement of its own, as IWRAM_FILL_WORDS is: the link
+/// code copies the Djinn recovery table into its send buffer so, in the lobby
+/// and in the battle, as The Broken Seal's does. The name is ours.
+#define IWRAM_COPY_WORDS(destination, source, size)                            \
+  do {                                                                         \
+    Iwram_CopyWords(destination, source, size);                                \
+  } while (0)
+
 /// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)

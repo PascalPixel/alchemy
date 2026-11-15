@@ -34,14 +34,6 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
- * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
- * selected[2]; struct BattleWork *battle; s32 count; count =
- * BattleParty_PrepareReserveOwners...; tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/window/window/battle_targets.c:228: invalid type
- * argument of `->'. */
-extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
 /* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void
  * *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32
  * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
@@ -186,7 +178,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
         if (candidateIds[j] == 254)
           continue;
-        candidate = Unit_Get__menus(candidateIds[j]);
+        candidate = Unit_Get(candidateIds[j]);
         switch (kind) {
         case 5:
           if (candidate->hp == 0) {
@@ -233,7 +225,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == 254 ||
          (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
-          Unit_Get__menus(candidateIds[targetIndex])->hp == 0)) {
+          ((struct BattleUnit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
@@ -340,7 +332,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
-          unit = Unit_Get__menus(candidateIds[targetIndex]);
+          unit = Unit_Get(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                      &selectedPosition);
           if (conditionWindow != NULL)
@@ -556,7 +548,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != 255) {
-        target = Unit_Get__menus(candidateIds[targetIndex]);
+        target = Unit_Get(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                    &namePosition);
         TARGET_BOB(namePosition.y);

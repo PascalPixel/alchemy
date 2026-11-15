@@ -321,12 +321,6 @@ u32 MessageArgument_Lookup(u32 name, u32 clear);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
-/* VIEW(window): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unitId);
- * owner_state.h has void *Unit_Get(s32 owner); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, Message_Decode
- * (gone) moves: 1065 of 1065 instructions in tla-ja. */
-struct BattleUnit *Unit_Get__window(s32 unitId) __asm__("Unit_Get");
-#define Unit_Get Unit_Get__window
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 
@@ -622,7 +616,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
+            nameBytes =
+                ((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))
+                    ->name;
             nameOutput = name;
             i = 0;
             do {
@@ -636,9 +632,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(messageReader) - 1;
-            nameBytes =
-                Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear))
-                    ->name;
+            nameBytes = ((struct BattleUnit *)Unit_Get(MessageArgument_Lookup(
+                             MESSAGE_ARGUMENT_ACTOR, clear)))
+                            ->name;
             nameOutput = name;
             j = 0;
             do {
@@ -652,7 +648,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = Unit_Get(argument)->name;
+            nameBytes = ((struct BattleUnit *)Unit_Get(argument))->name;
             nameOutput = name;
             j = 0;
             do {
@@ -1065,7 +1061,9 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
+            nameBytes =
+                ((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))
+                    ->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1105,7 +1103,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = Unit_Get(argument)->name;
+            nameBytes = ((struct BattleUnit *)Unit_Get(argument))->name;
             nameOutput = name;
             j = 0;
             do {

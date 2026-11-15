@@ -43,7 +43,6 @@
 #include "window/debug.c"
 #include "window/text_tiles.c"
 
-#undef Unit_Get
 #undef Ability_Get
 #undef Portrait_Create
 #undef CommandIcon_Create

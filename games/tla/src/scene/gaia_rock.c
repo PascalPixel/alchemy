@@ -300,22 +300,24 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGaiaRock_Triggers;
 }
 
+/// A circling leaf as its update reads it: struct Actor's fields under a type
+/// of its own, the timer unsigned and the update taking the leaf.
 struct OrbitEffect {
-  u8 unk00[6];
-  u16 angle;
+  u8 unused[6]; ///< the script and its cursor, not read here
+  u16 facing;
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[15];
+  u8 unusedAfterZ[15];
   u8 priorityFlags;
-  u8 unk24[4];
-  s32 scale;
-  u8 unk2c[28];
-  s32 speed;
-  u8 unk4c[24];
+  u8 unusedAfterPriority[4];
+  s32 velocityY;
+  u8 unusedAfterVelocityY[28];
+  s32 gravity;
+  u8 unusedAfterGravity[24];
   u16 timer;
-  s16 pause;
-  struct OrbitEffect *anchor;
+  s16 pause; ///< Actor.userValue
+  struct OrbitEffect *watchedActor;
   void (*update)(struct OrbitEffect *);
 };
 
@@ -328,15 +330,15 @@ void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 dz;
 
   radius = Random16() + 0x20000;
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
-  effect->angle += 0xfff0;
+  effect->facing += 0xfff0;
   if (effect->pause != 0) {
     effect->pause--;
-    effect->angle += 0x800;
+    effect->facing += 0x800;
   } else if ((Random16() << 5) >> 16 == 0) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
@@ -367,9 +369,9 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
         effect->update = GaiaRock_CircleLeaf;
         effect->timer = timer;
         effect->pause = 0;
-        effect->speed = 0x1999;
-        effect->scale = 0x30000;
-        effect->angle = Random16();
+        effect->gravity = 0x1999;
+        effect->velocityY = px(3);
+        effect->facing = Random16();
         effect->priorityFlags = 0;
         Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
       }

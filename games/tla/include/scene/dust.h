@@ -4,6 +4,7 @@
 /// @file
 /// Dust and ground particles the scenes draw by hand.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "field/ground_mask.h"
 
@@ -16,7 +17,7 @@ struct GroundParticleWork {
   struct GroundParticle particles[64];
   /// The 16.16 position (x, height, z) new particles appear around; NULL
   /// keeps them where they fall.
-  s32 *leader;
+  FIXED *leader;
   u8 unused[4]; ///< no code reads it
   s32 stopped;  ///< nonzero stops new sparkle bursts, as in WeatherWork
 };

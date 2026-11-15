@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_RIDE_H
 #define ALCHEMY_RIDE_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// @file
@@ -31,7 +32,7 @@ struct RideEntry {
   s16 flags;
   s16 offScreen; ///< puffs off screen and keeps the flames' sprites
   struct Actor *actor;
-  s32 reach; ///< 16.16, the low nibble of flags << 16
+  FIXED reach; ///< 16.16, the low nibble of flags << 16
 };
 
 /// An actor the ride checks against as it moves: a ride stops beside it

@@ -142,9 +142,9 @@ struct ActorPlacement {
   /// A movement type (enum MovementType) or an actor script, for
   /// Actor_SetMovementType.
   s32 movement;
-  s32 x;         ///< 16.16 fixed-point pixels
-  s32 y;         ///< 16.16 fixed-point pixels
-  s32 z;         ///< 16.16 fixed-point pixels
+  FIXED x;       ///< 16.16 fixed-point pixels
+  FIXED y;       ///< 16.16 fixed-point pixels
+  FIXED z;       ///< 16.16 fixed-point pixels
   u16 facing;    ///< 1/65536 turns (enum Facing)
   u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader
                  ///< afterwards

@@ -5,6 +5,7 @@
 /// The field's routines and tables other banks call, and the field Psynergy's
 /// reach.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 #include "field/actor.h"
@@ -395,7 +396,7 @@ struct PartyPauseView {
 /// The point the map view follows (MapWork.origin), as the depth sort reads it.
 struct DepthOrigin {
   s32 x;
-  s32 y; ///< its height, 16.16 fixed-point pixels
+  FIXED y; ///< its height, 16.16 fixed-point pixels
 };
 
 /// The map view's place (MapWork.viewX and viewZ), read as a pair.

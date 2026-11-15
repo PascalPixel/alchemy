@@ -5,6 +5,7 @@
 /// Map grids: their cells, layers, animations and blend scripts, and the map
 /// grid state.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "field/field.h"
@@ -87,9 +88,9 @@ STATIC_ASSERT(sizeof(struct TilesetAnim) == 12);
 
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {
-  s32 x;      ///< 16.16 fixed-point pixels
-  s32 height; ///< 16.16 fixed-point pixels
-  s32 y;      ///< 16.16 fixed-point pixels
+  FIXED x;      ///< 16.16 fixed-point pixels
+  FIXED height; ///< 16.16 fixed-point pixels
+  FIXED y;      ///< 16.16 fixed-point pixels
 };
 
 /// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture

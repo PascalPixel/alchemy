@@ -5,6 +5,7 @@
 /// The field effect sprites the field Psynergy keeps (FieldParticle).
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -16,20 +17,20 @@ typedef void (*EffectCallback)(struct FieldParticle *);
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback.
 struct FieldParticle {
-  void *object;     ///< the slot's sprite
-  s32 x;            ///< 16.16 fixed-point pixels
-  s32 z;            ///< 16.16 fixed-point pixels
-  s32 targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
-  s32 targetZ;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
-  s32 originX;      ///< 16.16 fixed-point pixels
-  s32 originZ;      ///< 16.16 fixed-point pixels
-  s32 speed;        ///< 16.16 fixed-point pixels per frame
-  s32 maxSpeed;     ///< 16.16 fixed-point pixels per frame
-  s32 acceleration; ///< 16.16 fixed-point pixels per frame, each frame
-  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
-  u16 heading;      ///< 1/65536 turns
-  s16 maxTurnStep;  ///< 1/65536 turns a frame
+  void *object;       ///< the slot's sprite
+  FIXED x;            ///< 16.16 fixed-point pixels
+  FIXED z;            ///< 16.16 fixed-point pixels
+  FIXED targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
+  FIXED targetZ;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
+  FIXED originX;      ///< 16.16 fixed-point pixels
+  FIXED originZ;      ///< 16.16 fixed-point pixels
+  FIXED speed;        ///< 16.16 fixed-point pixels per frame
+  FIXED maxSpeed;     ///< 16.16 fixed-point pixels per frame
+  FIXED acceleration; ///< 16.16 fixed-point pixels per frame, each frame
+  FIXED scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 heading;        ///< 1/65536 turns
+  s16 maxTurnStep;    ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0
   u16 age;                 ///< frames
   s16 callbackDelay;       ///< frames

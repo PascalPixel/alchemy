@@ -5,6 +5,7 @@
 /// A particle's position and the screen points the effects draw at.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -14,21 +15,21 @@ struct Particle {
 #ifdef UBFIX
   union {
     struct {
-      s32 x; ///< 16.16 fixed-point pixels
-      s32 y; ///< 16.16 fixed-point pixels
-      s32 z; ///< 16.16 fixed-point pixels
+      FIXED x; ///< 16.16 fixed-point pixels
+      FIXED y; ///< 16.16 fixed-point pixels
+      FIXED z; ///< 16.16 fixed-point pixels
     };
     s32 coordinates[3];
   };
 #else
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
 #endif
-  s32 velocityX; ///< 16.16 fixed-point pixels per frame
-  s32 velocityY; ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ; ///< 16.16 fixed-point pixels per frame
-  s32 variant;   ///< each effect's own
+  FIXED velocityX; ///< 16.16 fixed-point pixels per frame
+  FIXED velocityY; ///< 16.16 fixed-point pixels per frame
+  FIXED velocityZ; ///< 16.16 fixed-point pixels per frame
+  s32 variant;     ///< each effect's own
 };
 
 /// Returns the step's three coordinates as an array.

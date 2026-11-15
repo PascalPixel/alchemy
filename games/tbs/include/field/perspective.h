@@ -4,6 +4,7 @@
 /// @file
 /// The world map's perspective view work.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -18,11 +19,11 @@ struct WorldMapView {
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
   /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
-  s32 view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
-  s32 scaleX;  ///< 32 in 16.16 at load
-  s32 scaleY;  ///< 64 in 16.16 at load
-  s32 limitX;  ///< 8160 in 16.16 at load
-  s32 limitY;  ///< 8160 in 16.16 at load
+  FIXED view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
+  FIXED scaleX;  ///< 32 in 16.16 at load
+  FIXED scaleY;  ///< 64 in 16.16 at load
+  FIXED limitX;  ///< 8160 in 16.16 at load
+  FIXED limitY;  ///< 8160 in 16.16 at load
   /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
@@ -53,7 +54,7 @@ struct WorldMapView {
   s32 farPlane;             ///< 510 pixels at load
   s32 distance;             ///< farPlane scaled by the zoom
   s32 previousZoom;         ///< the zoom a transition starts from
-  s32 zoom;                 ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED zoom;               ///< 16.16 fixed point, FIXED_ONE full size
   s16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
   s16 zoomTransitionStep;   ///< frames of the transition done
 };

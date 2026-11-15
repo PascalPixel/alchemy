@@ -18,13 +18,13 @@
 struct BattleCamera {
   /// The eye, 16.16 fixed-point pixels: written each frame distance behind
   /// the focus along the turned view.
-  s32 eye[3];
-  s32 focus[3]; ///< the focus, 16.16 fixed-point pixels
+  FIXED eye[3];
+  FIXED focus[3]; ///< the focus, 16.16 fixed-point pixels
   /// When set, ActorSystem_ProjectSprites faces the sprites from it instead
   /// of eye; every camera setup clears it and nothing sets it.
   s32 *followEye;
   s32 *followPosition;        ///< when set, followed instead of focus
-  s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
+  FIXED distance;             ///< eye to focus, 16.16 fixed-point pixels
   u8 unusedAfterDistance[16]; ///< no code names it
   u16 pitch;                  ///< 1/65536 turns
   u16 yaw;                    ///< 1/65536 turns

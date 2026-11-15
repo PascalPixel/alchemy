@@ -4,6 +4,8 @@
 /// @file
 /// The Colosso race gauge's sprites and work.
 
+#include "fixed_math.h"
+
 /// One sprite of the race gauge's list: a link word, its position and shape
 /// attributes, and its tile.
 struct ColossoGaugeSprite {
@@ -43,8 +45,8 @@ struct ColossoGaugeWork {
   s16 segments;
   /// 16.16 fixed-point pixels: the opponent starts opposite Isaac across it and
   /// runs its path mirrored across it.
-  s32 finishX;
-  s32 finishZ; ///< 16.16 fixed-point pixels
+  FIXED finishX;
+  FIXED finishZ; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct ColossoGaugeSprite) == 12);

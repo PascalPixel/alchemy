@@ -110,9 +110,9 @@ s16 gHeatGauge_Held BSS_DATA;
 void HeatGauge_Start(void);
 /// The middles of the oases, where a leader stepping into one bathes: x and z
 /// of each, in 16.16 fixed-point pixels.
-extern const s32 gLamakanDesertEast_Oases[];
-extern const s32 gLamakanDesertSmog_Oases[];
-extern const s32 gLamakanDesertOasesOther[];
+extern const FIXED gLamakanDesertEast_Oases[];
+extern const FIXED gLamakanDesertSmog_Oases[];
+extern const FIXED gLamakanDesertOasesOther[];
 extern struct SceneEntrance gLamakanDesertEntrancesOther[];
 extern struct SceneEntrance gLamakanDesertEastEntrances[];
 extern struct SceneEntrance gLamakanDesertSmogEntrances[];

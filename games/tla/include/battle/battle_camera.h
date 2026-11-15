@@ -7,6 +7,7 @@
 
 #include "battle/battle_action.h"
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
@@ -17,12 +18,12 @@
 struct BattleCamera {
   /// The eye, 16.16 fixed-point pixels: written distance behind the focus
   /// along the turned view.
-  s32 eye[3];
-  s32 focus[3];        ///< the focus, 16.16 fixed-point pixels
+  FIXED eye[3];
+  FIXED focus[3];      ///< the focus, 16.16 fixed-point pixels
   s32 followEye;       ///< cleared beside followPosition; nothing reads it
   s32 *followPosition; ///< when set, followed instead of focus
 
-  s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
+  FIXED distance;             ///< eye to focus, 16.16 fixed-point pixels
   u8 unusedAfterDistance[16]; ///< no code names it
   u16 pitch;                  ///< 1/65536 turns
   u16 yaw;                    ///< 1/65536 turns

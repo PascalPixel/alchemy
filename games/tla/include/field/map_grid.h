@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MAP_GRID_H
 #define ALCHEMY_MAP_GRID_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -66,14 +67,14 @@ extern const struct MapResources gMaps[];
 /// One background layer of the field map: its scroll position, origin,
 /// parallax against the view, drift and wrap, and its window of cells.
 struct MapLayer {
-  s32 x, y;              ///< 16.16 fixed-point pixels
-  s32 offsetX, offsetY;  ///< 16.16 fixed-point pixels
-  s32 scaleX, scaleY;    ///< 16.16 fixed point, FIXED_ONE moves with the view
-  s32 speedX, speedY;    ///< 16.16 fixed-point pixels per frame
-  s32 phaseX, phaseY;    ///< 16.16 fixed-point pixels
-  u16 maskX, maskY;      ///< a drifting layer's wrap mask, in 8-pixel tiles
-  u16 originX, originY;  ///< the cell column and row of the layer's window
-  struct MapCell *cells; ///< the layer's first cell in the map cell buffer
+  FIXED x, y;             ///< 16.16 fixed-point pixels
+  FIXED offsetX, offsetY; ///< 16.16 fixed-point pixels
+  FIXED scaleX, scaleY;   ///< 16.16 fixed point, FIXED_ONE moves with the view
+  FIXED speedX, speedY;   ///< 16.16 fixed-point pixels per frame
+  FIXED phaseX, phaseY;   ///< 16.16 fixed-point pixels
+  u16 maskX, maskY;       ///< a drifting layer's wrap mask, in 8-pixel tiles
+  u16 originX, originY;   ///< the cell column and row of the layer's window
+  struct MapCell *cells;  ///< the layer's first cell in the map cell buffer
   u8 *terrainIds;
 };
 
@@ -82,7 +83,7 @@ struct MapLayer {
 /// view.
 struct MapWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels.
-  s32 *origin;
+  FIXED *origin;
   /// Screen shake amplitudes and the factor that scales them each frame;
   /// MapGrid_SetScreenShake keeps a component given as negative.
   s32 shakeX, shakeY, shakeDecay;

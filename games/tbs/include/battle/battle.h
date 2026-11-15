@@ -4,6 +4,7 @@
 /// @file
 /// The battle bank's routines and globals, as the other banks see them.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 #include "system/vector3.h"
@@ -47,15 +48,15 @@ extern const u8 gMindRead_CasterPaletteCycle[];
 extern const u8 gBattleAI_ActionWeights[3][8];
 /// The knockback's speed gained each frame by variant (enum BattleKnockback),
 /// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
-extern s32 gBattleKnockback_Acceleration[];
+extern FIXED gBattleKnockback_Acceleration[];
 /// The knockback's reach by variant, in percent of the unit's distance from
 /// the centre: 140 to 200, 100 for KNOCKBACK_BOUNCE and KNOCKBACK_JOLT.
 extern s32 gBattleKnockback_DistancePercent[];
 /// The knockback's top speed by variant, 16.16 pixels a frame: 4, but 20 for
 /// KNOCKBACK_HURL.
-extern s32 gBattleKnockback_SpeedLimit[];
+extern FIXED gBattleKnockback_SpeedLimit[];
 /// The knockback's hop by variant, 16.16 pixels a frame upward: 2 to 10.
-extern s32 gBattleKnockback_VelocityY[];
+extern FIXED gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern const s8 gBattleParty_CenterOrderOffsets[];
@@ -87,7 +88,7 @@ extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
-extern const s32 gBattleCamera_CommandMatrix[];
+extern const FIXED gBattleCamera_CommandMatrix[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_StarPictures[];

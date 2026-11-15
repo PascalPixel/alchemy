@@ -4,14 +4,15 @@
 /// @file
 /// Point, a position in 16.16 fixed point.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
 /// A position in three coordinates, each in 16.16 fixed point.
 struct Point {
-  s32 x; ///< 16.16 fixed point
-  s32 y; ///< 16.16 fixed point
-  s32 z; ///< 16.16 fixed point
+  FIXED x; ///< 16.16 fixed point
+  FIXED y; ///< 16.16 fixed point
+  FIXED z; ///< 16.16 fixed point
 };
 
 STATIC_ASSERT(sizeof(struct Point) == 0x0c);

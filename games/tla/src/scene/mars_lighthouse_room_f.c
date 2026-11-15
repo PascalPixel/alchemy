@@ -183,7 +183,7 @@ enum {
 
 /// Where a pushed object comes to rest, read by the push that follows.
 struct PushTarget {
-  s32 x; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
   s32 footprint; ///< index into the footprint table
@@ -1627,7 +1627,7 @@ typedef struct Entry {
   /// Puffs even off screen, and its flames keep their sprites.
   s16 offScreen;
   struct Actor *actor;
-  s32 reach; ///< 16.16 pixels, from the flags' low four bits
+  FIXED reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
 /// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
@@ -2026,7 +2026,7 @@ struct SpriteView {
   u16 priority : 2;
   u16 palette : 4;
   u8 afterOam[2];
-  s32 scale; ///< 16.16, as FieldSprite has it
+  FIXED scale; ///< 16.16, as FieldSprite has it
   u8 vramBlock;
   u8 retainCacheEntry : 1;
   u8 otherFlags : 7;

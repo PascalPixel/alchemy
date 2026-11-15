@@ -626,7 +626,7 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
 }
 
 /// The world map cursor's position (x, then y, 16.16 pixels).
-extern s32 *gWorldPicture_Cursor;
+extern FIXED *gWorldPicture_Cursor;
 
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]

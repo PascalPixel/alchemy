@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MOTION_OBJECT_H
 #define ALCHEMY_MOTION_OBJECT_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "battle_action.h"
@@ -13,33 +14,33 @@ struct Actor;
 /// velocity and target, and its per-frame update. It is one of the object
 /// slots the field's FieldActor also describes.
 struct MotionObject {
-  const s32 *script; ///< the object script it runs; null when it is free
-  s16 scriptCursor;  ///< the script cursor, in words
-  u16 angle;         ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 groundHeight;  ///< 16.16 fixed-point pixels
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 height;        ///< not named by TLA code through this view
-  u8 layer;          ///< the map layer its ground height is read from
+  const s32 *script;  ///< the object script it runs; null when it is free
+  s16 scriptCursor;   ///< the script cursor, in words
+  u16 angle;          ///< 1/65536 turns
+  FIXED x;            ///< 16.16 fixed-point pixels
+  FIXED y;            ///< 16.16 fixed-point pixels
+  FIXED z;            ///< 16.16 fixed-point pixels
+  FIXED groundHeight; ///< 16.16 fixed-point pixels
+  FIXED scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 height;         ///< not named by TLA code through this view
+  u8 layer;           ///< the map layer its ground height is read from
   u8 priorityFlags;
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityZ;  ///< 16.16 fixed-point pixels per frame
+  FIXED speedLimit; ///< 16.16 fixed-point pixels per frame
   /// Horizontal speed gained each frame towards the target, or lost braking
   /// without one, in 16.16 fixed-point pixels per frame.
-  s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 for no target
-  s32 targetY; ///< 16.16 fixed-point pixels
-  s32 targetZ; ///< 16.16 fixed-point pixels
+  FIXED acceleration;
+  FIXED targetX; ///< 16.16 fixed-point pixels; 0x80000000 for no target
+  FIXED targetY; ///< 16.16 fixed-point pixels
+  FIXED targetZ; ///< 16.16 fixed-point pixels
   /// With motionFlags bit 1, the 16.16 share of velocityY kept on a bounce.
-  s32 verticalMotionPhase;
+  FIXED verticalMotionPhase;
   /// Gravity: taken from velocityY each frame above the ground with
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame.
-  s32 verticalMotionStrength;
+  FIXED verticalMotionStrength;
   s32 riseBaseY;
   void *records; ///< one sprite, or a table of them (recordStorageKind)
   /// bits: 3..0 how records holds the sprites

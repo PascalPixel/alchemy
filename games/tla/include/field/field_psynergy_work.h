@@ -4,6 +4,7 @@
 /// @file
 /// The field Psynergy's work (FieldEffectWork) and its particle.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "field_particle.h"
@@ -33,9 +34,9 @@ struct FieldEffectWork {
   u16 angle;
   /// The caster's facing, rounded to eight directions, 1/65536 turns.
   u16 angle8;
-  s32 x;                   ///< 16.16 fixed-point pixels
-  s32 y;                   ///< 16.16 fixed-point pixels
-  s32 z;                   ///< 16.16 fixed-point pixels
+  FIXED x;                 ///< 16.16 fixed-point pixels
+  FIXED y;                 ///< 16.16 fixed-point pixels
+  FIXED z;                 ///< 16.16 fixed-point pixels
   struct Actor *mainActor; ///< the caster's actor
   struct Actor *child;     ///< the target's actor, or NULL
   s16 firstActorId;        ///< the caster's actor id

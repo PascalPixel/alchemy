@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_ACTION_H
 #define ALCHEMY_BATTLE_ACTION_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -15,10 +16,10 @@ struct BattleObject {
   u16 overlay;                 ///< a second sprite drawn over it; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
   u16 shadow;    ///< the shadow sprite drawn under the unit
-  s32 anchorX;   ///< 16.16 fixed-point pixels
-  s32 anchorZ;   ///< 16.16 fixed-point pixels
+  FIXED anchorX; ///< 16.16 fixed-point pixels
+  FIXED anchorZ; ///< 16.16 fixed-point pixels
   s32 palette;   ///< the unit sprite's colour mode, an enum SpriteColorMode
-  s32 scale;     ///< 16.16 fixed point, 0x10000 full size
+  FIXED scale;   ///< 16.16 fixed point, 0x10000 full size
   u16 activeStatuses;                     ///< a bit per status with an icon
   u8 selectedCondition;                   ///< the status whose icon is shown
   s8 cycleTimer;                          ///< frames until the next status icon

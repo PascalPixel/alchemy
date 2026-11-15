@@ -63,7 +63,7 @@ struct WhirlSpark {
   s32 z;
   s32 angle;            ///< 1/65536 turns
   s32 unusedAfterAngle; ///< no code names it
-  s32 radius;           ///< 16.16 fixed-point pixels
+  FIXED radius;         ///< 16.16 fixed-point pixels
   s32 age;
 };
 
@@ -97,8 +97,8 @@ struct CycloneWork {
   s16 timer;              ///< frames into the ride
   s32 angle;              ///< the whirlwind's turn, 1/65536 turns
   s32 radius;
-  s32 from[3]; ///< where the ride starts, 16.16 pixels
-  s32 to[3];   ///< where it ends, 16.16 pixels
+  FIXED from[3]; ///< where the ride starts, 16.16 pixels
+  FIXED to[3];   ///< where it ends, 16.16 pixels
   /// Nonzero runs the particle burst with it: a nearby cell of kind 1
   /// (FieldPsynergy_GatherNearbyCells).
   s8 kind;

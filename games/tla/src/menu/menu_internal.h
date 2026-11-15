@@ -241,7 +241,7 @@ struct ItemMenuWork {
   void *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];         ///< screen pixels
   s16 memberY[8];         ///< screen pixels
-  s32 memberScale[8];     ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
   /// The party member each figure shows, -1 for none
   /// (Menu_CreateOwnerEntryObjects).
   s16 memberSpriteIds[8];
@@ -352,7 +352,7 @@ struct StatusScreenWork {
   void *memberSprites[8];
   s16 memberX[8];         ///< screen pixels
   s16 memberY[8];         ///< screen pixels
-  s32 memberScale[8];     ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
   s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
   u16 selectedSlots[2];
   u16 selectedActions[2];
@@ -422,7 +422,7 @@ struct PsynergyMenuWork {
   void *tabSprites[8];    ///< the party members' figures
   s16 tabX[8];            ///< screen pixels
   s16 rowPositions[8];    ///< screen pixels
-  s32 memberScale[8];     ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
   s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
   u16 sideRow[2];         ///< each side's Psynergy row chosen
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action

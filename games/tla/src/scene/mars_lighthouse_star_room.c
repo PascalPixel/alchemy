@@ -1317,7 +1317,7 @@ typedef struct Entry {
   /// Puffs even off screen, and its flames keep their sprites.
   s16 offScreen;
   struct Actor *actor;
-  s32 reach; ///< 16.16 pixels, from the flags' low four bits
+  FIXED reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
 /// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop

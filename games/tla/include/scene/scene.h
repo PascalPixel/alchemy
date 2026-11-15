@@ -4,6 +4,7 @@
 /// @file
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "resource_ids.h"
 #include "field/field_coordinate.h"
@@ -284,7 +285,7 @@ struct GustObject {
 /// A coordinate as the scenes' actor views read it: struct FieldCoordinate's
 /// layout as a union, whose members may alias anything.
 union ViewCoordinate {
-  s32 fixed;
+  FIXED fixed;
   struct {
     u16 decimal;
     s16 integer;
@@ -498,7 +499,7 @@ struct MarsLighthouseBeamTarget {
   u16 flags;
   u16 unk06;
   struct Actor *object;
-  s32 height; ///< 16.16 pixels
+  FIXED height; ///< 16.16 pixels
 };
 
 struct MarsLighthouseBeam {
@@ -614,10 +615,10 @@ struct TreasureIsleCell {
 };
 
 struct SceneEffectParams {
-  s32 priority;    ///< the sprite's priority
-  s32 palette;     ///< the sprite's palette
-  s32 startScaleX; ///< 16.16 fixed point, 0x10000 full size
-  s32 startScaleY; ///< 16.16 fixed point, 0x10000 full size
+  s32 priority;      ///< the sprite's priority
+  s32 palette;       ///< the sprite's palette
+  FIXED startScaleX; ///< 16.16 fixed point, 0x10000 full size
+  FIXED startScaleY; ///< 16.16 fixed point, 0x10000 full size
   u8 unk10[0x18];
 };
 

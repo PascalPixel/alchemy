@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MERCURY_LIGHTHOUSE_LIGHTS_H
 #define ALCHEMY_MERCURY_LIGHTHOUSE_LIGHTS_H
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -30,8 +31,8 @@ struct MercuryLighthouseLights {
   s32 rippleTimer;
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.
-  s32 targetX;
-  s32 targetZ;
+  FIXED targetX;
+  FIXED targetZ;
   struct Actor *pillar; ///< the column of light over the leader, or null
   /// The light holding the leader up where they landed in the pool, or null.
   struct Actor *stepEffect;

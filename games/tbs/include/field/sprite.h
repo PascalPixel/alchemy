@@ -6,6 +6,7 @@
 /// slots they draw from.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "graphics/render_placement.h"
@@ -128,8 +129,8 @@ struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
-  s32 scale; ///< 16.16 fixed point, FIXED_ONE full size
-  u8 slot;   ///< VRAM cache entry holding its tiles
+  FIXED scale; ///< 16.16 fixed point, FIXED_ONE full size
+  u8 slot;     ///< VRAM cache entry holding its tiles
   /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).

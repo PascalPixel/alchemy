@@ -4,6 +4,7 @@
 /// @file
 /// The item menu's state and commands.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "gamepak/far_call.h"
 #include "graphics/render_input.h"
@@ -63,7 +64,7 @@ struct ItemMenuWork {
   struct Sprite *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];                  ///< screen pixels
   s16 memberY[8];                  ///< screen pixels
-  s32 memberScale[8];              ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED memberScale[8];            ///< 16.16 fixed point, FIXED_ONE full size
   u16 selectedSlots[2];            ///< each side's inventory slot chosen
   u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;

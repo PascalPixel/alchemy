@@ -4,6 +4,7 @@
 /// @file
 /// Actors, the actor snapshot, and the screen transition styles.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "field/field_work.h"
@@ -39,9 +40,9 @@ struct Actor {
   struct FieldCoordinate x; ///< 16.16 fixed-point pixels
   struct FieldCoordinate y; ///< 16.16 fixed-point pixels
   struct FieldCoordinate z; ///< 16.16 fixed-point pixels
-  s32 groundHeight;         ///< 16.16 fixed-point pixels
-  s32 scaleX;               ///< 16.16 fixed point, FIXED_ONE full size
-  s32 scaleY;               ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED groundHeight;       ///< 16.16 fixed-point pixels
+  FIXED scaleX;             ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleY;             ///< 16.16 fixed point, FIXED_ONE full size
   /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
   /// created; the overlap checks use it less 2.
   u16 radius;
@@ -52,23 +53,23 @@ struct Actor {
   /// ActorPriorityFlag bits, read by the scrolling camera: 1 for placed
   /// actors, 2 for footprints.
   u8 priorityFlags;
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityZ;  ///< 16.16 fixed-point pixels per frame
+  FIXED speedLimit; ///< 16.16 fixed-point pixels per frame
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame; FIXED_ONE when created.
-  s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
-  s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
-  s32 targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED acceleration;
+  FIXED targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
   /// fixed point (a quarter when created); a floating actor's phase instead.
-  s32 bounce;
+  FIXED bounce;
   /// Taken off velocityY each frame while it is above the ground, in 16.16
   /// fixed-point pixels per frame (FIXED_ONE when created); also scales a
   /// floating actor's bob.
-  s32 gravity;
+  FIXED gravity;
   /// Zeroed by FieldActor_Create and not read by the field; scene code keeps a
   /// resting height, a sway or a countdown here.
   s32 riseBaseY;

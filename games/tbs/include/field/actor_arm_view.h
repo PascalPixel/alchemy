@@ -5,6 +5,7 @@
 /// The words of an actor's script as the motion loops index them, and
 /// ActorArmView, struct Actor as actor_update_arm.c reads it.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -29,10 +30,10 @@ struct ActorArmView {
   const ActorScriptWords *script; ///< null when its slot is released
   u16 scriptCursor;               ///< in words; read signed
   u16 facing;                     ///< 1/65536 turns
-  s32 x;                          ///< 16.16 fixed-point pixels
-  s32 y;                          ///< 16.16 fixed-point pixels
-  s32 z;                          ///< 16.16 fixed-point pixels
-  s32 groundHeight;               ///< 16.16 fixed-point pixels
+  FIXED x;                        ///< 16.16 fixed-point pixels
+  FIXED y;                        ///< 16.16 fixed-point pixels
+  FIXED z;                        ///< 16.16 fixed-point pixels
+  FIXED groundHeight;             ///< 16.16 fixed-point pixels
   /// Actor's scales and radius; not named here.
   ///@{
   s32 scaleX;
@@ -41,25 +42,25 @@ struct ActorArmView {
   ///@}
   u8 layer;         ///< the map layer whose ground height it follows
   u8 priorityFlags; ///< Actor's; not named here
-  s32 velocityX;    ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;    ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit;   ///< 16.16 fixed-point pixels per frame
+  FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityZ;  ///< 16.16 fixed-point pixels per frame
+  FIXED speedLimit; ///< 16.16 fixed-point pixels per frame
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
-  s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
-  s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
-  s32 targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED acceleration;
+  FIXED targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   union {
     /// The share of the falling speed kept on landing, 16.16 fixed point.
-    s32 bounce;
+    FIXED bounce;
     /// A floating actor's step along gActorScript_CycleTable, low six bits.
     s32 phase;
   } vertical;
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
   /// pixels per frame; also scales a floating actor's bob.
-  s32 gravity;
+  FIXED gravity;
   /// Actor's riseBaseY, sprite and sprite kind; not named here.
   ///@{
   s32 riseBaseY;

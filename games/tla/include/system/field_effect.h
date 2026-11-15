@@ -3,6 +3,7 @@
 
 #include "edition.h"
 #include "field/field_event.h"
+#include "fixed_math.h"
 #include "vector3.h"
 #include "types.h"
 
@@ -15,12 +16,12 @@ struct FieldEffect {
   s16 scriptCursor;
   u16 facing;
   ///@}
-  s32 x;            ///< 16.16 fixed-point pixels
-  s32 y;            ///< 16.16 fixed-point pixels
-  s32 z;            ///< 16.16 fixed-point pixels
+  FIXED x;          ///< 16.16 fixed-point pixels
+  FIXED y;          ///< 16.16 fixed-point pixels
+  FIXED z;          ///< 16.16 fixed-point pixels
   s32 groundHeight; ///< Actor's; not named by this view
-  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleX;     ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleY;     ///< 16.16 fixed point, 0x10000 full size
   u16 radius;       ///< Actor's; not named by this view
   u8 layer;         ///< Actor's; not named by this view
   /// The spawner clears bit 0 when EFFECT_USE_PRIORITY sets the sprite's
@@ -30,7 +31,7 @@ struct FieldEffect {
   struct Vector3 objectVelocity;
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
-  s32 scaleRateX;
+  FIXED scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
   /// Actor's targetX to targetZ; not named by this view.
   ///@{
@@ -114,16 +115,16 @@ enum EffectSpawnFlags {
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
-  s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to Actor_SetSpriteColor
-  s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
-  s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleY;  ///< 16.16 fixed point, 0x10000 full size
-  s16 type;          ///< the object type to create
-  const s32 *script; ///< the object script, run in mode 1
-  u16 rotation;      ///< 1/65536 turns
-  u16 spin;          ///< 1/65536 turns per frame
+  s32 priority;       ///< the sprite's priority
+  s32 palette;        ///< passed to Actor_SetSpriteColor
+  FIXED startScaleX;  ///< 16.16 fixed point, 0x10000 full size
+  FIXED startScaleY;  ///< 16.16 fixed point, 0x10000 full size
+  FIXED targetScaleX; ///< 16.16 fixed point, 0x10000 full size
+  FIXED targetScaleY; ///< 16.16 fixed point, 0x10000 full size
+  s16 type;           ///< the object type to create
+  const s32 *script;  ///< the object script, run in mode 1
+  u16 rotation;       ///< 1/65536 turns
+  u16 spin;           ///< 1/65536 turns per frame
   void (*update)(union FieldObject *object); ///< replaces the update hook
 };
 

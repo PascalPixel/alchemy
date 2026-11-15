@@ -650,7 +650,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
 /// A spark of the star field behind a summon: its position and velocity, 16.16,
 /// and the frames it has left.
 struct Spark {
-  s32 pos[6]; // x, y, z and their velocities, 16.16
+  FIXED pos[6]; // x, y, z and their velocities, 16.16
   s32 life;
 };
 

@@ -4,6 +4,7 @@
 /// @file
 /// The world map's scanlines and affine lines.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -13,7 +14,7 @@
 struct WorldMapScanline {
   /// The line's width scale and its signed ground distance, halved, both 16.16
   /// fixed point; both 0 for a line above the horizon.
-  s32 scale, depth;
+  FIXED scale, depth;
   s32 offsetX, offsetY; ///< 0 from WorldMap_BuildScanlineTable
   s16 pa, pc;
 };

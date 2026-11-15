@@ -5,6 +5,7 @@
 /// ShopWork, a shop's work, and the shop screen's tiles.
 
 #include "shop/shop.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "field/field_particle.h"
 #include "field/sprite.h"
@@ -34,7 +35,7 @@ struct ShopWork {
   struct Sprite *partyMemberIcons[8]; ///< the party row's sprites
   s16 partyMemberX[8];                ///< pixels
   s16 partyMemberY[8];                ///< pixels
-  s32 partyMemberScale[8]; ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED partyMemberScale[8]; ///< 16.16 fixed point, FIXED_ONE full size
   /// The menu screens' choices, entries and party and the row of four
   /// figures; not named here.
   u8 menuLists[248];

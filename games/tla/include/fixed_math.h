@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+/// A signed 16.16 fixed-point number, as SGL types one: FIXED_ONE is 1.0.
+typedef s32 FIXED;
+
 /// One in the game's signed 16.16 fixed-point format.
 #define FIXED_ONE (1 << 16)
 

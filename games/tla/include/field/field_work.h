@@ -5,6 +5,7 @@
 /// FieldWork, the running scene's work: The Broken Seal's, with the Psynergy
 /// state The Lost Age adds at its end.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"
@@ -118,15 +119,15 @@ struct FieldWork {
   /// The area's graphics are to be reloaded on the World Map
   /// (WorldMap_Freeze, WorldMap_ReloadPendingAreaGraphics).
   s8 areaGraphicsPending;
-  u8 encounterZones[8];   ///< encounter zone for each kind of ground
-  s32 encounterBias;      ///< randomized distance adjustment between battles
-  s32 encounterThreshold; ///< encounter steps before a battle; 16 * FIXED_ONE
+  u8 encounterZones[8];     ///< encounter zone for each kind of ground
+  s32 encounterBias;        ///< randomized distance adjustment between battles
+  FIXED encounterThreshold; ///< encounter steps before a battle; 16 * FIXED_ONE
   /// Scales the leader's speed into walkingDistance, in 16.16 fixed point:
   /// 409 on entry, 0 in a town.
-  s32 walkingDistanceScale;
+  FIXED walkingDistanceScale;
   /// Distance walked toward the next FIXED_ONE, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_UpdateWalking).
-  s32 walkingDistance;
+  FIXED walkingDistance;
   struct MapCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapCell *previousCell; ///< the cell before it
   s32 transition; ///< SCENE_TRANSITION(style, variant); (1, 0) on entry

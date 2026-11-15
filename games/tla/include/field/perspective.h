@@ -4,6 +4,7 @@
 /// @file
 /// The world map's perspective view work.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -21,12 +22,12 @@ struct WorldMapView {
   u8 fadeStep; ///< MapWork's wideTiles, 0x80 at load
   /// As MapWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
-  s32 viewX;               ///< the view's left, 16.16 fixed-point pixels
-  s32 viewY;               ///< the view's top, 16.16 fixed-point pixels
-  s32 scaleX;              ///< 32 in 16.16 at load
-  s32 scaleY;              ///< 64 in 16.16 at load
-  s32 limitX;              ///< 16352 in 16.16 at load
-  s32 limitY;              ///< 16352 in 16.16 at load
+  FIXED viewX;             ///< the view's left, 16.16 fixed-point pixels
+  FIXED viewY;             ///< the view's top, 16.16 fixed-point pixels
+  FIXED scaleX;            ///< 32 in 16.16 at load
+  FIXED scaleY;            ///< 64 in 16.16 at load
+  FIXED limitX;            ///< 16352 in 16.16 at load
+  FIXED limitY;            ///< 16352 in 16.16 at load
   u8 unusedAfterLimitY[4]; ///< no code names it
   /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
@@ -62,7 +63,7 @@ struct WorldMapView {
   s32 farPlane;             ///< 510 pixels at load
   s32 distance;             ///< farPlane scaled by the zoom
   s32 previousZoom;         ///< the zoom a transition starts from
-  s32 zoom;                 ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED zoom;               ///< 16.16 fixed point, FIXED_ONE full size
   u16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
   s16 zoomTransitionStep;   ///< frames of the transition done
   /// Set when a field Psynergy cast on the World Map has used the second half

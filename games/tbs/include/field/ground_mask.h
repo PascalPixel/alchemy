@@ -5,6 +5,7 @@
 /// The fade overlay, the weather particles and the actor effect work.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "field/sprite.h"
 #include "system/heap.h"
@@ -49,12 +50,12 @@ struct GroundParticle {
   u16 priority : 2;    ///< 1.
   u16 palette : 4;     ///< 13; not named by the effects.
   ///@}
-  u8 attr3[2];   ///< OAM attribute 3, cleared with the others.
-  s32 positionX; ///< World position, in 16.16 pixels.
-  s32 positionY; ///< The ground's height there.
-  s32 positionZ; ///< World position, in 16.16 pixels.
-  s32 delay;     ///< Motes: height risen; sparkles: phase within a burst.
-  u16 timer;     ///< Frames left; zero frees the particle.
+  u8 attr3[2];     ///< OAM attribute 3, cleared with the others.
+  FIXED positionX; ///< World position, in 16.16 pixels.
+  s32 positionY;   ///< The ground's height there.
+  FIXED positionZ; ///< World position, in 16.16 pixels.
+  s32 delay;       ///< Motes: height risen; sparkles: phase within a burst.
+  u16 timer;       ///< Frames left; zero frees the particle.
 };
 
 STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 0x0c);

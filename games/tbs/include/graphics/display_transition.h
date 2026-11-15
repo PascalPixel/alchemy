@@ -5,6 +5,7 @@
 /// The screen transition's frames, windows and state.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -81,8 +82,8 @@ struct ScreenTransitionState {
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point
   /// (WINDOW_TRANSITION_RIPPLE), set by Reveal.
-  s32 centreX;
-  s32 centreY; ///< as centreX: the target's z less its y
+  FIXED centreX;
+  FIXED centreY; ///< as centreX: the target's z less its y
   /// WINOUT, or WININ by mode: 0x3f3f or 63 when a transition starts.
   s16 mask;
   /// WININ, or WINOUT by mode: 1 when a transition starts.

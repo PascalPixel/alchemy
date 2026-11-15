@@ -146,7 +146,7 @@ struct Vector3;
 /// A push: where the pushed actor ends up, which footprint it has and which
 /// actor it is.
 struct PushTarget {
-  s32 x; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
   s32 footprint; ///< index into the footprint table

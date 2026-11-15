@@ -96,7 +96,7 @@ s16 gColosso_MarkerStep BSS_DATA;
 s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
 /// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
-s32 gColosso_WarriorStartZ BSS_DATA;
+FIXED gColosso_WarriorStartZ BSS_DATA;
 s16 gColosso_MarkerEndX BSS_DATA;
 s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
 s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
@@ -130,7 +130,7 @@ s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
 s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
 s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
 /// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
-s32 gColosso_WarriorStartX BSS_DATA;
+FIXED gColosso_WarriorStartX BSS_DATA;
 
 s32 Scene_Initialize(void);
 extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];

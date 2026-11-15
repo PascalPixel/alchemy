@@ -6,6 +6,7 @@
 /// system's work.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "graphics/render_placement.h"
@@ -119,8 +120,8 @@ enum SpriteFlag {
 /// four sprite animations.
 struct Sprite {
   struct AnimationSpritePart image;
-  s32 scale; ///< 16.16 fixed point, FIXED_ONE full size
-  u8 slot;   ///< VRAM cache entry holding its tiles
+  FIXED scale; ///< 16.16 fixed point, FIXED_ONE full size
+  u8 slot;     ///< VRAM cache entry holding its tiles
   /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).
@@ -161,7 +162,7 @@ struct PlacedSprite {
   u8 priority : 2;
   u8 palette : 4;
   u8 unusedB[2]; ///< no code names it
-  s32 scale;     ///< 16.16 fixed point
+  FIXED scale;   ///< 16.16 fixed point
   u8 slot;
   u8 retainCacheEntry; ///< bit 0
   u16 rotation;

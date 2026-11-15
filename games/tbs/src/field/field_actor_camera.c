@@ -15,9 +15,9 @@ struct ActorCameraTile {
 
 /// A point the fixed camera looks from or at.
 struct ActorCameraPoint {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
 };
 
 /// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA,

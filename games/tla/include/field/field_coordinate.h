@@ -4,6 +4,7 @@
 /// @file
 /// FieldCoordinate, a position on the field.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -16,7 +17,7 @@ struct FieldCoordinate {
     u16 decimal; ///< 1/65536 pixels
     s16 integer;
   } part[0];
-  s32 fixed; ///< 16.16 fixed-point pixels
+  FIXED fixed; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct FieldCoordinate) == 4);

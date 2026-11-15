@@ -6,6 +6,7 @@
 /// between sequences and the state every sequence shares, which a save file
 /// keeps.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "battle/battle_unit.h"
@@ -113,9 +114,9 @@ struct MainRoutineWork {
   u8 unusedAfterBackground[2];
   /// The scene's map (Scene.mapIndex); the World Map's is MAP_INDEX_WORLD.
   s16 mapId;
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
+  FIXED x;           ///< 16.16 fixed-point pixels
+  FIXED y;           ///< 16.16 fixed-point pixels
+  FIXED z;           ///< 16.16 fixed-point pixels
   u32 heading;       ///< 1/65536 turns
   u16 layer;         ///< the leader's layer, kept with its position
   s16 battleMusic;   ///< the battle music chosen for the encounter
@@ -178,7 +179,7 @@ struct MainRoutineWork {
                       ///< entrance
   s16 retreatEntrance; ///< where Retreat goes; the area's first
                        ///< entrance
-  s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
+  FIXED avoidDistance; ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
   s8 pausedPose;       ///< Halt: the stopped actor's first animation param
   s16 haltedActor;     ///< Halt: the stopped actor; -1 for none

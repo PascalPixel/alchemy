@@ -5,6 +5,7 @@
 /// Field effects, their scripts and the flags that spawn them.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "field/actor_script.h"
 #include "field/event.h"
 #include "system/vector3.h"
@@ -18,12 +19,12 @@ struct FieldEffect {
   u16 scriptCursor;
   u16 facing;
   ///@}
-  s32 x;            ///< 16.16 fixed-point pixels
-  s32 y;            ///< 16.16 fixed-point pixels
-  s32 z;            ///< 16.16 fixed-point pixels
+  FIXED x;          ///< 16.16 fixed-point pixels
+  FIXED y;          ///< 16.16 fixed-point pixels
+  FIXED z;          ///< 16.16 fixed-point pixels
   s32 groundHeight; ///< Actor's; not named by this view
-  s32 scaleX;       ///< 16.16 fixed point, FIXED_ONE full size
-  s32 scaleY;       ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleX;     ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleY;     ///< 16.16 fixed point, FIXED_ONE full size
   u16 radius;       ///< Actor's; not named by this view
   u8 layer;         ///< Actor's; not named by this view
   /// ActorPriorityFlag bits: the spawner clears
@@ -34,7 +35,7 @@ struct FieldEffect {
   struct Vector3 objectVelocity;
   /// Added to scaleX each frame by the update routines, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
-  s32 scaleRateX;
+  FIXED scaleRateX;
   s32 scaleRateY;
   /// Actor's targetX to targetZ; not named by this view.
   ///@{
@@ -136,16 +137,16 @@ struct EffectDurationScripts {
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
-  s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to Actor_SetSpriteColor
-  s32 startScaleX;   ///< 16.16 fixed point, FIXED_ONE full size
-  s32 startScaleY;   ///< 16.16 fixed point, FIXED_ONE full size
-  s32 targetScaleX;  ///< 16.16 fixed point, FIXED_ONE full size
-  s32 targetScaleY;  ///< 16.16 fixed point, FIXED_ONE full size
-  s16 type;          ///< the sprite, SPRITE_DUST_PUFF without the flag
-  const s32 *script; ///< the actor script, run in mode 1
-  u16 rotation;      ///< 1/65536 turns
-  u16 spin;          ///< 1/65536 turns per frame
+  s32 priority;       ///< the sprite's priority
+  s32 palette;        ///< passed to Actor_SetSpriteColor
+  FIXED startScaleX;  ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED startScaleY;  ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED targetScaleX; ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED targetScaleY; ///< 16.16 fixed point, FIXED_ONE full size
+  s16 type;           ///< the sprite, SPRITE_DUST_PUFF without the flag
+  const s32 *script;  ///< the actor script, run in mode 1
+  u16 rotation;       ///< 1/65536 turns
+  u16 spin;           ///< 1/65536 turns per frame
   void (*update)(struct Actor *actor); ///< replaces the update routine
 };
 

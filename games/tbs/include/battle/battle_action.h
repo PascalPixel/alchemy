@@ -5,6 +5,7 @@
 /// A battle's battle objects and sprites, each unit's command and action, and
 /// the spoils.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -21,12 +22,12 @@ struct BattleObject {
   u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
   u16 shadow;    ///< the shadow sprite under the unit (SPRITE_BATTLE_SHADOW)
-  s32 anchorX;   ///< 16.16 fixed-point pixels
-  s32 anchorZ;   ///< 16.16 fixed-point pixels
+  FIXED anchorX; ///< 16.16 fixed-point pixels
+  FIXED anchorZ; ///< 16.16 fixed-point pixels
   /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
   /// character on the enemy side (a link opponent), else 0.
   s32 palette;
-  s32 scale;          ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scale;        ///< 16.16 fixed point, FIXED_ONE full size
   u16 activeStatuses; ///< a bit per status with an icon (ICON_)
   u8 shownStatus;     ///< the status whose icon is shown
   s8 cycleTimer;      ///< frames until the next status icon

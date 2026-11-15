@@ -2,6 +2,7 @@
 #define ALCHEMY_ACTOR_H
 
 #include "field/field_coordinate.h"
+#include "fixed_math.h"
 #include "types.h"
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which
@@ -102,30 +103,30 @@ struct Actor {
   struct FieldCoordinate x; ///< 16.16 fixed-point pixels
   struct FieldCoordinate y; ///< 16.16 fixed-point pixels
   struct FieldCoordinate z; ///< 16.16 fixed-point pixels
-  s32 groundHeight;         ///< 16.16 fixed-point pixels
-  s32 scaleX;               ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;               ///< 16.16 fixed point, 0x10000 full size
+  FIXED groundHeight;       ///< 16.16 fixed-point pixels
+  FIXED scaleX;             ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleY;             ///< 16.16 fixed point, 0x10000 full size
   u16 radius;               ///< collision radius in pixels
   u8 layer;                 ///< the map layer its ground height is read from
   /// Bit 0 is cleared when Actor_SetSpritePriorityDirect fixes its
   /// sprite's priority.
   u8 priorityFlags;
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
+  FIXED velocityZ;  ///< 16.16 fixed-point pixels per frame
+  FIXED speedLimit; ///< 16.16 fixed-point pixels per frame
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
-  s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  FIXED acceleration;
+  FIXED targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  FIXED targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  FIXED targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
   /// fixed point.
-  s32 bounce;
+  FIXED bounce;
   /// Taken off the vertical velocity each frame while it is above the
   /// ground, in 16.16 fixed-point pixels per frame.
-  s32 gravity;
+  FIXED gravity;
   /// Not read by the motion update; field code keeps its own values here (a
   /// drifting speed, a 0x31415927 marker), and scene code a resting height.
   s32 riseBaseY;

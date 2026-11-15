@@ -4,6 +4,7 @@
 /// @file
 /// The globals Kolima's scenes share: the falling effect and the party's state.
 
+#include "fixed_math.h"
 #include "types.h"
 
 // The curse dust that falls over the party (Kolima_UpdateCurseDust). In
@@ -11,7 +12,7 @@
 // offset from the point the map view follows; in phase 0, within 128 pixels
 // of that point.
 /// Where the band starts, from the followed point, in 16.16 fixed-point pixels.
-extern s32 gFallingEffectOffset;
+extern FIXED gFallingEffectOffset;
 extern s32 gFallingEffectWidth; ///< the band's width in 1/256 pixels
 extern u32 gFallingEffectState; ///< the dust's phase, 0 to 3
 

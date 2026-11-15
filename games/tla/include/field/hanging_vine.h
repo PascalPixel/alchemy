@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_HANGING_VINE_H
 #define ALCHEMY_HANGING_VINE_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field/sprite.h"
@@ -22,7 +23,7 @@ struct HangingVineSlot {
   s16 id;                   ///< the actor the chain hangs from
   u8 unusedAfterId[2];      ///< no code names it
   s32 swing;                ///< the arc's width
-  s32 spacing;              ///< between links, in 16.16
+  FIXED spacing;            ///< between links, in 16.16
   u8 unusedAfterSpacing[4]; ///< no code names it
   s32 phase;                ///< where the swing is in its arc, an angle
   s32 active;

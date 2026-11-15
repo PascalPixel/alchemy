@@ -48,7 +48,7 @@ struct WorldPictureWork {
   u8 unreadAfterCursor[6];        ///< not read by this screen
   s16 namedMarker;           ///< actor whose name is drawn; -1 clears the name
   u8 unreadAfterName[4];     ///< not read by this screen
-  s32 cursorSpeed;           ///< 16.16 screen pixels per frame
+  FIXED cursorSpeed;         ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
   /// The visible areas' markers packed from the start, then the frame round
   /// the nearest; the last entry is the cursor.

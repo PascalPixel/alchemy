@@ -11,14 +11,14 @@ enum { SOL_SANCTUM_RING_MAX = 10 };
 /// where it is while hidden.
 struct SolSanctumRingEntry {
   struct Actor *actor;
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
   s32 speedX;
   s32 speedY;
   s32 speedZ;
-  s32 scale;     ///< 16.16 fixed point, where FIXED_ONE is full size
-  s32 scaleStep; ///< 16.16 fixed point
+  FIXED scale;     ///< 16.16 fixed point, where FIXED_ONE is full size
+  FIXED scaleStep; ///< 16.16 fixed point
   u8 timer;
   u8 hold;
 };

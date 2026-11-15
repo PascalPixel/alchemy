@@ -4,6 +4,7 @@
 /// @file
 /// BattleWork, the battle's own work, and the battle message window's work.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "battle/battle.h"
@@ -136,7 +137,8 @@ struct BattleWork {
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;
   u16 palette[128]; ///< the battle background's colours, before scaling
-  s32 brightness; ///< the battle background's brightness, 16.16, FIXED_ONE full
+  FIXED
+      brightness; ///< the battle background's brightness, 16.16, FIXED_ONE full
   u16 background; ///< the battle background's id
   u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep;           ///< index into gBattleHighlight_BlendRamp

@@ -220,7 +220,7 @@ struct IsletsExit {
 };
 
 struct PushTarget {
-  s32 x; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
   s32 footprint; ///< index into the footprint table

@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MAIN_ROUTINE_WORK_H
 #define ALCHEMY_MAIN_ROUTINE_WORK_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -147,7 +148,7 @@ struct MainRoutineWork {
   s16 sceneType;       ///< the current scene's variant from its record
   s16 retreatScene;    ///< where Retreat goes; the group's first entrance
   s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
-  s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
+  FIXED avoidDistance; ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (flag 0x145)
   u8 pausedPose;       ///< the paused object's first animation param
   s16 haltedActor;     ///< the object field Psynergy has stopped, -1 for none

@@ -4,6 +4,7 @@
 /// @file
 /// The 3D projection.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "system/io_reg.h"
@@ -13,9 +14,9 @@
 struct Projection {
   /// The focal length in 16.16 pixels: 80, half the screen height, over the
   /// tangent of half the vertical field of view (Projection_SetFieldOfView).
-  s32 focal;
-  s32 near;    ///< nearer points are not drawn; 16.16 along the view axis
-  s32 far;     ///< farther points are not drawn; 16.16 along the view axis
+  FIXED focal;
+  FIXED near;  ///< nearer points are not drawn; 16.16 along the view axis
+  FIXED far;   ///< farther points are not drawn; 16.16 along the view axis
   s32 centerX; ///< screen pixels
   s32 centerY; ///< screen pixels
 };

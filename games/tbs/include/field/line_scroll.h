@@ -4,6 +4,7 @@
 /// @file
 /// The map scroll work and the line scroll's work and wave.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "field/map_grid_scroll.h"
 #include "system/heap.h"
@@ -16,12 +17,12 @@ struct LineScrollWork {
   u8 mode;      ///< set at the start; not read by name
   u16 frame;    ///< frames built so far, added to BG3's y for the wave's phase
   u8 unused[4]; ///< zeroed with the block; nothing reads or writes it
-  s32 freqX;    ///< phase per frame and per BG3 row, 16.16 wave table entries
-  s32 freqY;    ///< phase per frame and per BG3 row, 16.16 wave table entries
-  s32 stepX;    ///< 16.16 wave table entries a scanline, 256 a cycle
-  s32 stepY;    ///< 16.16 wave table entries a scanline, 256 a cycle
-  s32 ampX;     ///< 16.16 scale on the sine entry, which is then divided by 256
-  s32 ampY;     ///< 16.16 scale on the sine entry, which is then divided by 256
+  FIXED freqX;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED freqY;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED stepX;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED stepY;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED ampX;   ///< 16.16 scale on the sine entry, which is then divided by 256
+  FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
 STATIC_ASSERT(sizeof(struct LineScrollWork) == 0xf20);

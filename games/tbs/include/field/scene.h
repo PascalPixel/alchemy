@@ -5,6 +5,7 @@
 /// Scenes, exit regions and scene entry tables, with the field work they
 /// fill (field_work.h).
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "field/actor.h"
@@ -67,7 +68,7 @@ STATIC_ASSERT(offsetof(struct SceneEntryPoints, regions) == 0x2c);
 
 /// A position on the field.
 struct FieldPosition {
-  s32 x, y, z; ///< 16.16 fixed-point pixels
+  FIXED x, y, z; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);

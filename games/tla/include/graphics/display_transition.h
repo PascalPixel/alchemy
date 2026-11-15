@@ -5,6 +5,7 @@
 /// The screen transition's frames, windows and state.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -49,10 +50,10 @@ struct ScreenTransitionState {
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point, set
   /// by the Reveal effect.
-  s32 centreX;
-  s32 centreY; ///< as centreX: the target's z less its y
-  s16 mask;    ///< a window register value: 0x3f3f when a transition starts
-  s16 active;  ///< a window register value: bit 0 set when one starts
+  FIXED centreX;
+  FIXED centreY; ///< as centreX: the target's z less its y
+  s16 mask;      ///< a window register value: 0x3f3f when a transition starts
+  s16 active;    ///< a window register value: bit 0 set when one starts
   u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step

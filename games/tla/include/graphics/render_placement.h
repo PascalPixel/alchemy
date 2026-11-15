@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_RENDER_PLACEMENT_H
 #define ALCHEMY_RENDER_PLACEMENT_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -49,8 +50,8 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 struct SpriteScale {
   union {
     struct {
-      s32 x; ///< 16.16
-      s32 y; ///< 16.16
+      FIXED x; ///< 16.16
+      FIXED y; ///< 16.16
     };
     s32 values[2];
   };

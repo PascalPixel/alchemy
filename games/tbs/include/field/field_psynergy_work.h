@@ -4,6 +4,7 @@
 /// @file
 /// FieldEffectWork, the work of a field Psynergy.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "field/field_particle.h"
@@ -15,9 +16,9 @@ struct Actor;
 /// the map state it restores and its 24 field effect sprites.
 struct FieldEffectWork {
   s32 angle;         ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
+  FIXED x;           ///< 16.16 fixed-point pixels
+  FIXED y;           ///< 16.16 fixed-point pixels
+  FIXED z;           ///< 16.16 fixed-point pixels
   void *mainActor;   ///< the caster's actor
   void *child;       ///< the target's actor, or NULL
   s16 firstActorId;  ///< the caster's actor id

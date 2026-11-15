@@ -4,6 +4,7 @@
 /// @file
 /// The views of an orbiting scene actor's sprite.
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// A floating Nut's sprite, seen as the attribute bits, palette and state its
@@ -52,9 +53,9 @@ typedef struct OrbitingMapActor {
   const s32 *script;
   s16 scriptCursor;
   u16 facing;
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
   s32 groundHeight;
   s32 scaleX;
   s32 scaleY;
@@ -70,9 +71,9 @@ typedef struct OrbitingMapActor {
   /// random steps each frame.
   s32 orbitAngle;
   s32 acceleration;
-  s32 orbitCenterX; ///< Actor.targetX: 16.16 fixed-point pixels
-  s32 orbitCenterY; ///< Actor.targetY: 16.16 fixed-point pixels
-  s32 orbitCenterZ; ///< Actor.targetZ: 16.16 fixed-point pixels
+  FIXED orbitCenterX; ///< Actor.targetX: 16.16 fixed-point pixels
+  FIXED orbitCenterY; ///< Actor.targetY: 16.16 fixed-point pixels
+  FIXED orbitCenterZ; ///< Actor.targetZ: 16.16 fixed-point pixels
   s32 bounce;
   s32 gravity;
   s32 riseBaseY;

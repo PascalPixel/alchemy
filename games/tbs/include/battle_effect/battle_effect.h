@@ -257,8 +257,8 @@ typedef struct {
 /// Two-dimensional {x, y} pair for position or velocity, a local of the
 /// summon effects (Nereid, Procne, Tiamat and Ramses).
 struct Point2D {
-  s32 x; ///< 16.16 pixels in every effect that uses it
-  s32 y; ///< 16.16 pixels
+  FIXED x; ///< 16.16 pixels in every effect that uses it
+  FIXED y; ///< 16.16 pixels
 };
 
 /// A blitter pair: [0] built in HEAP_SLOT_RAM_CODE and [1] in

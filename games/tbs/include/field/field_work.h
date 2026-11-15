@@ -6,6 +6,7 @@
 /// triggers the field sequence handles itself.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "system/heap.h"
@@ -89,16 +90,16 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
-  s16 mode;               ///< an enum ActorSystemMode
-  u8 encounterZones[8];   ///< encounter zone for each kind of ground
-  s32 encounterBias;      ///< randomized distance adjustment between battles
-  s32 encounterThreshold; ///< encounter steps before a battle; 16 * FIXED_ONE
+  s16 mode;                 ///< an enum ActorSystemMode
+  u8 encounterZones[8];     ///< encounter zone for each kind of ground
+  s32 encounterBias;        ///< randomized distance adjustment between battles
+  FIXED encounterThreshold; ///< encounter steps before a battle; 16 * FIXED_ONE
   /// Scales the leader's speed into walkingDistance, in 16.16 fixed point:
   /// FIXED_ONE / 160 on entry, 0 in a town.
-  s32 walkingDistanceScale;
+  FIXED walkingDistanceScale;
   /// Distance walked toward the next FIXED_ONE, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_UpdateWalking).
-  s32 walkingDistance;
+  FIXED walkingDistance;
   struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapGridCell *previousCell; ///< the cell before it
   s32 transition; ///< SCENE_TRANSITION(style, variant); (1, 0) on entry

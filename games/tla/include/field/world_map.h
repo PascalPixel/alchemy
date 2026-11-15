@@ -4,6 +4,7 @@
 /// @file
 /// The world map screen's work and the destinations it marks.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "field/world_map_marker.h"
@@ -13,16 +14,16 @@
 struct WorldMapWork {
   u16 vramBlock;          ///< owns the marker tiles
   u16 windowSlot;         ///< the resource slot of the name window's tiles
-  s32 x;                  ///< the cursor's screen column, 16.16 pixels
-  s32 z;                  ///< the cursor's screen row, 16.16 pixels
+  FIXED x;                ///< the cursor's screen column, 16.16 pixels
+  FIXED z;                ///< the cursor's screen row, 16.16 pixels
   u8 unusedAfterZ[6];     ///< no code names them
   s16 shown;              ///< the FlagEntry whose name is drawn; -1 for none
   u8 unusedAfterShown[4]; ///< no code names them
-  s32 speed;              ///< the cursor's speed, 16.16 pixels per frame
+  FIXED speed;            ///< the cursor's speed, 16.16 pixels per frame
   void *window;           ///< the name window
   struct WorldMapMarker markers[129]; ///< the marker sprites
   s32 *cursor;                        ///< the cursor the picture scrolls to
-  s32 scrollX;                        ///< the picture's scroll, 16.16 pixels
+  FIXED scrollX;                      ///< the picture's scroll, 16.16 pixels
   s32 scrollZ;
   u8 unusedAfterScrollZ[8]; ///< no code names them
   s16 centered;             ///< nonzero draws resource 35 at the origin
@@ -30,8 +31,8 @@ struct WorldMapWork {
   u16 mode;                 ///< 0 to look, nonzero to choose a destination
   /// Where the nearest-place search looks from in place of the cursor, 16.16
   /// pixels, when nonzero; the field code only ever clears it.
-  s32 searchX;
-  s32 searchZ;
+  FIXED searchX;
+  FIXED searchZ;
 };
 
 STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 0x1c);

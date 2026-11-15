@@ -4,6 +4,7 @@
 /// @file
 /// A sprite's screen position and scale.
 
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
@@ -52,8 +53,8 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 struct SpriteScale {
   union {
     struct {
-      s32 x; ///< 16.16
-      s32 y; ///< 16.16
+      FIXED x; ///< 16.16
+      FIXED y; ///< 16.16
     };
     s32 values[2];
   };

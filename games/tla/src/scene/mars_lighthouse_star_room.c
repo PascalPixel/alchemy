@@ -703,7 +703,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   if (!Event_GetFlag(FLAG_MARS_STAR_TAKEN)) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
     object = gMarsLighthouseStarRoom_MarsStar;
     object->motionFlags = 0;
     object->speedLimit = px(4);

@@ -497,7 +497,7 @@ answeredNo:
   Event_Wait(1);
   Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_LUNPA, FACING_EAST);
   Event_Wait(10);
@@ -708,7 +708,7 @@ answeredNo:
   Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 5);
   Actor_ShowEmote(ACTOR_HYDROS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HYDROS, 0, 5);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Actor_SetAnimationAndWait(ACTOR_HYDROS, 4);
@@ -950,7 +950,7 @@ answeredNo:
   Actor_FaceDirectionAndWait(ACTOR_HYDROS, FACING_SOUTH_SOUTHEAST);
   Event_Wait(5);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HYDROS, 0, 5);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_EAST, 0);
@@ -982,7 +982,7 @@ answeredNo:
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -1017,11 +1017,11 @@ answeredNo:
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (target != 0) {
     Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].pixel,

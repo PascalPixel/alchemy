@@ -855,7 +855,7 @@ void MarsLighthouseRoomF_FallIntoHole(void) {
 
   Leader_StopMoving();
   Actor_SetSpriteFlags(object, 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   frame = 0;
 step:

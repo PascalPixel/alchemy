@@ -523,7 +523,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
     Summon_ShowLearnedMessage(0x16);
     Class_GetSeries(0x16);
     Actor_SetPosition(ACTOR_LEMURIA_SPRING_PRIZE, 0, 0);
-    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   } else {
     Call2(ItemDisplay_ShowItem, a0, 3);
     Party_GiveItem(a0, 0);

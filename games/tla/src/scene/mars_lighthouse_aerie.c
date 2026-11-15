@@ -583,7 +583,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-  FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 3);
+  FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   MarsLighthouseAerie_StopLookingAround(ACTOR_ISAAC);
   MarsLighthouseAerie_StopLookingAround(ACTOR_GARET);
   MarsLighthouseAerie_StopLookingAround(ACTOR_KRADEN);
@@ -1385,14 +1385,14 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Event_ShowMessage(ACTOR_GARET_STAND_IN, 0);
   // "Kraden, what do you know? Why were you trying to stop us from..."
   Event_ShowMessage(ACTOR_MIA_STAND_IN, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "It was the Wise One's final trap..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_IVAN_STAND_IN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "Trap? What do you mean?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN_STAND_IN, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "The Wise One knew he couldn't stop you, so he played a cruel..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_ISAAC_STAND_IN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -1546,7 +1546,7 @@ L_0200a47a:
   MarsLighthouseAerie_StartRisingRings((Actor_Get(ACTOR_MIA_STAND_IN)),
                                        (s32)gMarsLighthouseAerie_RisingRingsB);
   FieldEvent_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -1651,7 +1651,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "Being transformed into a dragon, fighting in that form... This..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
@@ -1663,7 +1663,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
   // "They don't have the strength to..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "Even if they had won the battle, they would not have survived. You..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -1771,7 +1771,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 498, 320);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
@@ -2249,7 +2249,7 @@ L_0200bcea:
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 3);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
@@ -2383,7 +2383,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   // "The Wise One said that when all four lighthouses have been lit, the..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
@@ -2402,7 +2402,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   // "So, the Wise One is warning people in dreams, telling them to seek..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Why would he do that!? You saw what he did to us... He can't be up..."
   Event_ShowMessage(ACTOR_GARET, 0);

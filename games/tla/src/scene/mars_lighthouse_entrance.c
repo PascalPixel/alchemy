@@ -844,7 +844,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     MarsLighthouseEntrance_StartHoleMask();
   }
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   i = 0;
 next:
@@ -932,7 +932,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     MarsLighthouseEntrance_StartHoleMask();
   }
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   i = 0;
 next:
@@ -2226,7 +2226,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   } while (0);
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   event->busy = 1;
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)

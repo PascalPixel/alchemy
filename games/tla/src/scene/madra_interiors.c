@@ -1117,11 +1117,11 @@ answeredNo:
 answered:
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   if (Event_GetFlag(0x981) == 0)
@@ -1145,7 +1145,7 @@ saidGoodbye:
   FieldEvent_Wait(40);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
@@ -1182,7 +1182,7 @@ void MadraInteriors_SayGoodbyeAgain(void) {
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "You seem to be quite busy."
   FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   // "It is their youth that allows them to be so busy."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
@@ -1274,7 +1274,7 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_Wait(20);
   // "And the sooner we depart, the better, right, Kraden?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
   FieldEvent_Wait(20);
@@ -1294,7 +1294,7 @@ void MadraInteriors_AskToStayLonger(void) {
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "You seem quite busy."
   FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   // "It is their youth that allows them to be so busy."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);

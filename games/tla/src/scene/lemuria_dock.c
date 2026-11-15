@@ -94,7 +94,7 @@ void LemuriaDock_MoveKraden(void) {
       Actor_SetSpeed(ACTOR_KRADEN, 2);
       Actor_WalkToAndWait(ACTOR_KRADEN, 440, 440);
       Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-      Actor_SetAnimation(ACTOR_KRADEN, 2);
+      Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
       leader = Actor_GetById(party->leaderActorId);
       if (leader != NULL)
         Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,

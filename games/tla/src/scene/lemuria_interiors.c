@@ -312,7 +312,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -475,12 +475,12 @@ answeredNo:
   gFieldWork->message += 1;
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
 answered:
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader == 0)
     goto noLeader;
@@ -876,7 +876,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MAN_ASKING_FOR_PIERS, FACING_NORTH_NORTHEAST, 0);
@@ -904,7 +904,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_StartRepeatedMotion(ACTOR_MAN_ASKING_FOR_PIERS, 3);
   Actor_SetAttachedEffect(ACTOR_MAN_ASKING_FOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -913,7 +913,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_MAN_ASKING_FOR_PIERS, 2);
   Event_Wait(10);
   Event_Wait(15);
@@ -988,13 +988,13 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_MAN_ASKING_FOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MAN_ASKING_FOR_PIERS, 2);
@@ -1051,7 +1051,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_MAN_ASKING_FOR_PIERS,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   FieldActor_ShowEmote(ACTOR_MAN_ASKING_FOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE,
                        50);
@@ -1089,7 +1089,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(25);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_OpenMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
@@ -1107,7 +1107,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_FELIX, 0x7fff, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
@@ -1122,7 +1122,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
@@ -1138,7 +1138,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_MAN_ASKING_FOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -1151,7 +1151,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -1167,7 +1167,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
@@ -1182,11 +1182,11 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, 0x8001, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MAN_ASKING_FOR_PIERS, 2);
   Event_Wait(20);
@@ -1217,7 +1217,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_WalkByAndWait(ACTOR_KRADEN, -12, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(15);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MAN_ASKING_FOR_PIERS, 3);
   Event_Wait(10);
@@ -1253,7 +1253,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MAN_ASKING_FOR_PIERS, 4);
   FieldEvent_ShowMessageThenWait(
@@ -1277,7 +1277,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_MAN_ASKING_FOR_PIERS, 4);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
@@ -1400,10 +1400,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,

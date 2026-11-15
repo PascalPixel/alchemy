@@ -24,7 +24,7 @@ Field_MagmaRockInsideGolemCoreChest:
 	.incbin "games/tla/src/map/magma_rock_inside_golem_core_chest/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MagmaRockInsideGolemCoreChest_ANIMATION:
-	.incbin "games/tla/src/map/magma_rock_inside_2/animation.script.lz"
+	.incbin "games/tla/src/map/magma_rock_inside_entrance/animation.script.lz"
 	.balign 4, 0
 .LField_MagmaRockInsideGolemCoreChest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

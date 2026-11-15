@@ -426,7 +426,7 @@ const struct MapResources gMaps[] = {
     {195, 196, {197, 198, 199}, 200}, // madra_drawbridge
     {201, 202, {203, 204, 205}, 206}, // osenia_cliffs
     {207, 208, {197, 209, 210}, 200}, // mikasalla
-    {211, 212, {213, 214, 215}, 216}, // mikasalla_2
+    {211, 212, {213, 214, 215}, 216}, // mikasalla_north
     {217, 218, {219, 220, 221}, 222}, // mikasalla_interiors
     {223, 224, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
     {229, 230, {197, 209, 210}, 200}, // garoh
@@ -510,7 +510,7 @@ const struct MapResources gMaps[] = {
     {454, 455, {197, 198, 199}, 200}, // yallam
     {456, 457, {458, 459, 460}, 461}, // yallam_interiors
     {462, 463, {163, 164, 165}, 166}, // yallam_interiors_shops
-    {211, 464, {213, 214, 215}, 216}, // mikasalla_2
+    {211, 464, {213, 214, 215}, 216}, // mikasalla_north
     {465, 466, {467, 468, 469}, 470}, // taopo_swamp_entrance
     {471, 472, {473, 474, 475}, 476}, // taopo_swamp_mud
     {477, 478, {479, 480, 481}, 482}, // taopo_swamp_pool
@@ -559,7 +559,7 @@ const struct MapResources gMaps[] = {
     {589, 590, {225, 226, 227}, 228}, // champa_sanctum
     {591, 592, {593, 594, 595}, 596}, // sea_of_time_whirlpool
     {597, 598, {599, 600, 601}, 602}, // sea_of_time_to_lemuria
-    {603, 430, {604, 605, 606}, 607}, // lemurian_ship_deck_1
+    {603, 430, {604, 605, 606}, 607}, // lemurian_ship_tiller
     {608, 609, {97, 98, 99}, 100}, // ankohl_ruins_stone_faces
     {610, 609, {97, 98, 99}, 100}, // ankohl_ruins_thanatos_mace_chest
     {611, 609, {97, 98, 99}, 100}, // ankohl_ruins_great_face
@@ -568,7 +568,7 @@ const struct MapResources gMaps[] = {
     {613, 609, {97, 98, 99}, 100}, // ankohl_ruins_sand_doors
     {614, 615, {103, 104, 105}, 106}, // ankohl_ruins_entrance
     {101, 616, {103, 104, 105}, 106}, // shrine_of_the_sea_god_right_prong
-    {603, 617, {604, 605, 606}, 607}, // lemurian_ship_deck_1
+    {603, 617, {604, 605, 606}, 607}, // lemurian_ship_tiller
     {618, 619, {213, 214, 215}, 216}, // lemuria_entrance
     {620, 621, {622, 623, 624}, 625}, // lemuria
     {626, 627, {622, 623, 624}, 625}, // ancient_lemuria
@@ -592,11 +592,11 @@ const struct MapResources gMaps[] = {
     {695, 694, {270, 271, 272}, 273}, // magma_rock_salamander_tail_chest
     {696, 694, {270, 271, 272}, 273}, // magma_rock_statue
     {697, 698, {525, 526, 527}, 528}, // magma_rock_inside_lucky_medal_chest
-    {699, 698, {525, 526, 527}, 528}, // magma_rock_inside_2
+    {699, 698, {525, 526, 527}, 528}, // magma_rock_inside_entrance
     {700, 698, {525, 526, 527}, 528}, // magma_rock_inside_fury
-    {701, 698, {525, 526, 527}, 528}, // magma_rock_inside_4
+    {701, 698, {525, 526, 527}, 528}, // magma_rock_inside_cracked_pillars
     {702, 698, {525, 526, 527}, 528}, // magma_rock_inside_golem_core_chest
-    {703, 698, {525, 526, 527}, 528}, // magma_rock_inside_6
+    {703, 698, {525, 526, 527}, 528}, // magma_rock_inside_salamander_tail_chest
     {704, 698, {525, 526, 527}, 528}, // magma_rock_inside_ember_stone
     {705, 706, {278, 279, 280}, 281}, // magma_rock_inside_blaze_tablet
     {707, 708, {604, 605, 606}, 709}, // atteka_inlet
@@ -617,7 +617,7 @@ const struct MapResources gMaps[] = {
     {755, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_orihalcon_chest
     {756, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_guardian
     {757, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_entrance
-    {758, 759, {760, 761, 762}, 763}, // trial_road_1
+    {758, 759, {760, 761, 762}, 763}, // trial_road_stages
     {764, 759, {760, 761, 762}, 763}, // trial_road_cave_rock
     {765, 766, {767, 768, 769}, 770}, // trial_road_gasp
     {771, 772, {773, 774, 775}, 776}, // trial_road_summit

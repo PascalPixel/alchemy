@@ -24,7 +24,7 @@ Field_MagmaRockInsideFury:
 	.incbin "games/tla/src/map/magma_rock_inside_fury/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MagmaRockInsideFury_ANIMATION:
-	.incbin "games/tla/src/map/magma_rock_inside_2/animation.script.lz"
+	.incbin "games/tla/src/map/magma_rock_inside_entrance/animation.script.lz"
 	.balign 4, 0
 .LField_MagmaRockInsideFury_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

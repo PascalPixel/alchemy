@@ -293,18 +293,20 @@ extern char SceneId_MagmaRockStatue;
 extern char SceneId_MagmaRockInsideLuckyMedalChest;
 #define SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST                              \
   ((s32)&SceneId_MagmaRockInsideLuckyMedalChest)
-extern char SceneId_MagmaRockInside2;
-#define SCENE_MAGMA_ROCK_INSIDE_2 ((s32)&SceneId_MagmaRockInside2)
+extern char SceneId_MagmaRockInsideEntrance;
+#define SCENE_MAGMA_ROCK_INSIDE_ENTRANCE ((s32)&SceneId_MagmaRockInsideEntrance)
 /// The room inside Magma Rock where Fury is fought.
 extern char SceneId_MagmaRockInsideFury;
 #define SCENE_MAGMA_ROCK_INSIDE_FURY ((s32)&SceneId_MagmaRockInsideFury)
-extern char SceneId_MagmaRockInside4;
-#define SCENE_MAGMA_ROCK_INSIDE_4 ((s32)&SceneId_MagmaRockInside4)
+extern char SceneId_MagmaRockInsideCrackedPillars;
+#define SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS                                \
+  ((s32)&SceneId_MagmaRockInsideCrackedPillars)
 extern char SceneId_MagmaRockInsideGolemCoreChest;
 #define SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST                               \
   ((s32)&SceneId_MagmaRockInsideGolemCoreChest)
-extern char SceneId_MagmaRockInside6;
-#define SCENE_MAGMA_ROCK_INSIDE_6 ((s32)&SceneId_MagmaRockInside6)
+extern char SceneId_MagmaRockInsideSalamanderTailChest;
+#define SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST                          \
+  ((s32)&SceneId_MagmaRockInsideSalamanderTailChest)
 extern char SceneId_MagmaRockInsideEmberStone;
 #define SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE                                    \
   ((s32)&SceneId_MagmaRockInsideEmberStone)
@@ -387,10 +389,10 @@ extern char SceneId_DehkanPlateauPoundCube;
 /// The Dehkan Plateau scene where Cannon is met and fought.
 extern char SceneId_DehkanPlateauCannon;
 #define SCENE_DEHKAN_PLATEAU_CANNON ((s32)&SceneId_DehkanPlateauCannon)
-extern char SceneId_LemurianShipDeck1;
-#define SCENE_LEMURIAN_SHIP_DECK_1 ((s32)&SceneId_LemurianShipDeck1)
-extern char SceneId_LemurianShipDeck2;
-#define SCENE_LEMURIAN_SHIP_DECK_2 ((s32)&SceneId_LemurianShipDeck2)
+extern char SceneId_LemurianShipTiller;
+#define SCENE_LEMURIAN_SHIP_TILLER ((s32)&SceneId_LemurianShipTiller)
+extern char SceneId_LemurianShipMainDeck;
+#define SCENE_LEMURIAN_SHIP_MAIN_DECK ((s32)&SceneId_LemurianShipMainDeck)
 extern char SceneId_Madra;
 #define SCENE_MADRA ((s32)&SceneId_Madra)
 /// The Kibombo Mountains scene where Waft is fought.
@@ -700,8 +702,8 @@ extern char SceneId_PsynergyTest2;
 #define SCENE_PSYNERGY_TEST_2 ((s32)&SceneId_PsynergyTest2)
 extern char SceneId_ShopTest;
 #define SCENE_SHOP_TEST ((s32)&SceneId_ShopTest)
-extern char SceneId_TrialRoad1;
-#define SCENE_TRIAL_ROAD_1 ((s32)&SceneId_TrialRoad1)
+extern char SceneId_TrialRoadStages;
+#define SCENE_TRIAL_ROAD_STAGES ((s32)&SceneId_TrialRoadStages)
 extern char SceneId_TrialRoadSummit;
 #define SCENE_TRIAL_ROAD_SUMMIT ((s32)&SceneId_TrialRoadSummit)
 extern char SceneId_TrialRoadCaveRock;
@@ -765,8 +767,8 @@ extern char SceneId_SwAttekaIsletHouses;
 #define SCENE_SW_ATTEKA_ISLET_HOUSES ((s32)&SceneId_SwAttekaIsletHouses)
 extern char SceneId_Mikasalla;
 #define SCENE_MIKASALLA ((s32)&SceneId_Mikasalla)
-extern char SceneId_Mikasalla2;
-#define SCENE_MIKASALLA_2 ((s32)&SceneId_Mikasalla2)
+extern char SceneId_MikasallaNorth;
+#define SCENE_MIKASALLA_NORTH ((s32)&SceneId_MikasallaNorth)
 extern char SceneId_Lemuria;
 #define SCENE_LEMURIA ((s32)&SceneId_Lemuria)
 extern char SceneId_LemuriaInteriors;

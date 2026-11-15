@@ -841,7 +841,7 @@ Resource_DirectoryTable:
 	resource , Tileset_MikasallaPalette
 	resource , Tileset_MikasallaTilesA
 	resource , Tileset_MikasallaTilesB
-	resource , Field_Mikasalla2
+	resource , Field_MikasallaNorth
 	resource , Tileset_Mikasalla2Palette
 	resource , Tileset_Mikasalla2TilesA
 	resource , Tileset_Mikasalla2TilesB
@@ -1233,7 +1233,7 @@ Resource_DirectoryTable:
 	resource , Tileset_SeaOfTimeToLemuriaTilesB
 	resource , Tileset_SeaOfTimeToLemuriaTilesC
 	resource , Tileset_SeaOfTimeToLemuriaTilesD
-	resource , Field_LemurianShipDeck1
+	resource , Field_LemurianShipTiller
 	resource , Tileset_LemurianShipDeck1TilesA
 	resource , Tileset_LemurianShipDeck1TilesB
 	resource , Tileset_LemurianShipDeck1TilesC
@@ -1329,11 +1329,11 @@ Resource_DirectoryTable:
 	resource , Field_MagmaRockStatue
 	resource , Field_MagmaRockInsideLuckyMedalChest
 	resource , Tileset_PaletteMagmaRockInsideLuckyMedalChest
-	resource , Field_MagmaRockInside2
+	resource , Field_MagmaRockInsideEntrance
 	resource , Field_MagmaRockInsideFury
-	resource , Field_MagmaRockInside4
+	resource , Field_MagmaRockInsideCrackedPillars
 	resource , Field_MagmaRockInsideGolemCoreChest
-	resource , Field_MagmaRockInside6
+	resource , Field_MagmaRockInsideSalamanderTailChest
 	resource , Field_MagmaRockInsideEmberStone
 	resource , Field_MagmaRockInsideBlazeTablet
 	resource , Tileset_PaletteMagmaRockInsideBlazeTablet
@@ -1388,7 +1388,7 @@ Resource_DirectoryTable:
 	resource , Field_AnemosInnerSanctumOrihalconChest
 	resource , Field_AnemosInnerSanctumGuardian
 	resource , Field_AnemosInnerSanctumEntrance
-	resource , Field_TrialRoad1
+	resource , Field_TrialRoadStages
 	resource , Tileset_TrialRoad1Palette
 	resource , Tileset_TrialRoad1TilesA
 	resource , Tileset_TrialRoad1TilesB

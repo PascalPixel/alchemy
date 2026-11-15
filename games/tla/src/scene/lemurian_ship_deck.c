@@ -55,13 +55,13 @@ enum {
 };
 
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
-extern struct ActorPlacement gLemurianShipDeck_Room1Placements[];
+extern struct ActorPlacement gLemurianShipDeck_TillerPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_LEMURIAN_SHIP_DECK_1)
-    return gLemurianShipDeck_Room1Placements;
+  if (scene == SCENE_LEMURIAN_SHIP_TILLER)
+    return gLemurianShipDeck_TillerPlacements;
   return gLemurianShipDeck_Placements;
 }
 
@@ -104,13 +104,13 @@ void LemurianShipDeck_EnterCabin(void) {
 }
 
 extern struct Trigger gLemurianShipDeck_Triggers[];
-extern struct Trigger gLemurianShipDeck_Room2Triggers[];
+extern struct Trigger gLemurianShipDeck_MainDeckTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_LEMURIAN_SHIP_DECK_2)
-    return gLemurianShipDeck_Room2Triggers;
+  if (scene == SCENE_LEMURIAN_SHIP_MAIN_DECK)
+    return gLemurianShipDeck_MainDeckTriggers;
   return gLemurianShipDeck_Triggers;
 }
 
@@ -522,8 +522,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_SetExitRequest(1);
 }
 
-/// Room1, the deck at the tiller: the colour rotations, and the tiller scenes
-/// of entrances 10 and 20.
+/// The deck at the tiller (SCENE_LEMURIAN_SHIP_TILLER): the colour rotations,
+/// and the tiller scenes of entrances 10 and 20.
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
@@ -538,7 +538,7 @@ s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
 
   map->mode = 1;
-  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_DECK_1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_TILLER) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -555,7 +555,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_DECK_1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_TILLER) {
     MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);
     MapGrid_CopyCellsTo(0, 62, 26, 62, 3, 8);
     MapGrid_CopyCellsTo(50, 65, 25, 61, 6, 1);
@@ -1240,11 +1240,11 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(LemurianShipDeck2),
+    SCENE_EXITS(LemurianShipMainDeck),
     SCENE_EXIT(1, LemurianShipCabins, 1),
     SCENE_EXIT(1, WorldMap, 68),
     SCENE_EXIT(2, WorldMap, 8),
-    SCENE_EXITS(LemurianShipDeck1),
+    SCENE_EXITS(LemurianShipTiller),
     SCENE_EXIT(1, WorldMap, 42),
     SCENE_EXIT(2, WorldMap, 8),
     SCENE_EXIT(10, WorldMap, 71),
@@ -1260,7 +1260,7 @@ struct ActorPlacement gLemurianShipDeck_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gLemurianShipDeck_Room1Placements[] = {
+struct ActorPlacement gLemurianShipDeck_TillerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1273,7 +1273,7 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gLemurianShipDeck_Room2Triggers[] = {
+struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},

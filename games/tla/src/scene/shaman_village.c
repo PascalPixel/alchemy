@@ -3265,12 +3265,12 @@ struct SceneEntrance gShamanVillageSanctumEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillageTrialGrounds),
-    SCENE_EXIT(1, TrialRoad1, 31),
-    SCENE_EXIT(2, TrialRoad1, 32),
+    SCENE_EXIT(1, TrialRoadStages, 31),
+    SCENE_EXIT(2, TrialRoadStages, 32),
     SCENE_EXIT(3, ShamanVillageAroma, 1),
-    SCENE_EXIT(10, TrialRoad1, 50),
-    SCENE_EXIT(11, TrialRoad1, 31),
-    SCENE_EXIT(12, TrialRoad1, 32),
+    SCENE_EXIT(10, TrialRoadStages, 50),
+    SCENE_EXIT(11, TrialRoadStages, 31),
+    SCENE_EXIT(12, TrialRoadStages, 32),
     SCENE_EXITS(ShamanVillageAroma),
     SCENE_EXIT(1, ShamanVillageTrialGrounds, 3),
     SCENE_EXIT(2, ShamanVillage, 8),

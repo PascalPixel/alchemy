@@ -1,7 +1,7 @@
 /// @file
 /// Mikasalla, the village in the far south of Osenia, and the tunnels under
 /// it, in two scenes that share this overlay (SceneId_Mikasalla, the village,
-/// and SceneId_Mikasalla2, the tunnels).
+/// and SceneId_MikasallaNorth, the tunnels).
 ///
 /// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
 /// lead to the inn's back yard, where Spark the Mars Djinni joins the party
@@ -70,7 +70,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 s16 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MIKASALLA_2)
+  if (scene == SCENE_MIKASALLA_NORTH)
     return gMikasalla_TunnelRegions;
   return 0;
 }
@@ -149,7 +149,7 @@ void Mikasalla_MeetSpark(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MIKASALLA_2)
+  if (scene == SCENE_MIKASALLA_NORTH)
     return gMikasalla_TunnelTriggers;
   return gMikasalla_VillageTriggers;
 }
@@ -224,7 +224,7 @@ s32 Scene_PrepareMap(void) {
   } while (0);
   object->priorityFlags = flags;
   Actor_GetById(party->leaderActorId)->priorityFlags |= 0x20;
-  if (party->next == SCENE_MIKASALLA_2) {
+  if (party->next == SCENE_MIKASALLA_NORTH) {
     if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       TilesetAnim_Pause(0);
       TilesetAnim_Pause(1);
@@ -387,12 +387,12 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(8, Mikasalla, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, Mikasalla, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, Mikasalla, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, Mikasalla2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, Mikasalla2, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(Mikasalla2),
+    SCENE_EXIT_UNLESS(11, MikasallaNorth, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, MikasallaNorth, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(MikasallaNorth),
     SCENE_EXIT_UNLESS(1, Mikasalla, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Mikasalla2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Mikasalla2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, MikasallaNorth, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MikasallaNorth, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Mikasalla, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -601,7 +601,7 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The tunnels under the village (Mikasalla2).
+/// The tunnels under the village (MikasallaNorth).
 struct ActorPlacement gMikasalla_TunnelPlacements[] = {
     {SCENE_TABLE_END},
 };

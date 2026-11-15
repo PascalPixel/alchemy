@@ -1413,7 +1413,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(1, WorldMap, 42, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, SeaOfTimeWhirlpool, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LemurianShipDeck1, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, LemurianShipTiller, 20, EXIT_FLAG_NONE),
     SCENE_EXITS(SeaOfTimeToLemuria),
     SCENE_EXIT_UNLESS(1, SeaOfTimeWhirlpool, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 6, EXIT_FLAG_NONE),

@@ -64,7 +64,7 @@ enum TrialRoadStageActorId {
 
 /// The log stage's three logs (gTrialRoad_LogStagePlacements): two rolling
 /// east and west, upper and lower, and one rolling north and south east of
-/// them. Kraden, at the summit (gTrialRoad_Room2Placements), after Moapa.
+/// them. Kraden, at the summit (gTrialRoad_SummitPlacements), after Moapa.
 #define ACTOR_KRADEN (ACTOR_MOAPA + 1)
 
 enum TrialRoadLogStageActorId {
@@ -109,10 +109,10 @@ enum { ACTOR_POUND_STAGE_BUSH = ACTOR_EAST_PILLAR + 1 };
 /// The bush in the sand stage, after its two sand pieces.
 enum { ACTOR_SAND_STAGE_BUSH = ACTOR_FIRST_STAGE_PIECE + 2 };
 
-/// The pillar at the summit (gTrialRoad_Room2Placements), after Kraden.
+/// The pillar at the summit (gTrialRoad_SummitPlacements), after Kraden.
 #define ACTOR_PEAK_PILLAR (ACTOR_KRADEN + 1)
 
-/// Gasp, alone in his room (gTrialRoad_Room4Placements).
+/// Gasp, alone in his room (gTrialRoad_GaspPlacements).
 enum { ACTOR_GASP = ACTOR_FIRST_PLACED };
 
 /// The fountain stage's three spouts (gTrialRoad_FountainStagePlacements).
@@ -133,10 +133,10 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gTrialRoad_Placements[];
-extern struct ActorPlacement gTrialRoad_Room3Placements[];
-extern struct ActorPlacement gTrialRoad_Room4Placements[];
-extern struct ActorPlacement gTrialRoad_Room2Placements[];
-extern s32 gTrialRoad_Room1Placements[];
+extern struct ActorPlacement gTrialRoad_CaveRockPlacements[];
+extern struct ActorPlacement gTrialRoad_GaspPlacements[];
+extern struct ActorPlacement gTrialRoad_SummitPlacements[];
+extern s32 gTrialRoad_StagesPlacements[];
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height =
@@ -153,14 +153,14 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_1)
-    return gTrialRoad_Room1Placements[pattern & 7];
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_STAGES)
+    return gTrialRoad_StagesPlacements[pattern & 7];
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
-    return gTrialRoad_Room3Placements;
+    return gTrialRoad_CaveRockPlacements;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
-    return gTrialRoad_Room4Placements;
+    return gTrialRoad_GaspPlacements;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_SUMMIT)
-    return gTrialRoad_Room2Placements;
+    return gTrialRoad_SummitPlacements;
   return gTrialRoad_Placements;
 }
 
@@ -1442,22 +1442,22 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
 }
 
 extern struct Trigger gTrialRoad_Triggers[];
-extern struct Trigger gTrialRoad_Room3Triggers[];
-extern struct Trigger gTrialRoad_Room4Triggers[];
-extern struct Trigger gTrialRoad_Room2Triggers[];
-extern s32 gTrialRoad_Room1Triggers[];
+extern struct Trigger gTrialRoad_CaveRockTriggers[];
+extern struct Trigger gTrialRoad_GaspTriggers[];
+extern struct Trigger gTrialRoad_SummitTriggers[];
+extern s32 gTrialRoad_StagesTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_1)
-    return gTrialRoad_Room1Triggers[pattern & 7];
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_STAGES)
+    return gTrialRoad_StagesTriggers[pattern & 7];
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
-    return gTrialRoad_Room3Triggers;
+    return gTrialRoad_CaveRockTriggers;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
-    return gTrialRoad_Room4Triggers;
+    return gTrialRoad_GaspTriggers;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_SUMMIT)
-    return gTrialRoad_Room2Triggers;
+    return gTrialRoad_SummitTriggers;
   return gTrialRoad_Triggers;
 }
 
@@ -1838,7 +1838,7 @@ s32 Scene_Initialize(void) {
 
   if (gFieldWork->exit != 0)
     return 0;
-  if (scene == SCENE_TRIAL_ROAD_1) {
+  if (scene == SCENE_TRIAL_ROAD_STAGES) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
@@ -1995,7 +1995,7 @@ s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
 
-  if (scene == SCENE_TRIAL_ROAD_1) {
+  if (scene == SCENE_TRIAL_ROAD_STAGES) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
@@ -2024,7 +2024,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination(SCENE_TRIAL_ROAD_1, n);
+      Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
@@ -2053,7 +2053,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination(SCENE_TRIAL_ROAD_1, n);
+      Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.leaderActorId);
       Iwram_ClearWordsEntry(state, 32);
@@ -2067,7 +2067,7 @@ s32 Scene_PrepareMap(void) {
       state->leaderBest = 0;
       state->rivalBest = 0;
       state->pattern = state->order[0];
-      Event_SetDestination(SCENE_TRIAL_ROAD_1, 55);
+      Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;
@@ -3936,11 +3936,11 @@ LAST_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LAST_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(TrialRoad1),
-    SCENE_EXIT(1, TrialRoad1, 3),
-    SCENE_EXIT(2, TrialRoad1, 4),
-    SCENE_EXIT(3, TrialRoad1, 1),
-    SCENE_EXIT(4, TrialRoad1, 2),
+    SCENE_EXITS(TrialRoadStages),
+    SCENE_EXIT(1, TrialRoadStages, 3),
+    SCENE_EXIT(2, TrialRoadStages, 4),
+    SCENE_EXIT(3, TrialRoadStages, 1),
+    SCENE_EXIT(4, TrialRoadStages, 2),
     SCENE_EXIT(5, ShamanVillageTrialGrounds, 1),
     SCENE_EXIT(6, ShamanVillageTrialGrounds, 2),
     SCENE_EXIT(7, TrialRoadSummit, 1),
@@ -3955,8 +3955,8 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXITS(TrialRoadGasp),
     SCENE_EXIT(1, TrialRoadCaveRock, 4),
     SCENE_EXITS(TrialRoadSummit),
-    SCENE_EXIT(1, TrialRoad1, 33),
-    SCENE_EXIT(2, TrialRoad1, 34),
+    SCENE_EXIT(1, TrialRoadStages, 33),
+    SCENE_EXIT(2, TrialRoadStages, 34),
     SCENE_EXIT(3, TrialRoadCaveRock, 3),
     SCENE_EXIT(4, ShamanVillageInn, 30),
     SCENE_EXIT(5, ShamanVillageInn, 31),
@@ -4099,17 +4099,17 @@ LAST_DATA struct ActorPlacement gTrialRoad_SandStagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LAST_DATA struct ActorPlacement gTrialRoad_Room3Placements[] = {
+LAST_DATA struct ActorPlacement gTrialRoad_CaveRockPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LAST_DATA struct ActorPlacement gTrialRoad_Room4Placements[] = {
+LAST_DATA struct ActorPlacement gTrialRoad_GaspPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GASP), MOVEMENT_TYPE_STAND, 344, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-LAST_DATA struct ActorPlacement gTrialRoad_Room2Placements[] = {
+LAST_DATA struct ActorPlacement gTrialRoad_SummitPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4124,7 +4124,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LAST_DATA s32 gTrialRoad_Room1Placements[] = {
+LAST_DATA s32 gTrialRoad_StagesPlacements[] = {
     (s32)gTrialRoad_PillarStagePlacements,
     (s32)gTrialRoad_TorchStagePlacements,
     (s32)gTrialRoad_BushPillarStagePlacements,
@@ -4489,7 +4489,7 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA struct Trigger gTrialRoad_Room3Triggers[] = {
+LAST_DATA struct Trigger gTrialRoad_CaveRockTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4498,7 +4498,7 @@ LAST_DATA struct Trigger gTrialRoad_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA struct Trigger gTrialRoad_Room4Triggers[] = {
+LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
      CONDITION_ALWAYS, EVENT(TrialRoad_CutBushes)},
@@ -4512,7 +4512,7 @@ LAST_DATA struct Trigger gTrialRoad_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA struct Trigger gTrialRoad_Room2Triggers[] = {
+LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
     {TRIGGER_STEP, 33, 0x283, EVENT(TrialRoad_OpenSummitGate)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},
@@ -4527,7 +4527,7 @@ LAST_DATA struct Trigger gTrialRoad_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA s32 gTrialRoad_Room1Triggers[] = {
+LAST_DATA s32 gTrialRoad_StagesTriggers[] = {
     (s32)gTrialRoad_PillarStageTriggers,     (s32)gTrialRoad_TorchStageTriggers,
     (s32)gTrialRoad_BushPillarStageTriggers, (s32)gTrialRoad_PoundStageTriggers,
     (s32)gTrialRoad_CrumblingStageTriggers,  (s32)gTrialRoad_LogStageTriggers,

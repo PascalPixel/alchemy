@@ -70,7 +70,7 @@ places at different points in the story. The Lemurian Ship's first way out
 leads to three, one after another:
 
 ```c
-SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
+SCENE_EXIT_UNLESS(1, LemurianShipMainDeck, 1, 0x907),
 SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
 SCENE_EXIT_UNLESS(1, AttekaInlet, 4, EXIT_FLAG_NONE),
 ```

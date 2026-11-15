@@ -304,7 +304,7 @@ void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
-  // The first scene_rules.s word names a battle background.
+  // The first battle_background_rules.c word names a battle background.
   s32 backdrop;
 
   while (entry != 0 && entry != target) {

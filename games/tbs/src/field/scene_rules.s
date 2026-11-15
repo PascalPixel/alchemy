@@ -27,16 +27,6 @@
 	.2byte SceneId_\scene, \entrance, SceneId_\saved, \saved_entrance
 	.endm
 
-@ A battle background and the scenes that use it.
-	.macro backdrop resource:req, scenes:vararg
-	.2byte ResourceId_\resource, 0x8000
-	.ifnb \scenes
-	.irp scene, \scenes
-	.4byte SceneId_\scene
-	.endr
-	.endif
-	.endm
-
 	.section .rodata
 	.balign 4
 	.global gScene_MusicRules
@@ -323,39 +313,3 @@ gScene_RestartRules:
 	restart_point Lalivero, -1, TimberRoomsB, 12
 	restart_point BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
-
-@ A scene not listed takes the last battle background.
-	.global gScene_BattleBackgroundRules
-gScene_BattleBackgroundRules:
-	backdrop ValeStormBackdrop, ValePrologue, Vale, ValePlaza, ValeKradensCottage
-	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
-	backdrop InteriorBackdrop, LogRoomsA
-	backdrop GomaCaveBackdrop, GomaCaveEntrance
-	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
-	backdrop KolimaForestBackdrop, KolimaForestEntrance, KolimaForestGlade, KolimaForestCliff, KolimaForestFloodgate, KolimaForestTree
-	backdrop TretTreeBranchBackdrop, TretTreeBranch
-	backdrop TretTreeInteriorsBackdrop, TreeRooms
-	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
-	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior
-	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie
-	backdrop ImilFuchinFallsBackdrop, FuchinFallsCaveEntrance, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, CrossboneIsleFloatingLogs
-	backdrop MogallForestBackdrop, MogallForestSign, MogallForestQuartz, MogallForestKillerApe
-	backdrop AltinPeakBackdrop, AltinPeakFirstWaterBeast, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakWestExit
-	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
-	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast
-	backdrop TolbiShipInteriorsBackdrop, ShipRooms
-	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, BattleArena
-	backdrop AltmillerCaveBackdrop, AltmillerCaveEntrance, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall, AltmillerCaveCookieChest, AltmillerCaveDraught
-	backdrop AltmillerCaveBackdrop, LunpaFortressGroundFloor, LunpaFortressUpperFloor, LunpaFortressCave, LunpaFortressToadonpa
-	backdrop SuhallaDesertBackdrop, SuhallaDesertNorth, SuhallaDesertSouth
-	backdrop CrossboneIsleCaveBackdrop, CrossboneIsleFirstFloor, CrossboneIsleSecondFloor, CrossboneIsleThirdFloor, CrossboneIsleFourthFloor, CrossboneIsleFifthFloor, CrossboneIsleSixthFloor, CrossboneIsleSeventhFloor, CrossboneIsleEighthFloor, CrossboneIsleNinthFloor
-	backdrop PirateShipBackdrop, PirateShip
-	backdrop SuhallaGateBackdrop, SuhallaGateCheckpoint, SuhallaGateDew
-	backdrop GomaCaveBackdrop, GatewayCave
-	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouseLuff, BabiLighthouseStoneDoor, CrossboneIsleBane
-	backdrop TunnelRuinsBackdrop, TunnelRuinsGreatStatue, TunnelRuinsLadyStatues
-	backdrop InteriorBackdrop, Lalivero, TimberRoomsB, TimberRoomsC
-	backdrop VenusLighthouseBackdrop, VenusLighthouseGroundFloor, VenusLighthouseFirstFloor, VenusLighthouseSecondFloor, VenusLighthouseThirdFloor, VenusLighthouseFourthFloor
-	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie
-	backdrop GomaCaveBackdrop
-	.4byte 0	@ end

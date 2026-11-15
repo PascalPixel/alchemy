@@ -278,6 +278,7 @@ SECTIONS
         "*/games/tbs/src/field/encounter_rules.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/world_map_encounter_rules.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scene_rules.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/battle_background_rules.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/battle_music.o"(.text .rodata .data .padding)
         "*/games/tbs/src/graphics/palette_editor/swatch.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/field_sequence_tables.o"(.text .rodata .data .padding)

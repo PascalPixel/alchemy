@@ -62,11 +62,12 @@ extern char ResourceId_IntroTilesB;
 #define RESOURCE_INTRO_TILES_B ((s32)&ResourceId_IntroTilesB)
 
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
-// scene from gScene_BattleBackgroundRules (field/scene_rules.s), and on the
-// world map BattleBackground_SelectForEnvironment picks one by battle
-// environment; either leaves it in gMainRoutineWork.battleBackground for the
-// battle. The credits (gCredits_Backgrounds) shows every one but DesertBackdrop
-// and AerialViewBackdrop, and some summons draw one as their sky.
+// scene from gScene_BattleBackgroundRules (field/battle_background_rules.c),
+// and on the world map BattleBackground_SelectForEnvironment picks one by
+// battle environment; either leaves it in gMainRoutineWork.battleBackground for
+// the battle. The credits (gCredits_Backgrounds) shows every one but
+// DesertBackdrop and AerialViewBackdrop, and some summons draw one as their
+// sky.
 
 /// Suhalla Gate's checkpoint and Dew rooms. The debug battle menu fights on it
 /// too.

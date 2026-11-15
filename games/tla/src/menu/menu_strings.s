@@ -62,9 +62,9 @@ gStatusPanel_HpRowString:
 gStatusPanel_PpRowString:
 	.asciz "EP    /"
 	.endif
-@ The border tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here
-	.global gData_08105948
-gData_08105948:
+@ The tile the Start prompt blinks while a menu watches for Start
+	.global gMenu_StartPromptTile
+gMenu_StartPromptTile:
 	.incbin "games/tla/src/menu/backdrop.4bpp"
 	.if EDITION_INTERNATIONAL
 	.else

@@ -18,7 +18,9 @@ const u16 gFont_MarkGlyphCodes[] = {
 };
 #endif
 
-const u32 gData_0805c0e8[2] = {0x1999999a, 0x1999999a};
+/// Unused: two fractions of one tenth (2^32 / 10, rounded up); nothing reads
+/// them.
+const u32 gUnusedTenthFractions[2] = {0x1999999a, 0x1999999a};
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 

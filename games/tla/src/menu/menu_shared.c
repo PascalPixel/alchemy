@@ -1162,10 +1162,13 @@ s32 Sound_PlayReturnOne(s32 cue) {
   return 1;
 }
 
-/// A VBlank task while the menus watch for Start: flashes the Start prompt's
+/// The tile of BG character block 0 the Start prompt blinks.
+#define MENU_START_PROMPT_TILE 298
+
+/// A VBlank task while the menus watch for Start: blinks the Start prompt's
 /// tile every four frames, and on Start plays the cancel sound, sets
 /// FLAG_MENU_START_PRESSED and removes itself.
-void Menu_UpdateCancelSound(void) {
+void Menu_WatchStart(void) {
   u32 frame;
   u32 *node;
   struct InputState *input;
@@ -1174,33 +1177,40 @@ void Menu_UpdateCancelSound(void) {
   frame = gFrameCount;
   if ((frame & 3) == 0) {
     if (frame & 4)
-      Iwram_CopyWords((void *)0x06002540, gData_08105948, 32);
+      Iwram_CopyWords(BG_CHAR_BLOCK(0) +
+                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                      gMenu_StartPromptTile, TILE_SIZE_4BPP);
     else
-      Iwram_FillWords((void *)0x06002540, 32, 0x44444444);
+      Iwram_FillWords(BG_CHAR_BLOCK(0) +
+                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                      TILE_SIZE_4BPP, 0x44444444);
   }
   input = &gInput;
-  mask = 8;
+  mask = KEY_START;
   if (input->pressed & mask) {
     Sound_PlayFar(SE_MENU_CANCEL);
     GameFlag_Set(FLAG_MENU_START_PRESSED);
-    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_WatchStart));
   }
-  node = (u32 *)(Ram_HeapSlots->windowWork + 0xE30);
+  // DEAD: walks the free window sprites to the end of their list and keeps
+  // nothing; the ROM keeps the loop.
+  node = (u32 *)&((struct WindowWork *)Ram_HeapSlots->windowWork)
+             ->freeOutputs.head;
   while ((node = (u32 *)*node) != 0)
     ;
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_UpdateCancelSound.
+/// Menu_WatchStart.
 void Menu_StartWatchingStart(void) {
   GameFlag_Clear(FLAG_MENU_START_PRESSED);
-  Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
+  Task_Add((s32)Menu_WatchStart, TASK_PASS_VBLANK);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
 void Menu_StopWatchingStart(void) {
   if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
-    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_WatchStart));
   }
 }
 

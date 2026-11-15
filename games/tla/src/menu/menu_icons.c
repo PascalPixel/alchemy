@@ -504,15 +504,16 @@ void MenuIcon_PushSlots(void) {
   }
 }
 
-extern u16 gData_08105a50[5];
+extern u16 gStatusScreen_CommandIcons[5];
 
-/// Loads the five menu icons of gData_08105a50 into free VRAM entries, gives
+/// Loads the Status screen's five command icons (gStatusScreen_CommandIcons)
+/// into free VRAM entries, gives
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot = menu->menuIcons;
-  u16 *ids = gData_08105a50;
+  u16 *ids = gStatusScreen_CommandIcons;
   u16 *resource = menu->menuIconSlots;
   s32 entry;
   s32 i;

@@ -52,12 +52,11 @@ s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Obj;
-struct Actor_0801c0dc;
 struct RenderInput;
 struct WindowSprite;
 struct DjinnMenuBackdrop;
 
-extern u8 gData_08105948[];
+extern u8 gMenu_StartPromptTile[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);
 void Scene_TalkToActorFar(s32, s32);
@@ -83,7 +82,8 @@ void *String_FormatPlayTime(s32, u8 *);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
 #ifndef OWN_UiTextResource_Initialize
-void MenuArrow_Create(struct Actor_0801c0dc *obj, s32 *slot);
+struct MenuSprite;
+void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot);
 #endif
 #ifndef OWN_UiTextResource_SetPosition
 void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);

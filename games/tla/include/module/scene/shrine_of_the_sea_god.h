@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-struct ShrineOfTheSeaGodObject;
+struct Actor;
 
 /// A word of the object written through a one-member union (see the
 /// FAKEMATCH(signature) tag in ShrineOfTheSeaGod_LashRope).
@@ -35,7 +35,7 @@ struct ShrineOfTheSeaGodPartyExtra {
 void ShrineOfTheSeaGod_DjinniRunsWest(void);
 void ShrineOfTheSeaGod_SetUpFlatProp(s32 actor);
 
-void ShrineOfTheSeaGod_StartleCompanion(void);
+void ShrineOfTheSeaGod_StartleRiki(void);
 
 void ShrineOfTheSeaGod_OpenFieldMenu(void);
 
@@ -79,8 +79,7 @@ void ShrineOfTheSeaGod_EndSand(void);
 
 extern u32 gFieldEffect_MediumScript[];
 
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object,
-                                        s32 base);
+void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *object, s32 base);
 void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void);
 
 void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void);

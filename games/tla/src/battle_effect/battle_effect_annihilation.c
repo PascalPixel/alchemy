@@ -8,11 +8,11 @@
 #undef HIT_FRAME
 
 #define SHARD_COUNT 64
-#define STREAK_PICTURE_BYTES (48 * 72)
-#define BURST_PICTURE_BYTES (40 * 80)
+#define STREAK_PICTURE_BYTES PICTURE_BYTES(FIRE_STREAK)
+#define BURST_PICTURE_BYTES PICTURE_BYTES(FIRE_BURST)
 #define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) ///< the stronger variant's
 
-#define SHARDS_FRAMES 64
+#define ANNIHILATION_FRAMES 64
 #define STREAK_FRAME 6 ///< the user's fire streak, six frames
 #define HIT_FRAME 8
 #define FLASH_FRAME 14
@@ -74,7 +74,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != SHARDS_FRAMES; frame++) {
+  for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (args->variant != EFFECT_VARIANT_BASIC && frame == HIT_FRAME)

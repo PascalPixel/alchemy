@@ -11,6 +11,9 @@
 /// its end.
 #define NEPTUNE_FLARES_FRAME 152
 #define NEPTUNE_BURST_FRAME 222
+/// WaterSpraySheet: the wave, then the splash's pictures.
+#define NEPTUNE_SPLASH PICTURE_BYTES(WATER_WAVE)
+#define NEPTUNE_COLUMN_FRAMES 144 ///< frames of the columns of water
 #define NEPTUNE_FLARE_SHEET 20000 ///< the flare pictures, after the spray
 
 /// A water column's head, after its shaft: BlueFlameSheet's pictures.
@@ -283,7 +286,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         spark->variant = 0;
       }
     }
-    if (frame > 221) {
+    if (frame >= NEPTUNE_BURST_FRAME) {
       for (i = 0; i != 64; i++) {
         u16 *sparkCells = gBattleEffect_FlarePictures;
         s32 r = 1;
@@ -372,24 +375,27 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                 100 - z, 52 - z, z * 2, z * 2);
       }
     }
-    if (frame >= 214 && frame < NEPTUNE_BURST_FRAME) {
+    if (frame >= NEPTUNE_BURST_FRAME - 8 && frame < NEPTUNE_BURST_FRAME) {
       s32 z;
 
-      z = (frame - 214) / 4;
+      z = (frame - (NEPTUNE_BURST_FRAME - 8)) / 4;
       if (z > 2)
         z = 2;
-      draw[1](canvas, work->sheet + z * 9 * 256 + 0x400, 63, 18,
-              WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
+      draw[1](canvas,
+              work->sheet + z * PICTURE_BYTES(WATER_SPLASH) + NEPTUNE_SPLASH,
+              63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
     if (frame > 221) {
       s32 z;
 
       z = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
-      draw[0](canvas, work->sheet + z * 9 * 256 + 0x400, 72, 30,
-              WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
+      draw[0](canvas,
+              work->sheet + z * PICTURE_BYTES(WATER_SPLASH) + NEPTUNE_SPLASH,
+              72, 30, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       if (z == 5)
-        draw[0](canvas, work->sheet + 0x1600, 66, 22, WATER_SPLASH_WIDTH,
-                WATER_SPLASH_HEIGHT);
+        draw[0](canvas,
+                work->sheet + NEPTUNE_SPLASH + 2 * PICTURE_BYTES(WATER_SPLASH),
+                66, 22, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
 
     // The spray, rising and falling back into the sea.
@@ -531,7 +537,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 8);
     EFFECT_END_FRAME(work);
-  } while (++frame != 144);
+  } while (++frame != NEPTUNE_COLUMN_FRAMES);
 
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->sprites[i]);

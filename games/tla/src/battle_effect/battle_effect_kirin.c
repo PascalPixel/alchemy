@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define KIRIN_BLOB_BYTES (48 * 32)
+#define KIRIN_BLOB_BYTES PICTURE_BYTES(FIRE_BLOB)
 
 /// The hit bursts, 32 for each target, in the map cell buffer.
 

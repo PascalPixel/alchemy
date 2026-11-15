@@ -30,7 +30,8 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 }
 
 /// Where BlastSheet is decoded in the effect's pictures.
-#define CYBELE_BLAST_PICTURES 0x1680
+#define CYBELE_BLAST_PICTURES                                                  \
+  5760 ///< the blast pictures, after the yellow ring
 
 #define CYBELE_FRAMES 366
 

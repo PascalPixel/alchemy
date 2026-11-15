@@ -256,7 +256,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       IO_WRITE_HALFWORD);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -321,7 +321,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_HALFWORD);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
 

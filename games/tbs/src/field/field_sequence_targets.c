@@ -130,7 +130,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     return nearestActorId;
 
   // The facing rounded to the nearest of the four quarter turns.
-  facingQuadrant = (source->facing + TRIG_TURN / 8) & 0xc000;
+  facingQuadrant = FACING_NEAREST_CARDINAL(source->facing);
   // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first
   // treasure spot's actor, so the map's first chest or Psynergy Stone is a
   // candidate too.

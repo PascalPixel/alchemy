@@ -37,7 +37,7 @@ void Weather_UpdateRain(void) {
       frame++;
       particle->shape = *(const u8 *)frame;
       particle->size = *(const u8 *)(frame + 1);
-      Oam_AddSpriteAtDepth(particle, 240);
+      Oam_AddSpriteAtDepth(particle, OAM_DEPTH_WINDOW);
     }
     if (particle->timer == 0) {
       s32 *leader = grid->origin;
@@ -197,7 +197,7 @@ void FieldMotes_Update(void) {
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Oam_AddSpriteAtDepth(mote, 240);
+        Oam_AddSpriteAtDepth(mote, OAM_DEPTH_WINDOW);
       } else {
         mote->timer = 0;
       }
@@ -324,7 +324,7 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
-        Oam_AddSpriteAtDepth(sparkle, 240);
+        Oam_AddSpriteAtDepth(sparkle, OAM_DEPTH_WINDOW);
       }
       sparkle->timer--;
     }

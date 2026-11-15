@@ -70,7 +70,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   Projection_Set(0, result, px(1938));
 
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
-  gProjection.centerY = verticalOffset + 120;
+  gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
   view->busy = 1;
   BattleCamera_SetRange(px(120), px(118 - verticalOffset), 0, 8 << 8,
                         Q16_ONE * 2);

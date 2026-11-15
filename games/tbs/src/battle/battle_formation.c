@@ -4,9 +4,6 @@
 
 #include "battle_internal.h"
 
-/// The entries of an array whose size is declared.
-#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
-
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
 // 9 in the localizations.
 #if LANGUAGE != LANGUAGE_JAPANESE

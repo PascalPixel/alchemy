@@ -90,7 +90,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"

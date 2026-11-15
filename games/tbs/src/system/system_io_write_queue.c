@@ -28,7 +28,8 @@ IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits32, IO_WRITE_SET | IO_WRITE_WORD)
 /// Queues clearing a byte register's bits.
 IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits8, IO_WRITE_CLEAR | IO_WRITE_BYTE)
 /// Queues clearing a halfword register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16, IO_WRITE_CLEAR | IO_WRITE_HALFWORD)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16,
+                      IO_WRITE_CLEAR | IO_WRITE_HALFWORD)
 /// Queues clearing a word register's bits.
 IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 

@@ -2017,7 +2017,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Party_RemoveMemberRestored(JENNA);
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
@@ -2097,7 +2097,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
   actor->gravity = px(1) / 4;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
-  VramCache_Load(sprite->slot, 128, glyph->tiles);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(actor, 3);

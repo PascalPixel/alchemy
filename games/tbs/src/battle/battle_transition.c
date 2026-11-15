@@ -250,7 +250,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       s32 start = 0;
 
       gBgScroll[0].y = 32;
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       gBgScroll[1].x = 8;
       wait(1);
       REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);

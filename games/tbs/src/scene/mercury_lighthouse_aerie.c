@@ -76,7 +76,6 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_nearest.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -291,7 +290,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(50);
   Event_Wait(50);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   Event_Wait(30);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 504, 168);

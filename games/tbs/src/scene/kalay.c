@@ -135,7 +135,6 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
-#include "scene/facing_nearest.h"
 #include "scene/orbit.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -1193,7 +1192,7 @@ static void Kalay_PrepareTown(void) {
     nut->visible = 1;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
-    VramCache_Load(sprite->palette, 128, glyph->tiles);
+    VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;

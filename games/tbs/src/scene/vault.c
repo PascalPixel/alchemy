@@ -65,7 +65,6 @@
 #include "game/inventory.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/vault_range.h"
 #include "scene/walk_into_leader.h"
@@ -618,7 +617,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(continuation);
 }
 

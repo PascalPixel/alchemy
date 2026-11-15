@@ -73,7 +73,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight.

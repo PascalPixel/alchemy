@@ -136,7 +136,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       if (frame <= 63)
         camera->yaw += TRIG_TURN / 256;
     }
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     if (frame <= 17) {
       s32 picture = frame / 3;
 

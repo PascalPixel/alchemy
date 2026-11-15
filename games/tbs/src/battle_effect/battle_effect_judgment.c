@@ -340,27 +340,27 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
-                                            60 - high, 80 - high * 2, high,
-                                            high * 2);
+                                                 60 - high, 80 - high * 2, high,
+                                                 high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture, 60,
-                                            80 - high * 2, high, high * 2);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, work->sheet + picture, 60, 80 - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
-                                            60 - high, 80, high, high * 2);
+                                                 60 - high, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture, 60,
-                                            80, high, high * 2);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
+                                                 60, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       for (i = 0; i != 6; i++) {
@@ -382,13 +382,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       blitters[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet, 36, top,
-                                     JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
+                                          JUDGMENT_BEAM_WIDTH,
+                                          JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
       blitters[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet, 60, top,
-                                     JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
+                                          JUDGMENT_BEAM_WIDTH,
+                                          JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       n = (frame - JUDGMENT_BEAM_FRAME) / 2;
@@ -490,7 +492,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < JUDGMENT_SWEEP_BEACH) {
         frame = JUDGMENT_SWEEP_BEACH;
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5),
+                                IO_WRITE_HALFWORD);
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_WORD);
         Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
@@ -505,7 +508,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == JUDGMENT_SWEEP_EXPLOSION) {
-      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5),
+                              IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_WORD);
       Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
       Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
@@ -626,30 +630,30 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 36, top - 24,
-                                            JUDGMENT_FLARE_WIDTH,
-                                            JUDGMENT_FLARE_HEIGHT);
+                                                 JUDGMENT_FLARE_WIDTH,
+                                                 JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 59, top - 24,
-                                            JUDGMENT_FLARE_WIDTH,
-                                            JUDGMENT_FLARE_HEIGHT);
+                                                 JUDGMENT_FLARE_WIDTH,
+                                                 JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 36, top - 1,
-                                            JUDGMENT_FLARE_WIDTH,
-                                            JUDGMENT_FLARE_HEIGHT);
+                                                 JUDGMENT_FLARE_WIDTH,
+                                                 JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 59, top - 1,
-                                            JUDGMENT_FLARE_WIDTH,
-                                            JUDGMENT_FLARE_HEIGHT);
+                                                 JUDGMENT_FLARE_WIDTH,
+                                                 JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 

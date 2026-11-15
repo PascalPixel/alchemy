@@ -79,7 +79,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
         unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
         matchingSlots = 0;
-        for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+        for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
+             inventorySlot++) {
           if ((unit->inventory[inventorySlot] & INVENTORY_ITEM_ID_MASK) ==
               itemId)
             matchingSlots++;
@@ -92,7 +93,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       }
     } else {
       unit = Unit_GetFar(actorId);
-      for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+      for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
+           inventorySlot++) {
         if ((unit->inventory[inventorySlot] & INVENTORY_ITEM_ID_MASK) == itemId)
           mostMatchingSlots++;
       }

@@ -720,8 +720,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                     COMPOSITE_LIGHTEN);
               else
-                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-                                    COMPOSITE_LIGHTEN);
+                EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                                    EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,

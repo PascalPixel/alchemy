@@ -681,7 +681,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_SetPosition(ACTOR_KYLE, 294, 868);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
@@ -2301,8 +2301,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   wait(160);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
   Event_Wait(80);
   Event_Wait(100);

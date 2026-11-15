@@ -74,7 +74,6 @@
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
-#include "scene/facing_nearest.h"
 #include "system/heap.h"
 #include "system/iwram_call.h"
 #include "window/screens.h"

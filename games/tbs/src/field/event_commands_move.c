@@ -317,8 +317,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   u32 spread;
   u32 jitter;
 
-  angle =
-      (caster->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
+  angle = FACING_NEAREST_CARDINAL(caster->facing);
   parent = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
                        caster->y.fixed + px(16), caster->z.fixed);
   if (parent == 0)

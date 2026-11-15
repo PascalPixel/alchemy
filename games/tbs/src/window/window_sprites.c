@@ -143,7 +143,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       sprite = SPRITE_CELL(windowSprite);
     }
     // Glyphs are drawn at depth slot 254.
-    windowSprite->sentinel = OAM_DEPTH_FRONT - 1;
+    windowSprite->depth = OAM_DEPTH_FRONT - 1;
     windowSprite->x = sprite->x;
     windowSprite->y = sprite->y;
     windowSprite->index = index;
@@ -165,7 +165,7 @@ struct WindowSpriteCellView {
   u16 unused;        ///< WindowSprite's
   u16 animationStep; ///< step of its motion's animation
   u8 index;
-  u8 sentinel;              ///< depth slot it is drawn at
+  u8 depth;                 ///< depth slot it is drawn at
   struct CursorSprite attr; ///< the sprite cell queued each frame
 };
 
@@ -429,7 +429,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
-/// its depth slot (WindowSprite.sentinel).
+/// its depth slot (WindowSprite.depth).
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
@@ -577,9 +577,9 @@ void WindowSprite_UpdateAll(void) {
       // Queue it unless it is hidden, or an arrow with no picture.
       if (windowSprite->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
-          Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
+          Oam_AddSpriteAtDepth(sprite, windowSprite->depth);
       } else if (windowSprite->active != WINDOW_SPRITE_MOTION_HIDDEN) {
-        Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
+        Oam_AddSpriteAtDepth(sprite, windowSprite->depth);
       }
       windowSprite = windowSprite->next;
       phase = (gVBlankCount >> 2) & 7;

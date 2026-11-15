@@ -391,9 +391,6 @@ void Text_DrawStatComparison(const struct Unit *after,
   }
 }
 
-/// Size of one 16x16 4bpp sprite tile block.
-#define ICON_TILE_BYTES 128
-
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
 /// into a free VRAM block.
 UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
@@ -454,7 +451,7 @@ void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
   struct Window *window;
-  s32 sentinel;
+  s32 depth;
   struct WindowSprite *cursor;
 
   menu->auxiliaryWindow = NULL;
@@ -466,13 +463,13 @@ struct Window *MenuCursor_Create(void *source) {
   menu->tabIndex[0] = 255;
   menu->tabIndex[1] = 0;
   menu->sideIcon[0] = cursor;
-  // sentinel is the depth slot an icon is drawn at: the hand at 254, with
+  // depth is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
-  sentinel = OAM_DEPTH_FRONT - 1;
-  cursor->sentinel = sentinel;
-  sentinel -= 255;
+  depth = OAM_DEPTH_FRONT - 1;
+  cursor->depth = depth;
+  depth -= 255;
   // sideIcon[1] gets slot 255.
-  menu->sideIcon[1]->sentinel = sentinel; // -1
+  menu->sideIcon[1]->depth = depth; // -1
   return window;
 }
 
@@ -1203,6 +1200,5 @@ void WindowPalette_SetLowHpTextColor(void) {
 #undef WINDOW_KEEP_EXISTING
 #undef WINDOW_STYLE_MASK
 #undef NUMBER_PIXELS_PER_DIGIT
-#undef ICON_TILE_BYTES
 #undef CURSOR_BOB_STEP
 #undef PAGE_LABEL_FIRST

@@ -287,7 +287,7 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   work = gWindowWork[0];
   Task_Remove(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
-  BG_PLTT_COLOR(WINDOW_PALETTE, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 1) = RGB_WHITE;
   BG_PLTT_COLOR(WINDOW_PALETTE, 3) = 0;
   BG_PLTT_COLOR(WINDOW_PALETTE, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(WINDOW_PALETTE, 12) = RGB(20, 20, 20);

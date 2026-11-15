@@ -166,7 +166,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
-        VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 1024);
+        VramCache_Load(sprite->slot, ICON_TILE_BYTES, (u8 *)iconBuffer + 1024);
 
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
@@ -251,7 +251,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     sprite->image.priority = 1;
 
     Icon_DrawItemFar(item);
-    VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 1024);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, (u8 *)iconBuffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)

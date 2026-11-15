@@ -1478,7 +1478,7 @@ static void Imil_RunIceSlide(void) {
   subject = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
   for (;;) {
-    heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
+    heading = gImil_SwayHeadings[DPAD_INDEX(gKeysHeld)];
     if ((u16)heading == 0xffff) {
       return;
     }

@@ -59,15 +59,10 @@
 #include "system/transform.h"
 #include "window/menu_list.h"
 
-/// A blend weight's whole: REG_BLDALPHA's two weights and REG_BLDY's level
-/// run from 0 to 16.
-#define BLEND_WEIGHT_MAX 16
 /// The canvas added to the battle under it: both blend weights whole.
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
-/// The brightest colour, every channel at its highest level.
-#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 
 // Display, palette and per-line work (README.md, "Around the canvas").
 // The tasks read the current effect's work block, so the runner that
@@ -143,13 +138,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// screen's right edge.
 #define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
 
-/// BG1's vertical scroll that sets the battle background in the battle view.
-#define BATTLE_BACKGROUND_SCROLL_Y 32
-
-/// Where the battle's projection (gProjection) centres on the screen, and
-/// where Atalanta and Boreas centre it while their formations fly, lower.
-#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
-#define BATTLE_PROJECTION_CENTER_Y 120
+/// Where Atalanta and Boreas centre the projection while their formations
+/// fly, lower than the battle's BATTLE_PROJECTION_CENTER_Y.
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
@@ -199,7 +189,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
-  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
+  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED),                                \
+   HeapSlot_Release(HEAP_SLOT_RAM_CODE))
 
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.

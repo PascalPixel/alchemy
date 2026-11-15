@@ -47,8 +47,8 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 
 /// Disables interrupts to add one register write or DMA to the queue; a write
 /// to a full queue is dropped.
-/// @param control a width (IO_WRITE_BYTE to IO_WRITE_WORD), with IO_WRITE_SET or
-/// IO_WRITE_CLEAR to change bits; or a DMA control word.
+/// @param control a width (IO_WRITE_BYTE to IO_WRITE_WORD), with IO_WRITE_SET
+/// or IO_WRITE_CLEAR to change bits; or a DMA control word.
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

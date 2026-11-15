@@ -311,7 +311,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
-    sprite->sentinel = OAM_DEPTH_FRONT;
+    sprite->depth = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;
     // The caret stands after the name, at its width in pixels.
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
@@ -576,7 +576,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
-    sprite->sentinel = OAM_DEPTH_FRONT;
+    sprite->depth = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
     x = 72 + NameEntry_CountLetters(editedName) * 10;

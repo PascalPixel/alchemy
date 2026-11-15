@@ -137,9 +137,6 @@ enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 #define EXAMINE_CHEST_FACING(facing)                                           \
   (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
-/// An item icon's tiles: a 16-pixel square at 4 bits a pixel.
-#define ICON_TILE_BYTES (16 * 16 / 2)
-
 /// In Lalivero, on either visit, talking to Torch, a Mars Djinni, makes it join
 /// the party.
 static void Lalivero_TalkToTorch(void) {
@@ -225,7 +222,7 @@ static void Lalivero_EnterDoor(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
   Event_Wait(10);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(door);
 }
 
@@ -236,7 +233,7 @@ static void Lalivero_EnterDoorway(void) {
   s16 *trigger = (s16 *)&work->stepTrigger;
   s32 exit = *trigger;
 
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exit);
 }
 

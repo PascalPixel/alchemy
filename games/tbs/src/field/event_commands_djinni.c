@@ -28,11 +28,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 i;
   UNUSED struct Actor *copies[DJINNI_CLONE_MAX];
 
-  // The way the leader faces, to the nearest quarter turn.
   djinni = Actor_GetById(djinniId);
-  dir =
-      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 8) &
-      0xc000;
+  dir = FACING_NEAREST_CARDINAL(
+      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);

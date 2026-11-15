@@ -116,7 +116,6 @@
 #include "game/inventory.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/tolbi_ship.h"
 #include "scene/walk_into_leader.h"
@@ -2952,7 +2951,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->image.palette = 0;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
-  VramCache_Load(sprite->slot, 128, glyph->tiles);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gShipRooms_AnchorObject = actor;

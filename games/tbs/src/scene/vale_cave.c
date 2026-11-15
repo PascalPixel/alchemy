@@ -71,7 +71,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"

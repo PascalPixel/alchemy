@@ -302,7 +302,7 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   Sound_Play(SE_MAP_EXIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(exitNumber);

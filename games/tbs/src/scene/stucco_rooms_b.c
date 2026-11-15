@@ -66,7 +66,6 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
-#include "scene/facing_nearest.h"
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 

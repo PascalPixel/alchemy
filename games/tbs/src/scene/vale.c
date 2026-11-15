@@ -109,7 +109,6 @@
 #include "scene/actor_polar_target.h"
 #include "scene/catch_nut.h"
 #include "scene/event_psynergy.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "scene/world_map_attached_effects.h"

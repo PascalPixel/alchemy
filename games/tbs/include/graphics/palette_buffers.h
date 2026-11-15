@@ -60,10 +60,10 @@ struct PaletteFade {
                                      ///< frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][448];
-  u8 page;        ///< the packed page queued this frame
-  s8 duration;    ///< frames; 0 when the colours are not moving
-  s8 step;        ///< frames
-  u8 padding; ///< never named
+  u8 page;     ///< the packed page queued this frame
+  s8 duration; ///< frames; 0 when the colours are not moving
+  s8 step;     ///< frames
+  u8 padding;  ///< never named
 };
 
 STATIC_ASSERT(sizeof(struct PaletteFade) == 0x2a04);

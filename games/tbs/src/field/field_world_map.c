@@ -344,8 +344,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01a901a8;
-  for (screenRow = 0; screenRow < SCREEN_ROWS; screenRow++) {
-    for (screenColumn = 0; screenColumn < SCREEN_COLUMNS / 2; screenColumn++) {
+  for (screenRow = 0; screenRow < DISPLAY_TILE_HEIGHT; screenRow++) {
+    for (screenColumn = 0; screenColumn < DISPLAY_TILE_WIDTH / 2;
+         screenColumn++) {
       *screenTiles++ = tilePair;
       tilePair += 0x00020002;
     }

@@ -138,7 +138,7 @@ redraw:
         if (!(gKeysHeld & KEY_START))
           break;
         if (red == 0)
-          *paletteColor = RGB(31, 31, 31);
+          *paletteColor = RGB_WHITE;
         if (red == EDITOR_BLINK_FRAMES)
           *paletteColor = rgb555;
         if (red == EDITOR_BLINK_FRAMES * 2)

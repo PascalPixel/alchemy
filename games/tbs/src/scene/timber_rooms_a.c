@@ -51,7 +51,6 @@
 #include "field/event_inline.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "system/main_routine.h"
 #include "system/main_routine_work.h"

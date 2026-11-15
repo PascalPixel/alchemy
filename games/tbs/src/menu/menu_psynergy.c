@@ -1089,7 +1089,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           // Swell the selected icon, in depth slot 250, as in ItemMenu_RunList.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
-          icon->sentinel = OAM_DEPTH_FRONT - 5;
+          icon->depth = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++) {
           Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);

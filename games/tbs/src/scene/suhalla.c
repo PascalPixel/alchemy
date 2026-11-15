@@ -184,7 +184,7 @@ static void Suhalla_EnterDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitTrigger);
 }
 
@@ -198,7 +198,7 @@ static void Suhalla_EnterWideDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitTrigger);
 }
 

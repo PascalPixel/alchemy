@@ -67,7 +67,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/fixed_point_position.h"

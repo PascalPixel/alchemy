@@ -1905,7 +1905,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
       icon->gravity = px(1) / 4;
       glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Icon_DrawItem(item);
-      VramCache_Load(sprite->slot, 128, glyph->tiles);
+      VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       for (frame = 0; frame < 60; frame++) {
         if (icon->velocityY >= -255 && icon->velocityY <= 255)

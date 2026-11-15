@@ -88,7 +88,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/vault_item_icon.h"
 #include "sound/sound.h"
@@ -1396,7 +1395,7 @@ static void LogRoomsA_LeaveGuestsRoom(void) {
 static void LogRoomsA_ClimbToLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
@@ -1412,7 +1411,7 @@ static void LogRoomsA_LeaveLoft(void) {
     Event_ShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
     Event_End();
   }
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }

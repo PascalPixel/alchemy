@@ -807,7 +807,8 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
       actor->sprite->flags = 0;
     }
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND,
+                      IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
@@ -860,7 +861,8 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND,
+                      IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);

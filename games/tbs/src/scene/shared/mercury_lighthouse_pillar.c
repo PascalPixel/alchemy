@@ -263,8 +263,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   flags = &actor->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
-  angle = gMercuryLighthouse_MoveAngles[(keys >> 4) & 15];
-  if ((s16)gMercuryLighthouse_MoveAngles[(keys >> 4) & 15] == -1)
+  angle = gMercuryLighthouse_MoveAngles[DPAD_INDEX(keys)];
+  if ((s16)gMercuryLighthouse_MoveAngles[DPAD_INDEX(keys)] == -1)
     return;
   pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   pos[1].fixed = actor->groundHeight;

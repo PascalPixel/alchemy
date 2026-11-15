@@ -46,7 +46,7 @@ void Scene_FloatNut(s32 id) {
 
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_NUT);
-  VramCache_Load(sprite->palette, 128, glyph->tiles);
+  VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
   actor->orbitCenterX = actor->x;

@@ -785,7 +785,7 @@ s32 Scene_Initialize(void) {
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
-    gFieldWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     wait(1);
     FieldCamera_SetSpeed(8);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2076,7 +2076,7 @@ static void WorldMap_ShowEndingEvent(void) {
   WorldMap_StartZoom(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
@@ -2401,8 +2401,8 @@ static void WorldMap_ShowIslandDrifting(void) {
   Event_Wait(120);
   WorldMap_StartZoom(7 * Q16_ONE / 5, 300);
   Event_Wait(270);
-  gFieldWork->transitionFrames = 16;
-  PLTT_BACKDROP = RGB(31, 31, 31);
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  PLTT_BACKDROP = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
@@ -2597,7 +2597,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Event_Start();
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_GLITTER);

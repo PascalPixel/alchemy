@@ -192,7 +192,7 @@ void wait(s32 frames) {
       savedBackdropColor = PLTT_BACKDROP;
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
-        Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
+        Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
         for (delayVBlank = 0; delayVBlank < SLEEP_WHITE_VBLANKS;
              delayVBlank++) {
           VBlankIntrWait();

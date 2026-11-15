@@ -75,7 +75,6 @@
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -1125,7 +1124,7 @@ static void HeatGauge_Draw(void) {
     sprite->next = NULL;
     sprite->oam.word.attr01 = (x << 16) | y | attributes;
     sprite->oam.word.attr23 = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-    Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), 255);
+    Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), OAM_DEPTH_FRONT);
     sprite++;
     tile += 8;
     offset += sizeof(*sprite);

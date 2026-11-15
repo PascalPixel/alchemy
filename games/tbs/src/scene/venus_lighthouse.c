@@ -97,7 +97,6 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_step.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
@@ -1205,7 +1204,7 @@ static void VenusLighthouse_SearchStatue(void) {
   Event_Wait(100);
   Sound_Play(SE_SWIRL);
   Event_Wait(30);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   Event_Wait(70);
   // The first consultation selects a route; later consultations alternate it.

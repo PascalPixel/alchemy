@@ -218,7 +218,7 @@ static void Title_UpdateSpriteReveal(void) {
       if (revealAge <= 2 && (gFrameCount & 1))
         revealAge = 0;
       if (revealAge != 0)
-        Oam_AddSpriteAtDepth(sprite, 255);
+        Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
       sprite++;
       tileIndex += 2;
     }
@@ -247,7 +247,7 @@ static void Title_UpdateSpriteReveal(void) {
     if (revealAge <= 2 && (gFrameCount & 1))
       revealAge = 0;
     if (revealAge != 0)
-      Oam_AddSpriteAtDepth(sprite++, 255);
+      Oam_AddSpriteAtDepth(sprite++, OAM_DEPTH_FRONT);
     tileIndex += 2;
   } while (++column <= 17);
 #endif
@@ -277,7 +277,8 @@ static void Title_RevealScreen(s32 unused) {
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16),
+                      IO_WRITE_HALFWORD);
   Event_Wait(120);
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_HALFWORD);

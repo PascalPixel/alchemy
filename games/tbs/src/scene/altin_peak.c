@@ -2131,7 +2131,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
   Event_End();
 }

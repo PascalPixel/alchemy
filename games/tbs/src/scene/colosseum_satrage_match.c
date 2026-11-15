@@ -82,7 +82,6 @@
 #include "scene/colosso_occupant.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"

@@ -35,7 +35,6 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
-#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/kolima_palette.h"
 #include "sound/sound.h"

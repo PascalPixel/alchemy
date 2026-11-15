@@ -1391,8 +1391,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   FieldCamera_MoveTo(286, CAMERA_KEEP, 134, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
@@ -1473,7 +1473,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Io_Write16(0, &PLTT_BACKDROP);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
 

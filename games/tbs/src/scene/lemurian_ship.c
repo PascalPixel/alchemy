@@ -864,7 +864,7 @@ static void Curtain_Close(void) {
   for (; i < 8; i++)
     CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
   for (i = 0; i < 24; i++)
-    Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
+    Oam_AddSpriteAtDepth(&sCurtainSprites[i], OAM_DEPTH_FRONT);
 }
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels

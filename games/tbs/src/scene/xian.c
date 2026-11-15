@@ -70,7 +70,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -605,7 +604,7 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 

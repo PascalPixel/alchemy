@@ -210,6 +210,8 @@ enum DisplayControl {
 #define RGB_BLUE(color) (((color) >> 10) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
@@ -388,6 +390,10 @@ enum KeyMask {
 };
 
 #define KEYS_MASK 0x3ff ///< the ten keys' bits; KEYINPUT reads 0 for a held key
+
+/// The direction pad's four keys (KEY_RIGHT to KEY_DOWN) as a number 0 to 15,
+/// to index a table with a row for each combination held.
+#define DPAD_INDEX(keys) (((keys) >> 4) & 15)
 
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)  ///< BG0's control (BGCNT_)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012) ///< BG0's vertical scroll

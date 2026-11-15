@@ -1141,11 +1141,11 @@ void LuckyWheels_Run(void) {
 
   count = 0;
   j = 0;
-  for (k = 0; k != SCREEN_ROWS; k++) {
-    for (i = 0; i != BG_MAP_COLUMNS; i++, j += 2) {
+  for (k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
+    for (i = 0; i != BG_SCREEN_WIDTH; i++, j += 2) {
       if (i >= 5 && i <= 24 && k > 2 && k <= 13) {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a6;
-      } else if (i >= SCREEN_COLUMNS) {
+      } else if (i >= DISPLAY_TILE_WIDTH) {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0;
       } else {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a8 + count;
@@ -1160,10 +1160,10 @@ void LuckyWheels_Run(void) {
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
   j = 0;
-  for (k = 0; k != SCREEN_ROWS; k++) {
-    for (i = 0; i != SCREEN_COLUMNS; i++) {
+  for (k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
+    for (i = 0; i != DISPLAY_TILE_WIDTH; i++) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
-        Dma_Set(tiles + (k * SCREEN_COLUMNS + i) * TILE_SIZE_4BPP,
+        Dma_Set(tiles + (k * DISPLAY_TILE_WIDTH + i) * TILE_SIZE_4BPP,
                 (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_COPY_WORDS(8),
                 REG_DMA3);
         j += TILE_SIZE_4BPP;
@@ -1172,13 +1172,13 @@ void LuckyWheels_Run(void) {
   }
   Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 768);
   j = 0;
-  for (k = 0; k != SCREEN_ROWS; k++) {
-    for (i = 0; i != BG_MAP_COLUMNS; i++, j += 2) {
+  for (k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
+    for (i = 0; i != BG_SCREEN_WIDTH; i++, j += 2) {
       if (k < 2 || k > 16)
         *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 191;
       else
         *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) =
-            k * BG_MAP_COLUMNS + i + 148;
+            k * BG_SCREEN_WIDTH + i + 148;
     }
   }
   REG_BG1CNT = BGCNT_SCREEN_BASE(5) | BGCNT_CHAR_BASE(2) | BGCNT_PRIORITY(1);
@@ -1279,9 +1279,8 @@ void LuckyWheels_Run(void) {
     Dma_Set((void *)BG_PLTT, work, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
             REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, PALETTE_HALF_COLORS);
-    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0,
-                            PALETTE_HALF_COLORS);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
+    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
@@ -1307,10 +1306,10 @@ void LuckyWheels_Run(void) {
       if (frame <= LUCKY_WHEELS_FADE_FRAMES) {
         LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
                                 frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                                PALETTE_HALF_COLORS);
+                                BG_PLTT_COLORS);
         LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
                                 frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                                PALETTE_HALF_COLORS);
+                                BG_PLTT_COLORS);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase =
@@ -1425,14 +1424,12 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
-                              Q16_ONE -
-                                  j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                              PALETTE_HALF_COLORS);
-      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
-                              Q16_ONE -
-                                  j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                              PALETTE_HALF_COLORS);
+      LuckyWheels_ScaleRgb555(
+          shade, (u16 *)OBJ_PLTT,
+          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
+      LuckyWheels_ScaleRgb555(
+          (u16 *)work, (u16 *)BG_PLTT,
+          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);

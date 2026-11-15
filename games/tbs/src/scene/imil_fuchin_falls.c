@@ -1478,7 +1478,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     actor->retainSpriteCache = 1;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
-    VramCache_Load(sprite->slot, 128, glyph->tiles);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     gImilFuchinFalls_DragonsEye = actor;
   }
@@ -1721,7 +1721,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
+  direction = gImilFuchinFalls_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (direction == -1) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -1751,7 +1751,7 @@ static void Imil_SlideActorAcrossIce(void) {
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
   for (;;) {
-    heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];
+    heading = gImilFuchinFalls_SlideHeadings[DPAD_INDEX(gKeysHeld)];
     if ((u16)heading == 0xffff) {
       return;
     }

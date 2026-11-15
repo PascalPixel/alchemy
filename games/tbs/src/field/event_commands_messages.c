@@ -86,8 +86,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     // Place the message above or below the speaker, or mid-screen when the
     // speaker is not on screen.
     if (!found) {
-      left = SCREEN_COLUMNS / 2;
-      top = SCREEN_ROWS / 2;
+      left = DISPLAY_TILE_WIDTH / 2;
+      top = DISPLAY_TILE_HEIGHT / 2;
     } else {
       left = 0;
       top = 0;
@@ -112,15 +112,15 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         column = 0;
     } else if (flags & SPEAKER_PORTRAIT_RIGHT) {
       column += 2;
-      if (column + margin > SCREEN_COLUMNS - 1)
-        column = SCREEN_COLUMNS - 1 - margin;
-    } else if (column <= SCREEN_COLUMNS / 2) {
+      if (column + margin > DISPLAY_TILE_WIDTH - 1)
+        column = DISPLAY_TILE_WIDTH - 1 - margin;
+    } else if (column <= DISPLAY_TILE_WIDTH / 2) {
       column = column - margin - 2;
       if (column < 0)
         column = x + 2;
     } else {
       column += 2;
-      if (column + margin > SCREEN_COLUMNS - 1)
+      if (column + margin > DISPLAY_TILE_WIDTH - 1)
         column = x - margin - 2;
     }
 
@@ -139,7 +139,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > SCREEN_ROWS - 1)
+      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
         portraitTop = top - 5;
       if (top < portraitTop) {
         s32 lines = height;
@@ -170,7 +170,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > SCREEN_ROWS - 1)
+      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
         portraitTop = top - 5;
     }
     if (top < y) {
@@ -184,8 +184,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #endif
     if (column < 0)
       column = 0;
-    else if (column + margin > SCREEN_COLUMNS - 1)
-      column = SCREEN_COLUMNS - 1 - margin;
+    else if (column + margin > DISPLAY_TILE_WIDTH - 1)
+      column = DISPLAY_TILE_WIDTH - 1 - margin;
 
     // Open the message and the portrait, and wait until the text is typed out.
     if (win->mindRead != 0) {
@@ -199,9 +199,10 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
-                                       (voice << 16) | 17);
+                                       MESSAGE_WINDOW_VOICE(voice) | 17);
       else
-        handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
+        handle = Message_OpenWindowFar(message, left, top,
+                                       MESSAGE_WINDOW_VOICE(voice) | 1);
     }
     // DEAD: both arms open the same portrait behind a test of win->mindRead;
     // the ROM keeps the test's load of mindRead.
@@ -469,5 +470,5 @@ void Message_SetVoiceFromActor(s32 actorId) {
   }
 }
 
-#undef SCREEN_COLUMNS
-#undef SCREEN_ROWS
+#undef DISPLAY_TILE_WIDTH
+#undef DISPLAY_TILE_HEIGHT

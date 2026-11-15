@@ -144,7 +144,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->kind = WINDOW_SPRITE_ICON;
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
-      sprite->sentinel = OAM_DEPTH_WINDOW;
+      sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
       sprite->y = 120;
       /* FAKEMATCH(type): the two words stored through pointer types. */

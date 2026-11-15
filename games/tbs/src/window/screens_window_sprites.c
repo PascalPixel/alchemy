@@ -44,7 +44,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   ((u32 *)&sprite->oam)[1] =
       ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
 #endif
-  sprite->sentinel = OAM_DEPTH_FRONT;
+  sprite->depth = OAM_DEPTH_FRONT;
   sprite->next = NULL;
   sprite->x = x;
   sprite->y = y;
@@ -103,7 +103,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
   sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   // Not checked: with every sprite in use, this stores through NULL.
-  sprite->sentinel = OAM_DEPTH_FRONT - 4;
+  sprite->depth = OAM_DEPTH_FRONT - 4;
   return sprite;
 }
 
@@ -221,7 +221,7 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
 /// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
   if (sprite != NULL)
-    ((struct WindowSprite *)sprite)->sentinel = ~priority;
+    ((struct WindowSprite *)sprite)->depth = ~priority;
 }
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);

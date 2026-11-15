@@ -714,7 +714,7 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
     cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
-    if ((cursor->sentinel = OAM_DEPTH_WINDOW, menu->page) ==
+    if ((cursor->depth = OAM_DEPTH_WINDOW, menu->page) ==
         STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
@@ -1500,7 +1500,7 @@ s32 PsynergyMenu_SelectAction(void) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)
-        icon->sentinel = priority;
+        icon->depth = priority;
     }
   }
   Task_Remove(Menu_PlacePartyFigures);
@@ -1777,7 +1777,7 @@ s32 ItemMenu_SelectItem(void) {
     struct WindowSprite *icon = menu->entryIcons[iconIndex];
 
     if (icon != 0)
-      icon->sentinel = OAM_DEPTH_WINDOW;
+      icon->depth = OAM_DEPTH_WINDOW;
   }
 
   Task_Remove(Menu_PlacePartyFigures);
@@ -2153,7 +2153,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
       entry->y = shown * 16 + 88;
-      entry->sentinel = OAM_DEPTH_WINDOW;
+      entry->depth = OAM_DEPTH_WINDOW;
       Icon_PrepareActor(entry);
       shown++;
     }
@@ -2172,7 +2172,7 @@ void ItemMenu_ResetCategory(void) {
     if (object != 0) {
       object->x = MENU_ICON_HIDDEN_X;
       object->y = MENU_ICON_HIDDEN_Y;
-      object->sentinel = OAM_DEPTH_WINDOW;
+      object->depth = OAM_DEPTH_WINDOW;
       Icon_PrepareActor(object);
     }
   }

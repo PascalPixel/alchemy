@@ -88,7 +88,6 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_step.h"
-#include "scene/facing_nearest.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/io_write_queue.h"

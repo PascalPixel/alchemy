@@ -205,21 +205,21 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   gFieldWork->transitionFrames = 8;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_Wait(4);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_Wait(4);
   SolSanctumEruption_ThrowEruptionRing();
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_Wait(16);
   Sound_Play(SE_CLATTER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_Wait(4);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_Wait(4);
   Sound_Play(SE_CLATTER);
@@ -836,7 +836,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   gEmberMask = 3;
   Event_Wait(80);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   Event_Wait(40);
   Task_Remove(SolSanctumEruption_StepEmbers);
@@ -1262,7 +1262,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.palette = 0;
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
-    VramCache_Load(starSprite->slot, 128, glyph->tiles);
+    VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);
@@ -1452,10 +1452,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   Event_Wait(20);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(60);
   wait(100);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);

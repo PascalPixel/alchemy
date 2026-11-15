@@ -277,7 +277,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// Runs the Lucky Dice minigame until the player quits or cannot afford a
 /// throw. Each throw costs ten coins per level of the party's average.
 void LuckyDice_Run(void) {
-  u16 bgPalette[PALETTE_HALF_COLORS];
+  u16 bgPalette[BG_PLTT_COLORS];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
   // The two faces, then the two rows the dice stopped in.
   s32 numbers[DICE_RESULT_COUNT];
@@ -359,10 +359,10 @@ void LuckyDice_Run(void) {
   // Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
   // the board and dice graphics with their palettes faded to black.
   index = 0;
-  for (tileY = 0; tileY != SCREEN_ROWS; tileY++) {
-    for (tileX = 0; tileX != BG_MAP_COLUMNS; tileX++) {
+  for (tileY = 0; tileY != DISPLAY_TILE_HEIGHT; tileY++) {
+    for (tileX = 0; tileX != BG_SCREEN_WIDTH; tileX++) {
       *(volatile u16 *)(BG_SCREEN_BLOCK(6) + index) =
-          tileX + tileY * SCREEN_COLUMNS;
+          tileX + tileY * DISPLAY_TILE_WIDTH;
       index += 2;
     }
   }
@@ -466,10 +466,10 @@ void LuckyDice_Run(void) {
     if (frame <= DICE_FADE_FRAMES) {
       LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
                                   frame * (Q16_ONE / DICE_FADE_FRAMES),
-                                  PALETTE_HALF_COLORS);
+                                  BG_PLTT_COLORS);
       LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
                                   frame * (Q16_ONE / DICE_FADE_FRAMES),
-                                  PALETTE_HALF_COLORS);
+                                  BG_PLTT_COLORS);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -1001,9 +1001,9 @@ void LuckyDice_Run(void) {
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
     scale = Q16_ONE - index * (Q16_ONE / DICE_FADE_FRAMES);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale,
-                                PALETTE_HALF_COLORS);
+                                BG_PLTT_COLORS);
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale,
-                                PALETTE_HALF_COLORS);
+                                BG_PLTT_COLORS);
     wait(1);
   }
   HeapSlot_Release(HEAP_SLOT_CAMERA);

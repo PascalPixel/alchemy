@@ -6,6 +6,7 @@
 
 #include "static_assert.h"
 #include "types.h"
+#include "system/io_reg.h"
 
 /// The 3D projection onto the screen: its focal length, near and far depths,
 /// and the screen point the view centres on.
@@ -27,5 +28,10 @@ STATIC_ASSERT(offsetof(struct Projection, centerY) == 0x10);
 /// write its focal length and depth range, and the battle and its battle
 /// effects set its centre directly.
 extern struct Projection gProjection;
+
+/// Where the battle centres its projection on the screen: across the middle,
+/// and 120 pixels down, below the screen's middle.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
 
 #endif

@@ -571,7 +571,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   Event_Wait(100);
   Task_Remove(spawnOrbitSparks);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   Event_Wait(100);
   KolimaPalette_Restore(0);

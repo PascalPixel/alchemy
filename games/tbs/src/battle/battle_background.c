@@ -12,9 +12,6 @@
 #define DEBUG_SELECT_VALUE 480
 #endif
 
-/// The projection's centre on screen, x and y alike.
-#define BATTLE_PROJECTION_CENTER 120
-
 /// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
 #define BACKGROUND_PLANE_UPPER                                                 \
@@ -288,16 +285,16 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   renderBounds[1] = 0;
   renderBounds[2] = camera->distance;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
-  gProjection.centerX = BATTLE_PROJECTION_CENTER;
-  gProjection.centerY = BATTLE_PROJECTION_CENTER;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER), px(BATTLE_PROJECTION_CENTER),
-      (BATTLE_PROJECTION_CENTER - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER - measuredBounds[1]) << 8, scale);
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -337,16 +334,16 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   renderBounds[2] = span;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
   // Where the battlefield's origin falls on the screen moves the plane as much.
-  gProjection.centerX = BATTLE_PROJECTION_CENTER;
-  gProjection.centerY = BATTLE_PROJECTION_CENTER;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER), px(BATTLE_PROJECTION_CENTER),
-      (BATTLE_PROJECTION_CENTER - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER - measuredBounds[1]) << 8, scale);
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   // The zoom scales the focal length and the far depth.
   half = scale * 255;
   width = half * 2;

@@ -512,7 +512,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();

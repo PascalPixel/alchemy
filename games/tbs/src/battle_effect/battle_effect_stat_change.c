@@ -210,8 +210,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                          drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       if (frame > 32)
         y = y - frame * 2 + 64;

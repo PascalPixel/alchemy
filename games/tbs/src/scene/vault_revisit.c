@@ -56,7 +56,6 @@
 #include "game/inventory.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/vault.h"
 #include "scene/vault_range.h"
@@ -412,7 +411,7 @@ static void VaultRevisit_RingBell(void) {
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 

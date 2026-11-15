@@ -105,7 +105,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/mercury_lighthouse_lights.h"
@@ -1791,7 +1790,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     Event_Wait(120);
-    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     Event_Wait(60);
     Import_EventSetExitRequest(
@@ -1873,7 +1872,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     Event_Wait(120);
-    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     Event_Wait(60);
     Event_End();

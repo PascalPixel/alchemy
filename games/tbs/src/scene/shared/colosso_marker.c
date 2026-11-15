@@ -47,7 +47,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
                         IO_WRITE_HALFWORD);
     wait(1);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0),
+                      IO_WRITE_HALFWORD);
   actor->scaleX = 17 * Q16_ONE / 16;
   actor->scaleY = 15 * Q16_ONE / 16;
   Event_Wait(1);
@@ -166,7 +167,7 @@ static void Colosso_UpdateMarker(void) {
     *dst++ = 0;
     *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerFlip << 28);
     *dst = tile | OBJ_PRIORITY(1);
-    Oam_AddSpriteAtDepth(oam, 255);
+    Oam_AddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
   } else if (gColosso_MarkerBlink > 19) {
     gColosso_MarkerBlink = 0;
   }

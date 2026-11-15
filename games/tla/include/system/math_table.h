@@ -12,7 +12,7 @@
 #include "types.h"
 #include "edition.h"
 
-extern const u16 gMath_ArcTanTable[];
+extern const u16 gMath_TanTable[258];
 extern const u8 gSystem_BasicColorPalette[];
 FIXED Math_SqrtFX(FIXED value);
 

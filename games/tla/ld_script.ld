@@ -122,7 +122,7 @@ SECTIONS
         "*/games/tla/src/gamepak/flash/atmel.o"(.text)
         "*libgcc.a:_call_via_rX.o"(.text)
         "*/games/tla/src/system/irq_table.o"(.rodata.irq_handlers)
-        "*/games/tla/src/system/mathtan.o"(.rodata)
+        "*/games/tla/src/system/math_table.o"(.rodata)
         "*/games/tla/src/graphics/palettes/palettes.o"(.rodata)
         "*/games/tla/src/system/number_text.o"(.rodata)
         "*/games/tla/src/system/inner_product.o"(.text .rodata .data .padding)
@@ -152,7 +152,7 @@ SECTIONS
         "*/games/tla/src/field/field.o"(.text)
         "*/games/tla/src/field/animdata.o"(.rodata)
         "*/games/tla/src/field/facing.o"(.rodata)
-        "*/games/tla/src/field/curve_data.o"(.rodata)
+        "*/games/tla/src/field/terrain_tables.o"(.data)
         "*/games/tla/src/field/map_grid_data.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08038000);
         "*/games/tla/src/gamepak/far_call/window.o"(.text .rodata .data .padding)
@@ -312,7 +312,7 @@ SECTIONS
         "*/games/tla/src/graphics/title/prompt.o"(.rodata)
         "*/games/tla/src/menu/logo.o"(.rodata)
         "*/games/tla/src/graphics/title/prompt_blend_levels.o"(.rodata)
-        "*/games/tla/src/menu/title_intro_tables.o"(.rodata)
+        "*/games/tla/src/menu/title_intro_tables.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + 0x081ac000);
         "*/games/tla/src/gamepak/far_call/lucky_dice.o"(.text)
         "*/games/tla/src/field/lucky_dice.o"(.text)

@@ -48,7 +48,7 @@ s32 Trig_Atan(s32 x, s32 y) {
     ratio = Iwram_UnsignedDivide(value << 8, ratio);
     result = DEGtoANG(90);
     if (ratio <= 0xFB6A) {
-      table = gMath_ArcTanTable;
+      table = &gMath_TanTable[127];
       result = 0;
       bit = 0x2000;
 

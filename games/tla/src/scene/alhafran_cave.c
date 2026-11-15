@@ -52,12 +52,64 @@ extern s32 gAlhafranCave_ClearedWord;
 /// Set while the way down to the jail is open, as the leader stands on the
 /// ledge above it.
 #define FLAG_WAY_TO_JAIL_OPEN 0x204
-/// The jail's people, numbering the rows of gAlhafranCave_JailActorPlacements.
+/// Set once Lash has tied the jail's rope.
+#define FLAG_JAIL_ROPE_TIED FLAG_SCENE_TEMP_00
+/// Set once Pound has sunk the jail's stake.
+#define FLAG_JAIL_STAKE_POUNDED FLAG_SCENE_TEMP_01
+/// Set once Frost has frozen the cave's puddle.
+#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
+/// The cave's actors (SceneId_AlhafranCave), numbering the rows of
+/// gAlhafranCave_CaveActorPlacements.
+enum AlhafranCaveActorId {
+  /// Three pillars standing twelve pixels up.
+  ACTOR_CAVE_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_CAVE_SECOND_PILLAR,
+  ACTOR_CAVE_THIRD_PILLAR,
+  /// A pillar's two pieces (sprite 371, in its animations 2 and 3) and the
+  /// pillar leaning across them, turned a sixteenth of a turn.
+  ACTOR_CAVE_FIRST_PILLAR_PIECE,
+  ACTOR_CAVE_SECOND_PILLAR_PIECE,
+  ACTOR_CAVE_LEANING_PILLAR,
+  /// The two pillars Move can push.
+  ACTOR_CAVE_FIRST_PUSHED_PILLAR,
+  ACTOR_CAVE_SECOND_PUSHED_PILLAR,
+  /// The puddle Frost freezes into a pillar of ice.
+  ACTOR_CAVE_PUDDLE
+};
+
+/// The jail's actors (SceneId_AlhafraJail), numbering the rows of
+/// gAlhafranCave_JailActorPlacements.
 enum AlhafraJailActorId {
-  ACTOR_BRIGGS = ACTOR_FIRST_PLACED + 10,
-  ACTOR_EOLEO = ACTOR_FIRST_PLACED + 13,
+  /// The crate Move pushes.
+  ACTOR_CRATE = ACTOR_FIRST_PLACED,
+  /// The stake Pound sinks.
+  ACTOR_JAIL_STAKE,
+  /// The poles of the rope Lash ties.
+  ACTOR_JAIL_ROPE_POLE,
+  ACTOR_JAIL_ROPE_OTHER_POLE,
+  /// A pillar's two pieces and the pillar leaning across them, as the cave's.
+  ACTOR_JAIL_FIRST_PILLAR_PIECE,
+  ACTOR_JAIL_SECOND_PILLAR_PIECE,
+  ACTOR_JAIL_LEANING_PILLAR,
+  /// XXX: what it shows (sprite 683, by the cells); a render of the jail with
+  /// Briggs's crew inside would settle it.
+  ACTOR_JAIL_CELL_SPRITE,
+  /// Briggs and his crew in their cell, once Briggs is caught.
+  /// "I hate prison. The food is terrible..."
+  ACTOR_CREWMAN_WHO_HATES_PRISON,
+  /// "It sounds like the mayor of Alhafra lost interest in fixing that boat."
+  ACTOR_CREWMAN_ON_THE_BOAT,
+  ACTOR_BRIGGS,
+  /// "Everything would have been fine if it hadn't been for you meddling
+  /// kids..."
+  ACTOR_CREWMAN_BLAMING_THE_PARTY,
+  /// "I saw you staring at Eoleo..."
+  ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  ACTOR_EOLEO,
   ACTOR_CHAUCHA,
-  ACTOR_JAILER = ACTOR_FIRST_PLACED + 16
+  /// "Everything's so boring here... Why doesn't anybody do anything...?"
+  ACTOR_BORED_GUARD,
+  ACTOR_JAILER
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -113,14 +165,17 @@ extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 extern u8 gAlhafranCave_CrateSprite[];
 
+/// Sets the height of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellHeight_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
+/// Sets the behavior of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellBehavior(x, z, a, b);
 }
 
+/// The current scene's actors: the cave's or the jail's.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
@@ -131,14 +186,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAlhafranCave_CaveActorPlacements;
 }
 
+/// Pound sinks the jail's stake.
 void AlhafranCave_PoundPillar(s32 mode, s32 frame) {
   Pound_SinkTarget(gAlhafranCave_Pillars, mode, frame);
 }
 
+/// Move lifts the crate; nothing else happens.
 void AlhafranCave_StartMovingCrate(void) {}
 
+/// Move sets the crate down; nothing else happens.
 void AlhafranCave_FinishMovingCrate(void) {}
 
+/// Briggs asks whether the party has stopped by for a visit, and answers yes or
+/// no.
 void AlhafranCave_TalkToBriggs(s32 id) {
   FieldEvent_SetMessageId((s32)MsgOhStoppedBy);
   // "Oh, stopped by for a visit, did you?"
@@ -154,36 +214,42 @@ void AlhafranCave_TalkToBriggs(s32 id) {
   Event_ShowMessage(id, 0);
 }
 
+/// Frost freezes the cave's puddle into a pillar of ice.
 void AlhafranCave_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gAlhafranCave_Puddles);
 }
 
+/// Opens the way down to the jail: the cells by the ledge drop to the lower
+/// level.
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(0x1900000, 0x1300000, 0, 4);
-  MapGrid_SetCellHeight_(0x1a00000, 0x1300000, 0, 4);
-  MapGrid_SetCellHeight(0x1b00000, 0x1300000, 0, 4);
-  MapGrid_SetCellBehavior_(0x1800000, 0x1200000, 0, 255);
-  MapGrid_SetCellHeight_(0x1200000, 0x1800000, 0, 4);
-  MapGrid_SetCellHeight(0x1500000, 0x1800000, 0, 4);
+  MapGrid_SetCellHeight_(px(400), px(304), 0, 4);
+  MapGrid_SetCellHeight_(px(416), px(304), 0, 4);
+  MapGrid_SetCellHeight(px(432), px(304), 0, 4);
+  MapGrid_SetCellBehavior_(px(384), px(288), 0, 255);
+  MapGrid_SetCellHeight_(px(288), px(384), 0, 4);
+  MapGrid_SetCellHeight(px(336), px(384), 0, 4);
 }
 
+/// Closes the way down to the jail as the leader steps off the ledge.
 void AlhafranCave_CloseWayToJail(void) {
   Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(0x1900000, 0x1300000, 0, 0);
-  MapGrid_SetCellHeight_(0x1a00000, 0x1300000, 0, 0);
-  MapGrid_SetCellHeight(0x1b00000, 0x1300000, 0, 0);
-  MapGrid_SetCellBehavior_(0x1800000, 0x1200000, 0, 0);
-  MapGrid_SetCellHeight_(0x1200000, 0x1800000, 0, 0);
-  MapGrid_SetCellHeight(0x1500000, 0x1800000, 0, 0);
+  MapGrid_SetCellHeight_(px(400), px(304), 0, 0);
+  MapGrid_SetCellHeight_(px(416), px(304), 0, 0);
+  MapGrid_SetCellHeight(px(432), px(304), 0, 0);
+  MapGrid_SetCellBehavior_(px(384), px(288), 0, 0);
+  MapGrid_SetCellHeight_(px(288), px(384), 0, 0);
+  MapGrid_SetCellHeight(px(336), px(384), 0, 0);
 }
 
+/// Sand sinks the leader into the sand's layer.
 void AlhafranCave_CastSand(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->unkd4a = 2;
 }
 
+/// The current scene's triggers: the cave's or the jail's.
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
@@ -194,6 +260,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAlhafranCave_CaveTriggers;
 }
 
+/// Notes whether the leader stands on the cave's upper level.
 void AlhafranCave_TrackLeadersLevel(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
@@ -203,8 +270,9 @@ void AlhafranCave_TrackLeadersLevel(void) {
     gMainRoutineWork.unk2c3 = 1;
 }
 
+/// The jail's task: draws the crate's sprite where the crate stands.
 s32 AlhafranCave_DrawCrateSprite(void) {
-  struct Actor *object = Actor_Get(8);
+  struct Actor *object = Actor_Get(ACTOR_CRATE);
 
   BattleEffect_DrawSpriteAtWorldPosition(
       gAlhafranCave_CrateSprite, object->x.fixed, object->y.fixed + px(28),
@@ -212,6 +280,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
   return 0;
 }
 
+/// Sets up the cave or the jail.
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
   gFieldWork->transition = 0x201;
@@ -239,6 +308,8 @@ s32 Scene_Initialize(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
+/// Sets up the cave: its pillars, the pushed pillars, the puddle, and the way
+/// to the jail if it is open.
 void AlhafranCave_SetUpCave(void) {
   struct AlhafranCaveMapWork *map =
       (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapGrid;
@@ -249,53 +320,53 @@ void AlhafranCave_SetUpCave(void) {
   Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
     AlhafranCave_OpenWayToJail();
-  object = Actor_Get(8);
+  object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
   object->motionFlags = 0;
   object->y.fixed = px(12);
-  object = Actor_Get(9);
+  object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR);
   object->motionFlags = 0;
   object->y.fixed = px(12);
-  object = Actor_Get(10);
+  object = Actor_Get(ACTOR_CAVE_THIRD_PILLAR);
   object->motionFlags = 0;
   object->y.fixed = px(12);
-  Actor_SetSpriteColorMode(Actor_Get(8), 6);
-  Actor_SetSpriteColorMode(Actor_Get(9), 6);
-  Actor_SetSpriteColorMode(Actor_Get(10), 6);
-  object = Actor_Get(12);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_THIRD_PILLAR), 6);
+  object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE);
   object->motionFlags = 0;
   object->y.fixed = px(16);
-  object = Actor_Get(11);
+  object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
   object->motionFlags = 0;
   object->y.fixed = px(16);
-  FieldActor_SetSpriteRotationById(13, 0x1000);
-  Actor_SetAnimation(11, 2);
-  Actor_SetAnimation(12, 3);
-  Actor_SetAnimation(13, 2);
-  FieldActor_SetSpritePriority(11, 2);
-  FieldActor_SetSpritePriority(12, 2);
-  FieldActor_SetSpritePriority(13, 3);
-  Actor_Get(11)->priorityFlags |= 2;
-  Actor_Get(12)->priorityFlags |= 2;
-  Actor_Get(13)->priorityFlags |= 2;
-  Actor_SetSpriteColorMode(Actor_Get(11), 6);
-  Actor_SetSpriteColorMode(Actor_Get(12), 6);
-  Actor_SetSpriteColorMode(Actor_Get(13), 6);
+  FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, 0x1000);
+  Actor_SetAnimation(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
+  Actor_SetAnimation(ACTOR_CAVE_SECOND_PILLAR_PIECE, 3);
+  Actor_SetAnimation(ACTOR_CAVE_LEANING_PILLAR, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_SECOND_PILLAR_PIECE, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_LEANING_PILLAR, 3);
+  Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE)->priorityFlags |= 2;
+  Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE)->priorityFlags |= 2;
+  Actor_Get(ACTOR_CAVE_LEANING_PILLAR)->priorityFlags |= 2;
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_LEANING_PILLAR), 6);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(14, 200, 136);
-    Actor_SetPosition(15, 392, 360);
+    Actor_SetPosition(ACTOR_CAVE_FIRST_PUSHED_PILLAR, 200, 136);
+    Actor_SetPosition(ACTOR_CAVE_SECOND_PUSHED_PILLAR, 392, 360);
   }
-  object = Actor_Get(14);
+  object = Actor_Get(ACTOR_CAVE_FIRST_PUSHED_PILLAR);
   object->motionFlags = 0;
   object->groundHeight = 0;
   object->y.fixed = 0;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
-  object = Actor_Get(15);
+  object = Actor_Get(ACTOR_CAVE_SECOND_PUSHED_PILLAR);
   object->motionFlags = 0;
   object->groundHeight = 0;
   object->y.fixed = 0;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
-  Actor_SetActionCallback(Actor_Get(16), 9);
+  Actor_SetActionCallback(Actor_Get(ACTOR_CAVE_PUDDLE), 9);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
      * MapGrid_CopyCellPictureCellsRect_. */
@@ -316,7 +387,7 @@ void AlhafranCave_SetUpJail(void) {
   struct FieldWork *work;
 
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-  Actor_Get(8)->priorityFlags |= 32;
+  Actor_Get(ACTOR_CRATE)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   data = gAlhafranCave_CrateSprite;
   BattleEffect_FillOverlayTiles(0);
@@ -328,69 +399,71 @@ void AlhafranCave_SetUpJail(void) {
     work->unkd4c = 3;
   }
   Rope_Initialize();
-  Rope_Place(0, 0x200, 10, 11);
-  Actor_Get(10)->priorityFlags |= 32;
-  Actor_Get(11)->priorityFlags |= 32;
+  Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_POLE,
+             ACTOR_JAIL_ROPE_OTHER_POLE);
+  Actor_Get(ACTOR_JAIL_ROPE_POLE)->priorityFlags |= 32;
+  Actor_Get(ACTOR_JAIL_ROPE_OTHER_POLE)->priorityFlags |= 32;
   Pillars_Place(gAlhafranCave_Pillars);
-  Actor_SetSpriteFlags(Actor_Get(9), 0);
-  FieldActor_SetSpriteRotationById(14, 0x1000);
-  Actor_SetAnimation(12, 0);
-  Actor_SetAnimation(13, 1);
-  Actor_SetAnimation(14, 2);
-  FieldActor_SetSpritePriority(12, 1);
-  FieldActor_SetSpritePriority(13, 1);
-  Actor_Get(12)->priorityFlags |= 2;
-  Actor_Get(13)->priorityFlags |= 2;
-  Actor_Get(14)->priorityFlags |= 2;
-  Actor_SetSpriteColorMode(Actor_Get(12), 6);
-  Actor_SetSpriteColorMode(Actor_Get(13), 6);
-  Actor_SetSpriteColorMode(Actor_Get(14), 6);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_JAIL_STAKE), 0);
+  FieldActor_SetSpriteRotationById(ACTOR_JAIL_LEANING_PILLAR, 0x1000);
+  Actor_SetAnimation(ACTOR_JAIL_FIRST_PILLAR_PIECE, 0);
+  Actor_SetAnimation(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
+  Actor_SetAnimation(ACTOR_JAIL_LEANING_PILLAR, 2);
+  FieldActor_SetSpritePriority(ACTOR_JAIL_FIRST_PILLAR_PIECE, 1);
+  FieldActor_SetSpritePriority(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
+  Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE)->priorityFlags |= 2;
+  Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE)->priorityFlags |= 2;
+  Actor_Get(ACTOR_JAIL_LEANING_PILLAR)->priorityFlags |= 2;
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_LEANING_PILLAR), 6);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(15, 0, 0);
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(16, 0, 0);
-    Actor_SetPosition(17, 0, 0);
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(22, 0, 0);
-    Actor_SetPosition(24, 0, 0);
-    Actor_Get(23)->update = AlhafranCave_TakeLeadersLayer;
+    Actor_SetPosition(ACTOR_JAIL_CELL_SPRITE, 0, 0);
+    Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_EOLEO, 0, 0);
+    Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+    Actor_SetPosition(ACTOR_JAILER, 0, 0);
+    Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    Actor_SetPosition(23, 0, 0);
-    FieldActor_SetSpritePriority(18, 2);
-    FieldActor_SetSpritePriority(16, 2);
-    FieldActor_SetSpritePriority(17, 2);
-    FieldActor_SetSpritePriority(19, 2);
-    FieldActor_SetSpritePriority(20, 2);
+    Actor_SetPosition(ACTOR_BORED_GUARD, 0, 0);
+    FieldActor_SetSpritePriority(ACTOR_BRIGGS, 2);
+    FieldActor_SetSpritePriority(ACTOR_CREWMAN_WHO_HATES_PRISON, 2);
+    FieldActor_SetSpritePriority(ACTOR_CREWMAN_ON_THE_BOAT, 2);
+    FieldActor_SetSpritePriority(ACTOR_CREWMAN_BLAMING_THE_PARTY, 2);
+    FieldActor_SetSpritePriority(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 2);
     if (!Event_GetFlag(FLAG_FAMILY_VISITED_BRIGGS)) {
-      Actor_SetPosition(17, 712, 216);
-      Actor_SetPosition(19, 744, 216);
+      Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 712, 216);
+      Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 744, 216);
     } else {
-      Actor_SetPosition(22, 0, 0);
-      Actor_SetPosition(21, 0, 0);
+      Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+      Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     }
   } else {
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(16, 0, 0);
-    Actor_SetPosition(17, 0, 0);
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(22, 0, 0);
-    Actor_SetPosition(24, 0, 0);
-    Actor_Get(23)->update = AlhafranCave_TakeLeadersLayer;
+    Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 0);
+    Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_EOLEO, 0, 0);
+    Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+    Actor_SetPosition(ACTOR_JAILER, 0, 0);
+    Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   }
   if (gMainRoutineWork.entrance == 9 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Actor_SetSpeed(8, 0.3);
-    Actor_SetDestinationOffset(8, 0, 16);
-    FieldActor_WaitForMoveById(8);
+    Actor_SetSpeed(ACTOR_CRATE, 0.3);
+    Actor_SetDestinationOffset(ACTOR_CRATE, 0, 16);
+    FieldActor_WaitForMoveById(ACTOR_CRATE);
   }
 }
 
+/// Once the mast is cleared, the jail's cells stand open and empty.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
@@ -407,6 +480,8 @@ extern u8 MsgYouHereTo[];
 
 void AlhafranCave_ShakeUnderEoleosPower(void);
 
+/// Briggs's wife Chaucha and their son Eoleo visit him in the jail, and Eoleo
+/// shows Psynergy of his own.
 void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *actor21;
   struct Actor *actor15;
@@ -424,9 +499,9 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(ACTOR_CHAUCHA, 1);
   Actor_SetSpeed(ACTOR_EOLEO, 1);
-  Actor_SetSpeed(17, 1);
-  Actor_SetSpeed(19, 1);
-  Actor_SetSpeed(20, 1);
+  Actor_SetSpeed(ACTOR_CREWMAN_ON_THE_BOAT, 1);
+  Actor_SetSpeed(ACTOR_CREWMAN_BLAMING_THE_PARTY, 1);
+  Actor_SetSpeed(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
   // "You here to see Briggs?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
@@ -452,10 +527,10 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "How...is your cell? Is there anything I can do to make this easier..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 10);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_CREWMAN_WHO_HATES_PRISON, 2);
   FieldEvent_Wait(10);
   // "I'm fine, Chaucha. My only complaint is that the food here is terrible."
-  FieldEvent_ShowMessageThenWait(16, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "What!? Are they forcing you to eat this disgusting gruel?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 10);
@@ -496,7 +571,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   actor21 = Actor_Get(ACTOR_EOLEO);
-  actor15 = Actor_Get(15);
+  actor15 = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
   Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
@@ -514,14 +589,15 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   actor15->update = AlhafranCave_ShakeUnderEoleosPower;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(17, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_CREWMAN_ON_THE_BOAT, 3);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(19, 3);
-  Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, 3);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                      FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
@@ -529,13 +605,15 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_ShowEmote(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                  EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(20, -16, 0);
+  Actor_WalkByAndWait(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, -16, 0);
   FieldEvent_Wait(20);
-  (void *)Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  (void *)Actor_ShowEmote(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                          EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
   FieldActor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
@@ -556,10 +634,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Field_StartPaletteTransition(8);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_FaceDirection(16, FACING_EAST, 0);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(20, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -571,10 +650,13 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                      FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JAILER, FACING_WEST, 0);
@@ -595,10 +677,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
-  Actor_FaceDirection(16, FACING_EAST, 0);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(20, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
@@ -614,10 +697,13 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   // "Ahhh waaah..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
-  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+                      0);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                      FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JAILER, FACING_WEST, 0);
@@ -708,13 +794,15 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(10);
   Actor_SetScript(ACTOR_EOLEO, gAlhafranCave_VisitorsLeaveScript);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(20, 16, 0);
-  Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_WalkBy(17, 0, 16);
-  Actor_WalkByAndWait(19, 0, 16);
+  Actor_WalkByAndWait(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 16, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+                      FACING_SOUTH_SOUTHEAST, 0);
+  Actor_WalkBy(ACTOR_CREWMAN_ON_THE_BOAT, 0, 16);
+  Actor_WalkByAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 16);
   FieldEvent_Wait(5);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHEAST,
+                      0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_RefreshSelectorById(ACTOR_EOLEO);
   FieldActor_Stop(ACTOR_JAILER);
@@ -728,6 +816,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
 
 void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
+/// While Eoleo's Psynergy runs, the actors shake.
 void AlhafranCave_ShakeUnderEoleosPower(void) {
   Actor_ApplyRandomChildValues();
 }
@@ -740,7 +829,7 @@ void AlhafranCave_ShakeUnderEoleosPower(void) {
 
 // clang-format off
 s16 gAlhafranCave_Puddles[] = {
-    16, 515, -1, 0,
+    ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
 };
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
@@ -773,7 +862,7 @@ u32 gAlhafranCave_VisitorsLeaveScript[] = {
 };
 
 s16 gAlhafranCave_Pillars[] = {
-    9, 1, 513, -1,
+    ACTOR_JAIL_STAKE, 1, FLAG_JAIL_STAKE_POUNDED, -1,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -839,7 +928,7 @@ struct Trigger gAlhafranCave_CaveTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_CloseWayToJail)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_OpenWayToJail)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_03, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
     {TRIGGER_TABLE_END},
 };
@@ -851,26 +940,27 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, 20, FLAG_FAMILY_VISITED_BRIGGS, EVENT(AlhafranCave_ChauchaAndEoleoVisit)},
-    {TRIGGER_TALK, 23, FLAG_ALHAFRA_MAST_CLEARED, MSGNO(MsgEverythingSSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_ALHAFRA_MAST_CLEARED, MSGNO(MsgIDonTKnow)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgBeforeIKnew)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgNoMatterHow)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgIVeBeen)},
+    {TRIGGER_TALK, ACTOR_BORED_GUARD, FLAG_ALHAFRA_MAST_CLEARED, MSGNO(MsgEverythingSSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BORED_GUARD, FLAG_ALHAFRA_MAST_CLEARED, MSGNO(MsgIDonTKnow)},
+    {TRIGGER_TALK, ACTOR_BORED_GUARD, CONDITION_ALWAYS, MSGNO(MsgBeforeIKnew)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BORED_GUARD, CONDITION_ALWAYS, MSGNO(MsgNoMatterHow)},
+    {TRIGGER_TALK, ACTOR_JAILER, CONDITION_ALWAYS, MSGNO(MsgIVeBeen)},
     {TRIGGER_TALK, ACTOR_BRIGGS, CONDITION_ALWAYS, EVENT(AlhafranCave_TalkToBriggs)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgIHatePrison)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgItSoundsLike)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgEverythingWouldHave)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgISawYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgItSSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHasStrangePowers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgIMNotStaying)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, FLAG_SCENE_TEMP_00, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, FLAG_SCENE_TEMP_01, EVENT(AlhafranCave_PoundPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_03, EVENT(AlhafranCave_FreezePuddle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(AlhafranCave_StartMovingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(AlhafranCave_FinishMovingCrate)},
+    {TRIGGER_TALK, ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIHatePrison)},
+    {TRIGGER_TALK, ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgItSoundsLike)},
+    {TRIGGER_TALK, ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgEverythingWouldHave)},
+    {TRIGGER_TALK, ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgISawYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JAILER, CONDITION_ALWAYS, MSGNO(MsgItSSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS, CONDITION_ALWAYS, MSGNO(MsgHasStrangePowers)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIMNotStaying)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_JAIL_ROPE_POLE, FLAG_JAIL_ROPE_TIED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_JAIL_STAKE, FLAG_JAIL_STAKE_POUNDED, EVENT(AlhafranCave_PoundPillar)},
+    // The cave's Frost row, repeated in the jail's table.
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CRATE, CONDITION_ALWAYS, EVENT(AlhafranCave_StartMovingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE, CONDITION_ALWAYS, EVENT(AlhafranCave_FinishMovingCrate)},
     {TRIGGER_TABLE_END},
 };

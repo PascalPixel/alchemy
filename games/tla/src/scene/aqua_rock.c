@@ -139,6 +139,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "field/event.h"
 #include "field/ground_mask.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "system/task.h"
 #include "field/actor.h"
 #include "system/iwram_call.h"
@@ -1026,14 +1027,15 @@ settle:
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
+  struct MapWorkGroundEffects *map =
+      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
   s32 id, x, z;
   s16 *entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_MOAI;
   gMainRoutineWork.retreatEntrance = 1;
-  map->mode = 1;
+  map->wading = MAP_WADING_UPPER_LEVEL;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   if (scene == SCENE_AQUA_ROCK_MOAI) {
     Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI), 4);

@@ -2341,8 +2341,8 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   s32 i, cellX, cellY;
 
   marker = Import_ActorCreate(288, px(x), 0, px(y));
-  REG_BLDALPHA = 16;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 0);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(marker, 0);
   Actor_SetSpriteFlags(marker, 0);
   sprite = marker->sprite;
@@ -2361,7 +2361,7 @@ fadeIn:
     goto fadeIn;
   i = 0;
 fadeOut:
-  REG_BLDALPHA = (16 - i) | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(16 - i, BLEND_WEIGHT_MAX);
   wait(1);
   i++;
   if (i != 16)
@@ -2550,8 +2550,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   Sound_Play(SE_TABLET_RISE);
   FieldEvent_Wait(45);
   Actor_ConfigureSpriteColor(idA, 0x100);
-  REG_BLDALPHA = 0x1008;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
     struct Actor *spark =
         Import_ActorCreate(0x2a0, a->x.fixed, a->y.fixed, a->z.fixed);
@@ -2567,16 +2567,16 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gAirsRockInside_RisingSparkScript);
-    REG_BLDALPHA = 0x1004;
+    REG_BLDALPHA = BLEND_ALPHA(4, 16);
     wait(2);
-    REG_BLDALPHA = 0x100a;
+    REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     wait(2);
-    REG_BLDALPHA = 0x100a;
+    REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
   }
-  REG_BLDALPHA = 0x1008;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
   for (i = 0; i != 16; i++) {
     struct Actor *spark =
@@ -3207,8 +3207,8 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance <= 11 || gMainRoutineWork.entrance == 16) {
       Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
-      REG_BLDALPHA = 0x1008;
-      REG_BLDCNT = 0x3f10;
+      REG_BLDALPHA = BLEND_ALPHA(8, 16);
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       AirsRockInside_SpawnMotes();
     }
     if (gMainRoutineWork.entrance > 13) {
@@ -3245,8 +3245,8 @@ s32 Scene_Initialize(void) {
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_LandInHall();
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST) {
-    REG_BLDALPHA = 0x1008;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDALPHA = BLEND_ALPHA(8, 16);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_EAST_PILLAR_PLACED))
       Actor_SetPositionFixed(ACTOR_VIAL_CHEST_EAST_PILLAR, px(328), px(392));
@@ -3268,8 +3268,8 @@ s32 Scene_Initialize(void) {
              SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     AirsRockInside_StartRestoringCells();
     Scene_QueueMusic(SE_245);
-    REG_BLDALPHA = 0xc08;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDALPHA = BLEND_ALPHA(8, 12);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
       Actor_SetPositionFixed(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR, px(264),
@@ -3405,8 +3405,8 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     Scene_QueueMusic(SE_245);
-    REG_BLDALPHA = 0xc08;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDALPHA = BLEND_ALPHA(8, 12);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED))
       Actor_SetPositionFixed(ACTOR_FACE_WARP_FIRST_PILLAR, px(280), px(472));

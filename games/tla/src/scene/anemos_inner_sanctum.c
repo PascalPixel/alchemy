@@ -651,7 +651,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
   PaletteFade_Interpolate(60);
   BlendScript_Suspend();
   alpha = alpha & 255;
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   t0 = x >> 4;
   t1 = z >> 4;
   column = t0;
@@ -660,7 +660,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
   i = 0;
   if (alpha != 0) {
   fadeIn:
-    REG_BLDALPHA = i | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     System_Wait(8);
     i++;
     if (i != alpha)
@@ -704,7 +704,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
     PaletteFade_ApplyTarget(0x10000, 1);
     PaletteFade_Interpolate(60);
     for (i = alpha; i != 0;) {
-      REG_BLDALPHA = i | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
       i--;
       System_Wait(8);
     }

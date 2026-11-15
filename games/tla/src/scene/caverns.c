@@ -363,7 +363,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
     kind = MapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
     if (kind != 0) {
       object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      REG_BLDALPHA = 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0, 16);
       blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
       sum = kind + 2;

@@ -54,6 +54,19 @@ enum ChampaInteriorsActorId {
   ACTOR_FISH_TRADER
 };
 
+/// The ways into the islet houses this overlay also holds: from the islet with
+/// the pier (IsletsPier) and from the islet with the dog (IsletsDog).
+enum ChampaInteriorsEntrance {
+  ENTRANCE_PIER_ISLET_HOUSE = 8,
+  ENTRANCE_DOG_ISLET_HOUSE = 9
+};
+
+/// Whether the party is in one of the islet houses.
+#define IN_ISLET_HOUSE()                                                       \
+  (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&                          \
+   (gMainRoutineWork.entrance == ENTRANCE_PIER_ISLET_HOUSE ||                  \
+    gMainRoutineWork.entrance == ENTRANCE_DOG_ISLET_HOUSE))
+
 /// The islet house's one actor.
 enum ChampaIsletHouseActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
 
@@ -66,8 +79,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 a, s32 b);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
-      (u16)(gMainRoutineWork.entrance - 8) <= 1)
+  if (IN_ISLET_HOUSE())
     return gChampaInteriors_IsletHouseActorPlacements;
   return gChampaInteriors_ActorPlacements;
 }
@@ -87,8 +99,7 @@ void ChampaInteriors_OpenArtifactShop(s32 actor) {
 void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(CHAMPA_INN, actor); }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
-      (u16)(gMainRoutineWork.entrance - 8) <= 1)
+  if (IN_ISLET_HOUSE())
     return gChampaInteriors_IsletHouseTriggers;
   if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gChampaInteriors_TriggersOnceBriggsSailed;
@@ -98,14 +109,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 *effect = &gFieldWork->transition;
 #if !TLA_PATCH_1
-  s32 value = 0x201;
+  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 #else
-  s32 value = 0x209;
+  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 #endif
 
   *effect = value;
-  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
-      (u16)(gMainRoutineWork.entrance - 8) <= 1)
+  if (IN_ISLET_HOUSE())
     Scene_FadeInAndClearFlag();
   return 0;
 }
@@ -118,8 +128,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {8, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0, 288, 536, 528, 696, 0},
-    {9, CONDITION_ALWAYS, 608, 0, 664, FACING_NORTH, 0, 488, 528, 728, 704, 0},
+    {ENTRANCE_PIER_ISLET_HOUSE, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0,
+     288, 536, 528, 696, 0},
+    {ENTRANCE_DOG_ISLET_HOUSE, CONDITION_ALWAYS, 608, 0, 664, FACING_NORTH, 0,
+     488, 528, 728, 704, 0},
     {SCENE_TABLE_END},
 };
 

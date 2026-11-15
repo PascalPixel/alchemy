@@ -33,6 +33,7 @@
 #include "field/field_sprite.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "scene/event_layer.h"
 #include "text/msg_ids.h"
 
@@ -587,13 +588,14 @@ s32 Scene_PrepareMap(void) {
 }
 
 void AttekaInlet_SetUpTheHarbour(void) {
-  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
+  struct MapWorkGroundEffects *map =
+      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *party;
 
   GameFlag_Set(0x9b4);
   if (!GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
     Actor_SetPosition(65, 0, 0);
-  map->mode = 1;
+  map->wading = MAP_WADING_UPPER_LEVEL;
   party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;

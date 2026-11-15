@@ -126,6 +126,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 #include "field/ground_mask.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "scene/event_layer.h"
 #include "system/system.h"
 #include "system/task.h"
@@ -378,8 +379,11 @@ flash:
   if (i >= 0)
     goto flash;
   ObjectTable_Snapshot();
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0xf00, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
+                          BLDCNT_TGT2_BG3,
+                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(0, 16), 0x20000);
   wait(1);
   Task_Remove(ApojiiIslands_CycleSeaColors);
   Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_VBLANK);
@@ -387,7 +391,8 @@ flash:
   ApojiiIslands_AddCellMarkers(33, 0, 0);
   i = 1;
 blend:
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000 | i, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
+                      0x20000);
   wait(4);
   i++;
   if (i <= 6)
@@ -611,8 +616,8 @@ void Scroll_HBlank(void) {
   } else {
     value = gApojiiIslands_LowerScrollX;
     Io_Write16(value, &REG_BG1HOFS);
-    REG_BLDALPHA = 0x100c;
-    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = BLEND_ALPHA(12, 16);
+    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
 }
 
@@ -634,7 +639,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
   struct MainRoutineWork *party;
 
-  ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
+  Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
   effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;

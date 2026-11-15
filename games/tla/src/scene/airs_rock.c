@@ -755,8 +755,8 @@ row:
   FieldCamera_WaitForArrival();
   Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);
-  REG_BLDALPHA = 0xf00;
-  REG_BLDCNT = 0x3f41;
+  REG_BLDALPHA = BLEND_ALPHA(0, 15);
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= 0x100;
   MapGrid_SetShake(1, 1, 1);
   i = 0;
@@ -768,8 +768,9 @@ glow:
   if (i != 64)
     goto glow;
   FieldEvent_Wait(60);
-  REG_BLDALPHA = 15;
-  REG_BLDCNT = 0xc42;
+  REG_BLDALPHA = BLEND_ALPHA(15, 0);
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3;
   MapGrid_SetShake(3, 3, 1);
   {
     u32 j = 0;
@@ -801,8 +802,8 @@ glow:
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
   MapGrid_CenterOnFollowedPoint();
   FieldEvent_Wait(1);
-  REG_BLDCNT = 0x3f41;
-  REG_BLDALPHA = 15;
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 6;
@@ -1398,7 +1399,7 @@ void AirsRock_DriftFog(void) {
   s32 i;
   volatile u16 *channel;
 
-  REG_BLDALPHA = gAirsRock_FogAlpha | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(gAirsRock_FogAlpha, BLEND_WEIGHT_MAX);
   if ((*Ram_FrameCount & 15) == 0) {
     gAirsRock_FogAlpha += gAirsRock_FogAlphaStep;
     if (gAirsRock_FogAlpha == 8 || gAirsRock_FogAlpha == 4)
@@ -1441,7 +1442,7 @@ void AirsRock_LiftFog(void) {
     line[2] = (scroll[0] >> 16) + (value >> 13);
     line += 3;
   }
-  REG_BLDALPHA = gAirsRock_LiftingFogAlpha | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(gAirsRock_LiftingFogAlpha, BLEND_WEIGHT_MAX);
   if ((gFrameCount & 15) == 0) {
     gAirsRock_LiftingFogAlpha += gAirsRock_LiftingFogAlphaStep;
     if (gAirsRock_LiftingFogAlpha == 8 || gAirsRock_LiftingFogAlpha == 4)
@@ -1562,18 +1563,18 @@ void AirsRock_WhirlwindClearsFog(void) {
   }
   FieldTask_Remove(AirsRock_LiftFog);
   Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
-  REG_BLDALPHA = 8;
-  REG_BLDCNT = 0x3f42;
+  REG_BLDALPHA = BLEND_ALPHA(8, 0);
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (i = 0; i != 257; i++) {
-    REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(8 - (i >> 5), BLEND_WEIGHT_MAX);
     Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = Random16() & 7;
     FieldEvent_Wait(1);
   }
   REG_DISPCNT &= ~0x200;
   System_Wait(30);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  REG_BLDALPHA = 0x10;
-  REG_BLDCNT = 0x3f41;
+  REG_BLDALPHA = BLEND_ALPHA(16, 0);
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 6;
   for (i = 0; i != 129; i++) {
@@ -1868,8 +1869,8 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_THIRD_PILLAR, 184, 280);
       if (!GameFlag_Get(FLAG_AIRS_ROCK_FOG_CLEARED)) {
         gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-        REG_BLDALPHA = 0x1008;
-        REG_BLDCNT = 0x3f42;
+        REG_BLDALPHA = BLEND_ALPHA(8, 16);
+        REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         dma = (volatile struct DmaRegisters *)0x040000b0;
         while ((s32)dma->control < 0)
           ;
@@ -1887,8 +1888,8 @@ s32 Scene_Initialize(void) {
           scale[21] = value;
         }
       } else {
-        REG_BLDALPHA = 0x1000;
-        REG_BLDCNT = 0x3f42;
+        REG_BLDALPHA = BLEND_ALPHA(0, 16);
+        REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_DISPCNT &= ~0x200;
         Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_IN_THE_FOG), 6);
       }

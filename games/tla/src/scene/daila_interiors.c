@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "game/inventory.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "window/window.h"
 #include "game/item.h"
 #include "version.h"
@@ -75,7 +76,8 @@ enum DailaInteriorsActorId {
   ACTOR_TRAVELER_FROM_MADRA,
   /// A guest of the inn who longs for Madra's seafood.
   ACTOR_GUEST_ON_MADRAS_SEAFOOD,
-  /// Until Tavi is rescued: the family in the house by entrance 7, whose sons
+  /// Until Tavi is rescued: the family in the house on the islet with the cow,
+  /// whose sons
   /// try the Sea of Time.
   ACTOR_WOMAN_ON_THE_CURRENTS,
   ACTOR_OLD_MAN_ON_THE_RED_ROCKS,
@@ -85,8 +87,8 @@ enum DailaInteriorsActorId {
   ACTOR_ARMOR_COUNTER
 };
 
-/// The rows of gDailaInteriors1PlacementsOnceTaviIsRescued after those it
-/// shares with gDailaInteriors1Placements.
+/// The rows of gDailaInteriors_HousesPlacementsOnceTaviIsRescued after those it
+/// shares with gDailaInteriors_HousesPlacements.
 enum DailaInteriorsActorIdAfterRescue {
   /// The two boys, back home, with their mouths full.
   ACTOR_RIKI = ACTOR_GUEST_ON_MADRAS_SEAFOOD + 1,
@@ -99,13 +101,18 @@ enum DailaInteriorsActorIdAfterRescue {
   ACTOR_ARMOR_COUNTER_AFTER_RESCUE
 };
 
+/// The way into the house on the islet with the cow (IsletsCow), which this
+/// overlay also holds: the family by entrance 7.
+enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
+
 /// The shops of Daila, as Shop_Run numbers them.
 enum { SHOP_DAILA_WEAPONS = 1, SHOP_DAILA_ARMOR = 2 };
 
 /// Daila's inn, as Inn_CheckIn numbers the inns.
 enum { DAILA_INN = 0 };
 
-/// The sanctuary's actors, numbering the rows of gDailaInteriors2Placements.
+/// The sanctuary's actors, numbering the rows of
+/// gDailaInteriors_SanctumPlacements.
 enum DailaSanctuaryActorId {
   /// The sanctuary's healer, who sends travelers with nowhere to go to Poi at
   /// the Kandorean Temple, and once that is done heals the party.
@@ -126,13 +133,14 @@ enum DailaSanctuaryActorId {
 /// Holds which of his two spots the practising man has jumped to last.
 #define FLAG_DAILA_PRACTICE_AT_DOOR 0x200
 
-extern s32 gDailaInteriorsExitsOnceTaviIsRescued[];
-extern struct ActorPlacement gDailaInteriors1Placements[];
-extern struct ActorPlacement gDailaInteriors2Placements[];
-extern struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[];
-extern struct Trigger gDailaInteriors2Events[];
-extern struct Trigger gDailaInteriors1EventsOnceTaviIsRescued[];
-extern struct Trigger gDailaInteriors2EventsOnceTaviIsRescued[];
+extern s32 gDailaInteriors_ExitsOnceTaviIsRescued[];
+extern struct ActorPlacement gDailaInteriors_HousesPlacements[];
+extern struct ActorPlacement gDailaInteriors_SanctumPlacements[];
+extern struct ActorPlacement
+    gDailaInteriors_HousesPlacementsOnceTaviIsRescued[];
+extern struct Trigger gDailaInteriors_SanctumEvents[];
+extern struct Trigger gDailaInteriors_HousesEventsOnceTaviIsRescued[];
+extern struct Trigger gDailaInteriors_SanctumEventsOnceTaviIsRescued[];
 
 void Sanctum_Run(s32 actor);
 
@@ -161,20 +169,20 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
-extern s32 gDailaInteriorsExits[];
+extern s32 gDailaInteriors_Exits[];
 
 const void *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
-    return gDailaInteriorsExitsOnceTaviIsRescued;
-  return gDailaInteriorsExits;
+    return gDailaInteriors_ExitsOnceTaviIsRescued;
+  return gDailaInteriors_Exits;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM)
-    return gDailaInteriors2Placements;
+    return gDailaInteriors_SanctumPlacements;
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
-    return gDailaInteriors1PlacementsOnceTaviIsRescued;
-  return gDailaInteriors1Placements;
+    return gDailaInteriors_HousesPlacementsOnceTaviIsRescued;
+  return gDailaInteriors_HousesPlacements;
 }
 
 /// Unused: does nothing.
@@ -249,7 +257,7 @@ UNUSED void DailaInteriors_StartLeaderEvent(void) {
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-extern struct Trigger gDailaInteriors1Events[];
+extern struct Trigger gDailaInteriors_HousesEvents[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
@@ -258,12 +266,12 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (flag) {
     if (party->next == id)
-      return gDailaInteriors2EventsOnceTaviIsRescued;
-    return gDailaInteriors1EventsOnceTaviIsRescued;
+      return gDailaInteriors_SanctumEventsOnceTaviIsRescued;
+    return gDailaInteriors_HousesEventsOnceTaviIsRescued;
   }
   if (party->next == id)
-    return gDailaInteriors2Events;
-  return gDailaInteriors1Events;
+    return gDailaInteriors_SanctumEvents;
+  return gDailaInteriors_HousesEvents;
 }
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -575,7 +583,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
     FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = ItemPicker_RunToDrop(&member, &slot);
     if (result == -1) {
-      if (Item_GetDirect(item)->flags & 8) {
+      if (Item_GetDirect(item)->flags & ITEM_INDISPENSABLE) {
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
         // "That ...'s valuable! You must get it!"
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
@@ -647,13 +655,13 @@ void FlagBlock_PlaceAll(const s16 *flags);
 /// behind his counter) or the sanctuary (the Tear on the pillars' top until it
 /// is taken, the puddles until Tavi is rescued, the frozen pillars after).
 s32 Scene_Initialize(void) {
-  struct MapBits *map;
+  struct MapWorkGroundEffects *map;
   s32 *effect = &gFieldWork->transition;
-  s32 value = 0x209;
+  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
   *effect = value;
   if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_HOUSES) {
-    if (gMainRoutineWork.entrance == 7) {
+    if (gMainRoutineWork.entrance == ENTRANCE_COW_ISLET_HOUSE) {
       Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
@@ -672,7 +680,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
     }
   } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM) {
-    map = (struct MapBits *)Ram_HeapSlots->mapGrid;
+    map = (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
@@ -693,7 +701,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_FIRST_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_SECOND_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_THIRD_PILLAR, 0, 0);
-      map->mode = 1;
+      map->wading = MAP_WADING_UPPER_LEVEL;
     } else {
       FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
     }
@@ -787,7 +795,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 // clang-format off
 /// Where the houses' doors lead, before Tavi is rescued, out into the flooded village.
-s32 gDailaInteriorsExits[] = {
+s32 gDailaInteriors_Exits[] = {
     SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, DailaFlooded, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, DailaFlooded, 2, EXIT_FLAG_NONE),
@@ -802,7 +810,7 @@ s32 gDailaInteriorsExits[] = {
 };
 
 /// Where the houses' doors lead once Tavi is rescued, out into the drained village.
-s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
+s32 gDailaInteriors_ExitsOnceTaviIsRescued[] = {
     SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Daila, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Daila, 2, EXIT_FLAG_NONE),
@@ -818,7 +826,7 @@ s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
 
 /// The houses, shops and inn before Tavi is rescued (enum
 /// DailaInteriorsActorId).
-struct ActorPlacement gDailaInteriors1Placements[] = {
+struct ActorPlacement gDailaInteriors_HousesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -843,7 +851,7 @@ struct ActorPlacement gDailaInteriors1Placements[] = {
 };
 
 /// The sanctuary (enum DailaSanctuaryActorId).
-struct ActorPlacement gDailaInteriors2Placements[] = {
+struct ActorPlacement gDailaInteriors_SanctumPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 333, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 196, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, FLAG_SCENE_TEMP_23, MOVEMENT_TYPE_STAND, 184, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -854,7 +862,7 @@ struct ActorPlacement gDailaInteriors2Placements[] = {
 };
 
 /// The houses, shops and inn once Tavi is rescued, with Riki and Tavi home.
-struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[] = {
+struct ActorPlacement gDailaInteriors_HousesPlacementsOnceTaviIsRescued[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -882,7 +890,7 @@ struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[] = {
 };
 
 /// The houses' doors, talk and Mind Read before Tavi is rescued.
-struct Trigger gDailaInteriors1Events[] = {
+struct Trigger gDailaInteriors_HousesEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -934,7 +942,7 @@ struct Trigger gDailaInteriors1Events[] = {
 };
 
 /// The sanctuary's doors, talk and Mind Read before Tavi is rescued.
-struct Trigger gDailaInteriors2Events[] = {
+struct Trigger gDailaInteriors_SanctumEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -947,7 +955,7 @@ struct Trigger gDailaInteriors2Events[] = {
 };
 
 /// The houses' doors, talk and Mind Read once Tavi is rescued.
-struct Trigger gDailaInteriors1EventsOnceTaviIsRescued[] = {
+struct Trigger gDailaInteriors_HousesEventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1006,7 +1014,7 @@ struct Trigger gDailaInteriors1EventsOnceTaviIsRescued[] = {
 
 /// The sanctuary once Tavi is rescued: Frost on the three puddles, the jumps
 /// between the pillars and the Tear at their top.
-struct Trigger gDailaInteriors2EventsOnceTaviIsRescued[] = {
+struct Trigger gDailaInteriors_SanctumEventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

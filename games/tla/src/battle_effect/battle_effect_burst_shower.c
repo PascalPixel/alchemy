@@ -928,22 +928,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                     screen[0] - 3, screen[1] - height / 2, 6, height);
             BattleEffectKernels_IntegrateVector3(mote, 62, 0);
             if (frame > i + 16) {
-              s32 dx;
-              s32 dy;
-              s32 dz;
+              s32 dx = (object->x - mote->x) >> 7;
+              s32 dy = (object->y + half - mote->y) >> 8;
+              s32 dz = (object->z - mote->z) >> 8;
 
-              dx = object->x - mote->x;
-              dy = object->y + half - mote->y;
-              dz = object->z - mote->z;
-              /* FAKEMATCH(barrier): an empty asm through dy adds the references
-               * that rank it above dz and dx. */
-              __asm__("" : "=r"(dy) : "0"(dy));
-              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx.
-               */
-              __asm__("" : "=r"(dz) : "0"(dz));
-              mote->velocityX += dx >> 7;
-              mote->velocityY += dy >> 8;
-              mote->velocityZ += dz >> 8;
+              mote->velocityX += dx;
+              mote->velocityY += dy;
+              mote->velocityZ += dz;
               if ((object->x < 0 ? -object->x : object->x) <
                   (mote->x < 0 ? -mote->x : mote->x))
                 mote->variant = -1;

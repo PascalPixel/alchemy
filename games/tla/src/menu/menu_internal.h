@@ -172,7 +172,6 @@ enum DjinnCompareOperation {
 #include "graphics/render_input.h"
 #include "graphics/render_placement.h"
 #include "field/sprite.h"
-#include "menu/m7_interfaces.h"
 #include "static_assert.h"
 #include "text/msg_ids.h"
 #include "system/irq.h"
@@ -190,6 +189,13 @@ enum DjinnCompareOperation {
 #include "macros.h"
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
+
+void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
+                                      s32 x, s32 y, s32 columns);
+void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
+                        s32 columns);
+void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
+                      s32 height);
 
 /// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
 /// windows, the party figures, the items listed and the two choices a command

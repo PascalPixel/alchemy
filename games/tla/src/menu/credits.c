@@ -4,7 +4,8 @@
 ///
 /// One object, as The Broken Seal's credits.c is, with its slides and lines at
 /// its end; the background decoders linked before it are assembly
-/// (credits/credits_background_*.s).
+/// (credits_background_decode.s and credits_background_expand.s, then the
+/// ending pictures' ending_picture_decode.s and ending_picture_expand.s).
 
 #include "types.h"
 #include "battle/battle.h"
@@ -68,14 +69,14 @@ void Credits_InitCrawlSprites(void);
 void Credits_InitTextSpritesAtPage(s32 credits);
 void Credits_StopTextSprites(void);
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
-extern const u8 BattleEffect_ExpandCode[];
-extern u8 BattleEffect_ExpandCodeSize[];
+extern const u8 Credits_DecodeBackgroundCode[];
+extern u8 Credits_DecodeBackgroundCodeSize[];
 extern const u8 gCredits_GlyphWidths[];
 extern const u8 gDisplayScroll_Font[];
 
 void EndingPicture_InitStrips(void);
-extern const u8 BattleEffect_Expand2Code[];
-extern u8 BattleEffect_Expand2CodeSize[];
+extern const u8 EndingPicture_DecodeCode[];
+extern u8 EndingPicture_DecodeCodeSize[];
 
 #include "gamepak/far_call/window.h"
 #include "system/ram_buffer.h"
@@ -192,8 +193,8 @@ extern u16 gWaitForFlashWrite__credits[] __asm__("gWaitForFlashWrite");
 /// Broken Seal does, but greyed: each channel
 /// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
 /// clears that half instead. The tiles are unpacked by the
-/// BattleEffect_Expand kernel, copied by DMA into a heap block for the call;
-/// the grey colours are built in the EWRAM buffer at gWaitForFlashWrite.
+/// Credits_DecodeBackground kernel, copied by DMA into a heap block for the
+/// call; the grey colours are built in the EWRAM buffer at gWaitForFlashWrite.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -216,7 +217,8 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = (void *)BG_CHAR_BLOCK(2);
     paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
-  RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
+  RamCode_Load(decoder, Credits_DecodeBackgroundCode,
+               Credits_DecodeBackgroundCodeSize);
   decoder(resourceData + BACKDROP_PALETTE_BYTES, tileDestination,
           paletteOffset);
   Heap_Release(decoder);
@@ -1037,7 +1039,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// Shows a scrolling picture on the hidden one of the two BG character blocks.
 /// With no resource it fills the map buffer with a plain tile word and clears
 /// the palette half; otherwise it clears the block's first 2 KB, expands
-/// resource's map into the buffer with BattleEffect_Expand2Code copied to the
+/// resource's map into the buffer with EndingPicture_DecodeCode copied to the
 /// heap (the fill word marks the second block's tiles), and queues the
 /// resource's 128-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
@@ -1073,7 +1075,7 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
     }
     Dma_Fill32Cell(cell, 0, tiles, ENDING_PICTURE_SCREEN_BYTES);
     data = Resource_GetTableEntry(resource);
-    RamCode_Load(code, BattleEffect_Expand2Code, BattleEffect_Expand2CodeSize);
+    RamCode_Load(code, EndingPicture_DecodeCode, EndingPicture_DecodeCodeSize);
     code(data + BACKDROP_PALETTE_BYTES, map, fill);
     Heap_Release(code);
     IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data,

@@ -512,7 +512,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(ACTOR_SISTER_IN_BED, 0, 0);
     } else {
-      Actor_SetSpriteRotationById(ACTOR_SISTER_IN_BED, 0xc000);
+      Actor_SetSpriteRotationById(ACTOR_SISTER_IN_BED, TRIG_TURN * 3 / 4);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_SISTER_IN_BED), 0);
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)
           ->nextFrame |= 8;
@@ -538,7 +538,7 @@ s32 MadraInteriors_TiltSprite(struct Actor *object) {
 
   sprite = object->sprite;
   if (object != NULL && sprite != NULL)
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
   return 0;
 }
 

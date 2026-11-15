@@ -616,7 +616,7 @@ void Madra_MindReadBriggsFan(void) {
     Event_ShowMessage(ACTOR_FIRST_PLACED, 0);
   } else {
     if (Event_GetFlag(FLAG_MADRA_BOY_HAS_ASKED) == 0) {
-      x = 0x100;
+      x = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
       z = 30;
       FieldActor_ShowEmote(ACTOR_BRIGGS_FAN, x, z);
       Actor_FaceActor(ACTOR_BRIGGS_FAN, ACTOR_FELIX, 0);
@@ -1200,7 +1200,7 @@ void Madra_MeetKarst(void) {
   s32 x = px(153);
   s32 z;
 
-  z = 0x01030000;
+  z = px(259);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
@@ -1609,7 +1609,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "But, Jenna... Aren't you and Isaac an item? Couldn't you, you know..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), 10);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
   // "A... An item? No! I mean... It's not like that! Not...really..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1633,7 +1633,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Don't you mean...Isaac?"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), 10);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Event_Wait(20);
   // "Sheba! Be quiet! Sheesh..."

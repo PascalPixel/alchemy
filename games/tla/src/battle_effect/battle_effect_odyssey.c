@@ -118,7 +118,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       list[1] = args->targets[0];
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++) {
@@ -437,8 +438,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   BattleObject_PutFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
-  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
-                           24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork), 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
@@ -770,7 +771,7 @@ void Iris_RestoreBattle(void) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
 }
 #undef KIND125_FRAMES
 #undef SWIRL_MAX_FRAMES

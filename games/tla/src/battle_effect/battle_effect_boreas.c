@@ -106,7 +106,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

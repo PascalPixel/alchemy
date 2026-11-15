@@ -57,10 +57,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // The reaper starts off to the side, above the field.
   visible = 1;
   if (args->side == EFFECT_SIDE_PARTY)
-    curve[0] = -0x500000;
+    curve[0] = -px(80);
   else
-    curve[0] = 0x700000;
-  curve[1] = -0x200000;
+    curve[0] = px(112);
+  curve[1] = -px(32);
 
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
@@ -82,10 +82,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // for the frame of each jump.
     if (frame == 24) {
       if (args->side == EFFECT_SIDE_PARTY)
-        curve[0] = -0x200000;
+        curve[0] = -px(32);
       else
-        curve[0] = 0x480000;
-      curve[1] = 0x180000;
+        curve[0] = px(72);
+      curve[1] = px(24);
       visible = 0;
     }
     if (frame == 25) {
@@ -208,7 +208,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
-  BattleBackground_LoadFar(1, Ram_HeapSlots->battleWork->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           Ram_HeapSlots->battleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

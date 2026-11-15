@@ -365,7 +365,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
     }
     if (frame == 62) {
-      BattleBackground_LoadFar(1, battle->background, -1);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
       battle->brightness = (frame << 13) - 0x7c000;

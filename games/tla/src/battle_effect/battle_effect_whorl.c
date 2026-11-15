@@ -18,6 +18,10 @@ struct StripQuad;
 /// Where FlashBurstSheet is decoded in the map cell buffer.
 #define WATER_COLUMN_FLASH_BURST 0x5000
 
+/// The last particle keeps the target's position, and its scale in velocityX
+/// and velocityY, to restore when the column ends.
+#define WATER_COLUMN_SAVED_TARGET 63
+
 /// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 /// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 /// rises around the target, with spray, bubbles and a burst.
@@ -112,11 +116,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  work->particles[63].x = target->x;
-  work->particles[63].y = target->y;
-  work->particles[63].z = target->z;
-  work->particles[63].velocityX = target->scaleX;
-  work->particles[63].velocityY = target->scaleY;
+  work->particles[WATER_COLUMN_SAVED_TARGET].x = target->x;
+  work->particles[WATER_COLUMN_SAVED_TARGET].y = target->y;
+  work->particles[WATER_COLUMN_SAVED_TARGET].z = target->z;
+  work->particles[WATER_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
+  work->particles[WATER_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D2, work->sheet, 0, 0);
   } else {
@@ -150,11 +154,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
-        target->x = work->particles[63].x;
-        target->y = work->particles[63].y;
-        target->z = work->particles[63].z;
-        target->scaleX = work->particles[63].velocityX;
-        target->scaleY = work->particles[63].velocityY;
+        target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
+        target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;
+        target->z = work->particles[WATER_COLUMN_SAVED_TARGET].z;
+        target->scaleX = work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
+        target->scaleY = work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
         if (mode == WATER_COLUMN_WHORL) {
           for (i = 0; i != 63; i++) {
             struct Particle *q = &work->particles[i];
@@ -218,32 +222,46 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (mode == WATER_COLUMN_WHORL) {
           if (frame == 32) {
             if (args->variant == EFFECT_VARIANT_STRONGER) {
-              target->y = 0x7c0000;
+              target->y = px(124);
             } else {
               work->shakeFrames = 8;
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-              target->scaleX = work->particles[63].velocityX;
-              target->scaleY = work->particles[63].velocityY;
+              target->scaleX =
+                  work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
+              target->scaleY =
+                  work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
               BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8),
                                             px(4), 150);
             }
           } else if (frame <= 19) {
             target->verticalMotionStrength = mode;
-            target->x += (pos[0] - work->particles[63].x) / 128;
-            target->y += (pos[1] - work->particles[63].y) / 128;
-            target->z += (pos[2] - work->particles[63].z) / 128;
+            target->x +=
+                (pos[0] - work->particles[WATER_COLUMN_SAVED_TARGET].x) / 128;
+            target->y +=
+                (pos[1] - work->particles[WATER_COLUMN_SAVED_TARGET].y) / 128;
+            target->z +=
+                (pos[2] - work->particles[WATER_COLUMN_SAVED_TARGET].z) / 128;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
-            target->x += (pos[0] - work->particles[63].x) / 16;
-            target->y += (pos[1] - work->particles[63].y) / 16;
-            target->z += (pos[2] - work->particles[63].z) / 16;
-            target->scaleX += (0x4000 - work->particles[63].velocityX) / 16;
-            target->scaleY += (0x4000 - work->particles[63].velocityY) / 16;
+            target->x +=
+                (pos[0] - work->particles[WATER_COLUMN_SAVED_TARGET].x) / 16;
+            target->y +=
+                (pos[1] - work->particles[WATER_COLUMN_SAVED_TARGET].y) / 16;
+            target->z +=
+                (pos[2] - work->particles[WATER_COLUMN_SAVED_TARGET].z) / 16;
+            target->scaleX +=
+                (Q16_ONE / 4 -
+                 work->particles[WATER_COLUMN_SAVED_TARGET].velocityX) /
+                16;
+            target->scaleY +=
+                (Q16_ONE / 4 -
+                 work->particles[WATER_COLUMN_SAVED_TARGET].velocityY) /
+                16;
           }
         } else if (mode == WATER_COLUMN_GALE) {
           target->verticalMotionStrength = 0;
           if (frame > 55) {
-            target->y = 0x900000;
+            target->y = px(144);
           } else if (frame <= 31) {
             if (target->x > 0) {
               target->x += 0x8000;
@@ -252,9 +270,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
           } else {
             if (target->x > 0) {
-              target->x += 0x100000;
+              target->x += px(16);
             } else {
-              target->x -= 0x100000;
+              target->x -= px(16);
             }
           }
         }
@@ -461,7 +479,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               Transform_ApplyTranslation(px(apos.x / 2 - 64), px(apos.y - 64),
                                          0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-              Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+              Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
               Transform_ApplyYaw(frame << 12);
               Transform_ApplyUniformScale(s);
@@ -566,11 +584,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
   if (unit[0x129] && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
-    target->x = work->particles[63].x;
-    target->y = work->particles[63].y;
-    target->z = work->particles[63].z;
-    target->scaleX = work->particles[63].velocityX;
-    target->scaleY = work->particles[63].velocityY;
+    target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
+    target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;
+    target->z = work->particles[WATER_COLUMN_SAVED_TARGET].z;
+    target->scaleX = work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
+    target->scaleY = work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -95,7 +95,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -3;

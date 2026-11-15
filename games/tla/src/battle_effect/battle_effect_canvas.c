@@ -89,7 +89,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleBackground_LoadFar(1, (s32)&ResourceId_EarthHorizonBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_EarthHorizonBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -1;
@@ -420,7 +421,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
@@ -527,7 +528,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   // The blast lands on the land far below and spreads in rings of light.
   count = -1;
   transition[4] = 1;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
   gBgScroll[1].x = 0;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -734,7 +736,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   wait(1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();

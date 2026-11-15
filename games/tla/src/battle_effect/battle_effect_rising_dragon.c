@@ -492,7 +492,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

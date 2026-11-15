@@ -202,7 +202,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       *dst = b << 10 | (i + 2) << 5 | r;
     }
   }
-  BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_MossCaveBackdrop, 0);
   frame = 0;
   if (!(gInput.repeat & (KEY_A | KEY_B))) {
     do {
@@ -449,7 +450,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           for (i = 0; i != 2; i++) {
             bodyPlace[0] = position.x;
             bodyPlace[1] = px(272) - (position.y + i * px(32));
-            bodyPlace[2] = 0x1000000;
+            bodyPlace[2] = px(256);
             Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                               (s32 *)&req, 0);
           }
@@ -485,7 +486,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           }
           bodyPlace[0] = position.x;
           bodyPlace[1] = px(120) - position.y;
-          bodyPlace[2] = 0x800000;
+          bodyPlace[2] = px(128);
           Render_ApplyProjectedPlacementFar(work->sprites[18], bodyPlace,
                                             (s32 *)&req, 0);
         }
@@ -631,7 +632,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
               px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
         }
@@ -849,7 +850,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           bodyPlace[0] = position.x - px(gHaures_FeatherPoints[i][0]);
           bodyPlace[1] =
               px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
@@ -858,7 +859,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
               px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }

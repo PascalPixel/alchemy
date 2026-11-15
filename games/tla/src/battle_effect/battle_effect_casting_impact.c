@@ -2289,7 +2289,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 Transform_ApplyTranslation(px(target[0] / 2 - 64),
                                            px(target[1] - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
                 Transform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
@@ -2334,7 +2334,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 Transform_ApplyTranslation(px(target[0] / 2 - 64),
                                            px(target[1] - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
                 Transform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,

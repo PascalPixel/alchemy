@@ -721,7 +721,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= args->targetCount * 8 + 40)
-      target[1] += 0x40000;
+      target[1] += px(4);
     point[0] = target[0];
     point[1] = target[1];
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;

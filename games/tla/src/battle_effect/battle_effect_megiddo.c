@@ -191,7 +191,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       list[0] = args->user;
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
@@ -613,7 +614,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   transition[4] = 0;
   // The background id is the low halfword of the word at 0x670.
   BattleBackground_LoadFar(
-      1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
+      BATTLE_BACKGROUND_FIXED,
+      (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER

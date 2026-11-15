@@ -156,7 +156,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   draw[1] = ALTERNATE_BLITTER_SLOT;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
   work->scrollStepX = -1;

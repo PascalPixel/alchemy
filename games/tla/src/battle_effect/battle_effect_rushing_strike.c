@@ -356,7 +356,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame == 164) {
-      BattleBackground_LoadFar(1, ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
     }
     if (frame == 165) {
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -392,7 +393,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       s32 max; // One constant, set in the for: red takes its 31 from it.
 
       // Into the sky: the red haze, its palette made grey-blue.
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
       for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31; i != 128;
            i++, color++) {
         s32 entry = *color;

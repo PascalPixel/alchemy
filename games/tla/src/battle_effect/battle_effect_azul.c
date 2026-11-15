@@ -29,6 +29,18 @@ struct AzulFace {
 
 #define AZUL_FRAMES 228
 
+/// Azul's pictures and models in the effect's pictures: the faces of its model
+/// after their vertices, the sphere, the grid, BlueBeamSheet and every other
+/// pixel of the beam's first picture, packed to 12x24.
+#define AZUL_FACES 0x1f0
+#define AZUL_SPHERE 0x800
+#define AZUL_GRID 0xc00
+#define AZUL_BLUE_BEAM 0x2bb8
+#define AZUL_BEAM_DROP 0x2df8
+/// Where Azul decodes, one after another, WispSheet, CornerRuneASheet,
+/// FireRingTexture and SwirlTexture in the map cell buffer.
+#define AZUL_TEXTURES 0x4000
+
 /// Azul: water and bubbles rush over the foes, the winged serpent swims in
 /// from the right and closes them in a great sphere of water, and the sphere
 /// bursts over the field in a wave of foam.
@@ -82,9 +94,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   battle = Ram_HeapSlots->battleWork;
   verts = (struct ModelVertex *)work->sheet;
-  faces = (struct AzulFace *)(work->sheet + 0x1f0);
-  sphere = work->sheet + 0x800;
-  grid = work->sheet + 0xc00;
+  faces = (struct AzulFace *)(work->sheet + AZUL_FACES);
+  sphere = work->sheet + AZUL_SPHERE;
+  grid = work->sheet + AZUL_GRID;
   {
     u8 *cells = gMapGridCellBuffer;
 
@@ -97,14 +109,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
   }
   {
-    u8 *cells = work->sheet + 0x2bb8;
+    u8 *cells = work->sheet + AZUL_BLUE_BEAM;
     u8 *dst;
     s32 count;
 
     Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, cells, 1, 1);
     i = 0;
     count = 288;
-    dst = work->sheet + 0x2df8;
+    dst = work->sheet + AZUL_BEAM_DROP;
     for (; i != count; i++) {
       *dst++ = *cells;
       cells += 2;
@@ -119,7 +131,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     ((struct Sprite *)work->sprites[i])->image.priority = 1;
   }
   mapCells = gMapGridCellBuffer;
-  planes = Ram_MapCellBuffer + 0x4000;
+  planes = Ram_MapCellBuffer + AZUL_TEXTURES;
   stripEnd = 0x3a08;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
@@ -214,7 +226,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (p->variant >= 0) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
-          blit(canvas, work->sheet + 0x2df8,
+          blit(canvas, work->sheet + AZUL_BEAM_DROP,
                (Q_16_16_TO_INT(p->x + (s << 4))) - 6,
                Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);
@@ -532,7 +544,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
-                                 Ram_MapCellBuffer + 0x4000, 1, 0);
+                                 Ram_MapCellBuffer + AZUL_TEXTURES, 1, 0);
       for (i = 0; i != 6; i++) {
         for (k = 0; k != 16; k++) {
           for (j = 0; j != 64; j++) {
@@ -542,16 +554,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
-                                 (Ram_MapCellBuffer + 0x4000), 1, 0);
-      Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + 0x4000,
+                                 (Ram_MapCellBuffer + AZUL_TEXTURES), 1, 0);
+      Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + AZUL_TEXTURES,
                                   gMapGridCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
     }
     u = frame - 80;
     if (u <= 107) {
@@ -618,7 +630,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
+          scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;
           scratchTexture.logWidth = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;
           scratchTexture.logHeight = 7;
@@ -637,7 +649,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         size = (frame << 13) + -0x130000;
         scratchTexture.logWidth = 6;
         scratchTexture.logHeight = 6;
-        scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
+        scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;
         model->shade = shade;
         model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
@@ -670,8 +682,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       p = (struct Particle *)gMapGridCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
-          blit(canvas, work->sheet + 0x2df8, Q_16_16_UPPER_HALF(p->x) - 6,
-               Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
+          blit(canvas, work->sheet + AZUL_BEAM_DROP,
+               Q_16_16_UPPER_HALF(p->x) - 6, Q_16_16_UPPER_HALF(p->y) - 12, 12,
+               24);
           BattleEffectKernels_IntegrateVector2(p, 63, px(1));
           if (p->y > px(96)) {
             p->velocityY = -p->velocityY / 2;
@@ -683,7 +696,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
     }
     if (frame == 186) {
-      BattleBackground_LoadFar(1, battle->background, 24);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);

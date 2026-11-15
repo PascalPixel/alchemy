@@ -1794,7 +1794,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         ty = (frame * 3 << 13) - 0x4ec000;
         pitch = 4000;
         if (ty > 0x180000) {
-          ty = 0x180000;
+          ty = px(24);
         }
         s = frame * 611 - 111926;
         if (s > 55536) {
@@ -1803,7 +1803,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (frame > 273) {
           ty = (frame << 15) - 0x710000;
           if (ty > 0x200000) {
-            ty = 0x200000;
+            ty = px(32);
           }
           pitch = 21536 - (frame << 6);
           if (pitch <= 2999) {
@@ -1882,7 +1882,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Transform_Reset();
             s = d << 13;
             if (i > 1) {
-              s32 ty = -0x2c0000;
+              s32 ty = -px(44);
 
               if (frame > 539) {
                 ty += (frame - 539) << 20;
@@ -1919,7 +1919,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyTranslation(-px(4), -px(44), 0);
             Transform_ApplyAxisScale(s, s << 1, s);
-            Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+            Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
             Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 9);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
@@ -1933,7 +1933,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           s32 st = gCoatlicue_GlowFrames[i];
 
           if (frame > st && frame < st + 100) {
-            ty = -0x2c0000;
+            ty = -px(44);
             s = (frame - st) * 2978;
             if (s > 65535) {
               s = 0x10000;
@@ -2153,7 +2153,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           Transform_ApplyTranslation(0, px(112 - lift), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyUniformScale(s);
-          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyYaw(frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners,

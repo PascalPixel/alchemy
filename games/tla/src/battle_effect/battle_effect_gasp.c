@@ -700,7 +700,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               Transform_Reset();
               Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 64), 0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-              Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+              Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
               Transform_ApplyUniformScale(scale);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
@@ -1260,7 +1260,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             shade = t * 8 - 64;
           model->shade = shade;
           Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
-          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);

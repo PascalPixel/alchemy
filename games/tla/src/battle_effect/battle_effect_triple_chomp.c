@@ -128,7 +128,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyTranslation(px(BITE_ANCHOR(i)->x - 128),
                                      px(BITE_ANCHOR(i)->y - 64), 0);
-          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyUniformScale(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,

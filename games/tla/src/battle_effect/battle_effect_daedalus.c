@@ -306,7 +306,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_VioletSkyBackdrop, 0);
       for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0; i != 128; i++, col++) {
         s32 mid;
         s32 s;

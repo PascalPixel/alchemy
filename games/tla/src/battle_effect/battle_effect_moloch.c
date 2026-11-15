@@ -361,7 +361,8 @@ void Iris_ChangeBackdrop(void) {
   // No actor objects over the new backdrop.
   list[0] = 0xff;
   BattleActor_SpawnObjectsForListFar(list, 0);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   for (i = 0; i != 128; i++) {
@@ -1162,7 +1163,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
       battle[0x867] = 1;
-      BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_SunsetBackdrop, 0);
       colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
       Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
       colors += 0x200;
@@ -1580,7 +1582,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Transform_Reset();
-      BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
       {
         u16 *fade = FADE_PLTT;

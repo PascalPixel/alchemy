@@ -98,7 +98,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   }
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);

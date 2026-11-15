@@ -725,7 +725,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         Transform_Reset();
         Transform_ApplyTranslation(px(target.x / 2 - 64), px(target.y - 64), 0);
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+        Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
         Transform_ApplyPitch(TRIG_TURN / 16);
         Transform_ApplyYaw(angle);
         Transform_ApplyUniformScale(t * 0x3000);

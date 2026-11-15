@@ -86,7 +86,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   BattleActor_SpawnObjectsForListFar(list, 0);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_RedHazeBackdrop, 0);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -833,9 +834,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.pixels = work->sheet;
         for (i = 0; i != 3; i++) {
           Transform_Push();
-          Transform_ApplyRoll(i * 21845 + 10922);
+          Transform_ApplyRoll(i * (TRIG_TURN / 3) + TRIG_TURN / 6);
           {
-            s32 phase = i * 21845 + 10922;
+            s32 phase = i * (TRIG_TURN / 3) + TRIG_TURN / 6;
             model->shade = -24 - (Q_16_16_TO_INT(Trig_Cos(phase + a) << 3));
           }
           Transform_ApplyTranslation(0, -px(16), 0);
@@ -947,7 +948,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   work->fadeStep = 0;
   // Act two: the land seen from the sky, where the orb falls and bursts.
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
@@ -1138,13 +1140,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Render_DrawModelList(aerialModel);
           aerialTexture.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
-            s32 k = i * 21845 + 10922;
+            s32 k = i * (TRIG_TURN / 3) + TRIG_TURN / 6;
             s32 tone =
                 aerialShade + (Q_16_16_TO_INT(Trig_Cos(a + k) << 3)) - 16;
             s32 v;
 
             Transform_Push();
-            Transform_ApplyRoll(i * 21845 + 10922);
+            Transform_ApplyRoll(i * (TRIG_TURN / 3) + TRIG_TURN / 6);
             aerialModel->shade = tone;
             Transform_ApplyTranslation(0, -px(16), 0);
             v = 19712;
@@ -1315,7 +1317,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                     CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     EFFECT_PRESENT_CANVAS(work);
     gBgScroll[1].x = savedScroll;
-    BattleBackground_LoadFar(1, battle->background, 24);
+    BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
     Palette_BrightenSavedBattleBg(-16, -16, -4);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                                1);

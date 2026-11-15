@@ -1086,7 +1086,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
-  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(battle), -1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           BATTLE_BACKGROUND_ID(battle), -1);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 

@@ -92,7 +92,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
   Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
@@ -404,7 +405,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -497,13 +499,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == JUDGMENT_SWEEP_FOREST) {
       IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct Particle *p = work->particles;
 

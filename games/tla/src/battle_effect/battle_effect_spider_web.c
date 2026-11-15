@@ -812,7 +812,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Iwram_ClearWords((void *)&BG_PLTT_COLOR(6, 0), 256);
   wait(1);
-  BattleBackground_LoadFar(2, battle->background, -1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_ZOOMED, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);

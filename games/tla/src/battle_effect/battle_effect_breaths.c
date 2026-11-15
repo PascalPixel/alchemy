@@ -295,7 +295,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
               if (mode == BREATH_BLAST) {
                 Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (args->side == EFFECT_SIDE_ENEMIES)

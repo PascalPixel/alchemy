@@ -988,7 +988,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 // Routines of other banks the parts call.
 void Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
+void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// Turns the battle camera, over `frames` frames, to look at the point between

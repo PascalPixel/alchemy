@@ -10,6 +10,7 @@
 #include "battle/battle.h"
 #include "window/window.h"
 #include "graphics/glyph.h"
+#include "window/screens.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "djinn_ids.h"
@@ -64,17 +65,57 @@ enum DjinnMenuResult {
   DJINN_RESULT_HELP = 10 ///< Select: the help
 };
 
-/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is.
+/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. The tutorial
+/// plays the menu itself, one scripted press a step, after a wait counted in
+/// frames (DjinnMenu_SelectDjinn and, on the preview screens,
+/// PsynergyList_RunCompareLoop).
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
-  /// Giving a Djinni and setting it.
+  /// Giving a Djinni and setting it: "To give your Djinni to someone else,
+  /// move it like this."
   DJINN_TUTORIAL_GIVE = 1,
-  /// The Djinn's powers.
+  DJINN_TUTORIAL_GIVE_PICK = 2,    ///< A on the Djinni
+  DJINN_TUTORIAL_GIVE_MOVE = 3,    ///< Right, to the next party member
+  DJINN_TUTORIAL_GIVE_DROP = 4,    ///< A there
+  DJINN_TUTORIAL_GIVE_PREVIEW = 5, ///< A on the preview
+  /// "After choosing who gets the Djinni, you can "set" it."
+  DJINN_TUTORIAL_SET = 6,
+  DJINN_TUTORIAL_SET_SPARE = 7,  ///< as DJINN_TUTORIAL_SET; no step leads here
+  DJINN_TUTORIAL_SET_PICK = 8,   ///< A on the Djinni
+  DJINN_TUTORIAL_SET_CHOOSE = 9, ///< A on its own column
+  /// The preview: "Setting a Djinni changes your attributes and sometimes even
+  /// your class."
+  DJINN_TUTORIAL_SET_CHANGES = 10,
+  /// The preview: "When your class changes, the Psynergy you can use may also
+  /// change."
+  DJINN_TUTORIAL_CLASS_PSYNERGY = 11,
+  DJINN_TUTORIAL_SET_PREVIEW = 12, ///< A on the preview
+  DJINN_TUTORIAL_SET_DONE = 13,    ///< B, out of the menu
+  /// The Djinn's powers: a wait, then "Each Djinni has different, unique
+  /// powers." and the two lines after it.
   DJINN_TUTORIAL_POWERS = 14,
+  DJINN_TUTORIAL_POWERS_TALK = 15,
+  DJINN_TUTORIAL_POWERS_WAIT = 16,
+  DJINN_TUTORIAL_POWERS_WAIT_MORE = 17,
+  DJINN_TUTORIAL_POWERS_PICK = 18, ///< A on the Djinni
+  /// As DJINN_TUTORIAL_POWERS_PICK; no step leads here.
+  DJINN_TUTORIAL_POWERS_PICK_SPARE = 20,
+  DJINN_TUTORIAL_POWERS_MOVE = 21,    ///< Left
+  DJINN_TUTORIAL_POWERS_CHOOSE = 22,  ///< A there
+  DJINN_TUTORIAL_POWERS_PREVIEW = 23, ///< A on the preview
+  DJINN_TUTORIAL_POWERS_DONE = 24,    ///< B, out of the menu
+  DJINN_TUTORIAL_POWERS_END = 25,     ///< nothing more is pressed
   /// Recovery after a summon.
   DJINN_TUTORIAL_RECOVERY = 27,
   /// Waits for the player's A, then presses B.
   DJINN_TUTORIAL_CLOSE = 28
+};
+
+/// What DjinnMenu_GetEntryState says of a Djinni in the list.
+enum DjinniState {
+  DJINNI_STATE_STANDBY = 0,   ///< on standby: R sets it
+  DJINNI_STATE_SET = 1,       ///< set: R puts it on standby
+  DJINNI_STATE_RECOVERING = 2 ///< neither: recovering from a summon
 };
 
 /// DjinnMenu_SelectDjinn's two choosers.

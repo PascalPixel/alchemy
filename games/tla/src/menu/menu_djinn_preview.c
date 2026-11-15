@@ -36,7 +36,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 row;
 
   menu = Ram_HeapSlots->menuWork;
-  confirmationChoice = 0;
+  confirmationChoice = YES;
   result = 0;
   redraw = 1;
   frame = 0;
@@ -200,7 +200,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     backdrop = menu->backdrop;
     pressed = gInput.pressed;
     repeat = gInput.repeat;
-    if (backdrop->tutorialStep != 0) {
+    if (backdrop->tutorialStep != DJINN_TUTORIAL_OFF) {
       u8 *saved;
       s32 size;
 
@@ -210,9 +210,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       repeat = 0;
       backdrop->tutorialTimer++;
       switch (backdrop->tutorialStep) {
-      case 5:
-      case 12:
-      case 23:
+      case DJINN_TUTORIAL_GIVE_PREVIEW:
+      case DJINN_TUTORIAL_SET_PREVIEW:
+      case DJINN_TUTORIAL_POWERS_PREVIEW:
         if (backdrop->tutorialTimer == 100) {
           repeat = KEY_A;
           pressed = KEY_A;
@@ -220,13 +220,14 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep++;
         }
         break;
-      case 10:
+      case DJINN_TUTORIAL_SET_CHANGES:
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
-          window =
-              Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
+                                             DJINN_TUTORIAL_LINE_SET_CHANGES,
+                                         8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_SHOWN;
@@ -241,20 +242,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
-          backdrop->tutorialStep = 11;
+          backdrop->tutorialStep = DJINN_TUTORIAL_CLASS_PSYNERGY;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_HIDDEN;
           } while (0);
         }
         break;
-      case 11:
+      case DJINN_TUTORIAL_CLASS_PSYNERGY:
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
-          window =
-              Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
+                                             DJINN_TUTORIAL_LINE_CLASS_PSYNERGY,
+                                         8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_SHOWN;
@@ -270,7 +272,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           wait(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
-          backdrop->tutorialStep = 12;
+          backdrop->tutorialStep = DJINN_TUTORIAL_SET_PREVIEW;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_HIDDEN;
@@ -401,7 +403,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     if ((pressed & KEY_A) != 0) {
-      if (confirmationChoice == 0) {
+      if (confirmationChoice == YES) {
         result = DJINN_RESULT_CONFIRMED;
         break;
       }

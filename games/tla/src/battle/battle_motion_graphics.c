@@ -18,10 +18,11 @@
 
 void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 
-/// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
-/// a call that lands, saves the battle object it borrows and brings in the
-/// beast's class (Wild Wolf's 117 and so on) to play the attack; returns the
-/// save, or NULL for any other ability. BattleMotion_DismissBeast undoes it.
+/// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
+/// for a call that lands, saves the battle object it borrows and brings in the
+/// beast's enemy (ENEMY_WILD_WOLF for Wild Wolf and so on) to play the attack;
+/// returns the save, or NULL for any other ability. BattleMotion_DismissBeast
+/// undoes it.
 struct SavedBattleObj *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {
@@ -45,98 +46,98 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   saved->single = single;
   saved->reactivate = 0;
   switch (plan->abilityId) {
-  case 600:
-    classId = 117;
+  case ABILITY_WILD_WOLF:
+    classId = ENEMY_WILD_WOLF;
     break;
-  case 601:
-    classId = 137;
+  case ABILITY_EMU:
+    classId = ENEMY_EMU;
     break;
-  case 602:
-    classId = 182;
+  case ABILITY_ROC:
+    classId = ENEMY_ROC;
     break;
-  case 603:
-    classId = 299;
+  case ABILITY_SALAMANDER:
+    classId = ENEMY_SALAMANDER;
     break;
-  case 604:
-    classId = 296;
+  case ABILITY_ORC:
+    classId = ENEMY_ORC;
     break;
-  case 605:
-    classId = 278;
+  case ABILITY_HARPY:
+    classId = ENEMY_HARPY;
     break;
-  case 606:
-    classId = 316;
+  case ABILITY_GRAND_GOLEM:
+    classId = ENEMY_GRAND_GOLEM;
     break;
-  case 607:
-    classId = 317;
+  case ABILITY_CERBERUS:
+    classId = ENEMY_DREAD_HOUND;
     break;
-  case 608:
-    classId = 185;
+  case ABILITY_WYVERN:
+    classId = ENEMY_WYVERN;
     break;
-  case 609:
-    classId = 158;
+  case ABILITY_PIXIE:
+    classId = ENEMY_PIXIE;
     break;
-  case 610:
-    classId = 150;
+  case ABILITY_DINOX:
+    classId = ENEMY_DINOX;
     break;
-  case 611:
-    classId = 311;
+  case ABILITY_GRYPHON:
+    classId = ENEMY_GRYPHON;
     break;
-  case 612:
-    classId = 212;
+  case ABILITY_LIVING_ARMOR:
+    classId = ENEMY_LIVING_ARMOR;
     break;
-  case 613:
-    classId = 323;
+  case ABILITY_CHIMERA:
+    classId = ENEMY_CHIMERA;
     break;
-  case 614:
-    classId = 191;
+  case ABILITY_BLUE_DRAGON:
+    classId = ENEMY_BLUE_DRAGON;
     break;
-  case 615:
-    classId = 159;
+  case ABILITY_FAERY:
+    classId = ENEMY_FAERY;
     break;
-  case 616:
-    classId = 162;
+  case ABILITY_ELDER_WOOD:
+    classId = ENEMY_ELDER_WOOD;
     break;
-  case 617:
-    classId = 155;
+  case ABILITY_LICH:
+    classId = ENEMY_DOOMSAYER;
     break;
-  case 618:
-    classId = 263;
+  case ABILITY_TROLL:
+    classId = ENEMY_TROLL;
     break;
-  case 619:
-    classId = 197;
+  case ABILITY_MINOTAUR:
+    classId = ENEMY_MINOTAURUS;
     break;
-  case 620:
-    classId = 215;
+  case ABILITY_GHOST_SOLDIER:
+    classId = ENEMY_GHOST_ARMY;
     break;
-  case 621:
-    classId = 99;
+  case ABILITY_MACETAIL:
+    classId = ENEMY_MACETAIL;
     break;
-  case 622:
-    classId = 196;
+  case ABILITY_FIRE_DRAGON:
+    classId = ENEMY_FIRE_DRAGON;
     break;
-  case 623:
-    classId = 160;
+  case ABILITY_WEIRD_NYMPH:
+    classId = ENEMY_WEIRD_NYPMH;
     break;
-  case 624:
-    classId = 281;
+  case ABILITY_SUCCUBUS:
+    classId = ENEMY_SIREN;
     break;
-  case 625:
-    classId = 163;
+  case ABILITY_ESTRE_WOOD:
+    classId = ENEMY_ESTRE_WOOD;
     break;
-  case 626:
-    classId = 302;
+  case ABILITY_MANTICORE:
+    classId = ENEMY_MANTICORE;
     break;
-  case 627:
-    classId = 188;
+  case ABILITY_PHOENIX:
+    classId = ENEMY_PHOENIX;
     break;
-  case 629:
-    classId = 242;
+  case ABILITY_CALL_ZOMBIE:
+    classId = ENEMY_ZOMBIE;
     break;
-  case 630:
-    classId = 203;
+  case ABILITY_CALL_DEMON:
+    classId = ENEMY_RED_DEMON;
     break;
-  case 631:
-    classId = 218;
+  case ABILITY_CALL_DULLAHAN:
+    classId = ENEMY_DULLAHAN;
     break;
   default:
     classId = 9;

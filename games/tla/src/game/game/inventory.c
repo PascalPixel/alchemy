@@ -37,22 +37,23 @@ s32 Item_GetEquipmentGroup(s32 item_id) {
   s32 type = Item_GetDirect(item_id)->type;
   s32 group;
 
-  if (type == 1)
-    group = 1;
-  else if (type == 2)
-    group = 2;
-  else if (type == 3)
-    group = 2;
-  else if (type == 4)
-    group = 2;
-  else if (type == 5)
-    group = 2;
-  else if (type == 9)
-    group = 2;
-  else if (type == 7)
-    group = 1;
+  if (type == ITEM_TYPE_WEAPON)
+    group = EQUIPMENT_GROUP_WEAPON;
+  else if (type == ITEM_TYPE_ARMOR)
+    group = EQUIPMENT_GROUP_ARMOR;
+  else if (type == ITEM_TYPE_SHIELD)
+    group = EQUIPMENT_GROUP_ARMOR;
+  else if (type == ITEM_TYPE_HELM)
+    group = EQUIPMENT_GROUP_ARMOR;
+  else if (type == ITEM_TYPE_BOOTS)
+    group = EQUIPMENT_GROUP_ARMOR;
+  else if (type == ITEM_TYPE_SHIRT)
+    group = EQUIPMENT_GROUP_ARMOR;
+  else if (type == ITEM_TYPE_TRIDENT)
+    group = EQUIPMENT_GROUP_WEAPON;
   else
-    group = type == 10;
+    // A class-changing item counts as a weapon: EQUIPMENT_GROUP_WEAPON is 1.
+    group = type == ITEM_TYPE_CLASS_CHANGE;
   return group;
 }
 
@@ -245,19 +246,19 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
 
   item = Item_GetDirect(item_id);
   type = item->type;
-  if (type != 6 && type != 11) {
-    for (other = 0; other <= 14; other++) {
+  if (type != ITEM_TYPE_PSYNERGY && type != ITEM_TYPE_ELEMENTAL_STAR) {
+    for (other = 0; other < INVENTORY_SLOTS; other++) {
       if ((inv->inventory[other] & INVENTORY_EQUIPPED) == 0)
         continue;
       if (Item_GetDirect(inv->inventory[other])->type == type)
         break;
     }
 
-    if (other != 15) {
+    if (other != INVENTORY_SLOTS) {
       item = Item_GetDirect(inv->inventory[other]);
-      if (item->flags & 2)
+      if (item->flags & ITEM_CANNOT_UNEQUIP)
         return -2;
-      inv->inventory[other] &= 0xfdff;
+      inv->inventory[other] &= (u16)~INVENTORY_EQUIPPED;
     }
   }
 
@@ -387,8 +388,9 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   return result;
 }
 
-/// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
-/// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
+/// Returns 0 when the item in `slot` may be dropped, or else why not: 8 the
+/// slot is empty, or bit 2 the item is indispensable and bit 1 it is equipped
+/// and cannot be taken off.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);
   s32 raw = inv->inventory[slot];

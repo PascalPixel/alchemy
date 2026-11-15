@@ -638,9 +638,12 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < toFIXED(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG3CNT = cnt;
+  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt;
+  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG1CNT = cnt;
   gOrbGlowActive = 0;
   Sound_Play(SE_STOP_ACTION_SE);
   wait(1);
@@ -718,9 +721,12 @@ s32 Scene_Initialize(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG3CNT = cnt;
+  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt;
+  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt;
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
              &REG_BLDCNT);

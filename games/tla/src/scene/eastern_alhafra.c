@@ -1412,7 +1412,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 8);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 23);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_CHAUCHA);
   Actor_WalkBy(ACTOR_EOLEO, -96, 0);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, -96, 0);
   Actor_WalkBy(ACTOR_CHAUCHA, 0, 80);
@@ -2284,11 +2284,12 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetAnimation(ACTOR_MAN_KNOCKED_DOWN, 3);
   Actor_SetAnimationAndWait(ACTOR_FIRST_WORKER, 3);
   FieldEvent_Wait(30);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 25);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 25);
-  FieldActor_WatchAndSetScript(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 25);
-  FieldActor_WatchAndSetScript(ACTOR_MAN_KNOCKED_DOWN, 25);
-  FieldActor_WatchAndSetScript(ACTOR_FIRST_WORKER, 25);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_ALHAFRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_ALHAFRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_YOUNG_MAN_KNOCKED_DOWN,
+                               ACTOR_ALHAFRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_MAN_KNOCKED_DOWN, ACTOR_ALHAFRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_FIRST_WORKER, ACTOR_ALHAFRAS_MAYOR);
   Actor_SetScript(ACTOR_ALHAFRAS_MAYOR, (s32)gEasternAlhafra_RunOffScript);
   Actor_SetScript(ACTOR_JIYA, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(10);

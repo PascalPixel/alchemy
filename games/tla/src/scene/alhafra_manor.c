@@ -607,11 +607,11 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
   Actor_SetSpeed(ACTOR_MAYOR, 1);
   Actor_SetSpeed(ACTOR_JIYA, 1);
-  Actor_WatchAndSetScript(ACTOR_FELIX, 9);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 9);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 9);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 9);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 9);
+  Actor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MAYOR);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 0);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 50);
   Actor_WalkByAndWait(ACTOR_MAYOR, -32, 4);

@@ -1297,12 +1297,12 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirectionById(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
   // "Chaucha!"
   Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-  Actor_WatchAndSetScript(ACTOR_FELIX, 14);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 14);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 14);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 14);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 14);
-  Actor_WatchAndSetScript(ACTOR_OBABA, 14);
+  Actor_WatchAndSetScript(ACTOR_FELIX, ACTOR_CHAUCHA);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_CHAUCHA);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_CHAUCHA);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_CHAUCHA);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_CHAUCHA);
+  Actor_WatchAndSetScript(ACTOR_OBABA, ACTOR_CHAUCHA);
   Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 0, 16);
   Actor_SetSpritePriority(ACTOR_CHAUCHA, 3);
   Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 0, 32);
@@ -1508,11 +1508,11 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(5);
   Actor_Jump(ACTOR_BRIGGS, 6, 20);
-  Actor_WatchAndSetScript(ACTOR_FELIX, 11);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 11);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 11);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 11);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 11);
+  Actor_WatchAndSetScript(ACTOR_FELIX, ACTOR_BRIGGS);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_BRIGGS);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_BRIGGS);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_BRIGGS);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_BRIGGS);
   Actor_SetSpeed(ACTOR_BRIGGS, 2);
   Actor_WalkByAndWaitById(ACTOR_BRIGGS, -80, 0);
   Event_Wait(10);

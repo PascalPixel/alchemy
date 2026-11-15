@@ -747,11 +747,12 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetAnimationById(ACTOR_MADRAS_MAYOR, ANIM_STAND);
   Event_Wait(1);
   Actor_SetAnimation(ACTOR_MADRAS_ELDER, 5);
-  FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 30);
-  Actor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 30);
+  FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                               ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_MAYOR);
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
@@ -953,9 +954,11 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_WaitForArrival();
   if (a0 == 0x15) {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
-    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 29);
-    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 29);
-    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
                               (s32)gAlhafra_PasserbyLeadsFromCell21Script);
     Actor_SetMovementTypeById(ACTOR_MADRAS_ELDER,
@@ -971,26 +974,31 @@ void Alhafra_MadransArrive(s32 a0) {
     FieldActor_SetSpritePriority(ACTOR_WEARY_MADRAN, 3);
     FieldActor_SetSpritePriority(ACTOR_PARCHED_MADRAN, 3);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
                               (s32)gAlhafra_MayorFollowsFromCell21Script);
     Event_Wait(170);
     Actor_SetMovementTypeById(
-        32, (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
+        ACTOR_SECOND_MADRAN_SOLDIER,
+        (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
     Event_Wait(10);
     Actor_SetMovementTypeById(
-        31, (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
+        ACTOR_FIRST_MADRAN_SOLDIER,
+        (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
     Actor_SetMovementTypeById(ACTOR_WEARY_MADRAN,
                               (s32)gAlhafra_ElderFollowsFromCell21Script);
     Event_Wait(60);
     Actor_SetMovementTypeById(
-        35, (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
+        ACTOR_PARCHED_MADRAN,
+        (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
   } else {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
     FieldActor_WatchAndSetScript(ACTOR_MADRAS_MAYOR, 17);
-    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
-    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
-    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 30);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_MAYOR);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_MAYOR);
+    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
                               (s32)gAlhafra_PasserbyLeadsFromCell20Script);
     Event_Wait(60);
@@ -999,7 +1007,7 @@ void Alhafra_MadransArrive(s32 a0) {
     Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                               (s32)gAlhafra_FirstMadranFollowsFromCell20Script);
     Event_Wait(70);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
                               (s32)gAlhafra_MayorFollowsFromCell20Script);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_ELDER, 3);
@@ -1015,12 +1023,15 @@ void Alhafra_MadransArrive(s32 a0) {
                               (s32)gAlhafra_ElderFollowsFromCell20Script);
     Event_Wait(40);
     Actor_SetMovementTypeById(
-        31, (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
+        ACTOR_FIRST_MADRAN_SOLDIER,
+        (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
     Actor_SetMovementTypeById(
-        35, (s32)gAlhafra_SecondMadranFollowsFromCell20Script);
+        ACTOR_PARCHED_MADRAN,
+        (s32)gAlhafra_SecondMadranFollowsFromCell20Script);
     Event_Wait(30);
     Actor_SetMovementTypeById(
-        32, (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
+        ACTOR_SECOND_MADRAN_SOLDIER,
+        (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
   }
   Event_Wait(300);
   Actor_WaitForScriptEndById(ACTOR_WEARY_MADRAN);

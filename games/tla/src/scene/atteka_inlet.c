@@ -365,7 +365,8 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 }
 
 void AttekaInlet_CheckForHammetsMessenger(void) {
-  if (GameFlag_Get(0x820) && GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS) &&
+  if (GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP) &&
+      GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS) &&
       !GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
     AttekaInlet_HammetsMessengerArrives();
 }

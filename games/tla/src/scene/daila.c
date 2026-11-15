@@ -281,7 +281,7 @@ void Daila_MeetAlex(void) {
 
   if (GameFlag_Get(FLAG_DAILA_MET_ALEX))
     return;
-  if (GameFlag_Get(0x910))
+  if (GameFlag_Get(FLAG_MADRA_GATE_INSPECTED))
     return;
   if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS)))
     return;

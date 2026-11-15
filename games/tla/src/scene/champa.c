@@ -247,8 +247,8 @@ void Champa_SailorsSpotFelix(void) {
                                  5);
   // "What was that!? Felix? Here?"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-  FieldActor_WatchAndSetScript(ACTOR_SAILOR_WHO_SPOTS_FELIX, 34);
-  FieldActor_WatchAndSetScript(ACTOR_SECOND_SAILOR, 34);
+  FieldActor_WatchAndSetScript(ACTOR_SAILOR_WHO_SPOTS_FELIX, ACTOR_BRIGGS);
+  FieldActor_WatchAndSetScript(ACTOR_SECOND_SAILOR, ACTOR_BRIGGS);
   Actor_SetSpeed(ACTOR_BRIGGS, 1.2);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 32);
   Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST);
@@ -386,7 +386,7 @@ void Champa_FeizhiArrives(void) {
 #if TLA_PATCH_1
 #endif
 
-  if (!Event_GetFlag(0x822)) {
+  if (!Event_GetFlag(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY)) {
   } else {
 #if TLA_PATCH_1
     // Once Isaac is in the party Feizhi no longer comes; the Japanese edition
@@ -517,7 +517,7 @@ void Champa_FeizhiArrives(void) {
       Actor_SetSpeed(ACTOR_FEIZHI, 1.2);
       Actor_WalkBy(ACTOR_FEIZHI, 0, 100);
       FieldEvent_Wait(10);
-      Actor_FaceEachOther(ACTOR_FELIX, 30, 0);
+      Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN_MEETING_FEIZHI, 0);
       FieldEvent_Wait(30);
       Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
@@ -1151,11 +1151,11 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 27);
-  FieldActor_WatchAndSetScript(ACTOR_PIERS, 27);
-  FieldActor_WatchAndSetScript(ACTOR_JENNA, 27);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, 27);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 27);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_AGATIO);
+  FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_AGATIO);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_AGATIO);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_AGATIO);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_AGATIO);
   Actor_SetSpeed(ACTOR_AGATIO, 1);
   Actor_WalkByAndWait(ACTOR_AGATIO, 20, 0);
   Actor_WalkByAndWait(ACTOR_AGATIO, 2, 32);
@@ -1170,11 +1170,11 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 26);
-  FieldActor_WatchAndSetScript(ACTOR_PIERS, 26);
-  FieldActor_WatchAndSetScript(ACTOR_JENNA, 26);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, 26);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 26);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_KARST);
+  FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_KARST);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_KARST);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_KARST);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_KARST);
   Actor_SetSpeed(ACTOR_KARST, 1);
   Actor_WalkByAndWait(ACTOR_KARST, 0, 32);
   Actor_WalkByAndWait(ACTOR_KARST, -20, 24);
@@ -1190,11 +1190,11 @@ void Champa_MeetAlex(void) {
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 25);
-  FieldActor_WatchAndSetScript(ACTOR_PIERS, 25);
-  FieldActor_WatchAndSetScript(ACTOR_JENNA, 25);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, 25);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 25);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_ALEX);
+  FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_ALEX);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_ALEX);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_ALEX);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_ALEX);
   Actor_SetSpeed(ACTOR_ALEX, 1);
   Actor_WalkByAndWait(ACTOR_ALEX, 22, 24);
   EventCamera_FollowActor(ACTOR_ALEX, 1);

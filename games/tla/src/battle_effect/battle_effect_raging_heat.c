@@ -288,10 +288,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
-    void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);

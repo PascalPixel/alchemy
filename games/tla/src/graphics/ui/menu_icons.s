@@ -1939,101 +1939,101 @@ Icon_PsynergyFirePuppet:
 	.balign 4
 	.global gIcon_MiscIconPointers
 gIcon_MiscIconPointers:
-	.4byte Icon_Misc000
-	.4byte Icon_Misc001
-	.4byte Icon_Misc002
-	.4byte Icon_Misc003
-	.4byte Icon_Misc004
-	.4byte Icon_Misc005
-	.4byte Icon_Misc006
-	.4byte Icon_Misc007
-	.4byte Icon_Misc008
-	.4byte Icon_Misc009
-	.4byte Icon_Misc010
-	.4byte Icon_Misc011
-	.4byte Icon_Misc012
-	.4byte Icon_Misc013
-	.4byte Icon_Misc014
-	.4byte Icon_Misc015
-	.4byte Icon_Misc016
-	.4byte Icon_Misc017
-	.4byte Icon_Misc018
-	.4byte Icon_Misc019
-	.4byte Icon_Misc020
-	.4byte Icon_Misc021
-	.4byte Icon_Misc022
-	.4byte Icon_Misc023
-	.4byte Icon_Misc024
-	.4byte Icon_Misc025
-	.4byte Icon_Misc026
-	.4byte Icon_Misc027
-	.4byte Icon_Misc028
-	.4byte Icon_Misc029
-	.4byte Icon_Misc030
-	.4byte Icon_Misc031
+	.4byte Icon_Misc00
+	.4byte Icon_Misc01
+	.4byte Icon_Misc02
+	.4byte Icon_Misc03
+	.4byte Icon_Misc04
+	.4byte Icon_Misc05
+	.4byte Icon_Misc06
+	.4byte Icon_Misc07
+	.4byte Icon_Misc08
+	.4byte Icon_Misc09
+	.4byte Icon_Misc10
+	.4byte Icon_Misc11
+	.4byte Icon_Misc12
+	.4byte Icon_Misc13
+	.4byte Icon_Misc14
+	.4byte Icon_Misc15
+	.4byte Icon_Misc16
+	.4byte Icon_Misc17
+	.4byte Icon_Misc18
+	.4byte Icon_Misc19
+	.4byte Icon_Misc20
+	.4byte Icon_Misc21
+	.4byte Icon_Misc22
+	.4byte Icon_Misc23
+	.4byte Icon_Misc24
+	.4byte Icon_Misc25
+	.4byte Icon_Misc26
+	.4byte Icon_Misc27
+	.4byte Icon_Misc28
+	.4byte Icon_Misc29
+	.4byte Icon_Misc30
+	.4byte Icon_Misc31
 	.4byte -1
-Icon_Misc000:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_000.icon4"
-Icon_Misc001:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_001.icon4"
-Icon_Misc002:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_002.icon4"
-Icon_Misc003:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_003.icon4"
-Icon_Misc004:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_004.icon4"
-Icon_Misc005:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_005.icon4"
-Icon_Misc006:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_006.icon4"
-Icon_Misc007:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_007.icon4"
-Icon_Misc008:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_008.icon4"
-Icon_Misc009:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_009.icon4"
-Icon_Misc010:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_010.icon4"
-Icon_Misc011:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_011.icon4"
-Icon_Misc012:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_012.icon4"
-Icon_Misc013:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_013.icon4"
-Icon_Misc014:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_014.icon4"
-Icon_Misc015:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_015.icon4"
-Icon_Misc016:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_016.icon4"
-Icon_Misc017:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_017.icon4"
-Icon_Misc018:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_018.icon4"
-Icon_Misc019:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_019.icon4"
-Icon_Misc020:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_020.icon4"
-Icon_Misc021:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_021.icon4"
-Icon_Misc022:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_022.icon4"
-Icon_Misc023:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_023.icon4"
-Icon_Misc024:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_024.icon4"
-Icon_Misc025:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_025.icon4"
-Icon_Misc026:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_026.icon4"
-Icon_Misc027:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_027.icon4"
-Icon_Misc028:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_028.icon4"
-Icon_Misc029:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_029.icon4"
-Icon_Misc030:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_030.icon4"
-Icon_Misc031:
-	.incbin "games/tla/src/graphics/ui/menu_icons/misc_031.icon4"
+Icon_Misc00:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_00.icon4"
+Icon_Misc01:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_01.icon4"
+Icon_Misc02:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_02.icon4"
+Icon_Misc03:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_03.icon4"
+Icon_Misc04:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_04.icon4"
+Icon_Misc05:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_05.icon4"
+Icon_Misc06:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_06.icon4"
+Icon_Misc07:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_07.icon4"
+Icon_Misc08:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_08.icon4"
+Icon_Misc09:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_09.icon4"
+Icon_Misc10:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_10.icon4"
+Icon_Misc11:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_11.icon4"
+Icon_Misc12:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_12.icon4"
+Icon_Misc13:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_13.icon4"
+Icon_Misc14:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_14.icon4"
+Icon_Misc15:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_15.icon4"
+Icon_Misc16:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_16.icon4"
+Icon_Misc17:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_17.icon4"
+Icon_Misc18:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_18.icon4"
+Icon_Misc19:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_19.icon4"
+Icon_Misc20:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_20.icon4"
+Icon_Misc21:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_21.icon4"
+Icon_Misc22:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_22.icon4"
+Icon_Misc23:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_23.icon4"
+Icon_Misc24:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_24.icon4"
+Icon_Misc25:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_25.icon4"
+Icon_Misc26:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_26.icon4"
+Icon_Misc27:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_27.icon4"
+Icon_Misc28:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_28.icon4"
+Icon_Misc29:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_29.icon4"
+Icon_Misc30:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_30.icon4"
+Icon_Misc31:
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_31.icon4"
 	.balign 4, 0

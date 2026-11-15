@@ -459,6 +459,7 @@ enum ObjMode {
 /// Attribute 2 above its tile number: the sprite's priority, 0 in front to 3
 /// behind, and its 16-colour palette.
 #define OBJ_PRIORITY(n) ((n) << 10)
+#define OBJ_PALETTE(n) ((n) << 12)
 /// Requires all ten keys together to prevent the reset chord retriggering it.
 #define KEYCNT_DISARMED 0xc3ff
 

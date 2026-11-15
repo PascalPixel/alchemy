@@ -37,11 +37,11 @@ Resource_DirectoryTable:
 	resource IntroClouds, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
-	resource Data01B, Resource_Data01B
-	resource Data01C, Resource_Data01C
-	resource Data01D, Resource_Data01D
-	resource Data01E, Resource_Data01E
-	resource Data01F, Resource_Data01F
+	resource Data01B, Resource_SubtitlePalette
+	resource Data01C, Resource_SubtitleA
+	resource Data01D, Resource_SubtitleB
+	resource Data01E, Resource_SubtitleC
+	resource Data01F, Resource_SubtitleD
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture

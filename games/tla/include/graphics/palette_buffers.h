@@ -92,21 +92,36 @@ void TitlePaletteFade_Release(void);
 /// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
 /// for all.
 enum PaletteTint {
+  /// The backdrop colour (palette RAM's first colour) for all.
   PALETTE_TINT_FROM_SOURCE = 0x8000,
-  PALETTE_TINT_NONE = 0x10000,
-  PALETTE_TINT_GRAYSCALE = 0x10001,
+  PALETTE_TINT_NONE = 0x10000,      ///< each colour unchanged
+  PALETTE_TINT_GRAYSCALE = 0x10001, ///< grey of brightness (2R + 4G + B) / 7
+  /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
+  /// 5, green and blue 3 times plus 5, each held to 8 to 28.
   PALETTE_TINT_SEPIA = 0x10002,
+  /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TINT_WARM = 0x10003,
+  /// Each channel held to a narrow range (R 10 to 28, G 16 to 24, B 16 to 26),
+  /// then G and B + 2.
   PALETTE_TINT_MUTED = 0x10004,
-  PALETTE_TINT_PALE = 0x10005,
+  PALETTE_TINT_PALE = 0x10005, ///< half of each channel, plus their mean
+  /// R plus an eighth of G and of B; G and B two thirds.
   PALETTE_TINT_RED = 0x10006,
-  PALETTE_TINT_WARM_DARK = 0x10007,
+  PALETTE_TINT_WARM_DARK = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
+  /// A fifth off each channel of a bright colour.
   PALETTE_TINT_DIM_BRIGHT = 0x10008,
+  /// A third of R + G + B, B three steps darker.
   PALETTE_TINT_DIM_GRAY = 0x10009,
+  /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
+  /// carrying an RGB555 colour in the low 15 bits; any other value is the
+  /// address of a ready buffer to copy.
   PALETTE_TINT_FLAGS = 0x100000,
+  /// The brightness (2R + 4G + B) times the colour carried.
   PALETTE_TINT_CUSTOM = 0x200000,
+  /// The brightness R + G + B shared out in the proportions of the colour
+  /// carried.
   PALETTE_TINT_BLEND = 0x400000,
-  PALETTE_TINT_SPLIT = 0x800000
+  PALETTE_TINT_SPLIT = 0x800000 ///< each colour unchanged
 };
 
 /// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512

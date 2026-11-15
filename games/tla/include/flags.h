@@ -937,5 +937,21 @@
 /// Set as the parties, reunited at Atteka Inlet (or Contigo), set out on the
 /// winged ship.
 #define FLAG_SET_OUT_WITH_WINGS 0x9b2
+/// Set as Susa, at Gaia Rock once the Serpent is slain, hears that Kushinada is
+/// safe (GaiaRock_SusaRejoices); his talk and Mind Read change.
+#define FLAG_SUSA_REJOICES 0x9ab
+/// Set as Jenna says "They're waiting for us. Let's go to Contigo." on the
+/// World Map, once the Jupiter beacon is lit.
+#define FLAG_JENNA_POINTED_TO_CONTIGO 0x9b3
+/// Set as the Sea of Time opens (SeaOfTime_Open); the way to Lemuria and the
+/// fortune-teller's later reading of the Trident follow it.
+#define FLAG_SEA_OF_TIME_OPENED 0x940
+/// Set in Madra as Karst comes in (Madra_MeetKarst) once flag 0x825 or 0x826
+/// is; the bandit and his two thieves then wait on the World Map, and their
+/// battle clears it.
+#define FLAG_BANDIT_ON_WORLD_MAP 0xa76
+/// Set while the Golden Boots are shown on the World Map
+/// (WorldMap_ShowGoldenBoots), cleared as they are picked up.
+#define FLAG_GOLDEN_BOOTS_ON_MAP 0xa77
 
 #endif

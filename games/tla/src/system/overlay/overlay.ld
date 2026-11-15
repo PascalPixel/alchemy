@@ -248,7 +248,7 @@ SECTIONS
         "*/games/tla/src/scene/apojii_islands.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/scene/apojii_islands.o"(.data)
-        "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
+        "*/games/tla/src/graphics/field/ground_tiles.o"(.rodata)
     }
     .bss :
     {
@@ -268,7 +268,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock.o"(.data)
         "*/games/tla/src/graphics/aqua_rock/tiles.o"(.rodata)
         "*/games/tla/src/scene/aqua_rock.o"(.data.late)
-        "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
+        "*/games/tla/src/graphics/field/ground_tiles.o"(.rodata)
     }
     .bss :
     {

@@ -268,6 +268,9 @@ enum CurseFlag {
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
+/// How many actions a unit's list holds (Unit.psynergy).
+#define PSYNERGY_SLOTS 32
+
 struct Unit {
   u8 name[0x0f];      ///< one byte a character, ending in 0
   u8 level;           ///< 1 to 99 for a character
@@ -282,7 +285,7 @@ struct Unit {
   u8 baseActionCount; ///< actions a turn before equipment
   u8 baseHpRegen;     ///< HP regained each turn before equipment
   u8 basePpRegen;     ///< PP regained each turn before equipment
-  u8 unk022[2];       ///< Not named by any TLA C.
+  u8 baseUnused[2];   ///< no code names it
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
@@ -298,17 +301,17 @@ struct Unit {
   u8 actionsPerTurn; ///< actions each turn (Unit_Calculate)
   u8 hpRegen;        ///< HP regained at each turn's end
   u8 ppRegen;        ///< PP regained at each turn's end
-  u8 unk046[2];      ///< Not named by any TLA C.
+  u8 unused[2];      ///< no code names it, as baseUnused
   /// Power and resistance in each element after equipment, element levels
   /// and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
-  struct PsynergyEntry psynergy[32];
+  struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
-  u8 unk0f6[2]; ///< Not named by any TLA C.
+  u8 paddingBeforeDjinn[2]; ///< up to the word djinnHeld starts on
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
   u32 djinnHeld[4];
   /// The Djinn set, one bit per Djinni.
@@ -367,11 +370,11 @@ struct Unit {
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;
-  u8 immobile;     ///< set by ABILITY_EFFECT_GROUND
-  u8 agilityTurns; ///< the Agility change's turns left, 5 when cast
-  s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
-  s8 challenge;    ///< set by the challenge effect
-  u8 unk149;       ///< Not named by any TLA C.
+  u8 immobile;             ///< set by ABILITY_EFFECT_GROUND
+  u8 agilityTurns;         ///< the Agility change's turns left, 5 when cast
+  s8 agilityStage;         ///< the Agility stage, -4 to 8 (twice the Agility)
+  s8 challenge;            ///< set by the challenge effect
+  u8 paddingBeforeEnemyId; ///< up to the halfword enemyId starts on
   /// Who the unit is: an enemy's id (BattleUnit_Set), or a character's id
   /// (copied from id at a new game) for Unit_UpdateClass and the experience
   /// table.

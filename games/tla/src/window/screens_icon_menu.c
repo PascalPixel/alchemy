@@ -1160,12 +1160,12 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
 /// is on the bottom icon row; a layout routine places the final row. The
 /// icon's number (ResourceId_CommandIcons) is also its command name's
 /// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
-void IconMenu_AddIcon(s32 no) {
+void IconMenu_AddIcon(s32 icon) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
-  s32 flags;
+  s32 y = 136;
 
   work = Ram_HeapSlots->iconMenu;
   index = work->count;
@@ -1173,12 +1173,11 @@ void IconMenu_AddIcon(s32 no) {
     work->count++;
     entry = &work->entries[index];
     slot = VramCache_FindFreeEntry();
-    CommandIcon_LoadIntoSlot(slot, no);
+    CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
-    flags = 136;
-    entry->y = flags;
+    entry->y = y;
     entry->slot = slot;
-    work->commandIcons[index] = no;
+    work->commandIcons[index] = icon;
   }
 }
 
@@ -1260,12 +1259,12 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
 
   IconMenu_Open();
-  IconMenu_AddIcon(1);
+  IconMenu_AddIcon(COMMAND_ICON_PSYNERGY);
   if (group == 0) {
-    IconMenu_AddIcon(15);
+    IconMenu_AddIcon(COMMAND_ICON_DJINN);
   }
-  IconMenu_AddIcon(2);
-  IconMenu_AddIcon(7);
+  IconMenu_AddIcon(COMMAND_ICON_ITEM);
+  IconMenu_AddIcon(COMMAND_ICON_STATUS);
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
   ret = IconMenu_Run(selection);
   IconMenu_Close();
@@ -1286,10 +1285,10 @@ s32 FieldMenu_SelectCommand(s32 selection) {
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();
-  IconMenu_AddIcon(1);
-  IconMenu_AddIcon(0xF);
-  IconMenu_AddIcon(2);
-  IconMenu_AddIcon(7);
+  IconMenu_AddIcon(COMMAND_ICON_PSYNERGY);
+  IconMenu_AddIcon(COMMAND_ICON_DJINN);
+  IconMenu_AddIcon(COMMAND_ICON_ITEM);
+  IconMenu_AddIcon(COMMAND_ICON_STATUS);
   // Only Japanese centres the entries before selecting.
 #if LANGUAGE == LANGUAGE_JAPANESE
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
@@ -1334,16 +1333,16 @@ s32 FileList_SelectAction(void) {
     initial = 1;
   IconMenu_Open();
   if (group == 0 || group == 3)
-    IconMenu_AddIcon(21);
+    IconMenu_AddIcon(COMMAND_ICON_NEW_GAME);
   if (group <= 1)
-    IconMenu_AddIcon(22);
+    IconMenu_AddIcon(COMMAND_ICON_CONTINUE);
   if (group == 0 || group == 3)
-    IconMenu_AddIcon(23);
-  IconMenu_AddIcon(24);
+    IconMenu_AddIcon(COMMAND_ICON_COPY);
+  IconMenu_AddIcon(COMMAND_ICON_ERASE);
   if (gData_020036d8 != 0)
-    IconMenu_AddIcon(29);
+    IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gData_02005350 != 0)
-    IconMenu_AddIcon(31);
+    IconMenu_AddIcon(COMMAND_ICON_UPDATE);
   IconMenu_Center(17, SAVE_SLOT_MENU_WIDTH, 0);
   ret = IconMenu_Run(initial);
   IconMenu_Close();
@@ -1584,12 +1583,12 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Open();
   work = Ram_HeapSlots->iconMenu;
   if (mode == 0) {
-    IconMenu_AddIcon(44);
-    IconMenu_AddIcon(45);
+    IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
+    IconMenu_AddIcon(COMMAND_ICON_LINK);
   } else {
-    IconMenu_AddIcon(46);
-    IconMenu_AddIcon(47);
-    IconMenu_AddIcon(48);
+    IconMenu_AddIcon(COMMAND_ICON_GOLD);
+    IconMenu_AddIcon(COMMAND_ICON_SILVER);
+    IconMenu_AddIcon(COMMAND_ICON_BRONZE);
   }
   IconMenu_Center(17, ENTRY_WIDTH, 0);
   if (mode != 0) {
@@ -1652,10 +1651,10 @@ s32 Menu_SelectShopCommand(s32 selection) {
   s32 ret;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x11);
-  IconMenu_AddIcon(0x12);
-  IconMenu_AddIcon(0x13);
-  IconMenu_AddIcon(0x14);
+  IconMenu_AddIcon(COMMAND_ICON_BUY);
+  IconMenu_AddIcon(COMMAND_ICON_SELL);
+  IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
+  IconMenu_AddIcon(COMMAND_ICON_REPAIR);
 #if (LANGUAGE == LANGUAGE_GERMAN)
   IconMenu_Center(17, 8, 0); // Name window width.
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
@@ -1673,10 +1672,10 @@ s32 Menu_SelectSanctumService(s32 selection) {
   s32 ret;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x19);
-  IconMenu_AddIcon(0x1A);
-  IconMenu_AddIcon(0x1B);
-  IconMenu_AddIcon(0x1C);
+  IconMenu_AddIcon(COMMAND_ICON_REVIVE);
+  IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
+  IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
+  IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   IconMenu_Center(17, 10, 0);
 #else
@@ -1706,8 +1705,8 @@ s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
     row = 17;
   }
 
-  IconMenu_AddIcon(5);
-  IconMenu_AddIcon(6);
+  IconMenu_AddIcon(COMMAND_ICON_YES);
+  IconMenu_AddIcon(COMMAND_ICON_NO);
   IconMenu_Center(row, w, message);
 
   selection = IconMenu_Run(selection);
@@ -1723,8 +1722,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   s32 message = (s32)MsgCommandYes;
 
   IconMenu_Open();
-  IconMenu_AddIcon(5);
-  IconMenu_AddIcon(6);
+  IconMenu_AddIcon(COMMAND_ICON_YES);
+  IconMenu_AddIcon(COMMAND_ICON_NO);
   IconMenu_LayoutIcons(x, y, 3, message);
   selection = IconMenu_Run(selection);
   IconMenu_Close();
@@ -1757,8 +1756,8 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 ret;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x20);
-  IconMenu_AddIcon(0x21);
+  IconMenu_AddIcon(COMMAND_ICON_COINS);
+  IconMenu_AddIcon(COMMAND_ICON_LUCKY_MEDALS);
   IconMenu_Center(17, PAIR_WIDTH, 0);
   ret = IconMenu_Run(selection);
   IconMenu_Close();

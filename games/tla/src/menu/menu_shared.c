@@ -923,7 +923,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (count == 0)
     goto done;
-  Link_DrawPageArrowsFar(0x06002500);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   pages = __divsi3(count, pageSize);
   if (__modsi3(count, pageSize) != 0)
     pages++;
@@ -1017,8 +1017,6 @@ void Palette_LightenHighlight(s32 paletteNumber) {
 }
 
 #define PAGE_LABEL_FIRST 49
-#define PAGE_CAP_LEFT 0xf128
-#define PAGE_CAP_RIGHT 0xf129
 
 /// Draws a paged list's page numbers on the top border of window, ending at
 /// tile rightEdge: one digit per page between the page arrows, selectedPage in
@@ -1038,7 +1036,7 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
 
   x -= pageCount;
   if (pageCount > 1) {
-    Window_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT, x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
@@ -1049,7 +1047,7 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
       x++;
     }
 
-    Window_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, x, -1, 0);
   }
 }
 

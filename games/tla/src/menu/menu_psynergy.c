@@ -45,8 +45,8 @@ s32 PsynergyMenu_Run(void) {
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
-  Palette_LightenHighlight(14);
-  Link_DrawPageArrowsFar((void *)0x06002500);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 
   Menu_StartWatchingStart();
   result = PsynergyMenu_RunSteps(&owner, &target, &item);

@@ -100,7 +100,7 @@ s32 StatusScreen_Run(void) {
   StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
   Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
-  Palette_LightenHighlight(14);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
@@ -112,7 +112,7 @@ s32 StatusScreen_Run(void) {
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   if (Party_SumDjinnCountsFar(result) != 0)
     DjinnFigures_InitializeTopRow();
-  Link_DrawPageArrowsFar(0x06002500);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   MenuIcon_LoadSlots();
   Menu_StartWatchingStart();
   *page = 0;
@@ -296,7 +296,7 @@ void DjinnMenu_ShowCurrentList(void) {
       ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
       redraw = 0;
     }
-    Link_DrawPageArrowsFar((void *)0x06002500);
+    Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
     wait(1);
     if (gInput.pressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
@@ -354,7 +354,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
   }
-  Palette_LightenHighlight(14);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);

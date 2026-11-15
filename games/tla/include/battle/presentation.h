@@ -46,7 +46,7 @@ u32 BattleSprite_GetDefeatSound(s32 index);
 
 s32 BattleAI_ChooseRandomTarget(s32 party);
 
-s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts);
+s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 
 struct BattlePresentationWork;
 

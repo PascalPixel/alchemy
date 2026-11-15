@@ -9,7 +9,9 @@
 #include "system/io_reg.h"
 #include "window/window_tile.h"
 #include "window/message_argument.h"
+#include "window/message_speed.h"
 #include "edition.h"
+#include "graphics/oam.h"
 #include "graphics/output.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
@@ -121,7 +123,7 @@ void Message_CloseFinishedWindows(void);
 
 s32 Message_AllTyped(void);
 
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 
 // The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
 // interior of a full-width window six tiles tall.
@@ -133,11 +135,97 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 /// copies the work block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
-/// The window palette's background colour, behind its text.
+/// The BG palette of the windows and their text, the UI palette.
+#define WINDOW_PALETTE 15
+
+/// The BG palette the menus keep for their selected row or page: a copy of
+/// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
+/// which the item icons borrow.
+#define HIGHLIGHT_PALETTE 14
+/// The window palette's background colour, behind its text; in
+/// HIGHLIGHT_PALETTE, the selected row's.
 #define WINDOW_BACKGROUND_COLOR 4
 /// Eight 4bpp pixels of WINDOW_BACKGROUND_COLOR, for filling the text canvas
 /// or a tile a word at a time.
 #define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
+/// The colour that text drawn in a palette other than WINDOW_PALETTE stands
+/// on; the menus copy WINDOW_BACKGROUND_COLOR into it.
+#define TEXT_BACKGROUND_COLOR 14
+/// The BG palette that battle and the Djinn menu fill with the first basic
+/// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
+/// icons and the coloured numbers are drawn in it.
+#define BASIC_COLORS_PALETTE 5
+
+/// The colours of one 16-colour palette.
+#define PALETTE_COLORS 16
+
+// The two page arrows beside a paged list's page numbers, in the menus and
+// the File Screen: tiles 296 and 297 of character block 0, which
+// Link_DrawPageArrows slides back and forth each frame, and their
+// tilemap entries.
+#define PAGE_ARROW_TILE 296
+#define PAGE_ARROW_VRAM                                                        \
+  ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
+#define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
+#define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
+
+/// The command icons (ResourceId_CommandIcons), each drawn with the command
+/// name of the same number (MsgCommandName + icon).
+enum CommandIcon {
+  COMMAND_ICON_ATTACK = 0,
+  COMMAND_ICON_PSYNERGY = 1,
+  COMMAND_ICON_ITEM = 2,
+  COMMAND_ICON_DEFEND = 3,
+  COMMAND_ICON_FLEE = 4,
+  COMMAND_ICON_YES = 5,
+  COMMAND_ICON_NO = 6,
+  COMMAND_ICON_STATUS = 7,
+  COMMAND_ICON_CHECK = 8,
+  COMMAND_ICON_USE = 9,
+  COMMAND_ICON_GIVE = 10,
+  COMMAND_ICON_DROP = 11,
+  COMMAND_ICON_SPEAK = 12,
+  COMMAND_ICON_EQUIP = 13,
+  COMMAND_ICON_FIGHT = 14,
+  COMMAND_ICON_DJINN = 15,
+  COMMAND_ICON_SUMMON = 16,
+  COMMAND_ICON_BUY = 17,
+  COMMAND_ICON_SELL = 18,
+  COMMAND_ICON_ARTIFACTS = 19,
+  COMMAND_ICON_REPAIR = 20,
+  COMMAND_ICON_NEW_GAME = 21,
+  COMMAND_ICON_CONTINUE = 22,
+  COMMAND_ICON_COPY = 23,
+  COMMAND_ICON_ERASE = 24,
+  COMMAND_ICON_REVIVE = 25,
+  COMMAND_ICON_CURE_POISON = 26,
+  COMMAND_ICON_REPEL_EVIL = 27,
+  COMMAND_ICON_REMOVE_CURSE = 28,
+  COMMAND_ICON_BATTLE = 29,
+  COMMAND_ICON_SEND = 30,
+  COMMAND_ICON_UPDATE = 31,
+  COMMAND_ICON_COINS = 32,
+  COMMAND_ICON_LUCKY_MEDALS = 33,
+  // The settings menu's choices and the Pause menu's entries
+  // (gOptionMenu_SpeedIcons to gOptionMenu_SleepIcons), whose command names
+  // are placeholders.
+  COMMAND_ICON_SPEED_SLOW = 34,
+  COMMAND_ICON_SPEED_NORMAL = 35,
+  COMMAND_ICON_SPEED_FAST = 36,
+  COMMAND_ICON_SPEECH_OFF = 37,
+  COMMAND_ICON_SPEECH_ON = 38,
+  COMMAND_ICON_AUTO_SLEEP_OFF = 39,
+  COMMAND_ICON_AUTO_SLEEP_ON = 40,
+  COMMAND_ICON_SAVE_QUEST = 41,
+  COMMAND_ICON_SLEEP = 42,
+  COMMAND_ICON_CHANGE_SETTINGS = 43,
+  COMMAND_ICON_PASSWORD = 44,
+  COMMAND_ICON_LINK = 45,
+  COMMAND_ICON_GOLD = 46,
+  COMMAND_ICON_SILVER = 47,
+  COMMAND_ICON_BRONZE = 48,
+  COMMAND_ICON_SWITCH = 49
+};
 
 /// Two copies of a tilemap entry, for filling a run of entries a word at a
 /// time.
@@ -313,7 +401,7 @@ void Portrait_CloseWindow(s32 id);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
+void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
 void MessageArgument_Push(u32 value, u32 kind);

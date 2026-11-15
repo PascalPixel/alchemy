@@ -50,8 +50,8 @@ s32 Party_ListMembersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
 #ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *
-WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
-                                   s32 arg3, s32 arg4);
+WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
+                                   struct RenderInput *window, s32 x, s32 y);
 #endif
 void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32, u8 *);
@@ -61,9 +61,9 @@ void Icon_PrepareActor(struct WindowSprite *icon);
 void MenuArrow_Create(struct Actor_0801c0dc *obj, s32 *slot);
 #endif
 #ifndef OWN_UiTextResource_SetPosition
-void MenuArrow_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);
 #endif
-void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
+void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
 
 extern const u8 gMenu_ColonString[];
 extern const u8 gMenu_HexDigitsString[];

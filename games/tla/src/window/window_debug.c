@@ -500,12 +500,12 @@ void DebugShortcut_Release(void) {
 extern const u8 gPauseMenu_Icons[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
-void DebugShortcut_DrawAbility(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
+void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
   if (ability != 0)
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
-                            (struct RenderInput *)arg1, arg2, arg3);
+                            (struct RenderInput *)window, x, y);
   else
-    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, arg1, arg2, arg3);
+    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, window, x, y);
 }
 
 extern const s16 gDebugShortcut_Abilities[4][9];

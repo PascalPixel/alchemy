@@ -149,8 +149,8 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
+void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s16 DebugSceneSelect_Run(void);
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);

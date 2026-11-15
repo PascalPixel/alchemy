@@ -17,6 +17,86 @@
 /// WindowSprite.motion as the menu sets it: shown, or hidden but kept.
 #define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
+
+/// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
+/// largest of the screens' views of it. Each screen's run function takes the
+/// block as it opens and releases it as it closes.
+#define MENU_WORK_SIZE 3308
+
+/// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
+/// work's sides removePairSlot and addPairSlot.
+enum DjinnPreviewMode {
+  DJINN_PREVIEW_ADD_AND_SET = 0, ///< the other's Djinni is added and set
+  DJINN_PREVIEW_UNSET = 1,       ///< the chosen Djinni is unset
+  /// A trade: the own Djinni is unset if set, the other's is added, and set
+  /// if it was.
+  DJINN_PREVIEW_TRADE = 2,
+  DJINN_PREVIEW_NO_CHANGE = 3, ///< nothing changes; maximum HP and PP shown
+  DJINN_PREVIEW_ADD = 4        ///< the other's Djinni is added, set if it was
+};
+
+/// What the Djinn menu's choosers return.
+enum DjinnMenuResult {
+  DJINN_RESULT_START = -2, ///< Start: the Djinn menu closes
+  DJINN_RESULT_BACK = -1,
+  DJINN_RESULT_CHOSEN = 1,    ///< A on a Djinni
+  DJINN_RESULT_CONFIRMED = 1, ///< A on the preview's "Is this OK?"
+  DJINN_RESULT_SET = 1,
+  DJINN_RESULT_STANDBY = 2,
+  DJINN_RESULT_GIVE = 3,
+  DJINN_RESULT_TRADE = 4,
+  /// The four commands applied without their preview, which no chooser
+  /// returns.
+  DJINN_RESULT_SET_NOW = 5,
+  DJINN_RESULT_STANDBY_NOW = 6,
+  DJINN_RESULT_STATUS = 7, ///< L: the party member's status
+  DJINN_RESULT_GIVE_NOW = 8,
+  DJINN_RESULT_TRADE_NOW = 9,
+  DJINN_RESULT_HELP = 10 ///< Select: the help
+};
+
+/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is.
+enum DjinnTutorialStep {
+  DJINN_TUTORIAL_OFF = 0,
+  /// Giving a Djinni and setting it.
+  DJINN_TUTORIAL_GIVE = 1,
+  /// The Djinn's powers.
+  DJINN_TUTORIAL_POWERS = 14,
+  /// Recovery after a summon.
+  DJINN_TUTORIAL_RECOVERY = 27,
+  /// Waits for the player's A, then presses B.
+  DJINN_TUTORIAL_CLOSE = 28
+};
+
+/// DjinnMenu_SelectDjinn's two choosers.
+enum DjinnSelectMode {
+  DJINN_SELECT_DJINNI = 0, ///< a Djinni in any party member's column
+  DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
+};
+
+/// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
+/// the four elements follow it in order.
+#define DJINN_ELEMENT_TILE 0x5001
+
+/// The tile of BG character block 1 the Djinn backdrop's border tile is copied
+/// to (menu_djinn.c); the preview screens blink it (menu_djinn_preview.c).
+#define DJINN_BACKDROP_BORDER_TILE 150
+#define DJINN_BACKDROP_BORDER_VRAM                                             \
+  (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)
+
+/// A Djinn list entry's party member, element and index, shifted down.
+#define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
+#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
+#define DJINN_NUMBER(v) ((v) & 0x1f)
+
+/// The preview loop's four operations, as its confirmation text describes them
+/// (PsynergyList_RunCompareLoop's mode).
+enum DjinnCompareOperation {
+  DJINN_COMPARE_TRADE = 0,
+  DJINN_COMPARE_GIVE = 1,
+  DJINN_COMPARE_STANDBY = 2,
+  DJINN_COMPARE_SET = 3
+};
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -83,19 +163,19 @@ struct ItemMenuWork {
   s8 sideIndex[2]; ///< the party member chosen, in memberIds
   s8 sideCount[2]; ///< party members to choose from
   ///@}
-  u8 unk020[4];
+  u8 unusedAfterSides[4]; ///< no view of the menu work names it
   struct RenderInput *itemWindow;
   struct RenderInput *statusWindow;
   struct RenderInput *buttonHelpWindow;
   struct RenderInput *infoWindow;
   struct RenderInput *equipWindow;
   struct RenderInput *listWindow;
-  u8 unk03c[4];
+  u8 unusedAfterLists[4]; ///< no view of the menu work names it
   struct RenderInput *modalWindow;
-  u8 unk044[4];
+  u8 unusedAfterModal[4]; ///< no view of the menu work names it
   struct WindowSprite *gridCursor;
   struct WindowSprite *entryIcons[32];
-  u8 unk0cc[0x24];
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *questionWindow;
   /// The cursor grid: its place and its size.
   ///@{
@@ -114,10 +194,11 @@ struct ItemMenuWork {
   u16 selectedSlots[2]; ///< each side's inventory slot chosen
   u16 selectedItems[2]; ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
-  u8 unk174[4];
+  u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  u8 unk180[0x44];
+  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  u8 aroundBackdrop[68];
   u16 items[32];    ///< the inventory entries listed
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
   u8 itemCount;
@@ -139,22 +220,24 @@ struct ItemMenuWork {
   s32 figureScales[4];
   u16 figureDepths[4];
   ///@}
-  u8 unk258[6];
-  s16 messageOffset; ///< the item use's result, after MsgItemUseResult
-  s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
-  s8 listMode;       ///< the command chosen last; -1 for none
-  u8 unk262[2];
+  u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
+  s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
+  s8 equipPreview; ///< 1 while the stats preview a removal, not an equip
+  s8 listMode;     ///< the command chosen last; -1 for none
+  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
-  u8 unk26c[0x282];
-  u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
-  u8 unk4f2[0x17];
+  u8 mode;                     ///< PsynergyMenuWork's; not named here
+  u8 unusedAfterMode[3];       ///< no view of the menu work names it
+  u8 shopStock[0x27e];         ///< ShopWork's stock and party; not named here
+  u16 resourceSlots[2];        ///< VRAM cache slots of two arrow pictures
+  u8 shopKeeper[0x17];         ///< ShopWork's cursor and keeper; not named here
   /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
   /// (DjinnFigures_SetShown).
   s8 figuresShown;
-  u8 unk50b[0x6c1];
+  u8 shopEffects[0x6c1]; ///< ShopWork's particles; not named here
   /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
   /// slot each, queued while menuIconsShown is nonzero.
   ///@{
@@ -196,9 +279,9 @@ struct StatusScreenWork {
   struct RenderInput *moneyWindow; ///< ShopWork's; not named here
   struct RenderInput *memberWindow;
   struct WindowSprite *memberCursors[2];
-  s8 memberIndex[2]; ///< each side's party member, in memberIds
-  s8 memberCount[2]; ///< party members each side chooses from
-  u8 unk020[4];
+  s8 memberIndex[2];      ///< each side's party member, in memberIds
+  s8 memberCount[2];      ///< party members each side chooses from
+  u8 unusedAfterSides[4]; ///< no view of the menu work names it
   struct RenderInput *actionWindow;
   struct RenderInput *statusWindow;
   struct RenderInput *unopenedWindow; ///< never given a window; only cleared
@@ -206,7 +289,7 @@ struct StatusScreenWork {
   /// ItemMenuWork's equipWindow to gridCursor; not named here.
   u8 itemWindows[24];
   struct WindowSprite *entryIcons[32];
-  u8 unk0cc[0x24];
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
@@ -220,10 +303,11 @@ struct StatusScreenWork {
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;
-  u8 unk174[4];
+  u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  u8 unk180[0x44];
+  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  u8 aroundBackdrop[68];
   u16 entries[32];
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
   u8 entryCount;
@@ -265,21 +349,22 @@ struct PsynergyMenuWork {
   struct RenderInput *moneyWindow; ///< ShopWork's; not named here
   struct RenderInput *auxiliaryWindow;
   struct WindowSprite *sideIcon[2]; ///< each side's cursor
-  s8 tabIndex[2];  ///< each side's party member, in memberTable
-  s8 tabCounts[2]; ///< party members each side chooses from
-  u8 unk020[4];
+  s8 tabIndex[2];         ///< each side's party member, in memberTable
+  s8 tabCounts[2];        ///< party members each side chooses from
+  u8 unusedAfterSides[4]; ///< no view of the menu work names it
   struct RenderInput *psynergyWindow;
   struct RenderInput *statusWindow;
   struct RenderInput *shortcutWindow;
   struct RenderInput *infoWindow;
   struct RenderInput *equipWindow; ///< ItemMenuWork's; not named here
   struct RenderInput *listWindow;
-  u8 unk03c[0xc];
+  /// ItemMenuWork's modal window and the words around it; not named here.
+  u8 modalWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[32];
-  u8 unk0cc[0x24];
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *messageWindow;
-  u8 unk0f4[4];
+  u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here
   void *tabSprites[8];    ///< the party members' figures
   s16 tabX[8];            ///< screen pixels
   s16 rowPositions[8];    ///< screen pixels
@@ -288,10 +373,12 @@ struct PsynergyMenuWork {
   u16 sideRow[2];         ///< each side's Psynergy row chosen
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
                      ///< entry
-  u8 unk170[8];
+  /// ItemMenuWork's cursor and the word after it; not named here.
+  u8 itemCursor[8];
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  u8 unk180[0x44];
+  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  u8 aroundBackdrop[68];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembersFar)
   u8 psynergyCount;
@@ -303,12 +390,14 @@ struct PsynergyMenuWork {
   /// bits: 0 set after a use or a cancelled target
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
-  u8 unk220[0x3e];
+  /// ItemMenuWork's row of figures and the pair after it; not named here.
+  u8 figureRow[0x3e];
   s16 useResult; ///< the use's result message, after MsgItemUseResult
-  u8 unk260[4];
+  /// ItemMenuWork's equipPreview and listMode; not named here.
+  u8 listState[4];
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
-  u8 unk26d[3];
+  u8 unusedAfterMode[3]; ///< no view of the menu work names it
 };
 
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 0x010);

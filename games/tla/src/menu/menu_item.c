@@ -105,8 +105,8 @@ s32 ItemMenu_Run(void) {
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
-  Palette_LightenHighlight(14);
-  Link_DrawPageArrowsFar(0x06002500);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow =
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
 #if TLA_PATCH_1
@@ -2021,7 +2021,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Window_CloseFar(window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
   Window_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);
-  Palette_LightenHighlight(14);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   {
     s32 priority = 0x480;
 

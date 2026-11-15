@@ -232,7 +232,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->motion = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(2, 96);
-          gMainRoutineWork.messageSpeed = 1;
+          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
@@ -260,7 +260,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->motion = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(106, 56);
-          gMainRoutineWork.messageSpeed = 1;
+          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
@@ -350,9 +350,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                     list->width - pageCounts[page] + index - 2,
                                     -1, 0);
         }
-        Window_SetTilemapEntryFar((s32)list, 0xf128,
+        Window_SetTilemapEntryFar((s32)list, PAGE_ARROW_LEFT,
                                   list->width - pageCounts[page] - 3, -1, 0);
-        Window_SetTilemapEntryFar((s32)list, 0xf129, list->width - 2, -1, 0);
+        Window_SetTilemapEntryFar((s32)list, PAGE_ARROW_RIGHT, list->width - 2,
+                                  -1, 0);
         UiRender_MarkRow(work, list->y);
       }
     }
@@ -567,9 +568,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
                                   window->width - counts[side] + pageIndex - 2,
                                   -1, 0);
       }
-      Window_SetTilemapEntryFar((s32)window, 0xf128,
+      Window_SetTilemapEntryFar((s32)window, PAGE_ARROW_LEFT,
                                 window->width - counts[side] - 3, -1, 0);
-      Window_SetTilemapEntryFar((s32)window, 0xf129, window->width - 2, -1, 0);
+      Window_SetTilemapEntryFar((s32)window, PAGE_ARROW_RIGHT,
+                                window->width - 2, -1, 0);
       UiRender_MarkRow(render, window->y);
     }
     frame++;

@@ -126,7 +126,7 @@ s32 BattleObject_RemoveFromLists(s32);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half);
 void FieldPsynergy_WhirlwindOnTarget(s32 unused);
-u16 Encounter_GetFormationAtSlot(s32 arg0, s32 arg1);
+u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);

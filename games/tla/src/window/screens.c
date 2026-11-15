@@ -113,34 +113,6 @@ struct StatusCursor {
   s32 row;
 };
 
-/// A cursor stop among the Status screen's stats: its help entry, where the
-/// cursor points and the run of the row it highlights.
-struct BattleSummaryStatCursor {
-  u8 entry;
-  u8 column;
-  u8 row;
-  u8 highlightColumn;
-  u8 highlightRow;
-  u8 highlightWidth;
-  u8 reserved[2]; ///< 0 in every row
-};
-
-/// A cursor stop on the Status screen's equipment or statuses: its help
-/// entry and where the cursor points.
-struct BattleSummaryCursor {
-  u8 entry;
-  u8 column;
-  u8 row;
-  u8 reserved; ///< 0 in every row
-};
-
-/// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
-/// XORed with (Menu_BuildLocalizedPatternTiles).
-struct BarPatternRow {
-  u32 firstTile;
-  u32 secondTile;
-};
-
 /// The name entry screen's cursors: the hand on the keyboard and the caret
 /// under the name, each a window sprite moved as a NameCursorMotion.
 union NameCursor {
@@ -242,11 +214,11 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-extern u8 gWorkspace_ItemTitle[];
-extern u8 gWorkspace_EnergyTitle[];
-extern u8 gWorkspace_StatusTitle[];
-extern u8 gWorkspace_PageLabel[];
-extern u8 gWorkspace_RangeDash[];
+extern const u8 gWorkspace_ItemTitle[];
+extern const u8 gWorkspace_EnergyTitle[];
+extern const u8 gWorkspace_StatusTitle[];
+extern const u8 gWorkspace_PageLabel[];
+extern const u8 gWorkspace_RangeDash[];
 
 extern s8 gMenu_SaveSlotActionByPosition[];
 

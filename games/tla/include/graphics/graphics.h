@@ -153,7 +153,7 @@ extern const u8 gTitle_PromptTiles[];
 extern const u8 gFont_GlyphWidths[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// settings menu's selected icon through.
-extern s32 gWindowSprite_PulseScales[];
+extern const s32 gWindowSprite_PulseScales[];
 /// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
 /// circle: the x offset leads the y offset by five steps.
 extern const s8 gNameEntry_CaretWave[];

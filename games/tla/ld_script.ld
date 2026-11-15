@@ -178,7 +178,16 @@ SECTIONS
         "*/games/tla/src/graphics/ui/sprite_cursors.o"(.rodata)
         "*/games/tla/src/window/scales.o"(.rodata)
         "*/games/tla/src/graphics/ui/page_arrow.o"(.rodata)
-        "*/games/tla/src/window/window_tables.o"(.rodata)
+        "*/games/tla/src/window/text_tables.o"(.rodata)
+        "*/games/tla/src/window/progress.o"(.rodata)
+        "*/games/tla/src/window/progress_bar_rows.o"(.rodata)
+        "*/games/tla/src/window/screen_tables.o"(.rodata)
+        "*/games/tla/src/window/shift_prompt.o"(.rodata)
+        "*/games/tla/src/window/menu_title_tables.o"(.data)
+        "*/games/tla/src/window/djinn_blink.o"(.rodata)
+        "*/games/tla/src/window/status_tables.o"(.rodata)
+        "*/games/tla/src/window/icon_menu_tables.o"(.data)
+        "*/games/tla/src/window/debug_labels.o"(.rodata)
         "*/games/tla/text/messages.o"(.rodata)
         /* Only German and Italian link the item genders, each its own table. */
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN

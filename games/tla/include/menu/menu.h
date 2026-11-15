@@ -42,7 +42,7 @@ extern u8 gMenu_PlusSignString;
 extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
 extern u8 gShop_GlyphBytes[];
-extern u8 gStatusMenu_LevelLetterString[];
+extern const u8 gStatusMenu_LevelLetterString[];
 void *IconMenu_Open(void);
 void ItemMenu_PositionCategory(void);
 void IconMenu_AddIcon(s32 no);

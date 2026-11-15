@@ -191,7 +191,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->drops[j];
 
-    EffectSprite_Init(sprite, 15, 24, 0x80000000, tile);
+    EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
     sprite->oam.palette256 = 1;
@@ -207,7 +207,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->puffs[j];
 
-    EffectSprite_Init(sprite, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
     sprite->scaleY = sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->depth = 250;
     sprite->oam.priority = 0;

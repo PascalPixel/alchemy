@@ -267,7 +267,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   mote = work->sparks;
   sprite = work->sparkSprites;
   for (i = 31; i >= 0; i--) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, sparkTile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

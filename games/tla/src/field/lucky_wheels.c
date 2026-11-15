@@ -927,14 +927,15 @@ void LuckyWheels_Update(void) {
       y = 32;
     }
     work->obj[work->spriteCount].attr01 =
-        OBJ_X(x - 12) | objMode | (y + 8) | 0x80006000;
+        OBJ_X(x - 12) | objMode | (y + 8) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     work->obj[work->spriteCount].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     work->spriteCount++;
     work->obj[work->spriteCount].attr01 =
         OBJ_X(x + 12) | objMode | (y + 8) | 0x90006000;
     work->obj[work->spriteCount].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     work->spriteCount++;
-    work->obj[work->spriteCount].attr01 = OBJ_X(x) | objMode | y | 0x80002000;
+    work->obj[work->spriteCount].attr01 =
+        OBJ_X(x) | objMode | y | OBJ_SIZE_32X32 | OBJ_256_COLORS;
     work->obj[work->spriteCount].attr2 = LUCKY_WHEELS_HAND_TILES;
     work->spriteCount++;
   }
@@ -950,7 +951,7 @@ void LuckyWheels_Update(void) {
       else
         work->obj[work->spriteCount].attr01 =
             (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
-            ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
+            ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | OBJ_SIZE_32X32;
       work->obj[work->spriteCount].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + REEL_TITLE_TILE) | 0xf000;
 #if TLA_PATCH_1
@@ -975,7 +976,7 @@ void LuckyWheels_Update(void) {
   for (k = 0; k != LUCKY_WHEELS_MACHINE_LIGHTS; k++) {
     work->obj[work->spriteCount].attr01 =
         OBJ_X(gLuckyWheels_MachineSpriteX[k]) | objMode |
-        gLuckyWheels_MachineSpriteY[k] | 0x80006000;
+        gLuckyWheels_MachineSpriteY[k] | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k < LUCKY_WHEELS_CORNER_LIGHTS)
       work->obj[work->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_CORNER_LIGHT_TILES;
@@ -987,15 +988,13 @@ void LuckyWheels_Update(void) {
 
   for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
     if (work->reels[i].held == 0) {
-      work->obj[work->spriteCount].attr01 = objMode | ((i * 36 + 32) << 16) |
-                                            124 | OBJ_SIZE_32X32 |
-                                            OBJ_256_COLORS;
+      work->obj[work->spriteCount].attr01 =
+          objMode | OBJ_X(i * 36 + 32) | 124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       work->obj[work->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LAMP_TILES;
     } else {
-      work->obj[work->spriteCount].attr01 = objMode | ((i * 36 + 32) << 16) |
-                                            124 | OBJ_SIZE_32X32 |
-                                            OBJ_256_COLORS;
+      work->obj[work->spriteCount].attr01 =
+          objMode | OBJ_X(i * 36 + 32) | 124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       work->obj[work->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_HELD_LAMP_TILES;
     }
@@ -1017,7 +1016,7 @@ void LuckyWheels_Update(void) {
   for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
     work->obj[work->spriteCount].attr01 =
         (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) | objMode |
-        (col * 16 + 5) | 0x80002000;
+        (col * 16 + 5) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
     if (col > 3 - work->bet && col < work->bet + 3)
       work->obj[work->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LIT_LINE_TILES;
@@ -1035,7 +1034,8 @@ void LuckyWheels_Update(void) {
       s32 index = work->spriteCount;
 
       symbolY += 4;
-      work->obj[index].attr01 = symbolY | ((i * 32 + 40) << 16) | 0x80006000;
+      work->obj[index].attr01 =
+          symbolY | OBJ_X(i * 32 + 40) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
       work->obj[work->spriteCount].attr2 =
           (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
       work->spriteCount++;
@@ -1050,13 +1050,15 @@ void LuckyWheels_Update(void) {
       lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) +
               LUCKY_WHEELS_LEVER_Y;
   }
-  work->obj[work->spriteCount].attr01 = lever | objMode | 0x80d06000;
+  work->obj[work->spriteCount].attr01 =
+      lever | objMode | OBJ_X(208) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
   work->obj[work->spriteCount].attr2 =
       OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_TILES;
   work->spriteCount++;
 
   for (k = 0; k != 8; k++) {
-    work->obj[work->spriteCount].attr01 = objMode | (k * 16 + 12) | 0x80ce6000;
+    work->obj[work->spriteCount].attr01 =
+        objMode | (k * 16 + 12) | OBJ_X(206) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k == 0)
       work->obj[work->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_SLOT_TILES;
@@ -1076,7 +1078,8 @@ void LuckyWheels_Update(void) {
   }
 
   while (work->spriteCount != 128) {
-    work->obj[work->spriteCount].attr01 = 0x40f02000;
+    work->obj[work->spriteCount].attr01 =
+        OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     work->obj[work->spriteCount].attr2 = 0;
     work->spriteCount++;
   }

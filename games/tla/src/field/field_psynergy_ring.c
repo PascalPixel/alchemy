@@ -317,7 +317,7 @@ void FieldPsynergy_Ring(void) {
       for (i = 0, mote = work->motes; i < 32; i++) {
         heading = Random16();
         sprite = &work->sprites[i];
-        EffectSprite_Init(sprite, 8, 8, 0x40000000, moteTile);
+        EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;

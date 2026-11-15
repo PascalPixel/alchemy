@@ -11,6 +11,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_reg.h"
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
@@ -249,7 +250,7 @@ void PsynergyTest2_StartRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

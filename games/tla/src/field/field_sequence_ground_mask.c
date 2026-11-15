@@ -39,7 +39,7 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    ((u32 *)mark)[1] = 0x40000800;
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(2);
     ((u32 *)mark)[2] = 0x400;
     mark->priority = 0;
     mark->tile = tile;
@@ -59,7 +59,7 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    ((u32 *)mark)[1] = 0x40000800;
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(2);
     ((u32 *)mark)[2] = 0;
     mark->priority = 0;
     mark->tile = tile;
@@ -131,7 +131,7 @@ void BlankOverlay_DrawMarks(void) {
   b = cells + (x - 8) / 16 + (row / 16 - 2) * 128;
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
-    ((u32 *)m)[1] = 0x40000000;
+    ((u32 *)m)[1] = OBJ_SIZE_16X16;
     ((u32 *)m)[2] = 0x400;
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
@@ -143,7 +143,7 @@ void BlankOverlay_DrawMarks(void) {
   b = cells + (x - 8) / 16 + (row / 16 - 1) * 128;
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
-    ((u32 *)m)[1] = 0x40000000;
+    ((u32 *)m)[1] = OBJ_SIZE_16X16;
     ((u32 *)m)[2] = 0x400;
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;

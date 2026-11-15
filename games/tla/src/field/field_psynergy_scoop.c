@@ -311,7 +311,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -338,7 +338,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -380,7 +380,7 @@ void FieldPsynergy_Scoop(void) {
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
-    EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
+    EffectSprite_Init(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
     sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
     sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
     sprite->oam.palette256 = 1;

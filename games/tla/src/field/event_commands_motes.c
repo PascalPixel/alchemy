@@ -54,9 +54,9 @@ void FieldMotes_Start(void) {
     *(s32 *)p = clear;
     p += sizeof(s32);
     pos = view->origin;
-    *(s32 *)p = 0x40000400;
+    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
     p += sizeof(s32);
-    *(s32 *)p = 0xd400;
+    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     p = pos[0];
     z = pos[2];
     mote->posX = (s32)p;
@@ -126,9 +126,9 @@ void Weather_StartRain(s32 withCue) {
     *(s32 *)p = clear;
     p += sizeof(s32);
     focus = view->origin;
-    *(s32 *)p = 0x40000400;
+    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
     p += sizeof(s32);
-    *(s32 *)p = 0xd400;
+    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     p = focus[0];
     z = focus[2];
     particle->posX = (s32)p;
@@ -281,9 +281,9 @@ void FieldEffect_InitializeSparkles(void) {
     *(u32 *)attr = clear;
     attr += sizeof(u32);
     leader = view->origin;
-    *(u32 *)attr = 0x40000400;
+    *(u32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(1);
     attr += sizeof(u32);
-    *(u32 *)attr = 0xd400;
+    *(u32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     attr = leader[0];
     z = leader[2];
     p->posX = clear;

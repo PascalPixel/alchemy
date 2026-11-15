@@ -171,7 +171,7 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
-  EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
+  EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   sprite->oam.palette256 = 1;
@@ -224,7 +224,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  EffectSprite_Init(sprite, 8, 8, 0x40000000, tiles);
+  EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);

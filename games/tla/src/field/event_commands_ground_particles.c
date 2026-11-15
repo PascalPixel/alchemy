@@ -38,8 +38,8 @@ void GroundParticles_Start(void) {
 
     words = (u32 *)particle;
     *words++ = 0;
-    *words++ = 0x40000400;
-    *words = 0xd400;
+    *words++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *words = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = leader[0];
     z = leader[2];
     particle->posX = x;
@@ -135,8 +135,8 @@ void RisingParticles_Start(void) {
     s32 z;
 
     *sprite++ = 0;
-    *sprite++ = 0x40000400;
-    *sprite = 0xd400;
+    *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = Random16() * 200 + 0x1200000;
     z = px(80) - Random16() * 20;
     particle->posX = x;

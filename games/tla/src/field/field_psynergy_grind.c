@@ -102,7 +102,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     sprite = &work->sprites[i];
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

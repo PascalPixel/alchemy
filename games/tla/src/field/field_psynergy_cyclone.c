@@ -246,7 +246,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = Q16_ONE * 3 / 2;
   canvas->scaleY = Q16_ONE * 3 / 2;
-  EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
+  EffectSprite_Init(&canvas->sprite, 32, 32, OBJ_SIZE_64X64, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;

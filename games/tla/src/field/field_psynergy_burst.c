@@ -391,7 +391,7 @@ void FieldPsynergy_Burst(void) {
   particle = work->bursts;
   burstSprite = work->burstSprites;
   for (i = 0; i < 32; i++) {
-    EffectSprite_Init(burstSprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(burstSprite, 8, 8, OBJ_SIZE_16X16, tile);
     burstSprite->depth = canvas->depth + 1;
     burstSprite->oam.priority = canvas->priority;
     burstSprite->oam.palette256 = 0;

@@ -181,7 +181,7 @@ void FieldPsynergy_Hover(void) {
   work->tile = tile;
   work->scale = 0;
   sprite = &work->sprite;
-  EffectSprite_Init(sprite, 15, 15, 0x80000000, (s16)work->tile);
+  EffectSprite_Init(sprite, 15, 15, OBJ_SIZE_32X32, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,

@@ -84,7 +84,7 @@ void WorldPicture_Initialize(void) {
   work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
   work->speed = px(1);
-  cursorAttributes = 0x40000000;
+  cursorAttributes = OBJ_SIZE_16X16;
   *oam++ = 0;
   *oam++ = cursorAttributes;
   cursorAttributes = 0x400;

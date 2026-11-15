@@ -145,7 +145,7 @@ loaded:
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     fresh = &work->sprites[i];
-    EffectSprite_Init(fresh, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
     fresh->oam.palette256 = 1;
@@ -239,7 +239,7 @@ loaded:
     scaleY = work->discScaleY;
     packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
-    EffectSprite_Init(sprite, 31, 31, 0xc0000000, packed);
+    EffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =

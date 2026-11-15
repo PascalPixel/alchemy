@@ -385,7 +385,7 @@ void Func_080dba5c(void) {
     scene->vramSlot = slot;
     Heap_Release(buffer);
     sprite = &scene->sprite;
-    EffectSprite_Init(sprite, 16, 31, 0x80000000, tiles);
+    EffectSprite_Init(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
     sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;

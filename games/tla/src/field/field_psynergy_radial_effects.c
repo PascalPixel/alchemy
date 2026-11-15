@@ -695,9 +695,6 @@ void FieldPsynergy_LashOnTarget(s32 value) {
     work->enabled = 1;
   } else {
     state->targetY = value;
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
     state->targetZ = first;
     state->targetX = second;
   }
@@ -1247,7 +1244,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 
   for (i = 0; i < 2; i++) {
     sprite = &work->sprites[group][i];
-    EffectSprite_Init(sprite, 16, 16, 0x80004000, tiles);
+    EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
     sprite->oam.palette256 = 0;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(target);
@@ -1643,7 +1640,7 @@ void FieldPsynergy_Arrow(void) {
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
   work->bowTile = tile;
   sprite = &work->bow;
-  EffectSprite_Init(sprite, 16, 16, 0x80000000, tile);
+  EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
@@ -1664,7 +1661,7 @@ void FieldPsynergy_Arrow(void) {
   arrowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
   sprite = &work->arrow;
-  EffectSprite_Init(sprite, 12, 8, 0x40000000, tile);
+  EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);

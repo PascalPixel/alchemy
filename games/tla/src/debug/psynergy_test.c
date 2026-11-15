@@ -937,7 +937,7 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
     offset = (row * 2) * sizeof(struct SparkleSprite);
     sprite = (struct SparkleSprite *)(offset + (s32)work);
     for (; col >= 0; col--) {
-      EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
+      EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->fullColor = 0;
       sprite->palette = 0;
       sprite->priority = BattleEffect_GetObjectPriority(object) & 3;

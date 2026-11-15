@@ -43,8 +43,8 @@ static inline void MapGrid_CopyCellPictureCellsRect_(s32 a0, s32 a1, s32 a2,
   MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, s32 x,
-                                                           s32 z) {
+static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, FIXED x,
+                                                           FIXED z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
@@ -52,7 +52,7 @@ static inline struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
+static inline void Camera_SetBounds(FIXED x, FIXED y, FIXED z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 

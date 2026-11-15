@@ -137,9 +137,9 @@ s32 Field_GetCollisionUnderLeader(void) {
 void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   s32 selectedValue;
   struct FieldWork *runtime;
-  s32 z;
-  s32 y;
-  s32 x;
+  FIXED z;
+  FIXED y;
+  FIXED x;
   s16 condition;
   s16 minZ;
   s16 maxY;
@@ -186,7 +186,7 @@ void FieldEffect_SetAttached(s32 owner, s32 mode);
 /// of map grid layer: records step triggers and push cells, takes exits, and
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
-void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
+void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
   struct FieldWork *work = gFieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 leaderId = Party_GetLeaderActor();

@@ -177,7 +177,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
 /// terrain: the ground, an index into work->encounterZones: 0 for ordinary
 /// ground, 1 and 2 for CELL_BEHAVIOR_ENCOUNTER_GROUND_A and _B cells. steps:
 /// the step weight, passed on to Encounter_CountStepsAndSelectFormation.
-s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
+s32 Encounter_RollMapStep(u32 terrain, FIXED steps) {
   u8 *zone;
 
   zone = gFieldWork->encounterZones;
@@ -186,7 +186,7 @@ s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
 
 /// Rolls a random battle on the World Map, taking the zone from the cell at
 /// pos. Returns the formation to fight, or 0 for no battle.
-s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
+s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
   return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }

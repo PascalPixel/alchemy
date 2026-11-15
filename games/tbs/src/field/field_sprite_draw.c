@@ -296,8 +296,9 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
 /// parts use the double-size affine mode.
-void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
-                                s32 screenY, s32 groundHeight, FIXED *scale) {
+void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
+                                s32 height, s32 screenY, s32 groundHeight,
+                                FIXED *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
   s32 marginX = 8;

@@ -1,6 +1,6 @@
 /// Lifts the leader by `height` and has the camera hold still, unless the party
 /// keeps its place.
-void Leader_Lift(s32 height) {
+void Leader_Lift(FIXED height) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {

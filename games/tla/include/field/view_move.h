@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_VIEW_MOVE_H
 #define ALCHEMY_VIEW_MOVE_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
@@ -39,7 +40,7 @@ STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 0x20);
 STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 0x50);
 
 void ViewMove_Start(s32 direction);
-void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude);
+void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude);
 void ViewMove_End(void);
 void ViewMove_SaveNearbySprites(void);
 void ViewMove_RestoreNearbySprites(void);

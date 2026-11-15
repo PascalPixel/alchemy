@@ -206,7 +206,7 @@ void Palette_LoadBasicSpriteColors(void);
 
 void Resource_ReservedNoOp(s32 count);
 
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
+void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 
 void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot);
 

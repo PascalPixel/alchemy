@@ -66,7 +66,7 @@ struct Chase {
 };
 
 /// Moves toward the target by speed, stopping on it on overshoot.
-void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
+void Motion_StepTowardTarget(struct Chase *chase, FIXED speed) {
   s32 dx = chase->targetX - chase->x;
   s32 dz = chase->targetZ - chase->z;
   u16 angle = Trig_Atan(dz, dx);
@@ -504,7 +504,7 @@ void Shop_ReleaseWork(void);
 
 /// Sets attribute bit 0x80 (raised) on the cell at (x, z) where no ground lies
 /// above height base.
-void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 base) {
+void MapGrid_MarkRaisedIfOpen(FIXED x, FIXED z, s32 layer, FIXED base) {
   if (MapGrid_GetTerrainHeightAboveFar(x, z, layer, base) == 0)
     MapGrid_SetAttributeBAt(x, z, layer,
                             MapGrid_GetAttributeBAt(x, z, layer) | 0x80);

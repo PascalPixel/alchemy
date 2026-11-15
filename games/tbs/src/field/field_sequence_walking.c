@@ -118,9 +118,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   s32 exitValue;
   struct FieldWork *work;
-  s32 fixedZ;
-  s32 fixedY;
-  s32 fixedX;
+  FIXED fixedZ;
+  FIXED fixedY;
+  FIXED fixedX;
   s16 condition;
   s16 minZ;
   s16 maxY;
@@ -164,7 +164,7 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
 /// of map grid layer: records step triggers and push cells, takes exits, and
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
-void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
+void Field_UpdateWalking(s32 layer, FIXED x, FIXED y, FIXED z) {
   struct FieldWork *work = gFieldWork;
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   s32 leaderId = gMainRoutineWork.leaderActorId;

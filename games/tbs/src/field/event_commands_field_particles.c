@@ -144,7 +144,7 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 /// Gives a field effect sprite a new sprite of kind at (x, z): stopping at its
 /// target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
-                              s32 z) {
+                              FIXED z) {
   struct Sprite *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);

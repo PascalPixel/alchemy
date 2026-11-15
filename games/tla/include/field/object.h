@@ -97,7 +97,7 @@ s32 Rope_IsLeaderAtEnd(s32 first, s32 second);
 void Tightrope_WobbleBetween(s32 index, s32 first, s32 second, s32 wobble);
 s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y,
-                       s32 to_z, s32 mode);
+                       s32 to_z, FIXED mode);
 s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                       s32 toZ);
 
@@ -130,7 +130,7 @@ void Rope_Update(void);
 s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
 
 s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
-                  s32 mode);
+                  FIXED mode);
 
 void Message_SetVoiceFromActor(s32 key);
 void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);

@@ -293,7 +293,7 @@ extern s16 Trig_Atan__f0d8ff8(s32 y, s32 x) __asm__("Trig_Atan");
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
 s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
-                  s32 height) {
+                  FIXED height) {
   struct RopeWork *work = ROPE_WORK;
   s32 dx = toX - x;
   s32 ax = dx >> 8;
@@ -976,7 +976,7 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
 FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
-                       s32 toZ, s32 height) {
+                       s32 toZ, FIXED height) {
   struct TightropeWork *work = TIGHTROPE_WORK;
   s32 dx = toX - x;
   s32 sx = dx >> 8;

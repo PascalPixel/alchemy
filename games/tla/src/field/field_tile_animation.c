@@ -999,7 +999,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
 }
 
 /// The ground height at (x, z) of layer, in 8-pixel steps.
-s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer) {
+s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
   return MapGrid_GetTerrainHeight(layer, x, z) >> 19;
 }
 
@@ -1082,7 +1082,7 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
 /// pixels above it, -1 when it falls more than 12 below, else 0. A layer past
 /// 2 reads the cell buffer and shape grid. With no map, or while the event
 /// mode is 3, every point is level (0).
-s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
+s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;

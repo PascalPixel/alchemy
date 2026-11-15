@@ -199,7 +199,7 @@ static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *actor) {
 
 /// Later patches land at the cell's centre. The base release uses the target
 /// pixel.
-static inline s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
+static inline s32 TunnelRuins_GetLandingPixel(FIXED coordinate) {
 #if TBS_PATCH_1
   return (FIELD_CELL(coordinate) << 4) + 8;
 #else

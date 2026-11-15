@@ -110,7 +110,7 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 
 void TundariaTower_AdvanceIceShard(union FieldObject *object);
 void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
-                                    s32 count, s32 scale);
+                                    s32 count, FIXED scale);
 void TundariaTower_UpdateFallingRocks(void);
 void TundariaTower_StartFallingRocks(void);
 void TundariaTower_EndFallingRocks(void);
@@ -331,7 +331,7 @@ void TundariaTower_AdvanceIceShard(union FieldObject *object) {
 /// Scatters shards of ice (effect 279) around a position, each turned at
 /// random and thrown off to fall under TundariaTower_AdvanceIceShard.
 void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
-                                    s32 count, s32 scale) {
+                                    s32 count, FIXED scale) {
   struct EffectOptions options;
   s32 i;
   s32 velocityX;

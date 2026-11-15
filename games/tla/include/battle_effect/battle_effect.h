@@ -240,7 +240,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
                                         s32 y); // ..PlaceFormationObjects
 void BattleEffect_RunImpactBurst(s32 formation, s32 x,
-                                 s32 y); // ..RunImpactBurst
+                                 FIXED y); // ..RunImpactBurst
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *midpoint);

@@ -1012,7 +1012,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
 /// Moves a Pipeworks actor with the speed used throughout its
 /// demonstration.
 static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
-                                                     s32 height) {
+                                                     FIXED height) {
   actor->motionFlags = 0;
   actor->acceleration = toFIXED(2) / 5;
   actor->speedLimit = toFIXED(4) / 5;

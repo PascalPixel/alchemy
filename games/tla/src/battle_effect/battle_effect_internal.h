@@ -940,7 +940,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 // particle_streams.c
 void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
-void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);

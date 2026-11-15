@@ -176,8 +176,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// Builds the zoomed background's next page for a zoom of scale about centerX
 /// and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
 /// the plane lies flat, from 1 it wraps and turns with the camera.
-void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
-                           s32 scale) {
+void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
+                           s32 offsetY, FIXED scale) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleAffineHdma *scanlines =

@@ -663,7 +663,7 @@ s32 Scene_Initialize(void) {
 }
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
-s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 
 s32 Scene_PrepareMap(void) {
   struct Actor *object;

@@ -243,7 +243,7 @@ void FieldMotes_Start(void) {
     // p walks the sprite's attribute words, then holds the x, as size carries
     // the fill's 0 above.
     u32 p = (u32)mote;
-    s32 z;
+    FIXED z;
     *(s32 *)p = 0;
     p += sizeof(s32);
     *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);

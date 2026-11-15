@@ -177,7 +177,7 @@ void Task_RunPass(s32 pass);
 u32 Random16(void);
 /// A random whole number from 0 to count - 1, from Random16.
 #define Random16_Below(count) ((Random16() * (count)) >> 16)
-void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);
+void Vector_AddPolarOffset(FIXED radius, s32 angle, void *position);
 s32 Trig_Atan(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
 FIXED Math_SqrtFX(FIXED value);

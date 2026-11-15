@@ -624,7 +624,7 @@ void BattleEffect_RunKite(struct BattleEffectParams *args);
 // battle_effect_helm_splitter.c
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args);
 void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z);
-void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 
 // battle_effect_particle_streams.c
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep);

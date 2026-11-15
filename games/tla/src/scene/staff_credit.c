@@ -192,7 +192,8 @@ extern u8 gStaffCredit_FlightTurns[];
 extern u16 gStaffCredit_GlowFadeIn[];
 extern s8 gStaffCredit_GlowScrolls[][2];
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
+static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED z,
+                                                   FIXED mode) {
   FieldCamera_MoveToFX(x, -1, z, mode);
 }
 
@@ -671,7 +672,7 @@ void StaffCredit_BlendPicture(void) {
   }
 }
 
-static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
+static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 

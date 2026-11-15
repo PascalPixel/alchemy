@@ -4,6 +4,7 @@
 /// @file
 /// What The Lost Age's code declares for the files that use it, written once.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "resource_ids.h"
 #include "field/map_grid.h"
@@ -106,7 +107,7 @@ void SpriteViewer_PlaceRing(void);
 extern struct BattleCells gSpriteObjects;
 
 void BlendScript_Start(u16 *script);
-s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height);
+s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);
 void WorldMap_PreloadCurrentTileBlock(void);
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);

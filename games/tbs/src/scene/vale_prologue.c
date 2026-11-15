@@ -2045,8 +2045,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
 
 /// Places an actor and its targets at once, x doubling as its height.
 static inline void ValePrologue_PlaceActor(struct Actor *actor,
-                                           s32 horizontalPosition,
-                                           s32 groundPosition) {
+                                           FIXED horizontalPosition,
+                                           FIXED groundPosition) {
   actor->x.fixed = horizontalPosition;
   actor->y.fixed = horizontalPosition;
   actor->targetX = horizontalPosition;

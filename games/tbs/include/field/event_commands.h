@@ -303,7 +303,7 @@ void FieldPsynergy_UpdateMindReadWave(void);
 void FieldEffect_ArmBg0HBlankDma(void);
 void FieldEffect_AdvanceHueCycle(void);
 void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
-s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high);
+s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, FIXED high);
 FIXED FixedPoint_Remainder(FIXED value, FIXED divisor);
 void FieldEffect_ReleaseOnArrival(struct Actor *actor);
 void FieldPsynergy_GreyMindReadPalette(void);
@@ -389,7 +389,7 @@ void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
 void FieldParticle_SetCallback(struct FieldParticle *effect,
                                EffectCallback callback);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
-                              s32 z);
+                              FIXED z);
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect);
 
 void WorldPicture_Initialize(void);

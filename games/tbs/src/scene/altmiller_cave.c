@@ -2117,10 +2117,10 @@ s32 Scene_Initialize(void) {
 
 /// Update routine of a piece of the burst wall.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
-  s32 position[3];
+  FIXED position[3];
 
   if (fragment->state == 0) {
-    s32 startZ = fragment->originZ;
+    FIXED startZ = fragment->originZ;
     s32 startX = fragment->originX;
 
     fragment->z = startZ;

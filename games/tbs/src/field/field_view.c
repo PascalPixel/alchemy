@@ -72,7 +72,7 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 }
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.
-void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
+void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline) {
   s32 groundPoint[3];
   s32 cameraPoint[3];

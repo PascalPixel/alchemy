@@ -105,7 +105,7 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
 }
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.
-void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
+void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
                                  struct ScanlineRow *row) {
   s32 vector[3];
   s32 result[3];
@@ -126,7 +126,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   height = result[1] - Iwram_MulFX(result[2], pitchSlope);
   nearZ = -gProjection.focal;
   for (i = 0; i < 160; i++) {
-    s32 distance;
+    FIXED distance;
 
     z = Iwram_RatioMulQ14(nearZ, (gProjection.centerY - i) * FIXED_ONE);
     distance = z - pitchSlope;

@@ -185,7 +185,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
 /// Rolls a random battle on the encounter zone of the ground underfoot: index
 /// into work->encounterZones; steps, the step weight, is passed on to
 /// Encounter_CountStepsAndSelectFormation.
-s32 Encounter_RollTerrain(u32 index, s32 steps) {
+s32 Encounter_RollTerrain(u32 index, FIXED steps) {
   u8 *table = gFieldWork->encounterZones;
 
   return Encounter_CountStepsAndSelectFormation(table[index], steps);
@@ -193,7 +193,7 @@ s32 Encounter_RollTerrain(u32 index, s32 steps) {
 
 /// Rolls a random battle on the World Map, taking the zone from the cell at
 /// pos. Returns the formation to fight, or 0 for no battle.
-s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
+s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
   return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }

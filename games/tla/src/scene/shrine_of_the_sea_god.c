@@ -109,8 +109,8 @@ void Actor_PlaceMovedBlock(void);
 void ShrineOfTheSeaGod_SetSlideActorsShown(s32 show);
 void ShrineOfTheSeaGod_KeepWithLeader(struct Actor *object);
 
-static inline void ShrineOfTheSeaGod_ObjSetPos(struct Actor *object, s32 x,
-                                               s32 y, s32 z) {
+static inline void ShrineOfTheSeaGod_ObjSetPos(struct Actor *object, FIXED x,
+                                               FIXED y, FIXED z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 

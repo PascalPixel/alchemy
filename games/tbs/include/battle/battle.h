@@ -427,8 +427,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade);
 void BattleBackground_Init(void);
 void BattleBackground_Free(void);
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level);
-void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
-                           s32 scale);
+void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
+                           s32 offsetY, FIXED scale);
 #ifdef UBFIX
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom);
 #else

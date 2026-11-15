@@ -109,7 +109,7 @@ void FieldMessage_Show(s32 message, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 flags);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz, s32 facing);
-void Vector_AddPolarOffset(s32 radius, s32 heading, s32 *probe);
+void Vector_AddPolarOffset(FIXED radius, s32 heading, s32 *probe);
 void MapGrid_SetCellBehaviorAt(s32 layer, FIXED x, FIXED y, s32 behavior);
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
@@ -386,8 +386,8 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 }
 
 /// Moves a treasure spot's actor to a point on the ground.
-static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
-                                            s32 fixed_z) {
+static inline void TreasureSpot_SetPosition(s32 object, FIXED fixed_x,
+                                            FIXED fixed_z) {
   TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
 }
 

@@ -1526,7 +1526,7 @@ static s32 FuchinFallsCave_SetDustPalette(struct Actor *actor) {
 }
 
 /// Creates scripted cave dust with the requested velocity, palette and scale.
-void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
+void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *extra) {
   struct FieldEffect *effect;

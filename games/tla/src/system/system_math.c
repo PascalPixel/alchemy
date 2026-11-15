@@ -17,7 +17,7 @@ u32 Random16(void) {
 
 /// Moves the point `position` by `radius` in direction `angle` on the ground
 /// plane: x by the cosine, z by the sine.
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position) {
+void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position) {
   *position++ += Iwram_MulFX(radius, Trig_Sin(angle + DEGtoANG(90)));
   position++;
   *position += Iwram_MulFX(radius, Trig_Sin(angle));

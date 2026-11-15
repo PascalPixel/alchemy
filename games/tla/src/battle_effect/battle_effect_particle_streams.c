@@ -382,7 +382,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
-void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle additive;

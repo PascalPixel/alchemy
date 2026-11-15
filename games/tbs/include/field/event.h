@@ -355,8 +355,8 @@ static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
 
 /// Creates an actor in an empty slot of gActors, outside the actor ids, or
 /// returns NULL when every slot is taken.
-static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
-                                              s32 fixed_y, s32 fixed_z) {
+static inline struct Actor *FieldActor_Create(s32 type, FIXED fixed_x,
+                                              FIXED fixed_y, FIXED fixed_z) {
   return Actor_Create(type, fixed_x, fixed_y, fixed_z);
 }
 
@@ -372,8 +372,8 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 }
 
 /// Moves a treasure spot's actor to a point on the ground.
-static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
-                                            s32 fixed_z) {
+static inline void TreasureSpot_SetPosition(s32 object, FIXED fixed_x,
+                                            FIXED fixed_z) {
   TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
 }
 

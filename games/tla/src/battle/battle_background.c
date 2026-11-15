@@ -173,8 +173,8 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
 /// Builds the zoomed background's next page for a zoom of scale about centerX
 /// and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
 /// the plane lies flat, from 1 it wraps and turns with the camera.
-void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
-                           s32 scale) {
+void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
+                           s32 offsetY, FIXED scale) {
   struct BattleBackgroundView *view =
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
@@ -828,12 +828,12 @@ s32 ElementGlow_UploadStarField(void) {
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 
 /// Returns the x of the point at angle and radius from the origin.
-static __inline__ s32 PolarX(s32 angle, s32 radius) {
+static __inline__ s32 PolarX(s32 angle, FIXED radius) {
   return Iwram_MulFX(Trig_Cos(angle), radius);
 }
 
 /// Returns the y of the point at angle and radius from the origin.
-static __inline__ s32 PolarY(s32 angle, s32 radius) {
+static __inline__ s32 PolarY(s32 angle, FIXED radius) {
   return Iwram_MulFX(Trig_Sin(angle), radius);
 }
 

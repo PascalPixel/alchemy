@@ -577,7 +577,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
 }
 
 /// Moves an actor and the camera north by dz, unless the map stops it.
-void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
+void KandoreanTemple_PushNorth(struct Actor *object, FIXED dz) {
   struct Actor *focus = gFieldWork->camera;
   FIXED position[3];
 
@@ -820,7 +820,7 @@ void KandoreanTemple_LowerRightColumn(s32 id) {
 }
 
 /// Grows a column piece by scale and raises it by dy.
-void KandoreanTemple_GrowColumn(s32 id, s32 dy, s32 scale) {
+void KandoreanTemple_GrowColumn(s32 id, FIXED dy, s32 scale) {
   struct Actor *object = Actor_GetById(id);
 
   object->scaleY += scale;
@@ -829,7 +829,7 @@ void KandoreanTemple_GrowColumn(s32 id, s32 dy, s32 scale) {
 }
 
 /// Shrinks a column piece by scale and lowers it by dy.
-void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale) {
+void KandoreanTemple_ShrinkColumn(s32 id, FIXED dy, s32 scale) {
   struct Actor *object = Actor_GetById(id);
 
   object->scaleY -= scale;
@@ -2665,7 +2665,7 @@ void KandoreanTemple_Wobble(struct FieldSprite *sprite, u32 frames, s32 step) {
 }
 
 /// Turns an actor's sprite by step each frame for the given frames.
-void KandoreanTemple_Sway(struct Actor *object, u32 frames, s32 step) {
+void KandoreanTemple_Sway(struct Actor *object, u32 frames, FIXED step) {
   u32 count = frames;
   u32 i;
 

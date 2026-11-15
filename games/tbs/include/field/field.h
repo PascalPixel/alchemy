@@ -365,8 +365,9 @@ enum Collision {
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
 s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir);
-void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
-                                s32 screenY, s32 groundHeight, FIXED *scale);
+void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
+                                s32 height, s32 screenY, s32 groundHeight,
+                                FIXED *scale);
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -658,7 +659,7 @@ void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay);
 void MapGrid_WaitForShakeToSettle(void);
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels);
-void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
+void WorldMap_BuildScanlineTable(FIXED depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
 void SpriteViewer_Run(void);

@@ -206,7 +206,7 @@ void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b) {
 
 /// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
 /// high from 60 to 180, falling from 180 to 240, low elsewhere.
-s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
+s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, FIXED high) {
   angle = FixedPoint_Remainder(angle, HUE_CIRCLE);
   if (angle < HUE_CIRCLE / 6)
     return Iwram_RatioMulQ14(HUE_CIRCLE / 6, Iwram_MulFX(high, angle));

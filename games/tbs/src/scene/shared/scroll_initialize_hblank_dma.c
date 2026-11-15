@@ -12,8 +12,8 @@ static inline void WaitDma(volatile u32 *channel) {
 /// the wave's frequency, its step each frame and its amplitude; two
 /// tasks build each frame's table of line offsets and sends it by DMA in
 /// the horizontal blank.
-void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
-                         s32 stepY, s32 ampY) {
+void LineScroll_InitWave(s32 mode, FIXED freqX, s32 stepX, FIXED ampX,
+                         FIXED freqY, s32 stepY, FIXED ampY) {
   struct LineScrollWork *work;
 
   work =

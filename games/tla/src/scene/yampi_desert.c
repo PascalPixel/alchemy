@@ -1439,7 +1439,7 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Slides the leader down a sand slide by (dx, dz), throwing up dust every
 /// other frame.
-void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
+void YampiDesert_SlideLeader(struct Actor *object, FIXED dx, FIXED dz) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   if (gMainRoutineWork.movementMode != 5) {
     u32 odd = gFrameCount & 1;

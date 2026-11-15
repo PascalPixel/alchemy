@@ -126,7 +126,7 @@ s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused);
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationWork *work);
 
-void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
+void BattleCamera_SetRange(FIXED cx, FIXED cy, s32 ox, s32 oy, FIXED scale);
 
 s32 BattleStaging_RunPairedUnitTransition(struct BattleActionRecord *action);
 s32 BattleObject_IsValidId(u32 objectId);

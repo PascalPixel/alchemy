@@ -173,9 +173,9 @@ static inline void EventCamera_FollowActor(s32 actorId, s32 keepPosition) {
 
 /// Actor_SetPositionAndResetMotion, from an event.
 static inline void FieldActor_SetPositionAndResetMotion(struct Actor *actor,
-                                                        s32 fixed_x,
-                                                        s32 fixed_y,
-                                                        s32 fixed_z) {
+                                                        FIXED fixed_x,
+                                                        FIXED fixed_y,
+                                                        FIXED fixed_z) {
   Actor_SetPositionAndResetMotion(actor, fixed_x, fixed_y, fixed_z);
 }
 
@@ -249,7 +249,7 @@ static inline s32 EventYesNo_Ask(s32 atBottom) {
 }
 
 /// Schedules a zoom of the field (WorldMap_StartZoom).
-static inline void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
+static inline void FieldEffect_ScheduleRatioTransition(FIXED zoom, s32 frames) {
   WorldMap_StartZoom(zoom, frames);
 }
 
@@ -275,7 +275,7 @@ static inline void FieldMapGrid_WaitForShakeToSettle(void) {
 }
 
 /// The cell behavior of the cell at (x, y) (MapGrid_GetCellBehaviorAt).
-static inline s32 FieldMapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
+static inline s32 FieldMapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
   return MapGrid_GetCellBehaviorAt(layer, x, y);
 }
 

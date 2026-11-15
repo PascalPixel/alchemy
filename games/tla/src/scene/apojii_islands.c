@@ -163,7 +163,8 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
+static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
+                                                   s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 

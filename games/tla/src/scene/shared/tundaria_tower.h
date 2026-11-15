@@ -53,7 +53,7 @@ static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   PaletteFade_SetSource(color, b);
 }
 
-static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
+static inline void TundariaTower_SetWork(FIXED a, FIXED b, FIXED c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 

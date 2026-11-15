@@ -154,7 +154,7 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
 // An orbiting mote: field_psynergy.c's OrbitEffect.
 
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
+void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 void BattleEffect_AgeAndCueAtEighty(struct Actor *object);
 
 #define ORB_OBJECT 280

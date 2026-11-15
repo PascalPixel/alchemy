@@ -2069,11 +2069,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+static __inline__ void CamBounds(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+static __inline__ void SetWorkTriple(FIXED a, FIXED b, FIXED c) {
   MapGrid_SetShakeFX(a, b, c);
 }
 

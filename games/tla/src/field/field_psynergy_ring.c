@@ -532,7 +532,7 @@ void ViewMove_Start(s32 direction) {
 /// asked directions, by amplitude times the sine of the phase. The swing goes
 /// into the room: away from the edge the view is beside, or forward when it is
 /// beside neither. A held view does not move.
-void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
+void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *center = event->camera;

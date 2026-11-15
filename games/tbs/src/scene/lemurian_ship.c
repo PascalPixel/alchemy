@@ -569,7 +569,8 @@ struct RippleScrollWork {
 };
 
 /// One line's ripple offset.
-static inline s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude, u16 base) {
+static inline s32 LemurianShip_WaveOffset(s32 angle, FIXED amplitude,
+                                          u16 base) {
   return (u16)(Iwram_MulFX(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;

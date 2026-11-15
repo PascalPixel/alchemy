@@ -142,7 +142,7 @@ s32 Scene_Initialize(void);
 #ifdef UBFIX
 void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
                                           s32 segments, s32 finishX,
-                                          s32 finishZ, s32 firstItem,
+                                          FIXED finishZ, s32 firstItem,
                                           s32 secondItem);
 #endif
 extern const u8 gColosseumSatrageMatch_RollLogScript[];
@@ -1449,7 +1449,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
 /// (shared/colosso_setup.c), which passes the gauge routine's address as it is.
 void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
                                           s32 segments, s32 finishX,
-                                          s32 finishZ, s32 firstItem,
+                                          FIXED finishZ, s32 firstItem,
                                           s32 secondItem) {
   struct ColossoRaceWork *work;
   struct Actor *leader;

@@ -179,7 +179,7 @@ static void Xian_SpawnTrainingParticles(void) {
     struct EffectOptions options;
 
     options.priority = 1;
-    options.palette = 9;
+    options.palette = SPRITE_COLOR_BLUE_TINT;
     options.type = SPRITE_GIRL_IN_PINK;
     options.script = gXian_TrainingParticleScript;
     FieldEffect_Spawn(student->x.fixed, student->y.fixed,

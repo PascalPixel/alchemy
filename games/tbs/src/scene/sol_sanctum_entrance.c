@@ -66,6 +66,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
@@ -569,7 +570,7 @@ static void SolSanctumEntrance_PushStatue(void) {
   struct FieldPosition target;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  direction = leader->facing >> 12;
+  direction = FACING_INDEX(leader->facing);
   statue = Actor_FindAtCell(
       (leader->x.part[0].pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
       (leader->z.part[0].pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);

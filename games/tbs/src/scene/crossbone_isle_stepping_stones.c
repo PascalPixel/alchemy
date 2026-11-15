@@ -495,7 +495,7 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   cycleFrame = gFrameCount & 3;
   if (cycleFrame == 0) {
-    options.palette = 10;
+    options.palette = SPRITE_COLOR_RED_TINT;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     x = leader->x.fixed + px(Random_Below(17) - 8);
@@ -533,7 +533,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(16), jumpDirection, &destination);
 #else
-  jumpDirection = leader->facing >> 12;
+  jumpDirection = FACING_INDEX(leader->facing);
   Actor_StepFrom(&destination, leader,
                  gPushedActor_DirectionSteps[jumpDirection]);
 #endif
@@ -1216,7 +1216,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
 
-  options.palette = 10;
+  options.palette = SPRITE_COLOR_RED_TINT;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 8 * Q16_ONE / 5;
@@ -1250,7 +1250,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   if (phase != 0)
     RETURN_UNREAD(0);
 
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
 

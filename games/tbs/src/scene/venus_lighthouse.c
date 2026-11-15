@@ -524,7 +524,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   s32 transitionBusy;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  directionIndex = leader->facing >> 12;
+  directionIndex = FACING_INDEX(leader->facing);
   Actor_StepFrom(&targetPosition, leader,
                  gPushedActor_DirectionSteps[directionIndex]);
   pillar = Actor_FindAtPosition(&targetPosition, leader);
@@ -626,7 +626,7 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
     options.priority = 3 - (Random_Below(2));
     options.startScaleX = 2 * Q16_ONE / 5;
     options.startScaleY = 2 * Q16_ONE / 5;
-    options.palette = 14;
+    options.palette = SPRITE_COLOR_BLACK;
     particleX = actor->x.fixed + px(Random_Below(9) - 4);
     particleY = actor->y.fixed + px(32 - Random_Below(32));
     riseSpeed = Math_Divide(px(Random_Below(5)) + px(5), 10);
@@ -767,7 +767,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
@@ -775,7 +775,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     s32 angle;
     s32 velocity[3];
 
-    angle = particleIndex << 12;
+    angle = particleIndex * FACING_STEP;
     SET_VECTOR(velocity, Trig_Cos(angle), 0, Trig_Sin(angle));
     velocity[0] += velocity[0] / 2;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
@@ -885,7 +885,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   direction = FACING_NEAREST_CARDINAL(leader->facing);
   Vector_AddPolarOffset(px(16), direction, &landing);
 #else
-  direction = leader->facing >> 12;
+  direction = FACING_INDEX(leader->facing);
   Actor_StepFrom(&landing, leader, gPushedActor_DirectionSteps[direction]);
 #endif
   if (FieldActor_CheckMovementCollision(leader, &landing) != 1 &&
@@ -3210,7 +3210,7 @@ static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
   s32 particleX, particleY, particleZ, riseSpeed;
 
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
   framePhase = gFrameCount & 3;

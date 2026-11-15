@@ -1585,7 +1585,7 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   framePhase = gFrameCount & 3;
   if (framePhase != 0)
     return;
-  options.palette = 10;
+  options.palette = SPRITE_COLOR_RED_TINT;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 9 * Q16_ONE / 5;

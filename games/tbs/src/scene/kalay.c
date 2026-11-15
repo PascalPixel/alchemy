@@ -135,6 +135,7 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
+#include "scene/facing_nearest.h"
 #include "scene/orbit.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -1980,7 +1981,7 @@ static void Kalay_PushTunnelStatue(void) {
   s32 leaderX;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  direction = (leader->facing >> 12);
+  direction = FACING_INDEX(leader->facing);
   leaderX = leader->x.part[0].pixel;
   probeStep = gKalay_TileStepByFacing[direction];
   statue = Actor_FindAtCell((leaderX + (probeStep >> 16)) >> 4,

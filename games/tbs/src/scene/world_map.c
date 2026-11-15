@@ -2416,7 +2416,7 @@ static void WorldMap_UpdateStormTimer(void) {
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  actor->facing = (gFrameCount << 12);
+  actor->facing = gFrameCount * FACING_STEP;
 
   progress = FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
   if (progress != 0) {

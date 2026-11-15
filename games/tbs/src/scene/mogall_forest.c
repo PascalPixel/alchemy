@@ -79,6 +79,7 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
@@ -317,9 +318,9 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   // Seventeen puffs a sixteenth of a turn apart, the first and last together,
   // spread a third wider east to west.
   for (direction = 0; direction <= 16; direction++) {
-    velocity.x = Trig_Cos(direction << 12);
+    velocity.x = Trig_Cos(direction * FACING_STEP);
     velocity.y = 0;
-    velocity.z = Trig_Sin(direction << 12);
+    velocity.z = Trig_Sin(direction * FACING_STEP);
     velocity.x += velocity.x / 3;
     FieldEffect_Spawn(actor->x.fixed, px(16), actor->z.fixed, velocity.x,
                       velocity.y + px(1) / 10, velocity.z, EFFECT_USE_PRIORITY,
@@ -1170,9 +1171,9 @@ static void MogallForest_KillerApeAttacks(void) {
   // The larger reveal uses a wider, level ring of puffs.
   MapGrid_SetShake(5, 5, 1);
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
-    velocity.x = Trig_Cos(directionIndex << 12);
+    velocity.x = Trig_Cos(directionIndex * FACING_STEP);
     velocity.y = 0;
-    z = Trig_Sin(directionIndex << 12);
+    z = Trig_Sin(directionIndex * FACING_STEP);
     x = velocity.x;
     velocity.z = z;
     x += x / 2;

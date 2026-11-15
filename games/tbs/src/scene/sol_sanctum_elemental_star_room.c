@@ -2149,7 +2149,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * Q16_ONE / 5;
   options.startScaleY = 3 * Q16_ONE;

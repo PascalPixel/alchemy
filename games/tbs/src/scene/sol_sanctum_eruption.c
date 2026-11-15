@@ -652,7 +652,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
     spun = Actor_Get(crystalIndex + 16);
     sprite = spun->sprite;
-    angle = crystalIndex << 12;
+    angle = crystalIndex * FACING_STEP;
     sprite->rotation = angle - TRIG_TURN / 4;
     offsetX = Iwram_MulQ16(Trig_Cos(angle), px(256));
     offsetZ = Iwram_MulQ16(Trig_Sin(angle), px(256));

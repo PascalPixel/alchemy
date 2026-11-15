@@ -64,7 +64,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   s32 rate;
 
   lead = Actor_GetById(ACTOR_PARTY_LEADER);
-  dir = lead->facing >> 12;
+  dir = FACING_INDEX(lead->facing);
   Actor_StepFrom(&dst, lead, gPushedActor_DirectionSteps[dir]);
   next = PushedActor_FindAtTile(&dst, lead);
   if (next == NULL)
@@ -125,7 +125,7 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   u32 dir;
   struct Actor *target;
 
-  dir = actor->facing >> 12;
+  dir = FACING_INDEX(actor->facing);
   Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   target = PushedActor_FindAtTile(&probe, actor);
   if (target != NULL) {
@@ -166,7 +166,7 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
   struct Actor **list;
   u32 i, j;
 
-  *direction = player->facing >> 12;
+  *direction = FACING_INDEX(player->facing);
   list = work->actors + ACTOR_FIRST_PLACED;
   for (i = ACTOR_FIRST_PLACED;
        i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
@@ -329,7 +329,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 #else
   workspace = (void *)((u32 *)gMapGridWork)[0];
 #endif
-  direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
+  direction = FACING_INDEX(Actor_GetById(ACTOR_PARTY_LEADER)->facing);
   actor = Actor_GetById(probe.actorSlot);
   {
     s32 extentA = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1];

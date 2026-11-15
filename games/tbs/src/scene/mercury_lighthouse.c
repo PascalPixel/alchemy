@@ -105,6 +105,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/mercury_lighthouse_lights.h"
@@ -747,7 +748,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
   MapGrid_CopyCellsTo(76, 59, 109, 36, 1, 1);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   row = 0;
@@ -797,7 +798,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   struct EffectOptions options;
 
   MapGrid_CopyCellsTo(78, 58, 110, 36, 1, 1);
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
@@ -997,7 +998,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     MapGrid_CopyCellsTo(115, 57, 116, 44, 1, 1);
     MapGrid_CopyCellsTo(113, 57, 115, 44, 1, 1);
   }
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 1; row++) {
@@ -1047,7 +1048,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   MapGrid_CopyCellsTo(117, 58, 112, 46, 1, 1);
   MapGrid_CopyCellsTo(117, 57, 116, 44, 1, 1);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
@@ -1657,7 +1658,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   Sound_Play(SE_RISE_WITH_SPARKS);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
   for (frame = 0; frame <= 47; frame++) {
@@ -1697,7 +1698,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   MapGrid_CopyCellsTo(45, 77, 45, 73, 9, 4);
   Event_Wait(30);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
   // Two bursts spread sparks across the water before it begins to part.
@@ -1738,7 +1739,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(5, 5, 1);
   Event_Wait(60);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
   options.targetScaleX = 6 * Q16_ONE / 5;
@@ -1966,7 +1967,7 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
   u32 particleIndex, row;
 
   MapGrid_CopyCellsTo(74, 58, 70, 34, 1, 1);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 1; row++) {
@@ -1995,7 +1996,7 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
   s32 offsetZ;
 
   MapGrid_CopyCellsTo(76, 61, 74, 38, 1, 1);
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
@@ -2030,9 +2031,9 @@ static void MercuryLighthouse_SparkleAroundLeader(void) {
   s32 framePhase = gFrameCount & 3;
 
   if (framePhase == 0) {
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     if (((Random_Below(2)) & 1) == 0)
-      options.palette = 5;
+      options.palette = SPRITE_COLOR_BRG;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     {
@@ -2053,9 +2054,9 @@ static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
   s32 framePhase = gFrameCount & 3;
 
   if (framePhase == 0) {
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     if (((Random_Below(2)) & 1) == 0)
-      options.palette = 5;
+      options.palette = SPRITE_COLOR_BRG;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     {
@@ -2075,7 +2076,7 @@ static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z) {
   s32 particleX;
   s32 particleZ;
 
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.priority = 1;
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
@@ -2099,9 +2100,9 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   Sound_Play(SE_BURST);
   for (particleIndex = 0; particleIndex <= 11; particleIndex++) {
     if ((particleIndex & 1) != 0) {
-      options.palette = 7;
+      options.palette = SPRITE_COLOR_WHITE;
       if ((particleIndex & 2) != 0)
-        options.palette = 5;
+        options.palette = SPRITE_COLOR_BRG;
       options.startScaleX = 3 * Q16_ONE / 5;
       options.startScaleY = 3 * Q16_ONE / 5;
       SET_VECTOR(velocity, 0, 0, 0);

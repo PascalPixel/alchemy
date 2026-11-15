@@ -71,6 +71,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -309,7 +310,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, px(368), px(624),
                                     &options);
@@ -348,7 +349,7 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, px(432), px(656),
                                     &options);

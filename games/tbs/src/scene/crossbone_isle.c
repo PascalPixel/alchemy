@@ -314,7 +314,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   actor = Actor_Get(actorId);
   options.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
-    angle = angleStep << 12;
+    angle = angleStep * FACING_STEP;
     velocity.x = Trig_Cos(angle);
     velocity.y = 0;
     velocityZ = Trig_Sin(angle);

@@ -263,7 +263,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  leader->facing = gFrameCount << 12;
+  leader->facing = gFrameCount * FACING_STEP;
 
   remainingFrames =
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
@@ -852,7 +852,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     sprite = actor->sprite;
     part = sprite->entries[0];
     if (part != NULL) {
-      part->colorMode = 10;
+      part->colorMode = SPRITE_COLOR_RED_TINT;
     }
     sprite->dirty = 1;
     sprite->flags = 0;

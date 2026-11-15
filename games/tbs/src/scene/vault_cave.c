@@ -88,6 +88,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_step.h"
+#include "scene/facing_nearest.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/io_write_queue.h"
@@ -288,7 +289,7 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
 /// blocks it.
 static void VaultCave_PushPillarAhead(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 direction = leader->facing >> 12;
+  s32 direction = FACING_INDEX(leader->facing);
   struct Actor *pillar;
   struct Actor *beyond;
   struct FieldPosition destination;

@@ -17,7 +17,7 @@ static void Colosso_PushActorAhead(void) {
   leaderId = gMainRoutineWork.leaderActorId;
   leader = Actor_Get(leaderId);
 
-  direction = leader->facing >> 12;
+  direction = FACING_INDEX(leader->facing);
 
   step = gPushedActor_DirectionSteps[direction];
   position.x = leader->x.fixed + (step & 0xffff0000);

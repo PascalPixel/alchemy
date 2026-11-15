@@ -1570,7 +1570,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * Q16_ONE / 5;
   options.startScaleY = 3 * Q16_ONE;
@@ -1617,7 +1617,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * Q16_ONE / 5;
   options.startScaleY = 3 * Q16_ONE;

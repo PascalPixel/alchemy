@@ -13,5 +13,8 @@
 #define FACING_NEAREST_EIGHTH(facing) (((facing) + TRIG_TURN / 16) & 0xe000)
 /// The sixteenth of a turn a facing lies in, what is past it dropped.
 #define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
+/// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,
+/// which indexes the scenes' sixteen-direction step tables.
+#define FACING_INDEX(facing) ((facing) >> 12)
 
 #endif

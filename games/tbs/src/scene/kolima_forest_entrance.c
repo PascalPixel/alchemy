@@ -46,6 +46,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/kolima.h"
 #include "scene/kolima_forest_bridge_falling_effect.h"

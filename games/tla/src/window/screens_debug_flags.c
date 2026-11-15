@@ -6,18 +6,17 @@
 #include "window_internal.h"
 #include "field/flag_call.h"
 
-// The debug selection row's keys: A returns -1 and B -2; Up or Down switches
-// the field, Left and Right step the value (0 to 324) or the second number
-// (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
+/// The debug selection row's range: its value (a scene) runs 0 to
+/// DEBUG_ROW_VALUE_MAX, its second number (an entrance) 0 to DEBUG_ROW_SUB_MAX.
+#define DEBUG_ROW_VALUE_MAX 324
+#define DEBUG_ROW_SUB_MAX 99
 
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to
-/// cancel. Shoulder buttons step by ten; it keeps the original 99-step
-/// entrance wrap. Otherwise it returns the scene after this frame's keys. Up
-/// and Down switch the field (`selectedField`: 0 scene, 1 entrance), Left
-/// and Right step by one, wrapping scenes 0 to 200 and entrances 0 to 99.
-/// R and L step a scene by ten, setting the entrance to 0, and past
-/// either end go to the other (195 + 10 gives 0); they step an entrance
-/// by ten, wrapping by 99 (95 + 10 gives 6).
+/// cancel, else the scene after this frame's keys. Up and Down switch the
+/// field (`mode`: 0 scene, 1 entrance), Left and Right step by one and wrap
+/// at either end. R and L step a scene by ten, setting the entrance to 0, and
+/// past either end go to the other; they step an entrance by ten, wrapping by
+/// 99 (95 + 10 gives 6).
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
     return -1;
@@ -32,10 +31,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
       value++;
     } else {
       (*sub)++;
-      if (*sub > 99)
+      if (*sub > DEBUG_ROW_SUB_MAX)
         *sub = 0;
     }
-    if (value > 324)
+    if (value > DEBUG_ROW_VALUE_MAX)
       value = 0;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_LEFT) {
@@ -44,10 +43,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     } else {
       (*sub)--;
       if (*sub < 0)
-        *sub = 99;
+        *sub = DEBUG_ROW_SUB_MAX;
     }
     if (value < 0)
-      value = 324;
+      value = DEBUG_ROW_VALUE_MAX;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
@@ -55,10 +54,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
       value += 10;
     } else {
       *sub += 10;
-      if (*sub > 99)
-        *sub -= 99;
+      if (*sub > DEBUG_ROW_SUB_MAX)
+        *sub -= DEBUG_ROW_SUB_MAX;
     }
-    if (value > 324)
+    if (value > DEBUG_ROW_VALUE_MAX)
       value = 0;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_L) {
@@ -68,10 +67,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     } else {
       *sub -= 10;
       if (*sub < 0)
-        *sub += 99;
+        *sub += DEBUG_ROW_SUB_MAX;
     }
     if (value < 0)
-      value = 324;
+      value = DEBUG_ROW_VALUE_MAX;
     DebugSceneSelect_DrawRow(arg, value, sub);
   }
   return value;
@@ -168,7 +167,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
 
     for (i = 0; i < 16; i++) {
       s32 val = GameFlag_Get(flag);
-      bits[i] = (val != 0) + 48;
+      bits[i] = (val != 0) + '0';
       flag++;
     }
     bits[i] = 0;

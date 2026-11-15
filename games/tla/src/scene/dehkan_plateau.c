@@ -991,9 +991,9 @@ void DehkanPlateau_JoltCamera(void) {
 
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
- * angle); event.h has s32 angle (the definition takes a word and keeps its
- * halfword); with it the constant angle loads after the position in three
- * events. */
+ * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32
+ * actorId, s32 x, s32 z, s32 angle); tried as event.h's, it compiles and moves
+ * the constant angle's load after the position in three events. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
@@ -1633,7 +1633,8 @@ void DehkanPlateau_InitializeTightropes(void) {
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
-  /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie. */
+  /* FAKEMATCH(dead): the form kept; as no block, 2 of 276 instructions differ
+   * in tla-en. */
   do {
   } while (0);
   Tightrope_Initialize();

@@ -1678,7 +1678,8 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       for (m = 0; m != 23; m++) {
         s32 count = 0;
         u16 quantity;
-        /* FAKEMATCH(dead): a halfword copy of the count nothing reads. */
+        /* FAKEMATCH(dead): the form kept; as no quantity copy, 133 of 479
+         * instructions differ in tla-en. */
 
         for (n = 0; n != 15; n++) {
           if ((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==

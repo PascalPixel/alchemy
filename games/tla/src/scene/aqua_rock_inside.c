@@ -1038,7 +1038,8 @@ void AquaRockInside_DouseTearStoneWaterStone(void) {
   s32 result;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_4B)) {
-    /* FAKEMATCH(signature): these two calls go through a void function type. */
+    /* FAKEMATCH(signature): the form kept; as two plain calls, 4 of 41
+     * instructions differ in tla-en. */
     ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(
         ACTOR_TEAR_STONE_WATER_PILLAR_C, 38);
     ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(

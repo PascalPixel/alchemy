@@ -519,9 +519,9 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Sound_PlayFar(SE_STAIRS_DOWN);
         Exit_StartStairsDown();
         break;
-      case 80:
+      case EXIT_STYLE_HIDDEN_LAYER:
         Sound_PlayFar(SE_MAP_EXIT);
-        Func_080d5fd4();
+        Exit_AddHiddenLeaderLayer();
         break;
       }
       work->exit = event->result;

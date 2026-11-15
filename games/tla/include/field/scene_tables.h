@@ -236,13 +236,15 @@ struct TriggerView {
   (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
 
 /// An exit trigger's control bits 6..4: how the leader leaves
-/// (Scene_RunStepTriggerOrExit). Style 0x50 plays the plain exit sound and
-/// runs Func_080d5fd4 on the leader as it goes.
+/// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
   EXIT_STYLE_STAIRS_UP = 0x20,   ///< with the stairs-up sound and walk
   EXIT_STYLE_STAIRS_DOWN = 0x30, ///< with the stairs-down sound and walk
+  /// With SE_MAP_EXIT and a hidden layer on the leader's sprite
+  /// (Exit_AddHiddenLeaderLayer).
+  EXIT_STYLE_HIDDEN_LAYER = 0x50,
   EXIT_STYLE_MASK = 0x70
 };
 

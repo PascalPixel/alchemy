@@ -242,9 +242,9 @@ s32 Entrance_PlayArrival(void) {
 
 /// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
 /// drawn transparent (SPRITE_COLOR_HIDDEN).
-void Func_080d5fd4(void) {
+void Exit_AddHiddenLeaderLayer(void) {
   struct Actor *object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  u8 *metadata = Sprite_AddAnimationFar(*(void **)((u8 *)object + 0x50), 268);
+  struct SpriteAnimation *layer = Sprite_AddAnimationFar(object->sprite, 268);
 
-  metadata[5] = 15;
+  layer->colorMode = SPRITE_COLOR_HIDDEN;
 }

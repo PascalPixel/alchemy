@@ -60,7 +60,7 @@ void PaletteFade_Initialize(void);
 s32 Entrance_PlayArrival(void);
 void Exit_StartStairsDown(void);
 void Exit_StartStairsUp(void);
-void Func_080d5fd4(void);
+void Exit_AddHiddenLeaderLayer(void);
 
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);

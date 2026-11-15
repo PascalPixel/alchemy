@@ -866,9 +866,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
 }
 
 void EasternAlhafra_OverhearWorkers(void) {
-  struct Actor *object0;
-  struct Actor *object1;
-  struct Actor *object2;
+  struct Actor *leader;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -993,28 +991,28 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object0 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object0 != 0) {
-    Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object0 + 10),
-                         *(s16 *)((u8 *)object0 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object1 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object1 != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object1 + 10),
-                         *(s16 *)((u8 *)object1 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, 2);
-  object2 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object2 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object2 + 10),
-                         *(s16 *)((u8 *)object2 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1029,10 +1027,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   s32 result1;
   s32 result2;
   s32 result3;
-  struct Actor *object4;
-  struct Actor *object5;
-  struct Actor *object6;
-  struct Actor *object7;
+  struct Actor *leader;
 
   result0 = Event_GetFlag(FLAG_BRIGGS_CAUGHT);
   if (result0 == 0) {
@@ -1085,38 +1080,38 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   if (result3 != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    object4 = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object4 != 0) {
-      Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object4 + 10),
-                           *(s16 *)((u8 *)object4 + 18));
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (leader != 0) {
+      Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object5 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object5 != 0) {
-    Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object5 + 10),
-                         *(s16 *)((u8 *)object5 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object6 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object6 != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object6 + 10),
-                         *(s16 *)((u8 *)object6 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, 2);
-  object7 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object7 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object7 + 10),
-                         *(s16 *)((u8 *)object7 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1130,10 +1125,7 @@ void EasternAlhafra_AskIfFinished(void) {
   s32 result1;
   s32 result2;
   s32 result3;
-  struct Actor *object4;
-  struct Actor *object5;
-  struct Actor *object6;
-  struct Actor *object7;
+  struct Actor *leader;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1215,38 +1207,38 @@ void EasternAlhafra_AskIfFinished(void) {
   if (result3 != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    object4 = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object4 != 0) {
-      Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object4 + 10),
-                           *(s16 *)((u8 *)object4 + 18));
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (leader != 0) {
+      Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object5 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object5 != 0) {
-    Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object5 + 10),
-                         *(s16 *)((u8 *)object5 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object6 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object6 != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object6 + 10),
-                         *(s16 *)((u8 *)object6 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, 2);
-  object7 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object7 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object7 + 10),
-                         *(s16 *)((u8 *)object7 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);

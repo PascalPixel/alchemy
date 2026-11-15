@@ -6,6 +6,8 @@
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "field/emote.h"
+#include "field/event.h"
+#include "field/event_inline.h"
 #include "sounds.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -75,7 +77,6 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldEvent_Wait(s32 frames);
-void FieldMessage_Show(const u8 *message, s32 mode);
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -219,7 +220,6 @@ extern struct Trigger gAirsRockInside_Room8Triggers[];
 extern struct Trigger gAirsRockInside_Room9Triggers[];
 extern struct Trigger gAirsRockInside_Room10Triggers[];
 
-void FieldEffect_SetAttached(u32 id, s32 mode);
 void MapGrid_WaitForShakeToSettle(void);
 
 void AirsRockInside_StartRestoringCells(void);
@@ -717,7 +717,7 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->velocityY = px(6);
     *priority = 33;
     *motion = 3;
-    Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
+    FieldCamera_MoveToFixed(-1, -1, -1, 0);
     dust = FieldCamera_GetActor();
     dust->speedLimit = px(8);
     dust->acceleration = px(1);
@@ -1197,9 +1197,8 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
-  (Sound_Play(SE_GATE_MOVE),                                                   \
-   Call3(MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000),                   \
-   Call3(MapGrid_SetScreenShake, -1, -1, 0xe666))
+  (Sound_Play(SE_GATE_MOVE), MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000), \
+   MapGrid_SetShakeFixed(-1, -1, 0xe666))
 
 /// Whirlwind on a twister rock: a gust rises from it and travels ahead of the
 /// leader, carrying what it meets.
@@ -1214,8 +1213,6 @@ void AirsRockInside_BlowGust(void) {
   s32 i, steps = 0, carried;
   s32 hit = 0;
 
-  /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
-   * and Call6. */
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_RUSH);
@@ -1309,8 +1306,8 @@ void AirsRockInside_BlowGust(void) {
     gust->speedLimit = px(4);
     gust->acceleration = px(4);
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y.fixed, cell.z << 16);
-    Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
-    Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
+    FieldCamera_SetSpeedFixed(0x50000, 0x50000);
+    FieldCamera_MoveToFixed(x << 16, -1, z << 16, 1);
   }
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
@@ -1357,10 +1354,10 @@ void AirsRockInside_BlowGust(void) {
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
       object->groundHeight = 0xffe00000;
-      Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
+      MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
-      Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
+      MapGrid_CopyCellAttributes(19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -1388,8 +1385,7 @@ void AirsRockInside_BlowGust(void) {
     cell.z = FIELD_PIXEL(gust->z.fixed) + dir.z * 48;
     gust->speedLimit = px(1) / 2;
     gust->acceleration = px(1) / 2;
-    Call4((void (*)())Actor_SetMoveTarget, (s32)(gust), (s32)(cell.x << 16),
-          (s32)(gust->y.fixed), (s32)(cell.z << 16));
+    FieldActor_SetMoveTargetFixed(gust, px(cell.x), gust->y.fixed, px(cell.z));
     hit -= 30;
     i = 0;
     while (Actor_HasArrived(gust) == 0) {
@@ -1428,21 +1424,20 @@ void AirsRockInside_BlowGust(void) {
             GameFlag_Set(FLAG_AREA_TEMP_04);
             MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
             Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
-            Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
+            MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
           } else {
             GameFlag_Set(FLAG_AREA_TEMP_05);
-            Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, cell.x, cell.z, 1,
-                  1);
-            Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
-            Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
+            MapGrid_CopyCellsTo(39, 82, cell.x, cell.z, 1, 1);
+            MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
+            MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
           }
         } else if (gMainRoutineWork.next ==
                    SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
           GameFlag_Set(FLAG_AREA_TEMP_06);
           cell.x = FIELD_CELL(gust->x.fixed);
-          Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
-          Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
-          Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
+          MapGrid_CopyCellsTo(15, 80, cell.x, 77, 1, 3);
+          MapGrid_CopyCellAttributes(15, 80, 1, 1, 15, 79);
+          MapGrid_CopyCellAttributes(17, 15, 2, 1, 15, 15);
         }
         MapGrid_CenterOnFollowedPoint();
       }
@@ -1466,29 +1461,29 @@ shrink:
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_4) {
     if (hit == 5) {
       SHAKE();
-      Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(79, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(MapGrid_CopyCellPictureIndicesRect, 69, 0x40, 29, 85, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
-      Call6(Map_CopyCellAttributeRect, 0x20, 89, 1, 1, 31, 89);
-      Call6(Map_CopyCellAttributeRect, 50, 86, 1, 1, 33, 87);
+      MapGrid_CopyCellsTo(69, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellAttributes(46, 20, 5, 5, 29, 21);
+      MapGrid_CopyCellAttributes(0x20, 89, 1, 1, 31, 89);
+      MapGrid_CopyCellAttributes(50, 86, 1, 1, 33, 87);
       GameFlag_Set(FLAG_AREA_TEMP_01);
     } else if (hit == 6) {
       SHAKE();
-      Call6(MapGrid_CopyCellPictureIndicesRect, 74, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(74, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 29, 85, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 52, 20, 5, 5, 29, 21);
-      Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
-      Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
+      MapGrid_CopyCellsTo(0x40, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellAttributes(52, 20, 5, 5, 29, 21);
+      MapGrid_CopyCellAttributes(33, 88, 1, 1, 33, 87);
+      MapGrid_CopyCellAttributes(0x30, 88, 1, 1, 31, 89);
       GameFlag_Clear(FLAG_AREA_TEMP_01);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     if (hit == 5) {
       SHAKE();
-      Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
+      MapGrid_CopyCellsTo(79, 0x40, 0x20, 79, 5, 7);
       if (Actor_GetById(8)->x.fixed >> 19 == 65) {
         velocity.x = Actor_GetById(8)->x.fixed + 0xfff80000;
         velocity.y = Actor_GetById(8)->y.fixed;
@@ -1502,15 +1497,15 @@ shrink:
         }
         wait(30);
         SHAKE();
-        Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellsTo(0x40, 0x40, 0x20, 79, 5, 7);
         Actor_GetById(8)->priorityFlags |= 1;
       } else {
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(MapGrid_CopyCellPictureIndicesRect, 69, 0x40, 0x20, 79, 5, 7);
-        Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 0x20, 15);
-        Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
-        Call6(Map_CopyCellAttributeRect, 52, 81, 1, 1, 36, 81);
+        MapGrid_CopyCellsTo(69, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellAttributes(49, 15, 5, 5, 0x20, 15);
+        MapGrid_CopyCellAttributes(33, 82, 1, 1, 34, 82);
+        MapGrid_CopyCellAttributes(52, 81, 1, 1, 36, 81);
         GameFlag_Clear(FLAG_AREA_TEMP_02);
       }
     } else if (hit == 6) {
@@ -1527,14 +1522,14 @@ shrink:
         }
         wait(20);
       } else {
-        Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellsTo(79, 0x40, 0x20, 79, 5, 7);
         Sound_Play(SE_GATE_MOVE);
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
-        Call6(Map_CopyCellAttributeRect, 49, 21, 5, 5, 0x20, 15);
-        Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
-        Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
+        MapGrid_CopyCellsTo(0x40, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellAttributes(49, 21, 5, 5, 0x20, 15);
+        MapGrid_CopyCellAttributes(35, 81, 1, 1, 36, 81);
+        MapGrid_CopyCellAttributes(50, 82, 1, 1, 34, 82);
         GameFlag_Set(FLAG_AREA_TEMP_02);
       }
     }
@@ -1649,12 +1644,12 @@ void AirsRockInside_StampCellUnderLeader(void) {
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
   }
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gAirsRockInside_StampedX,
-        gAirsRockInside_StampedZ, gAirsRockInside_StampedWidth,
-        gAirsRockInside_StampedHeight, 73, 72);
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 70, 72,
-        gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight,
-        gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
+  MapGrid_CopyCellsLayered(gAirsRockInside_StampedX, gAirsRockInside_StampedZ,
+                           gAirsRockInside_StampedWidth,
+                           gAirsRockInside_StampedHeight, 73, 72);
+  MapGrid_CopyCellsLayered(70, 72, gAirsRockInside_StampedWidth,
+                           gAirsRockInside_StampedHeight,
+                           gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
 void AirsRockInside_StampOtherCellUnderLeader(void) {
@@ -1679,12 +1674,12 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
   }
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gAirsRockInside_StampedX,
-        gAirsRockInside_StampedZ, gAirsRockInside_StampedWidth,
-        gAirsRockInside_StampedHeight, 73, 72);
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 71, 72,
-        gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight,
-        gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
+  MapGrid_CopyCellsLayered(gAirsRockInside_StampedX, gAirsRockInside_StampedZ,
+                           gAirsRockInside_StampedWidth,
+                           gAirsRockInside_StampedHeight, 73, 72);
+  MapGrid_CopyCellsLayered(71, 72, gAirsRockInside_StampedWidth,
+                           gAirsRockInside_StampedHeight,
+                           gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
@@ -1745,7 +1740,7 @@ burst:
   if (i != 8)
     goto burst;
   MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
 }
 
 void AirsRockInside_ScatterSparks(s32 x, s32 z) {
@@ -1813,7 +1808,6 @@ void AirsRockInside_FlickerTarget(struct Actor *object) {
 }
 
 void PaletteFade_SetSource(s32 a, s32 b);
-s32 PaletteFade_SetTarget(s32 a, s32 b);
 void PaletteFade_StartInterpolation(s32 mode);
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
@@ -1894,13 +1888,13 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Call2((void (*)())PaletteFade_SetSource, 0x10000, 0);
-  Call2((void (*)())PaletteFade_SetTarget, 0x10003, 0);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(312), -1, px(680), 1);
+  FieldCamera_SetSpeedFixed(0x10000, 0x2000);
+  FieldCamera_MoveToFixed(px(312), -1, px(680), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(11)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(11), 6);
@@ -1910,8 +1904,8 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  Call2((void (*)())PaletteFade_SetSource, 0x10003, 0);
-  Call2((void (*)())PaletteFade_SetTarget, 0x7fff, 0);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   PaletteFade_SetSource(0x7fff, 0);
@@ -1920,7 +1914,7 @@ row:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
   MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   i = 0;
 fade:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
@@ -1934,12 +1928,12 @@ fade:
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0x1380000, 0x2d00000);
-  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
+  MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(10, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
-  Call2((void (*)())Actor_ConfigureSpriteColor, 10, 0x100);
+  Actor_SetSpriteColorById(10, 0x100);
   AirsRockInside_ScatterSparks(Actor_GetById(10)->x.fixed,
                                Actor_GetById(10)->z.fixed);
   Actor_ConfigureSpriteColor(10, 0);
@@ -2203,13 +2197,13 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Call2((void (*)())PaletteFade_SetSource, 0x10000, 0);
-  Call2((void (*)())PaletteFade_SetTarget, 0x10003, 0);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(216), -1, px(224), 1);
+  FieldCamera_SetSpeedFixed(0x10000, 0x2000);
+  FieldCamera_MoveToFixed(px(216), -1, px(224), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(10)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(10), 6);
@@ -2219,8 +2213,8 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  Call2((void (*)())PaletteFade_SetSource, 0x10003, 0);
-  Call2((void (*)())PaletteFade_SetTarget, 0x7fff, 0);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   PaletteFade_SetSource(0x7fff, 0);
@@ -2229,7 +2223,7 @@ row:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
   MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   i = 0;
 fade:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
@@ -2243,12 +2237,12 @@ fade:
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0xd80000, 0x12d0000);
-  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
+  MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
-  Call2((void (*)())Actor_ConfigureSpriteColor, 8, 0x100);
+  Actor_SetSpriteColorById(8, 0x100);
   AirsRockInside_ScatterSparks(Actor_GetById(8)->x.fixed,
                                Actor_GetById(8)->z.fixed + px(32));
   Actor_ConfigureSpriteColor(8, 0);
@@ -2280,7 +2274,6 @@ void AirsRockInside_JumpDownLedge(void) {
   Event_End();
 }
 
-void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 
 /// While the leader is no further than z 653, moves the leader to (376, 668)
@@ -2336,8 +2329,7 @@ fadeOut:
     goto fadeOut;
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
-  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64,
-        cellY, 1, 2);
+  MapGrid_CopyCellsTo(65, 1, cellX + 64, cellY, 1, 2);
   MapCell_SetAttributes(0, cellX, cellY, 0xff00);
   Actor_Release(marker);
   Event_End();
@@ -2365,7 +2357,7 @@ void AirsRockInside_StepOnVanishingStone(void) {
   if (cell != 1 && cell != 7) {
     AirsRockInside_StampCellUnderLeader();
     AirsRockInside_VanishStone(264, row * 8 + 10);
-    if (!Value1((s32 (*)())GameFlag_Get, 0x200))
+    if (!Event_GetFlag(0x200))
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     GameFlag_Set(*(s16 *)work + 312);
   } else if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
@@ -2402,8 +2394,7 @@ extern u32 gAirsRockInside_OrbitSparkScript[];
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
-    Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1,   \
-          2);                                                                  \
+    MapGrid_CopyCellsTo(n2, 17, 72, 19, 1, 2);                                 \
     MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
   }
 
@@ -2412,9 +2403,8 @@ DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_HideRevealedDoors, 26, 90)
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
 void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
-  struct Actor *object =
-      (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0,
-                             source->x.fixed, source->y.fixed, source->z.fixed);
+  struct Actor *object = FieldActor_Create(0x2a0, source->x.fixed,
+                                           source->y.fixed, source->z.fixed);
 
   WORD_AT(object, 28) = 0x6666;
   WORD_AT(object, 24) = 0x6666;
@@ -2436,8 +2426,8 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  Call3((void (*)())Vector_AddPolarOffset, orbiter->radius, orbiter->angle,
-        (s32)&orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle,
+                                  (s32)&orbiter->x);
   if (--orbiter->countdown == 0)
     return 0;
   if (orbiter->radius == 0x20000)
@@ -2510,7 +2500,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
                                   a->y.part[0].pixel << 16,
                                   a->z.part[0].pixel << 16, 1);
   Sound_Play(SE_RUMBLE);
-  Call3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
+  MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
@@ -2564,8 +2554,7 @@ first:
 second:
   {
     struct Actor *spark =
-        (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0, b->x.fixed,
-                               b->y.fixed, b->z.fixed);
+        FieldActor_Create(0x2a0, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_195);
     angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + 0x8000;
@@ -2579,11 +2568,11 @@ second:
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    Call3(Vector_AddPolarOffset, spark->riseBaseY, *angle,
-          (s32)&spark->x.fixed);
+    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, *angle,
+                                    (s32)&spark->x.fixed);
     Actor_StartScript(spark, gAirsRockInside_OrbitingSparkScript);
     if (i == 3) {
-      Call2(Actor_ConfigureSpriteColor, idB, 0x100);
+      Actor_SetSpriteColorById(idB, 0x100);
       b->motionFlags = 0;
       b->acceleration = 0x3333;
       b->speedLimit = 0x3333;
@@ -2602,9 +2591,8 @@ second:
   i = 2;
 third:
   {
-    struct Actor *spark =
-        (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0, b->x.fixed,
-                               b->y.fixed + i * 65536 - 0x80000, b->z.fixed);
+    struct Actor *spark = FieldActor_Create(
+        0x2a0, b->x.fixed, b->y.fixed + i * 65536 - 0x80000, b->z.fixed);
     spark->timer = Random16();
     spark->userValue = 0x800;
     ((union SparkView *)spark)->bytes.unk62 = i;
@@ -2659,7 +2647,6 @@ void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 #define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
-s32 Actor_SetHorizontalPositionWithTerrain();
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_WaitForMoveById(s32 actorId);
 void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
@@ -2678,17 +2665,16 @@ void AirsRockInside_ReadRevealTablet(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgCheckedTheTablet, 1);
-  if (Value1(GameFlag_Get, FLAG_REVEAL_TABLET_READ) != 0) {
+  if (Event_GetFlag(FLAG_REVEAL_TABLET_READ) != 0) {
     Event_End();
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
     EVENT_WORK->message++;
-    Call3(Actor_SetSpeedParameters, gMainRoutineWork.leaderActorId, 0xb333,
-          0x5999);
-    Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
+    Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, 0xb333, 0x5999);
+    Actor_SetSpeedFixed(6, 0xb333, 0x5999);
     Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
-    Call3(Actor_WalkToById, gMainRoutineWork.leaderActorId, 256, 136);
+    Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 136);
     Actor_WalkToById(ACTOR_SHEBA, 272, 136);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Actor_WaitForMoveById(ACTOR_SHEBA);
@@ -2700,21 +2686,20 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(30);
     Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 256, 152);
-    Call3(Actor_FaceDirectionById, gMainRoutineWork.leaderActorId, FACING_NORTH,
-          0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
     FieldEvent_Wait(30);
-    Call3(Actor_FaceDirectionById, 6, FACING_NORTH, 0);
+    Actor_FaceDirection(6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Call3(Actor_WalkToAndWaitById, 6, 264, 137);
+    Actor_WalkToAndWait(6, 264, 137);
     Actor_FaceDirectionById(ACTOR_SHEBA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
-    Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
-    Call3(MapGrid_SetScreenShake, -1, -1, 0xe666);
+    MapGrid_SetShakeFixed(0x50000, 0x70000, 0x10000);
+    MapGrid_SetShakeFixed(-1, -1, 0xe666);
     /* FAKEMATCH(wrapper): the call through Call0's pointer. */
     MapGrid_WaitForShakeToSettle();
     AirsRockInside_ShebaLearnsReveal(8, 6);
@@ -2725,7 +2710,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(20);
-    Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+    Actor_SetSpeedFixed(6, 0x13333, 0x9999);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != 0)
@@ -3147,7 +3132,7 @@ void AirsRockInside_LandInHall(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
@@ -3186,8 +3171,8 @@ void AirsRockInside_LandInHall(void) {
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 22);
-  Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -3207,8 +3192,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 i, z, one;
 
-  /* FAKEMATCH(wrapper): 48 calls forwarded through call.h's Call3, Call4 and
-   * Call6. */
+  /* FAKEMATCH(wrapper): MapCell_SetAttributes called through call.h's Call4. */
 
   gFieldWork->transition = 516;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
@@ -3232,7 +3216,7 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance > 13) {
       if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_ROOM_PILLAR_PLACED))
-        Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(824), px(328));
+        Actor_SetPositionFixed(12, px(824), px(328));
       Actor_PlaceBlocks(gAirsRockInside_Room1Pillars);
     }
     Actor_GetById(10)->motionFlags = 0;
@@ -3244,7 +3228,7 @@ s32 Scene_Initialize(void) {
     } else {
       AirsRockInside_WakeStatue(Actor_GetById(10), 8, 0);
       Actor_SetSpriteColor(Actor_GetById(11), 6);
-      Call6(MapGrid_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
+      MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
     }
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
@@ -3266,16 +3250,16 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(328), px(392));
+      Actor_SetPositionFixed(9, px(328), px(392));
     if (GameFlag_Get(FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 11, px(104), px(392));
+      Actor_SetPositionFixed(11, px(104), px(392));
     Actor_PlaceBlocks(gAirsRockInside_Room2Pillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
       AirsRockInside_WakeStatue(Actor_GetById(8), 60, 0);
       Actor_SetSpriteColor(Actor_GetById(10), 6);
-      Call6(MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
+      MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
     if (gMainRoutineWork.entrance == 3 &&
@@ -3289,11 +3273,11 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(264), px(632));
+      Actor_SetPositionFixed(8, px(264), px(632));
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 11, px(616), px(568));
+      Actor_SetPositionFixed(11, px(616), px(568));
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(472), px(520));
+      Actor_SetPositionFixed(12, px(472), px(520));
     Actor_PlaceBlocks(gAirsRockInside_Room3Pillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(9), 6);
@@ -3319,24 +3303,24 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(4, 19, 20);
     ((u8 *)Actor_GetById(18))[98] = 1;
     if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 29, 85, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
-      Call6(Map_CopyCellAttributeRect, 32, 89, 1, 1, 31, 89);
-      Call6(Map_CopyCellAttributeRect, 50, 86, 1, 1, 33, 87);
+      MapGrid_CopyCellsTo(69, 64, 29, 85, 5, 7);
+      MapGrid_CopyCellAttributes(46, 20, 5, 5, 29, 21);
+      MapGrid_CopyCellAttributes(32, 89, 1, 1, 31, 89);
+      MapGrid_CopyCellAttributes(50, 86, 1, 1, 33, 87);
     } else {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 64, 64, 29, 85, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 52, 20, 5, 5, 29, 21);
-      Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
-      Call6(Map_CopyCellAttributeRect, 48, 88, 1, 1, 31, 89);
+      MapGrid_CopyCellsTo(64, 64, 29, 85, 5, 7);
+      MapGrid_CopyCellAttributes(52, 20, 5, 5, 29, 21);
+      MapGrid_CopyCellAttributes(33, 88, 1, 1, 33, 87);
+      MapGrid_CopyCellAttributes(48, 88, 1, 1, 31, 89);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 90, 25, 86, 25, 4, 3);
-      Call6(MapGrid_CopyCellPictureIndicesRect, 21, 88, 24, 89, 1, 2);
-      Call6(Map_CopyCellAttributeRect, 23, 92, 2, 1, 23, 89);
-      Call6(Map_CopyCellAttributeRect, 18, 33, 2, 1, 23, 25);
+      MapGrid_CopyCellsTo(90, 25, 86, 25, 4, 3);
+      MapGrid_CopyCellsTo(21, 88, 24, 89, 1, 2);
+      MapGrid_CopyCellAttributes(23, 92, 2, 1, 23, 89);
+      MapGrid_CopyCellAttributes(18, 33, 2, 1, 23, 25);
     }
     if (GameFlag_Get(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(648), px(296));
+      Actor_SetPositionFixed(9, px(648), px(296));
     Actor_PlaceBlocks(gAirsRockInside_Room4Pillars);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -3345,7 +3329,7 @@ s32 Scene_Initialize(void) {
   loop:
     if (GameFlag_Get(514 + i)) {
       z = 24 - (i << 1);
-      Call6(MapGrid_CopyCellPictureIndicesRect, 65, 1, 80, z, 1, 2);
+      MapGrid_CopyCellsTo(65, 1, 80, z, 1, 2);
       Call4((void (*)())MapCell_SetAttributes, 0, 16, z, 0xff00);
     }
     i++;
@@ -3363,24 +3347,24 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(1, 13, 14);
     Tightrope_Place(2, 15, 0x10);
     if (!GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 32, 79, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 32, 15);
-      Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
-      Call6(Map_CopyCellAttributeRect, 52, 81, 1, 1, 36, 81);
+      MapGrid_CopyCellsTo(69, 64, 32, 79, 5, 7);
+      MapGrid_CopyCellAttributes(49, 15, 5, 5, 32, 15);
+      MapGrid_CopyCellAttributes(33, 82, 1, 1, 34, 82);
+      MapGrid_CopyCellAttributes(52, 81, 1, 1, 36, 81);
     } else {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 64, 64, 32, 79, 5, 7);
-      Call6(Map_CopyCellAttributeRect, 49, 21, 5, 5, 32, 15);
-      Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
-      Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
+      MapGrid_CopyCellsTo(64, 64, 32, 79, 5, 7);
+      MapGrid_CopyCellAttributes(49, 21, 5, 5, 32, 15);
+      MapGrid_CopyCellAttributes(35, 81, 1, 1, 36, 81);
+      MapGrid_CopyCellAttributes(50, 82, 1, 1, 34, 82);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_03))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(520), px(296));
+      Actor_SetPositionFixed(8, px(520), px(296));
     if (GameFlag_Get(FLAG_AIRS_ROCK_STATUE_MOVED)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(312), px(296));
+      Actor_SetPositionFixed(8, px(312), px(296));
       Actor_SetSpritePriority(8, 2);
       Actor_GetById(8)->motionFlags = 2;
       Actor_GetById(8)->groundHeight = 0xffe00000;
-      Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
+      MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     AirsRockInside_StartRestoringCells();
@@ -3395,17 +3379,17 @@ s32 Scene_Initialize(void) {
     }
     AirsRockInside_PlaceCones(gAirsRockInside_Room7Cones);
     if (GameFlag_Get(FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(344), px(696));
+      Actor_SetPositionFixed(8, px(344), px(696));
     Actor_PlaceBlocks(gAirsRockInside_Room7Pillars);
     if (GameFlag_Get(FLAG_AREA_TEMP_04)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, 38, 82, one, 3);
-      Call6(Map_CopyCellAttributeRect, 39, 82, 1, 1, 38, 82);
-      Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
+      MapGrid_CopyCellsTo(39, 82, 38, 82, one, 3);
+      MapGrid_CopyCellAttributes(39, 82, 1, 1, 38, 82);
+      MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_05)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, 38, 99, one, 3);
-      Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
-      Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
+      MapGrid_CopyCellsTo(39, 82, 38, 99, one, 3);
+      MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
+      MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     Scene_QueueMusic(SE_245);
@@ -3413,11 +3397,11 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(280), px(472));
+      Actor_SetPositionFixed(8, px(280), px(472));
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(840));
+      Actor_SetPositionFixed(9, px(360), px(840));
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(184), px(616));
+      Actor_SetPositionFixed(12, px(184), px(616));
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     }
     Actor_SetSpritePriority(9, 2);
@@ -3434,7 +3418,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(264));
+      Actor_SetPositionFixed(9, px(360), px(264));
     Actor_PlaceBlocks(gAirsRockInside_Room9Pillars);
     MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(10)->x.fixed),
                           FIELD_CELL(Actor_GetById(10)->z.fixed), 0);
@@ -3445,9 +3429,9 @@ s32 Scene_Initialize(void) {
       AirsRockInside_WakeStatue(Actor_GetById(10), 60, 0);
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     if (GameFlag_Get(FLAG_AREA_TEMP_06)) {
-      Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, 15, 77, 2, 3);
-      Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
-      Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
+      MapGrid_CopyCellsTo(15, 80, 15, 77, 2, 3);
+      MapGrid_CopyCellAttributes(15, 80, 1, 1, 15, 79);
+      MapGrid_CopyCellAttributes(17, 15, 2, 1, 15, 15);
     }
   }
   return 0;

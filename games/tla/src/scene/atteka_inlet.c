@@ -43,9 +43,9 @@
 #define FLAG_HAMMETS_GIFT_DELIVERED 0x9ad ///< Master Hammet's messenger came
 
 extern struct ActorPlacement gAttekaInlet_ActorPlacements[];
-extern u32 gAttekaInlet_HarbourActorPlacements[];
+extern struct ActorPlacement gAttekaInlet_HarbourActorPlacements[];
 extern struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[];
-extern u32 gAttekaInlet_HarbourActorPlacementsOnceFlown[];
+extern struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceFlown[];
 extern struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[];
 extern struct ActorPlacement gAttekaInlet_ShoreActorPlacements[];
 extern struct Trigger gAttekaInlet_Triggers[];
@@ -54,8 +54,39 @@ void AttekaInlet_HammetsMessengerArrives(void);
 void AttekaInlet_SetUpTheHarbour(void);
 void AttekaInlet_SetUpTheShore(void);
 
+/// The harbour's people, numbering gAttekaInlet_HarbourActorPlacements and
+/// the tables after it.
+enum AttekaInletHarbourActorId {
+  /// "I wonder if these giant wings will really make it fly..."
+  ACTOR_BOY_ON_THE_WINGS = ACTOR_FIRST_PLACED + 8,
+  /// The cannon on the dock.
+  ACTOR_CANNON,
+  /// Kraden, who asks whether to set sail.
+  ACTOR_KRADEN,
+  /// Once the ship has wings: Contigo's scholars come to see it fly, and
+  /// Hamma.
+  ACTOR_FIRST_SCHOLAR,
+  ACTOR_HAMA = ACTOR_FIRST_SCHOLAR + 4,
+  /// Master Hammet's messenger, in a game linked with The Broken Seal.
+  ACTOR_HAMMETS_MESSENGER
+};
+
+/// The shore beside the harbour (gAttekaInlet_ShoreActorPlacements).
+enum AttekaInletShoreActorId {
+  /// The shipwrights who stop the party at the pier: "Where do you think
+  /// you're going?"
+  ///@{
+  ACTOR_SHIPWRIGHT = ACTOR_FIRST_PLACED + 1,
+  ACTOR_SECOND_SHIPWRIGHT,
+  ///@}
+  /// A scholar from Contigo on the shore.
+  ACTOR_SHORE_SCHOLAR,
+  /// Geode, the Venus Djinni Cyclone uncovers.
+  ACTOR_GEODE = ACTOR_FIRST_PLACED + 6
+};
+
 void AttekaInlet_GeodeJoins(void) {
-  Djinn_JoinParty(14, DJINNI_GEODE / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_GEODE, DJINNI_GEODE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_GEODE));
   GameFlag_Clear(FLAG_AREA_TEMP_00);
 }
@@ -107,12 +138,12 @@ void AttekaInlet_AskPiersToSetSail(void) {
   Event_SetMessageId(MsgAreWeSetting);
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
-  FieldMessage_ShowAtActor(18, 0);
+  FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetAnimationById(18, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
     // "Then, to sea we go!"
-    Event_ShowMessageAndWait(18, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
@@ -122,15 +153,15 @@ void AttekaInlet_AskPiersToSetSail(void) {
   } else {
     (gFieldWork->message)++;
     // "Please don't rush on my account. Let's enjoy our stay."
-    Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 1.6);
-    Actor_SetAnimationById(18, 2);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.6);
+    Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
+      Actor_SetDestinationById(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
-    Actor_WaitForMoveById(18);
-    Actor_SetPosition(18, 0, 0);
+    Actor_WaitForMoveById(ACTOR_KRADEN);
+    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
     Event_End();
   }
@@ -147,47 +178,49 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     {
       s32 angle = 208;
 
-      Actor_SetPositionAndFacing(9, px(60), px(362), angle << 8);
+      Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, px(60), px(362), angle << 8);
     }
     wait(1);
-    Actor_SetSpeed(9, 2);
-    Actor_Jump(9, 6, 0);
-    Actor_MoveToAndWait(9, 64, 336);
-    Actor_WalkToAndWait(9, 70, 308);
-    Actor_FaceDirectionById(9, FACING_EAST, 0);
+    Actor_SetSpeed(ACTOR_SHIPWRIGHT, 2);
+    Actor_Jump(ACTOR_SHIPWRIGHT, 6, 0);
+    Actor_MoveToAndWait(ACTOR_SHIPWRIGHT, 64, 336);
+    Actor_WalkToAndWait(ACTOR_SHIPWRIGHT, 70, 308);
+    Actor_FaceDirectionById(ACTOR_SHIPWRIGHT, FACING_EAST, 0);
     {
       s32 angle = 160;
 
-      Actor_SetPositionAndFacing(10, px(94), px(272), angle << 7);
+      Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, px(94), px(272),
+                                 angle << 7);
     }
     wait(1);
-    Actor_SetSpeed(10, 2);
-    Actor_Jump(10, 6, 0);
-    Actor_MoveToAndWait(10, 90, 288);
-    Actor_WalkToAndWaitById(10, 80, 316);
-    Actor_FaceDirectionAndRefreshById(10, FACING_EAST);
-    Actor_GetById(9)->velocityY = px(4);
+    Actor_SetSpeed(ACTOR_SECOND_SHIPWRIGHT, 2);
+    Actor_Jump(ACTOR_SECOND_SHIPWRIGHT, 6, 0);
+    Actor_MoveToAndWait(ACTOR_SECOND_SHIPWRIGHT, 90, 288);
+    Actor_WalkToAndWaitById(ACTOR_SECOND_SHIPWRIGHT, 80, 316);
+    Actor_FaceDirectionAndRefreshById(ACTOR_SECOND_SHIPWRIGHT, FACING_EAST);
+    Actor_GetById(ACTOR_SHIPWRIGHT)->velocityY = px(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
     // "Where do you think you're going?"
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
-    Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHIPWRIGHT, 0);
+    Actor_ShowEmoteById(ACTOR_SECOND_SHIPWRIGHT,
+                        EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     // "We worked really hard on that ship of yours!"
-    Event_ShowMessageAndWait(10, 0);
-    Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+    Event_ShowMessageAndWait(ACTOR_SECOND_SHIPWRIGHT, 0);
+    Actor_FaceDirection(ACTOR_SHIPWRIGHT, FACING_SOUTH_SOUTHEAST, 0);
     // "I want to see our handiwork take flight. Don't you, buddy?"
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
-    Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
-    Actor_SetAnimationById(10, 3);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHIPWRIGHT, 0);
+    Actor_FaceDirectionAndWait(ACTOR_SECOND_SHIPWRIGHT, FACING_NORTH_NORTHWEST);
+    Actor_SetAnimationById(ACTOR_SECOND_SHIPWRIGHT, 3);
     // "I want to! Boy, do I want to!"
-    Event_ShowMessageAndWait(10, 0);
-    Actor_FaceDirectionById(10, FACING_EAST, 0);
-    Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Actor_FaceDirectionById(9, FACING_EAST, 20);
+    Event_ShowMessageAndWait(ACTOR_SECOND_SHIPWRIGHT, 0);
+    Actor_FaceDirectionById(ACTOR_SECOND_SHIPWRIGHT, FACING_EAST, 0);
+    Actor_ShowEmoteById(ACTOR_SHIPWRIGHT, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+    Actor_FaceDirectionById(ACTOR_SHIPWRIGHT, FACING_EAST, 20);
     // "So hurry up! We want to see the boat fly!"
-    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SHIPWRIGHT, 0);
     // "Thanks, buddy!"
-    Event_ShowMessageAndWait(10, 0);
+    Event_ShowMessageAndWait(ACTOR_SECOND_SHIPWRIGHT, 0);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);
@@ -206,14 +239,14 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
     FieldCamera_WaitForArrival();
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
+    Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
     // "I've been waiting for you, Felix."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHWEST);
     // "Take a look at your ship."
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 23, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMA, 0);
     FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_SetSpeed(4.8);
     FieldCamera_MoveTo(440, 32, 368, 1);
@@ -226,50 +259,50 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_MoveTo(520, 32, 372, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
-    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationAndWait(23, 3);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "Now that you have been given wings, all obstacles in your path will..."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "However, it is not the wings alone that grant your ship the power of..."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_SetAnimationById(23, 4);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_SetAnimationById(ACTOR_HAMA, 4);
     // "Psynergy is the force that powers the Wings of Anemos."
-    Event_ShowMessageAndWait(23, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     // "If the ship is to fly, you will need to focus the power of your..."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHWEST);
     // "You have visited Shaman Village recently, have you not?"
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 23, 0);
-    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST);
     // "Now is the time to make use of the powers you acquired there."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_SetAnimationAndWait(23, 3);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "Now... Use the power of Hover to raise your ship!"
-    Event_ShowMessageAndWait(23, 0);
-    Actor_SetAnimationById(23, 4);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_SetAnimationById(ACTOR_HAMA, 4);
     // "At first, you may not want to move your ship too high or too far..."
-    Event_ShowMessageAndWait(23, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    Actor_ShowEmoteById(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "It will be difficult at first, but that is to be expected... After..."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_ShowEmoteById(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     // "But your quest should not demand much more of you..."
-    Event_ShowMessageAndWait(23, 0);
-    Actor_SetAnimationAndWait(23, 3);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "Now, be confident and set sail!"
-    Event_ShowMessageAndWait(23, 0);
-    Actor_SetSpeed(23, 0.8);
-    Actor_GetById(23)->steeringFlags &= ~1;
-    Actor_WalkToAndWaitById(23, 504, 360);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_SetSpeed(ACTOR_HAMA, 0.8);
+    Actor_GetById(ACTOR_HAMA)->steeringFlags &= ~1;
+    Actor_WalkToAndWaitById(ACTOR_HAMA, 504, 360);
     Event_Wait(1);
-    Actor_GetById(23)->steeringFlags |= 1;
-    Actor_FaceDirectionAndRefreshById(23, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationAndWait(23, 3);
+    Actor_GetById(ACTOR_HAMA)->steeringFlags |= 1;
+    Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "All of Contigo is watching... Show them your power, and make your..."
-    Event_ShowMessageAndWait(23, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
     Event_End();
   }
@@ -277,28 +310,28 @@ void AttekaInlet_HammaShowsTheWings(void) {
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-/// Object 18 comes to the party leader and asks whether to set out, as in
+/// Kraden comes to the party leader and asks whether to set out, as in
 /// AttekaInlet_AskPiersToSetSail; after a no the leader steps back.
 void AttekaInlet_PiersAsksToSetSail(void) {
   struct Actor *object;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_MoveToObject(18, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(18, 0.8);
-  Actor_WalkToAndWaitById(18, 532, 248);
-  Actor_FaceDirectionAndRefreshById(18, FACING_SOUTH_SOUTHEAST);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_WalkToAndWaitById(ACTOR_KRADEN, 532, 248);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
-  FieldMessage_ShowAtActor(18, 0);
+  FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetAnimationById(18, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
     // "Then, to sea we go!"
-    Event_ShowMessageAndWait(18, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
@@ -308,15 +341,15 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   } else {
     (gFieldWork->message)++;
     // "Please don't rush on my account. Let's enjoy our stay."
-    Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 1.6);
-    Actor_SetAnimationById(18, 2);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.6);
+    Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
+      Actor_SetDestinationById(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
-    Actor_WaitForMoveById(18);
-    Actor_SetPosition(18, 0, 0);
+    Actor_WaitForMoveById(ACTOR_KRADEN);
+    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 528, 276);
     Event_End();
@@ -352,9 +385,9 @@ void AttekaInlet_CycloneUncoversGeode(void) {
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;
     }
-    Actor_SetPosition(14, 120, 376);
+    Actor_SetPosition(ACTOR_GEODE, 120, 376);
     wait(1);
-    Actor_Jump(14, 4, 10);
+    Actor_Jump(ACTOR_GEODE, 4, 10);
     GameFlag_Set(FLAG_AREA_TEMP_00);
     if (moved)
       Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
@@ -381,7 +414,6 @@ void AttekaInlet_CycloneEighthBush(void) { MapCopy(9, 23, 1, 1, 22, 6, 0); }
 
 void AttekaInlet_CycloneNinthBush(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
 
-/// Object 24 calls out to the party, jumps down to it and talks with object
 /// 23; flag FLAG_HAMMETS_GIFT_DELIVERED is set.
 void AttekaInlet_HammetsMessengerArrives(void) {
   s32 angle;
@@ -389,61 +421,63 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   angle = FACING_NORTH_NORTHEAST;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMMETS_MESSENGER,
+                                                 px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
   // "Hey, wait!"
-  Event_ShowMessageAndWait(24, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(512, CAMERA_KEEP, 380, 1);
-  Actor_SetSpeed(24, 1.6);
-  Actor_WalkToAndWait(24, 520, 432);
-  Actor_WalkToAndWait(24, 520, 388);
-  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetSpeed(ACTOR_HAMMETS_MESSENGER, 1.6);
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 432);
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 388);
+  Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
   // "Master Hammet requested that I deliver this to Isaac, and I totally..."
-  Event_ShowMessageAndWait(24, 0);
-  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
+  Actor_ShowEmoteById(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "Well, you'd better hurry."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_ShowEmote(ACTOR_HAMMETS_MESSENGER, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
+                  0);
   // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
-  Event_ShowMessageAndWait(24, 0);
-  Actor_SetAnimationAndWait(23, 3);
-  Actor_FaceDirectionAndRefreshById(24, angle);
-  Actor_GetById(24)->steeringFlags &= ~1;
-  Actor_WalkToAndWait(24, 520, 384);
+  Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, angle);
+  Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags &= ~1;
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 384);
   Event_Wait(1);
-  Actor_GetById(24)->steeringFlags |= 1;
-  Actor_RunRepeatedMotion(24, 2);
+  Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags |= 1;
+  Actor_RunRepeatedMotion(ACTOR_HAMMETS_MESSENGER, 2);
   Actor_SetPosition(65, 520, 380);
   wait(1);
-  Actor_GetById(24)->steeringFlags &= ~1;
-  Actor_WalkToAndWait(24, 520, 388);
+  Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags &= ~1;
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 388);
   Event_Wait(1);
-  Actor_GetById(24)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags |= 1;
   Event_Wait(10);
-  Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
-  Actor_SetAnimationAndWait(24, 3);
-  Actor_WalkToAndWait(24, 520, 434);
+  Actor_FaceDirection(ACTOR_HAMMETS_MESSENGER, FACING_NORTH_NORTHWEST, 10);
+  Actor_SetAnimationAndWait(ACTOR_HAMMETS_MESSENGER, 3);
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 434);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 348, 1);
-  Actor_WalkToAndWait(24, 504, 460);
-  Actor_SetPosition(24, 0, 0);
-  Actor_FaceDirectionAndRefreshById(23, angle);
+  Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 504, 460);
+  Actor_SetPosition(ACTOR_HAMMETS_MESSENGER, 0, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, angle);
   // "On my way here, I stopped in Kalay briefly to speak with Master Hammet."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_ShowEmoteById(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "He was quite upset that you hadn't returned to visit him so that he..."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_SetAnimationById(23, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMA, 3);
   // "So he requested that I take this with me to Atteka."
-  Event_ShowMessageAndWait(23, 0);
-  Actor_SetAnimationAndWait(23, 3);
-  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+  Actor_ShowEmoteById(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "It is a gift of thanks from Master Hammet. Take it, please."
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();
 }
@@ -454,7 +488,7 @@ void AttekaInlet_ShareLeadersPriority(void) {
            ->sprite)
           ->priority;
 
-  Actor_SetSpritePriority(16, variant);
+  Actor_SetSpritePriority(ACTOR_BOY_ON_THE_WINGS, variant);
   Actor_SetSpritePriority(8, variant);
   Actor_SetSpritePriority(10, variant);
 }
@@ -558,24 +592,24 @@ void AttekaInlet_SetUpTheHarbour(void) {
   Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
   Task_Add_(AttekaInlet_RotateWaterColors, 0x480);
   Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
-  Actor_SetSpriteFlags(Actor_GetById(17), 0);
-  *((u8 *)Actor_GetById(17) + 85) = 0;
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
+  *((u8 *)Actor_GetById(ACTOR_CANNON) + 85) = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(22, 0, 0);
-    Actor_SetPosition(23, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_SCHOLAR, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 1, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 2, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 3, 0, 0);
+    Actor_SetPosition(ACTOR_HAMA, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
-      Actor_SetPositionAndFacing(23, px(504), px(360), speed << 6);
+      Actor_SetPositionAndFacing(ACTOR_HAMA, px(504), px(360), speed << 6);
     }
-    Actor_WatchAndSetScript(19, party->leaderActorId);
-    Actor_WatchAndSetScript(20, party->leaderActorId);
-    Actor_WatchAndSetScript(21, party->leaderActorId);
-    Actor_WatchAndSetScript(22, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_FIRST_SCHOLAR, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_FIRST_SCHOLAR + 1, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_FIRST_SCHOLAR + 2, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_FIRST_SCHOLAR + 3, party->leaderActorId);
   }
 }
 
@@ -583,12 +617,13 @@ void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(ACTOR_SHIPWRIGHT, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_SHIPWRIGHT, 0, 0);
+    Actor_SetPosition(ACTOR_SHORE_SCHOLAR, 0, 0);
   } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
-    Actor_SetPositionAndFacing(9, px(70), px(308), FACING_EAST);
-    Actor_SetPositionAndFacing(10, px(80), px(316), FACING_EAST);
+    Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, px(70), px(308), FACING_EAST);
+    Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, px(80), px(316),
+                               FACING_EAST);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);
@@ -596,7 +631,7 @@ void AttekaInlet_SetUpTheShore(void) {
     wait(1);
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00))
-    Actor_SetPosition(14, 120, 376);
+    Actor_SetPosition(ACTOR_GEODE, 120, 376);
   {
     s32 priority = 0x480;
 
@@ -629,19 +664,30 @@ struct ActorPlacement gAttekaInlet_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gAttekaInlet_HarbourActorPlacements[] = {
-    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
-    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
-    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
-    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
-    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
-    0xffff0073, 1, 0x980000,  0, 0x1280000, 0x12000,
-    0xffff0073, 1, 0x500000,  0, 0x1300000, 0x1c000,
-    0xffff0074, 1, 0xd00000,  0, 0x1180000, 0x18000,
-    0xffff006a, 1, 0xb80000,  0, 0xe00000,  0x14000,
-    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
-    0xffff0038, 1, 0,         0, 0,         0x4000,
-    0xffff,     0, 0,         0, 0,         0,
+struct ActorPlacement gAttekaInlet_HarbourActorPlacements[] = {
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 296,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 304,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 280,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 224,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(420, 0x190a, MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
@@ -682,19 +728,30 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gAttekaInlet_HarbourActorPlacementsOnceFlown[] = {
-    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
-    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
-    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
-    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
-    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
-    0xffff0073, 1, 0xa20000,  0, 0x12c0000, 0x12000,
-    0xffff0073, 1, 0x6f0000,  0, 0x1470000, 0x1c000,
-    0xffff0074, 1, 0,         0, 0,         0x18000,
-    0xffff006a, 3, 0xcc0000,  0, 0xcc0000,  0x4000,
-    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
-    0xffff0038, 1, 0,         0, 0,         0x4000,
-    0xffff,     0, 0,         0, 0,         0,
+struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceFlown[] = {
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 162, 0, 300,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 111, 0, 327,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, 3, 204, 0, 204, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(420, 0x190a, MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {

@@ -185,24 +185,24 @@ void AquaRock_DouseTearRock(void);
 
 void AquaRock_DropDownFalls(void);
 
-struct Unk02003450 {
-  s16 unk00;
-  s16 unk02;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0A;
-  s16 unk0C;
-  s16 unk0E;
-  s16 unk10;
-  s16 unk12;
-  s16 unk14;
-  s16 unk16[2];
-  s16 unk1A[2];
-  s16 unk1E;
+/// One of the rock's water streams, which turns on and off with its flag:
+/// each change runs down it as a wave, copying three cells a row from the
+/// open or closed pictures beside it, a row every four frames.
+struct AquaRockStream {
+  s16 pictureSourceX, pictureSourceY; ///< its pictures, closed then open
+  s16 cellSourceX, cellSourceY;       ///< its cells, closed then open
+  s16 pictureX, pictureY;             ///< where its pictures are copied
+  s16 cellX, cellY;                   ///< where its cells are copied
+  s16 height;                         ///< its rows
+  /// The flag that opens it; with 0x1000 the stream is open while it is clear.
+  s16 flag;
+  s16 shown;       ///< the flag's value it was last told
+  s16 waveRow[2];  ///< each wave's row times four; 9999 for none
+  s16 waveOpen[2]; ///< whether each wave opens the stream or closes it
+  s16 nextWave;
 };
 
-extern struct Unk02003450 gAquaRock_Streams[];
+extern struct AquaRockStream gAquaRock_Streams[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -320,41 +320,44 @@ void AquaRock_DripAtRandom(struct Actor *object) {
 }
 
 void AquaRock_UpdateStreams(void) {
-  struct Unk02003450 *entry;
+  struct AquaRockStream *entry;
   s32 n, i, flag;
 
   entry = gAquaRock_Streams;
   for (n = 0; n <= 4; n++, entry++) {
-    flag = GameFlag_Get(entry->unk12 & 0xfff);
-    if (entry->unk12 & 0x1000)
+    flag = GameFlag_Get(entry->flag & 0xfff);
+    if (entry->flag & 0x1000)
       flag ^= 1;
-    if (entry->unk14 != flag) {
-      entry->unk16[entry->unk1E] = 0;
-      entry->unk1A[entry->unk1E] = flag;
-      if (++entry->unk1E > 1)
-        entry->unk1E = 0;
-      entry->unk14 = flag;
+    if (entry->shown != flag) {
+      entry->waveRow[entry->nextWave] = 0;
+      entry->waveOpen[entry->nextWave] = flag;
+      if (++entry->nextWave > 1)
+        entry->nextWave = 0;
+      entry->shown = flag;
     }
     for (i = 0; i < 2; i++) {
-      s32 row = entry->unk16[i];
-      if (row < entry->unk10 * 4) {
+      s32 row = entry->waveRow[i];
+      if (row < entry->height * 4) {
         s32 inverse;
         row /= 4;
-        flag = entry->unk1A[i];
+        flag = entry->waveOpen[i];
         inverse = flag ^ 1;
-        if (entry->unk16[i] & 1) {
-          MapGrid_CopyCellsLayered(flag * 3 + entry->unk00, entry->unk02 + row,
-                                   3, 1, entry->unk08, entry->unk0A + row);
-          MapGrid_CopyCells(flag * 3 + entry->unk04, entry->unk06 + row, 3, 1,
-                            entry->unk0C, entry->unk0E + row);
+        if (entry->waveRow[i] & 1) {
+          MapGrid_CopyCellsLayered(flag * 3 + entry->pictureSourceX,
+                                   entry->pictureSourceY + row, 3, 1,
+                                   entry->pictureX, entry->pictureY + row);
+          MapGrid_CopyCells(flag * 3 + entry->cellSourceX,
+                            entry->cellSourceY + row, 3, 1, entry->cellX,
+                            entry->cellY + row);
         } else {
-          MapGrid_CopyCellsLayered(inverse * 3 + entry->unk00,
-                                   entry->unk02 + row, 3, 1, entry->unk08,
-                                   entry->unk0A + row);
-          MapGrid_CopyCells(inverse * 3 + entry->unk04, entry->unk06 + row, 3,
-                            1, entry->unk0C, entry->unk0E + row);
+          MapGrid_CopyCellsLayered(inverse * 3 + entry->pictureSourceX,
+                                   entry->pictureSourceY + row, 3, 1,
+                                   entry->pictureX, entry->pictureY + row);
+          MapGrid_CopyCells(inverse * 3 + entry->cellSourceX,
+                            entry->cellSourceY + row, 3, 1, entry->cellX,
+                            entry->cellY + row);
         }
-        entry->unk16[i]++;
+        entry->waveRow[i]++;
       }
     }
   }
@@ -406,34 +409,38 @@ void AquaRock_TimeStreams(void) {
     gAquaRock_FourthStreamTimer = 0;
 }
 
-#define UNK02003450_SET(g, a, b, c, d, e, f, h, i, height, flag)               \
-  (g)->unk00 = (a);                                                            \
-  (g)->unk02 = (b);                                                            \
-  (g)->unk04 = (c);                                                            \
-  (g)->unk06 = (d);                                                            \
-  (g)->unk08 = (e);                                                            \
-  (g)->unk0A = (f);                                                            \
-  (g)->unk0C = (h);                                                            \
-  (g)->unk0E = (i);                                                            \
-  (g)->unk10 = (height);                                                       \
-  (g)->unk12 = (flag);                                                         \
-  (g)->unk14 = GameFlag_Get(flag) ^ 1;                                         \
-  (g)->unk1E = 0;                                                              \
-  (g)->unk16[1] = 9999;                                                        \
-  (g)->unk16[0] = 9999
+/// Sets up a stream (struct AquaRockStream) to show its flag's opposite, so
+/// that its first update runs a wave to the flag's state.
+#define STREAM_SET(stream, pictureSourceX_, pictureSourceY_, cellSourceX_,     \
+                   cellSourceY_, pictureX_, pictureY_, cellX_, cellY_,         \
+                   height_, flag_)                                             \
+  (stream)->pictureSourceX = (pictureSourceX_);                                \
+  (stream)->pictureSourceY = (pictureSourceY_);                                \
+  (stream)->cellSourceX = (cellSourceX_);                                      \
+  (stream)->cellSourceY = (cellSourceY_);                                      \
+  (stream)->pictureX = (pictureX_);                                            \
+  (stream)->pictureY = (pictureY_);                                            \
+  (stream)->cellX = (cellX_);                                                  \
+  (stream)->cellY = (cellY_);                                                  \
+  (stream)->height = (height_);                                                \
+  (stream)->flag = (flag_);                                                    \
+  (stream)->shown = GameFlag_Get(flag_) ^ 1;                                   \
+  (stream)->nextWave = 0;                                                      \
+  (stream)->waveRow[1] = 9999;                                                 \
+  (stream)->waveRow[0] = 9999
 
 void AquaRock_SetUpStreams(void) {
-  struct Unk02003450 *entry = gAquaRock_Streams;
+  struct AquaRockStream *entry = gAquaRock_Streams;
 
-  UNK02003450_SET(entry, 64, 74, 76, 74, 70, 10, 6, 74, 36, 0x200);
+  STREAM_SET(entry, 64, 74, 76, 74, 70, 10, 6, 74, 36, 0x200);
   entry++;
-  UNK02003450_SET(entry, 70, 74, 82, 74, 78, 10, 14, 74, 36, 0x201);
+  STREAM_SET(entry, 70, 74, 82, 74, 78, 10, 14, 74, 36, 0x201);
   entry++;
-  UNK02003450_SET(entry, 90, 93, 102, 93, 103, 26, 39, 90, 15, 0x202);
+  STREAM_SET(entry, 90, 93, 102, 93, 103, 26, 39, 90, 15, 0x202);
   entry++;
-  UNK02003450_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15, 0x203);
+  STREAM_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15, 0x203);
   entry++;
-  UNK02003450_SET(entry, 116, 95, 122, 95, 96, 32, 32, 96, 13, 0x1a6b);
+  STREAM_SET(entry, 116, 95, 122, 95, 96, 32, 32, 96, 13, 0x1a6b);
   if (GameFlag_Get(FLAG_AREA_TEMP_20))
     GameFlag_Set(FLAG_SCENE_TEMP_00);
   else
@@ -445,36 +452,38 @@ void AquaRock_SetUpStreams(void) {
   /* FAKEMATCH(temporary): each copy's five varying arguments held in locals of
    * their own scope. */
   if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-    struct Unk02003450 *opened = &gAquaRock_Streams[0];
+    struct AquaRockStream *opened = &gAquaRock_Streams[0];
     {
-      s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
-          height = opened->unk10, destX = opened->unk08, destY = opened->unk0A;
+      s32 srcX = opened->pictureSourceX + 3, srcY = opened->pictureSourceY,
+          height = opened->height, destX = opened->pictureX,
+          destY = opened->pictureY;
       MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     {
-      s32 srcX = opened->unk04 + 3, srcY = opened->unk06,
-          height = opened->unk10, destX = opened->unk0C, destY = opened->unk0E;
+      s32 srcX = opened->cellSourceX + 3, srcY = opened->cellSourceY,
+          height = opened->height, destX = opened->cellX, destY = opened->cellY;
       Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
     }
-    opened->unk16[1] = 9999;
-    opened->unk16[0] = 9999;
-    opened->unk14 = 1;
+    opened->waveRow[1] = 9999;
+    opened->waveRow[0] = 9999;
+    opened->shown = 1;
   }
   if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
-    struct Unk02003450 *opened = &gAquaRock_Streams[1];
+    struct AquaRockStream *opened = &gAquaRock_Streams[1];
     {
-      s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
-          height = opened->unk10, destX = opened->unk08, destY = opened->unk0A;
+      s32 srcX = opened->pictureSourceX + 3, srcY = opened->pictureSourceY,
+          height = opened->height, destX = opened->pictureX,
+          destY = opened->pictureY;
       MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     {
-      s32 srcX = opened->unk04 + 3, srcY = opened->unk06,
-          height = opened->unk10, destX = opened->unk0C, destY = opened->unk0E;
+      s32 srcX = opened->cellSourceX + 3, srcY = opened->cellSourceY,
+          height = opened->height, destX = opened->cellX, destY = opened->cellY;
       Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
     }
-    opened->unk16[1] = 9999;
-    opened->unk16[0] = 9999;
-    opened->unk14 = 1;
+    opened->waveRow[1] = 9999;
+    opened->waveRow[0] = 9999;
+    opened->shown = 1;
   }
   Task_AddFrame(AquaRock_TimeStreams, TASK_PASS_VBLANK);
   Task_Add(AquaRock_UpdateStreams, TASK_PASS_VBLANK);

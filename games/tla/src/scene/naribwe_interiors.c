@@ -25,6 +25,7 @@
 #include "version.h"
 #include "call.h"
 #include "system/ram_buffer.h"
+#include "item_ids.h"
 
 extern struct Trigger gNaribweInteriors_Triggers[];
 extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
@@ -532,9 +533,9 @@ s32 NaribweInteriors_NextPowerToGain(void) {
     return 4;
   if (Party_FindOwnerWithAction(138) == -1)
     return 5;
-  if (FieldPartyInventory_FindMember(213) == -1)
+  if (FieldPartyInventory_FindMember(ITEM_BURST_BROOCH) == -1)
     return 6;
-  if (FieldPartyInventory_FindMember(214) == -1)
+  if (FieldPartyInventory_FindMember(ITEM_GRINDSTONE) == -1)
     return 7;
   return 8;
 }
@@ -544,11 +545,11 @@ s32 NaribweInteriors_NextPowerToGain(void) {
 s32 NaribweInteriors_NextPath(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return 0;
-  if (FieldPartyInventory_FindMember(326) == -1) {
+  if (FieldPartyInventory_FindMember(ITEM_TRIDENT) == -1) {
     if (Event_GetFlag(0x940) == 0) {
-      if (FieldPartyInventory_FindMember(439) == -1 ||
-          FieldPartyInventory_FindMember(440) == -1 ||
-          FieldPartyInventory_FindMember(441) == -1)
+      if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 ||
+          FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 ||
+          FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
         return 9;
       return (Event_GetFlag(0x905) != 0) + 10;
     }
@@ -562,25 +563,25 @@ s32 NaribweInteriors_NextPath(void) {
 /// Which of the three prongs the party carries, as the prong's reading tells
 /// it.
 s32 NaribweInteriors_ProngsHeld(void) {
-  if (FieldPartyInventory_FindMember(439) == -1 &&
-      (FieldPartyInventory_FindMember(441) != -1 ||
-       FieldPartyInventory_FindMember(440) != -1))
+  if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 &&
+      (FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1 ||
+       FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1))
     return 14;
-  if (FieldPartyInventory_FindMember(439) != -1 &&
-      FieldPartyInventory_FindMember(440) == -1 &&
-      FieldPartyInventory_FindMember(441) == -1)
+  if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 &&
+      FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
     return 15;
-  if (FieldPartyInventory_FindMember(439) != -1 &&
-      FieldPartyInventory_FindMember(440) == -1 &&
-      FieldPartyInventory_FindMember(441) != -1)
+  if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 &&
+      FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1)
     return 15;
-  if (FieldPartyInventory_FindMember(439) != -1 &&
-      FieldPartyInventory_FindMember(440) != -1 &&
-      FieldPartyInventory_FindMember(441) == -1)
+  if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
     return 16;
-  if (FieldPartyInventory_FindMember(439) != -1 &&
-      FieldPartyInventory_FindMember(440) != -1 &&
-      FieldPartyInventory_FindMember(441) != -1)
+  if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1 &&
+      FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1)
     return 17;
 }
 

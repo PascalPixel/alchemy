@@ -474,7 +474,7 @@ void Islets_TradeWithBird(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(452) == -1) {
+  if (FieldPartyInventory_FindMember(ITEM_PRETTY_STONE) == -1) {
     if (Event_GetFlag(0xaa4)) {
       FieldActor_WatchAndSetScript(10, gMainRoutineWork.leaderActorId);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
@@ -503,7 +503,7 @@ void Islets_TradeWithBird(void) {
         FieldActor_Create(0x1e9, leader->x.fixed, px(152), leader->z.fixed);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
-      FieldActor_SetItemIcon(spawned, 453);
+      FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
@@ -511,7 +511,7 @@ void Islets_TradeWithBird(void) {
     FieldPsynergy_RestoreMindReadPalette();
     // "Felix traded his stone for the very fancy neckerchief."
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
-    PartyInventory_Remove(0x1c4);
+    PartyInventory_Remove(ITEM_PRETTY_STONE);
     Party_GiveItem(ITEM_RED_CLOTH, 0);
     FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
@@ -553,12 +553,12 @@ void Islets_TradeWithBird(void) {
     if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);                   \
       given->motionFlags = off;                                                \
-      Actor_SetItemIcon(given, 454);                                           \
+      Actor_SetItemIcon(given, ITEM_MILK);                                     \
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
     FieldPsynergy_RestoreMindReadPalette();                                    \
-    PartyInventory_Remove(453);                                                \
+    PartyInventory_Remove(ITEM_RED_CLOTH);                                     \
     PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
@@ -582,7 +582,7 @@ void Islets_TradeWithCow(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(453) != -1) {
+  if (FieldPartyInventory_FindMember(ITEM_RED_CLOTH) != -1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       FieldCamera_SetSpeed(0.8);
@@ -606,7 +606,7 @@ void Islets_TradeWithCow(void) {
         // Default: the object handed back is set for real in HAND_BACK.
         given = 0;
         if (item != 0) {
-          Actor_SetItemIcon(item, 453);
+          Actor_SetItemIcon(item, ITEM_RED_CLOTH);
           Actor_SetSpriteFlags(item, 0);
           item->motionFlags = 0;
           item->retainSpriteCache = 1;
@@ -640,7 +640,7 @@ void Islets_TradeWithCow(void) {
       STEP(gMainRoutineWork.leaderActorId, 132, 190);
       item = FieldActor_Create(489, px(140), 0, px(190));
       if (item != 0) {
-        Actor_SetItemIcon(item, 453);
+        Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
         zero.v = 0;
@@ -752,7 +752,7 @@ void Islets_TradeWithDog(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(454) != -1) {
+  if (FieldPartyInventory_FindMember(ITEM_MILK) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     trader = Actor_GetById(11);
     // Default: the trader's zero update stores read it.
@@ -831,7 +831,7 @@ void Islets_TradeWithDog(void) {
     FieldPsynergy_RestoreMindReadPalette();
     // "Felix traded his milk for the dog's turtle!"
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
-    PartyInventory_Remove(454);
+    PartyInventory_Remove(ITEM_MILK);
     Party_GiveItem(giftItem, 0);
     FieldPsynergy_GreyMindReadPalette();
     Actor_GetById(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
@@ -910,7 +910,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   FieldActor_WaitForMove(gift);
   Actor_SelectAnimation(gift, 1);
   gift->update = 0;
-  PartyInventory_Remove(455);
+  PartyInventory_Remove(ITEM_LIL_TURTLE);
   // "Hop on my back!"
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664))[661] = 99;
@@ -978,7 +978,7 @@ void Islets_GiveTurtle(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (PartyInventory_FindMember(455) != -1) {
+  if (PartyInventory_FindMember(ITEM_LIL_TURTLE) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -1305,7 +1305,7 @@ void Islets_PengusGivesPrettyStone(void) {
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   item = Actor_GetById(20);
   item->motionFlags = 0;
-  FieldActor_SetItemIcon(item, 452);
+  FieldActor_SetItemIcon(item, ITEM_PRETTY_STONE);
   FieldActor_SetPositionAndResetMotion(
       item, leader->x.fixed, leader->y.fixed + px(24), leader->z.fixed);
   FieldEvent_Wait(20);
@@ -1832,7 +1832,7 @@ void Islets_InitializeRoom1(void) {
     spawned = FieldActor_Create(489, px(280), 0, px(840));
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      FieldActor_SetItemIcon(spawned, 454);
+      FieldActor_SetItemIcon(spawned, ITEM_MILK);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->retainSpriteCache = 1;
@@ -2001,7 +2001,7 @@ void Islets_InitializeRoom3(void) {
     spawned = FieldActor_Create(489, px(104), px(24), px(160));
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      FieldActor_SetItemIcon(spawned, 453);
+      FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->retainSpriteCache = 1;
     }

@@ -954,7 +954,7 @@ void GaiaRockInside_ReadSusasMind(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = FieldPartyInventory_FindMember(451);
+  t2 = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
   if (t2 != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
     // "Who do they think they are? I'm the only one who can save Kushinada."
@@ -1436,7 +1436,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     } while (0);
     scene = SCENE_GAIA_ROCK_INSIDE_1;
     FieldEvent_SetAfterBattleDestination(scene, 10);
-    if (FieldPartyInventory_FindMember(451) != -1) {
+    if (FieldPartyInventory_FindMember(ITEM_DANCING_IDOL) != -1) {
       if (count == 0)
         Event_SetDefeatDestination(scene, 12);
     } else {
@@ -1489,7 +1489,7 @@ void GaiaRockInside_CheckAltar(void) {
   s32 owner;
 
   Message_ShowCentered(message, 1);
-  owner = FieldPartyInventory_FindMember(451);
+  owner = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
   next = message + 2;
   if (owner != -1) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -2307,7 +2307,7 @@ s32 Scene_Initialize(void) {
       if (Test(FLAG_SERPENT_SLAIN))
         goto end;
       C1(Sound_Play, 53);
-      found = FieldPartyInventory_FindMember(451);
+      found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
       none = -1;
       if (found != none) {
         s32 flag;
@@ -3004,7 +3004,7 @@ s32 Scene_Initialize(void) {
       if (Test(FLAG_SERPENT_SLAIN))
         goto end;
       C1(Sound_Play, 53);
-      found = FieldPartyInventory_FindMember(451);
+      found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
       none = -1;
       if (found != none) {
         s32 flag;

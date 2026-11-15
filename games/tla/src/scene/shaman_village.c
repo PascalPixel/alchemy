@@ -1760,7 +1760,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   s16 *owner;
 
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
-  if (PartyInventory_FindMember(65) == -1)
+  if (PartyInventory_FindMember(ITEM_SHAMANS_ROD) == -1)
     goto refuse;
   count = FieldParty_ListMembers(owners);
   owner = owners;

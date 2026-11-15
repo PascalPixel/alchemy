@@ -798,7 +798,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
   Message_ShowCentered(((t102 << 16) >> 16), 5);
-  PartyInventory_Add_(224);
+  PartyInventory_Add_(ITEM_MYTHRIL_BAG);
   for (slot = 0; slot < 15; slot++) {
     if ((((struct UnitItems *)Unit_Get_(4))->items[slot] & 0x1ff) == 224) {
       JupiterLighthouse_Equip(4, slot);

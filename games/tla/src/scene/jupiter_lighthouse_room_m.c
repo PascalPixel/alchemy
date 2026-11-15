@@ -23,6 +23,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "actor.h"
+#include "item_ids.h"
 
 void Leader_CenterInCell(void);
 #include "system/io_reg.h"
@@ -1557,7 +1558,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldActor_StartRepeatedMotion(ACTOR_ISAAC, 2);
   FieldEvent_Wait(4);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
-  PartyInventory_Remove(0xdf);
+  PartyInventory_Remove(ITEM_MYTHRIL_BAG_JUPITER_STAR);
   PartyInventory_Add(245);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;

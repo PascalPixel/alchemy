@@ -610,11 +610,11 @@ void AquaRockInside_CheckColumn(void) {
   if (!seen) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
-    if (FieldPartyInventory_FindMember(456) != -1)
+    if (FieldPartyInventory_FindMember(ITEM_AQUARIUS_STONE) != -1)
       gFieldWork->fieldMenu = 1;
   } else {
     Message_ShowCentered(message, 1);
-    MessageArgument_Push(0x1c8, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(ITEM_AQUARIUS_STONE, MESSAGE_ARGUMENT_ITEM);
     Message_ShowCentered(message + 2, 1);
   }
   Event_End();

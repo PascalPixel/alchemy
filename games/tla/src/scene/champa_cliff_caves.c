@@ -723,13 +723,13 @@ remove:
   PartyInventory_Remove(item);
   goto chosen;
 last:
-  item = 441;
+  item = ITEM_CENTER_PRONG;
   if ((owner = PartyInventory_FindMember(item)) != -1)
     goto remove;
   item = -1;
   goto chosen;
 first:
-  item = 439;
+  item = ITEM_RIGHT_PRONG;
   if ((owner = PartyInventory_FindMember(item)) != -1)
     goto remove;
   item++;

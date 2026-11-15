@@ -216,7 +216,7 @@ void IzumoInteriors_TalkToUzume(void) {
     Event_SetMessageId((s32)MsgIfYouHave);
     // "If you have time, won't you enjoy a little of our celebratory festival?"
     Event_ShowMessageAndWait(15, 0);
-    if (PartyInventory_FindMember(451) != -1)
+    if (PartyInventory_FindMember(ITEM_DANCING_IDOL) != -1)
       FIELD_AT(work, u16, 346) = 1;
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
@@ -1227,7 +1227,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_UZUME_HAS_THE_DOLL);
-  PartyInventory_Remove(0x1c3);
+  PartyInventory_Remove(ITEM_DANCING_IDOL);
   Event_End();
 }
 

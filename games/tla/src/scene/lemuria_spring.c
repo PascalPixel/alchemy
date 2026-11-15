@@ -346,7 +346,7 @@ toss:
         wait(1);
         continue;
       }
-      PartyInventory_Remove(229);
+      PartyInventory_Remove(ITEM_LUCKY_MEDAL);
       if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
         // "You can't carry more items. Do you still want to play?"
@@ -383,7 +383,7 @@ toss:
     if (choice == 0) {
       Party_AdjustCoins(minusOne);
     } else if (choice == 1) {
-      PartyInventory_Remove(229);
+      PartyInventory_Remove(ITEM_LUCKY_MEDAL);
     }
 #endif
     result = LemuriaSpring_RunToss(choice);

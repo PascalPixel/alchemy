@@ -257,7 +257,7 @@ void Alhafra_SailorToldToWork(void) {
 
 void Alhafra_GiveBreadToHungryBoy(void) {
   GameFlag_Set(FLAG_HUNGRY_BOY_FED);
-  PartyInventory_Remove(0x1c9);
+  PartyInventory_Remove(ITEM_LARGE_BREAD);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);

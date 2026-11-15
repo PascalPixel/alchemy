@@ -1,6 +1,6 @@
 /// @file
-/// Three effect scripts of the field sequence bank: the found item's picture
-/// growing in and pulsing, and a sinking particle.
+/// Four effect scripts of the field sequence bank: the found item's picture
+/// growing in and pulsing, a sinking particle and a Reveal marker.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -65,5 +65,13 @@ const s32 gBattleEffect_ParticleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
+    SC_RELEASE,
+};
+
+/// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
+/// runs it again each frame), and releases itself once Reveal ends; the same
+/// as The Broken Seal's gFieldEffect_MarkerParticleScript.
+const s32 gBattleEffect_MarkerParticleScript[] = {
+    SC_CALL(Field_IsRevealActive),
     SC_RELEASE,
 };

@@ -64,7 +64,8 @@ extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 extern const s32 gFieldEffect_ParticleEmitterScript[];
 
-extern const u8 gBattleEffect_MarkerParticleScript[];
+extern const s32 gBattleEffect_MarkerParticleScript[];
+s32 Field_IsRevealActive(struct Actor *interpreter);
 
 extern const s32 gFieldEffect_RisingPulseScript[];
 

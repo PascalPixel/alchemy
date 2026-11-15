@@ -175,13 +175,18 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// A sprite's attribute words. They are volatile, as LuckyWheels_Update keeps
-/// its OAM shadow in both games; as plain words, the two offset
-/// counters, the multiply on each pass and the stack slots all differ.
-struct ReelSprite {
-  volatile u32 attr01;
-  volatile u32 attr2;
+/// One sprite's two OAM words.
+// volatile: the words are built in place for the DMA to copy to OAM.
+struct OamWords {
+  volatile u32 attr01; ///< attr0 | attr1 << 16
+  volatile u32 attr2;  ///< attr2 | affine value << 16
 };
+
+/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
+/// attribute 0's eight, each wrapped as the screen wraps them.
+#define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
+/// An affine sprite's matrix, of the 32, in its attr01 word.
+#define OBJ_AFFINE_MATRIX(n) ((n) << 25)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
@@ -216,17 +221,11 @@ struct DiceWork {
 /// io_reg.h writes it, for the field's minigames.
 #define OBJ_PALETTE(n) ((n) << 12)
 
-/// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
-struct DiceOam {
-  volatile u32 attr01;
-  volatile u32 attr2;
-};
-
 /// The dice game's work as its drawing reads it: 128 OAM entries and its
 /// coins, bet and help windows.
 struct DiceSprites {
   u8 filler[196];
-  struct DiceOam oam[128];
+  struct OamWords oam[128];
   struct RenderInput *coinsWindow;
   struct RenderInput *betWindow;
   struct RenderInput *helpWindow;
@@ -261,7 +260,7 @@ struct FieldUnit {
 /// winnings and help windows.
 struct LuckyDiceSprites {
   u8 filler[196];
-  struct DiceOam oam[128];
+  struct OamWords oam[128];
   struct RenderInput *coinsWindow;
   struct RenderInput *winningsWindow;
   struct RenderInput *helpWindow;

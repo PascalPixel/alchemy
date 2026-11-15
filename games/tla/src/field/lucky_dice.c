@@ -517,24 +517,24 @@ void LuckyDice_Run(void) {
     sprites->oam[spriteCount].attr2 = DICE_BONUS_SIGN_TILE;
     spriteCount++;
     sprites->oam[spriteCount].attr01 =
-        (16 << 16) | 32 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        OBJ_POSITION(16, 32) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     sprites->oam[spriteCount].attr2 = DICE_THREE_TILE;
     spriteCount++;
     sprites->oam[spriteCount].attr01 =
-        (16 << 16) | 48 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        OBJ_POSITION(16, 48) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     sprites->oam[spriteCount].attr2 = DICE_FIVE_TILE;
     spriteCount++;
     sprites->oam[spriteCount].attr01 =
-        (4 << 16) | 32 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        OBJ_POSITION(4, 32) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     sprites->oam[spriteCount].attr2 = DICE_TIMES_TILE;
     spriteCount++;
     sprites->oam[spriteCount].attr01 =
-        (4 << 16) | 48 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        OBJ_POSITION(4, 48) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     sprites->oam[spriteCount].attr2 = DICE_TIMES_TILE;
     spriteCount++;
     for (index = 0; index != DICE_COUNT; index++) {
       sprites->oam[spriteCount].attr01 =
-          (32 + index * 16) | (32 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+          OBJ_X(32) | (32 + index * 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 =
           luckyNumbers[index] * 8 + DICE_LUCKY_NUMBER_TILES;
       spriteCount++;
@@ -547,7 +547,7 @@ void LuckyDice_Run(void) {
         }
         if (resultTimer >= index * DICE_NUMBER_REVEAL_FRAMES) {
           sprites->oam[spriteCount].attr01 =
-              64 | OBJ_SIZE_32X32 | OBJ_256_COLORS | px(56 + index * 32);
+              64 | OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_X(56 + index * 32);
           sprites->oam[spriteCount].attr2 =
               numbers[index] * 32 + DICE_NUMBER_TILES;
           spriteCount++;
@@ -562,7 +562,7 @@ void LuckyDice_Run(void) {
                    gLuckyDice_LabelCounts[resultKind] * 16 + index * 32;
           labelY = 96;
           sprites->oam[spriteCount].attr01 =
-              (px(labelX & 0x1ff) | labelY) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+              OBJ_POSITION(labelX, labelY) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
           sprites->oam[spriteCount].attr2 =
               gLuckyDice_LabelTiles[resultKind] * 8 + DICE_NUMBER_TILES +
               index * 32;
@@ -735,7 +735,7 @@ void LuckyDice_Run(void) {
       dieY = screen[1] - halfSize;
       if (dieY + 96 > -16) {
         sprites->oam[spriteCount].attr01 =
-            ((drawOrder[index] << 25) | OBJ_X((dieX + 632) & 0x1ff) |
+            (OBJ_AFFINE_MATRIX(drawOrder[index]) | OBJ_X((dieX + 632) & 0x1ff) |
              ((dieY + 352) & 255)) |
             OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
@@ -752,8 +752,7 @@ void LuckyDice_Run(void) {
         x = screen[0] - 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 768 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
-            (px((x + 632) & 0x1ff) | ((y + 352) & 255)) | OBJ_SIZE_32X32 |
-            OBJ_256_COLORS;
+            OBJ_POSITION(x + 632, y + 352) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
         if (index == 1) {
           sprites->oam[spriteCount].attr01 |= OBJ_HFLIP;
         }
@@ -787,7 +786,7 @@ void LuckyDice_Run(void) {
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (((index + 2) << 25) | OBJ_X((shadowX + 624) & 0x1ff)) |
+            (OBJ_AFFINE_MATRIX(index + 2) | OBJ_X((shadowX + 624) & 0x1ff)) |
             ((shadowY + 344) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
             OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 = OBJ_PRIORITY(2) | DICE_SHADOW_TILE;
@@ -963,7 +962,7 @@ void LuckyDice_Run(void) {
       }
     }
 
-    for (; spriteCount != OAM_SIZE / sizeof(struct DiceOam); spriteCount++) {
+    for (; spriteCount != OAM_SIZE / sizeof(struct OamWords); spriteCount++) {
       sprites->oam[spriteCount].attr01 =
           px(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;

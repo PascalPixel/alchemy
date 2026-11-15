@@ -195,21 +195,15 @@ void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
   }
 }
 
-/// Super Lucky Dice's work as the dice game reads it: its 128 reel sprites.
-struct ReelWork {
-  u8 unused[0xc4]; ///< no code names it
-  struct ReelSprite obj[128];
-};
-
 s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
                               s32 digits) {
-  struct ReelWork *work;
+  struct DiceSprites *sprites;
   s32 started;
   s32 digit;
   s32 i;
   s32 k;
 
-  work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
+  sprites = (struct DiceSprites *)Ram_HeapSlots->canvasMap;
   started = 0;
   x -= digits * 10;
   for (i = 0; i != digits; i++) {
@@ -221,9 +215,9 @@ s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
       started = 1;
     else if (!started && i != digits - 1)
       continue;
-    work->obj[sprite].attr01 =
-        OBJ_X((x + i * 10 + 522) & 0x1ff) | ((y + 256) & 255) | OBJ_SIZE_16X16;
-    work->obj[sprite].attr2 =
+    sprites->oam[sprite].attr01 =
+        OBJ_POSITION(x + i * 10 + 522, y + 256) | OBJ_SIZE_16X16;
+    sprites->oam[sprite].attr2 =
         (digit * 4 + PINK_DIGIT_TILES) | OBJ_PALETTE(palette);
     sprite++;
   }
@@ -235,13 +229,13 @@ s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
 /// SuperLuckyDice_DrawNumber does. Returns the next free sprite.
 s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
                                    s32 palette, s32 digits) {
-  struct ReelWork *work;
+  struct DiceSprites *sprites;
   s32 started;
   s32 digit;
   s32 i;
   s32 k;
 
-  work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
+  sprites = (struct DiceSprites *)Ram_HeapSlots->canvasMap;
   started = 0;
   for (i = 0; i != digits; i++) {
     digit = value;
@@ -252,9 +246,9 @@ s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
       started = 1;
     else if (!started)
       continue;
-    work->obj[sprite].attr01 =
-        OBJ_X((x + i * 22 + 512) & 0x1ff) | ((y + 256) & 255) | OBJ_SIZE_32X32;
-    work->obj[sprite].attr2 =
+    sprites->oam[sprite].attr01 =
+        OBJ_POSITION(x + i * 22 + 512, y + 256) | OBJ_SIZE_32X32;
+    sprites->oam[sprite].attr2 =
         (digit * 16 + GREEN_DIGIT_TILES) | OBJ_PALETTE(palette);
     sprite++;
   }
@@ -1310,7 +1304,7 @@ void SuperLuckyDice_Run(void) {
 
       for (index = 0; index != 4; index++) {
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((0x200 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+            OBJ_POSITION(512 + index * 16, 2) | OBJ_SIZE_16X16;
         sprites->oam[spriteCount].attr2 =
             (SMALL_DOUBLE_UP_TILES + index * 4) |
             OBJ_PALETTE(DICE_PALETTE_SMALL_DOUBLE_UP);
@@ -1319,7 +1313,7 @@ void SuperLuckyDice_Run(void) {
       if (round == 5) {
         for (index = 0; index != 5; index++) {
           sprites->oam[spriteCount].attr01 =
-              OBJ_X((584 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+              OBJ_POSITION(584 + index * 16, 2) | OBJ_SIZE_16X16;
           sprites->oam[spriteCount].attr2 =
               (FINAL_GAME_TILES + index * 4) |
               OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
@@ -1328,7 +1322,7 @@ void SuperLuckyDice_Run(void) {
       } else {
         for (index = 0; index != 3; index++) {
           sprites->oam[spriteCount].attr01 =
-              OBJ_X((ROUND_BANNER_X + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 2;
+              OBJ_POSITION(ROUND_BANNER_X + index * 16, 2) | OBJ_SIZE_16X16;
           sprites->oam[spriteCount].attr2 =
               (GAME_TILES + index * 4) | OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
           spriteCount++;
@@ -1353,7 +1347,7 @@ void SuperLuckyDice_Run(void) {
       }
       for (index = 0; index != 2; index++) {
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((576 + index * 16) & 0x1ff) | OBJ_SIZE_16X16 | 24;
+            OBJ_POSITION(576 + index * 16, 24) | OBJ_SIZE_16X16;
         sprites->oam[spriteCount].attr2 =
             (OR_TILES + index * 4) | OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
         spriteCount++;
@@ -1369,7 +1363,7 @@ void SuperLuckyDice_Run(void) {
       else
         multiplierDigits = 5;
       sprites->oam[spriteCount].attr01 =
-          OBJ_X((560 - multiplierDigits * 10) & 0x1ff) | OBJ_SIZE_16X16 | 24;
+          OBJ_POSITION(560 - multiplierDigits * 10, 24) | OBJ_SIZE_16X16;
       sprites->oam[spriteCount].attr2 =
           TIMES_SIGN_TILES | OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
       spriteCount++;
@@ -1408,7 +1402,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 52;
+            OBJ_POSITION(column + index * 32 + 512, 52) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             OBJ_PALETTE(DICE_PALETTE_RELOADED_A) | (HIGHER_TILES + index * 16);
         spriteCount++;
@@ -1418,7 +1412,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 92;
+            OBJ_POSITION(column + index * 32 + 512, 92) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             (LOWER_TILES + index * 16) | OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
         spriteCount++;
@@ -1436,7 +1430,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 52;
+            OBJ_POSITION(column + index * 32 + 512, 52) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 = (DOUBLE_UP_TILES + index * 16) |
                                           OBJ_PALETTE(DICE_PALETTE_RELOADED_C);
         spriteCount++;
@@ -1446,7 +1440,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_X((column + index * 32 + 512) & 0x1ff) | OBJ_SIZE_32X32 | 84;
+            OBJ_POSITION(column + index * 32 + 512, 84) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 = (CASH_OUT_TILES + index * 16) |
                                           OBJ_PALETTE(DICE_PALETTE_RELOADED_D);
         spriteCount++;
@@ -1514,15 +1508,13 @@ void SuperLuckyDice_Run(void) {
           doubled *= 2;
           bannerY = doubled - 344;
         }
-        sprites->oam[spriteCount].attr01 = OBJ_X((bannerX + 512) & 0x1ff) |
-                                           ((bannerY + 256) & 255) |
-                                           OBJ_SIZE_64X64;
+        sprites->oam[spriteCount].attr01 =
+            OBJ_POSITION(bannerX + 512, bannerY + 256) | OBJ_SIZE_64X64;
         sprites->oam[spriteCount].attr2 =
             RESULT_BANNER_TILES | OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
         spriteCount++;
-        sprites->oam[spriteCount].attr01 = OBJ_X((bannerX + 576) & 0x1ff) |
-                                           ((bannerY + 256) & 255) |
-                                           OBJ_SIZE_64X64;
+        sprites->oam[spriteCount].attr01 =
+            OBJ_POSITION(bannerX + 576, bannerY + 256) | OBJ_SIZE_64X64;
         sprites->oam[spriteCount].attr2 =
             (RESULT_BANNER_TILES + 64) | OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
         spriteCount++;
@@ -1559,7 +1551,7 @@ void SuperLuckyDice_Run(void) {
       y = screen[1] - 0x800 / (spriteDepth[drawOrder[index]] / 4 + 64);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
-            ((drawOrder[index] << 25) | OBJ_X((x + 632) & 0x1ff) |
+            (OBJ_AFFINE_MATRIX(drawOrder[index]) | OBJ_X((x + 632) & 0x1ff) |
              ((y + 348) & 255)) |
             OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
@@ -1594,7 +1586,7 @@ void SuperLuckyDice_Run(void) {
         y = screen[1] - 0xc00 / half;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
-              (((index + 4) << 25) | OBJ_X((x + 632) & 0x1ff)) |
+              (OBJ_AFFINE_MATRIX(index + 4) | OBJ_X((x + 632) & 0x1ff)) |
               ((y + 348) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
               OBJ_DOUBLE_SIZE | OBJ_AFFINE;
           sprites->oam[spriteCount].attr2 = DICE_SHADOW_TILE | OBJ_PRIORITY(2);
@@ -1602,7 +1594,7 @@ void SuperLuckyDice_Run(void) {
         }
       }
     }
-    for (; spriteCount != OAM_SIZE / sizeof(struct DiceOam); spriteCount++) {
+    for (; spriteCount != OAM_SIZE / sizeof(struct OamWords); spriteCount++) {
       sprites->oam[spriteCount].attr01 =
           OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;

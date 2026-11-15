@@ -153,7 +153,8 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   slot = BattleObject_Get(id);
   object = slot->object;
   enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
-  if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
+  if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON &&
+      enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8) {
     object->acceleration = gBattleKnockback_Acceleration[variant];
     object->speedLimit = gBattleKnockback_SpeedLimit[variant];
     if (object->y == 0 || variant > 4)

@@ -9,10 +9,20 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-/// Builds a battle object's status icon flags from its unit: poison
-/// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
-/// enemies), Psy Seal (8), haunt (0x40), sleep (0x10) and the Grim Reaper's
-/// countdown (bit 6 + count); an object marked visible keeps its flags.
+// The status icons' bits in BattleObj.activeConditions
+#define ICON_POISON 0x01
+#define ICON_VENOM 0x02 ///< deadly poison
+#define ICON_STUN 0x04
+#define ICON_PSY_SEAL 0x08
+#define ICON_SLEEP 0x10
+#define ICON_DELUSION 0x20
+#define ICON_HAUNT 0x40
+#define ICON_GRIM_REAPER 6 ///< the curse's turns left, 1 to 7, as bits 7 to 13
+
+/// Builds the status icon bits of unit id's statuses into its battle object's
+/// activeConditions, which BattleStatusIcon_Cycle shows; an object marked
+/// visible keeps its bits. A stun shows no icon on the Serpent, the Kraken or
+/// the Fusion Dragon.
 void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output) {
   u32 flags = 0;
 
@@ -20,41 +30,42 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output) {
     struct BattleUnit *state = Unit_Get(id);
     s8 mode = state->poison;
 
-    if (mode == 1)
-      flags = 1;
-    if (mode == 2)
+    if (mode == POISON_NORMAL)
+      flags = ICON_POISON;
+    // Deadly poison: poison is ICON_VENOM.
+    if (mode == POISON_VENOM)
       flags |= mode;
     if (state->delusion != 0)
-      flags |= 0x20;
+      flags |= ICON_DELUSION;
     if (state->stun != 0) {
-      flags |= 4;
+      flags |= ICON_STUN;
       switch (state->enemyId) {
-      case 91:
-      case 92:
-      case 93:
-      case 94:
-      case 95:
-      case 96:
-      case 97:
-      case 348:
-      case 357:
-        flags &= ~4;
+      case ENEMY_SERPENT:
+      case ENEMY_SERPENT_2:
+      case ENEMY_SERPENT_3:
+      case ENEMY_SERPENT_4:
+      case ENEMY_SERPENT_5:
+      case ENEMY_SERPENT_6:
+      case ENEMY_SERPENT_7:
+      case ENEMY_KRAKEN:
+      case ENEMY_FUSION_DRAGON:
+        flags &= ~ICON_STUN;
         break;
       }
     }
     if (state->psySeal != 0)
-      flags |= 8;
+      flags |= ICON_PSY_SEAL;
     if (state->haunt != 0)
-      flags |= 0x40;
+      flags |= ICON_HAUNT;
     if (state->sleep != 0)
-      flags |= 0x10;
+      flags |= ICON_SLEEP;
     if (state->grimReaper != 0)
-      flags |= 1 << (state->grimReaper + 6);
+      flags |= 1 << (state->grimReaper + ICON_GRIM_REAPER);
     output->activeConditions = flags;
   }
 }
 
-#define ICON_MAX 14
+#define ICON_MAX 14 ///< the kinds of icon
 
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.

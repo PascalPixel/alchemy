@@ -525,14 +525,14 @@ void Battle_ProcessTurnEnd(void) {
           if (unit->hpRegen != 0 && unit->hp != unit->hpMax) {
             hpAmount = unit->hpRegen;
             switch (unit->enemyId) {
-            case 91:
-            case 92:
-            case 93:
-            case 94:
-            case 95:
-            case 96:
-            case 97:
-            case 218:
+            case ENEMY_SERPENT:
+            case ENEMY_SERPENT_2:
+            case ENEMY_SERPENT_3:
+            case ENEMY_SERPENT_4:
+            case ENEMY_SERPENT_5:
+            case ENEMY_SERPENT_6:
+            case ENEMY_SERPENT_7:
+            case ENEMY_DULLAHAN:
               hpAmount *= 10;
               break;
             }

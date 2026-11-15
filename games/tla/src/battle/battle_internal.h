@@ -83,6 +83,7 @@
 #include "field/particle.h"
 #include "battle_formation.h"
 #include "enemy_ids.h"
+#include "item_ids.h"
 
 /// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
 /// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
@@ -105,6 +106,25 @@
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
+/// BattleWork.placement of a unit with no place on the battlefield:
+/// BattleUnit_RefreshPlacement fills the list with it.
+#define BATTLE_OBJECT_NONE 0xff
+
+/// The party's battle sprites, and Isaac's and Garet's while they hold a
+/// Machete, drawn as part of it (BattleObject_Make).
+#define SPRITE_BATTLE_ISAAC 490
+#define SPRITE_BATTLE_GARET 495
+#define SPRITE_BATTLE_IVAN 500
+#define SPRITE_BATTLE_MIA 504
+#define SPRITE_BATTLE_FELIX 508
+#define SPRITE_BATTLE_JENNA 513
+#define SPRITE_BATTLE_SHEBA 517
+#define SPRITE_BATTLE_PIERS 521
+#define SPRITE_ISAAC_MACHETE 635
+#define SPRITE_GARET_MACHETE 637
+/// The shadow sprite under a unit (BattleObj.effect).
+#define SPRITE_BATTLE_SHADOW 686
+
 /// Enemy ids the battle tests, each named from the English release
 /// (MsgEnemyName plus the id less ENEMY_ID_FIRST). Rows that share a name take
 /// _2 onwards in row order, as the game itself numbers some of them ("Serpent
@@ -112,6 +132,9 @@
 #define ENEMY_RUFFIAN 68
 #define ENEMY_RUFFIAN_2 69
 #define ENEMY_RUFFIAN_3 70
+#define ENEMY_CHESTBEATER 74
+#define ENEMY_WILD_GORILLA 75
+#define ENEMY_CRAZY_GORILLA 76
 #define ENEMY_DEVIL_SCORPION 78
 #define ENEMY_SAND_SCORPION 79
 #define ENEMY_BRIGGS 80
@@ -128,6 +151,7 @@
 #define ENEMY_SERPENT_5 95
 #define ENEMY_SERPENT_6 96
 #define ENEMY_SERPENT_7 97
+#define ENEMY_AVIMANDER 98
 #define ENEMY_POSEIDON 101
 #define ENEMY_POSEIDON_2 102
 #define ENEMY_POSEIDON_3 103
@@ -181,6 +205,7 @@
 #define ENEMY_THIEF 246
 #define ENEMY_TROLL 263
 #define ENEMY_CAVE_TROLL 264
+#define ENEMY_BRUTAL_TROLL 265
 #define ENEMY_RECLUSE 268
 #define ENEMY_SIREN 281
 #define ENEMY_SUCCUBUS 282
@@ -194,6 +219,8 @@
 #define ENEMY_GRYPHON 311
 #define ENEMY_CERBERUS 318
 #define ENEMY_CHIMERA 323
+#define ENEMY_LIZARD_FIGHTER 331
+#define ENEMY_LIZARD_KING 332
 #define ENEMY_ANT_LION 333
 #define ENEMY_TOADONPA 336
 #define ENEMY_LIVING_STATUE 339

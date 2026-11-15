@@ -43,10 +43,6 @@
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
-/// BattleUnit.poison: poisoned, or deadly poisoned.
-#define POISON_NORMAL 1
-#define POISON_VENOM 2
-
 /// The rate Battle_CalculatePsynergyPowerFar and Battle_CalculateRecoveryFar
 /// scale by: 256 is 1.
 #define FULL_RATE 256

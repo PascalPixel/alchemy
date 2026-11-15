@@ -569,21 +569,23 @@ assign_enemy:
     struct BattleUnit *unit;
     s32 enemyId;
 
-    if (suffixCode & 0x8000)
+    if (suffixCode & ENEMY_LETTER_FIRST_TOO)
       BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
-    BattleUnit_SetFar(memberOrEnemyIndex + 128,
-                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
-    unit = Unit_Get(memberOrEnemyIndex + 128);
+    BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                      enemyClasses[memberOrEnemyIndex],
+                      suffixCode & ENEMY_LETTER_MASK);
+    unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
-      BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
+      BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                              levelAdjustment);
     else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
-      BattleUnit_Strengthen(memberOrEnemyIndex + 128);
+      BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
     switch (enemyId) {
-    case 101:
-    case 102:
-    case 103:
+    case ENEMY_POSEIDON:
+    case ENEMY_POSEIDON_2:
+    case ENEMY_POSEIDON_3:
       if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
         battle->unk868 = 1;
       break;

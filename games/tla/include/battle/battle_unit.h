@@ -239,10 +239,21 @@ enum CurseFlag {
 /// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
 #define ALLY_MAX 7
 
+/// Party unit ids: one for each character, ISAAC to PIERS.
+#define PARTY_UNIT_COUNT (ALLY_MAX + 1)
+
 /// The party fights four at a time, three in a link battle; six enemies at
 /// most, three in a link battle.
 #define PARTY_BATTLE_SIZE 4
 #define ENEMY_BATTLE_SIZE 6
+
+/// The most units in a battle, every party unit and the most enemies: the
+/// length of a unit list such as BattleUnit_ListIds fills.
+#define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
+
+/// BattleUnit.poison: poisoned, or deadly poisoned.
+#define POISON_NORMAL 1
+#define POISON_VENOM 2
 
 /// BattleUnit.defendLevel, 0 for no guard: each guard effect raises it to its
 /// own level and no lower (BattleAbility_ApplyToTarget). Defend and Granite

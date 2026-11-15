@@ -83,15 +83,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #define MENU_TEXT_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define ITEM_BROKEN 0x400
-
-// Sets a menu sprite's attribute words.
-#define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
-  do {                                                                         \
-    (sprite).oam.word.attr01 = (shape);                                        \
-    (sprite).oam.word.attr23 = 0;                                              \
-  } while (0)
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
@@ -134,11 +126,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
-  do {
-    firstEntry = NAVIGATION->page;
-    selectedRow = NAVIGATION->row;
-    preferredRow = NAVIGATION->preferredRow;
-  } while (0);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
@@ -267,12 +255,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     if (count != 0)
       Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
-    do {
-      NAVIGATION->page = firstEntry;
-      NAVIGATION->row = selectedRow;
-      NAVIGATION->preferredRow = preferredRow;
-    } while (0);
-    navigation = NAVIGATION;
+    BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
+    navigation = BATTLE_MENU_WORK;
     if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
@@ -374,6 +358,4 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 #undef CURSOR_TEXT_LENGTH
 #undef REFUSAL_TEXT_LENGTH
 #undef MENU_TEXT_COPY
-#undef NAVIGATION
 #undef ITEM_BROKEN
-#undef MENU_SPRITE_INITIALIZE

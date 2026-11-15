@@ -129,4 +129,24 @@ enum { BATTLE_LIST_ROWS = 5 };
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+/// The battle menus' shared work, in its heap slot.
+#define BATTLE_MENU_WORK                                                       \
+  ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
+
+/// Restores the previous selection: page, row and return row.
+#define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
+  do {                                                                         \
+    (page_) = BATTLE_MENU_WORK->page;                                          \
+    (row_) = BATTLE_MENU_WORK->row;                                            \
+    (preferred_) = BATTLE_MENU_WORK->preferredRow;                             \
+  } while (0)
+
+/// Saves the selection: page, row and return row.
+#define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
+  do {                                                                         \
+    BATTLE_MENU_WORK->page = (page_);                                          \
+    BATTLE_MENU_WORK->row = (row_);                                            \
+    BATTLE_MENU_WORK->preferredRow = (preferred_);                             \
+  } while (0)
+
 #endif

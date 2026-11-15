@@ -58,18 +58,10 @@
 #define PSYNERGY_MENU_ICON_X 48
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-
 #include "system/heap_slots.h"
 #include "system/serial.h"
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-#define SET_CURSOR(page_, row_, preferred_)                                    \
-  do {                                                                         \
-    NAVIGATION->page = (page_);                                                \
-    NAVIGATION->row = (row_);                                                  \
-    NAVIGATION->preferredRow = (preferred_);                                   \
-  } while (0)
 
 #define COMMAND_ICON_X(state) ((state)->icons[0].oam.f.x)
 
@@ -234,7 +226,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       BattleObject_PutFar();
       state->swappedUnit = -1;
       BattleSummon_UpdateAvailabilityFar();
-      NAVIGATION->commandSelection[0] = 1;
+      BATTLE_MENU_WORK->commandSelection[0] = 1;
       continue;
     }
     // Switch: choose a party place, then the reserve member for it.
@@ -248,7 +240,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       if (mode == -1)
         goto choose_place;
       BattleSummon_UpdateAvailabilityFar();
-      NAVIGATION->commandSelection[0] = 0;
+      BATTLE_MENU_WORK->commandSelection[0] = 0;
       continue;
     }
     // Status: the summary screens of the party and the reserve, or in the
@@ -313,7 +305,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
 #endif
       {
-        struct BattleMenuWork *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
         struct MenuSprite *iconSprite;
 
         navigation->commandActor = actorId;
@@ -332,7 +324,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mark_visible:
       Window_MarkVisibleTextTiles();
       {
-        struct BattleMenuWork *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
 
         navigation->iconShown[0] = 0;
         navigation->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
@@ -363,7 +355,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         continue;
       }
       {
-        struct BattleMenuWork *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
         struct MenuSprite *iconSprite = &navigation->icons[0];
 
         if (navigation->timer == 0)
@@ -411,7 +403,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
-        SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       psynergy_menu:
         list = state->listAbilities;
         pick = state->listSlots;
@@ -496,7 +488,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 n;
 
         Sound_PlayFar(SE_MENU_CONFIRM);
-        SET_CURSOR(0, 0, 0);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
         COMMAND_ICON_X(state) = SUMMON_MENU_ICON_X;
         PartyStatus_HighlightMembers(signatureHeader);
@@ -575,17 +567,17 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 index;
 
         Sound_PlayFar(SE_MENU_CONFIRM);
-        SET_CURSOR(0, 0, 0);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
-        NAVIGATION->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+        BATTLE_MENU_WORK->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(actorId, 1);
         command->range = 0;
         if (mode == -1)
           goto mark_visible;
         parameter = mode;
         commandKind = 5;
-        NAVIGATION->chosenDjinn[commandIndex] = mode;
+        BATTLE_MENU_WORK->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
@@ -655,7 +647,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
-        SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       item_menu:
         COMMAND_ICON_X(state) = 96;
         pick = state->listSlots;
@@ -982,8 +974,6 @@ void IconMenu_DrawIcons(void) {
 #undef DJINN_MENU_ICON_X
 #undef ATTACK_NAME_X
 #undef PSYNERGY_MENU_ICON_X
-#undef NAVIGATION
-#undef SET_CURSOR
 #undef COMMAND_ICON_X
 #undef TRANSITION_BUSY
 

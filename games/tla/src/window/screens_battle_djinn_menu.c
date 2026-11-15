@@ -37,16 +37,6 @@
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-
-// Reads the menu's page, row and preferred row.
-#define DJINN_MENU_GET_CURSOR(page_, row_, preferred_)                         \
-  do {                                                                         \
-    (page_) = NAVIGATION->page;                                                \
-    (row_) = NAVIGATION->row;                                                  \
-    (preferred_) = NAVIGATION->preferredRow;                                   \
-  } while (0)
-
 // Marks a window's tilemap row for upload, on a signed row.
 #define DJINN_MENU_MARK_ROW(render, y)                                         \
   do {                                                                         \
@@ -130,7 +120,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                     WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
   listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
-  DJINN_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_Get(member);
 
   for (element = 0; element <= 3; element++) {
@@ -201,7 +191,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         MessageArgument_ClearAll();
         alreadySelected = 0;
         for (k = 0; k <= 7; k++) {
-          if (NAVIGATION->chosenDjinn[k] == selectedDjinn) {
+          if (BATTLE_MENU_WORK->chosenDjinn[k] == selectedDjinn) {
             alreadySelected = 1;
             break;
           }
@@ -353,7 +343,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     pressed = gInput.pressed;
     repeated = gInput.repeat;
     held = gInput.held;
-    navigation = NAVIGATION;
+    navigation = BATTLE_MENU_WORK;
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -366,7 +356,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         navigation->tutorialDelay--;
       }
     }
-    navigation = NAVIGATION;
+    navigation = BATTLE_MENU_WORK;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
@@ -565,8 +555,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 #undef DJINN_MESSAGE_CAPACITY
 #undef DJINN_TURNS_X
 #undef DJINN_MESSAGE_COPY
-#undef NAVIGATION
-#undef DJINN_MENU_GET_CURSOR
 #undef DJINN_MENU_MARK_ROW
 #undef DJINN_ENTRY_STANDBY
 #undef DJINN_ENTRY_RECOVERY_MASK

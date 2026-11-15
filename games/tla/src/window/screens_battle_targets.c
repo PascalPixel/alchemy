@@ -25,8 +25,6 @@
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
@@ -132,9 +130,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    NAVIGATION->targetViewOffset = -2;
+    BATTLE_MENU_WORK->targetViewOffset = -2;
   else
-    NAVIGATION->targetViewOffset = 16;
+    BATTLE_MENU_WORK->targetViewOffset = 16;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   targetIndex = -1;
@@ -188,7 +186,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             found = 1;
           break;
         case 8:
-          if (NAVIGATION->lastTarget == candidateIds[j])
+          if (BATTLE_MENU_WORK->lastTarget == candidateIds[j])
             found = 1;
           break;
         }
@@ -316,7 +314,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
       // The (u32) compares the stored id unsigned, as the bytes do.
-      if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
+      if ((u32)(BATTLE_MENU_WORK->lastTarget = candidateIds[targetIndex]) <=
+          7) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_Get(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
@@ -606,15 +605,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
     pressed = gInput.pressed;
     repeated = gInput.repeat;
-    if (NAVIGATION->tutorialStep != 0) {
+    if (BATTLE_MENU_WORK->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
-      if (NAVIGATION->tutorialDelay == 0) {
-        NAVIGATION->tutorialDelay = 60;
+      if (BATTLE_MENU_WORK->tutorialDelay == 0) {
+        BATTLE_MENU_WORK->tutorialDelay = 60;
         repeated = KEY_A;
         pressed = KEY_A;
       } else {
-        NAVIGATION->tutorialDelay--;
+        BATTLE_MENU_WORK->tutorialDelay--;
       }
     }
     if (pressed & KEY_A) {
@@ -658,7 +657,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
+    if (BATTLE_MENU_WORK->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
@@ -673,7 +672,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
-  NAVIGATION->targetViewOffset = 0;
+  BATTLE_MENU_WORK->targetViewOffset = 0;
   wait(1);
   return targetIndex;
 }
@@ -681,7 +680,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #undef TARGET_CONDITION_LIST_WIDTH
 #undef TARGET_MYSTERY_NAME_COPY
 #undef TARGET_MYSTERY_NAME_CAPACITY
-#undef NAVIGATION
 #undef TARGET_HELP_COLUMN
 #undef TARGET_CONDITION_LIST_WINDOW
 #undef TARGET_BOB

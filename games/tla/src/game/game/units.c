@@ -11,6 +11,7 @@
 #include "gamepak/far_call/window.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
+#include "system/save.h"
 
 extern u16 gData_02003860;
 
@@ -23,10 +24,11 @@ void Game_RestartQuest(void) {
   MainRoutine_RunFar(0);
 }
 
-struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 which) {
-  if (which != 0) {
-    return Unit_Get(0x83);
-  }
+/// Returns the party's Djinn recovery bank, the standby Djinn and their turns
+/// to recover, or for the enemy side a battle unit read as one.
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
+  if (enemySide != 0)
+    return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
   return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
 }
 
@@ -402,32 +404,28 @@ void Unit_Calculate(s32 unitId) {
   Heap_Release(stats);
 }
 
+/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item with
+/// EQUIP_EFFECT_LURE) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
-  s32 partyIndex;
+  s32 member;
 
-  GameFlag_Clear(0x167);
+  GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
-  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct OwnerInventoryState *unit;
-    s32 inventorySlot;
+  for (member = 0; member < partySize; member++) {
+    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    s32 slot;
 
-    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
-    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
-      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-        struct EquipEffect *effect;
-        s32 effectIndex;
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      const struct ItemDefinition *item;
+      s32 effect;
 
-        effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
-        for (effectIndex = 0; effectIndex < 4; effectIndex++) {
-          u8 effectKind;
-
-          effectKind = effect->kind;
-          effect++;
-          if (effectKind == 27) {
-            GameFlag_Set(0x167);
-          }
-        }
+      if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))
+        continue;
+      item = Item_GetDirect(unit->inventory[slot]);
+      for (effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
+        if (item->effects[effect].kind == EQUIP_EFFECT_LURE)
+          GameFlag_Set(FLAG_LURE_CAP);
       }
     }
   }
@@ -493,46 +491,30 @@ void Party_DrainPp(s32 count) {
   Party_GetPpRatio();
 }
 
-u16 BuildStamp_GetTime(void) {
-  u8 *digits;
-  s32 hourTens;
-  s32 hourUnits;
-  s32 minuteTens;
-  s32 minuteUnits;
-  s32 secondTens;
-  s32 secondUnits;
+/// Encodes the build stamp's time, which a new game takes as its start stamp
+/// and the file list compares saves with.
+u32 BuildStamp_GetTime(void) {
+  // The stamp is six ASCII digits, hhmmss.
+  const u8 *digits = Resource_GetTableEntry(RESOURCE_BUILD_STAMP);
   s32 hours;
   s32 minutes;
   s32 seconds;
-  s32 packed;
-  s32 shifted;
-  s32 result;
+  s16 time;
+  s32 stamp;
 
-  digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
-  hourTens = *digits;
-  hours = (hourTens - '0') * 10;
-  digits++;
-  hourUnits = *digits;
-  digits++;
-  hours += hourUnits - '0';
-  minuteTens = *digits;
-  minutes = (minuteTens - '0') * 10;
-  digits++;
-  minuteUnits = *digits;
-  digits++;
-  minutes += minuteUnits - '0';
-  secondTens = digits[0];
-  seconds = (secondTens - '0') * 10;
-  secondUnits = digits[1];
-  seconds += secondUnits - '0';
-  packed = (((hours << 4) + minutes) << 6) + seconds;
-  shifted = 0x80 << 21;
-  shifted |= packed << 16;
-  result = shifted >> 16;
-  if (gDebugMode != 0) {
-    result |= ~0x7fff;
-  }
-  return result;
+  hours = (*digits++ - '0') * 10;
+  hours += *digits++ - '0';
+  minutes = (*digits++ - '0') * 10;
+  minutes += *digits++ - '0';
+  seconds = (digits[0] - '0') * 10;
+  seconds += digits[1] - '0';
+  time = (hours * 16 + minutes) * 64 + seconds;
+  time |= 0x1000;
+  stamp = time;
+
+  if (gDebugMode != 0)
+    stamp |= 0xFFFF8000;
+  return (u16)stamp;
 }
 
 #define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
@@ -593,27 +575,27 @@ void MainRoutineWork_InitializeDefaults(void) {
   START_DMA(&zero, gCharacterUnits,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Party_InitializeCharacters();
-  gMainRoutineWork.aKeys = 1;
-  gMainRoutineWork.bKeys = 2;
-  gMainRoutineWork.selectKeys = 4;
-  gMainRoutineWork.startKeys = 8;
-  gMainRoutineWork.firstShortcutKeys = 0x200;
-  gMainRoutineWork.secondShortcutKeys = 0x100;
-  gMainRoutineWork.dashKeys = 2;
+  gMainRoutineWork.aKeys = KEY_A;
+  gMainRoutineWork.bKeys = KEY_B;
+  gMainRoutineWork.selectKeys = KEY_SELECT;
+  gMainRoutineWork.startKeys = KEY_START;
+  gMainRoutineWork.firstShortcutKeys = KEY_L;
+  gMainRoutineWork.secondShortcutKeys = KEY_R;
+  gMainRoutineWork.dashKeys = KEY_B;
   gMainRoutineWork.firstShortcut = 0;
   gMainRoutineWork.secondShortcut = 0;
-  gMainRoutineWork.leaderActorId = 4;
-  Party_AddMember(4);
-  Party_AddMember(5);
-  Unit_LearnPsynergy(4, 149);
-  Unit_LearnPsynergy(4, 140);
-  Unit_LearnPsynergy(6, 141);
-  Unit_LearnPsynergy(7, 33);
-  Unit_LearnPsynergy(0, 149);
-  Unit_LearnPsynergy(0, 140);
-  Unit_LearnPsynergy(1, 140);
-  Unit_LearnPsynergy(2, 141);
-  Unit_LearnPsynergy(2, 144);
+  gMainRoutineWork.leaderActorId = FELIX;
+  Party_AddMember(FELIX);
+  Party_AddMember(JENNA);
+  Unit_LearnPsynergy(FELIX, ABILITY_RETREAT);
+  Unit_LearnPsynergy(FELIX, ABILITY_MOVE);
+  Unit_LearnPsynergy(SHEBA, ABILITY_MIND_READ);
+  Unit_LearnPsynergy(PIERS, ABILITY_DOUSE);
+  Unit_LearnPsynergy(ISAAC, ABILITY_RETREAT);
+  Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
+  Unit_LearnPsynergy(GARET, ABILITY_MOVE);
+  Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
+  Unit_LearnPsynergy(IVAN, ABILITY_REVEAL);
   gMainRoutineWork.coins = 200;
   *(u32 *)&gMainRoutineWork.unk284[8] = 0;
   gMainRoutineWork.forgeItem = 0;
@@ -624,8 +606,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.windowHue = 0;
   gMainRoutineWork.windowBrightness = 8;
   gMainRoutineWork.buildStamp = 0;
-  // Its result taken as a whole word, where the definition returns u16.
-  gMainRoutineWork.startStamp = ((u32 (*)(void))BuildStamp_GetTime)();
+  gMainRoutineWork.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
   gIdleSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
@@ -660,13 +641,13 @@ void MainRoutineWork_InitializeDefaults(void) {
   }
 }
 
-void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = 5; }
+void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = JENNA; }
 
 void Party_SetLeaderFelix(void) {
-  gMainRoutineWork.leaderActorId = 4;
-  Party_AddMember(4);
-  Party_RemoveMember(5);
-  Party_RemoveMember(6);
+  gMainRoutineWork.leaderActorId = FELIX;
+  Party_AddMember(FELIX);
+  Party_RemoveMember(JENNA);
+  Party_RemoveMember(SHEBA);
 }
 
 /// Gives Piers his two Mercury Djinn, Spring and Shade (Mercury 9 and 10),
@@ -677,9 +658,9 @@ void Party_GivePiersDjinn(void) {
   s32 count;
 
   for (i = 10; i < 12; i++) {
-    GameFlag_Set(i + 67);
-    Djinn_Give(7, 1, i - 1);
-    Djinn_Set(7, 1, i - 1);
+    GameFlag_Set(FLAG_DJINNI(ELEMENT_MERCURY * DJINN_PER_ELEMENT + i - 1));
+    Djinn_Give(PIERS, ELEMENT_MERCURY, i - 1);
+    Djinn_Set(PIERS, ELEMENT_MERCURY, i - 1);
   }
   // Called with an argument it does not take.
   ((void (*)(s32))Party_BalanceDjinn)(0);
@@ -710,9 +691,9 @@ void Party_RestoreHpPp(s32 cureConditions) {
   }
 }
 
-/// Restores the PP of each party member whose element group has a lit
-/// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
-/// Called by the events at the top of the Mercury and Venus Lighthouses.
+/// Restores the PP of each party member whose element group's lighthouse
+/// the party is inside: Venus or Mars for group 0, Mercury or Jupiter for the
+/// others. Nothing calls it or its far-call export.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
@@ -757,8 +738,8 @@ s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
   s32 i;
   s32 j;
 
-  for (i = 0; i < 20; i++) {
-    for (j = 0; j < 4; j++) {
+  for (i = 0; i < DJINN_PER_ELEMENT; i++) {
+    for (j = 0; j < ELEMENT_COUNT; j++) {
       if (sets[j] & (1 << i)) {
         element = j;
         index = i;
@@ -835,9 +816,10 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
 /// its flags, its coins, its options (when it came by link rather than by
 /// password) and its four units into this game's state.
 void DataTransfer_Apply(u8 *save, s32 byPassword) {
-  u8 *flags = save + 0x40;
-  struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
-  struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
+  u8 *flags = save + SAVE_IMAGE_GAME_FLAGS;
+  struct MainRoutineWork *party =
+      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct BattleUnit *units = (struct BattleUnit *)(save + SAVE_IMAGE_UNITS);
   struct MainRoutineWork *state;
   u8 name[16];
   s32 i;
@@ -862,7 +844,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
       asm("" : : "r"(j));
     }
   }
-  for (i = 0; i < 6; i++) {
+  for (i = 0; i < TRANSFERRED_FLAG_COUNT; i++) {
     if (FlagBits_Test(flags, gDataTransfer_Flags[i]))
       GameFlag_Set(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
     else
@@ -884,13 +866,14 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     WindowColor_ApplyFar(state->windowHue, state->windowBrightness);
   }
 
-  j = 4; // A local reused for a second value: the unit loop's bound.
+  j = MIA +
+      1; // A local reused for a second value: Isaac's party, the units moved.
   for (i = 0; i < (s32)j; i++) {
     struct BattleUnit *unit = Unit_Get(i);
 
-    memcpy(name, &units[i], 15);
+    memcpy(name, &units[i], sizeof(units->name));
     Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct BattleUnit));
-    memcpy(unit, name, 15);
+    memcpy(unit, name, sizeof(units->name));
     if (byPassword == 0)
       unit->enemyId = unit->id;
     for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
@@ -913,8 +896,9 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
 /// Carries Clear Data over to a new quest: the options, coins and each unit's
 /// base stats, level and experience.
 void ClearData_Apply(u8 *save) {
-  struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
-  struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
+  struct MainRoutineWork *party =
+      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct BattleUnit *units = (struct BattleUnit *)(save + SAVE_IMAGE_UNITS);
   u8 unused[16]; // Unused: gives the stack frame its 16 bytes.
   s32 i;
   s32 count;
@@ -926,7 +910,7 @@ void ClearData_Apply(u8 *save) {
   gMainRoutineWork.unk244[6] = party->unk244[6];
   WindowColor_ApplyFar(gMainRoutineWork.windowHue,
                        gMainRoutineWork.windowBrightness);
-  count = 8;
+  count = PIERS + 1;
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = Unit_Get(i);
     struct BattleUnit *saved = &units[i];
@@ -1019,11 +1003,13 @@ void Party_AddIsaacsParty(void) {
 /// Does nothing; nothing calls Unit_ReservedNoOpFar.
 void Unit_ReservedNoOp(void) {}
 
+/// Gives `owner` a Djinni on standby and sets its found flag, as if met in the
+/// field.
 void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
-  s32 flag = element * 20 + djinn;
+  s32 flag = element * DJINN_PER_ELEMENT + djinn;
 
   Djinn_Give(owner, element, djinn);
-  flag += 0x30;
+  flag += FLAG_DJINN_FIRST;
   DjinnRecovery_AddStandby(owner, element, djinn);
   GameFlag_Set(flag);
 }
@@ -1112,43 +1098,12 @@ void DataTransfer_GiveDefaultDjinn(void) {
 }
 
 /// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-/// that Unit_Calculate keeps the same fractions. Called after anything that
-/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
-/// battle.
-void Unit_RecalculateGauges(s32 ownerId) {
-  s32 first;
-  s32 second;
-  s32 firstValue;
-  s32 secondValue;
-  struct BattleUnit *owner;
+/// that Unit_Calculate keeps the same fractions.
+void Unit_RecalculateGauges(s32 unitId) {
+  struct BattleUnit *unit;
 
-  owner = Unit_Get(ownerId);
-  first = (owner->hp << 14) / owner->hpMax;
-  firstValue = 0x4000;
-  if (first <= 0x4000) {
-    firstValue = 0;
-    if (first >= 0) {
-      firstValue = first;
-    }
-  }
-  owner->hpGauge = firstValue;
-  if (owner->hpGauge == 0 && owner->hp != 0) {
-    firstValue = 1;
-    owner->hpGauge = firstValue;
-  }
-  second = (owner->pp << 14) / owner->ppMax;
-  secondValue = 0x4000;
-  if (second <= 0x4000) {
-    secondValue = 0;
-    if (second >= 0) {
-      secondValue = second;
-    }
-  }
-  owner->ppGauge = secondValue;
-  if (owner->ppGauge == 0 && owner->pp != 0) {
-    secondValue = 1;
-    owner->ppGauge = secondValue;
-  }
+  unit = Unit_Get(unitId);
+  Unit_UpdateGauges(unit);
 }
 
 /// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP

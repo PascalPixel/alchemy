@@ -16,108 +16,87 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index) {
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
-/// has room in that element, puts it on standby and sets its found flag.
-/// Returns who got it, -1 if it was found before or -2 when nobody has room.
-/// Called by Djinn_JoinParty when a Djinni joins in the field. Of party members
-/// holding equally few, the earliest in the party order gets it.
-s32 Djinn_GiveToParty(s32 index, s32 bit) {
-  s32 flag = bit + index * 20 + 48;
-  s32 bestNo = 0;
-  s32 bestVal = 999;
-  s32 count;
-  s32 result;
-  u8 *owners;
+/// has room, on standby. Returns who got it, -1 if found before, -2 when nobody
+/// has room.
+s32 Djinn_GiveToParty(s32 element, s32 djinn) {
+  s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
+  s32 leastLoadedMember = 0;
+  s32 fewestDjinn = 999;
+  s32 partySize;
+  s32 partyIndex;
+  s32 elementIndex;
 
   if (GameFlag_Get(flag) != 0)
     return -1;
 
-  result = Party_CountMembers();
-  if (bestNo < result) {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+  partySize = Party_CountMembers();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
-    owners = party->party;
-    count = result;
-    do {
-      struct OwnerDjinnState *state = Unit_Get(*owners);
+    if (unit->djinnOwnedCounts[element] <= 9) {
+      s32 ownedDjinn = 0;
 
-      if (state->counts.banks.owned[index] <= 9) {
-        u8 *p = state->counts.banks.owned;
-        s32 value = 0;
-        s32 i = 3;
-
-        do {
-          u8 byte = *p;
-          p++;
-          value += byte;
-          i--;
-        } while (i >= 0);
-
-        if (bestVal > value) {
-          bestVal = value;
-          bestNo = *owners;
-        }
+      for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
+        ownedDjinn += unit->djinnOwnedCounts[elementIndex];
+      if (fewestDjinn > ownedDjinn) {
+        fewestDjinn = ownedDjinn;
+        leastLoadedMember = gMainRoutineWork.party[partyIndex];
       }
-      count--;
-      owners++;
-    } while (count != 0);
+    }
   }
 
-  if (bestVal == 999)
+  if (fewestDjinn == 999)
     return -2;
 
-  Djinn_Give(bestNo, index, bit);
-  DjinnRecovery_AddStandby(bestNo, index, bit);
+  Djinn_Give(leastLoadedMember, element, djinn);
+  DjinnRecovery_AddStandby(leastLoadedMember, element, djinn);
   GameFlag_Set(flag);
-  return bestNo;
+  return leastLoadedMember;
 }
 
-/// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in
-/// djinnHeld and counts it. Returns -1 when the unit holds ten of the
-/// element or has it already. Called by Djinn_GiveToParty and
-/// Djinn_Transfer, by the events where a party member joins with Djinn, and by
-/// the debug menus.
-s32 Djinn_Give(s32 owner, s32 index, s32 bit) {
-  struct OwnerDjinnState *state = Unit_Get(owner);
-  u32 owned;
+/// Gives a Djinni to a unit. Returns -1 when the unit holds ten of the element
+/// or has it already.
+s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = Unit_Get(unitId);
 
-  if (state->counts.slots[index] > 9)
+  if (unit->djinnOwnedCounts[element] > 9)
     return -1;
-  owned = state->flags.slots[index];
-  if ((owned & (1 << bit)) != 0)
+  if ((unit->djinnHeld[element] & (1 << djinnIndex)) != 0)
     return -1;
-  state->counts.slots[index]++;
-  state->flags.slots[index] |= 1 << bit;
+  unit->djinnOwnedCounts[element]++;
+  unit->djinnHeld[element] |= 1 << djinnIndex;
   return 0;
 }
 
-/// Whether the djinn can be set: it is owned, fewer than ten are set, it is
-/// not set already, and no trade offer holds it unless the offer has run out.
-s32 Djinn_CanSet(s32 owner, s32 index, s32 bit) {
-  struct OwnerDjinnState *state = Unit_Get(owner);
-  struct DjinnRecoveryList *table;
-  s32 i;
-  s32 status;
-  u32 owned;
+/// Returns 1 when the unit holds the Djinni and it can be set: not set, not
+/// recovering and not held by a summon.
+s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  struct DjinnRecoveryList *list;
+  s32 entryIndex;
+  s32 recoveryTurns;
 
-  if (state->counts.banks.owned[index] == 0)
+  if (unit->djinnOwnedCounts[element] == 0)
     return 0;
-  if (state->counts.banks.active[index] > 9) {
-    state->counts.banks.active[index] = 10;
+  if (unit->djinnActiveCounts[element] > 9) {
+    unit->djinnActiveCounts[element] = 10;
     return 0;
   }
-  owned = state->flags.banks.owned[index];
-  if ((owned & (1 << bit)) == 0)
+  if ((unit->djinnHeld[element] & (1 << djinnIndex)) == 0)
     return 0;
-  if ((state->flags.banks.active[index] & (1 << bit)) != 0)
+  if ((unit->djinnSet[element] & (1 << djinnIndex)) != 0)
     return 0;
 
-  table = &(Djinn_GetRecoveryTable((owner < 0 || owner > 7)))->list;
-  for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].index)
+  list = &Djinn_GetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
+  for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
+    if (element == list->entries[entryIndex].element &&
+        djinnIndex == list->entries[entryIndex].index)
       break;
   }
-  if (i == table->count ||
-      ((status = table->entries[i].turns) <= 0 && status != -2))
+  // Ready when not listed, on standby or recovered.
+  if (entryIndex == list->count ||
+      ((recoveryTurns = list->entries[entryIndex].turns) <= 0 &&
+       recoveryTurns != DJINN_RECOVERY_SUMMONED))
     return 1;
   return 0;
 }
@@ -132,100 +111,93 @@ u32 Djinn_IsSet(s32 owner, s32 index, s32 bit) {
 }
 
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class
-/// again. Returns 1 when it was set. Called by the Djinn menu, by battle when
-/// a Djinni recovers, and by Djinn_Transfer.
-s32 Djinn_Set(s32 owner, s32 index, s32 bit) {
-  struct OwnerDjinnState *state = Unit_Get(owner);
-  s32 result = Djinn_CanSet(owner, index, bit);
+/// again. Returns 1 when it was set.
+s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  s32 isReady = Djinn_CanSet(unitId, element, djinnIndex);
 
-  if (result != 0) {
-    u32 owned = state->flags.banks.owned[index];
-    if (owned & (1 << bit)) {
-      state->flags.banks.active[index] |= 1 << bit;
-    } else {
+  if (isReady != 0) {
+    if (unit->djinnHeld[element] & (1 << djinnIndex))
+      unit->djinnSet[element] |= 1 << djinnIndex;
+    else
       return 0;
-    }
-    state->counts.banks.active[index]++;
-    Unit_UpdateClass(owner);
+    unit->djinnActiveCounts[element]++;
+    Unit_UpdateClass(unitId);
   }
-  return result;
+  return isReady;
 }
 
 /// Takes a set Djinni off the unit and works out its class again. Returns 1
-/// when it was set. Called by the Djinn menu, by battle when a Djinni is
-/// unleashed, and by Djinn_Transfer.
-u32 Djinn_PutOnStandby(s32 owner, s32 index, s32 bit) {
-  struct OwnerDjinnState *state = Unit_Get(owner);
-  u32 present = Djinn_IsSet(owner, index, bit);
+/// when it was set.
+u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  u32 wasActive = Djinn_IsSet(unitId, element, djinnIndex);
 
-  if (present != 0) {
-    state->counts.banks.active[index]--;
-    state->flags.banks.active[index] &= ~(1 << bit);
-    Unit_UpdateClass(owner);
+  if (wasActive != 0) {
+    unit->djinnActiveCounts[element]--;
+    unit->djinnSet[element] &= ~(1 << djinnIndex);
+    Unit_UpdateClass(unitId);
   }
-  return present;
+  return wasActive;
 }
 
-s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
-  struct DjinnRecoveryList *table;
-  s32 found = 0;
-  s32 i;
+/// Takes the Djinni off its side's standby and recovery list, closing the gap.
+/// Returns 1 when it was there.
+s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
+  struct DjinnRecoveryList *list;
+  s32 removed = 0;
+  s32 entryIndex;
 
-  table = &(Djinn_GetRecoveryTable((owner < 0 || owner > 7)))->list;
-  for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].index) {
-      table->count--;
-      found = 1;
+  list = &Djinn_GetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
+  for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
+    if (element == list->entries[entryIndex].element &&
+        djinnIndex == list->entries[entryIndex].index) {
+      list->count--;
+      removed = 1;
       break;
     }
   }
-  for (; i < table->count; i++)
-    table->entries[i] = table->entries[i + 1];
-  return found;
+  for (; entryIndex < list->count; entryIndex++) {
+    list->entries[entryIndex] = list->entries[entryIndex + 1];
+  }
+  return removed;
 }
 
-u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn) {
-  struct DjinnRecoveryTable *state;
-  u8 *entries;
-  struct DjinnRecoveryEntry *entry;
-  u32 *count_p;
-  u32 count;
-  u32 offset;
+/// Puts a unit's Djinni at the end of its side's list on standby. Nothing
+/// checks the list's capacity.
+u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
+  struct DjinnRecoveryList *list;
+  s32 count;
 
-  DjinnRecovery_Remove(owner, element, djinn);
-  state = Djinn_GetRecoveryTable(owner > 7);
-  entries = (u8 *)state->list.entries;
-  count_p = &state->list.count;
-  count = *count_p;
-  /* FAKEMATCH(temporary): the entry's offset as a byte stride of its own. */
-  offset = count * sizeof(struct DjinnRecoveryEntry);
-  entries[offset] = element;
-  count++;
-  entry = (struct DjinnRecoveryEntry *)(entries + offset);
-  entry->index = djinn;
-  entry->unitId = owner;
-  entry->turns = DJINN_RECOVERY_AFTER_BATTLE;
-  *count_p = count;
-  return count_p;
+  DjinnRecovery_Remove(unitId, element, djinnIndex);
+  list = &Djinn_GetRecoveryTable(unitId > PIERS)->list;
+  count = list->count;
+  list->entries[count].element = element;
+  list->entries[count].index = djinnIndex;
+  list->entries[count].unitId = unitId;
+  list->entries[count].turns = DJINN_RECOVERY_AFTER_BATTLE;
+  list->count = count + 1;
+  return (u32 *)&list->count;
 }
 
-s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
-  struct OwnerDjinnState *state = Unit_Get(source);
-  u32 mask;
-  u32 present;
+/// Moves a Djinni from one unit to another, set or on standby as it was.
+/// Returns -1 when it cannot.
+s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
+  struct BattleUnit *sourceUnit = Unit_Get(source);
+  u32 wasActive;
 
-  if ((state->flags.banks.owned[index] & (mask = 1U << bit)) != 0) {
-    present = Djinn_IsSet(source, index, bit);
-    if (Djinn_Give(target, index, bit) == 0) {
-      Djinn_PutOnStandby(source, index, bit);
-      state->flags.banks.owned[index] &= ~mask;
-      state->counts.banks.owned[index]--;
+  if ((sourceUnit->djinnHeld[element] & (1 << djinnIndex)) != 0) {
+    wasActive = Djinn_IsSet(source, element, djinnIndex);
+    if (Djinn_Give(target, element, djinnIndex) == 0) {
+      Djinn_PutOnStandby(source, element, djinnIndex);
+      sourceUnit->djinnHeld[element] &= ~(1 << djinnIndex);
+      sourceUnit->djinnOwnedCounts[element]--;
 
-      if (present != 0) {
-        Djinn_Set(target, index, bit);
+      if (wasActive != 0) {
+        Djinn_Set(target, element, djinnIndex);
       } else {
-        DjinnRecovery_Remove(source, index, bit);
-        DjinnRecovery_AddStandby(target, index, bit);
+        DjinnRecovery_Remove(source, element, djinnIndex);
+        DjinnRecovery_AddStandby(target, element, djinnIndex);
       }
       return 0;
     }
@@ -233,36 +205,34 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
   return -1;
 }
 
+/// Counts the party's Djinn on standby, by element into counts when it is
+/// given.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
-  s32 found = 0;
-  struct DjinnRecoveryTable *state = Djinn_GetRecoveryTable(0);
-  struct DjinnRecoveryEntry *entry = state->list.entries;
-  s32 index;
+  s32 standbyCount = 0;
+  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
+  s32 entryIndex;
 
   if (counts != 0) {
     u8 *slot;
 
     slot = counts + 3;
-    *slot = found;
+    *slot = standbyCount;
     slot = counts + 2;
-    *slot = found;
+    *slot = standbyCount;
     slot = counts + 1;
-    *slot = found;
-    counts[0] = found;
+    *slot = standbyCount;
+    counts[0] = standbyCount;
   }
-  index = 0;
-  if (state->list.count != 0) {
-    do {
-      if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        if (counts != 0)
-          counts[entry->element]++;
-        found++;
-      }
-      index++;
-      entry++;
-    } while (index != state->list.count);
+  for (entryIndex = 0; entryIndex != recoveryTable->list.count; entryIndex++) {
+    if (entry->turns == -1) {
+      if (counts != 0)
+        counts[entry->element]++;
+      standbyCount++;
+    }
+    entry++;
   }
-  return found;
+  return standbyCount;
 }
 
 u16 Djinn_GetDefinitionHeader(u32 group, u32 index) {
@@ -285,30 +255,27 @@ s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
   return result;
 }
 
-s32 Party_SumDjinnCounts(s32 index) {
-  u16 owners[16];
-  s32 result = 0;
-  s32 count = Party_ListMembers((s16 *)owners);
+/// Returns how many Djinn of `element` the party holds, or of all elements for
+/// -1.
+s32 Party_SumDjinnCounts(s32 element) {
+  u16 unitIds[16];
+  s32 djinnCount = 0;
+  s32 partySize = Party_ListMembers(unitIds);
+  s32 i;
 
-  if (result < count) {
-    u16 *owner = owners;
-    s32 remaining = count;
+  for (i = 0; i < partySize; i++) {
+    struct BattleUnit *unit = Unit_Get(unitIds[i]);
 
-    do {
-      struct OwnerDjinnState *state = Unit_Get(*owner++);
-
-      if (index == -1) {
-        result += state->counts.banks.owned[0];
-        result += state->counts.banks.owned[1];
-        result += state->counts.banks.owned[2];
-        result += state->counts.banks.owned[3];
-      } else {
-        result += state->counts.banks.owned[index];
-      }
-      remaining--;
-    } while (remaining != 0);
+    if (element == -1) {
+      djinnCount += unit->djinnOwnedCounts[0];
+      djinnCount += unit->djinnOwnedCounts[1];
+      djinnCount += unit->djinnOwnedCounts[2];
+      djinnCount += unit->djinnOwnedCounts[3];
+    } else {
+      djinnCount += unit->djinnOwnedCounts[element];
+    }
   }
-  return result;
+  return djinnCount;
 }
 
 void Djinn_ActivateOfferedForParty(void) {

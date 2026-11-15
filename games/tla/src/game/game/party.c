@@ -135,24 +135,18 @@ s32 Party_RemoveMember(s32 unitId) {
   return Party_CountMembers();
 }
 
-/// Writes the party members to `unitIds`, ending with BATTLE_UNIT_LIST_END, and
-/// returns how many there are. Every screen that lists the party starts here:
-/// the menus, the shops, the inn and the party inventory searches.
-s32 Party_ListMembers(s16 *owners) {
+/// Writes the party members to unitIds and returns how many there are.
+s32 Party_ListMembers(s16 *unitIds) {
   s32 count = 0;
 
-  if (owners != NULL) {
+  if (unitIds != NULL) {
     s32 index;
 
     count = Party_CountMembers();
-    index = 0;
-    if (count != 0) {
-      do {
-        *owners++ = gMainRoutineWork.party[index];
-        index++;
-      } while (index != count);
+    for (index = 0; index != count; index++) {
+      *unitIds++ = gMainRoutineWork.party[index];
     }
-    *owners = 0xff;
+    *unitIds = BATTLE_UNIT_LIST_END;
   }
   return count;
 }

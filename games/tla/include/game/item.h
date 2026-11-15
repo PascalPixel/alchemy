@@ -25,6 +25,14 @@ enum InventoryEncoding {
   INVENTORY_SLOTS = 15 ///< BattleUnit.inventory's entries
 };
 
+/// What Inventory_Remove and Inventory_Discard return.
+enum InventoryRemoveResult {
+  INVENTORY_REMOVE_EMPTY_SLOT = -1, ///< nothing was there to take
+  INVENTORY_REMOVE_ONE = 1,         ///< the stack is one smaller
+  /// The last one left its slot, and the slots after it moved up.
+  INVENTORY_REMOVE_LAST = 2
+};
+
 /// The equipMask bit of character `no` (ISAAC to PIERS):
 /// Item_CanUnitEquipDirect reads the bit of the unit's character.
 #define EQUIP_CHARACTER(no) (1 << (no))

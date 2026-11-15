@@ -103,6 +103,7 @@ extern char ResourceId_WorldMapPaletteB;
 extern char ResourceId_PerspectiveDataA;
 
 extern char ResourceId_BuildStamp;
+#define RESOURCE_BUILD_STAMP ((s32)&ResourceId_BuildStamp)
 
 extern char ResourceId_SuhallaGateBackdrop;
 extern char ResourceId_PirateShipBackdrop;

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "battle/battle_unit.h"
 #include "owner_state.h"
+#include "flags.h"
 
 struct LevelUpResult;
 
@@ -23,8 +24,9 @@ s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 s32 Party_RemoveMember(s32 owner);
 void Djinn_ActivateOfferedForParty(void);
-extern const u16 gDataTransfer_Flags[6];
-extern const s16 gDataTransfer_DjinnChances[4][7];
+extern const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT];
+extern const s16 gDataTransfer_DjinnChances[ELEMENT_COUNT]
+                                           [TRANSFERRED_DJINN_PER_ELEMENT];
 void Party_BalanceDjinn(void);
 s16 Unit_AddPp(s32 owner, s32 delta);
 s32 PartyInventory_Remove(s32 item_id);

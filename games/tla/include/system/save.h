@@ -52,6 +52,13 @@ struct SaveSectorHeader {
   u8 reserved[4]; ///< not named by ⚓️ code
 };
 
+/// Where a save image, EWRAM from gSaveBuffer as a part holds it, keeps the
+/// game flags, gMainRoutineWork and gCharacterUnits. The Clear Data and the
+/// data transferred from The Broken Seal come in this layout.
+#define SAVE_IMAGE_GAME_FLAGS 0x40
+#define SAVE_IMAGE_MAIN_ROUTINE_WORK 0x240
+#define SAVE_IMAGE_UNITS 0x520
+
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 0x1e);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x303c);

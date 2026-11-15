@@ -14,15 +14,17 @@ const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
 /// Seal's names: Dodonpa locked up, the Colosso won, Hsu freed without the
 /// party, Deadbeard beaten, the sick Dora visited, and Vault warned of the
 /// escaped thieves.
-const u16 gDataTransfer_Flags[6] = {0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868};
+const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT] = {0x941, 0x951, 0x8b3,
+                                                         0x8d1, 0x81e, 0x868};
 
 /// The percent chance that DataTransfer_GiveDefaultDjinn hands out each of The
 /// Broken Seal's seven Djinn of each element, one row per element.
-const s16 gDataTransfer_DjinnChances[4][7] = {
-    {100, 70, 70, 30, 40, 50, 20},
-    {100, 50, 70, 70, 30, 30, 70},
-    {70, 50, 30, 60, 70, 40, 70},
-    {50, 50, 70, 50, 20, 70, 70},
+const s16 gDataTransfer_DjinnChances[ELEMENT_COUNT]
+                                    [TRANSFERRED_DJINN_PER_ELEMENT] = {
+                                        {100, 70, 70, 30, 40, 50, 20},
+                                        {100, 50, 70, 70, 30, 30, 70},
+                                        {70, 50, 30, 60, 70, 40, 70},
+                                        {50, 50, 70, 50, 20, 70, 70},
 };
 
 /// Experience per level, 99 levels for each character in turn.

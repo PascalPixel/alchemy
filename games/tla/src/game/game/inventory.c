@@ -23,12 +23,11 @@ s32 Item_CanUnitEquipDirect(s32 unit, s32 item) {
   return (mask >> st->classId) & 1;
 }
 
-/// Returns 1 for an item that is not equipment, otherwise whether the
-/// character can equip it.
+/// Returns 1 for an item that is not a weapon or armor, and for those whether
+/// the character can equip it.
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
-  if (Item_GetEquipmentGroup(item) == 0) {
+  if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE)
     return 1;
-  }
   return Item_CanUnitEquipDirect(unit, item);
 }
 
@@ -71,16 +70,15 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   return owner;
 }
 
-s32 Inventory_Count(s32 owner) {
-  struct OwnerInventoryState *inv = Unit_Get(owner);
-  s32 count = 0;
+/// Counts filled inventory slots up to the first empty slot; the inventory is
+/// kept closed up, so this is how many items the unit carries.
+s32 Inventory_Count(s32 unitId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  s32 count;
 
-  if (inv->inventory[count] != 0) {
-    do {
-      count++;
-      if (count > 14)
-        break;
-    } while (inv->inventory[count] != 0);
+  for (count = 0; count < INVENTORY_SLOTS; count++) {
+    if (unit->inventory[count] == 0)
+      break;
   }
   return count;
 }
@@ -117,25 +115,24 @@ s32 PartyInventory_CountFreeSlots(void) {
   return freeSlots;
 }
 
-s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
-  struct OwnerInventoryState *inv = Unit_Get(owner_id);
-  struct ItemDefinition *item = Item_GetDirect(item_id);
+/// Gives a unit one item, joining its first matching stack (up to 30) or taking
+/// the first free slot. A full matching stack fails immediately, even if
+/// another slot is free.
+s32 Inventory_AddItem(s32 unitId, s32 itemId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  const struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
-  if ((item->flags & ITEM_STACKABLE) != 0) {
-    slot = 0;
-    if (((inv->inventory[slot] ^ item_id) & INVENTORY_ITEM_ID_MASK) != 0) {
-      do {
-        slot++;
-        if (slot >= INVENTORY_SLOTS)
-          break;
-      } while (((inv->inventory[slot] ^ item_id) & INVENTORY_ITEM_ID_MASK) !=
-               0);
+  if (item->flags & ITEM_STACKABLE) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      if (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) == 0)
+        break;
     }
     if (slot != INVENTORY_SLOTS) {
-      s32 entry = inv->inventory[slot];
+      s32 entry = unit->inventory[slot];
       u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
+      // A stack holds 30 at most.
       if (count > 29)
         return -1;
       {
@@ -143,20 +140,18 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
 
         value &= entry;
         value |= count << INVENTORY_QUANTITY_SHIFT;
-        inv->inventory[slot] = value;
+        unit->inventory[slot] = value;
       }
       return slot;
     }
   }
 
-  slot = 0;
-  do {
-    if (inv->inventory[slot] == 0) {
-      inv->inventory[slot] = item_id;
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (unit->inventory[slot] == 0) {
+      unit->inventory[slot] = itemId;
       return slot;
     }
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
   return -1;
 }
 
@@ -195,14 +190,15 @@ s32 PartyInventory_FindRoom(s32 itemId) {
   return -1;
 }
 
-s32 Inventory_Find(s32 owner, s32 item_id) {
-  struct OwnerInventoryState *inv = Unit_Get(owner);
+/// Returns the first slot holding `itemId` (any quantity, equipped or not), or
+/// -1.
+s32 Inventory_Find(s32 unitId, s32 itemId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-    if ((inv->inventory[slot] & INVENTORY_ITEM_ID_MASK) == item_id) {
+    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemId)
       return slot;
-    }
   }
   return -1;
 }
@@ -263,10 +259,11 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   return 0;
 }
 
-s32 Inventory_FindEquipped(s32 owner, s32 type) {
-  struct OwnerInventoryState *base = Unit_Get(owner);
+/// Returns the slot of the equipped item of `type`, or -1.
+s32 Inventory_FindEquipped(s32 unitId, s32 type) {
+  struct BattleUnit *base = Unit_Get(unitId);
   s32 index;
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
 
   for (index = 0; index < INVENTORY_SLOTS; index++) {
     if (base->inventory[index] & INVENTORY_EQUIPPED) {
@@ -296,15 +293,16 @@ Inventory_GetEquippedDefinition(struct OwnerInventoryState *inv, s32 type) {
   return 0;
 }
 
-s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type) {
+/// Returns the id of the unit's equipped item of `type`, or 0.
+s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   s32 slot;
 
-  for (slot = 0; slot <= 14; slot++) {
-    if (inv->inventory[slot] & 0x200) {
-      struct ItemDefinition *item = Item_GetDirect(inv->inventory[slot]);
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
+      const struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
       if (item->type == type) {
-        return inv->inventory[slot] & 0x1ff;
+        return unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
       }
     }
   }
@@ -322,22 +320,25 @@ s32 Inventory_ClearSlot(s32 owner, s32 slot) {
   return 2;
 }
 
-s32 Inventory_Remove(s32 owner, s32 slot) {
-  struct OwnerInventoryState *unit = Unit_Get(owner);
+/// Takes one item out of slot, closing up the inventory when it was the last.
+/// The Psynergy list is not rebuilt, so a removed item's Psynergy stays listed
+/// until something rebuilds it.
+s32 Inventory_Remove(s32 unitId, s32 slot) {
+  struct BattleUnit *unit = Unit_Get(unitId);
   u16 item = unit->inventory[slot];
-  s32 result = -1;
+  s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
   if (item != 0) {
     if (item & INVENTORY_QUANTITY_MASK) {
       unit->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
-      result = 1;
+      result = INVENTORY_REMOVE_ONE;
     } else {
       unit->inventory[slot] = 0;
-      Inventory_CompactSlots((s16 *)unit->inventory);
-      result = 2;
+      Inventory_CompactSlots(unit->inventory);
+      result = INVENTORY_REMOVE_LAST;
     }
   }
-  Unit_Calculate(owner);
+  Unit_Calculate(unitId);
   return result;
 }
 
@@ -417,28 +418,30 @@ s32 PartyInventory_Discard(s32 itemId) {
   return 0;
 }
 
-s32 Inventory_Break(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = Unit_Get(owner);
-  if (inv->inventory[slot] == 0) {
+/// Marks the item in `slot` broken; returns -1 for an empty slot.
+s32 Inventory_Break(s32 unitId, s32 slot) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+
+  if (unit->inventory[slot] == 0)
     return -1;
-  }
-  inv->inventory[slot] |= 0x400;
+  unit->inventory[slot] |= INVENTORY_BROKEN;
   return 0;
 }
 
-s32 Inventory_Repair(s32 owner, s32 slot) {
-  struct OwnerInventoryState *inv = Unit_Get(owner);
-  if (inv->inventory[slot] == 0) {
+/// Clears the broken mark of the item in `slot`; returns -1 for an empty slot.
+s32 Inventory_Repair(s32 unitId, s32 slot) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+
+  if (unit->inventory[slot] == 0)
     return -1;
-  }
-  inv->inventory[slot] &= ~0x400;
+  unit->inventory[slot] &= ~INVENTORY_BROKEN;
   return 0;
 }
 
+/// Returns how the action an item performs when used picks its targets.
+/// Nothing calls it or its far-call export.
 u8 Item_GetTargetMode(s32 itemId) {
-  return ((struct BattleAct *)Ability_GetDirect(
-              Item_GetDirect(itemId)->abilityId))
-      ->targetMode;
+  return Ability_GetDirect(Item_GetDirect(itemId)->abilityId)->targetMode;
 }
 
 /// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
@@ -487,24 +490,23 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   return result;
 }
 
-s32 Inventory_CountItem(s32 owner, s32 item_id) {
-  struct OwnerInventoryState *base = Unit_Get(owner);
+/// Counts matching nonstackable items, or the quantity in the first matching
+/// stack.
+s32 Inventory_CountItem(s32 unitId, s32 itemId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
   s32 count = 0;
-  s32 target = item_id & INVENTORY_ITEM_ID_MASK;
-  s32 index = 0;
+  s32 slot;
 
-  do {
-    if ((base->inventory[index] & INVENTORY_ITEM_ID_MASK) == target) {
-      struct ItemDefinition *item = Item_GetDirect(target);
-
-      if (item->flags & ITEM_STACKABLE) {
-        count = (base->inventory[index] >> INVENTORY_QUANTITY_SHIFT) + 1;
+  itemId &= INVENTORY_ITEM_ID_MASK;
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemId) {
+      if (Item_GetDirect(itemId)->flags & ITEM_STACKABLE) {
+        count = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
         break;
       }
       count++;
     }
-    index++;
-  } while (index < INVENTORY_SLOTS);
+  }
   return count;
 }
 

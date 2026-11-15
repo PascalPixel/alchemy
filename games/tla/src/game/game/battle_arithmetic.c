@@ -103,40 +103,42 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   return signedProduct >> 16;
 }
 
-/// Returns the element of the unit's equipped weapon (4 for none); an enemy
-/// has no equipment and attacks with its species' element instead.
-s32 Item_GetEquippedElement(s32 id) {
-  struct ItemDefinition *item;
+/// Returns the element the unit attacks with (ELEMENT_NONE for none): an
+/// enemy's comes from its kind, a character's from its equipped weapon.
+s32 Item_GetEquippedElement(s32 unitId) {
+  const struct ItemDefinition *item;
   struct BattleUnit *unit;
 
-  unit = Unit_Get(id);
-  if (unit->classId == 0)
+  unit = Unit_Get(unitId);
+  if (unit->classId == CLASS_NONE)
     return Enemy_GetAttackElement(unit);
-  item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1: weapon.
+  item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item != NULL)
     return item->element;
-  return 4;
+  return ELEMENT_NONE;
 }
 
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner) {
-  s32 sum;
-  s32 i;
-  s32 j;
-  struct ItemDefinition *item;
+/// Returns the unleash chance, in percent, that a unit's equipment adds
+/// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE).
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
+  s32 chanceBonus;
+  s32 inventorySlot;
+  s32 effectIndex;
+  const struct ItemDefinition *item;
 
-  sum = 0;
-  for (i = 0; i < 15; i++) {
-    if (owner->inventory[i] & 0x200) {
-      item = Item_GetDirect(owner->inventory[i]);
-      for (j = 0; j < 4; j++) {
-        if (item->effects[j].kind == 23)
-          sum += item->effects[j].amount;
+  chanceBonus = 0;
+  for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+    if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+      item = Item_GetDirect(unit->inventory[inventorySlot]);
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
+        if (item->effects[effectIndex].kind == EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
+          chanceBonus += item->effects[effectIndex].amount;
       }
     }
   }
-  if (sum < 0)
-    sum = 0;
-  return sum;
+  if (chanceBonus < 0)
+    chanceBonus = 0;
+  return chanceBonus;
 }
 
 s32 RollWeaponUnleash(struct BattleUnit *owner) {

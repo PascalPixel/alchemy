@@ -49,6 +49,8 @@
 #define FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY 0x822
 #define FLAG_TRANSFERRED_VISITED_SICK_DORA 0x824
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
+/// How many flags gDataTransfer_Flags lists.
+#define TRANSFERRED_FLAG_COUNT 6
 
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing its sound, once.
@@ -129,6 +131,8 @@
 /// Holds the field's weather still, its particles and its next burst, while a
 /// menu is open, as The Broken Seal's.
 #define FLAG_WEATHER_HELD 0x166
+/// Set while the Lure Cap is worn: random encounters come twice as fast.
+#define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
 /// each turn with no command menu, as The Broken Seal's; the debug battle menu
 /// sets it.

@@ -204,13 +204,13 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
   return Unit_TryLevelUp(unitId, gains);
 }
 
-/// Returns character `character`'s definition: its growth curves, element
-/// bonus, starting level and starting equipment.
-const struct CharacterDefinition *Character_GetDefinition(s32 character) {
+/// Returns character `index`'s definition: growth curves, starting level and
+/// equipment.
+const struct CharacterDefinition *Character_GetDefinition(s32 index) {
   const struct CharacterDefinition *base;
 
   base = gCharacter_DefinitionTable;
-  return &base[character];
+  return &base[index];
 }
 
 void Party_InitializeCharacters(void) {
@@ -392,13 +392,12 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   return gains;
 }
 
-/// Levels the character up once if its experience reaches the next level.
-/// Returns `gains` filled with the gains, or NULL. Called after a battle by
-/// Battle_AwardSpoils, once for each level a party member reaches.
+/// Levels the character up once if its experience reaches the next level, and
+/// returns gains, or NULL.
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
 
-  unit = (struct BattleUnit *)Unit_Get(unitId);
+  unit = Unit_Get(unitId);
   if ((unit->experience >=
        Unit_GetExperienceForLevel(unitId, unit->level + 1)) &&
       (Unit_LevelUp(unitId, gains) != NULL)) {

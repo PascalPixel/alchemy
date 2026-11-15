@@ -194,7 +194,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     scale = gBoreas_UnitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++)
-        ((struct SpriteAttributes *)work->sprites[i])->priority = 0;
+        ((struct Sprite *)work->sprites[i])->image.priority = 0;
     }
     if (frame > BOREAS_BLOCK_SINK_FRAME)
       Sprite_StartAnimationFar(work->sprites[2],

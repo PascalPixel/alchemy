@@ -85,10 +85,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   pal += 512;
   Decompress_TaggedLz(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = EffectSprite_CreateWithTiles(
+    struct Sprite *obj = EffectSprite_CreateWithTiles(
         32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
-    obj->priority = 2;
+    obj->image.priority = 2;
     work->sprites[i] = obj;
     Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
@@ -129,7 +129,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       pal += 512;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
-        struct JudgmentObject *obj = work->sprites[i];
+        struct Sprite *obj = work->sprites[i];
 
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
                              Ram_MapCellBuffer + i * 0x400, 0x400);
@@ -216,7 +216,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       pal += 512;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        QUEUE_PUSH_PARTED(OBJ_TILES((struct JudgmentObject *)work->sprites[i]),
+        QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
                           (u32)(cells + i * 0x400), 0x84000100);
       }
     }
@@ -227,8 +227,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
-            OBJ_TILES((struct JudgmentObject *)
-                          work->sprites[gJudgment_BurstPictures[i]]),
+            OBJ_TILES(
+                (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
             (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400), 0x84000100);
       }
     }
@@ -364,13 +364,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct JudgmentObject *obj = Sprite_CreateFar(0x28d);
+    struct Sprite *obj = Sprite_CreateFar(0x28d);
 
     work->sprites[i] = obj;
     if (obj) {
-      obj->unk1a = 0;
+      obj->flags = 0;
       Sprite_StartAnimationFar(obj, i % 3);
-      ((struct JudgmentObject *)work->sprites[i])->priority = 0;
+      ((struct Sprite *)work->sprites[i])->image.priority = 0;
     }
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

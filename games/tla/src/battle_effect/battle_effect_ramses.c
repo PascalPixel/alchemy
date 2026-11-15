@@ -49,13 +49,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   // The statue, its fist and wrist, then six rocks.
   BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct FxAnimObject *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
+    struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[9 + i] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, i % 3);
-      ((struct FxAnimObject *)work->sprites[9 + i])->priority = 1;
+      ((struct Sprite *)work->sprites[9 + i])->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

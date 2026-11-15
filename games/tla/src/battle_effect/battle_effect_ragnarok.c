@@ -618,18 +618,6 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
 struct StripQuad;
 
-/// A sprite as Judgment reads it: its priority and resource.
-struct JudgmentObject {
-  u8 unk0[9];
-  u8 flagsLow : 2;
-  u8 priority : 2;
-  u8 flagsHigh : 4;
-  u8 unk0a[6];
-  u8 resource;
-  u8 unk11[9];
-  u8 unk1a;
-};
-
 extern const struct Scale gJudgment_UnitScale;
 
 /// Fills words through the IWRAM fill as one statement, the way Judgment clears
@@ -648,7 +636,7 @@ static inline void BattleEffect_FillWords(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only

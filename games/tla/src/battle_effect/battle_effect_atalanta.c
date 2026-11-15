@@ -134,10 +134,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   picture += 256;
   Decompress_TaggedLz(picture, tiles);
   for (i = 0; i != ATALANTA_PIECES; i++) {
-    struct SpriteObject *piece = EffectSprite_CreateWithTiles(
+    struct Sprite *piece = EffectSprite_CreateWithTiles(
         32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
-    piece->priority = 1;
+    piece->image.priority = 1;
     work->sprites[i] = piece;
     Iwram_CopyWordsEntry(OBJ_VRAM + gVramCacheEntries[piece->slot].offset,
                          tiles + i * 0x400, 0x400);

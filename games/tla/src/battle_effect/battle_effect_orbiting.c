@@ -208,13 +208,4 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef TRAILS
 
-/// A sprite object as EffectSprite_CreateWithTiles returns it.
-struct SpriteObject {
-  u8 unk00[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[6];
-  u8 slot; // its row of gVramCacheEntries
-};
 #undef STARS

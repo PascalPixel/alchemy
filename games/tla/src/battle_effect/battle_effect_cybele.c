@@ -548,11 +548,3 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 /// follow the first 128 particles.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 0xe00))
-
-/// An object's sprite attributes, as far as this scene sets them.
-struct SpriteAttributes {
-  u8 unk00[9];
-  u8 tileHi : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-};

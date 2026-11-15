@@ -545,23 +545,6 @@ struct IrisScene {
   struct IrisPoint streaks[15][10];
 };
 
-/// A sprite as Iris reads its tile and resource.
-struct IrisSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 unk08_10 : 6;
-  u8 unk0a[6];
-  u8 resource;
-};
-
-/// A sprite as Iris sets its priority.
-struct IrisSpriteFlags {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 unk09_4 : 4;
-};
-
 /// The five widths a rising pillar takes.
 struct FiveWidths {
   s32 w[5];
@@ -591,7 +574,7 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 #define SCENE (&IRIS_SCENE)
 #define STREAK(i, j) (((struct IrisPoint *)IRIS_STREAKS)[(i) * 10 + (j)])
 /// The 128 background colours the scene fades (entries 96 to 223).
@@ -767,7 +750,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   struct IrisPoint(*streaks)[10] = IRIS_STREAKS;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
+  struct Sprite **objects = (struct Sprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisSparks *sparks = &IRIS_SPARKS;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -819,7 +802,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           sparks->frames[i]++;
         if (sparks->frames[i] > 14)
           sparks->frames[i] = 0;
-        objects[i]->tile = sparks->tiles[sparks->frames[i]];
+        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
         sparks->life[i] -= 0x100;
       }
     }
@@ -1185,11 +1168,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
-        struct IrisSprite *obj = EffectSprite_CreateWithTiles(
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
         work->sprites[i] = obj;
-        ((struct IrisSpriteFlags *)obj)->priority = 1;
+        obj->image.priority = 1;
         Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
                 REG_DMA3);
       }
@@ -1199,25 +1182,25 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       DECOMPRESS_IN_BLOCK(colors, work->sheet);
       table = gVramCacheEntries;
       for (i = 0; i != 15; i++) {
-        struct IrisSprite *obj = EffectSprite_CreateWithTiles(
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
-        ((struct IrisSpriteFlags *)obj)->priority = 1;
-        sparks->tiles[i] = obj->tile;
+        obj->image.priority = 1;
+        sparks->tiles[i] = obj->image.tile;
         sparks->frames[i] = i;
         Dma_Set(work->sheet + i * 128,
-                (void *)(OBJ_VRAM0 + table[obj->resource].offset),
+                (void *)(OBJ_VRAM0 + table[obj->slot].offset),
                 DMA_COPY_WORDS(32), REG_DMA3);
       }
       for (; i != 36; i++) {
-        struct IrisSprite *obj =
+        struct Sprite *obj =
             EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
         Dma_Set(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);
         sparks->frames[i] = Random16() % 15;
-        objects[i]->tile = sparks->tiles[sparks->frames[i]];
+        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
       }
       for (i = 0; i != 18; i++) {
         sparks->x[i] = (Random16() % 15 << 16) + px(57);
@@ -1331,7 +1314,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           sparks->frames[i]++;
         if (sparks->frames[i] > 14)
           sparks->frames[i] = 0;
-        objects[i]->tile = sparks->tiles[sparks->frames[i]];
+        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
       }
     }
     if ((u32)(frame - 179) <= 38) {

@@ -59,7 +59,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   struct ModelTexture landingTexture;
   struct RenderModel *model;
   struct Particle *p;
-  struct EclipseObject *obj;
+  struct Sprite *obj;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -97,7 +97,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       for (i = 0; i != 31; i++) {
         obj = EffectSprite_CreateWithTiles(32, 32,
                                            OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-        obj->priority = 2;
+        obj->image.priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
         tiles += 0x400;
@@ -109,7 +109,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       obj = EffectSprite_CreateWithTiles(32, 32,
                                          OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
       work->sprites[31] = obj;
-      obj->priority = 2;
+      obj->image.priority = 2;
       Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 0x400);
     }
     scroll += 4;
@@ -153,7 +153,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         for (i = 0; i != 7; i++) {
 
           void *o = (void *)OBJ_TILES(
-              (struct EclipseObject *)work->sprites[gEclipse_TileObjects[i]]);
+              (struct Sprite *)work->sprites[gEclipse_TileObjects[i]]);
           // Default: set for real below; as s32 size = 0x400, 762 differ.
           s32 size = 0;
           size = 0x400;

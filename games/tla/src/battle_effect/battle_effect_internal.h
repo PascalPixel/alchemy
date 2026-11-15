@@ -65,16 +65,6 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags);
 
-/// A dragon sprite as Eclipse reads its priority and palette.
-struct EclipseObject {
-  u8 unk0[9];
-  u8 unk09 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[6];
-  u8 slot;
-};
-
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 

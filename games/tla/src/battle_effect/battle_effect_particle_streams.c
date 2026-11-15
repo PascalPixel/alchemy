@@ -666,16 +666,6 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define BLAST_FLASH_FRAME 16 ///< the flashes rise from here
 #define BLAST_HIT_FRAME 48
 
-/// A flame sprite as the particle streams set its priority and flags.
-struct FxAnimObject {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[16];
-  u8 flags;
-};
-
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
 /// The burst's flashes in PARTICLES, then its embers.
@@ -770,13 +760,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // Mode 1's two flames, or mode 0's sun.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct FxAnimObject *flame = Sprite_CreateFar(638 + i * 0x2001);
+      struct Sprite *flame = Sprite_CreateFar(638 + i * 0x2001);
 
       work->sprites[i] = flame;
       if (flame != 0) {
         flame->flags = 0;
         Sprite_StartAnimationFar(flame, 2);
-        ((struct FxAnimObject *)work->sprites[i])->priority = 3;
+        ((struct Sprite *)work->sprites[i])->image.priority = 3;
       }
     }
   } else {

@@ -1136,21 +1136,9 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 struct MeshTriangle;
 struct MeshVertex;
 
-/// The effect sprite EffectSprite_CreateWithTiles returns, as far as this
-/// function reads it.
-struct SpriteView {
-  s32 unk00;
-  s32 attributes;
-  u32 tile : 10;
-  u32 priority : 2;
-  u32 rest : 20;
-  s32 unk0c;
-  u8 vramEntry;
-};
-
 #define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
 
-#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->vramEntry].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
@@ -1251,7 +1239,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ModelTexture texture;
   struct ModelTexture washTexture;
-  struct SpriteView *obj;
+  struct Sprite *obj;
   struct Particle *p;
 
   canvas = Ram_HeapSlots->battleCanvas;
@@ -1298,7 +1286,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       for (; i != 12; cells += 1024, i++) {
         obj = EffectSprite_CreateWithTiles(32, 32,
                                            OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-        obj->priority = 2;
+        obj->image.priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
       }

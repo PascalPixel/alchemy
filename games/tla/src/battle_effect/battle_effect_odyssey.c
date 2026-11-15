@@ -643,36 +643,18 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
-/// An actor's child sprite, as Actor_SetActiveChildParam sets its mode.
-struct ChildObject {
-  u8 unk00[5];
-  u8 mode;
-  u8 unk06[10];
-  s32 active;
-};
-
-/// An actor's group of child sprites.
-struct ChildGroup {
-  u8 unk00[25];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[12];
-  struct ChildObject *children[1];
-};
-
-/// Sets the draw parameter (byte 5) of each active child of group to mode
-/// and marks the group for redrawing.
-void Actor_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
+/// Unused: sets the colour mode of each running animation layer of a sprite
+/// and marks it for redrawing, as Actor_SetSpriteColor does for an actor's.
+UNUSED void Sprite_SetColorMode(struct Sprite *sprite, s32 mode) {
   s32 i;
 
-  for (i = 0; i < group->count; i++) {
-    struct ChildObject *child = group->children[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *part = sprite->entries[i];
 
-    if (child != NULL && child->active != 0)
-      *((u8 *)child + 5) = mode;
+    if (part != NULL && part->script != NULL)
+      part->colorMode = mode;
   }
-  group->dirty = 1;
+  sprite->dirty = 1;
 }
 
 /// Fills count bytes of table with a rising shade ramp (0 to 63, by a step

@@ -323,10 +323,10 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomPhaetonsBladeChest),
-    SCENE_EXIT(1, JupiterLighthouseWhorl, 1),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, JupiterLighthouseWhorl, JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
     SCENE_EXIT(2, JupiterLighthouseRoomPhaetonsBladeChest, 3),
     SCENE_EXIT(3, JupiterLighthouseRoomPhaetonsBladeChest, 2),
-    SCENE_EXIT(4, JupiterLighthouseAerie, 4),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, JupiterLighthouseAerie, JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
     SCENE_EXIT(5, JupiterLighthouseRoomPhaetonsBladeChest, 6),
     SCENE_EXIT(6, JupiterLighthouseRoomPhaetonsBladeChest, 5),
     SCENE_EXIT(7, JupiterLighthouseRoomPhaetonsBladeChest, 8),

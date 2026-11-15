@@ -47,22 +47,27 @@ place changes without any code saying so.
 ### Entrances
 
 An [entrance](../../glossary.md#entrance) is a spot where the party appears
-and the way it faces. In The Lost Age the entrances are still numbers. One
-can also give a box the camera must stay inside, which is how a room
-drawn beside others on one map stays out of their sight. Champa's entrance
-8 is one:
+and the way it faces, named in `include/scene_exits.h` for where the party
+comes from: `KIBOMBO_FROM_KIBOMBO_HOUSES_NORTHWEST`. A door has one number in each
+scene, as Camelot numbered it: exit a of one scene leads to entrance b of the
+other, and that scene's exit b leads back to entrance a, so in each scene the
+entrance and the exit of one number are one door and share its name. An entrance no exit reaches, or a way between rooms of one map,
+keeps its number. An entrance can also give a box the camera must stay
+inside, which is how a room drawn beside others on one map stays out of their
+sight. The house on the pier's islet, entrance 8 of Champa's houses, is one:
 
 ```c
-{8, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0, 288, 536, 528, 696, 0},
+{ENTRANCE_PIER_ISLET_HOUSE, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0,
+ 288, 536, 528, 696, 0},
 ```
 
 ### Exits
 
-An [exit](../../glossary.md#exit) is a way out, by number. The exit table
-turns the number into a scene and an entrance:
+An [exit](../../glossary.md#exit) is a way out, named for where it leads.
+The exit table turns the name into a scene and an entrance:
 
 ```c
-SCENE_EXIT(2, LemurianShipCabins, 3),
+SCENE_EXIT(KIBOMBO_TO_KIBOMBO_HOUSES_NORTHWEST, KibomboHouses, KIBOMBO_HOUSES_FROM_KIBOMBO_NORTHWEST),
 ```
 
 Rows can carry conditions here too, which is how one path leads to several
@@ -70,9 +75,9 @@ places at different points in the story. The Lemurian Ship's first way out
 leads to three, one after another:
 
 ```c
-SCENE_EXIT_UNLESS(1, LemurianShipMainDeck, 1, 0x907),
-SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
-SCENE_EXIT_UNLESS(1, AttekaInlet, 4, EXIT_FLAG_NONE),
+SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemurianShipMainDeck, LEMURIAN_SHIP_MAIN_DECK_FROM_LEMURIAN_SHIP_CABINS, 0x907),
+SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemuriaDock, LEMURIA_DOCK_FROM_LEMURIAN_SHIP_CABINS, FLAG_SHIP_AT_ATTEKA_INLET),
+SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, AttekaInlet, ATTEKA_INLET_FROM_WORLD_MAP_WEST, EXIT_FLAG_NONE),
 ```
 
 The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `Scene_TakeExit` takes that exit

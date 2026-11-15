@@ -6,6 +6,7 @@
 /// placements and triggers, as The Broken Seal's scene_tables.h has them.
 
 #include "fixed_math.h"
+#include "scene_exits.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "system/main_routine_work.h"

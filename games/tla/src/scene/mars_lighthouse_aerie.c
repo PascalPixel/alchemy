@@ -3391,8 +3391,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(MarsLighthouseAerie),       SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 1), SCENE_EXIT(2, MarsLighthouseAerie, 3),     
-      SCENE_EXIT(3, MercuryLighthouse, 2), SCENE_EXIT(4, ProxHouses, 20), SCENE_EXITS_END,           
+      SCENE_EXITS(MarsLighthouseAerie),       SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS, MarsLighthouseRoomMInscriptions, MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE), SCENE_EXIT(2, MarsLighthouseAerie, MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_A),     
+      SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EAST_A, MercuryLighthouse, MERCURY_LIGHTHOUSE_FROM_MARS_LIGHTHOUSE_AERIE_EAST_A), SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_PROX_HOUSES, ProxHouses, PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE), SCENE_EXITS_END,           
   };
 
 struct ActorPlacement gMarsLighthouseAerie_Placements[] = {

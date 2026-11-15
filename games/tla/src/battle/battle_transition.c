@@ -73,30 +73,23 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 
 /// Writes consecutive bytes 0-255 followed by 0-223, then fills the remaining
 /// 544 bytes with 0xff (1024 bytes in all).
-void Graphics_BuildSequentialTileTable(s32 *dst) {
-  s32 v;
-  s32 n;
-  s32 (*fill)(void *, s32, u32);
+void Graphics_BuildSequentialTileTable(void *tilemap) {
+  u32 *words = tilemap;
+  u32 tiles;
+  u32 i;
 
-  // Advance by four entries because each store writes four bytes.
-  v = 0x03020100;
-  n = 0;
-  do {
-    n += 1;
-    *dst++ = v;
-    v += 0x04040404;
-  } while (n >= 0 && n <= 63);
-
-  v = 0x03020100;
-  n = 0;
-  do {
-    n += 1;
-    *dst++ = v;
-    v += 0x04040404;
-  } while (n >= 0 && n <= 55);
-
-  fill = Iwram_FillWordsEntry;
-  fill(dst, 544, -1);
+  // Each word is four consecutive tile numbers, one a byte.
+  tiles = 0x03020100;
+  for (i = 0; i < 64; i++) {
+    *words++ = tiles;
+    tiles += 0x04040404;
+  }
+  tiles = 0x03020100;
+  for (i = 0; i < 56; i++) {
+    *words++ = tiles;
+    tiles += 0x04040404;
+  }
+  Iwram_FillWords(words, 544, -1);
 }
 
 /// Builds a flat tilemap: rows 0 to 3 0xffff, rows 4 and 5 tile 1023, rows 6

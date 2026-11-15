@@ -695,35 +695,36 @@ s32 Save_EraseSelectedFile(void) {
 /// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
 void FileList_UpdatePulse(void) {
   s32 *vblankCount;
-  volatile u16 *pal;
-  s32 col;
-  s32 s;
+  volatile u16 *palette;
+  s32 colour;
+  s32 sine;
   s32 i;
 
   vblankCount = (s32 *)&gVBlankCount;
-  pal = (volatile u16 *)(BG_PLTT + 232); // Background palette 14, color 8.
+  palette = (volatile u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
   i = 0;
   do {
 #ifdef UBFIX
-    // The unsigned VBlank count wraps without overflowing signed arithmetic.
-    s = Trig_Sin((((u32)*vblankCount + i * 8U) * 0x300U) & 0xffffU);
+    // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
+    sine = Trig_Sin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+                    0xffffU);
 #else
-    s = Trig_Sin((*vblankCount + i * 8) * 0x300);
+    sine = Trig_Sin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
-    col = s / 16384;
+    colour = sine / 16384;
     {
 #ifdef UBFIX
-      // The sine can be negative; shift its bits as an unsigned value.
-      u32 r = (u32)col << 1;
+      // A negative sine must be shifted as unsigned bits.
+      u32 red = (u32)colour << 1;
 #else
-      u32 r = col << 1;
+      u32 red = colour << 1;
 #endif
-      u32 g = col;
+      u32 green = colour;
 
-      r += 22;
-      g += 16;
-      col += 20;
-      Io_Write16(RGB(r, g, col), pal++);
+      red += 22;
+      green += 16;
+      colour += 20;
+      Io_Write16(RGB(red, green, colour), palette++);
     }
   } while (++i <= 3);
 }
@@ -886,17 +887,16 @@ void FileList_DrawDjinnCounts(struct RenderInput *win,
 #define SUMMARY_COINS_X 48
 #endif
 
-/// win: destination; do nothing if zero.
-/// rec: the file summary (SaveSummary).
-///      +16 name, +28 level, +29 class, +32 play time, +36 coins.
-void FileList_DrawSummary(s32 win, u8 *rec) {
-  u32 buf[4]; // Formatted play time.
+/// Draws a file's summary into window, when there is one: the leader's name,
+/// level and class, the play time and the coins.
+void FileList_DrawSummary(s32 win, struct SaveSummary *summary) {
+  u32 playTime[4]; // the play time text
   s32 y;
 
   if (win != 0) {
     WindowSprite_PrepareForRedraw((struct Window *)win);
     Window_DrawDividerLine((struct Window *)win, 0, 4, 13, 4);
-    Text_DrawStringAtOffset(rec + 16, win, 0, 0);
+    Text_DrawStringAtOffset(summary->name, win, 0, 0);
     y = 0;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
     Text_DrawStringAtOffset(gStatusMenu_LevelLetterString, win, SUMMARY_LEVEL_X,
@@ -904,24 +904,24 @@ void FileList_DrawSummary(s32 win, u8 *rec) {
 #else
     Text_DrawStringInWindow((u8 *)gStatusMenu_LevelLetterString, win, 72, 0);
 #endif
-    Text_DrawNumberAtOffset(rec[28], 2, win, 80, y);
-    Text_DrawMessageAsTiles(rec[29] + (s32)MsgClassName, win, 0, 16);
+    Text_DrawNumberAtOffset(summary->level, 2, win, 80, y);
+    Text_DrawMessageAsTiles(summary->classId + (s32)MsgClassName, win, 0, 16);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     y = 32;
-    Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
+    Text_DrawNumberInWindow(summary->coins, 6, win, 24, y);
     Text_DrawMessageAsTiles((s32)MsgCoins, win, 72, 32);
     Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 48);
     Text_DrawStringInWindow(
-        String_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 48);
+        String_FormatPlayTime(summary->playTime, (u8 *)playTime), win, 48, 48);
 #else
     Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 32);
     Text_DrawStringInWindow(
-        String_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
+        String_FormatPlayTime(summary->playTime, (u8 *)playTime), win, 48, 40);
     y = 48;
-    Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
+    Text_DrawNumberInWindow(summary->coins, 6, win, 0, y);
 #if (LANGUAGE == LANGUAGE_FRENCH)
-    // French uses the singular form for zero or one coin.
-    if (*(u32 *)(rec + 36) > 1)
+    // French takes the singular "Pièce" for one coin or none.
+    if (summary->coins > 1)
       Text_DrawMessageAsTiles((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
     else
       Text_DrawMessageAsTiles((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
@@ -1071,8 +1071,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                           save->summary[selectedFile].windowBrightness);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
-        FileList_DrawSummary((s32)summaryWindow,
-                             (u8 *)&save->summary[selectedFile]);
+        FileList_DrawSummary((s32)summaryWindow, &save->summary[selectedFile]);
         wait(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);

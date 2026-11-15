@@ -52,8 +52,8 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;
-  cursorX = work->x >> 16;
-  cursorY = work->z >> 16;
+  cursorX = FIELD_PIXEL(work->x);
+  cursorY = FIELD_PIXEL(work->z);
   if (work->unk644 != 0) {
     cursorX = work->unk644 >> 16;
     cursorY = work->unk648 >> 16;
@@ -283,8 +283,8 @@ void WorldPicture_UpdateMarkers(void) {
         name = -2;
         tile = 2;
         always = 0;
-        placeX = (gMainRoutineWork.savedX >> 16) * 853 / 16384 - 269;
-        placeY = (gMainRoutineWork.savedZ >> 16) * 640 / 16384 - 112;
+        placeX = FIELD_PIXEL(gMainRoutineWork.savedX) * 853 / 16384 - 269;
+        placeY = FIELD_PIXEL(gMainRoutineWork.savedZ) * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Get(flag))
           continue;
@@ -296,8 +296,8 @@ void WorldPicture_UpdateMarkers(void) {
     marker->objectMode = always;
     marker->tile = tileBase + tile;
     if (gWorldPicture_Zoomed == 0) {
-      x = placeX - (scrollX >> 16) - 1;
-      y = placeY - (scrollY >> 16) - 1;
+      x = placeX - FIELD_PIXEL(scrollX) - 1;
+      y = placeY - FIELD_PIXEL(scrollY) - 1;
       if ((u32)(x + 4) > 247)
         continue;
       if (y < -4)
@@ -327,8 +327,8 @@ void WorldPicture_UpdateMarkers(void) {
   if (gInput.held == 0) {
     if (nearest != -1) {
       if (nearestDistance <= 2) {
-        work->x = nearestX << 16;
-        work->z = nearestY << 16;
+        work->x = px(nearestX);
+        work->z = px(nearestY);
         work->speed = Q16_ONE;
       } else {
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
@@ -350,8 +350,8 @@ void WorldPicture_UpdateMarkers(void) {
     marker->objectMode = 0;
     marker->tile = tileBase + 3;
     if (gWorldPicture_Zoomed == 0) {
-      marker->x = nearestX - (scrollX >> 16) - 2;
-      marker->y = nearestY - (scrollY >> 16) - 2;
+      marker->x = nearestX - FIELD_PIXEL(scrollX) - 2;
+      marker->y = nearestY - FIELD_PIXEL(scrollY) - 2;
     } else {
       marker->x = WORLD_MAP_SCALE(nearestX) - 2;
       marker->y = WORLD_MAP_SCALE(nearestY) - 2;
@@ -362,8 +362,8 @@ void WorldPicture_UpdateMarkers(void) {
   marker = &gWorldPicture_CursorMarker;
   if (gWorldPicture_Zoomed == 0) {
     marker->affineIndex = 0;
-    marker->x = cursorX - (scrollX >> 16) - 17;
-    marker->y = cursorY - (scrollY >> 16) + 1;
+    marker->x = cursorX - FIELD_PIXEL(scrollX) - 17;
+    marker->y = cursorY - FIELD_PIXEL(scrollY) + 1;
   } else {
     marker->x = WORLD_MAP_SCALE(cursorX) - 17;
     marker->y = WORLD_MAP_SCALE(cursorY) + 1;
@@ -398,8 +398,8 @@ void WorldPicture_UpdateMarkers(void) {
         if (gWorldPicture_Zoomed == 0) {
           cursorX = nearestX - WORLD_MAP_NAME_LEFT;
           cursorY = nearestY - 11;
-          cursorX -= scrollX >> 16;
-          cursorY -= scrollY >> 16;
+          cursorX -= FIELD_PIXEL(scrollX);
+          cursorY -= FIELD_PIXEL(scrollY);
         } else {
           cursorX = WORLD_MAP_SCALE(nearestX) - 1;
           cursorY = WORLD_MAP_SCALE(nearestY) - 11;
@@ -428,8 +428,8 @@ void WorldPicture_UpdateMarkers(void) {
     if (gWorldPicture_Zoomed == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
-      cursorX -= scrollX >> 16;
-      cursorY -= scrollY >> 16;
+      cursorX -= FIELD_PIXEL(scrollX);
+      cursorY -= FIELD_PIXEL(scrollY);
     } else {
       cursorX = WORLD_MAP_SCALE(nearestX) - 1;
       cursorY = WORLD_MAP_SCALE(nearestY) - 11;
@@ -504,8 +504,8 @@ void WorldMapPicture_Draw(void) {
     z = 0;
   if (z > bottom)
     z = bottom;
-  gBgScroll[1].x = x >> 16;
-  gBgScroll[1].y = z >> 16;
+  gBgScroll[1].x = FIELD_PIXEL(x);
+  gBgScroll[1].y = FIELD_PIXEL(z);
   x = (u32)x >> 19;
   column = x;
   firstRow = (u32)z >> 19;
@@ -699,8 +699,8 @@ void WorldMapPicture_UpdateScroll(void) {
       else
         WorldMapPicture_DrawRow(column, row);
     }
-    gBgScroll[1].x = x >> 16;
-    gBgScroll[1].y = y >> 16;
+    gBgScroll[1].x = FIELD_PIXEL(x);
+    gBgScroll[1].y = FIELD_PIXEL(y);
   }
   SCROLL_X = x;
   SCROLL_Y = y;

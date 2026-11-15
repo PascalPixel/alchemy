@@ -124,7 +124,7 @@ void BlankOverlay_DrawMarks(void) {
   if (actor == 0)
     return;
   x = ((s16 *)&actor->x)[1];
-  row = (actor->z - actor->y) >> 16;
+  row = FIELD_PIXEL(actor->z - actor->y);
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
   cells = map->layers[2].cells;
   a = cells + (x + 8) / 16 + (row / 16 - 2) * 128;

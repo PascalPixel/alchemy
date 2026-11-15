@@ -244,8 +244,8 @@ void FieldPsynergy_Pound(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                       Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;

@@ -564,11 +564,12 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
           if (WorldMap_IsSailable(object, &testPosition) == 0) {
             SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                          object->z.fixed);
-            Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+            Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
             if (WorldMap_IsSailable(object, &testPosition) == 0) {
               SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                            object->z.fixed);
-              Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+              Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000,
+                                    &testPosition);
               if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
             }
@@ -600,12 +601,12 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         angle = (s16)direction;
@@ -779,11 +780,11 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
       if (WorldMap_IsFlyable(object, &testPosition) == 0) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsFlyable(object, &testPosition) == 0) {
           SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+          Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
           if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
         }
@@ -814,12 +815,12 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+    Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+    Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;

@@ -190,7 +190,7 @@ void FieldEffect_UpdateSparkles(void) {
       frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
-      x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
+      x = FIELD_PIXEL(sparkle->posX - cameraX) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
       sy = (sparkle->posZ - sparkle->posY - cameraZ) / Q16_ONE +
            *(const s16 *)frame;

@@ -189,7 +189,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 
   if (dx > px(64) || dz > px(64))
     return -1;
-  if (dy > radius << 16)
+  if (dy > px(radius))
     return -1;
   if (dx * dx + dz * dz < radius * radius)
     return 1;

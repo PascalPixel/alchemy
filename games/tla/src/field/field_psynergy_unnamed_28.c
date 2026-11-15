@@ -60,9 +60,9 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   if (work->orbiting != 0)
     Vector_AddPolarOffset(px(2), -(event->ringFrames << 11), pos);
   Camera_WorldToScreen(pos);
-  x = pos[0] >> 16;
+  x = FIELD_PIXEL(pos[0]);
   gBgScroll[0].x = 64 - x;
-  y = pos[2] >> 16;
+  y = FIELD_PIXEL(pos[2]);
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
@@ -486,8 +486,8 @@ void ViewMove_Start(s32 direction) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *center = event->camera;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 viewX = map->viewX >> 16;
-  s32 viewZ = map->viewZ >> 16;
+  s32 viewX = FIELD_PIXEL(map->viewX);
+  s32 viewZ = FIELD_PIXEL(map->viewZ);
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;

@@ -26,6 +26,7 @@
 #include "gamepak/far_call/window.h"
 #include "field/lucky_wheels_title.h"
 #include "field/field_bank.h"
+#include "field/field_sequence.h"
 #include "system/system_bank.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
@@ -926,14 +927,14 @@ void LuckyWheels_Update(void) {
       y = 32;
     }
     work->obj[work->spriteCount].attr01 =
-        ((x - 12) << 16) | objMode | (y + 8) | 0x80006000;
+        OBJ_X(x - 12) | objMode | (y + 8) | 0x80006000;
     work->obj[work->spriteCount].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     work->spriteCount++;
     work->obj[work->spriteCount].attr01 =
-        ((x + 12) << 16) | objMode | (y + 8) | 0x90006000;
+        OBJ_X(x + 12) | objMode | (y + 8) | 0x90006000;
     work->obj[work->spriteCount].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     work->spriteCount++;
-    work->obj[work->spriteCount].attr01 = (x << 16) | objMode | y | 0x80002000;
+    work->obj[work->spriteCount].attr01 = OBJ_X(x) | objMode | y | 0x80002000;
     work->obj[work->spriteCount].attr2 = LUCKY_WHEELS_HAND_TILES;
     work->spriteCount++;
   }
@@ -973,7 +974,7 @@ void LuckyWheels_Update(void) {
 
   for (k = 0; k != LUCKY_WHEELS_MACHINE_LIGHTS; k++) {
     work->obj[work->spriteCount].attr01 =
-        (gLuckyWheels_MachineSpriteX[k] << 16) | objMode |
+        OBJ_X(gLuckyWheels_MachineSpriteX[k]) | objMode |
         gLuckyWheels_MachineSpriteY[k] | 0x80006000;
     if (k < LUCKY_WHEELS_CORNER_LIGHTS)
       work->obj[work->spriteCount].attr2 =
@@ -1158,7 +1159,7 @@ void LuckyWheels_InitializeTitle(void) {
 
   letter = work->particles;
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
-    letter[i].x = (left + REEL_TITLE_LEFT) << 16;
+    letter[i].x = px(left + REEL_TITLE_LEFT);
     left += gLuckyWheels_TitleLetterWidths[i];
     letter[i].y = (-32 - i * 8) << 16;
     letter[i].velocityY = 0;
@@ -1458,8 +1459,8 @@ void LuckyWheels_Run(void) {
 
               if (y <= 0x7fffff) {
                 if (y >= 0) {
-                  s32 px = x >> 16;
-                  s32 py = y >> 16;
+                  s32 px = FIELD_PIXEL(x);
+                  s32 py = FIELD_PIXEL(y);
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,

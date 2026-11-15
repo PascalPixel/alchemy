@@ -770,7 +770,7 @@ void ActorSystem_PlaceSprites(void) {
         if (*priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           probeX = object->x.fixed - px(7);
           feetZ = object->z.fixed + px(2);
-          objectHeight = object->groundHeight >> 16;
+          objectHeight = FIELD_PIXEL(object->groundHeight);
           priority = 0;
           leftPriority = 0;
           middlePriority = 0;
@@ -969,7 +969,8 @@ void ActorSystem_ProjectSprites(void) {
     eye = camera->followEye;
   if (camera->followPosition != NULL)
     target = camera->followPosition;
-  angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
+  angle = (s16)ArcTan2(FIELD_PIXEL(eye->x - target->x),
+                       FIELD_PIXEL(eye->z - target->z));
   system->used = 0;
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     Transform_Reset();

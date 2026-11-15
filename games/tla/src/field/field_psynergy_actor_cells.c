@@ -308,13 +308,13 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     s32 turnedX = Iwram_MulQ16(cos, pivotX) - Iwram_MulQ16(sin, pivotY);
     s32 turnedY = Iwram_MulQ16(cos, pivotY) + Iwram_MulQ16(sin, pivotX);
 
-    left = width / 2 + ((turnedX - cornerX) >> 16);
-    top = height / 2 + ((turnedY - cornerY) >> 16);
+    left = width / 2 + FIELD_PIXEL(turnedX - cornerX);
+    top = height / 2 + FIELD_PIXEL(turnedY - cornerY);
   }
 
   // The box on screen; skip it when none of it shows.
-  screenX = (x >> 16) - left;
-  screenY = (y >> 16) - top;
+  screenX = FIELD_PIXEL(x) - left;
+  screenY = FIELD_PIXEL(y) - top;
   if (screenX + width < 0 || screenX > 239 || screenY + height <= 0 ||
       screenY > 159)
     return;

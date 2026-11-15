@@ -763,8 +763,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   actor->acceleration = watchedObject->acceleration;
   dx = watchedObject->x.fixed - actor->x.fixed;
   dz = watchedObject->z.fixed - actor->z.fixed;
-  deltaXPixels = dx >> 16;
-  deltaZPixels = dz >> 16;
+  deltaXPixels = FIELD_PIXEL(dx);
+  deltaZPixels = FIELD_PIXEL(dz);
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
   if (distancePixels > 0x10) {

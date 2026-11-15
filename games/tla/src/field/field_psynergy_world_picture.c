@@ -61,8 +61,8 @@ void WorldPicture_Initialize(void) {
     work->z = px(16);
   } else {
     WorldPicture_GetLeaderPoint(&screenX, &screenY);
-    work->x = screenX << 16;
-    work->z = screenY << 16;
+    work->x = px(screenX);
+    work->z = px(screenY);
   }
   screenX = work->x - px(120);
   screenY = work->z - px(80);
@@ -115,8 +115,8 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
     x >>= 16;
     x = ((x << 14) + 0x434000) / 853;
     z >>= 16;
-    object->x.fixed = x << 16;
-    object->z.fixed = (((z << 14) + px(28)) / 640) << 16;
+    object->x.fixed = px(x);
+    object->z.fixed = px(((z << 14) + px(28)) / 640);
     camera[0] = object->x.fixed;
     camera[2] = object->z.fixed;
   }

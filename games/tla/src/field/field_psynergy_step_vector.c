@@ -248,8 +248,8 @@ void BattleEffect_UploadCanvas(void) {
 /// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
-  s32 x = work->x << 16;
-  s32 y = work->y << 16;
+  s32 x = px(work->x);
+  s32 y = px(work->y);
   s32 scaleX = work->scaleX;
   s32 scaleY = work->scaleY;
 

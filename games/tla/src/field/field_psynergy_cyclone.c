@@ -239,8 +239,8 @@ void FieldPsynergy_Cyclone(void) {
   pos[1] = effect->mainActor->y.fixed;
   pos[2] = effect->mainActor->z.fixed;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   canvas->priority = 1;
   canvas->depth = 240;
   canvas->mode = CANVAS_SPRITE_KEPT;

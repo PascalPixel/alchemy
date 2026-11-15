@@ -1576,10 +1576,10 @@ again:
         motion->velocityY = Trig_Sin(angle) * speed >> 6;
       }
       if (motion->delay > 0) {
-        s32 x = (s16)(motion->x >> 16);
+        s32 x = (s16)FIELD_PIXEL(motion->x);
 
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
-                                     x, (s16)(motion->y >> 16), 8, 8);
+                                     x, (s16)FIELD_PIXEL(motion->y), 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
         /* FAKEMATCH(barrier): an empty asm after the step. */
         asm("");
@@ -1597,8 +1597,8 @@ again:
   pos[2] = motion->z;
   Vector_AddPolarOffset(-px(36), scene->angle8, pos);
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   canvas->command = CANVAS_UPLOAD_AND_FADE3;
   work->timer++;
 }
@@ -1766,8 +1766,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
     }
     if (kind == 2 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
-      event->unk_d3c = x >> 16;
-      event->unk_d3e = z >> 16;
+      event->unk_d3c = FIELD_PIXEL(x);
+      event->unk_d3e = FIELD_PIXEL(z);
       event->unk_d3c = (event->unk_d3c & 0xfff0) + 8;
       event->unk_d3e = (event->unk_d3e & 0xfff0) + 8;
       points[count * 2] = x / px(16);
@@ -1776,8 +1776,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
     }
     if (kind == 3 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
-      event->unk_d40 = x >> 16;
-      event->unk_d42 = z >> 16;
+      event->unk_d40 = FIELD_PIXEL(x);
+      event->unk_d42 = FIELD_PIXEL(z);
       event->unk_d40 = (event->unk_d40 & 0xfff0) + 8;
       event->unk_d42 = (event->unk_d42 & 0xfff0) + 8;
       points[count * 2] = x / px(16);

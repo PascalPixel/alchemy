@@ -376,7 +376,8 @@ void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
   s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);
   s32 y = Iwram_MulQ16(Trig_Sin(turn), radius);
 
-  BattleEffect_PlotCanvasPixel(center - (x >> 16), center - (y >> 16), color);
+  BattleEffect_PlotCanvasPixel(center - FIELD_PIXEL(x), center - FIELD_PIXEL(y),
+                               color);
 }
 
 extern const u16 gData_080f39c4[];

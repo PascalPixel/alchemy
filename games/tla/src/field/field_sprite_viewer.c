@@ -344,10 +344,10 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 3:
     for (i = 0; i < 6; i++) {
       angle <<= 16;
-      positions->x = centerX << 16;
+      positions->x = px(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = centerY << 16;
+      positions->y = px(centerY);
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 6);
@@ -364,7 +364,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->x = px(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = centerY << 16;
+      positions->y = px(centerY);
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 8);
@@ -376,10 +376,10 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 6:
     for (i = 0; i < 10; i++) {
       angle <<= 16;
-      positions->x = centerX << 16;
+      positions->x = px(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = centerY << 16;
+      positions->y = px(centerY);
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 10);
@@ -391,17 +391,17 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     i = 0;
     pair = positions;
     while (i < 2) {
-      pair[i * 2].x = centerX << 16;
+      pair[i * 2].x = px(centerX);
       pair[i * 2].height = 0;
-      pair[i * 2].y = centerY << 16;
+      pair[i * 2].y = px(centerY);
       angle <<= 16;
       angle = (u32)angle >> 16;
       Vector_AddPolarOffset(px(40), angle, &positions[0].x);
-      pair[i * 2 + 1].x = centerX << 16;
+      pair[i * 2 + 1].x = px(centerX);
       {
         s32 *point = SpritePlacement_Values(&positions[1]);
         pair[i * 2 + 1].height = 0;
-        pair[i * 2 + 1].y = centerY << 16;
+        pair[i * 2 + 1].y = px(centerY);
         Vector_AddPolarOffset(px(40), (u16)angle, point);
       }
       angle = ((u32)angle + TRIG_TURN / 2) << 16;
@@ -417,7 +417,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->x = px(centerX);
       positions->height = 0;
-      positions->y = centerY << 16;
+      positions->y = px(centerY);
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 4);

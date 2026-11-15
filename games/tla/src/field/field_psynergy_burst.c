@@ -84,16 +84,16 @@ void FieldPsynergy_UpdateBurst(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
 
   if (scene->enabled == 0) {
     particle = work->sparks;
     for (i = 0; i < 32; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
-        sprite->x = particle->x + (canvas->x << 16);
-        sprite->y = particle->y + (canvas->y << 16);
+        sprite->x = particle->x + px(canvas->x);
+        sprite->y = particle->y + px(canvas->y);
         EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
@@ -212,8 +212,8 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < 12; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
-        sprite->x = particle->x + (canvas->x << 16);
-        sprite->y = particle->y + (canvas->y << 16);
+        sprite->x = particle->x + px(canvas->x);
+        sprite->y = particle->y + px(canvas->y);
         EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
@@ -347,8 +347,8 @@ void FieldPsynergy_Burst(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   canvas->priority =
       FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;

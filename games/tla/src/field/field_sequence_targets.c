@@ -102,7 +102,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   s32 height = MapGrid_GetTerrainHeightAboveFar(
       position[0], position[2], actor->layer, actor->groundHeight);
 
-  if (ABS(height) <= entry->height << 16)
+  if (ABS(height) <= px(entry->height))
     return ABS(height);
   return -1;
 }
@@ -134,7 +134,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
 
   // Height: within the rule's pixels above or below.
   rule = Field_GetPsynergyReach(animation);
-  height = rule->height << 16;
+  height = px(rule->height);
   if (animation == ANIMATION_MEASURES_FOOTING) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;

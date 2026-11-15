@@ -170,7 +170,7 @@ void Actor_UpdateAllThumb(void) {
             y = object->targetY;
             z = object->targetZ;
           } else {
-            ratio = Iwram_RatioMulQ14(distance << 16, object->acceleration);
+            ratio = Iwram_RatioMulQ14(px(distance), object->acceleration);
             object->velocityX += dx * ratio;
             object->velocityY += dy * ratio;
             object->velocityZ += dz * ratio;

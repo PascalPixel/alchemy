@@ -539,8 +539,8 @@ s32 Field_ClimbDown(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16, gridZ << 16) <=
-        MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) <=
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
                                     (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x.fixed;
@@ -571,8 +571,8 @@ s32 Field_ClimbDown(void) {
     spriteFlags &= 0xfe;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Actor_SelectAnimationFar(leader, 13);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed - px(16),
-                           (gridZ << 16) + 0x100000);
+    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed - px(16),
+                           px(gridZ) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     gMainRoutineWork.movementMode = 2;
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
@@ -631,8 +631,8 @@ s32 Field_ClimbUp(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16, gridZ << 16) >=
-        MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) >=
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
                                     (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x.fixed;
@@ -682,8 +682,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
     Actor_SelectAnimationFar(leader, 11);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed + px(8),
-                           (gridZ << 16) - 0x100000);
+    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed + px(8),
+                           px(gridZ) - 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 3;
     leader->groundHeight = leader->y.fixed;

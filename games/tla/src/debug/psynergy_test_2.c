@@ -325,14 +325,14 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, x << 16, 0, z << 16);
+    object = FieldActor_Create(354, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = (FieldActor_Create(252, x << 16, 0, z << 16));
+    object = (FieldActor_Create(252, px(x), 0, px(z)));
     if (object != NULL) {
       s32 scale;
 

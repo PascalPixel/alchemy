@@ -79,7 +79,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
-  struct Actor *object = Actor_CreateFar(sprite, x << 16, 0, z << 16);
+  struct Actor *object = Actor_CreateFar(sprite, px(x), 0, px(z));
   s32 from[3];
   s32 to[3];
   s32 i;

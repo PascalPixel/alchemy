@@ -7,6 +7,7 @@
 #include "sounds.h"
 #include "debug/debug.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -427,7 +428,7 @@ enum SuperLuckyDiceState {
       die = &(dice)->particles[index];                                         \
       die->z = 0;                                                              \
       die->y = px(96);                                                         \
-      die->x = (index * 24 - 108) << 16;                                       \
+      die->x = px(index * 24 - 108);                                           \
       die->velocityX = ((Random16() & 127) - 64) << 12;                        \
       die->velocityY = ((Random16() & 15) + 48) << 13;                         \
       die->velocityZ = ((Random16() & 127) + 64) << 13;                        \
@@ -803,9 +804,9 @@ void SuperLuckyDice_Run(void) {
           if (index != otherIndex) {
             s32 separationX, separationY, separationZ, separation;
 
-            separationX = (die->x - other->x) >> 16;
-            separationY = (die->y - other->y) >> 16;
-            separationZ = (die->z - other->z) >> 16;
+            separationX = FIELD_PIXEL(die->x - other->x);
+            separationY = FIELD_PIXEL(die->y - other->y);
+            separationZ = FIELD_PIXEL(die->z - other->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
                 0x1323) {
@@ -818,8 +819,8 @@ void SuperLuckyDice_Run(void) {
             }
           }
         }
-        wallX = die->x >> 16;
-        wallZ = die->z >> 16;
+        wallX = FIELD_PIXEL(die->x);
+        wallZ = FIELD_PIXEL(die->z);
         if (Iwram_Sqrt(wallX * wallX + wallZ * wallZ) > 199) {
           if (die->x > 0)
             die->velocityX = -ABS(die->velocityX);
@@ -1488,7 +1489,7 @@ void SuperLuckyDice_Run(void) {
         if (screen[2] > DICE_FARTHEST_DEPTH)
           screen[2] = DICE_FARTHEST_DEPTH;
         spriteDepth[4 + index] = screen[2] - DICE_NEAREST_DEPTH;
-        spriteDepth[4 + index] += (s16)(die->y >> 16);
+        spriteDepth[4 + index] += (s16)FIELD_PIXEL(die->y);
         half = spriteDepth[4 + index] / 2 + 128;
         x = screen[0] - 0x1800 / half;
         y = screen[1] - 0xc00 / half;

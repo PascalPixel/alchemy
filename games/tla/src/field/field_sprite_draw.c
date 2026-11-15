@@ -382,15 +382,15 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
     marginX = 16;
     marginY = 8;
   }
-  x = (screenX >> 16) - halfWidth;
-  y = ((screenY - height) >> 16) - halfHeight -
+  x = FIELD_PIXEL(screenX) - halfWidth;
+  y = FIELD_PIXEL(screenY - height) - halfHeight -
       ((((HEIGHT_COPY(sprite) >> 1) - sprite->offsetY) * scaleY + 0xffff) >>
        16);
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
-  x = (screenX >> 16) - marginX;
-  y = ((screenY - groundHeight) >> 16) - marginY;
+  x = FIELD_PIXEL(screenX) - marginX;
+  y = FIELD_PIXEL(screenY - groundHeight) - marginY;
   shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
@@ -456,13 +456,13 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   }
 
   // The shadow: an 8 by 4 sprite on the ground below the object.
-  y = ((pz - pw) >> 16) - 4;
+  y = FIELD_PIXEL(pz - pw) - 4;
   if ((object->flags & OBJECT_SHADOW) && y < 160) {
     part = &object->shadow;
     part->affine = 0;
-    part->x = (px >> 16) - 8;
+    part->x = FIELD_PIXEL(px) - 8;
     part->y = y;
-    Oam_AddSpriteAtDepthClamped(part, ((pz + pw) >> 16) + 60);
+    Oam_AddSpriteAtDepthClamped(part, FIELD_PIXEL(pz + pw) + 60);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -481,15 +481,15 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     anchorX = Iwram_MulQ16(cos, offsetX) + Iwram_MulQ16(sin, offsetY);
     anchorY = Iwram_MulQ16(cos, offsetY) - Iwram_MulQ16(sin, offsetX);
   }
-  x = (px >> 16) - halfWidth + ((anchorX + 0xffff) >> 16);
-  y = ((pz - py) >> 16) - halfHeight - ((anchorY + 0xffff) >> 16);
+  x = FIELD_PIXEL(px) - halfWidth + FIELD_PIXEL(anchorX + 0xffff);
+  y = FIELD_PIXEL(pz - py) - halfHeight - FIELD_PIXEL(anchorY + 0xffff);
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Oam_AddSpriteAtDepthClamped(part, ((py + pz) >> 16) + 62);
+    Oam_AddSpriteAtDepthClamped(part, FIELD_PIXEL(py + pz) + 62);
   }
 }
 
@@ -558,11 +558,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     extentY = 8;
   }
 
-  y = ((pz - pw) >> 16) - extentY;
+  y = FIELD_PIXEL(pz - pw) - extentY;
   if ((object->flags & OBJECT_SHADOW) && y < 160) {
     part = &object->shadow;
     part->affine = 0;
-    part->x = (px >> 16) - extentX;
+    part->x = FIELD_PIXEL(px) - extentX;
     part->y = y;
     Oam_AddSpriteAtDepth(part, depth);
   }
@@ -587,8 +587,8 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);
     anchorY = Iwram_MulQ16(cos, extentY) - Iwram_MulQ16(sin, extentX);
   }
-  x = (px >> 16) - halfWidth + ((anchorX + 0xffff) >> 16);
-  y = ((pz - py) >> 16) - halfHeight - ((anchorY + 0xffff) >> 16);
+  x = FIELD_PIXEL(px) - halfWidth + FIELD_PIXEL(anchorX + 0xffff);
+  y = FIELD_PIXEL(pz - py) - halfHeight - FIELD_PIXEL(anchorY + 0xffff);
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;

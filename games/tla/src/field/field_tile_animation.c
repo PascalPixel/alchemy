@@ -1005,8 +1005,8 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
 /// less base; a layer past 2 reads the shape grid. With no map, or while the
 /// event mode is 3, it is 0.
 s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
-  s32 x = px >> 16;
-  s32 z = pz >> 16;
+  s32 x = FIELD_PIXEL(px);
+  s32 z = FIELD_PIXEL(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
@@ -1031,8 +1031,8 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
 /// 2 reads the cell buffer and shape grid. With no map, or while the event
 /// mode is 3, every point is level (0).
 s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
-  s32 x = px >> 16;
-  s32 z = pz >> 16;
+  s32 x = FIELD_PIXEL(px);
+  s32 z = FIELD_PIXEL(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;

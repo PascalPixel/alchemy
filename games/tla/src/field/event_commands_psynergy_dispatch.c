@@ -352,7 +352,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     s32 base = map->base->base;
 
     depth =
-        ((object->y.fixed - base + object->z.fixed - base - bias) >> 16) + 62;
+        FIELD_PIXEL(object->y.fixed - base + object->z.fixed - base - bias) +
+        62;
   }
   return depth;
 }

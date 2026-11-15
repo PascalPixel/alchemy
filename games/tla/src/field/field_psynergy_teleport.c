@@ -227,7 +227,7 @@ void Teleport_PlaySparks(void) {
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
-        particle->velocityY = -(px(4));
+        particle->velocityY = -px(4);
         particle->velocityZ = zero;
         Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
                               &work->particles[next].velocityX);

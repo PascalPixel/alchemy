@@ -583,21 +583,20 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   }
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    SET_POSITION(&gMainRoutineWork, entry->x << 16, entry->y << 16,
-                 entry->z << 16);
+    SET_POSITION(&gMainRoutineWork, px(entry->x), px(entry->y), entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.layer = 0;
   }
 
   left = entry->cameraLeft;
   if (left != -1)
-    map->minX = left << 16;
+    map->minX = px(left);
   if (entry->cameraTop != -1)
-    map->minZ = entry->cameraTop << 16;
+    map->minZ = px(entry->cameraTop);
   if (entry->cameraRight != -1)
-    map->maxX = entry->cameraRight << 16;
+    map->maxX = px(entry->cameraRight);
   if (entry->cameraBottom != -1)
-    map->maxZ = entry->cameraBottom << 16;
+    map->maxZ = px(entry->cameraBottom);
 
   if (map->minX + px(240) > map->maxX)
     map->minX = map->maxX - px(240);
@@ -648,8 +647,8 @@ s32 Field_PlaceAtEntrance(void) {
       cursor++;
       x = Stream_ReadS16(&cursor);
       z = Stream_ReadS16(&cursor);
-      xFixed = x << 16;
-      zFixed = z << 16;
+      xFixed = px(x);
+      zFixed = px(z);
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;

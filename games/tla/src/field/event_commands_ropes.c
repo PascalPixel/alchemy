@@ -87,15 +87,15 @@ void Rope_Draw(void) {
         screenY = depth - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 spriteX = ((screenX >> 16) - 4) & 0x1ff;
-          s32 spriteY = ((screenY >> 16) - 4) & 0xff;
+          s32 spriteX = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
+          s32 spriteY = (FIELD_PIXEL(screenY) - 4) & 0xff;
           struct AnimationSpritePart *sprite;
 
-          prevY = ((prevY + depth) >> 16) + 58;
+          prevY = FIELD_PIXEL(prevY + depth) + 58;
           sprite = &node->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = spriteY | (spriteX << 16) | 0x2000;
+          ((u32 *)&node->sprite)[1] = spriteY | OBJ_X(spriteX) | 0x2000;
           ((u32 *)&node->sprite)[2] = 0x800 | tile;
           if (angle != 0) {
             transform.angle = angle;
@@ -804,12 +804,12 @@ void Tightrope_Draw(void) {
 
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 left = ((screenX >> 16) - 4) & 0x1ff;
-          s32 top = ((screenY >> 16) - 4) & 0xff;
-          s32 key = ((prevY + prevZ) >> 16) + 58;
+          s32 left = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
+          s32 top = (FIELD_PIXEL(screenY) - 4) & 0xff;
+          s32 key = FIELD_PIXEL(prevY + prevZ) + 58;
 
           ((u32 *)&node->sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = top | (left << 16) | 0x2000;
+          ((u32 *)&node->sprite)[1] = top | OBJ_X(left) | 0x2000;
           ((u32 *)&node->sprite)[2] = tile | 0x800;
           node->sprite.affine = affine;
           node->sprite.affineIndex = matrix;
@@ -1379,13 +1379,13 @@ void HangingVine_Draw(void) {
         screenY = prevZ - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 sx = ((screenX >> 16) - 8) & 0x1ff;
-          s32 sy = ((screenY >> 16) - 8) & 0xff;
-          s32 priority = ((prevY + prevZ) >> 16) + 34;
+          s32 sx = (FIELD_PIXEL(screenX) - 8) & 0x1ff;
+          s32 sy = (FIELD_PIXEL(screenY) - 8) & 0xff;
+          s32 priority = FIELD_PIXEL(prevY + prevZ) + 34;
           struct AnimationSpritePart *sprite = &link->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&link->sprite)[1] = sy | (sx << 16) | 0x40002000;
+          ((u32 *)&link->sprite)[1] = sy | OBJ_X(sx) | 0x40002000;
           ((u32 *)&link->sprite)[2] = tile | 0x800;
           if (angle != 0) {
             transform.angle = angle;

@@ -176,9 +176,9 @@ void FieldMotes_Update(void) {
       }
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
-      x = ((mote->posX - cameraX) >> 16) +
+      x = FIELD_PIXEL(mote->posX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
-      y = ((mote->posZ - mote->posY - cameraZ) >> 16) - (u16)age;
+      y = FIELD_PIXEL(mote->posZ - mote->posY - cameraZ) - (u16)age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;

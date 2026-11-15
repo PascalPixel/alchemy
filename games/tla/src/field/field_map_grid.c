@@ -539,8 +539,8 @@ void MapGrid_UpdateLayerScroll(void) {
     }
     layer->x = baseX;
     layer->y = baseY;
-    gBgScroll[3 - layerIndex].x = baseX >> 16;
-    gBgScroll[3 - layerIndex].y = baseY >> 16;
+    gBgScroll[3 - layerIndex].x = FIELD_PIXEL(baseX);
+    gBgScroll[3 - layerIndex].y = FIELD_PIXEL(baseY);
   }
 }
 

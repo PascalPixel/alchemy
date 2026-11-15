@@ -221,8 +221,8 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
     GameFlag_Set(flag);
     if (object->x.fixed != 0)
       Actor_SetSquareSprite(objectId);
-    object->x.fixed = object->homeX << 16;
-    object->z.fixed = object->homeZ << 16;
+    object->x.fixed = px(object->homeX);
+    object->z.fixed = px(object->homeZ);
     BattleEffect_DropObjectAtAnchor(objectId);
   }
 }
@@ -311,9 +311,9 @@ void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
   if (object == 0)
     return;
   if (x == -1)
-    x = object->homeX << 16;
+    x = px(object->homeX);
   if (z == -1)
-    z = object->homeZ << 16;
+    z = px(object->homeZ);
   object->x.fixed = x;
   object->z.fixed = z;
   object->y.fixed = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);

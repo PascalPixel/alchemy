@@ -80,7 +80,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       spriteId = descriptor->sprite;
       from.x = source->x.fixed;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
-      from.y = source->y.fixed + (metadata->boxX << 16) - px(2);
+      from.y = source->y.fixed + px(metadata->boxX) - px(2);
       from.z = source->z.fixed;
       sprite = target->sprite;
       descriptor = Scene_FindActorPlacement(work->targetId);
@@ -91,7 +91,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         s32 box = metadata->boxX;
         s32 y = target->y.fixed;
 
-        y += box << 16;
+        y += px(box);
         to.y = y - px(2);
       }
       to.z = target->z.fixed;

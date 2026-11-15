@@ -16,6 +16,8 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
   map->maxZ = maxZ;
 }
 
+/// Each frame of a World Map zoom: moves the zoom from zoomFrom toward zoomTo
+/// over zoomFrames frames.
 void WorldMap_StepZoom(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 *duration;
@@ -80,6 +82,8 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
+/// Per-frame update: keeps the actor on the actor it watches, raised by the
+/// height of that actor's sprite and 8 pixels more.
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   struct Actor *link;
 
@@ -172,6 +176,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
   return object;
 }
 
+/// Returns 0 while the actor's first layer runs animation 0x108, else 1.
 s32 Actor_IsOutsideAnimation108(struct Actor *object) {
   struct ObjectAnimationState *state;
   s32 value;

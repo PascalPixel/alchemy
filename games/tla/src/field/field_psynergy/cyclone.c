@@ -410,6 +410,9 @@ void FieldPsynergy_Cyclone(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// The actor leaves in a ring of light (sprite 280): for 128 frames it swings
+/// up and round inside the ring as the screen transition starts, then the
+/// ring vanishes with a whoosh and the camera follows the actor again.
 void Actor_DepartInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;

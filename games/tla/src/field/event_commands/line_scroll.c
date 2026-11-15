@@ -174,6 +174,7 @@ void LineScroll_BuildPage(void) {
   work->page ^= 1;
 }
 
+/// Waits for a DMA channel to finish.
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA_ENABLE << 16) != 0) {
   }

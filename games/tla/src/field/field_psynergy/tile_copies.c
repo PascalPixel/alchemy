@@ -147,6 +147,9 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
   }
 }
 
+/// Starts Cyclone's 96 leaves, scattered round the caster and spinning, to
+/// blow toward the first cell of FieldWork.psynergyCells (ParticleBurst_Update
+/// moves them).
 void ParticleBurst_Start(void) {
   struct ParticleBurstWork *work =
       (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;

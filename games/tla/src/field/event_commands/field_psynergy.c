@@ -269,6 +269,7 @@ struct ResourceSprite {
   u8 flags;
 };
 
+/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount;
@@ -359,6 +360,8 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 
 void PaletteFade_SetTarget(s32 value, s32 mode);
 
+/// Fades the palettes to color over frames frames, keeping the field's colours
+/// for Field_StartPaletteTransition; flag 0x108 is set while it holds.
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->fieldWork;
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
@@ -373,6 +376,8 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   PaletteFade_StartInterpolation(frames);
 }
 
+/// Fades the palettes back from Field_StartColorTransition's colour over frames
+/// frames, the BG half to grey while Reveal is active; clears flag 0x108.
 void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->fieldWork;
   s32 colors = (s32)(state + 0x222);

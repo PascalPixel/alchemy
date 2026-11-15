@@ -349,6 +349,7 @@ void FieldEffect_ReleaseSlots(void) {
   wait(1);
 }
 
+/// Per-frame update: spins the actor an eighth of a turn.
 void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += TRIG_TURN / 8;
 }

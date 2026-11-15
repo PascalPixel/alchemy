@@ -242,6 +242,8 @@ s32 Entrance_PlayArrival(void) {
   return result;
 }
 
+/// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
+/// drawn transparent (SPRITE_COLOR_HIDDEN).
 void Func_080d5fd4(void) {
   struct Actor *object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   u8 *metadata =

@@ -487,6 +487,7 @@ s32 FieldPsynergy_FilterHaltTarget(s32 id) {
 /// Catch cast on a target: runs FieldPsynergy_Catch.
 void FieldPsynergy_CatchOnTarget(void) { FieldPsynergy_Catch(); }
 
+/// The value step tenths of the way from from to to.
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
 }
@@ -1817,6 +1818,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 // Only for the compiler: see the FAKEMATCH tag in
 // FieldPsynergy_RunTouchedEvents.
+/// An index, as passed.
 static inline s32 Index(s32 i) { return i; }
 
 /// Resolves each cell in the event work's touched list to an event id at the
@@ -1880,8 +1882,14 @@ extern struct TouchCopies gSceneLocalState;
 
 struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
-void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
-                                 s32 originX, s16 originZ, s32 layerIndex) {
+/// Clears what Cyclone blew away: each cell of FieldWork.psynergyCells that
+/// falls in the width by height window at (windowX, windowZ) of layerIndex
+/// (counted from the layer's scroll and the leader's height) takes the cell
+/// picture from the same place of the window at (sourceX, sourceZ), is opened
+/// on layer 2, and is recorded (up to 64) in gSceneLocalState to be made again.
+void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
+                                 s32 height, s32 windowX, s16 windowZ,
+                                 s32 layerIndex) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
@@ -1891,8 +1899,8 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
   s32 i;
 
   for (i = 0; cell[i].x != -1; i++) {
-    s32 x = cell[i].x - originX;
-    s32 z = cell[i].z - originZ - ownerHeight;
+    s32 x = cell[i].x - windowX;
+    s32 z = cell[i].z - windowZ - ownerHeight;
 
     x += layer->x >> 20;
     z += layer->z >> 20;
@@ -1900,15 +1908,15 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;
 
-      MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
-                                          originZ + z);
+      MapGrid_CopyCellPictureCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
+                                          windowX + x, windowZ + z);
       MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
       n = gSceneLocalState.count;
       if (n < 64) {
-        gSceneLocalState.copies[n].toX = toX + x;
-        gSceneLocalState.copies[n].toZ = toZ + z;
-        gSceneLocalState.copies[n].fromX = originX + x;
-        gSceneLocalState.copies[n].fromZ = originZ + z;
+        gSceneLocalState.copies[n].toX = sourceX + x;
+        gSceneLocalState.copies[n].toZ = sourceZ + z;
+        gSceneLocalState.copies[n].fromX = windowX + x;
+        gSceneLocalState.copies[n].fromZ = windowZ + z;
         gSceneLocalState.copies[n].cellX = cell[i].x;
         gSceneLocalState.copies[n].cellZ = cell[i].z;
         gSceneLocalState.count++;

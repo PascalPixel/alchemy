@@ -87,6 +87,10 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   } while (remainingSlots >= 0);
 }
 
+/// Prepares the work of the field Psynergy for ability (heap slot
+/// fieldEffectWork): its kind, the free VRAM it starts with, the map's shake
+/// to restore, and whether the place is lit. While another field Psynergy is
+/// resolving, only the ability and kind are set.
 void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -189,6 +193,9 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   }
 }
 
+/// Starts casting: the caster takes its casting pose (animation 20) and stops,
+/// flashes with a sound, and the ability's name is announced; with flag 0x140
+/// set the caster takes animation 21 and keeps its glow.
 void EventObject_Initialize(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -234,6 +241,7 @@ void EventObject_Initialize(void) {
   event->castStarted = 1;
 }
 
+/// Takes the caster out of its casting update and waits a frame.
 void BattleEffect_StopMainActor(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -241,6 +249,9 @@ void BattleEffect_StopMainActor(void) {
   wait(1);
 }
 
+/// Ends a field Psynergy: frees the field effect sprites still in use and,
+/// unless another is being resolved, waits for the swelling arcs to end,
+/// restores the map's shake and releases the work.
 void BattleEffect_CleanupSceneObjects(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;

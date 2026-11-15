@@ -712,6 +712,7 @@ s32 Field_PlaceAtEntrance(void) {
   }
 }
 
+/// Reads a little-endian halfword at *cursor and moves the cursor past it.
 u32 Stream_ReadU16(u8 **cursor) {
   u32 low = *(*cursor)++;
   u32 high = *(*cursor)++;
@@ -719,6 +720,8 @@ u32 Stream_ReadU16(u8 **cursor) {
   return low | (high << 8);
 }
 
+/// Reads a signed little-endian halfword at *cursor and moves the cursor past
+/// it.
 s16 Stream_ReadS16(u8 **cursor) {
   u32 value;
 
@@ -727,6 +730,9 @@ s16 Stream_ReadS16(u8 **cursor) {
   return value;
 }
 
+/// Places the party where it enters: by the scene's entrance row for
+/// gMainRoutineWork.entrance, else on a map by the map's own entrance stream
+/// (Field_PlaceAtEntrance), else by the scene's first entrance row.
 void BattleMap_ApplySceneEntranceView(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 done;

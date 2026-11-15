@@ -305,6 +305,11 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   return result;
 }
 
+/// Returns the scene's first Psynergy trigger (kind 5) for a field Psynergy
+/// kind whose condition holds, whose facing (when it has one) the leader
+/// faces, whose stage matches filter (0xf0000005 takes any) and whose target
+/// is what selector names (Scene_SelectPsynergyTarget: a cell, an actor, or
+/// anything); NULL when there is none.
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

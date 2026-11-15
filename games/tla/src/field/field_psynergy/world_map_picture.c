@@ -592,6 +592,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
   }
 }
 
+/// Adds a cell to a column number.
 static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
   /* FAKEMATCH(wrapper): the column added through an inline. */
   return column + cell;

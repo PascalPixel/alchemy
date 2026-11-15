@@ -117,6 +117,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
 }
 
 // Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
+/// The actor's x.
 static inline s32 ActorX(struct Actor *actor) { return actor->x.fixed; }
 
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the

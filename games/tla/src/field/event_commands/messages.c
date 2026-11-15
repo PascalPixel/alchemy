@@ -292,6 +292,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   work->message++;
 }
 
+/// Shows a message at a position of the screen (Event_ShowMessageAtPosition).
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowMessageAtPosition(a, b, c, d);
 }
@@ -438,6 +439,8 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
   }
 }
 
+/// The event command "camera set speed": the camera's top speed and
+/// acceleration, 16.16 pixels per frame.
 void Camera_SetSpeedParameters(s32 first, s32 second) {
   struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 

@@ -14,6 +14,8 @@
 #include "scene_call.h"
 #include "macros.h"
 
+/// Moves the actor halfway to the actor it watches; a copy of
+/// Actor_MoveHalfwayTowardTarget.
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
   struct Actor *target = object->watchedActor;
 

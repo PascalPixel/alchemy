@@ -421,6 +421,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 #undef FIELD_AT_OFFSET
 #undef gInput.held
 
+/// Gives layer slot of each of the viewer's ten sprites the colour mode value.
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * 4 + 40;
@@ -435,6 +436,8 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   } while (count >= 0);
 }
 
+/// Gives layer slot of each of the viewer's ten sprites the drawing order
+/// value.
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * 4 + 40;

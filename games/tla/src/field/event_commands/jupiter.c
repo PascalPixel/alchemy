@@ -77,6 +77,8 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   FieldEffect_ReleaseSlots();
 }
 
+/// Per-frame update: makes an actor pulse, switching its scale between the two
+/// values of gBattleEffect_PulseScales every 4 frames.
 void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   u32 *vblankCount = &gVBlankCount;
   u32 *table;

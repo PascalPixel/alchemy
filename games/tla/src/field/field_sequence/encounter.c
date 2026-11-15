@@ -183,6 +183,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   return sum;
 }
 
+/// Rolls a random battle on the encounter zone of the ground underfoot: index
+/// into work->encounterZones; steps, the step weight, is passed on to
+/// Encounter_CountStepsAndSelectFormation.
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = gFieldWork->encounterZones;
 

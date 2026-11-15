@@ -2,6 +2,7 @@
 #include "field_event.h"
 #include "macros.h"
 
+/// Clears all movement targets and velocities and resets the actor timer.
 void SceneActor_ParkRecord(struct Actor *actor) {
   actor->targetX = TARGET_UNSET;
   actor->targetY = TARGET_UNSET;

@@ -96,11 +96,13 @@ s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
   return 0;
 }
 
+/// Actor script hook: clears the actor's sprite flags (outline and shadow).
 s32 Actor_ClearChildFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
 
+/// Actor script hook: sets priorityFlags bit 5.
 s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
   obj->flags23 |= 0x20;
   return 0;
@@ -202,6 +204,8 @@ extern const u8 gMovementType_TakeLeaderLayerScript[];
 extern const u8 gMovementType_ResetActionScript[];
 extern const u8 gMovementType_ClearChildScript[];
 
+/// Starts an actor's movement type: an enum MovementType, or any other value as
+/// the actor script to run itself.
 void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:

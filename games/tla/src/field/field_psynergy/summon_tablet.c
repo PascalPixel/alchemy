@@ -454,6 +454,11 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /// Lemurian Ship call it as they start.
 // XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
 // would settle it.
+/// Sets up a scene's flag blocks (actor and flag pairs, ended by actor 0xffff):
+/// each stops being solid and blocks its cell; one whose flag is set takes
+/// animation 0 and has the flag cleared, the others animation 1. Then
+/// FlagBlock_ApplyFlags applies them and the leader is lifted onto the ground
+/// if it now lies below it.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;

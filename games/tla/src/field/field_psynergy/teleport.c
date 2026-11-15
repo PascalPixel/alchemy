@@ -27,6 +27,7 @@ extern char ResourceId_ColouredOrbs;
 /// Anemos Inner Sanctum, the Yampi Desert and Islet caves, Contigo).
 // XXX: whether the whirl is the leaving or the arriving half of a teleport;
 // a render of a Teleport circle would settle it.
+/// Teleport's whirl: 100 sparks circle round the leader as they fall in.
 void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct TeleportWhirlWork *work =

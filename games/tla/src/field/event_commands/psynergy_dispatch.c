@@ -311,6 +311,7 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
   }
 }
 
+/// Sends the actor toward the point magnitude away from it at angle.
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                s32 magnitude, s32 angle) {
   s32 values[3];

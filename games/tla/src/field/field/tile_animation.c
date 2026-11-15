@@ -613,6 +613,8 @@ s32 Terrain_GetFlatHeight(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
+/// The height of a slope across x at position (0 to 15 of the cell): a straight
+/// line from samples[0] to samples[1].
 s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position) {
   s32 start;
   s32 delta;
@@ -767,6 +769,8 @@ s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   return start + (((end << CURVE_VALUE_SHIFT) - start) * weight);
 }
 
+/// The height of a step across x at position (0 to 15 of the cell):
+/// samples[0] on the cell's first half, samples[1] on its second.
 s32 Terrain_GetStepXHeight(const s8 *samples, u32 position) {
   s32 value;
   if (position < CURVE_HALF_STEPS)
@@ -1168,6 +1172,8 @@ extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
 /// scene's events of kind 2, and 255 where the ship may not go.
 // XXX: what the byte numbers besides 255; the world map scene's events of
 // kind 2 against the blocks in gCellPictures would settle it.
+/// The World Map block under position (blocks of 32 pixels, 32 to a row): its
+/// third byte, 255 where the map has no block.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;

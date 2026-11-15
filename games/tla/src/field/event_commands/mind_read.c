@@ -179,6 +179,8 @@ void FieldEffect_AdvanceHueCycle(void) {
     work->hue = 0;
 }
 
+/// Per-frame update: once the actor has arrived (no target left on any axis),
+/// releases it through gBattleEffect_UntargetedObjectScript.
 void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   s32 tx;
   s32 ty;

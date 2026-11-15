@@ -10,6 +10,9 @@
 #include "types.h"
 #include "field_event.h"
 
+/// Creates an actor of sprite type at (x, y, z) to stand as a silhouette: at
+/// drawing priority 0, still, skipped by target searches, with no outline or
+/// shadow, all black (SPRITE_COLOR_BLACK) and blended.
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
 

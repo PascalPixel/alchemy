@@ -340,6 +340,7 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   }
 }
 
+/// Empties all the actor slots, without releasing the actors.
 void ObjectTable_Clear(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
@@ -348,6 +349,7 @@ void ObjectTable_Clear(void) {
     work->actors[i] = NULL;
 }
 
+/// Returns the actor in slot objectId (below 192), or NULL.
 struct Actor *ObjectTable_Get(u32 objectId) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -356,6 +358,8 @@ struct Actor *ObjectTable_Get(u32 objectId) {
   return work->actors[objectId];
 }
 
+/// Saves up to 32 actors into gSnapshotObjects, with each one's slot,
+/// animation, sprite flags and priority, so that they can be put back.
 void ObjectTable_Snapshot(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;

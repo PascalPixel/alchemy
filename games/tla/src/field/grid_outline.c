@@ -4,6 +4,9 @@
 
 #include "types.h"
 
+/// Redraws a width by height picture of 8-bit pixels as an outline: each drawn
+/// pixel inside the shape (its four neighbours drawn too) takes colour fill,
+/// and every other drawn pixel colour edge.
 void Grid_DrawOutlineArm(u32 width, u32 height, u8 *grid, u32 edge, u32 fill) {
   u32 size = width * height;
   u8 *next = grid + width + 1;

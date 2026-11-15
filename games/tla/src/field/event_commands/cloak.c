@@ -84,6 +84,8 @@ void FieldPsynergy_StartCloak(void) {
   }
 }
 
+/// Per-frame update of a falling mote: once it reaches its floor it starts the
+/// shared particle script and stops updating.
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
@@ -108,6 +110,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 /// Runs Douse cast on a target, through FieldPsynergy_Douse.
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
+/// The value step tenths of the way from start to end.
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
@@ -302,6 +305,7 @@ void FieldEffect_SpawnFallingParticles(void) {
 
 void FieldEffect_SpawnRadialParticleRing(struct Actor *object);
 
+/// The collision at position for the actor standing 16 pixels higher.
 static __inline__ s32 Actor_ProbeRaised(struct Actor *object,
                                         struct FxPosition *position) {
   s32 hit;

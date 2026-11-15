@@ -89,6 +89,7 @@ void Actor_DisableById(u32 id) {
   Actor_SetSpriteFlagsFar(object, 0);
 }
 
+/// Turns actor id's sprite to rotation (1/65536 turns).
 void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;

@@ -1291,17 +1291,10 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 
 extern s32 gScriptedPart_Script[];
 
-#include "shared/actor_setup_scripted.h"
+#include "shared/actor_setup_scripted_for.h"
 
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 void Ride_UpdateDrift();
-/* VIEW(s1b78): routine Actor_SetupScripted as void Actor_SetupScripted(struct
- * Actor *object, s32 priority); the definition has void
- * Actor_SetupScripted(struct Actor *object); not tried: Actor_SetupScripted's
- * declaration holds a FAKEMATCH tag. */
-extern void
-Actor_SetupScripted__s1b78(struct Actor *object,
-                           s32 priority) __asm__("Actor_SetupScripted");
 
 void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
   struct Actor *object = ObjectCreate_(SPARK_SPRITE, position[0], position[1],
@@ -1314,7 +1307,7 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
     object->riseBaseY = (u16)(Random16() << 1) + base;
     spin = (u16)Random16() - 0x8000;
     object->timer = spin;
-    Actor_SetupScripted__s1b78(object, 2);
+    Actor_SetupScriptedFor(object, 2);
     object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
   }

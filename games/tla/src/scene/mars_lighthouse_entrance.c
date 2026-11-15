@@ -869,17 +869,6 @@ extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 
-/* VIEW(mars_lighthouse_entrance): routine Actor_HoldDuringEvent as void
- * Actor_HoldDuringEvent(void); scene/mars_lighthouse_entrance/s263c has void
- * Actor_HoldDuringEvent(struct Actor *object) {; tried as the definition's void
- * Actor_HoldDuringEvent(struct Actor *object), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1630: conflicting types for
- * `Actor_HoldDuringEvent'. */
-void Actor_HoldDuringEvent__mars_lighthouse_entrance(void) __asm__(
-    "Actor_HoldDuringEvent");
-#define Actor_HoldDuringEvent Actor_HoldDuringEvent__mars_lighthouse_entrance
-
 /// The dragon face wakes and begins its slow way left, breathing fire.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
   Event_PlaySound(SE_BUTTON_PRESS);
@@ -1052,8 +1041,6 @@ extern struct Trigger gMarsLighthouseEntrance_BalmTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
-
-void Actor_HoldDuringEvent(void);
 
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *object) {
   if (ABS(object->x.fixed - object->watchedActor->x.fixed) > px(32))
@@ -1300,7 +1287,6 @@ extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
  * instructions, 3 more in tla-ja. */
 extern s32 Actor_Attach__s1930(s32 id, s32 a1, s32 a2, s32 a3,
                                const void *script) __asm__("Actor_Attach");
-void Actor_HoldDuringEvent(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
@@ -1582,7 +1568,6 @@ void FlameThrowers_Puff(void) {
   }
 }
 
-#undef Actor_HoldDuringEvent
 /// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
 /// keeps the block cached.
 struct RideAnimation {
@@ -2041,7 +2026,7 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->timer = 0;
   object->userValue = a3;
   BYTE_AT(object, 98) = kind;
-  object->update = Actor_HoldDuringEvent;
+  object->update = (void (*)(void))Actor_HoldDuringEvent;
 }
 
 #include "shared/actor_launch_ahead.h"
@@ -2093,7 +2078,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
-#undef Actor_HoldDuringEvent
 #undef Position
 extern s32 gFieldEffect_DurationScripts[];
 
@@ -2308,7 +2292,10 @@ next:
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s42f8): routine MarsLighthouseEntrance_DropThroughCrack as this part
- * declared it; the joined file has another; tried as the definition's void
+ * declared it; the joined file has another; typed as struct CellTarget (its
+ * true argument), the leader's load waits on the store to its member, since
+ * CellTarget holds a pointer and PushEvent only halfwords: 2 instructions move
+ * in tla-en and tla-ja; tried as the definition's void
  * MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event), which the
  * object already declares, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:2095: too many arguments to

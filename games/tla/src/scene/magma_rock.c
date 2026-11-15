@@ -430,7 +430,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
 
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
-void MagmaRock_PlayBurst(s16 value) {
+void MagmaRock_PlayBurst(u16 value) {
   struct MainRoutineWork *party;
 
   FieldPsynergy_LoadResources(ABILITY_BURST, 1);
@@ -733,16 +733,6 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
 }
 
 s32 Position_FlatDistance(s32 *a, s32 *b);
-// XXX: magma_rock.c defines this with an s16 value; this call matches only with
-// u16. A match of magma_rock.c's MagmaRock_PlayBurst under u16 would settle
-// which the game declares.
-/* VIEW(s0ff4): routine MagmaRock_PlayBurst as void MagmaRock_PlayBurst(u16
- * index); scene/magma_rock has void MagmaRock_PlayBurst(s16 value) {; tried as
- * the definition's void MagmaRock_PlayBurst(s16 value), which the object
- * already declares, MagmaRock_FireFromStatue moves: 1 of 260 instructions in
- * tla-ja (magma_rock.c). */
-void MagmaRock_PlayBurst__s0ff4(u16 index) __asm__("MagmaRock_PlayBurst");
-#define MagmaRock_PlayBurst MagmaRock_PlayBurst__s0ff4
 void Actor_Release(struct Actor *object);
 s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
@@ -914,20 +904,6 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/* VIEW(s0ff4): tag union Position as union Position__s0ff4; scene/scene.h has
- * struct Position; tried with the definition the rest of the object has, it
- * does not compile in tla-ja (magma_rock.c):
- * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
- * tag. */
-#define Position Position__s0ff4
-/// A 16.16 position word, read whole or by halves.
-union Position {
-  s32 word;
-  s16 half[2];
-};
-
-#define PART_Y(part) (((union Position *)&(part)->y.fixed)->word)
-
 void Actor_Release(struct Actor *part);
 
 /// One of the four parts MagmaRock_BurnStatue builds: rises and falls with its
@@ -936,13 +912,13 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
   struct Actor *owner = part->watchedActor;
 
   if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
-    PART_Y(part) = owner->y.fixed + px(32);
-    PART_Y(part) += (owner->timer << 19) + (px(-280));
+    part->y.fixed = owner->y.fixed + px(32);
+    part->y.fixed += (owner->timer << 19) + (px(-280));
   } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
-    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
+    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
   } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
-    PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
-    PART_Y(part) -= (owner->timer << 19) - (px(2656));
+    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
+    part->y.fixed -= (owner->timer << 19) - (px(2656));
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
     Actor_Release(part);
   }
@@ -950,8 +926,6 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 
 // The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
 // others, throws effect 403 every eighth frame and marks the ground beneath.
-
-#define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
 /// The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
 /// others, throws effect 403 every eighth frame and marks the ground beneath.
@@ -962,17 +936,17 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   s32 mask;
 
   if (watched->timer >= 35 && watched->timer <= 42) {
-    EFFECT_Y(object) = watched->y.fixed + px(24);
-    EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (px(-272));
+    object->effect.y = watched->y.fixed + px(24);
+    object->effect.y = object->effect.y + (watched->timer << 19) + (px(-272));
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
-      EFFECT_Y(object) =
+      object->effect.y =
           watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
     } else if (watched->timer > 332 &&
                watched->timer < (object->effect.riseCounter << 1) + 333) {
-      EFFECT_Y(object) =
+      object->effect.y =
           watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
-      EFFECT_Y(object) -= (watched->timer << 19) - (px(2656));
+      object->effect.y -= (watched->timer << 19) - (px(2656));
     } else if ((object->effect.riseCounter << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
@@ -999,8 +973,6 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
                                (object->effect.y >> 19) + 1);
 }
 #undef BYTE_AT
-#undef PART_Y
-#undef EFFECT_Y
 
 void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
@@ -1488,14 +1460,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 #undef BYTE_AT
 
-#undef MagmaRock_PlayBurst
-#undef Position
-
 #include "../field/field_effect_advance_motion.c"
 
 #undef BYTE_AT
-#undef PART_Y
-#undef EFFECT_Y
 #undef DEFINE_MAGMA_ROCK_BURST_COLUMN
 #undef DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN
 #undef EFFECT_SPAWN
@@ -1506,8 +1473,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 #undef EFFECT_SPRITE_PRIORITY
 #undef TLA_MAGMA_ROCK_H
 #undef HALF_AT
-#undef MagmaRock_PlayBurst
-#undef Position
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
 

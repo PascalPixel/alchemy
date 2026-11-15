@@ -180,7 +180,7 @@ extern s16 gMarsLighthouseRoomM_DoorwayBlendTarget;
 extern s16 gMarsLighthouseRoomM_Doorway;
 extern s16 gMarsLighthouseRoomM_DoorwayStep;
 void Map_CopyPalette(s32 scene, s32 a1);
-u32 TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame);
+void TilesetAnim_Resume(u32 no);
 
 void FieldEffect_StartBlankOverlay(void);
 
@@ -656,13 +656,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
-/* VIEW(s0b64): routine Actor_LaunchAhead as void Actor_LaunchAhead(void);
- * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); tried
- * as the definition's void Actor_LaunchAhead(struct Actor *self), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:631: too few arguments to
- * function `Actor_LaunchAhead'. */
-extern void Actor_LaunchAhead__s0b64(void) __asm__("Actor_LaunchAhead");
 
 extern s16 gMarsLighthouseRoomM_FadeSlots[];
 extern s16 gMarsLighthouseRoomM_FadeColorsFrom[];
@@ -728,7 +721,7 @@ s32 Scene_Initialize(void) {
         ((u8 *)actor)[98] = ACTOR_FIREBALL;
         actor->userValue = 0x4000;
         actor->watchedActor = (struct Actor *)unset;
-        Actor_LaunchAhead__s0b64();
+        Actor_LaunchAhead(actor);
         System_Wait(40);
         MapGrid_SetShake(2, 2, 1);
         MarsLighthouseRoomM_BreakFloorTile(216, 216, 65, 65, 13, 13);
@@ -765,14 +758,6 @@ s32 Scene_Initialize(void) {
  * `MarsLighthouseRoomM_ShowFlame'. */
 extern s32
 MarsLighthouseRoomM_ShowFlame__s0b64() __asm__("MarsLighthouseRoomM_ShowFlame");
-/* VIEW(mars_lighthouse_room_m): routine TilesetAnim_Resume as void
- * TilesetAnim_Resume(s32 value); scene/scene.h has u32
- * TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame); tried as the
- * definition's void TilesetAnim_Resume(u32 no), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types for
- * `TilesetAnim_Resume'. */
-extern void
-Map_ClearLayerEntryFlag__s0b64(s32 value) __asm__("TilesetAnim_Resume");
 void Weather_StartRain(s32 a);
 
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -799,30 +784,30 @@ s32 Scene_PrepareMap(void) {
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
       MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
                                            FLAME_ANIMATION_VENUS);
-      Map_ClearLayerEntryFlag__s0b64(4);
-      Map_ClearLayerEntryFlag__s0b64(5);
+      TilesetAnim_Resume(4);
+      TilesetAnim_Resume(5);
       break;
     case ENTRANCE_FROM_MERCURY_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_BGR);
       MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
                                            FLAME_ANIMATION_MERCURY);
-      Map_ClearLayerEntryFlag__s0b64(6);
-      Map_ClearLayerEntryFlag__s0b64(7);
+      TilesetAnim_Resume(6);
+      TilesetAnim_Resume(7);
       break;
     case ENTRANCE_FROM_MARS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH),
                                 SPRITE_COLOR_NORMAL);
       MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
                                            FLAME_ANIMATION_MARS);
-      Map_ClearLayerEntryFlag__s0b64(0);
-      Map_ClearLayerEntryFlag__s0b64(1);
+      TilesetAnim_Resume(0);
+      TilesetAnim_Resume(1);
       break;
     case ENTRANCE_FROM_JUPITER_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GBR);
       MarsLighthouseRoomM_ShowFlame__s0b64(ACTOR_LEDGE_FLAME,
                                            FLAME_ANIMATION_JUPITER);
-      Map_ClearLayerEntryFlag__s0b64(2);
-      Map_ClearLayerEntryFlag__s0b64(3);
+      TilesetAnim_Resume(2);
+      TilesetAnim_Resume(3);
       break;
     }
     object = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);

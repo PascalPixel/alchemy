@@ -680,7 +680,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
 
 s32 Import_BattleEffectStopMainActor(void);
 
-void MagmaRockInside_PlayBurst(s16 value) {
+void MagmaRockInside_PlayBurst(u16 value) {
   struct MainRoutineWork *party;
 
   FieldPsynergy_LoadResources(ABILITY_BURST, 1);
@@ -820,14 +820,6 @@ extern s32 gMagmaRockInside_EmberScript[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-/* VIEW(s0e20): routine MagmaRockInside_PlayBurst as void
- * MagmaRockInside_PlayBurst(u16 id); the definition has void
- * MagmaRockInside_PlayBurst(s16 value); tried as the definition's void
- * MagmaRockInside_PlayBurst(s16 value), which the object already declares,
- * MagmaRockInside_FireFromStatue moves: 1 of 270 instructions in tla-ja
- * (magma_rock_inside.c). */
-extern void
-MagmaRockInside_PlayBurst__s0e20(u16 id) __asm__("MagmaRockInside_PlayBurst");
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -934,7 +926,7 @@ hit:
   flame->update = NULL;
   Actor_Release(flame);
   Event_SetFlag(FLAG_FIRE_BURST_PLAYING);
-  MagmaRockInside_PlayBurst__s0e20((u16)id);
+  MagmaRockInside_PlayBurst(id);
   Event_ClearFlag(FLAG_FIRE_BURST_PLAYING);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();

@@ -1703,10 +1703,7 @@ void FieldPsynergy_Arrow(void) {
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   for (i = 0; i < 16; i++) {
     shade = i + 16;
-    // A once-only block: the store stays ahead of the loop's increments.
-    do {
-      *palette = (shade << 5 | blue) | shade;
-    } while (0);
+    Io_Write16((shade << 5 | blue) | shade, palette);
     palette++;
   }
 

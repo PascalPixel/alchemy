@@ -112,7 +112,7 @@ void Debug_SelectShortcuts(void) {
   u32 first;
   u32 second;
   u32 count;
-  UNUSED s32 done = 0;
+  s32 done = 0;
   s32 row = 0;
   s32 redraw;
   s32 slot;
@@ -151,7 +151,7 @@ void Debug_SelectShortcuts(void) {
     slot = MsgPanelHpMaxLabel;
     Text_DrawMessageAsTiles(slot, title, 16, 0);
     // Redraw both shortcut rows and the selected ability's detail side.
-    for (;;) {
+    while (!done) {
       if (redraw != 0) {
         redraw = 0;
         // Wrap both picks and the row; a step below 0 wraps through the
@@ -222,7 +222,6 @@ void Debug_SelectShortcuts(void) {
         Sound_PlayFar(SE_MENU_CANCEL);
       else
         continue;
-      /* FAKEMATCH(dead): an unread flag. */
       done = 1;
       break;
     }

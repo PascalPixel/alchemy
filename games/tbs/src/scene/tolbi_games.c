@@ -410,7 +410,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(10);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 112);
       Event_Wait(20);
-      coinChange = gMainRoutineWork.coins - sLuckyDiceCoinsBefore;
+      coinChange = gMainRoutineWork.holdings.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
         if (coinChange > 19999) {
           Sound_Play(MUS_JINGLE_LARGE);
@@ -436,7 +436,7 @@ s32 Scene_Initialize(void) {
     // Lucky Wheels returns item categories for the attendant to award.
     if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      wonPrizes = gMainRoutineWork.wonPrizes;
+      wonPrizes = gMainRoutineWork.holdings.wonPrizes;
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -464,7 +464,7 @@ s32 Scene_Initialize(void) {
             Event_Wait(30);
           }
         }
-        gMainRoutineWork.wonPrizes[0] = -2;
+        gMainRoutineWork.holdings.wonPrizes[0] = -2;
         Event_SetMessageId(MsgTolbiComeAgain);
         // "Come again!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -632,7 +632,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 
   cost = Party_GetAverageLevel() * 10;
   Event_Start();
-  coins = gMainRoutineWork.coins;
+  coins = gMainRoutineWork.holdings.coins;
   if (coins < cost) {
     Event_SetMessageId(MsgTolbiYaDontEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
@@ -684,7 +684,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
 #if TBS_PATCH_1
   routine = &gMainRoutineWork;
 prompt:
-  coins = routine->coins;
+  coins = routine->holdings.coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Event_SetMessageId(message);
   // "What will you throw?"
@@ -752,7 +752,7 @@ prompt:
   for (;;) {
     text = MsgTolbiCoins;
     routine = &gMainRoutineWork;
-    coins = routine->coins;
+    coins = routine->holdings.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
     // "What will you throw?"
@@ -850,7 +850,7 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          s8 weight = *(routine->prizeWeights + prizeIndex);
+          s8 weight = *(routine->holdings.prizeWeights + prizeIndex);
 
           totalWeight += weight;
           prizeIndex++;
@@ -858,7 +858,7 @@ prompt:
       }
       prizeRoll = Random_Below(totalWeight);
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
-        prizeRoll -= routine->prizeWeights[prizeIndex];
+        prizeRoll -= routine->holdings.prizeWeights[prizeIndex];
         if (prizeRoll < 0) {
           break;
         }
@@ -871,8 +871,8 @@ prompt:
       routine++;
       routine--;
       {
-        s32 slot =
-            prizeIndex + offsetof(struct MainRoutineWork, prizeWeights) - 1;
+        s32 slot = prizeIndex +
+                   offsetof(struct MainRoutineWork, holdings.prizeWeights) - 1;
         s8 *weights = (s8 *)routine + 1;
 
         if (weights[slot] > 1) {
@@ -905,11 +905,11 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
     category = Random_Below(5);
   }
 
-  previousVariant = gMainRoutineWork.wonPrizes[8 + category];
+  previousVariant = gMainRoutineWork.holdings.wonPrizes[8 + category];
 
   variant = (previousVariant + (s32)Random_Below(2) + 4) % 3;
 
-  gMainRoutineWork.wonPrizes[8 + category] = variant;
+  gMainRoutineWork.holdings.wonPrizes[8 + category] = variant;
 
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }

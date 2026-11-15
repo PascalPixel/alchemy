@@ -1129,9 +1129,9 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = (u32)gMainRoutineWork.coins >> 16;
-    out[166] = (u32)gMainRoutineWork.coins >> 8;
-    out[167] = gMainRoutineWork.coins;
+    out[165] = (u32)gMainRoutineWork.holdings.coins >> 16;
+    out[166] = (u32)gMainRoutineWork.holdings.coins >> 8;
+    out[167] = gMainRoutineWork.holdings.coins;
   }
 
   // The two larger forms include the packed base-stat rows. Each pass packs

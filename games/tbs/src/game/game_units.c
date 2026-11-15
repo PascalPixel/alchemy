@@ -55,7 +55,7 @@ void Game_RestartQuest(void) {
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
-  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
+  return (struct DjinnRecoveryTable *)&gMainRoutineWork.holdings;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -515,7 +515,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.secondShortcut = 0;
   gMainRoutineWork.leaderActorId = 0;
   Party_AddMember(ISAAC);
-  gMainRoutineWork.coins = 0;
+  gMainRoutineWork.holdings.coins = 0;
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;
@@ -530,21 +530,21 @@ void MainRoutineWork_InitializeDefaults(void) {
   gIdleFrames = 0;
   gSaveSlot = -1;
   // Three prizes share each successive slot-machine weight.
-  gMainRoutineWork.prizeWeights[0] = 4;
-  gMainRoutineWork.prizeWeights[1] = 4;
-  gMainRoutineWork.prizeWeights[2] = 4;
-  gMainRoutineWork.prizeWeights[3] = 8;
-  gMainRoutineWork.prizeWeights[4] = 8;
-  gMainRoutineWork.prizeWeights[5] = 8;
-  gMainRoutineWork.prizeWeights[6] = 16;
-  gMainRoutineWork.prizeWeights[7] = 16;
-  gMainRoutineWork.prizeWeights[8] = 16;
-  gMainRoutineWork.prizeWeights[9] = 32;
-  gMainRoutineWork.prizeWeights[10] = 32;
-  gMainRoutineWork.prizeWeights[11] = 32;
-  gMainRoutineWork.prizeWeights[12] = 64;
-  gMainRoutineWork.prizeWeights[13] = 64;
-  gMainRoutineWork.prizeWeights[14] = 64;
+  gMainRoutineWork.holdings.prizeWeights[0] = 4;
+  gMainRoutineWork.holdings.prizeWeights[1] = 4;
+  gMainRoutineWork.holdings.prizeWeights[2] = 4;
+  gMainRoutineWork.holdings.prizeWeights[3] = 8;
+  gMainRoutineWork.holdings.prizeWeights[4] = 8;
+  gMainRoutineWork.holdings.prizeWeights[5] = 8;
+  gMainRoutineWork.holdings.prizeWeights[6] = 16;
+  gMainRoutineWork.holdings.prizeWeights[7] = 16;
+  gMainRoutineWork.holdings.prizeWeights[8] = 16;
+  gMainRoutineWork.holdings.prizeWeights[9] = 32;
+  gMainRoutineWork.holdings.prizeWeights[10] = 32;
+  gMainRoutineWork.holdings.prizeWeights[11] = 32;
+  gMainRoutineWork.holdings.prizeWeights[12] = 64;
+  gMainRoutineWork.holdings.prizeWeights[13] = 64;
+  gMainRoutineWork.holdings.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -598,7 +598,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gMainRoutineWork.coins += 300;
+  gMainRoutineWork.holdings.coins += 300;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also

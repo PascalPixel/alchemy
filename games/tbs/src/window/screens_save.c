@@ -103,11 +103,6 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
   return count;
 }
 
-/// The distance in bytes from one field of a save summary to another.
-#define SUMMARY_DISTANCE(from, to)                                             \
-  ((u32)&((struct SaveFileSummary *)0)->to -                                   \
-   (u32)&((struct SaveFileSummary *)0)->from)
-
 /// Loads the save file summaries for the File Screen and returns how many files
 /// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
 /// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read.
@@ -121,22 +116,18 @@ s32 Save_ScanFileSummaries(void) {
   fileCount = SAVE_ERROR_NO_MEMORY;
   if (error == 0) {
     s32 i;
-    s8 *flags;
+    struct SaveWork *work;
 
     fileCount = Save_LoadFileSummaries();
-    /* FAKEMATCH(temporary): the flags read through a byte cursor at the end
-     * of the first summary's party. */
-    flags = (s8 *)&gSaveWork->summary[0].party[4];
+    work = gSaveWork;
     gTitleSendOptionEnabled = 0;
     gTitleBattleOptionEnabled = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
-      if (flags[i * sizeof(struct SaveFileSummary) +
-                SUMMARY_DISTANCE(party[4], sendFlag)] != 0) {
+      if (work->summary[i].sendFlag != 0) {
         gTitleSendOptionEnabled = 1;
         sentCount++;
       }
-      if (flags[i * sizeof(struct SaveFileSummary) +
-                SUMMARY_DISTANCE(party[4], flagCount)] != 0) {
+      if (work->summary[i].flagCount != 0) {
         gTitleBattleOptionEnabled = 1;
       }
     }
@@ -194,7 +185,7 @@ u32 Save_BuildFileSummary(void) {
   summary->area =
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
   summary->classId = leader->classId;
-  summary->coins = gMainRoutineWork.coins;
+  summary->coins = gMainRoutineWork.holdings.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);

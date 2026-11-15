@@ -392,14 +392,6 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// gMainRoutineWork seen from +12, where Djinn_GetRecoveryTable's table starts:
-/// wonPrizes is gMainRoutineWork.wonPrizes.
-struct LuckyWheelsWonPrizesView {
-  u8 beforeWonPrizes[288]; ///< gMainRoutineWork from summonMask to
-                           ///< wonPrizes
-  s8 wonPrizes[16];
-};
-
 // The Lucky Wheels tables, the same in both games; LUCKY_WHEELS_TITLE_LETTERS
 // above is the letters of the title they spell.
 
@@ -408,8 +400,8 @@ struct LuckyWheelsWonPrizesView {
 const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
                                           220, 364, 560, 816, 1140};
 
-/// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for each
-/// winning line.
+/// The prize of each wheel symbol, kept in gMainRoutineWork.holdings.wonPrizes
+/// for each winning line.
 const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
 /// The tile of each title letter, the letter's place in its sheet: jackpot.png
@@ -517,13 +509,10 @@ void LuckyWheels_Update(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        /* FAKEMATCH(temporary): wonPrizes read through a view of
-         * gMainRoutineWork from +12, here and below. */
-        struct LuckyWheelsWonPrizesView *save =
-            (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
+        struct PartyHoldings *holdings = &gMainRoutineWork.holdings;
 
         work->state = LUCKY_WHEELS_DONE;
-        save->wonPrizes[0] = -2;
+        holdings->wonPrizes[0] = -2;
         Window_CloseFar(work->window, 1);
       } else {
         if (work->pressed & KEY_UP) {
@@ -736,8 +725,7 @@ void LuckyWheels_Update(void) {
       }
 
       if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
-        struct LuckyWheelsWonPrizesView *save =
-            (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
+        struct PartyHoldings *holdings = &gMainRoutineWork.holdings;
         s32 hits = 0;
 
         for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
@@ -779,14 +767,14 @@ void LuckyWheels_Update(void) {
             }
             if (mixed == 0) {
               work->winningLines[col] = 1;
-              save->wonPrizes[hits] = gLuckyWheels_SymbolPrizes[found];
+              holdings->wonPrizes[hits] = gLuckyWheels_SymbolPrizes[found];
               hits++;
             }
           }
         }
         work->timer = 0;
         if (hits != 0) {
-          save->wonPrizes[hits] = -1;
+          holdings->wonPrizes[hits] = -1;
           work->state = LUCKY_WHEELS_WON;
           Sound_PlayFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
@@ -1113,9 +1101,7 @@ void LuckyWheels_Run(void) {
   void *canvas;
   struct BattleEffectWork *work;
   struct LuckyWheelsWork *state;
-  /* FAKEMATCH(temporary): wonPrizes read through a view of gMainRoutineWork
-   * from +12. */
-  struct LuckyWheelsWonPrizesView *save;
+  struct PartyHoldings *holdings;
   u8 *entry;
   u8 *tiles;
   s32 frame;
@@ -1131,9 +1117,9 @@ void LuckyWheels_Run(void) {
   state = HeapSlot_AllocEwram(LUCKY_WHEELS_HEAP_SLOT,
                               sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
-  save = (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
+  holdings = &gMainRoutineWork.holdings;
   Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
-  save->wonPrizes[0] = -1;
+  holdings->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
   Task_ResetAll();

@@ -48,6 +48,28 @@ enum BattleType {
   BATTLE_TYPE_DEBUG = 5
 };
 
+/// What the party holds apart from its items: its summons, coins and Djinn,
+/// and what Tolbi's shops and games keep for it. Djinn_GetRecoveryTable
+/// returns it as the party's struct DjinnRecoveryTable, and Lucky Wheels
+/// writes the prizes it wins through it.
+struct PartyHoldings {
+  /// The summons the party can call, bit n for summon n: the
+  /// DjinnRecoveryTable's summonMask.
+  u32 summonMask;
+  s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
+  /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
+  /// Djinn_GetRecoveryTable.
+  u8 djinnRecovery[260];
+  s32 shopCredit; ///< spent on a Game Ticket
+  s8 shopGifts;   ///< indexes the Game Ticket's credit cost
+  /// The spring game's prize weights, three prizes to each of 4, 8, 16, 32
+  /// and 64 on a new game.
+  s8 prizeWeights[15];
+  /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
+  /// awarded); 8 on the last variant given of each category.
+  s8 wonPrizes[16];
+};
+
 /// The main routine's work: the transition data the main routine reads between
 /// sequences (the scene and entrance it runs next, sequenceResult, the return
 /// point, the after-battle and defeat destinations and the restart point), and
@@ -58,23 +80,7 @@ struct MainRoutineWork {
   u32 buildStamp;
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
   u8 unused[4];
-  /// The summons the party can call, bit n for summon n: the first word of
-  /// the party's struct DjinnRecoveryTable (its summonMask),
-  /// which Djinn_GetRecoveryTable returns from here, its next word running
-  /// over coins.
-  u32 summonMask;
-  s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
-  /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
-  /// Djinn_GetRecoveryTable.
-  u8 djinnRecovery[260];
-  s32 shopCredit; ///< spent on a Game Ticket
-  s8 shopGifts;   ///< indexes the Game Ticket's credit cost
-  /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
-  /// and 64 on a new game.
-  s8 prizeWeights[15];
-  /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
-  /// awarded); 8 on the last variant given of each category.
-  s8 wonPrizes[16];
+  struct PartyHoldings holdings;
   u8 unusedAfterPrizes[132];
   /// What the main routine runs next: a scene (a SceneId_ row of gScenes),
   /// which means the field sequence running that scene, or a SEQUENCE_ value
@@ -191,11 +197,11 @@ struct MainRoutineWork {
 STATIC_ASSERT(offsetof(struct MainRoutineWork, buildStamp) == 0);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, playTime) == 4);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, idleSleepEnabled) == 0x22a);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, shopCredit) == 0x118);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.coins) == 0x10);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.shopGifts) == 0x11c);
 STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2c0);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.wonPrizes) == 0x12c);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, avoidDistance) == 0x244);

@@ -41,6 +41,9 @@ enum ColossoLetteringPicture {
 /// four 32x16 pieces or two 32x32 ones (lettering.tsv).
 #define COLOSSO_LETTERING_PICTURE_BYTES (4 * 32 * 16 / 2)
 
+/// The lettering's sprites are drawn just behind the windows.
+#define COLOSSO_LETTERING_DEPTH (OAM_DEPTH_WINDOW - 4)
+
 /// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
 /// gColosso_LetteringParameter picks the second half of a picture.
 enum ColossoLetteringShape {
@@ -198,7 +201,7 @@ commands:
                    OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
                    OBJ_AFFINE;
         *write++ = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(15);
-        Oam_AddSpriteAtDepth(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
       }
       tile += 8;
     }
@@ -221,7 +224,7 @@ commands:
                    OBJ_AFFINE;
         *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
                    OBJ_PALETTE(15);
-        Oam_AddSpriteAtDepth(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
       }
       tile += 8;
     }
@@ -245,7 +248,7 @@ commands:
                    OBJ_AFFINE;
         *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
                    OBJ_PALETTE(15);
-        Oam_AddSpriteAtDepth(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
       }
       tile += 8;
     }
@@ -264,7 +267,7 @@ commands:
                  OBJ_AFFINE;
       *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
                  OBJ_PALETTE(15);
-      Oam_AddSpriteAtDepth(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
     }
     break;
 #endif
@@ -280,7 +283,7 @@ commands:
                  OBJ_AFFINE;
       *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
                  OBJ_PALETTE(15);
-      Oam_AddSpriteAtDepth(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
     }
     break;
   }

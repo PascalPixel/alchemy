@@ -525,8 +525,8 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
       state = &gMainRoutineWork;
-      Text_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
-                              8);
+      Text_DrawNumberInWindow(state->holdings.coins, 6, coinsWindow,
+                              TICKET_COUNTER_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageAsTiles(coinLabel +
                                   (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),
@@ -538,7 +538,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Event_Wait(10);
         // "You're not going to do it? If you don't get onboard, you..."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
-      } else if ((u32)ticketPrice > (u32)state->coins) {
+      } else if ((u32)ticketPrice > (u32)state->holdings.coins) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Event_Wait(10);

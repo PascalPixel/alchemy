@@ -767,7 +767,7 @@ s32 Scene_Initialize(void) {
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
-  gMainRoutineWork.coins = 777777;
+  gMainRoutineWork.holdings.coins = 777777;
 #endif
   Unit_LevelUpTo(ISAAC, DEBUG_ISAAC_LEVEL);
   Unit_LevelUpTo(GARET, 30);

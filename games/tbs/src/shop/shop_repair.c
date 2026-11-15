@@ -159,7 +159,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor(MsgCursedWontComeOff);
     return;
   }
-  if (repairCost > gMainRoutineWork.coins) {
+  if (repairCost > gMainRoutineWork.holdings.coins) {
     Shop_ShowKeeperMessageHidingCursor(MsgNotEnoughMoney);
     return;
   }

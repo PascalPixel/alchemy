@@ -39,6 +39,7 @@
 #include "macros.h"
 #include "field/call.h"
 #include "fixed_math.h"
+#include "scene/falling_rocks.h"
 
 // Each pushed pillar's flag keeps it where it was pushed: two on the slide,
 // one on each of the Salamander Tail room's lower, middle and upper levels and
@@ -396,15 +397,6 @@ void MagmaRock_PlayBurst(s16 value) {
   FieldPsynergy_End();
 }
 
-struct MagmaRockEffectParams {
-  s32 unk00;
-  u8 unk04[0x14];
-  u16 kind;
-  u8 unk1a[2];
-  const void *script;
-  u8 unk20[8];
-};
-
 extern u32 gMagmaRock_FlameEmberScript[];
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
@@ -415,13 +407,13 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
     u32 phase = gFrameCount & 3;
 
     if (phase == 0) {
-      struct MagmaRockEffectParams params;
+      struct EffectOptions params;
       s32 dx;
       s32 dy;
 
-      params.kind = 403;
-      params.unk00 = 1;
-      params.script = gMagmaRock_FlameEmberScript;
+      params.type = 403;
+      params.priority = 1;
+      params.script = (const s32 *)gMagmaRock_FlameEmberScript;
       {
         s32 mask = 15;
 
@@ -461,16 +453,6 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
   (*timer)++;
 }
 
-struct MagmaRockEffectConfig {
-  s32 kind;
-  s32 variant;
-  u8 unk08[16];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  u8 unk20[8];
-};
-
 void Actor_PlaySoundInView(struct Actor *object, s32 value);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
@@ -479,14 +461,14 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
   u32 frame = gFrameCount;
 
   if ((frame & 3) == 0) {
-    struct MagmaRockEffectConfig config;
+    struct EffectOptions config;
     s32 dz;
     s32 velocityZ;
     s32 z;
 
-    config.id = 403;
-    config.kind = 2;
-    config.data = gMagmaRock_EmberScript;
+    config.type = 403;
+    config.priority = 2;
+    config.script = (const s32 *)gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(FLAG_SCENE_TEMP_60))
       Actor_PlaySoundInView(object, SE_WHOOSH);
     dz = ((Random16() & 15) - 8) << 15;
@@ -925,32 +907,13 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 // The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
 // others, throws effect 403 every eighth frame and marks the ground beneath.
 
-/* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
- * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
- * with the definition the rest of the object has, it does not compile in tla-ja
- * (magma_rock.c): games/tla/src/scene/magma_rock.c:874: redefinition of `struct
- * MagmaRockEffectConfig'. */
-#define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
-struct MagmaRockEffectConfig {
-  s32 kind;
-  s32 variant;
-  s32 unk08;
-  s32 unk0c;
-  u8 unk10[8];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  u8 unk20[4];
-  void (*unk24)(void);
-};
-
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
 /// The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
 /// others, throws effect 403 every eighth frame and marks the ground beneath.
 void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   struct Actor *watched = (struct Actor *)object->effect.countdown;
-  struct MagmaRockEffectConfig config;
+  struct EffectOptions config;
   s32 step;
   s32 mask;
 
@@ -975,11 +938,11 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   mask = 7;
   step = gFrameCount & mask;
   if (step == 0) {
-    config.id = 403;
-    config.variant = 10;
-    config.kind = 2;
-    config.unk24 = MagmaRock_DriftAndSlow;
-    config.data = gMagmaRock_EmberScript;
+    config.type = 403;
+    config.palette = 10;
+    config.priority = 2;
+    config.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
+    config.script = (const s32 *)gMagmaRock_EmberScript;
     FieldEffect_Spawn(object->effect.x + px(1), object->effect.y - px(4),
                       object->effect.z, ((Random16() & mask) - 3) << 14,
                       -0x20000, step,
@@ -1032,15 +995,15 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     u32 phase = gFrameCount & 3;
 
     if (phase == 0) {
-      struct MagmaRockEffectConfig config;
+      struct EffectOptions config;
       s32 dx;
       s32 dz;
 
-      config.id = 403;
-      config.variant = 10;
-      config.kind = 2;
-      config.unk24 = MagmaRock_DriftAndSlow;
-      config.data = gMagmaRock_EmberScript;
+      config.type = 403;
+      config.palette = 10;
+      config.priority = 2;
+      config.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
+      config.script = (const s32 *)gMagmaRock_EmberScript;
       dx = Random16() & 15;
       dz = Random16() & 15;
       FieldEffect_Spawn(object->x.fixed + px(1), object->y.fixed + px(24),
@@ -1223,9 +1186,9 @@ void FieldCamera_WaitForArrival(void);
 
 void MagmaRock_AmplifyBurst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MagmaRockEffectOptions options;
+  struct EffectOptions options;
   s32 position[3];
-  struct MagmaRockEffectOptions *opt;
+  struct EffectOptions *opt;
   s32 *offset;
   s32 i;
   u32 phase;
@@ -1238,10 +1201,10 @@ void MagmaRock_AmplifyBurst(void) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
   Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId, 32);
   opt = &options;
-  opt->kind = 1;
+  opt->priority = 1;
   opt->palette = 14;
-  opt->scaleX = Q16_ONE * 4 / 5;
-  opt->scaleY = Q16_ONE * 4 / 5;
+  opt->startScaleX = Q16_ONE * 4 / 5;
+  opt->startScaleY = Q16_ONE * 4 / 5;
   i = 0;
 first:
   {
@@ -1382,17 +1345,17 @@ void MagmaRock_GrowVineC(void) {
 }
 
 void MagmaRock_ScatterEmbers(s32 x, s32 z) {
-  struct MagmaRockEffectConfig config;
+  struct EffectOptions config;
   s32 position[3];
   s32 i;
   s32 kind;
 
-  config.unk08 = Q16_ONE * 2;
-  config.unk0c = Q16_ONE * 2;
-  config.id = 403;
+  config.startScaleX = Q16_ONE * 2;
+  config.startScaleY = Q16_ONE * 2;
+  config.type = 403;
   kind = 1; // Holds one constant: the native loads 1 before the data address.
-  config.data = gMagmaRock_EmberScript;
-  config.kind = kind;
+  config.script = (const s32 *)gMagmaRock_EmberScript;
+  config.priority = kind;
   i = 0;
 loop:
   position[0] = x + ((Random16() & 63) << 16) - Q16_ONE * 32;
@@ -1482,7 +1445,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 #undef BYTE_AT
 
 #undef MagmaRock_PlayBurst
-#undef MagmaRockEffectConfig
 #undef Position
 
 #include "../field/field_effect_advance_motion.c"
@@ -1502,7 +1464,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 #undef HALF_AT
 #undef MagmaRock_PlayBurst
 #undef Position
-#undef MagmaRockEffectConfig
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
 
@@ -1512,7 +1473,7 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 void MagmaRock_LaunchLeader(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct MagmaRockEffectOptions options;
+  struct EffectOptions options;
   u32 i;
   s32 angle;
   s32 velocity[3];
@@ -1534,8 +1495,8 @@ void MagmaRock_LaunchLeader(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.scaleX = Q16_ONE * 4 / 5;
-  options.scaleY = Q16_ONE * 4 / 5;
+  options.startScaleX = Q16_ONE * 4 / 5;
+  options.startScaleY = Q16_ONE * 4 / 5;
   i = 0;
 loop:
   angle = i << 12;
@@ -2290,26 +2251,21 @@ void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.leaderActorId);
 }
 
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 #include "shared/particles_update_falling.h"
 
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  u16 resource;
+};
+
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
-  struct EntryWork *work;
+  struct RockWork *work;
   s32 i;
 
   work = Ram_HeapSlots->menuWork;
@@ -2317,24 +2273,25 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
     i = count;
   next:
     {
-      struct Entry *entry;
+      struct Rock *rock;
       s32 angle = Random16();
 
-      entry = &work->entries[work->unk1600];
-      entry->unk18 = 0;
-      entry->x = x;
-      entry->y = y;
-      entry->z = z;
-      FieldVector_AddPolarOffsetFixed(Random16() * 8 + px(8), angle, entry);
-      entry->velocityX = 0;
-      entry->velocityY = px(5);
-      entry->velocityZ = 0;
+      rock = &work->rocks[work->next];
+      rock->timer = 0;
+      rock->position[0] = x;
+      rock->position[1] = y;
+      rock->position[2] = z;
+      FieldVector_AddPolarOffsetFixed(Random16() * 8 + px(8), angle,
+                                      rock->position);
+      rock->velocity[0] = 0;
+      rock->velocity[1] = px(5);
+      rock->velocity[2] = 0;
       FieldVector_AddPolarOffsetFixed(Random16() * 2 + px(2), angle,
-                                      &entry->velocityX);
+                                      rock->velocity);
       {
         s32 mask = 63;
 
-        work->unk1600 = (work->unk1600 + 1) & mask;
+        work->next = (work->next + 1) & mask;
       }
       i--;
     }
@@ -2345,34 +2302,6 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
 
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
-
-struct Rock {
-  u8 unk00[24];
-  s32 timer;
-};
-
-struct RockSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct RockWork {
-  u8 tiles[0x500];
-  struct Rock rocks[64];
-  struct RockSprite sprites[64];
-  s16 next;
-  u16 tileBase;
-  u16 resource;
-};
 
 void Import_DecompressTaggedLz(void *entry, void *destination);
 

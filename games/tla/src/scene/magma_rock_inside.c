@@ -1437,12 +1437,12 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
   if (++object->timer > 64)
     object->update = NULL;
   if ((object->timer & 1) == 0) {
-    struct EffectConfig config;
+    struct EffectOptions config;
 
-    config.id = 403;
-    config.kind = 2;
-    config.variant = 10;
-    config.data = gMagmaRockInside_EmberScript;
+    config.type = 403;
+    config.priority = 2;
+    config.palette = 10;
+    config.script = (const s32 *)gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
                       0x1000, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |

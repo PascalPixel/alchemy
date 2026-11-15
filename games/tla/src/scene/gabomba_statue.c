@@ -3028,7 +3028,9 @@ extern s32 gGabombaStatue_TileFallScript[];
 extern u32 gGabombaStatue_TileRiseScript[];
 
 /// A charge's step along the channel's pieces, splashing at its end.
-void GabombaStatue_MoveCharge(struct Actor *ball, s32 step) {
+// GabombaStatue_RunCharges passes the charge's actor id as well, which this
+// routine never reads.
+void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
   s32 col = *colp;
   s16 *rowp = (s16 *)((u8 *)ball + 102);
@@ -3198,66 +3200,57 @@ done:
   }
 }
 
-/* VIEW(s4d48): routine GabombaStatue_MoveCharge as void
- * GabombaStatue_MoveCharge(); the parts before it has another declaration;
- * tried as the definition's void GabombaStatue_MoveCharge(struct Actor *ball,
- * s32 step), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3171: too many arguments to function
- * `GabombaStatue_MoveCharge'. */
-extern void
-GabombaStatue_MoveCharge__charges() __asm__("GabombaStatue_MoveCharge");
-
 /// Runs a pair of charges, one red and one blue, along the channel to the head.
 s32 GabombaStatue_RunCharges(s32 first, s32 check) {
-  struct Unk02004d48 *actor;
+  struct Actor *actor;
   s32 second = first + 1;
   s32 frame, tries, id;
   s32 done;
   s32 result;
 
-  actor = ((struct Unk02004d48 *)Actor_Get(first));
-  actor->unk64 = 0;
-  actor->unk66 = 7;
-  actor->unk62 = 2;
-  actor->unk63 = 1;
-  actor->unk4c = 0;
+  actor = Actor_Get(first);
+  actor->timer = 0;
+  actor->userValue = 7;
+  actor->riseCounter = 2;
+  actor->blockMarked = 1;
+  actor->riseBaseY = 0;
   /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer, called
    * without the actor it reads from r0. */
   Actor_StartIdle();
   Actor_SelectAnimation(actor, 2);
   id = second;
-  actor = ((struct Unk02004d48 *)Actor_Get(id++));
-  actor->unk64 = 2;
-  actor->unk66 = 7;
-  actor->unk62 = 0;
-  actor->unk63 = 1;
-  actor->unk4c = 0;
+  actor = Actor_Get(id++);
+  actor->timer = 2;
+  actor->userValue = 7;
+  actor->riseCounter = 0;
+  actor->blockMarked = 1;
+  actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
-  actor = ((struct Unk02004d48 *)Actor_Get(id++));
-  actor->unk64 = 8;
-  actor->unk66 = 7;
-  actor->unk62 = 2;
-  actor->unk63 = 1;
-  actor->unk4c = 0;
+  actor = Actor_Get(id++);
+  actor->timer = 8;
+  actor->userValue = 7;
+  actor->riseCounter = 2;
+  actor->blockMarked = 1;
+  actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
-  actor = ((struct Unk02004d48 *)Actor_Get(id));
-  actor->unk64 = 10;
-  actor->unk66 = 7;
-  actor->unk62 = 0;
-  actor->unk63 = 1;
-  actor->unk4c = 0;
+  actor = Actor_Get(id);
+  actor->timer = 10;
+  actor->userValue = 7;
+  actor->riseCounter = 0;
+  actor->blockMarked = 1;
+  actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
-        actor = ((struct Unk02004d48 *)Actor_Get(id));
-        if (actor->unk63 != 0 && actor->unk63 != 7)
+        actor = Actor_Get(id);
+        if (actor->blockMarked != 0 && actor->blockMarked != 7)
           done = 0;
-        GabombaStatue_MoveCharge__charges(actor, frame, id);
+        GabombaStatue_MoveCharge(actor, frame, id);
       }
       System_Wait(1);
     }
@@ -3270,27 +3263,27 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
     u32 a = 0;
     u32 b = 0;
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first));
-      if (r->x != 0)
-        a = r->unk4c;
+      struct Actor *r = Actor_Get(first);
+      if (r->x.fixed != 0)
+        a = r->riseBaseY;
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(second));
-      if (r->x != 0) {
-        u32 value = r->unk4c;
+      struct Actor *r = Actor_Get(second);
+      if (r->x.fixed != 0) {
+        u32 value = r->riseBaseY;
         if (a == 0 || a > value)
           a = value;
       }
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 2));
-      if (r->x != 0)
-        b = r->unk4c;
+      struct Actor *r = Actor_Get(first + 2);
+      if (r->x.fixed != 0)
+        b = r->riseBaseY;
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 3));
-      if (r->x != 0) {
-        u32 value = r->unk4c;
+      struct Actor *r = Actor_Get(first + 3);
+      if (r->x.fixed != 0) {
+        u32 value = r->riseBaseY;
         if (b == 0 || b > value)
           b = value;
       }

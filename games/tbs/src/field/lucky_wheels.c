@@ -294,6 +294,21 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_LOSS_PAUSE 45
 /// The stop prompt's sound plays this many frames into a spin.
 #define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
+/// Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
+/// steps (a 256-colour tile is two): the sheet is 32 pixels wide, so a picture
+/// starts at the tile numbered as its row. The six symbols are 16 apart from 0.
+#define LUCKY_WHEELS_LAMP_TILES 96       ///< a wheel's lamp, not held
+#define LUCKY_WHEELS_HELD_LAMP_TILES 128 ///< a held wheel's lamp
+#define LUCKY_WHEELS_CORNER_LIGHT_TILES 224
+#define LUCKY_WHEELS_FRAME_LIGHT_TILES 232
+#define LUCKY_WHEELS_LEVER_TILES 256
+#define LUCKY_WHEELS_LINE_TILES 272     ///< a payline's gem, not bet on
+#define LUCKY_WHEELS_LIT_LINE_TILES 464 ///< a payline's gem, bet on
+/// The slot the lever runs in, drawn in pieces down beside the wheels.
+#define LUCKY_WHEELS_LEVER_SLOT_TILES 320
+#define LUCKY_WHEELS_HAND_TILES 496  ///< the cursor's hand
+#define LUCKY_WHEELS_PULL_TILES 528  ///< a pull's number, the current one large
+#define LUCKY_WHEELS_ARROW_TILES 688 ///< the cursor's blinking arrows
 /// The symbols round a wheel, each 16 pixels tall: a wheel turns once in 336
 /// pixels, 8 a frame, and stops only with a symbol centred on a line.
 #define LUCKY_WHEELS_REEL_SYMBOLS 21
@@ -849,15 +864,15 @@ void LuckyWheels_Update(void) {
     }
     work->oam[sprite].attr01 =
         ((x - 12) << 16) | objMode | (y + 8) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
-    work->oam[sprite].attr2 = (v << 4) + 688;
+    work->oam[sprite].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     sprite++;
     work->oam[sprite].attr01 = ((x + 12) << 16) | objMode | (y + 8) |
                                OBJ_SIZE_32X16 | OBJ_256_COLORS | OBJ_HFLIP;
-    work->oam[sprite].attr2 = (v << 4) + 688;
+    work->oam[sprite].attr2 = (v << 4) + LUCKY_WHEELS_ARROW_TILES;
     sprite++;
     work->oam[sprite].attr01 =
         (x << 16) | objMode | y | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-    work->oam[sprite].attr2 = 496;
+    work->oam[sprite].attr2 = LUCKY_WHEELS_HAND_TILES;
     sprite++;
   }
 
@@ -900,9 +915,11 @@ void LuckyWheels_Update(void) {
                                objMode | gLuckyWheels_MachineSpriteY[k] |
                                OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k <= 3)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 224;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | LUCKY_WHEELS_CORNER_LIGHT_TILES;
     else
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 232;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | LUCKY_WHEELS_FRAME_LIGHT_TILES;
     sprite++;
   }
 
@@ -910,11 +927,11 @@ void LuckyWheels_Update(void) {
     if (work->reels[i].held == 0) {
       work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 124 |
                                  OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 96;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_LAMP_TILES;
     } else {
       work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 124 |
                                  OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 128;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_HELD_LAMP_TILES;
     }
     sprite++;
   }
@@ -925,9 +942,11 @@ void LuckyWheels_Update(void) {
     work->oam[sprite].attr01 =
         objMode | ((i * 16 + 32) << 16) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (i == work->spins)
-      work->oam[sprite].attr2 = (i * 32 + 528) | OBJ_PRIORITY(1);
+      work->oam[sprite].attr2 =
+          (i * 32 + LUCKY_WHEELS_PULL_TILES) | OBJ_PRIORITY(1);
     else
-      work->oam[sprite].attr2 = (i * 32 + 544) | OBJ_PRIORITY(1);
+      work->oam[sprite].attr2 =
+          (i * 32 + LUCKY_WHEELS_PULL_TILES + 16) | OBJ_PRIORITY(1);
     sprite++;
   }
 
@@ -937,9 +956,9 @@ void LuckyWheels_Update(void) {
                                OBJ_256_COLORS;
     if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
         col < work->bet + LUCKY_WHEELS_MIDDLE_LINE)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 464;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_LIT_LINE_TILES;
     else
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 272;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_LINE_TILES;
     sprite++;
   }
 
@@ -974,22 +993,26 @@ void LuckyWheels_Update(void) {
   }
   work->oam[sprite].attr01 = lever | objMode | (LUCKY_WHEELS_LEVER_X << 16) |
                              OBJ_SIZE_32X16 | OBJ_256_COLORS;
-  work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 256;
+  work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_TILES;
   sprite++;
 
   for (k = 0; k != 8; k++) {
     work->oam[sprite].attr01 =
         objMode | (k * 16 + 12) | (206 << 16) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k == 0)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 320;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_SLOT_TILES;
     else if (k == 1)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 336;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | (LUCKY_WHEELS_LEVER_SLOT_TILES + 16);
     else if (k == 6)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 368;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | (LUCKY_WHEELS_LEVER_SLOT_TILES + 48);
     else if (k == 7)
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 384;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | (LUCKY_WHEELS_LEVER_SLOT_TILES + 64);
     else
-      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 352;
+      work->oam[sprite].attr2 =
+          OBJ_PRIORITY(1) | (LUCKY_WHEELS_LEVER_SLOT_TILES + 32);
     sprite++;
   }
 

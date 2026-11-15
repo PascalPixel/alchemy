@@ -1571,12 +1571,11 @@ again:
       }
       if (motion->delay > 0) {
         s32 x = (s16)FIELD_PIXEL(motion->x);
+        s32 y = (s16)FIELD_PIXEL(motion->y);
 
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
-                                     x, (s16)FIELD_PIXEL(motion->y), 8, 8);
+                                     x, y, 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
-        /* FAKEMATCH(barrier): an empty asm after the step. */
-        asm("");
       }
       motion->delay++;
       if (work->sparksRepeat == 1 && motion->delay == 10)

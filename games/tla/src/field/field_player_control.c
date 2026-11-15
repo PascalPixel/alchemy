@@ -733,8 +733,6 @@ counted:
     else
       cells = gMapGridCellBuffer;
     cells += object->x.fixed / px(16) + (object->z.fixed / px(16)) * 128;
-    /* FAKEMATCH(temporary): the cell attribute read into a local before the
-     * flags. */
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & 16) {

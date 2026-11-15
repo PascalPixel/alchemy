@@ -802,7 +802,6 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
                    object->z.fixed);
       Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12, &leftPosition);
       rightPosition.x = object->x.fixed;
-      /* FAKEMATCH(temporary): y read into its own local before the block. */
       y = object->y.fixed;
       /* FAKEMATCH(dead): the right probe's y stored in a once-only block. */
       do {

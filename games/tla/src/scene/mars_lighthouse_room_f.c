@@ -335,7 +335,20 @@ void Leader_CenterInCell(void);
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 
-extern volatile s16 gSlideOnIce_Stopped;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
+s16 gLightSpriteTile BSS_DATA ALIGNED(4);
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
 
 /// Whether two spheres overlap (Field_CheckSpheresOverlap), from an event.
 static inline s32 Event_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b,
@@ -357,13 +370,6 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
 void Actor_StopAtPushTarget(struct Actor *object);
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
-
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void MarsLighthouseRoomF_MeltIcebergs(void);
@@ -377,11 +383,8 @@ void Tightrope_Place(s32 a0, s32 a1, s32 a2);
 void Actor_DepartInRing(s32 id);
 void Actor_ArriveInRing(s32 id);
 void Map_CopyPalette(s32 scene, s32 a1);
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
-extern s32 gWhirlwindRiding;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1306,8 +1309,6 @@ extern s32 gPaletteCycleFrame;
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
-
-extern u16 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"
 
@@ -2427,7 +2428,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-extern struct CellTarget gCrackedTiles;
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 

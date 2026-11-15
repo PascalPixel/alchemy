@@ -68,9 +68,6 @@ void Orbs_UpdateRising(struct Actor *self);
 
 extern u32 gOrbs_RisingScript[];
 
-extern u32 gMarsLighthouseAerie_BeaconFireFrame;
-extern u32 gMarsLighthouseAerie_BeaconFireFrames;
-
 extern s32 gMarsLighthouseAerie_BeaconSparkScript[];
 
 void Orbs_SpawnRising(void);
@@ -79,10 +76,6 @@ extern s32 gMarsLighthouseAerie_BeamWidenScript[];
 extern u32 gMarsLighthouseAerie_BeamShootUpScript[];
 extern u32 gMarsLighthouseAerie_BeamRiseScript[];
 extern s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[];
-
-extern u16 *gPaletteCycle_FlashColors;
-extern u16 *gPaletteCycle_Colors;
-extern u16 *gPaletteCycle_Order;
 
 void Teleport_ArriveWhirling(void);
 

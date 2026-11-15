@@ -168,7 +168,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x662
-SCENE_WITH_BSS(yampi_desert_cave)
+SCENE(yampi_desert_cave)
 #elif OVERLAY == 0x663
 SCENE(airs_rock)
 #elif OVERLAY == 0x664
@@ -256,7 +256,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/apojii_islands.o"(.bss)
+        "*/games/tla/src/scene/apojii_islands.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67a
@@ -353,7 +353,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/lemuria_palace.o"(.bss)
+        "*/games/tla/src/scene/lemuria_palace.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x68e
@@ -373,7 +373,7 @@ SCENE(contigo)
 #elif OVERLAY == 0x695
 SCENE(shaman_village_cave)
 #elif OVERLAY == 0x696
-SCENE_WITH_BSS(shaman_village)
+SCENE(shaman_village)
 #elif OVERLAY == 0x697
 SECTIONS
 {
@@ -679,11 +679,11 @@ SCENE(prox)
 #elif OVERLAY == 0x6a9
 SCENE(caverns)
 #elif OVERLAY == 0x6aa
-SCENE_WITH_BSS(mars_lighthouse_entrance)
+SCENE(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
 SCENE(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
-SCENE_WITH_BSS(mars_lighthouse_room_m)
+SCENE(mars_lighthouse_room_m)
 #elif OVERLAY == 0x6ad
 SECTIONS
 {
@@ -700,11 +700,11 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/mars_lighthouse_room_f.o"(.bss)
+        "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6ae
-SCENE_WITH_BSS(mars_lighthouse_aerie)
+SCENE(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
 SCENE(treasure_isle)
 #elif OVERLAY == 0x6b0

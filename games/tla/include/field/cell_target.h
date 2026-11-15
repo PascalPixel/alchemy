@@ -33,7 +33,8 @@ struct CellTarget {
   /// The sprite as Oam_AddSpriteAtDepth takes it: the queue's link, then OAM
   /// attributes 0 and 1 in one word and attribute 2 in the next.
   unsigned long oam[3];
-  struct CellTargetEntry entries[1];
+  /// Room for 128, as the ROM spaces Mars Lighthouse room F's table.
+  struct CellTargetEntry entries[128];
 };
 
 /// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,

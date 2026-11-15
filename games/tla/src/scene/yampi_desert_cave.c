@@ -132,9 +132,15 @@ void YampiDesertCave_EndSand(void);
 extern u32 gYampiDesertCave_Settle[];
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
-extern u16 *gYampiDesertCave_MarkColors;
-extern u16 *gYampiDesertCave_MarkDimColors;
-extern u16 *gYampiDesertCave_MarkCycleSlots;
+u16 gYampiDesertCave_MarkBright BSS_DATA;
+u16 *gYampiDesertCave_MarkCycleSlots BSS_DATA;
+u16 gYampiDesertCave_MarkTimer BSS_DATA;
+u16 gYampiDesertCave_MarkPeriod BSS_DATA ALIGNED(4);
+u16 *gYampiDesertCave_MarkSlots BSS_DATA;
+u16 *gYampiDesertCave_MarkColors BSS_DATA;
+u16 *gYampiDesertCave_MarkDimColors BSS_DATA;
+u16 gYampiDesertCave_MarkCount BSS_DATA;
+u16 gYampiDesertCave_MarkCycleIndex BSS_DATA ALIGNED(4);
 void Actor_DisableById(s32 id);
 
 extern s8 gYampiDesertCave_LogFootprints[];
@@ -340,12 +346,6 @@ struct YampiDesertCaveRect {
   s32 word[6];
 };
 
-extern u16 gYampiDesertCave_MarkBright;
-extern u16 gYampiDesertCave_MarkTimer;
-extern u16 gYampiDesertCave_MarkPeriod;
-extern u16 *gYampiDesertCave_MarkSlots;
-extern u16 gYampiDesertCave_MarkCount;
-extern u16 gYampiDesertCave_MarkCycleIndex;
 extern struct ActorPlacement gYampiDesertCave_Placements[];
 extern struct ActorPlacement gYampiDesertCaveGuardianPlacements[];
 extern struct ActorPlacement gYampiDesertCaveCrystalPlacements[];

@@ -1450,7 +1450,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local. */
+      // Each piece starts 0 to 13 pixels lower than the leader.
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(

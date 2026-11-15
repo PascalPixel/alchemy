@@ -235,6 +235,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   s32 directionIndex;
   u32 step;
   s32 moveRate;
+  s32 transitionBusy;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   directionIndex = leader->facing >> 12;
@@ -272,7 +273,8 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   if (MapGrid_CheckCollision(pillar, &targetPosition) > 0)
     return;
 
-  if (pillar->riseCounter != 0)
+  transitionBusy = pillar->riseCounter;
+  if (transitionBusy != 0)
     return;
 
   Import_ActorSelectAnimation(leader, 8);
@@ -290,18 +292,13 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   FieldActor_WaitForMove(pillar);
   Event_NoOp();
   pillar->x.fixed = targetPosition.x;
-  {
-    /* FAKEMATCH(temporary): z read ahead of velocityX's store. */
-    s32 z = targetPosition.z;
-
-    pillar->velocityX = 0;
-    pillar->z.fixed = z;
-    pillar->velocityZ = 0;
-  }
+  pillar->z.fixed = targetPosition.z;
+  pillar->velocityX = transitionBusy;
+  pillar->velocityZ = transitionBusy;
   leader->targetX = TARGET_UNSET;
   leader->targetZ = TARGET_UNSET;
-  leader->velocityX = 0;
-  leader->velocityZ = 0;
+  leader->velocityX = transitionBusy;
+  leader->velocityZ = transitionBusy;
   leader->x.fixed = px(leader->x.part[0].pixel);
   leader->z.fixed = px(leader->z.part[0].pixel);
   Import_ActorSelectAnimation(leader, ANIM_STAND);
@@ -396,6 +393,9 @@ extern s32 gVenusLeaderDazedScript[];
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
+/// Sets bits in a byte of flags.
+static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
+
 /// Until the statue has sunk, stepping by it throws the leader
 /// back in a flash of sparks.
 void VenusLighthouse_RepelLeader(void) {
@@ -411,15 +411,15 @@ void VenusLighthouse_RepelLeader(void) {
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
   if (actor->z.fixed >> 20 <= 54) {
-    Actor_GetById(leader)->steeringFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 210;
   } else {
-    Actor_GetById(leader)->steeringFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 238;
   }
   Actor_WalkToAndWaitById(leader, actor->x.part[0].pixel, z * 4);
   Event_Wait(1);
-  Actor_GetById(leader)->steeringFlags |= 1;
+  SetFlagBits(&Actor_GetById(leader)->steeringFlags, ACTOR_FACES_MOTION);
   Event_Wait(20);
   Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles;
@@ -427,10 +427,6 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetAnimationAndWait(leader, 4);
   Actor_SetSpriteColor(Actor_GetById(leader), 0);
   Actor_SetAnimationAndWait(leader, 4);
-
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
 
   actor->update = 0;
   Event_End();

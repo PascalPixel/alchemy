@@ -748,7 +748,7 @@ void WorldMap_GazeIntoPond(void) {
     FieldActor_ShowItemIconById(ACTOR_POND_COINS, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
     do {
-      *(u16 *)((u8 *)work + 0xd34) = amount;
+      work->scoopedItem = amount;
       Scene_TalkToActor(0x1000 | slot);
     } while (0);
   } else if (roll == 1) {
@@ -1365,10 +1365,7 @@ void WorldMap_MeetEcho(void) {
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = (leader->x.fixed - px(10120)) / 2 + 0x27880000;
   z = (leader->z.fixed - px(8356)) / 2 + 0x20a40000;
-  /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
-   * flag 0x175's result for MsgHey2. */
-  flag = 0x16e;
-  flag = GameFlag_Get(flag);
+  flag = Event_GetFlag(0x16e);
   if (flag == 0) {
     if (gInput.held & KEY_UP)
       Event_SetFlag(0x175);

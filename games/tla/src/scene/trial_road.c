@@ -182,7 +182,6 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
-  s16 *order = (s16 *)state;
 
   if ((u32)(direction - 1) <= 1) {
     if (state->stage[0] <= 0) {
@@ -213,12 +212,7 @@ void TrialRoad_TakeStairs(s32 direction) {
     if (state->stage[0] > state->leaderBest)
       state->leaderBest = state->stage[0];
   }
-  {
-    /* FAKEMATCH(temporary): the byte offset kept in a local. */
-    s32 offset = (state->stage[0] * 2 + state->mirrored) * 2;
-
-    state->pattern = *(s16 *)((u8 *)order + offset);
-  }
+  state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
 }
 
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
@@ -1588,17 +1582,12 @@ void TrialRoad_SetUpCrumblingStage(void) {
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
-  OBJECT_BYTE(Actor_GetById(ACTOR_UPPER_LOG), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(ACTOR_LOWER_LOG), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(ACTOR_EAST_LOG), 98) = 1;
-  {
-    /* FAKEMATCH(pin): the zero pinned to r6. */
-    register s32 clear asm("r6") = 0;
-
-    Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = clear;
-    Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = clear;
-    Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = clear;
-  }
+  Actor_GetById(ACTOR_UPPER_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_LOWER_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_EAST_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = 0;
+  Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = 0;
+  Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = 0;
   TrialRoad_BlockLogs();
   TrialRoad_AddPillarTop(15);
   TrialRoad_BlockCellUnder(15);
@@ -2050,7 +2039,6 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Set(FLAG_AREA_TEMP_80);
       }
       {
-        /* FAKEMATCH(temporary): side, for both the store and its flip. */
         s16 side = (entrance - 1) & 1;
 
         state->mirrored = side;
@@ -2058,12 +2046,11 @@ s32 Scene_PrepareMap(void) {
         state->stage[1] = 3;
         state->leaderBest = 4;
         state->rivalBest = 4;
-        side ^= 1;
         {
-          /* FAKEMATCH(temporary): index. */
-          s32 index = side + 6;
+          // The rival runs stage 3 on the other side of the course.
+          s32 rivalSlot = 3 * 2 + (side ^ 1);
 
-          value = state->order[index];
+          value = state->order[rivalSlot];
         }
       }
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
@@ -2548,10 +2535,10 @@ void TrialRoad_BeatMoapa(void) {
   PartyInventory_Discard(65);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
   Actor_FaceActor(ACTOR_FELIX, 8, 0);
-  Actor_GetById(ACTOR_MOAPA)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MOAPA, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
-  Actor_GetById(ACTOR_MOAPA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   // "After many years, the vow that Hoabna made to Yegelos has at last..."
@@ -2664,10 +2651,10 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetAnimationById(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.25);
-  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 8);
   Event_Wait(1);
-  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 2);
   Actor_SetAnimationById(ACTOR_WEST_GUARD, 5);
@@ -2677,10 +2664,10 @@ void TrialRoad_ShowTraps(void) {
   MapGrid_SetShake(2, 4, 1);
   Actor_GetById(ACTOR_WEST_GUARD)->velocityY = px(4);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 16);
   Event_Wait(1);
-  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(60);
   Actor_FaceDirectionById(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Event_Wait(20);
@@ -3223,7 +3210,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local. */
+      // Each piece starts 0 to 13 pixels lower than the leader.
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(

@@ -905,13 +905,13 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(10);
   FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 3);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 2);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
   /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
   } while (0);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
   FieldEvent_Wait(20);
@@ -925,10 +925,10 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 1);
-  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 456, 440);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Let's go meet them together, shall we?"
@@ -947,14 +947,14 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 0.5);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 0.5);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 488, 424);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 488, 440);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_ALEX, 456, 432);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(10);
@@ -969,12 +969,12 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAttachedEffect(ACTOR_SOLDIER_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 504, 424);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetPosition(ACTOR_DOUBTING_SOLDIER, 0, 0);
-  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
   FieldEvent_Wait(1);
   {

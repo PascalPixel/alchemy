@@ -2585,7 +2585,7 @@ void Gauge_Draw(s32 progress) {
   if (kind + level == gGauge_Shown)
     return;
   gGauge_Shown = kind + level;
-  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gGauge_Tiles), (s32)(0x100));
+  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
@@ -2623,43 +2623,25 @@ void Gauge_Draw(s32 progress) {
     count = 0;
   }
   if (count != 0) {
-    i = 0;
-    if (i >= count)
-      goto done;
-  loop:
-    {
-      s32 j;
+    for (i = 0; i < count; i++) {
       u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
       u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
-      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
-       * rank. */
-      asm("" : "=r"(dest) : "0"(dest));
+      s32 j;
 
-      j = 2;
       if ((i & 1) == 0) {
-        j = 1;
-      even:
-        *dest = (*dest & 240) | (*source & 15);
-        j++;
-        source += 4;
-        dest += 4;
-        if (j > 3)
-          goto next;
-        goto even;
+        for (j = 1; j <= 3; j++) {
+          *dest = (*dest & 240) | (*source & 15);
+          source += 4;
+          dest += 4;
+        }
       } else {
-      oddLoop:
-        *dest = (*dest & 15) | (*source & 240);
-        j--;
-        source += 4;
-        dest += 4;
-        if (j >= 0)
-          goto oddLoop;
+        for (j = 2; j >= 0; j--) {
+          *dest = (*dest & 15) | (*source & 240);
+          source += 4;
+          dest += 4;
+        }
       }
     }
-  next:
-    i++;
-    if (i < count)
-      goto loop;
   }
 done:
   Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);

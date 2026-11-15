@@ -767,7 +767,7 @@ void Actor_AnimateAndEmit(struct Actor *object) {
 void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   struct LinkedEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 i;
 
@@ -782,18 +782,17 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
       child->timer = 0;
       child->watchedActor = parent;
       if (sprite != NULL) {
-        Sprite_StartAnimation((struct ActorSpriteView *)sprite, 0);
-        sprite->nextFrame = 0;
-        VramCache_FreeEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView. */
-        ((struct LinkedSpriteView *)sprite)->retainCacheEntry = 1;
-        sprite->tile =
-            (gVramCacheEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct LinkedSpriteView *)sprite)->size = 2;
-        ((struct LinkedDetail *)sprite->record)->field16 = 0;
+        Sprite_StartAnimation(sprite, 0);
+        sprite->flags = 0;
+        VramCache_FreeEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        ((struct LinkedDetail *)sprite->entries[0])->field16 = 0;
       }
     }
   }
@@ -869,43 +868,25 @@ void Gauge_Draw(s32 progress) {
     count = 0;
   }
   if (count != 0) {
-    i = 0;
-    if (i >= count)
-      goto done;
-  loop:
-    {
-      s32 j;
+    for (i = 0; i < count; i++) {
       u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
       u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
-      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
-       * rank. */
-      asm("" : "=r"(dest) : "0"(dest));
+      s32 j;
 
-      j = 2;
       if ((i & 1) == 0) {
-        j = 1;
-      even:
-        *dest = (*dest & 240) | (*source & 15);
-        j++;
-        source += 4;
-        dest += 4;
-        if (j > 3)
-          goto next;
-        goto even;
+        for (j = 1; j <= 3; j++) {
+          *dest = (*dest & 240) | (*source & 15);
+          source += 4;
+          dest += 4;
+        }
       } else {
-      oddLoop:
-        *dest = (*dest & 15) | (*source & 240);
-        j--;
-        source += 4;
-        dest += 4;
-        if (j >= 0)
-          goto oddLoop;
+        for (j = 2; j >= 0; j--) {
+          *dest = (*dest & 15) | (*source & 240);
+          source += 4;
+          dest += 4;
+        }
       }
     }
-  next:
-    i++;
-    if (i < count)
-      goto loop;
   }
 done:
   Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);

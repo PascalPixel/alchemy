@@ -24,7 +24,10 @@ struct BattleSpriteDefinition {
   u8 palette : 4;     ///< the sprite's palette
   u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
   ///@}
-  u8 unk04[4]; ///< [0] is the effect height (BattleSprite_GetEffectHeight)
+  /// The height a battle effect is drawn at over the enemy, in pixels; 0 for
+  /// its size's default.
+  u8 effectHeight;
+  u8 reserved[3]; ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
@@ -34,7 +37,7 @@ extern struct BattleSpriteDefinition gBattleSprites[];
 /// A summon: its name and the Djinn of each element it needs.
 struct SummonDefinition {
   u16 abilityId;
-  u8 unk02[2];         ///< not named by TLA code
+  u8 reserved[2];      ///< 0 in every row; read by no code
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };
 

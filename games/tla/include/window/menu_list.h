@@ -23,7 +23,7 @@ struct CursorSprite {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u16 unk;
+  u16 affineParam; ///< OAM's fourth halfword, the affine parameter slot
 };
 
 /// A point on the screen, in pixels.

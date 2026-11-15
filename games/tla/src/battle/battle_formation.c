@@ -693,13 +693,7 @@ s32 BattleSprite_HasHeavyImpact(s32 index) {
 /// Returns the height an animation is drawn at over a class, in pixels, or 0
 /// for its size's default; 0 out of range.
 u32 BattleSprite_GetEffectHeight(u32 index) {
-  u8 *table;
-  u32 offset;
-
   if (index > ENEMY_CLASS_LAST)
     return 0;
-  table = (u8 *)gBattleSprites;
-  offset = index * 8;
-  offset += 4;
-  return table[offset];
+  return gBattleSprites[index].effectHeight;
 }

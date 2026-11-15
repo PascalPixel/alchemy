@@ -13,42 +13,15 @@
 #include "system/field_effect.h"
 #include "fixed_math.h"
 
-// The spawner sees its callees through its own views, as every copy did on
-// its own: the including scene's declarations of the same names do not
-// reach it, whatever they say.
-#define EFFECT_NAME(name) EFFECT_NAME_STRING(name)
-#define EFFECT_NAME_STRING(name) #name
-
-/* VIEW(spawn): routine Actor_GetById as struct FieldEffect *Actor_GetById(s32
- * id); field/event.h has struct Actor *Actor_GetById(u32 objectId); tried as
- * the definition's struct Actor *Actor_GetById(u32 objectId), which the object
- * already declares, it does not compile in tla-ja (garoh.c) (make modern):
- * games/tla/src/field/field_effect_spawn.c:42:41: note: expected 'struct Actor
- * *' but argument is of type 'struct FieldEffect *'. */
-extern struct FieldEffect *
-Actor_GetById__spawn(s32 id) __asm__("Actor_GetById");
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
-/* VIEW(spawn): routine EFFECT_SET_MODE as void EFFECT_SET_MODE(struct
- * FieldEffect *effect, s32 mode); field/field.h has void
- * Actor_SelectAnimation(struct Actor *object, s32 argument); not tried:
- * EFFECT_SET_MODE's bound declaration was not found. */
-extern void SetMode__spawn(struct FieldEffect *effect,
-                           s32 mode) __asm__(EFFECT_NAME(EFFECT_SET_MODE));
-/* VIEW(spawn): routine EFFECT_SET_SCRIPT as void EFFECT_SET_SCRIPT(struct
- * FieldEffect *effect, const s32 *script); actor_view.h has void
- * Actor_StartScript(struct Actor *, const s32 *); not tried:
- * EFFECT_SET_SCRIPT's bound declaration was not found. */
-extern void
-SetScript__spawn(struct FieldEffect *effect,
-                 const s32 *script) __asm__(EFFECT_NAME(EFFECT_SET_SCRIPT));
 extern const s32 *EFFECT_SCRIPTS[];
+struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
-  struct FieldEffect *party =
-      Actor_GetById__spawn(gMainRoutineWork.leaderActorId);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -69,15 +42,16 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  SetMode__spawn(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  SetScript__spawn(effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
+  EFFECT_SET_MODE((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  EFFECT_SET_SCRIPT((void *)effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -117,8 +91,8 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    SetMode__spawn(effect, 1);
-    SetScript__spawn(effect, options->script);
+    EFFECT_SET_MODE((void *)effect, 1);
+    EFFECT_SET_SCRIPT((void *)effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -127,6 +101,3 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
-
-#undef EFFECT_NAME
-#undef EFFECT_NAME_STRING

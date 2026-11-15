@@ -469,75 +469,30 @@ struct Unk_080db0b0Sprite {
   u16 unk12;
 };
 
-struct CompositeAnimation {
-  u8 unused[0x11]; ///< no code names it
-  u8 displayFlags;
-  u8 unusedAfterDisplayFlags[7]; ///< no code names it
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
-  struct SpriteAnimation *entries[4];
-};
-
 /// unk26a from main_routine_work.h.
 struct PartyPauseView {
   u8 unused[0x26a]; ///< no code names it
   s16 pausedObject;
 };
 
-struct DepthPart {
-  u8 unused[9]; ///< no code names it
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 unk09_4 : 4;
+/// The point the map view follows (MapWork.origin), as the depth sort reads it.
+struct DepthOrigin {
+  s32 x;
+  s32 y; ///< its height, 16.16 fixed-point pixels
 };
 
-struct DepthMapBase {
-  u8 unused[4]; ///< no code names it
-  s32 base;
-};
-
+/// The map view's place (MapWork.viewX and viewZ), read as a pair.
 struct DepthScroll {
-  s32 unk00;
-  s32 offset;
+  s32 x;
+  s32 z;
 };
 
+/// MapWork as BattleEffect_GetObjectDepth reads it: its followed point and its
+/// view, through a pointer to the pair.
 struct DepthMap {
-  struct DepthMapBase *base;
-  u8 unusedAfterBase[0xe0]; ///< no code names it
-  struct DepthScroll scroll;
-};
-
-struct DepthSprite {
-  u8 unused[5]; ///< no code names it
-  u8 unk05_0 : 5;
-  u8 hidden : 1;
-  u8 unk05_6 : 2;
-  u8 unusedB[3]; ///< no code names it
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 layer : 4;
-  u8 unusedAfterLayer[2]; ///< no code names it
-  s32 x;
-  s32 y;
-  u8 unk14[4];
-  s32 scale;
-  u8 unusedAfterScale[2]; ///< no code names it
-  u16 frame;
-  u8 unusedAfterFrame[8]; ///< no code names it
-};
-
-struct DepthScene {
-  u16 mode;
-  u8 unusedAfterMode[2]; ///< no code names it
-  s32 x;
-  u8 unusedAfterX[8]; ///< no code names it
-  struct Actor *mainActor;
-  u8 unk14[0x7b4];
-  struct DepthSprite sprite;
-  s16 vramSlot;
-  s16 active;
+  struct DepthOrigin *origin;
+  u8 unusedAfterOrigin[0xe0]; ///< no code names it
+  struct DepthScroll view;
 };
 
 /// One rising particle: its sprite, world position, drift and frames left.

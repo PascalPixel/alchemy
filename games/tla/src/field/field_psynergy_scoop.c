@@ -249,7 +249,7 @@ void FieldPsynergy_Scoop(void) {
   other->priorityFlags = 1;
   other->scaleX = 0;
   if (!(event->unkd4c & 1))
-    Func_080dba5c();
+    FieldPsynergy_StartSceneSprite();
   Sound_PlayFar(SE_ITEM_BREAK);
   FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
   wait(10);

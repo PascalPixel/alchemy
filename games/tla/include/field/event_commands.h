@@ -47,22 +47,6 @@ struct ScatterPosition {
   s32 z;
 };
 
-/// A composite sprite, as field.h's CompositeAnimation.
-struct CloakSprite {
-  u8 unused[0x19]; ///< no code names it
-  u8 dirty;        // redraw the parts
-  u8 blend;        // 2 draws the caster half transparent, 1 shows it plainly
-  u8 unk1b[0x0d];
-  struct SpriteAnimation *entries[4];
-};
-
-struct CloakCaster {
-  u8 unused[0x50]; ///< no code names it
-  struct CloakSprite *sprite;
-  u8 unusedAfterSprite[0x18]; ///< no code names it
-  void (*hook)(void);
-};
-
 struct TouchCell {
   s16 x;
   s16 z;

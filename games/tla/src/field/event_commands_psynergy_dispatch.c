@@ -270,33 +270,20 @@ void FieldPsynergy_RunExtraHandler(void) {
   }
 }
 
-void Actor_ApplyRandomChildValues(struct Actor *owner) {
-  s32 state;
-  struct CompositeAnimation *target;
-  s32 initialCount;
+/// Per-frame update: sets every part of an actor's sprite to colour mode
+/// frame % 6, which cycles its colours.
+void Actor_ApplyRandomChildValues(struct Actor *actor) {
+  struct Sprite *sprite;
   s32 count;
-  struct SpriteAnimation **entry;
-  struct SpriteAnimation *current;
-  u32 frame;
-  s32 value;
+  s32 i;
 
-  state = owner->spriteStorageKind;
-  if (state == 1) {
-    target = owner->sprite;
-    if (target != 0 && (target->displayFlags & state) == 0) {
-      initialCount = target->count;
-      if (initialCount != 0) {
-        entry = target->entries;
-        frame = gFrameCount;
-        count = initialCount;
-        do {
-          current = *entry++;
-          value = frame % 6;
-          count--;
-          current->colorMode = value;
-        } while (count != 0);
-      }
-      target->dirty = 1;
+  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+    sprite = actor->sprite;
+    if (sprite != 0 && sprite->retainCacheEntry == 0) {
+      count = sprite->count;
+      for (i = 0; i < count; i++)
+        sprite->entries[i]->colorMode = gFrameCount % 6;
+      sprite->dirty = 1;
     }
   }
 }
@@ -317,13 +304,13 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
 /// casts facing away (0xc000), else 0, in front of everything.
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
-    return ((struct DepthPart *)object->sprite)->priority;
+    return ((struct PlacedSprite *)object->sprite)->priority;
   return 0;
 }
 
 /// Returns the 2-bit OBJ priority of the object's animation record.
 s32 BattleEffect_GetObjectPriority(struct Actor *object) {
-  return ((struct DepthPart *)object->sprite)->priority;
+  return ((struct PlacedSprite *)object->sprite)->priority;
 }
 
 /// Returns the object's sort depth: from its projected z on the world map
@@ -334,7 +321,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   s32 depth;
   s32 *out;
 
-  if (gFieldWork->mode == 3) {
+  if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
     point[0] = object->x.fixed;
     out = screen;
     point[1] = object->y.fixed;
@@ -345,9 +332,9 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
       depth = 1;
   } else {
     struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->mapGrid;
-    struct DepthScroll *scroll = &map->scroll;
-    s32 bias = scroll->offset & 0xffff0000;
-    s32 base = map->base->base;
+    struct DepthScroll *view = &map->view;
+    s32 bias = view->z & FIELD_PIXEL_MASK;
+    s32 base = map->origin->y;
 
     depth =
         FIELD_PIXEL(object->y.fixed - base + object->z.fixed - base - bias) +
@@ -356,37 +343,43 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   return depth;
 }
 
-/// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
+/// Per-frame callback: draws the scene's sprite (FieldEffectWork.sprite).
 void BattleEffect_DrawSceneSprite(void) {
-  EffectSprite_Draw((u8 *)Ram_HeapSlots->fieldEffectWork + 0x7c8);
+  EffectSprite_Draw(
+      &((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->sprite);
 }
 
-void Func_080dba5c(void) {
-  struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
+/// When the caster faces away (FACING_NORTH), starts the scene's sprite
+/// (FieldEffectWork.sprite): a blank 32x32 sprite of its own VRAM cache entry,
+/// twice as tall, 28 pixels above the caster in front of everything, drawn
+/// each frame by BattleEffect_DrawSceneSprite until
+/// FieldPsynergy_ReleaseSceneSprite.
+void FieldPsynergy_StartSceneSprite(void) {
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor;
-  struct DepthSprite *sprite;
+  struct EffectSprite *sprite;
   s32 position[3];
   void *buffer;
   s32 slot;
   s32 tiles;
 
-  mainActor = scene->mainActor;
-  if (scene->mode == 0xc000) {
-    scene->active = 1;
+  mainActor = effectWork->mainActor;
+  if (effectWork->angle == FACING_NORTH) {
+    effectWork->spriteActive = 1;
     buffer = Heap_Alloc(0x200);
     IWRAM_FILL_WORDS(buffer, 0x200, 0);
     slot = VramCache_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
-    scene->vramSlot = slot;
+    effectWork->spriteVramSlot = slot;
     Heap_Release(buffer);
-    sprite = &scene->sprite;
+    sprite = &effectWork->sprite;
     EffectSprite_Init(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
-    sprite->frame = 0;
-    sprite->priority = 0;
-    sprite->hidden = 0;
-    sprite->layer = 0;
-    sprite->scale = Q16_ONE * 2;
-    position[0] = scene->x;
+    sprite->depth = 0;
+    sprite->oam.priority = 0;
+    sprite->oam.fullColor = 0;
+    sprite->oam.palette = 0;
+    sprite->scaleY = Q16_ONE * 2;
+    position[0] = effectWork->x;
     position[1] = mainActor->y.fixed + px(28);
     position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);

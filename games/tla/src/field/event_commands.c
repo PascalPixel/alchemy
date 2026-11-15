@@ -32,8 +32,6 @@
 #include "event_commands_field_psynergy_work.c"
 #include "event_commands_mind_read.c"
 
-#undef CLOAK_FLICKER_PALETTE
-
 #include "event_commands_cloak.c"
 
 #include "event_commands_carry.c"

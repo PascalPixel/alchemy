@@ -138,7 +138,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
 /// Pound cast on a target: runs FieldPsynergy_Pound.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
 
-void Func_080dba5c(void);
+void FieldPsynergy_StartSceneSprite(void);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
 /// Pound ("Drive objects into the ground."): a giant fist forms over the spot
@@ -225,7 +225,7 @@ void FieldPsynergy_Pound(void) {
   shine->facing = caster->facing;
   Actor_SelectAnimationFar(shine, 2);
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
-    Func_080dba5c();
+    FieldPsynergy_StartSceneSprite();
 
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;

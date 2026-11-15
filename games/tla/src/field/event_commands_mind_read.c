@@ -1672,47 +1672,44 @@ void FieldEffect_CheckCloakTile(void) {
     event->psynergy = 0x2092;
 }
 
-// The caster's palette while it flickers.
-#define CLOAK_FLICKER_PALETTE 7
-
 /// Show the Cloaked caster again: stop checking the ground under it, then
 /// flicker it back into view over twenty frames and clear the cloak
 /// (FieldPsynergy_RunExtraHandler).
 void FieldPsynergy_EndCloak(void) {
-  struct CloakCaster *caster =
+  struct Actor *caster =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
-  struct CloakSprite *sprite = caster->sprite;
+  struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 i;
 
   Sound_PlayFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
-  Actor_SelectAnimationFar((struct Actor *)caster, 0);
-  caster->hook = 0;
+  Actor_SelectAnimationFar(caster, ANIM_STILL);
+  caster->update = 0;
 
   // Blink between the flicker palette half transparent and solid...
   for (i = 0; i < 5; ++i) {
-    entry->colorMode = CLOAK_FLICKER_PALETTE;
-    sprite->blend = 2;
+    entry->colorMode = SPRITE_COLOR_WHITE;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     sprite->dirty = 1;
     wait(2);
     sprite->dirty = 1;
-    sprite->blend = 0;
+    sprite->flags = 0;
     wait(2);
   }
 
   // ...then between the flicker palette and the caster's own.
   for (i = 0; i < 5; ++i) {
-    entry->colorMode = CLOAK_FLICKER_PALETTE;
-    sprite->blend = 0;
+    entry->colorMode = SPRITE_COLOR_WHITE;
+    sprite->flags = 0;
     sprite->dirty = 1;
     wait(2);
-    entry->colorMode = 0;
+    entry->colorMode = SPRITE_COLOR_NORMAL;
     sprite->dirty = 1;
     wait(2);
   }
 
-  sprite->blend = 1;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   gMainRoutineWork.cloaked = 0;
 }
 

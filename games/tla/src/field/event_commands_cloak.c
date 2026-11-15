@@ -34,9 +34,6 @@
 
 /// The end of Cloak, and Douse.
 
-// The caster's palette while it flickers.
-#define CLOAK_FLICKER_PALETTE 7
-
 // What the ground check (FieldEffect_CheckCloakTile) requests when the caster
 // does not stand on a tile it can hide on.
 #define CLOAK_END 0x2092
@@ -46,31 +43,31 @@
 /// stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct CloakCaster *caster =
+  struct Actor *caster =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
-  struct CloakSprite *sprite = caster->sprite;
+  struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
   s32 order;
 
   Sound_PlayFar(SE_PSYNERGY_START);
-  Actor_SelectAnimationFar((struct Actor *)caster, 0);
-  caster->hook = 0;
+  Actor_SelectAnimationFar(caster, ANIM_STILL);
+  caster->update = 0;
 
   for (n = 0; n < 10; n++) {
-    entry->colorMode = CLOAK_FLICKER_PALETTE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
-    sprite->blend = 2;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     wait(2);
     sprite->dirty = 1;
-    sprite->blend = 0;
+    sprite->flags = 0;
     wait(2);
   }
 
   order = TASK_PASS_VBLANK;
-  sprite->blend = 2;
-  entry->colorMode = 0;
+  sprite->flags = SPRITE_FLAG_OUTLINED;
+  entry->colorMode = SPRITE_COLOR_NORMAL;
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);

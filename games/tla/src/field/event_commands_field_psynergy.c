@@ -13,12 +13,12 @@
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
-  struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
 
-  if (scene->active != 0) {
-    scene->active = 0;
+  if (effectWork->spriteActive != 0) {
+    effectWork->spriteActive = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);
-    VramCache_FreeEntry(scene->vramSlot);
+    VramCache_FreeEntry(effectWork->spriteVramSlot);
   }
 }
 

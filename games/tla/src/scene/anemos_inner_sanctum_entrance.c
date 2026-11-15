@@ -5,6 +5,8 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/event_commands.h"
+#include "field/field_sequence.h"
 
 #include "../field/actor_prepare.c"
 #include "flags.h"
@@ -25,11 +27,7 @@ struct AnemosInnerSanctumEntranceParty {
 void AnemosInnerSanctumEntrance_PlaceStatues(void);
 void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-s32 Field_FindNearbyTalkTarget(s32 id);
 void Field_TryJumpForward(void);
-s32 Leader_CanPushObjectAhead(void);
-void Leader_PushObjectAhead(void);
 #include "field/field.h"
 #include "types.h"
 #include "field/actor.h"
@@ -57,8 +55,6 @@ void Leader_PushObjectAhead(void);
 #include "system/task.h"
 #include "macros.h"
 #include "shared/tables.h"
-
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 #include "shared/scene_create_imported_actor.h"
 

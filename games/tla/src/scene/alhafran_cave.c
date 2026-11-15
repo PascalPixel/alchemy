@@ -38,6 +38,9 @@
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/object.h"
+#include "scene/dehkan_plateau.h"
+#include "scene/gabomba_statue.h"
 
 void Pillars_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
@@ -49,7 +52,6 @@ void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 extern s32 gAlhafranCave_ClearedWord;
 
 /// Set while the way down to the jail is open, as the leader stands on the
@@ -133,8 +135,6 @@ void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
 
 void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
-void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
-void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 extern s16 gAlhafranCave_Puddles[];
 extern s16 gAlhafranCave_Pillars[];

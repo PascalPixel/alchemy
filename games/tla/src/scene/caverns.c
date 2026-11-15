@@ -16,6 +16,9 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/actor_script.h"
+#include "field/map.h"
+#include "field/objdisp.h"
+#include "scene/dehkan_plateau.h"
 
 /// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's
 /// water dried by Parch.
@@ -41,8 +44,6 @@ void Caverns_PlaceAngaraBlocks(const s16 *data);
 void Caverns_PrepareOsenia(void);
 void Caverns_PrepareAtteka(void);
 s32 MapGrid_CheckCollision(struct Actor *object, s16 *position);
-void Rope_Initialize(void);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Caverns_InitializeIndra(void);
 void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
@@ -92,8 +93,6 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "../field/field_effect_spawn.c"
 
 struct Actor;
-
-struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 extern u32 gFieldEffect_ShortScript[];
 
@@ -320,11 +319,6 @@ void Caverns_LayerLeaderByStack(struct Actor *object) {
     *flags &= ~6;
   }
 }
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-void Actor_Release(struct Actor *object);
 
 /// After the block has moved: a block left over a drop falls with a thump and a
 /// ring of dust, and one landing on the other block stacks on it; then its new

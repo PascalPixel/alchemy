@@ -39,9 +39,6 @@
 #include "version.h"
 #include "text/msg_ids.h"
 
-void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                       s32 height);
-
 /// Reads a game flag.
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
@@ -162,7 +159,6 @@ void Scene_RaiseHeldActor(void);
 
 void DailaInteriors_TakeSeaGodsTear(void);
 
-s32 FieldYesNo_Ask(s32 mode);
 void Field_TryJumpForward(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -274,7 +270,6 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gDailaInteriors_HousesEvents;
 }
 
-struct Actor *Actor_GetById(u32 objectId);
 s32 Inn_CheckIn(s32 mode, s32 objectId);
 
 /// The weapon merchant sells across his counter, and otherwise warns of the
@@ -502,7 +497,6 @@ void DailaInteriors_TalkCaughtPracticing(void) {
 #include "shared/scene_raise_held_actor.h"
 
 void ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
-void Sound_Play(s32 cue);
 void Actor_StartIdle(struct Actor *object);
 
 /// Takes the Sea God's Tear from the top of the pillars, or, when the bags are
@@ -554,8 +548,6 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   }
   Event_End();
 }
-
-struct ItemDefinition *Item_GetDirect(s32 item);
 
 /// Gives an item to the party, asking what to drop when no one has room for
 /// it; returns who took it, or -1.
@@ -648,7 +640,6 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
 
 void TilesetAnim_Pause(s32 mode);
 
-void Actor_SetItemIcon(struct Actor *object, s32 item);
 void FlagBlock_PlaceAll(const s16 *flags);
 
 /// Sets up the houses (the boys eating once they are home, the armor merchant

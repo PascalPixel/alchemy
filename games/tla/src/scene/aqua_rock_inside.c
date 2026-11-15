@@ -24,13 +24,14 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "scene/dehkan_plateau.h"
+#include "window/item_icon.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void Event_FinishScreenTransition(void);
-s32 VramCache_FindFreeEntry(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "field/map_grid.h"
 
@@ -114,19 +115,12 @@ struct FieldSpriteFlags {
   u8 flag0 : 1;
 };
 
-s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
-void Event_End(void);
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void FieldCamera_WaitForArrival(void);
 void Field_TryJumpForward(void);
-void Party_AddPp(s32 a, s32 b);
-void Scene_QueueMusic(s32 a);
 void AquaRockInside_SpawnSplash(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
-void Event_NoOp(void);
 
 void AquaRockInside_LowerSpring(void);
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value);
@@ -1177,10 +1171,6 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 #include "shared/actor_aim_at_watched.h"
 
 #include "shared/actor_step_to_watched.h"
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
 
 #include "shared/actor_emit_bubbles.h"
 

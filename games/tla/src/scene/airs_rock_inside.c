@@ -19,6 +19,10 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/scene_call.h"
+#include "scene/airs_rock.h"
+#include "scene/dehkan_plateau.h"
+#include "scene/gabomba_statue.h"
 
 /// Set once Move has left the hall's pillar on cell (103, 41) in
 /// half cells.
@@ -69,21 +73,7 @@ struct AirsRockInsideMapWork {
 
 extern u8 gMapGridCellBuffer[];
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
-void Actor_SetBlendMode(struct Actor *object, u32 value);
-struct Actor *Actor_GetById(u32 objectId);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Set(s32 flag);
-void GameFlag_Clear(s32 flag);
-void FieldEvent_Wait(s32 frames);
 void Actor_StartScript(struct Actor *object, const u8 *data);
-void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Party_AddPp(s32 a, s32 b);
-void Sound_Play(s32 value);
 
 /// The actors of each inner room, numbering its placement table. The wind
 /// statues (sprite 377) breathe whirlwinds once Whirlwind on their room's
@@ -256,16 +246,8 @@ extern struct ActorPlacement gAirsRockInside_RevealTabletPlacements[];
 
 void AirsRockInside_RestoreCellBehindLeader(void);
 
-s32 Actor_GetCellIndex(struct Actor *object);
-
-void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
-
 void AirsRockInside_BurstDust(s32 x, s32 z);
 void AirsRockInside_ScatterSparks(s32 x, s32 z);
-
-void WindowColor_Apply(s32 hue, s32 brightness);
-
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
 extern s16 gAirsRockInside_HallPillars[];
 extern s16 gAirsRockInside_VialChestPillars[];
@@ -292,8 +274,6 @@ extern struct Trigger gAirsRockInside_FaceWarpTriggers[];
 extern struct Trigger gAirsRockInside_CoinsChestTriggers[];
 extern struct Trigger gAirsRockInside_PsynergyStoneTriggers[];
 
-void MapGrid_WaitForShakeToSettle(void);
-
 void AirsRockInside_StartRestoringCells(void);
 void AirsRockInside_SetLedgeCellsByLevel(void);
 void AirsRockInside_SpawnMotes(void);
@@ -302,7 +282,6 @@ void Actor_PlaceBlocks(u16 *actors);
 
 void AirsRockInside_RiseOnLift(void);
 
-void Scene_QueueMusic(s32 id);
 void Tightrope_Initialize(void);
 s32 Tightrope_Place(s32 slot, s32 a, s32 b);
 
@@ -338,7 +317,6 @@ void AirsRockInside_IgnoreStep(void);
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gAirsRockInside_StatueScript[];
 
-struct Actor *FieldCamera_GetActor(void);
 void Actor_PlaySoundInView(struct Actor *object, s32 cue);
 s32 Actor_HasArrived(struct Actor *object);
 
@@ -637,9 +615,6 @@ void AirsRockInside_PlaceCones(u16 *list) {
   } while (*entry != 0xffff);
 }
 
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void FieldCamera_FollowActor(s32 id, s32 flag);
-
 /// The leader rides a statue's whirlwind along its path until it fades.
 void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -806,8 +781,6 @@ void AirsRockInside_RideWhirlwind(void) {
 extern u32 gAirsRockInside_WhirlwindFadesScript[];
 extern u32 gAirsRockInside_WhirlwindRisesScript[];
 
-s32 Trig_Sin(s32 angle);
-
 /// AirsRockInside_MovePooledWhirlwind's twin for another shot: it also stops
 /// while the render mode is 5, and on a cell of kind 212 it ends with one of
 /// two end scripts by its angle; otherwise, the first time it reaches the
@@ -875,10 +848,6 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     shot->z.fixed += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   }
 }
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
 
 /// A launcher's update with a new shot each time: while none of the event
 /// work's four busy counters is set it counts frames in its action parameter,
@@ -1218,8 +1187,6 @@ void AirsRockInside_FollowGust(struct Actor *object) {
 }
 
 void AirsRockInside_SpiralGust(struct Actor *object);
-void Camera_SetSpeedParameters(s32 a, s32 b);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 #define TARGET(effect) ((effect)->child)
 
@@ -1756,10 +1723,6 @@ DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
     AirsRockInside_StampTallCellUnderLeaderNearer, 63)
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-
 /// A burst of dust at x, z.
 void AirsRockInside_BurstDust(s32 x, s32 z) {
   struct EffectOptions options;
@@ -1847,12 +1810,6 @@ void AirsRockInside_FlickerTarget(struct Actor *object) {
 
   Actor_SetSpriteColor(object, (u8)(bit * object->riseCounter));
 }
-
-void PaletteFade_SetSource(s32 a, s32 b);
-void PaletteFade_StartInterpolation(s32 mode);
-void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
-                                        s32 a, s32 b);
-void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 
 /// Whirlwind on the hall's twister rock (object 11): it glows and the light it
 /// sends wakes the statue (object 10), which starts breathing whirlwinds; sets
@@ -1989,8 +1946,6 @@ fade:
   GameFlag_Set(FLAG_AIRS_ROCK_HALL_STATUE_WOKEN);
   Event_End();
 }
-
-void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
 /// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
 /// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
@@ -2301,8 +2256,6 @@ void AirsRockInside_JumpDownLedge(void) {
   Event_End();
 }
 
-void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-
 /// While the leader is no further than z 653, moves the leader to (376, 668)
 /// with bit 0 of its byte 90 cleared for the move.
 void AirsRockInside_StepOffRide(void) {
@@ -2446,8 +2399,6 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   Actor_StartScript(object, gAirsRockInside_OrbitSparkScript);
 }
 
-void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
-
 s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
 
@@ -2497,10 +2448,6 @@ s32 Orbit_Update(struct Orbit *object) {
 
 #include "shared/actor_step_to_watched.h"
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-
 #include "shared/actor_emit_bubbles.h"
 
 extern u32 gAirsRockInside_TabletRiseScript[];
@@ -2510,7 +2457,6 @@ extern u32 gAirsRockInside_ShebaRiseScript[];
 extern s32 gAirsRockInside_SeekingSparkScript[];
 extern s32 gAirsRockInside_TabletSettleScript[];
 extern s32 gAirsRockInside_ShebaSettleScript[];
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
 
 /// The tablet rises in a rumble, sparks circle Sheba and she learns Reveal.
 void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
@@ -2639,15 +2585,9 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
 
 #include "text/msg_ids.h"
 
-void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
-
 #define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
-void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
-void Actor_WaitForMoveById(s32 actorId);
-void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 
 /// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
 /// the scene with actor 6 follows, as Magma Rock's tablet does for Blaze.
@@ -3103,12 +3043,6 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
 #undef TARGET
 #undef PICK_UP
 #undef SHAKE
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Trig_Sin(s32 angle);
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void AirsRockInside_LandInHall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -3168,10 +3102,6 @@ void AirsRockInside_LandInHall(void) {
 }
 
 void AirsRockInside_PuffVents(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
-                                        s32 a, s32 b);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,
-                               s32 destX, s32 destZ);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;

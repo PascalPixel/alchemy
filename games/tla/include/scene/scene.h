@@ -749,18 +749,6 @@ extern const u8 gWorldMapPackedTilesC[];
 struct Vector3;
 struct Window;
 
-struct ClearWork {
-  u8 unk00[20];
-  u16 mode;
-};
-
-struct PasswordWork {
-  void *glyphs[50];
-  void *cells[50];
-  u8 shown[50];
-  u8 unk1c2[26];
-};
-
 struct FieldPartBytes {
   u8 unk00[5];
   u8 frame;

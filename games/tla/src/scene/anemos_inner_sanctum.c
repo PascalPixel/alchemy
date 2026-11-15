@@ -42,6 +42,13 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "field/actor_view.h"
+#include "field/event_commands.h"
+#include "field/map.h"
+#include "field/objdisp.h"
+#include "scene/event_layer.h"
+#include "scene/mars_lighthouse_entrance.h"
+#include "scene/mars_lighthouse_star_room.h"
 
 struct Actor;
 struct CellTarget;
@@ -106,29 +113,17 @@ extern u16 gPaletteCycleDelay;
 extern u16 gPaletteCycleLength;
 extern u16 gPaletteCycleIndex;
 
-s32 List_CountEntries(u16 *list);
-
-void PaletteCycle_Fade(void);
-
-void Teleport_PlayWhirl(void);
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 s32 Actor_LiftTargetBlock();
 
 void Actor_PlaceMovedBlock(void);
 
 void AnemosInnerSanctum_StopPaletteCycle(void);
 
-void Actor_Release(struct Actor *object);
-
-void PaletteCycle_Start(void);
-
 void Teleport_PlaySparks(void);
 
 void Leader_CenterInCell(void);
 
 extern struct CellTarget gCrackedTiles;
-
-void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void AnemosInnerSanctum_LightThePillar(void);
 void AnemosInnerSanctum_StepOntoCenter(void);
@@ -336,7 +331,6 @@ void AnemosInnerSanctum_TeleportIn(void) {
 #include "../field/field_effect_move.c"
 
 #undef BG_PLTT_SET_RGB
-void Actor_StartScript(struct Actor *object, const s32 *script);
 extern s32 gAnemosInnerSanctum_DurationScripts[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -593,7 +587,6 @@ s16 part;
 
 #include "text/msg_ids.h"
 
-void BlendScript_Resume(void);
 extern u32 gAnemosInnerSanctum_PillarRisesScript[];
 extern s32 gAnemosInnerSanctum_PillarSparkScript[];
 extern s32 gAnemosInnerSanctum_SparkOffsets[][2];
@@ -1631,7 +1624,6 @@ void Effect_MoveLocal(union FieldObject *object) {
 }
 
 extern s32 gFieldEffect_DurationScripts[];
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,

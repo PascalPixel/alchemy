@@ -45,14 +45,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
 
-void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-
-void Event_StartScreenTransition(void);
 
 // ---- this overlay
 

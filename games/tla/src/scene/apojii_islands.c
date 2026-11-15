@@ -48,7 +48,6 @@ enum ApojiiIslandsHousesActorId {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-s32 VramCache_FindFreeEntry(void);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);

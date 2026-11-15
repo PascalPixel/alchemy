@@ -5,6 +5,10 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/actor_view.h"
+#include "field/event.h"
+#include "field/field_sequence_event.h"
+#include "scene/dehkan_plateau.h"
 
 #include "../field/actor_prepare.c"
 #include "types.h"
@@ -97,7 +101,6 @@ void AnkohlRuins_RideRaftDown(void);
 
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 #include "field/field.h"
 #include "flags.h"
 #include "battle/battle.h"
@@ -195,10 +198,6 @@ void AnkohlRuins_JumpDownLedge(void) {
 #if TLA_PATCH_1
 #include "../field/field_effect_advance_motion.c"
 #endif
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
 
 #if TLA_PATCH_1
 
@@ -1324,8 +1323,6 @@ struct AnkohlRuinsSpriteWork;
 void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
 void AnkohlRuins_LandFromFall(void);
-void Event_StartScreenTransition(void);
-void MapGrid_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
@@ -1598,9 +1595,6 @@ s32 Scene_Initialize(s32 a0) {
 
 void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
-void Event_Start(void);
-void Event_StartScreenTransition(void);
-void MapGrid_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;

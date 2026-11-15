@@ -48,6 +48,7 @@
 #include "gamepak/far_call/system.h"
 #include "system/heap_release.h"
 #include "system/task.h"
+#include "scene/gabomba_statue.h"
 
 /// Cannon's flight across the plateau, a flag for each stage, room by room.
 #define FLAG_CANNON_FLED_OVER_CRACKS 0x86c ///< room 2, over the cracked floor
@@ -348,8 +349,6 @@ void DehkanPlateau_StepOnCannonPillar(void) {
   if (y < 0x180000)
     DehkanPlateau_LeaveConeCell();
 }
-
-void Actors_SetHidden(s32 show, s32 first, u32 count);
 
 /// Sets the covers of the room the party is in (Actors_SetHidden).
 void DehkanPlateau_SetActorsHidden(s32 show) {
@@ -990,11 +989,6 @@ void DehkanPlateau_JoltCamera(void) {
 }
 #undef SCENE
 
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
-
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
  * angle); event.h has s32 angle (the definition takes a word and keeps its
@@ -1003,10 +997,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_WatchAndSetScript(s32 id, s32 target);
 
 /// Places an actor on the ground at a 16.16 position, facing a heading.
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -1352,18 +1342,7 @@ extern s16 gDehkanPlateau_ThemisAxeChestMovablePillars[];
 extern s16 gDehkanPlateau_TightropesMovablePillars[];
 
 void DehkanPlateau_LeaveConeCell(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
 void DehkanPlateau_ForgetFall(void);
-
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
-                                                    s32 angle);
-
-s32 PartyInventory_GiveItem(s32 item, s32 unused);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_WatchAndSetScript(s32 id, s32 target);
 
 /// Cannon casts Pound on the leader in the fifth room.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
@@ -1591,10 +1570,6 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
 }
 
 void DehkanPlateau_RestoreThemisAxeChestCracks(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
-                                                    s32 angle);
 
 /// Sets up the second room: its grey, Pound and stone pillars, its cracks, and
 /// Cannon as far as he has fled.

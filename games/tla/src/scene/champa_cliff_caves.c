@@ -115,8 +115,6 @@ void ChampaCliffCaves_BriggsMournsSalamander(void);
 void ChampaCliffCaves_HandPieceToObaba(s32 value);
 void ChampaCliffCaves_ObabaStepsForward(s32 mode);
 
-void FieldCamera_WaitForArrival(void);
-
 void ChampaCliffCaves_UpdateSparks(void);
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
@@ -162,7 +160,6 @@ extern s16 gChampaCliffCaves_DoorFrames[];
 extern s16 gChampaCliffCaves_OtherDoorFrames[];
 
 void FieldEffect_StartBlankOverlay(s32 a);
-void Field_StartColorTransition(s32 a, s32 b);
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
@@ -570,7 +567,6 @@ struct ThrowAnimations {
 };
 
 extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
-void Actor_ShowItemIconById(s32 id, s32 animation);
 
 void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *thrown = Actor_GetById(ACTOR_HELD_ITEM);

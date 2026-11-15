@@ -19,6 +19,8 @@
 #include "scene/scene.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/actor_view.h"
+#include "scene/dehkan_plateau.h"
 
 /// Set once Move has left the second room's first pillar on its ledge, cell
 /// (16, 43).
@@ -444,10 +446,6 @@ void AirsRock_FlickerTarget(struct Actor *object) {
 // The Whirlwind gust in Air's Rock.
 
 extern s16 gAirsRock_GustTargets[][4];
-void Actor_StartScript(struct Actor *object, const s32 *script);
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
 
 /// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
 /// target and grows, shedding sparks every fourth frame while the target

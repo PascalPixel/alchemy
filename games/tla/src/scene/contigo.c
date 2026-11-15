@@ -327,8 +327,6 @@ s32 List_CountEntries(u16 *list) {
 
 #include "shared/palette_cycle_fade.h"
 
-void Teleport_PlayWhirl(void);
-
 void Contigo_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
@@ -638,8 +636,6 @@ struct OrbitEffect {
   u16 timer;
   s16 pause;
 };
-
-s32 Trig_Cos(s32 angle);
 
 void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 radius;
@@ -2292,8 +2288,6 @@ void Contigo_KeepPriorityWithLeader(void) {
         65, ((struct SpriteAttributes *)owner->sprite)->priority);
   }
 }
-
-void MapGrid_CenterOnFollowedPoint(void);
 
 /// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
 /// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and

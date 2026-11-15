@@ -9,6 +9,8 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/dust.h"
+#include "field/event_commands.h"
+#include "field/objdisp.h"
 
 #include "../field/actor_prepare.c"
 
@@ -24,16 +26,9 @@
 #include "field/field_sprite.h"
 #include "system/frame.h"
 
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Clear(s32 flag);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-s32 VramCache_FindFreeEntry(void);
 
 #include "scene_ids.h"
 
@@ -55,12 +50,6 @@ struct AquaRockWork {
 };
 
 void Actor_StartScript(struct Actor *object, const void *data);
-void Actor_Release(struct Actor *object);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void PaletteFade_SetTarget(s32 a, s32 b);
-void Event_End(void);
-void Event_NoOp(void);
 s32 Actor_EmitMist(struct Actor *object);
 
 void AquaRock_TurnSprite(struct Actor *object);
@@ -208,8 +197,6 @@ void AquaRock_FlowWithStream(void);
 void AquaRock_SpawnSplash(struct Actor *object);
 void AquaRock_SetMoaiFace(s32 id);
 void Actor_EmitWaterDrop(struct Actor *object);
-
-void Scene_QueueMusic(s32 a);
 
 void AquaRock_KeepLeaderPriority(void);
 void AquaRock_StartCellMarkers(void);

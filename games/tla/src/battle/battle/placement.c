@@ -227,7 +227,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_ORC_LORD:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case ENEMY_KOBOLD:
+  case ENEMY_KOBOLD_2:
     actor->scale = Q16_ONE * 9 / 10;
     break;
   case ENEMY_HOBGOBLIN:

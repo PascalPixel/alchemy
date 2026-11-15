@@ -846,8 +846,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #define WINDOW_BATTLE_MESSAGE 2
 
 // An enemy's id is 8 above its name's place after MsgEnemyName.
-#define ENEMY_MYSTERY_MAN 352
-#define ENEMY_MYSTERY_WOMAN 355
 
 extern u8 MsgWaitingForOpponent[];
 

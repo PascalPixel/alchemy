@@ -32,8 +32,8 @@
 #include "system/ram_buffer.h"
 #include "map.h"
 #include "field/field.h"
-#include "module/field/map.h"
-#include "module/scene/magma_rock.h"
+#include "field/map.h"
+#include "scene/magma_rock.h"
 #include "flag_call.h"
 #include "shared/tundaria_tower.h"
 #include "field_event.h"
@@ -55,14 +55,14 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "field/event.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "module/field/field_effect.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
+#include "field/field_effect.h"
 #include "system/input.h"
 #include "version.h"
-#include "module/field/object.h"
+#include "field/object.h"
 #include "shared/tables.h"
 #include "field_sprite.h"
 #include "gamepak/far_call/system.h"
@@ -1539,9 +1539,9 @@ next:
 }
 
 // A falling rock's sprite.
-/* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja (tundaria_tower.c):
+/* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0;
+ * scene/shared.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja (tundaria_tower.c):
  * games/tla/src/scene/tundaria_tower.c:1544: structure has no member named
  * `blend'. */
 struct RockSprite__s29d0 {

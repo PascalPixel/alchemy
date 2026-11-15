@@ -31,10 +31,10 @@
 #include "scene_ids.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "field/cell_target.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "owner_state.h"
 #include "debug.h"
 #include "shared/jupiter_lighthouse_aerie.h"
@@ -46,7 +46,7 @@
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "item_icon.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "macros.h"
 #include "shared/tables.h"
 #include "objcmd.h"
@@ -2283,7 +2283,7 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
 }
 
 /* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
- * module/scene/scene.h has another definition; tried with the definition the
+ * scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2192: structure has no
  * member named `map'. */
@@ -2444,7 +2444,7 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 #include "shared/palette_cycle_step.h"
 
 /* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
- * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the
+ * scene/scene.h has void MapGrid_SetCellHeight(void); tried as the
  * definition's void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height),
  * it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2344: conflicting types

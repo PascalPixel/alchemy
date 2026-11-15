@@ -5,7 +5,7 @@
 #include "field_sequence_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "module/field/field_sequence.h"
+#include "field/field_sequence.h"
 
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
@@ -153,7 +153,7 @@ void Field_PlaceTreasureSpots(void) {
 }
 
 /* VIEW(field_sequence): tag struct ObjectSprite as struct
- * ObjectSprite__field_sequence; module/field/field.h has another definition;
+ * ObjectSprite__field_sequence; field/field.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
  * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:167: structure
  * has no member named `yOffset'. */

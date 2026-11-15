@@ -23,7 +23,7 @@
 #include "system/sprite_metadata.h"
 #include "actor.h"
 #include "actor_view.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"

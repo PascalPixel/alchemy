@@ -177,12 +177,11 @@ Evidence: plain English.
 ### Module header
 
 For readers of the code: the source is many files, and a file can only use
-what another file has announced. A module header is the short file where
-one file of code makes its announcements. The System's header is where the
-rest of the game learns the numbers of the [sequences](#sequence), such as
-`SEQUENCE_BATTLE`. A header sits at the same path under `include/module/`
-as its code has under `src/`: `src/system/system.c` has
-`include/module/system/system.h`.
+what another file has announced. A module header is the short file where one
+file of code makes its announcements. The System's header is where the rest
+of the game learns the numbers of the [sequences](#sequence), such as
+`SEQUENCE_BATTLE`. A header sits at the same path under `include/` as its
+code has under `src/`: `src/system/system.c` has `include/system/system.h`.
 
 Evidence: plain English; the project's own word.
 

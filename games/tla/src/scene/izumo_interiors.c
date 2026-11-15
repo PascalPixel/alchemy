@@ -21,8 +21,8 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
+#include "field/event_commands.h"
+#include "scene/scene.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
 

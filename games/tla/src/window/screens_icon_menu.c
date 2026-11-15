@@ -14,10 +14,10 @@
 #include "gamepak/far_call/game.h"
 #include "item_icon.h"
 #include "window/menu_list.h"
-#include "module/tla.h"
+#include "scene/shared.h"
 #include "gamepak/far_call/battle.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "window/screens.h"
+#include "window/window.h"
 #include "resource_ids.h"
 
 // Where the Japanese layout differs: the summon window, the item window and

@@ -5,8 +5,8 @@
 
 #include "battle_internal.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
-#include "module/system/system.h"
+#include "battle/battle.h"
+#include "system/system_bank.h"
 #include "system/transform.h"
 #include "macros.h"
 

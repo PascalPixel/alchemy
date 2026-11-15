@@ -7,10 +7,10 @@
 #include "sounds.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
+#include "window/screens.h"
+#include "window/window.h"
 #include "gamepak/far_call/field.h"
 
 /// The progress bar's serial callback: advances the stored progress by step
@@ -341,7 +341,7 @@ s32 Save_ScanFileSummaries(void) {
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
 
 /* VIEW(screens): variable gSceneLocalState as u32 gSceneLocalState;
- * module/tla.h has s8 gSceneLocalState[]; tried as the rest of the object
+ * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
  * games/tla/src/window/screens_save.c:353: `gData_02001000__screens' undeclared
  * (first use in this function). */

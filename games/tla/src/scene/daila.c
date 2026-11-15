@@ -31,7 +31,7 @@
 #include "scene_ids.h"
 #include "actor.h"
 #include "flags.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"

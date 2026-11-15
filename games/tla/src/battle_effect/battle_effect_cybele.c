@@ -6,10 +6,10 @@
 #include "sounds.h"
 
 #include "gamepak/far_call/battle.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
+#include "field/object.h"
+#include "system/system_bank.h"
 #include "gamepak/far_call/field.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 #include "resource_ids.h"
 
 /// The menu work as Cybele reads it: its busy flag.

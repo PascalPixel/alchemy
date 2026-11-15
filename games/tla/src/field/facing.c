@@ -3,7 +3,7 @@
 
 #include "objcmd.h"
 #include "types.h"
-#include "module/field/object.h"
+#include "field/object.h"
 #include "resource_ids.h"
 
 //--------------------------------------------------------------------------

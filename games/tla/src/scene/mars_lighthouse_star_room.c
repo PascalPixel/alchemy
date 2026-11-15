@@ -11,7 +11,7 @@
 
 #include "system/task.h"
 #include "flags.h"
-#include "module/scene/ride.h"
+#include "scene/ride.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -19,9 +19,9 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "field/field.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/mars_lighthouse_star_room.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -38,7 +38,7 @@
 #include "field_sprite.h"
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/field_sequence_event.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "system/io_reg.h"
 #include "battle/battle_unit.h"
 #include "call.h"
@@ -46,7 +46,7 @@
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
 #include "item_icon.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "map.h"
 #include "macros.h"
 #include "system/input.h"
@@ -54,7 +54,7 @@
 #include "system/heap_release.h"
 #include "field/cell_target.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "objcmd.h"
 #include "field/sprite.h"
 
@@ -1538,7 +1538,7 @@ void Ride_SetMode(s16 value) {
 }
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
- * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
+ * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition;
  * not tried: struct MarsLighthouseBeam__ride_handle was not found. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];

@@ -7,13 +7,13 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/field/field.h"
-#include "module/field/resource_slot.h"
+#include "field/field_bank.h"
+#include "field/resource_slot.h"
 #include "macros.h"
 #include "hanging_vine.h"
 #include "flag_call.h"
-#include "module/field/map.h"
-#include "module/field/object.h"
+#include "field/map.h"
+#include "field/object.h"
 #include "system/ram_buffer.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.

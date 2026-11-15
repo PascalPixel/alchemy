@@ -32,7 +32,7 @@
 #include "field_event.h"
 #include "field_sprite.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "text/msg_ids.h"
 
 /// The inlet's own story, which no other scene reads.

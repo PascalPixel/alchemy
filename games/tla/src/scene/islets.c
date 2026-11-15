@@ -33,14 +33,14 @@
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 #include "graphics/palette_snapshots.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
 #include "system/vector3.h"
 #include "shared/tables.h"
 #include "objcmd.h"
 #include "fixed_math.h"
-#include "module/scene/mars_lighthouse_entrance.h"
-#include "module/scene/shrine_of_the_sea_god.h"
+#include "scene/mars_lighthouse_entrance.h"
+#include "scene/shrine_of_the_sea_god.h"
 
 struct Actor;
 

@@ -5,7 +5,7 @@
 
 #include "battle_internal.h"
 #include "fixed_math.h"
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 #include "gamepak/far_call/field.h"
 #include "macros.h"
 

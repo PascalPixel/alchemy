@@ -8,9 +8,9 @@
 #include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
-#include "module/battle/presentation.h"
-#include "module/battle/presentation.h"
+#include "battle/battle.h"
+#include "battle/presentation.h"
+#include "battle/presentation.h"
 
 // Battle: test whether a unit is in a battle formation.
 

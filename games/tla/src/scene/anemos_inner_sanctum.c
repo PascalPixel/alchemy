@@ -33,13 +33,13 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "flags.h"
-#include "module/field/object.h"
+#include "field/object.h"
 #include "call.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "objcmd.h"
 
 struct Actor;

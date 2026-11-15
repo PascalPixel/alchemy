@@ -3,7 +3,7 @@
 
 #include "objcmd.h"
 #include "types.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 
 //--------------------------------------------------------------------------
 // Effect tables after the particle pictures.

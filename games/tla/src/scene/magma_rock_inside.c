@@ -47,12 +47,12 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_coordinate.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/scene/mars_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "field/object.h"
+#include "scene/mars_lighthouse_aerie.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
 #include "system/scene.h"
 #include "system/ram_buffer.h"
 #include "map.h"
@@ -77,7 +77,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "shared/tundaria_tower.h"
@@ -1760,7 +1760,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 }
 
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
- * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
+ * Orbiter__magma_rock_inside; scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
  * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
  * structure has no member named `parent'. */

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
-#include "module/scene/airs_rock.h"
+#include "scene/airs_rock.h"
 #include "system/ram_buffer.h"
 #include "flags.h"
 #include "system/main_routine_work.h"
@@ -15,10 +15,10 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "map.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
@@ -1100,7 +1100,7 @@ void AirsRock_LiftPillar(void) {
 }
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
- * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
+ * Actor_PlaceMovedBlock(void); scene/scene.h has void
  * Actor_PlaceMovedBlock(s32 id); tried as the definition's void
  * Actor_PlaceMovedBlock(void), which the object already declares, it does not
  * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1051: too

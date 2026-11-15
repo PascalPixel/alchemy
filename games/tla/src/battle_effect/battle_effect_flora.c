@@ -990,7 +990,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
 }
 
 /* VIEW(ability_effects): tag struct FxSlot as struct FxSlot__ability_effects;
- * module/battle_effect/battle_effect.h has another definition; not tried:
+ * battle_effect/battle_effect.h has another definition; not tried:
  * struct FxSlot__ability_effects was not found. */
 struct FxSlot {
   void *object;

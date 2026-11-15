@@ -24,7 +24,7 @@
 /// throwers or the way on.
 
 #include "flags.h"
-#include "module/scene/ride.h"
+#include "scene/ride.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -36,10 +36,10 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
+#include "scene/mars_lighthouse_star_room.h"
+#include "scene/shared.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "system/system.h"
@@ -209,15 +209,15 @@ void MarsLighthouseRoomF_ShootFireballAtWall(void);
 #include "field/field_coordinate.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle_unit.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "field/cell_target.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
-#include "module/system/system.h"
+#include "field/field_effect.h"
+#include "system/system_bank.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "objcmd.h"
@@ -3376,7 +3376,7 @@ s32 gPushLeaderSteps[] = {
 #undef ABS
 #undef MapLayer
 
-#include "module/scene/airs_rock.h"
+#include "scene/airs_rock.h"
 
 void MarsLighthouseRoomF_JumpGapOrPushStone(void);
 void MarsLighthouseRoomF_FillGapsWithStones(void);

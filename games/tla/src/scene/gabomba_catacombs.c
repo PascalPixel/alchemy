@@ -16,7 +16,7 @@
 #include "system/frame.h"
 #include "field/event_inline.h"
 #include "field/field.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -27,7 +27,7 @@
 #include "version.h"
 #include "objcmd.h"
 #include "fixed_math.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);

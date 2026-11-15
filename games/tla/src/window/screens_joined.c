@@ -4,8 +4,8 @@
 
 #include "window_internal.h"
 #include "sounds.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// Returns 0; only the far-call table refers to it.
 s32 Screens_ReturnZero(void) { return 0; }

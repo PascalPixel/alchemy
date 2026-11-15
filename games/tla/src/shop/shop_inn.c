@@ -5,7 +5,7 @@
 #include "shop_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 
 /// The innkeeper's lines, in message order from MsgInnWelcome ("Welcome to our
 /// inn.").

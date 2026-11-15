@@ -24,8 +24,8 @@
 #include "flags.h"
 #include "field/particle.h"
 
-#include "module/scene/kibombo.h"
-#include "module/tla.h"
+#include "scene/kibombo.h"
+#include "scene/shared.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"

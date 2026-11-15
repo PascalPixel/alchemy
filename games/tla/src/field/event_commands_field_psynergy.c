@@ -4,10 +4,10 @@
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/field_effect.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/field_effect.h"
+#include "field/object.h"
 #include "macros.h"
 
 /// If the scene's sprite is active, stops its update callback

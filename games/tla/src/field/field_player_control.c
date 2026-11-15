@@ -9,9 +9,9 @@
 #include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
+#include "field/field_bank.h"
+#include "field/object.h"
+#include "field/resource_slot.h"
 #include "macros.h"
 #include "version.h"
 

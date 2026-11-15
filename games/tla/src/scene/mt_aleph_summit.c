@@ -36,10 +36,10 @@
 #include "call.h"
 #include "map.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "field/field_effect.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 

@@ -6,7 +6,7 @@
 #include "sound/sound.h"
 #include "sounds.h"
 #include "types.h"
-#include "module/sound/sound.h"
+#include "sound/sound.h"
 #include "sound_driver.h"
 
 /// Does nothing; the far-call table exports it and nothing calls it.

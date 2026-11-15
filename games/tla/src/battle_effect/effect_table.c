@@ -8,8 +8,8 @@
 
 #include "types.h"
 #include "battle/render_model.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect_table.h"
+#include "battle_effect/battle_effect.h"
+#include "battle_effect/battle_effect_table.h"
 
 /// Each mote size's picture: its byte offset in the particle sheet, by size.
 const u16 gBattleEffect_MotePictures[] = {0,   2,   10,  28,  60,

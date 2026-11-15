@@ -10,11 +10,11 @@
 #include "flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/window.h"
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/battle/presentation.h"
-#include "module/system/system.h"
+#include "battle/presentation.h"
+#include "system/system_bank.h"
 #include "battle/range_falloff.h"
 
 /// With the front line down and someone living, sends the reserve members in
@@ -122,9 +122,10 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
 }
 
 /* VIEW(battle): tag struct EncounterWork as struct EncounterWork__battle;
- * module/tla.h has another definition; tried with the definition the rest of
+ * scene/shared.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/include/module/tla.h:98: redefinition of `struct EncounterWork'. */
+ * games/tla/include/scene/shared.h:98: redefinition of `struct EncounterWork'.
+ */
 /// The battle work as Battle_Run reads it.
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
@@ -166,9 +167,9 @@ struct EncounterWork {
   u8 unk866[0x16];
 };
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
-/* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; module/tla.h has
- * u32 Data_02018000[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/battle/battle_run.c:255: `Data_02018000'
+/* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; scene/shared.h
+ * has u32 Data_02018000[]; tried as the rest of the object declares it, it does
+ * not compile in tla-ja: games/tla/src/battle/battle_run.c:255: `Data_02018000'
  * undeclared (first use in this function). */
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle

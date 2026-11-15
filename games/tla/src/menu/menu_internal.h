@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "battle/battle.h"
-#include "module/window/window.h"
+#include "window/window.h"
 #include "flags.h"
 #include "item_ids.h"
 

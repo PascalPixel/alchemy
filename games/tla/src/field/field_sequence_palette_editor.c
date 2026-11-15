@@ -3,7 +3,7 @@
 // Part of field_sequence.c.
 
 #include "field_sequence_internal.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 
 #define PALETTE ((u16 *)BG_PLTT)
 #define EDITOR_MAP ((u16 *)0x0600205a)

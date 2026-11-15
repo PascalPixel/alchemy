@@ -19,8 +19,8 @@
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "call.h"
-#include "module/scene/scene.h"
-#include "module/window/window.h"
+#include "scene/scene.h"
+#include "window/window.h"
 #include "graphics/uiflow.h"
 #include "objcmd.h"
 

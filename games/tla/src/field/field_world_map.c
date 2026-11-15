@@ -5,14 +5,14 @@
 
 #include "field_internal.h"
 #include "fixed_math.h"
-#include "module/field/field.h"
-#include "module/field/resource_slot.h"
-#include "module/system/system.h"
+#include "field/field_bank.h"
+#include "field/resource_slot.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 #include "system/transform.h"
 #include "macros.h"
-#include "module/field/map.h"
-#include "module/field/object.h"
+#include "field/map.h"
+#include "field/object.h"
 
 /* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
  * graphics.h has void Transform_Reset(void); tried as the definition's void

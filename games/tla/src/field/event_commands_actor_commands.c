@@ -5,8 +5,8 @@
 
 #include "event_commands_internal.h"
 #include "fixed_math.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "field/field_bank.h"
+#include "system/system_bank.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -99,7 +99,7 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
 }
 
 /* VIEW(event_commands): routine Icon_DrawItemFar as void Icon_DrawItemFar(s32
- * resource, u8 *buffer); module/field/field.h has void Icon_DrawItemFar(s32
+ * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32
  * item); tried as the rest of the object declares it, it does not compile in
  * tla-ja: games/tla/src/field/event_commands_actor_commands.c:199: too many
  * arguments to function `Icon_DrawItemFar'. */

@@ -3,9 +3,9 @@
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 
 /* VIEW(ground_particles): tag struct GroundParticleWork as struct
  * GroundParticleWork__ground_particles; event_commands.c has another

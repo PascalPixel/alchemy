@@ -4,8 +4,8 @@
 
 #include "shop_internal.h"
 #include "graphics/palette_buffers.h"
-#include "module/shop/shop.h"
-#include "module/tla.h"
+#include "shop/shop.h"
+#include "scene/shared.h"
 
 /// Colours the first itemCount segments of the quantity bar, each two pixels
 /// wide.

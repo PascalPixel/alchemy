@@ -7,8 +7,8 @@
 #include "sounds.h"
 #include "djinn_ids.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/presentation.h"
-#include "module/battle/presentation.h"
+#include "battle/presentation.h"
+#include "battle/presentation.h"
 
 /// Rolls whether a stat change or status with five turns or fewer left ends
 /// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.

@@ -21,11 +21,11 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
 #include "field/cell_target.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "actor.h"
@@ -49,7 +49,7 @@
 #include "item_icon.h"
 #include "system/heap_release.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
@@ -565,7 +565,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 
 void MapGrid_SetCellHeight();
 /* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
- * MapGrid_SetAttributeBAt(); module/scene/scene.h has void
+ * MapGrid_SetAttributeBAt(); scene/scene.h has void
  * MapGrid_SetAttributeBAt(s32 actor); tried as the definition's u8
  * MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value), which the object
  * already declares, it does not compile in tla-ja:

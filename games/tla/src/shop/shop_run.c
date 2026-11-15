@@ -7,10 +7,10 @@
 #include "item_ids.h"
 #include "sounds.h"
 #include "gamepak/far_call/window.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/tla.h"
+#include "scene/shared.h"
 
 extern char ResourceId_ShopGemTiles;
 extern char ResourceId_MenuArrowTiles;

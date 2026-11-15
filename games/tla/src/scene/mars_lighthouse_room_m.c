@@ -15,7 +15,7 @@
 #include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "module/scene/ride.h"
+#include "scene/ride.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -27,10 +27,10 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "module/tla.h"
+#include "scene/scene.h"
+#include "sound/sound.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
 #include "scene_ids.h"
 #include "system/ram_buffer.h"
 #include "system/frame.h"
@@ -45,8 +45,8 @@
 #include "system/dma.h"
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/field_sequence_event.h"
-#include "module/field/field.h"
-#include "module/scene/dehkan_plateau.h"
+#include "field/field_bank.h"
+#include "scene/dehkan_plateau.h"
 #include "battle/battle_unit.h"
 #include "system/vector3.h"
 #include "fixed_math.h"
@@ -773,7 +773,7 @@ s32 Scene_Initialize(void) {
 extern s32
 MarsLighthouseRoomM_ShowFlame__s0b64() __asm__("MarsLighthouseRoomM_ShowFlame");
 /* VIEW(mars_lighthouse_room_m): routine TilesetAnim_Resume as void
- * TilesetAnim_Resume(s32 value); module/scene/scene.h has u32
+ * TilesetAnim_Resume(s32 value); scene/scene.h has u32
  * TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame); tried as the
  * definition's void TilesetAnim_Resume(u32 no), it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types for
@@ -1793,7 +1793,7 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
- * module/scene/scene.h has another definition; tried with the definition the
+ * scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_m.c:1669: redefinition of `struct
  * Work020023c4'. */

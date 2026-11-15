@@ -4,9 +4,9 @@
 
 #include "window_internal.h"
 #include "sounds.h"
-#include "module/system/system.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "system/system_bank.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 // The Japanese name entry screen enters kana, whose voicing marks (dakuten
 // and handakuten) are characters of their own that join the kana before them.

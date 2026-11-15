@@ -37,9 +37,9 @@
 #include "item_icon.h"
 #include "item_ids.h"
 #include "game/character_ids.h"
-#include "module/game/game.h"
-#include "module/tla.h"
-#include "module/window/window.h"
+#include "game/game_bank.h"
+#include "scene/shared.h"
+#include "window/window.h"
 
 // The room's flags: the four Scoop spots dug, the falling actor's item taken,
 // and which of his two spots the

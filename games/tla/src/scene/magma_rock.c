@@ -12,15 +12,15 @@
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "field/event_inline.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "system/main_routine_work.h"
 #include "field/field_coordinate.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "system/scene.h"
 #include "map.h"
 #include "field/field.h"
-#include "module/field/event_commands.h"
-#include "module/scene/magma_rock.h"
+#include "field/event_commands.h"
+#include "scene/magma_rock.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -40,13 +40,13 @@
 #include "call.h"
 #include "fixed_math.h"
 #include "field/sprite.h"
-#include "module/field/object.h"
-#include "module/scene/mars_lighthouse_star_room.h"
+#include "field/object.h"
+#include "scene/mars_lighthouse_star_room.h"
 #include "shared/tables.h"
 #include "field_sprite.h"
 #include "graphics/resource.h"
 #include "system/heap_release.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "field/particle.h"
 #include "system/task.h"
 #include "objcmd.h"
@@ -841,7 +841,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
- * module/scene/scene.h has struct Position; tried with the definition the rest
+ * scene/scene.h has struct Position; tried with the definition the rest
  * of the object has, it does not compile in tla-ja (magma_rock.c):
  * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
  * tag. */

@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/field.h"
 

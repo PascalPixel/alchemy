@@ -65,10 +65,10 @@
 #include "graphics/vram_tab.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
+#include "field/field_bank.h"
+#include "field/field_sequence.h"
+#include "field/object.h"
+#include "system/system_bank.h"
 #include "gamepak/far_call/field.h"
 
 // The object's functions its parts call before their definitions.
@@ -78,7 +78,7 @@
 struct Actor *Actor_GetById(u32 objectId);
 
 #include "field/encounter_zone.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "scene_tables.h"
 #include "inventory.h"
 #include "graphics/uiwindow.h"

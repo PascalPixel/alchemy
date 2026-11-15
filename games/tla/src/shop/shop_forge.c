@@ -4,7 +4,7 @@
 // Part of shop.c.
 
 #include "shop_internal.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 
 /// The forge's recipe for an item, or NULL when it has none; the table ends at
 /// an item of -1.

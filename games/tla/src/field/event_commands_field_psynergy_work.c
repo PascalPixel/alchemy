@@ -20,11 +20,11 @@
 #include "flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 #include "text/msg_ids.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "map.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
@@ -314,7 +314,7 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
 }
 
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
- * module/field/event_commands.h has another definition; tried with the
+ * field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
  * games/tla/src/field/event_commands_field_psynergy_work.c: structure has no
  * member named `id'. */

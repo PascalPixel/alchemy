@@ -5,7 +5,7 @@
 
 #include "window_internal.h"
 #include "item_icon.h"
-#include "module/window/window.h"
+#include "window/window.h"
 
 /// Runs the save screen's selection until a choice completes: saving (refused
 /// while FLAG_CANNOT_SAVE_HERE or FLAG_NO_PLACE_TO_SAVE is set), sleep mode or

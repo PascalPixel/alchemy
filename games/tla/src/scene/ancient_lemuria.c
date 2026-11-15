@@ -27,7 +27,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 

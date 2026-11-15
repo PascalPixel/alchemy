@@ -5,7 +5,7 @@
 
 #include "shop_internal.h"
 #include "sounds.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/game.h"
 

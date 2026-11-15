@@ -22,9 +22,9 @@
 #include "call.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "module/scene/lemurian_ship.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
+#include "scene/lemurian_ship.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 

@@ -6,8 +6,8 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/event_commands.h"
-#include "module/field/field_sequence.h"
+#include "field/event_commands.h"
+#include "field/field_sequence.h"
 
 /// Runs message as an event of its own, shown at actor.
 void Event_RunMessage(s32 actor, s32 message) {

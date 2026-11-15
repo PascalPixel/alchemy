@@ -212,7 +212,7 @@ room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
 (`pillars_place.h`, `pound_sink_target.h`), the rubble (`rubble.h`), the
 slide over ice (`leader_slide_on_ice.h`) and the Mars Lighthouse flame
 throwers (`beam_*.h` and `ride_*.h`, over one `FlameHitWork` in
-[`ride.h`](../../include/module/scene/ride.h)).
+[`ride.h`](../../include/scene/ride.h)).
 
 Where a scene's copy differs in a number from the others, the scene writes
 its copy out.

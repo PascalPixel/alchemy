@@ -6,8 +6,8 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60

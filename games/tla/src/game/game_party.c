@@ -4,7 +4,7 @@
 
 #include "game_internal.h"
 #include "gamepak/far_call/window.h"
-#include "module/game/game.h"
+#include "game/game_bank.h"
 #include "text/msg_ids.h"
 
 // A unit whose suffix is below SUFFIX_COUNT gets one more character after its

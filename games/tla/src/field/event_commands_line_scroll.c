@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "sounds.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.

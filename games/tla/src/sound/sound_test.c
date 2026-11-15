@@ -8,7 +8,7 @@
 #include "macros.h"
 #include "sounds.h"
 #include "types.h"
-#include "module/sound/sound.h"
+#include "sound/sound.h"
 #include "sound_driver.h"
 #include "system/input.h"
 #include "system/io_reg.h"

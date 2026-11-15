@@ -6,9 +6,9 @@
 #include "flags.h"
 #include "field/encounter_zone.h"
 #include "gamepak/far_call/game.h"
-#include "module/field/field_sequence.h"
+#include "field/field_sequence.h"
 #include "gamepak/far_call/field.h"
-#include "module/tla.h"
+#include "scene/shared.h"
 #include "resource_ids.h"
 
 /// Marks the world map place the party has just entered as visited: sets game

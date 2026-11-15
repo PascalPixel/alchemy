@@ -5,8 +5,8 @@
 #include "battle_internal.h"
 #include "fixed_math.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
-#include "module/system/system.h"
+#include "battle/battle.h"
+#include "system/system_bank.h"
 
 /// Resets a battle object, making its actor when it has none: nine tenths
 /// size, the anchors cleared unless keep is set, no sprite, animation, shadow

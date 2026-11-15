@@ -23,7 +23,7 @@
 #include "system/dma.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "graphics/render_input.h"
 #include "effect_sprite.h"
 #include "graphics/resource.h"

@@ -7,7 +7,7 @@
 #include "field/event.h"
 
 /* VIEW(advance_motion_priority): tag struct EffectSpriteBits as struct
- * EffectSpriteBits__advance_motion_priority; module/scene/trial_road.h has
+ * EffectSpriteBits__advance_motion_priority; scene/trial_road.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja (dehkan_plateau.c):
  * games/tla/src/field/field_effect_advance_motion_priority.c:18: field `bits'
@@ -19,7 +19,7 @@ struct EffectSpriteBits__advance_motion_priority {
 } __attribute__((packed));
 
 /* VIEW(advance_motion_priority): tag struct EffectSpriteAttributes as struct
- * EffectSpriteAttributes__advance_motion_priority; module/scene/trial_road.h
+ * EffectSpriteAttributes__advance_motion_priority; scene/trial_road.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja (dehkan_plateau.c):
  * games/tla/src/field/field_effect_advance_motion_priority.c:50: dereferencing

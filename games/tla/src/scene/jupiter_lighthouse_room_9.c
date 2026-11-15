@@ -30,9 +30,9 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "field/field_sequence_event.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "call.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
@@ -51,7 +51,7 @@
 #include "field_sprite.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 
 /// Where a stone face's whirlwind starts: an unseen actor moved to the face
 /// that blows, which the whirlwind takes its place and heading from.

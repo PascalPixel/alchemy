@@ -3,7 +3,7 @@
 // Part of window.c.
 
 #include "window_internal.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's

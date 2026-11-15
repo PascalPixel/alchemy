@@ -5,7 +5,7 @@
 
 #include "event_commands_internal.h"
 #include "sounds.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "fixed_math.h"
 #include "flags.h"
 

@@ -7,8 +7,8 @@
 #include "battle_internal.h"
 #include "battle_effect_work.h"
 #include "fixed_math.h"
-#include "module/battle/presentation.h"
-#include "module/system/system.h"
+#include "battle/presentation.h"
+#include "system/system_bank.h"
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.

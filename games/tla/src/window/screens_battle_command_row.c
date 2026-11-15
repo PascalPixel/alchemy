@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 #include "sounds.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 
 /// Opens a message at (x, y), waits for its text to finish, and returns its
 /// window so the caller can hold it open for a separate prompt.

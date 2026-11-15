@@ -8,8 +8,8 @@
 #include "flag_call.h"
 #include "gamepak/far_call/battle.h"
 #include "item_icon.h"
-#include "module/tla.h"
-#include "module/window/window.h"
+#include "scene/shared.h"
+#include "window/window.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window
 // (MsgSetDjinni), the condition list, and the Mystery names' copy, which

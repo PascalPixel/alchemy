@@ -5,9 +5,9 @@
 
 #include "battle_internal.h"
 #include "gamepak/far_call/window.h"
-#include "module/battle/battle.h"
-#include "module/battle/presentation.h"
-#include "module/system/system.h"
+#include "battle/battle.h"
+#include "battle/presentation.h"
+#include "system/system_bank.h"
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the

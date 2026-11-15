@@ -6,8 +6,8 @@
 #include "djinn_ids.h"
 #include "sounds.h"
 #include "flag_call.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/object.h"
 
 /// Sets up a battle with the formation in slot of encounter table zone.
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
@@ -131,10 +131,10 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
 }
 
 /* VIEW(event_commands): tag struct EventWork1cc as struct
- * EventWork1cc__event_commands; module/tla.h has another definition; tried with
- * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_requests.c:119: redefinition of `struct
- * EventWork1cc'. */
+ * EventWork1cc__event_commands; scene/shared.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence_requests.c:119: redefinition of
+ * `struct EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {
   u8 unk000[0x1cc];

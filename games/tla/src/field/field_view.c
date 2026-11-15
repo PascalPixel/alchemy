@@ -11,7 +11,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/ram_code.h"
-#include "module/field/resource_slot.h"
+#include "field/resource_slot.h"
 
 /// Returns the world map's battle environment at position from
 /// gWorldMap_TerrainBehaviorTable, by its collision value and its block's

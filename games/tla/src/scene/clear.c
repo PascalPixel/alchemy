@@ -29,12 +29,12 @@
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "system/heap_slots.h"
-#include "module/game/game.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "game/game_bank.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
+#include "window/screens.h"
+#include "window/window.h"
 #include "system/serial.h"
 #include "edition.h"
 #include "version.h"
@@ -278,13 +278,13 @@ s32 Clear_CanRetreat(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has
- * u16 gData_02003860; tried as the rest of the object declares it,
+/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; scene/shared.h
+ * has u16 gData_02003860; tried as the rest of the object declares it,
  * Scene_Initialize moves: 4 of 738 instructions in tla-ja. */
 extern s16 gData_02003860__clear __asm__("gData_02003860");
-/* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState; module/tla.h
- * has s8 gSceneLocalState[]; tried as the rest of the object declares it,
- * Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
+/* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState;
+ * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
+ * declares it, Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
 extern u32 gData_02001000__clear __asm__("gSceneLocalState");
 
 s32 Save_ToChosenFile(void);

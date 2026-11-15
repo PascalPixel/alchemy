@@ -5,7 +5,7 @@
 /// the script command table and the work value handlers.
 
 #include "types.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "curve.h"
 #include "field/script_operands.h"
 #include "objcmd.h"

@@ -7,12 +7,12 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/field/event_commands.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
-#include "module/shop/shop.h"
-#include "module/window/screens.h"
+#include "battle_effect/battle_effect.h"
+#include "field/event_commands.h"
+#include "field/field_sequence.h"
+#include "field/object.h"
+#include "shop/shop.h"
+#include "window/screens.h"
 
 /// The Broken Seal's Scene_FindActorPlacement: finds actor id's placement in
 /// the event work's four tables (ids up to 7 by sprite, later ones counted

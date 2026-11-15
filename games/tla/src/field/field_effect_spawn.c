@@ -34,7 +34,7 @@ static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
 }
 #endif
 /* VIEW(spawn): routine EFFECT_SET_MODE as void EFFECT_SET_MODE(struct
- * FieldEffect *effect, s32 mode); module/field/field.h has void
+ * FieldEffect *effect, s32 mode); field/field.h has void
  * Actor_SelectAnimation(struct Actor *object, s32 argument); not tried:
  * EFFECT_SET_MODE's bound declaration was not found. */
 extern void SetMode__spawn(struct FieldEffect *effect,

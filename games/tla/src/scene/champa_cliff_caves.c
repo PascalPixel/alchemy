@@ -21,10 +21,10 @@
 #include "field/field.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "scene_tables.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "system/system.h"
 #include "battle/battle.h"
@@ -1771,7 +1771,7 @@ next:
 
 // The glow's frame callback.
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
- * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
+ * GlowSprite__champa_cliff_caves; scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
  * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1688: structure has no
  * member named `x'. */

@@ -23,7 +23,7 @@
 #include "objcmd.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 
 void MercuryLighthouse_HearVoices(void);
 

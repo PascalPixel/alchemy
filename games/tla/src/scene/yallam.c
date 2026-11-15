@@ -9,7 +9,7 @@
 #include "text/msg_ids.h"
 #include "actor.h"
 #include "field/field.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"

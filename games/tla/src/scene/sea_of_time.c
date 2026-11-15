@@ -62,8 +62,8 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
+#include "field/event_commands.h"
+#include "scene/scene.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "battle/battle.h"

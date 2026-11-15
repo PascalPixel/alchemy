@@ -6,7 +6,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/menu.h"
-#include "module/shop/shop.h"
+#include "shop/shop.h"
 
 /// Lets the player choose whose items to sell, repair or forge, by
 /// shop->action, until B or, at the forge, an item is taken.

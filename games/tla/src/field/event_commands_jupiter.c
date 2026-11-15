@@ -6,9 +6,9 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/shop.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 

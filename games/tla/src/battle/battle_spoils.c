@@ -5,8 +5,8 @@
 #include "battle_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
-#include "module/battle/presentation.h"
+#include "battle/battle.h"
+#include "battle/presentation.h"
 
 // XXX: what this encodes, and whether item ids here are wider than The Broken
 // Seal's 9 bits; its callers would settle it.

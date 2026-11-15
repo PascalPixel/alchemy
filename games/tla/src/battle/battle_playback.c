@@ -5,10 +5,10 @@
 
 #include "battle_internal.h"
 #include "sounds.h"
-#include "module/battle/presentation.h"
-#include "module/battle/presentation.h"
+#include "battle/presentation.h"
+#include "battle/presentation.h"
 #include "gamepak/far_call/field.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 
 /// Starts playback of the action's targets when the effect's blow lands, with
 /// cue as the hit's sound (0 keeps the one set); later calls change nothing.
@@ -44,7 +44,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define OBJ_VRAM 0x06010000
 
 /* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__presentation;
- * module/tla.h has another definition; not tried: struct ArrowSprite__f11e3ac
+ * scene/shared.h has another definition; not tried: struct ArrowSprite__f11e3ac
  * was not found. */
 struct ArrowSprite__presentation {
   void *next;

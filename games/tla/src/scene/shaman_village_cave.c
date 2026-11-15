@@ -20,7 +20,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/event_inline.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "field_sprite.h"
 #include "call.h"
 #include "scene_ids.h"

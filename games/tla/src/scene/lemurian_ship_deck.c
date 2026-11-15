@@ -25,7 +25,7 @@
 #include "map.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "shared/tables.h"
 #include "version.h"
 #include "macros.h"

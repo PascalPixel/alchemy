@@ -3,7 +3,7 @@
 // Part of game.c.
 
 #include "game_internal.h"
-#include "module/game/game.h"
+#include "game/game_bank.h"
 
 /// Returns the definition of Djinni `index` of element `group`; anything out of
 /// range gives DJINNI_FLINT's.

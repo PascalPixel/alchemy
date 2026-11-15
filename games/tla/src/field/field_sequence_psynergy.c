@@ -4,8 +4,8 @@
 
 #include "field_sequence_internal.h"
 #include "flags.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/object.h"
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \

@@ -28,11 +28,11 @@
 #include "field/field_sequence_event.h"
 #include "field_event.h"
 #include "flag_call.h"
-#include "module/game/game.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
+#include "game/game_bank.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
 #include "scene_call.h"
-#include "module/window/window.h"
+#include "window/window.h"
 #include "field_sprite.h"
 
 /// Set once the worker has popped up out of the hole for this visit.

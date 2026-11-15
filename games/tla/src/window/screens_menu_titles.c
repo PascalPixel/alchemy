@@ -4,8 +4,8 @@
 
 #include "window_internal.h"
 #include "system/io_write.h"
-#include "module/tla.h"
-#include "module/window/screens.h"
+#include "scene/shared.h"
+#include "window/screens.h"
 #include "resource_ids.h"
 #include "macros.h"
 

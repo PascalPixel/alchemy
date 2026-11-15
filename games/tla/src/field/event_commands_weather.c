@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "sounds.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 
 /* VIEW(event_commands): tag struct GroundParticle as struct
  * GroundParticle__event_commands; ground_mask.h has another definition; tried

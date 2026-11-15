@@ -16,7 +16,7 @@
 #include "lib.h"
 #include "menu/menu.h"
 #include "minigame.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "edition.h"
@@ -45,7 +45,7 @@
 #include "enemy_ids.h"
 #include "item_ids.h"
 #include "battle/range_falloff.h"
-#include "module/game/game.h"
+#include "game/game_bank.h"
 
 // The game object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.

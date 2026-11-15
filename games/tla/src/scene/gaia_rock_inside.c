@@ -27,19 +27,19 @@
 #include "system/field_effect.h"
 #include "field_sprite.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/scene/scene.h"
+#include "field/event_commands.h"
+#include "field/object.h"
+#include "scene/scene.h"
 #include "flags.h"
-#include "module/field/field.h"
-#include "module/tla.h"
-#include "module/field/field_effect.h"
+#include "field/field_bank.h"
+#include "scene/shared.h"
+#include "field/field_effect.h"
 #include "call.h"
 #include "system/iwram_call.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "fixed_math.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "actor_view.h"
 #include "map.h"
 #include "shared/tables.h"
@@ -272,7 +272,7 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #endif
 
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * module/scene/scene.h has void Event_End(void); two events return its value,
+ * scene/scene.h has void Event_End(void); two events return its value,
  * which the bytes need; not tried: Event_End's bound declaration was not found.
  */
 extern s32 Event_EndWithResult(void) __asm__("Event_End");
@@ -471,7 +471,7 @@ s32 GaiaRockInside_SerpentSettles(void) {
 #include "text/msg_ids.h"
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
- * module/scene/scene.h has another definition; tried with the definition the
+ * scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja (gaia_rock_inside.c):
  * games/tla/src/scene/gaia_rock_inside.c:495: structure has no member named
  * `layer'. */

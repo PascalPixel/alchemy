@@ -48,7 +48,7 @@
 #include "system/task.h"
 #include "scene_ids.h"
 #include "flags.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"

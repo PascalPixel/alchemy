@@ -23,7 +23,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 

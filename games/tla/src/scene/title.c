@@ -29,9 +29,9 @@
 #include "bg_scroll.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "module/game/game.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
+#include "game/game_bank.h"
+#include "scene/scene.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 extern s16 gTitleVramBlock;
@@ -61,7 +61,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
- * module/tla.h has another definition; tried with the definition the rest of
+ * scene/shared.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
  * games/tla/src/scene/title.c:194: invalid use of undefined type `struct
  * TitleSprite'. */

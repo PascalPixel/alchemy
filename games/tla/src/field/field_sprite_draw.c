@@ -8,8 +8,8 @@
 #include "actor.h"
 #include "system/affine.h"
 #include "fixed_math.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
+#include "field/object.h"
+#include "system/system_bank.h"
 #include "system/task.h"
 
 /// Runs each of the player's animation channels on to its next stop (a

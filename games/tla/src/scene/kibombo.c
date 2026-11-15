@@ -46,8 +46,8 @@ struct Actor;
 #include "kibombo.h"
 #include "field/field_sequence_event.h"
 #include "gamepak/far_call/system.h"
-#include "module/field/event_commands.h"
-#include "module/scene/kibombo.h"
+#include "field/event_commands.h"
+#include "scene/kibombo.h"
 #include "graphics/resource.h"
 
 s32 Kibombo_SpinSprite(struct Actor *object) {
@@ -1584,10 +1584,10 @@ void Kibombo_CarryBlackCrystal(void) {
 #include "shared/tables.h"
 #include "kibombo.h"
 #include "field/field_sequence_event.h"
-#include "module/field/event_commands.h"
-#include "module/scene/kibombo.h"
-#include "module/scene/scene.h"
-#include "module/field/field_effect.h"
+#include "field/event_commands.h"
+#include "scene/kibombo.h"
+#include "scene/scene.h"
+#include "field/field_effect.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
 extern u32 gKibombo_EmberScript[];

@@ -4,9 +4,9 @@
 
 #include "window_internal.h"
 #include "window/menu_list.h"
-#include "module/system/system.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "system/system_bank.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// Sizes the party status window by the party: a column of six tiles a party
 /// member (four at most outside battle), one more row with flag 1 and five more
@@ -198,7 +198,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 #define PARTY_STATUS_COLUMN_WIDTH 6
 
 /* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
- * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); module/window/window.h has
+ * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); window/window.h has
  * void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); tried as the rest of
  * the object declares it, PartyStatus_Draw moves: 2 of 495 instructions,
  * BattleCommandRow_Run moves: 1 of 1120 instructions in tla-ja. */

@@ -5,7 +5,7 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "window_tile.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 

@@ -4,7 +4,7 @@
 
 #include "battle_internal.h"
 #include "system/heap_slots.h"
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 
 /// Unused: receives the opponent's party into the enemy units, "Enemy" before
 /// each name, then its Djinn recovery list. Returns how many party members

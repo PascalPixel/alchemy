@@ -18,7 +18,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"

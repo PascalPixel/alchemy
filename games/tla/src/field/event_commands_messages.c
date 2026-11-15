@@ -4,10 +4,10 @@
 
 #include "event_commands_internal.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/field_sequence.h"
+#include "field/object.h"
 #include "scene_call.h"
 #include "macros.h"
 

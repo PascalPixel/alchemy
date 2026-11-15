@@ -6,9 +6,9 @@
 #include "flags.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
-#include "module/battle/presentation.h"
-#include "module/system/system.h"
+#include "battle/battle.h"
+#include "battle/presentation.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 /// Unused: nothing refers to it. Runs random encounters one after another,

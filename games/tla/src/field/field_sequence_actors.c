@@ -8,11 +8,11 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "actor_view.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
+#include "field/field_sequence.h"
+#include "field/object.h"
 #include "gamepak/far_call/field.h"
 #include "system/ram_buffer.h"
-#include "module/tla.h"
+#include "scene/shared.h"
 #include "macros.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8

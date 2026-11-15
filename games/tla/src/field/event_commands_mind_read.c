@@ -28,8 +28,8 @@
 #include "system/scene.h"
 #include "macros.h"
 #include "field/event.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/object.h"
 #include "item_icon.h"
 
 // The parts, in ROM order.

@@ -6,9 +6,9 @@
 #include "battle_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
-#include "module/battle/presentation.h"
+#include "battle/presentation.h"
 
 /// A party member's attack effect, staged by id range (0x4000): effect 1 for
 /// Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and Sheba, any other

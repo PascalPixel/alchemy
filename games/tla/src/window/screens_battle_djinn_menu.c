@@ -6,8 +6,8 @@
 #include "menu/djinn_menu.h"
 #include "sounds.h"
 #include "version.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 // The Japanese list window is 9 tiles wide from column 21, its messages hold
 // 32 characters and a recovering Djinni's turns stand at x 40.

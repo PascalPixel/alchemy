@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "gamepak/far_call/field.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 /// The flashes, after the map cells.

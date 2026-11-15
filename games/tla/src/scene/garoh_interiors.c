@@ -29,7 +29,7 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "text/msg_ids.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {

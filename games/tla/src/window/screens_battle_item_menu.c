@@ -17,10 +17,10 @@
 #include "edition.h"
 #include "graphics/graphics.h"
 #include "graphics/uiwindow.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/field/object.h"
-#include "module/shop/shop.h"
-#include "module/window/screens.h"
+#include "battle_effect/battle_effect.h"
+#include "field/object.h"
+#include "shop/shop.h"
+#include "window/screens.h"
 
 #define BATTLE_OK 0x80 ///< flags: usable in battle.
 

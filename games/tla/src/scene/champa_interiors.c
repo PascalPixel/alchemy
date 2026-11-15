@@ -25,7 +25,7 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "flags.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 
 extern struct ActorPlacement gChampaInteriors_ActorPlacements[];
 extern struct ActorPlacement gChampaInteriors_IsletHouseActorPlacements[];

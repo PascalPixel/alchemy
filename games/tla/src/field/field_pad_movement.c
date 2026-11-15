@@ -7,10 +7,10 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "flag_call.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 #include "macros.h"
-#include "module/field/resource_slot.h"
+#include "field/resource_slot.h"
 
 // The heading of each direction-pad combination, -1 for none.
 

@@ -6,7 +6,7 @@
 /// variable two parts declare. system.c includes it before the parts, and each
 /// part includes it too, so that a part read on its own still resolves.
 
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "battle/battle.h"
 #include "debug.h"
 #include "game/game.h"

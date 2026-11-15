@@ -5,9 +5,9 @@
 #include "window_internal.h"
 #include "window/djinn_preview.h"
 #include "gamepak/far_call/game.h"
-#include "module/tla.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "scene/shared.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// Formats value as decimal text and copies its 14 characters, one a halfword,
 /// into out.

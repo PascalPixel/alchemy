@@ -78,7 +78,7 @@ extern const u8 BattleEffect_Expand2Code[];
 extern u8 BattleEffect_Expand2CodeSize[];
 
 #include "gamepak/far_call/window.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
 #include "flag_call.h"

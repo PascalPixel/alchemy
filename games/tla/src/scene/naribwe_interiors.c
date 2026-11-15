@@ -18,7 +18,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "field/event_inline.h"
 #include "system/main_routine_work.h"
 #include "actor.h"

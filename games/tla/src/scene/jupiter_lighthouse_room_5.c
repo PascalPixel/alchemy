@@ -28,11 +28,11 @@
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
 #include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
 #include "field/cell_target.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
@@ -48,7 +48,7 @@
 #include "system/heap_release.h"
 #include "system/io_write.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
@@ -838,10 +838,10 @@ struct Spark {
 };
 
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
- * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:794: structure has no
- * member named `x'. */
+ * SparkSprite__jupiter_lighthouse_room_5; scene/shared.h has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:794:
+ * structure has no member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
   s32 x;

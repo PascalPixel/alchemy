@@ -174,7 +174,7 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 }
 
 #include "types.h"
-#include "module/tla.h"
+#include "scene/shared.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -264,10 +264,10 @@ enum YampiDesertRoom12ActorId {
 #include "flag_call.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/field_effect.h"
+#include "scene/scene.h"
 #include "graphics/resource.h"
 #include "call.h"
 #include "system/input.h"

@@ -2,7 +2,7 @@
 /// The text canvas renderer, compiled as ARM code and copied to RAM to run,
 /// entered in Thumb through Glyph_DrawCode (glyph_arm_entries.s).
 
-#include "module/window/glyph_arm.h"
+#include "window/glyph_arm.h"
 #include "types.h"
 #include "graphics/uiwindow.h"
 #include "graphics/glyph.h"

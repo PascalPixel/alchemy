@@ -3,10 +3,10 @@
 // Part of field.c.
 
 #include "field_internal.h"
-#include "module/field/field.h"
-#include "module/field/resource_slot.h"
-#include "module/system/system.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "field/resource_slot.h"
+#include "system/system_bank.h"
+#include "scene/shared.h"
 #include "system/system.h"
 #include "types.h"
 #include "graphics/resource.h"

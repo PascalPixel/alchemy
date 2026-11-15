@@ -10,11 +10,11 @@
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/sound.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
-#include "module/tla.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/field_sequence.h"
+#include "field/object.h"
+#include "scene/shared.h"
 #include "macros.h"
 
 extern u8 gMapGridCellBuffer[];
@@ -495,7 +495,7 @@ done:
 }
 
 /* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
- * module/tla.h has another definition; tried with the definition the rest of
+ * scene/shared.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
  * games/tla/src/field/field_sequence_run.c:508: structure has no member named
  * `pos'. */

@@ -28,9 +28,9 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "call.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
@@ -50,7 +50,7 @@
 #include "field/field_sequence_event.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 
 /// Set while the leader stands on the button by the door, which holds it open.
 #define FLAG_DOOR_BUTTON_HELD 0x200

@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 /// One slash strikes the first target among glints, in lightning colours.

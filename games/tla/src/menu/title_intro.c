@@ -121,7 +121,7 @@ extern u16 gTitleIntro_ChannelCurveContrast[];
 s32 TitlePaletteFade_ClampComponent(s32 value);
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \

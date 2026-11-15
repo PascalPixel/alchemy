@@ -5,7 +5,7 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 
 // Where the Japanese layout differs: the summon list's window and its Djinn
 // costs, in tiles. The Japanese edition decodes a summon's description

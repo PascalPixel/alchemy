@@ -20,7 +20,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/event_inline.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
 

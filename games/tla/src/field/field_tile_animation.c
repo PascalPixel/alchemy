@@ -9,7 +9,7 @@
 
 #include "map.h"
 #include "graphics/graphics.h"
-#include "module/field/map.h"
+#include "field/map.h"
 #include "system/system.h"
 #include "system/frame.h"
 #include "graphics/palette_snapshots.h"
@@ -1161,7 +1161,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
 }
 
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
- * gCellPictures[]; module/tla.h has u32 gCellPictures[]; tried as the rest of
+ * gCellPictures[]; scene/shared.h has u32 gCellPictures[]; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
  * games/tla/src/field/field_tile_animation.c:1118: request for member `unk2' in
  * something not a structure or union. */

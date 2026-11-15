@@ -4,9 +4,9 @@
 
 #include "event_commands_internal.h"
 #include "fixed_math.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)

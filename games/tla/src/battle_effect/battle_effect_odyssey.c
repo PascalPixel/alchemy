@@ -9,7 +9,7 @@
 #define KIND125_FRAMES 114
 
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
- * BattleBackgroundId__summon_effects; module/battle_effect/battle_effect.h has
+ * BattleBackgroundId__summon_effects; battle_effect/battle_effect.h has
  * another definition; not tried: struct BattleBackgroundId__summon_effects was
  * not found. */
 union BattleBackgroundId {

@@ -3,7 +3,7 @@
 // Part of game.c.
 
 #include "game_internal.h"
-#include "module/game/game.h"
+#include "game/game_bank.h"
 #include "system/mul_q16.h"
 
 /// Writes ten times each element level: an enemy's from its preset, a

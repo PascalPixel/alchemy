@@ -4,13 +4,13 @@
 
 #include "window_internal.h"
 #include "sounds.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/battle.h"
 #include "battle/motobj.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 // Room for the help line of an item and of a Djinni, and the second letter
 // tile of the PP cost's label, as measured: the item line grows from German

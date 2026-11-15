@@ -30,12 +30,12 @@
 #include "field/field_sequence_event.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "field/event_commands.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
-#include "module/game/game.h"
+#include "game/game_bank.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "call.h"
@@ -1531,10 +1531,10 @@ void VenusLighthouseEntrance_UpdateDust(void) {
 }
 
 /* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct
- * SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1407: structure has
- * no member named `unk1e'. */
+ * SparkSprite__venus_lighthouse_entrance; scene/shared.h has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1407:
+ * structure has no member named `unk1e'. */
 struct SparkSprite__venus_lighthouse_entrance {
   u8 unk00[8];
   u16 tile : 10;

@@ -9,9 +9,9 @@
 #include "system/frame.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.

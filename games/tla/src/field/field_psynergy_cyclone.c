@@ -28,7 +28,7 @@
 #include "system/frame.h"
 
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); module/field/event_commands.h has void
+ * *position); field/event_commands.h has void
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:

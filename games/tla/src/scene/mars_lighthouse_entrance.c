@@ -20,11 +20,11 @@
 /// it; cracked floors (room 7) drop the leader to the floor below.
 
 #include "flags.h"
-#include "module/scene/ride.h"
+#include "scene/ride.h"
 #include "field/event_inline.h"
 #include "field/field.h"
-#include "module/scene/mars_lighthouse_entrance.h"
-#include "module/scene/scene.h"
+#include "scene/mars_lighthouse_entrance.h"
+#include "scene/scene.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -40,8 +40,8 @@
 #include "actor.h"
 #include "field/field_sequence_event.h"
 #include "item_icon.h"
-#include "module/field/field.h"
-#include "module/tla.h"
+#include "field/field_bank.h"
+#include "scene/shared.h"
 #include "scene_ids.h"
 #include "field_event.h"
 #include "system/field_effect.h"
@@ -57,14 +57,14 @@
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "field_sprite.h"
 #include "macros.h"
 #include "system/input.h"
 #include "system/heap_release.h"
 #include "field/cell_target.h"
 #include "shared/tables.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "system/dma.h"
 #include "objcmd.h"
 
@@ -1666,8 +1666,8 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
  * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
  * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
  * #include "field/field_sequence_event.h" #include "field.h" #include
- * "item_icon.h" #include "module/field/field.h" #include
- * "module/scene/mars_lighthouse_entrance.h" #include "module/system/system.h"
+ * "item_icon.h" #include "field/field.h" #include
+ * "scene/mars_lighthouse_entrance.h" #include "system/system.h"
  * #include "scene_ids.h" void Party_TakeFallDamage(); tried as the definition's
  * void Actor_Blink(struct Actor *object), it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1457: conflicting types for

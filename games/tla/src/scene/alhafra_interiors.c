@@ -17,7 +17,7 @@
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "module/scene/scene.h"
+#include "scene/scene.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "field_sprite.h"

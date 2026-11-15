@@ -32,7 +32,7 @@
 #include "map.h"
 #include "system/task.h"
 #include "actor_view.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"

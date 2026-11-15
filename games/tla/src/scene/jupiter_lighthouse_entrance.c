@@ -24,15 +24,15 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "system/irq.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
 #include "system/task.h"
 #include "item_icon.h"
-#include "module/field/field.h"
+#include "field/field_bank.h"
 #include "field/cell_target.h"
 #include "objcmd.h"
 #include "fixed_math.h"
@@ -52,7 +52,7 @@
 #include "graphics/vram_tab.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 
 extern u16 gLighthouseUnlitColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

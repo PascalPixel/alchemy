@@ -230,8 +230,8 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 #include "field/field_sequence_event.h"
-#include "module/scene/scene.h"
-#include "module/scene/shrine_of_the_sea_god.h"
+#include "scene/scene.h"
+#include "scene/shrine_of_the_sea_god.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -247,7 +247,7 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
 #include "call.h"
 #include "macros.h"
 #include "system/frame.h"
-#include "module/field/field_effect.h"
+#include "field/field_effect.h"
 #include "shared/tables.h"
 
 /// The entrance hall's actors (SceneId_ShrineOfTheSeaGod1), numbering the rows

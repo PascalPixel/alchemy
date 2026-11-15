@@ -17,11 +17,11 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "field/field_sequence_event.h"
-#include "module/scene/mars_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
+#include "scene/mars_lighthouse_aerie.h"
+#include "scene/scene.h"
+#include "scene/shared.h"
 #include "scene_ids.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -3205,7 +3205,7 @@ struct SparkleWork__s53e4 {
 };
 
 /* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
- * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
+ * BattleEffect_GetObjectPriority(struct Actor *object); scene/scene.h
  * has void BattleEffect_GetObjectPriority(void); tried as the definition's s32
  * BattleEffect_GetObjectPriority(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja:

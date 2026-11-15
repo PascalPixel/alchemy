@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/system/system.h"
+#include "system/system_bank.h"
 #include "resource_ids.h"
 
 /// The gathering lights' modes (BattleEffect_RunGatheringLights), each named

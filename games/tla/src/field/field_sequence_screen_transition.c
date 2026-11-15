@@ -43,10 +43,10 @@
 #include "system/input.h"
 
 // The parts, in ROM order.
-#include "module/system/system.h"
-#include "module/field/screen_transition.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "system/system_bank.h"
+#include "field/screen_transition.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 #include "field/event.h"
 #include "gamepak/far_call/window.h"
 #include "field/ground_mask.h"
@@ -54,7 +54,7 @@
 
 /* VIEW(f0cf050): routine Vector_AddPolarOffset as void
  * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
- * module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
+ * system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
  * s32 *position); tried as the definition's void Vector_AddPolarOffset(s32
  * radius, s32 angle, s32 *position), which the object already declares,
  * Leader_StepAwayFromNearbyActor moves: 3 of 55 instructions in tla-ja. */

@@ -5,7 +5,7 @@
 
 #include "battle_internal.h"
 #include "flag_call.h"
-#include "module/battle/presentation.h"
+#include "battle/presentation.h"
 
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
@@ -111,7 +111,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 }
 
 /* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__presentation;
- * module/tla.h has another definition; not tried: struct OwnerStats__f11e3ac
+ * scene/shared.h has another definition; not tried: struct OwnerStats__f11e3ac
  * was not found. */
 struct OwnerStats__presentation {
   s16 maxHp;
@@ -213,8 +213,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 }
 
 /* VIEW(f11e3ac): tag struct UnitBaseStats as struct
- * UnitBaseStats__presentation; module/tla.h has another definition; not tried:
- * struct UnitBaseStats__f11e3ac was not found. */
+ * UnitBaseStats__presentation; scene/shared.h has another definition; not
+ * tried: struct UnitBaseStats__f11e3ac was not found. */
 struct UnitBaseStats__presentation {
   s16 hp;
   s16 pp;

@@ -14,9 +14,9 @@
 #include "field/field_psynergy_work.h"
 #include "system/ram_buffer.h"
 #include "battle/battle.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/field_bank.h"
+#include "field/object.h"
 #include "fixed_math.h"
 
 /// Carry cast with no target: two hands appear 32 pixels to either side of

@@ -6,8 +6,8 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "system/frame.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
+#include "field/event_commands.h"
+#include "field/object.h"
 
 /// Returns an actor, or NULL if it does not exist.
 struct Actor *Actor_GetById(u32 actorId) {

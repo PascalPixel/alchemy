@@ -5,9 +5,9 @@
 
 #include "battle_internal.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 #include "gamepak/far_call/field.h"
-#include "module/battle/presentation.h"
+#include "battle/presentation.h"
 
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and resets everyone's display mode and motion.

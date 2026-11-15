@@ -647,8 +647,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
       if (args->prelude == 1) {
-        s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + origin[0] / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + origin[1] - 24;
+        s32 x =
+            (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 4)) + origin[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 2)) + origin[1] - 24;
 
         if (frame > 56)
           y = y - frame * 2 + 112;
@@ -687,8 +688,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           aim[1] = targets[target][1] + Random16() % 96 - 32;
         else if (mode == BURST_SHOWER_MODE_FIRE_DANCE) {
           aim[1] = targets[target][1] + (Random16() & 255) - 192;
-          aim[1] =
-              targets[target][1] + ((Trig_Sin(frame << 12) << 8) >> 16) - 128;
+          aim[1] = targets[target][1] +
+                   (Q_16_16_TO_INT(Trig_Sin(frame << 12) << 8)) - 128;
         } else
           aim[1] = targets[target][1] + (Random16() & 63) - 16;
         limit = 16;
@@ -752,7 +753,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
             pair[1](canvas, work->sheet + cel * 1024,
-                    Q_16_16_UPPER_HALF(shot->x) - 16, (y >> 16) - 16, 32, 32);
+                    Q_16_16_UPPER_HALF(shot->x) - 16, (Q_16_16_TO_INT(y)) - 16,
+                    32, 32);
           }
         } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
           s32 cel = i % 5 * 3 + age % 3;
@@ -773,7 +775,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           s32 wobble = Trig_Sin((i * 2 + frame) << 11);
           s32 y;
           cel = age >> 2;
-          y = (shot->y + (wobble << 5)) >> 16;
+          y = Q_16_16_TO_INT(shot->y + (wobble << 5));
 
           pair[1](canvas, work->sheet + cel * 1152,
                   Q_16_16_UPPER_HALF(shot->x) - 12, y - 24, 24, 48);
@@ -828,11 +830,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
               widths = NULL;
               heights = NULL;
               angle = Random16() & 0xffff;
-              x = (Trig_Sin(angle) << 4) >> 16;
+              x = Q_16_16_TO_INT(Trig_Sin(angle) << 4);
               x += targets[i][0] / 2;
               widths = gBattleEffect_GlintPictureWidths;
               x -= widths[cel] >> 1;
-              y = (Trig_Cos(angle) << 4) >> 16;
+              y = Q_16_16_TO_INT(Trig_Cos(angle) << 4);
               y += targets[i][1];
               heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;

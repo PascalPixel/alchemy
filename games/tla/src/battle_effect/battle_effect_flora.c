@@ -600,8 +600,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             }
           }
         }
-        pos.x = Trig_Sin(a + b) * rr >> 16;
-        pos.y = Trig_Cos(a + b) * rr >> 16;
+        pos.x = Q_16_16_TO_INT(Trig_Sin(a + b) * rr);
+        pos.y = Q_16_16_TO_INT(Trig_Cos(a + b) * rr);
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
@@ -651,8 +651,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       outerY = 92 - sy;
       innerY = 88 - sy;
       for (i = 0; i != 128; i++) {
-        ringPoint.x = Trig_Sin(i << 9) * inner >> 16;
-        ringPoint.y = Trig_Cos(i << 9) * inner >> 16;
+        ringPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
+        ringPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
         ringPoint.depth = 0;
         EffectPosition_ProjectPoint(&ringPoint, &ringScreen);
         ringScreen.x >>= 1;
@@ -678,8 +678,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         dot[0] = c;
         dot[1] = c;
         for (i = 0; i != 128; i++) {
-          fadeRingPoint.x = Trig_Sin(i << 9) * inner >> 16;
-          fadeRingPoint.y = Trig_Cos(i << 9) * inner >> 16;
+          fadeRingPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
+          fadeRingPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
           fadeRingPoint.depth = 0;
           EffectPosition_ProjectPoint(&fadeRingPoint, &fadeRingScreen);
           fadeRingScreen.x >>= 1;

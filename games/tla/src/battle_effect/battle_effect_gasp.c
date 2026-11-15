@@ -364,8 +364,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
-      y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
+      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 44) {
         twice = frame * 2;
         y = y - twice + 88;
@@ -383,8 +383,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         if (r > 12)
           r = 12;
         a = frame << 9;
-        x -= Trig_Sin(a) * r * 2 >> 16;
-        y -= (Trig_Cos(a) * r >> 16) - r;
+        x -= Q_16_16_TO_INT(Trig_Sin(a) * r * 2);
+        y -= (Q_16_16_TO_INT(Trig_Cos(a) * r)) - r;
         if (frame <= 61)
           draw[0](canvas, FIGURE(work), x, y, 20, 40);
       }
@@ -408,8 +408,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         if ((u32)p->variant <= 31) {
           s32 n = p->variant / 8 + 2;
-          s32 x = (Trig_Sin(p->z) * p->velocityZ / 2 >> 16) + target.x / 2;
-          s32 y = (Trig_Cos(p->z) * p->velocityZ >> 16) + target.y;
+          s32 x = (Q_16_16_TO_INT(Trig_Sin(p->z) * p->velocityZ / 2)) +
+                  target.x / 2;
+          s32 y = (Q_16_16_TO_INT(Trig_Cos(p->z) * p->velocityZ)) + target.y;
 
           p->z += 512;
           p->velocityZ -= 4;
@@ -481,8 +482,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
-      y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
+      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 48) {
         twice = frame * 2;
         y = y - twice + 96;

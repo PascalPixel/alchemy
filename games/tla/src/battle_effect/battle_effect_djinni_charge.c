@@ -321,17 +321,18 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
           Mesh_BuildGrid(mesh, 8, 8, 8, 8);
           for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
-            s32 y = (-Trig_Cos(angle) * 48) >> 16;
-            s32 radius = (Trig_Sin(angle) * 48) >> 16;
+            s32 y = Q_16_16_TO_INT(-Trig_Cos(angle) * 48);
+            s32 radius = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
             struct ModelVertex *vertex = (struct ModelVertex *)cells;
             s32 k;
 
             for (k = 0; k != 8; k++) {
-              s32 x = (Trig_Sin(k << 13) * radius) >> 16;
+              s32 x = Q_16_16_TO_INT(Trig_Sin(k << 13) * radius);
 
               vertex[row * 8 + k].y = y;
               vertex[row * 8 + k].x = x;
-              vertex[row * 8 + k].z = (Trig_Cos(k << 13) * radius) >> 16;
+              vertex[row * 8 + k].z =
+                  Q_16_16_TO_INT(Trig_Cos(k << 13) * radius);
             }
           }
         }

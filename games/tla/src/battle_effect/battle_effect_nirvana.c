@@ -198,7 +198,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       scrollSpeed += 0x8000;
       scrollSpeed = scrollSpeed * 60 / 64;
     }
-    scrollX = scroll >> 16;
+    scrollX = Q_16_16_TO_INT(scroll);
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
 
     // Each boulder spins through three pictures of its shard (z is its
@@ -601,9 +601,11 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
               radius = gSerac_RowRadii[row] + (Random16() & 3);
             }
             angle = (column << 13) + TRIG_TURN / 16;
-            VERTICES[row * 8 + column].x = (Trig_Sin(angle) * radius) >> 16;
+            VERTICES[row * 8 + column].x =
+                Q_16_16_TO_INT(Trig_Sin(angle) * radius);
             VERTICES[row * 8 + column].y = -height;
-            VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
+            VERTICES[row * 8 + column].z =
+                Q_16_16_TO_INT(Trig_Cos(angle) * radius);
             if (row <= 6) {
               u8 *quad = MESH_BUFFER + (row * 8 + column) * 24;
               u8 *gridQuad;

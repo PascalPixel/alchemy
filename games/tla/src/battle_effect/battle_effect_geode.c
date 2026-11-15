@@ -248,8 +248,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {
-        s32 lift = ((-Trig_Cos(angle) * 3) << 4) >> 16;
-        s32 reach = (Trig_Sin(angle) * 48) >> 16;
+        s32 lift = Q_16_16_TO_INT((-Trig_Cos(angle) * 3) << 4);
+        s32 reach = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
         s32 column;
         s32 y;
         s32 radius;
@@ -257,10 +257,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         radius = (reach - 56) * curl / 16 + 56;
         for (column = 0; column != DOME_COLUMNS; column++) {
           vertices[row * DOME_COLUMNS + column].x =
-              (Trig_Sin(column << 12) * radius) >> 16;
+              Q_16_16_TO_INT(Trig_Sin(column << 12) * radius);
           vertices[row * DOME_COLUMNS + column].y = y;
           vertices[row * DOME_COLUMNS + column].z =
-              (Trig_Cos(column << 12) * radius) >> 16;
+              Q_16_16_TO_INT(Trig_Cos(column << 12) * radius);
         }
       }
       model = Render_AllocateModelList(1);

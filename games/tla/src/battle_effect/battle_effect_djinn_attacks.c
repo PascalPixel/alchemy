@@ -131,7 +131,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
 
       draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
@@ -239,7 +239,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
-      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
       blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
     }
@@ -375,8 +375,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   do {
     // The Djinn swings on an arc that narrows by two pixels a frame.
     if (frame <= 79) {
-      s32 x = (Trig_Sin(angle) * 24) >> 16;
-      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+      s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
@@ -485,8 +485,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   do {
     s32 angle = member << 11;
 
-    puff->x = (Trig_Sin(angle) * 24) >> 16;
-    puff->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+    puff->x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
+    puff->y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + 52;
     if (member & 1)
       puff->x = 32 - puff->x;
     else
@@ -567,7 +567,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = Q_16_16_UPPER_HALF(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
+        x = Q_16_16_UPPER_HALF(spark->x) +
+            (Q_16_16_TO_INT(Trig_Sin(spark->z) * 4));
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
                 size * 2);

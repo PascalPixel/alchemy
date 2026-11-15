@@ -805,8 +805,9 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
           s32 diameter;
           s32 index;
 
-          diameter =
-              ((Trig_Sin(burst->variant << 10) * burst->velocityX) >> 16) * 2;
+          diameter = (Q_16_16_TO_INT(Trig_Sin(burst->variant << 10) *
+                                     burst->velocityX)) *
+                     2;
           index = diameter - 2;
           if ((u32)index <= 61)
             Canvas_BlitAtFoot((void *)(*(s16 *)(index + (s32)discs) + cells),
@@ -992,7 +993,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       x = streak->x + streak->velocityX;
       streak->x = x;
       streak->y += streak->velocityY;
-      if (streak->y >> 16 > 48) {
+      if (Q_16_16_TO_INT(streak->y) > 48) {
         /* FAKEMATCH(temporary): landing set to the buffer, then advanced. */
         struct Particle *landing = PARTICLES;
 

@@ -188,7 +188,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                                                  gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
-          if (drop->velocityY > 0 && (drop->y >> 16) > 104) {
+          if (drop->velocityY > 0 && (Q_16_16_TO_INT(drop->y)) > 104) {
             drop->variant = -1;
           }
           if (drop->y < -size) {

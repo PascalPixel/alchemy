@@ -225,8 +225,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
             s32 half;
 
             spin = (frame + i * 32) << 9;
-            x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offsetX;
-            y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
+            x = (screen.x + (Q_16_16_TO_INT(Trig_Sin(spin) << 4))) + offsetX;
+            y = screen.y + (Q_16_16_TO_INT(Trig_Cos(spin) << 4));
             half = frame / 16;
             draw[half & 1](canvas,
                            work->sheet + (((frame / 4) - (half * 4)) << 10),
@@ -355,13 +355,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
     row = work->bg2xLines;
-    sway = Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
-                                     args->targetCount * 20)) *
-               16 >>
-           16;
+    sway = Q_16_16_TO_INT(
+        Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
+                                  args->targetCount * 20)) *
+        16);
     scrollX = gBgScroll[1].x;
     for (i = 0; i != 160; i++) {
-      s32 x = (Trig_Sin((frame + i) << 10) * sway >> 16) + scrollX;
+      s32 x = (Q_16_16_TO_INT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
 
       if (x < 0)
         x += 0xffff;

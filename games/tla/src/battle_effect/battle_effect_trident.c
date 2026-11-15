@@ -215,7 +215,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->velocityZ = (Random16() & 7) + 4;
         }
         if ((u32)p->variant <= 31) {
-          s32 drop = ((Trig_Sin(p->variant << 10) * p->velocityZ) >> 16) * 2;
+          s32 drop =
+              (Q_16_16_TO_INT(Trig_Sin(p->variant << 10) * p->velocityZ)) * 2;
           s32 index = drop - 2;
 
           if ((u32)index <= 61) {
@@ -396,9 +397,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       for (i = 0; i != 4; i++) {
         s32 k = i & 3;
         s32 angle = Random16();
-        s32 x = centerX + ((Trig_Sin(angle) << 3) >> 16) -
+        s32 x = centerX + (Q_16_16_TO_INT(Trig_Sin(angle) << 3)) -
                 (gBattleEffect_GlintPictureWidths[k] >> 1);
-        s32 y = (i << 5) + ((Trig_Cos(angle) << 4) >> 16) -
+        s32 y = (i << 5) + (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
                 (gBattleEffect_GlintPictureHeights[k] >> 1);
 
         {
@@ -527,8 +528,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       draw[0](canvas, work->sheet, pos.x - 16, pos.y - 64, 32, 64);
     if ((u32)(frame - 4) <= 11) {
       for (i = 0; i != 16; i++) {
-        s32 x = pos.x + ((frame * Trig_Sin(i << 12)) >> 16);
-        s32 y = pos.y + ((frame * Trig_Cos(i << 12)) >> 16) - frame;
+        s32 x = pos.x + (Q_16_16_TO_INT(frame * Trig_Sin(i << 12)));
+        s32 y = pos.y + (Q_16_16_TO_INT(frame * Trig_Cos(i << 12))) - frame;
 
         draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64,
                 32, 64);
@@ -762,8 +763,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size,
-                  size * 2);
+                  (Q_16_16_TO_INT(spark->x)) - size / 2,
+                  (Q_16_16_TO_INT(spark->y)) - size, size, size * 2);
         }
       }
       spark++;

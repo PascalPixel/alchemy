@@ -511,8 +511,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         size = 40;
       }
       index = (size - 2) >> 1;
-      x = ball->x >> 16;
-      y = ball->y >> 16;
+      x = Q_16_16_TO_INT(ball->x);
+      y = Q_16_16_TO_INT(ball->y);
       ball->x += ball->velocityX;
       ball->y += ball->velocityY;
       DrawDisc(canvas, discs, cells, x, y, size, index);
@@ -531,10 +531,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
             if (radius >= 0) {
               s32 width = 4;
-              s32 x = to.x / 2 + ((Trig_Sin(step->z) * radius) >> 16);
+              s32 x = to.x / 2 + (Q_16_16_TO_INT(Trig_Sin(step->z) * radius));
               s32 height = size * 2;
               s32 half = size >> 1;
-              s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
+              s32 y = to.y + (Q_16_16_TO_INT(Trig_Cos(step->z) * radius));
 
               draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - half, y - 32 - size, width, height);

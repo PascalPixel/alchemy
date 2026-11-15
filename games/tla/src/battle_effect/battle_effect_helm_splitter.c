@@ -148,8 +148,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
-          s32 sx = spark->x >> 16;
-          s32 sy = spark->y >> 16;
+          s32 sx = Q_16_16_TO_INT(spark->x);
+          s32 sy = Q_16_16_TO_INT(spark->y);
 
           if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),

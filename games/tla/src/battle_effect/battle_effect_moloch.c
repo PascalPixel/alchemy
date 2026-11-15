@@ -634,8 +634,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 a;
       s32 py;
       a = point << 10;
-      px = (r * Trig_Sin(a) / 2 >> 16) + x;
-      py = (r * Trig_Cos(a) >> 16) + y;
+      px = (Q_16_16_TO_INT(r * Trig_Sin(a) / 2)) + x;
+      py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y;
       draw(canvas, sprites + cel8 + 444, px, py - 2, 2, 4);
     }
     if (small == 0) {
@@ -659,12 +659,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = (spoke << 13) + (t * 5 << 9);
-        px = (r * Trig_Sin(a) >> 16) + x;
-        py = (r * Trig_Cos(a) * 2 >> 16) + y;
+        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
+        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
         a += a >> 1;
-        px = (Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2) >> 16) + x;
-        py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
+        px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
+        py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
       }
       draw(canvas, work->sheet + (gBattleEffect_MotePictures[8] + sheetOffset),
@@ -690,12 +690,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = (spoke << 13) + (t * 5 << 9);
-        px = (r * Trig_Sin(a) >> 16) + x;
-        py = (r * Trig_Cos(a) * 2 >> 16) + y;
+        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
+        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
         a += a >> 1;
-        px = (Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2) >> 16) + x;
-        py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
+        px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
+        py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
       }
       draw(canvas, work->sheet + (gBattleEffect_MotePictures[6] + sheetOffset),
@@ -715,8 +715,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = point << 10;
-        px = (r * Trig_Sin(a) >> 16) + x;
-        py = (r * Trig_Cos(a) * 2 >> 16) + y;
+        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
+        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
         draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
       for (point = 0; point != 64; point++) {
@@ -724,8 +724,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = point << 10;
-        px = (r * Trig_Sin(a) * 2 >> 16) + x;
-        py = (r * Trig_Cos(a) >> 16) + y + gIris_SplashOffsetsY[small] * 2;
+        px = (Q_16_16_TO_INT(r * Trig_Sin(a) * 2)) + x;
+        py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y +
+             gIris_SplashOffsetsY[small] * 2;
         draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
     }
@@ -846,8 +847,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     for (i = 0; i != 32; i++) {
       if (work->particles[i].variant != 0) {
         s32 n = work->particles[i].variant & 15;
-        s32 px = work->particles[i].x >> 16;
-        s32 py = work->particles[i].y >> 16;
+        s32 px = Q_16_16_TO_INT(work->particles[i].x);
+        s32 py = Q_16_16_TO_INT(work->particles[i].y);
         s32 offset = 0;
 
         if (work->particles[i].x < 0 || work->particles[i].x > px(127) ||
@@ -1337,15 +1338,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 px = Trig_Sin(a) * radius;
         s32 py = Trig_Cos(a) * radius;
 
-        ((DrawRectangle)draw[0])(canvas,
-                                 work->sheet + gBattleEffect_MotePictures[3],
-                                 (px >> 16) + 58, (py * 2 >> 16) + 48, 4, 8);
+        ((DrawRectangle)draw[0])(
+            canvas, work->sheet + gBattleEffect_MotePictures[3],
+            (Q_16_16_TO_INT(px)) + 58, (Q_16_16_TO_INT(py * 2)) + 48, 4, 8);
       }
       for (i = 0; i != 12; i++) {
-        ((DrawRectangle)draw[0])(canvas,
-                                 work->sheet + gBattleEffect_MotePictures[1],
-                                 (work->particles[i].x >> 16) - 2,
-                                 (work->particles[i].y >> 16) - 2, 2, 4);
+        ((DrawRectangle)draw[0])(
+            canvas, work->sheet + gBattleEffect_MotePictures[1],
+            (Q_16_16_TO_INT(work->particles[i].x)) - 2,
+            (Q_16_16_TO_INT(work->particles[i].y)) - 2, 2, 4);
         work->particles[i].x += work->particles[i].velocityX;
       }
     }
@@ -1796,7 +1797,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > 63)
         shade = 63;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, (Iwram_MulQ16((frame - 521) * 0x10000, 0x400) + 0x7b0000) >> 16,
+          0,
+          Q_16_16_TO_INT(Iwram_MulQ16((frame - 521) * 0x10000, 0x400) +
+                         0x7b0000),
           frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
@@ -1806,7 +1809,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > 63)
         shade = 63;
       x -= Iwram_MulQ16((frame - 530) * 0x10000, 0x400);
-      BattleEffect_DrawDiagonalCanvasLine(x >> 16, 127, frame - 530, shade);
+      BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 530,
+                                          shade);
     }
     if ((u32)(frame - 535) <= 209) {
       s16 shade = 745 - frame;
@@ -1814,7 +1818,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > 63)
         shade = 63;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, (Iwram_MulQ16((frame - 534) * 0x10000, 0x600) + 0x780000) >> 16,
+          0,
+          Q_16_16_TO_INT(Iwram_MulQ16((frame - 534) * 0x10000, 0x600) +
+                         0x780000),
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
@@ -1824,7 +1830,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > 63)
         shade = 63;
       x -= Iwram_MulQ16((frame - 553) * 0x10000, 0x600);
-      BattleEffect_DrawDiagonalCanvasLine(x >> 16, 127, frame - 553, shade);
+      BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 553,
+                                          shade);
     }
 
     // The healing: rings turning about the centre, then the great glow.
@@ -1846,8 +1853,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
             s32 rowY;
 
-            px = (px >> 16) + (j >> 1) + 64;
-            rowY = (py >> 16) - (j >> 1) + 63;
+            px = (Q_16_16_TO_INT(px)) + (j >> 1) + 64;
+            rowY = (Q_16_16_TO_INT(py)) - (j >> 1) + 63;
             ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, rowY, 1,
                                      2);
           }
@@ -1898,8 +1905,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t << 1);
         s32 sy = Trig_Cos(a) * t;
-        s32 px = (Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT)) >> 16;
-        s32 py = (Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT)) >> 16;
+        s32 px =
+            Q_16_16_TO_INT(Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT));
+        s32 py =
+            Q_16_16_TO_INT(Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT));
 
         ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 101, py + 26,
                                  6, 12);
@@ -1915,8 +1924,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t >> 1);
         s32 sy = Trig_Cos(a) * (t << 1);
-        s32 px = (Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT)) >> 16;
-        s32 py = (Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT)) >> 16;
+        s32 px =
+            Q_16_16_TO_INT(Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT));
+        s32 py =
+            Q_16_16_TO_INT(Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT));
 
         ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 93, py + 32,
                                  6, 12);
@@ -2060,8 +2071,8 @@ struct SolidFace {
 /// keeping the brighter of each pixel's colour and color.
 #define FILL_SPAN(row, xa, xb)                                                 \
   {                                                                            \
-    s32 left = (xa) >> 16;                                                     \
-    s32 right = (xb) >> 16;                                                    \
+    s32 left = Q_16_16_TO_INT(xa);                                             \
+    s32 right = Q_16_16_TO_INT(xb);                                            \
     s32 rowOffset;                                                             \
     s32 x;                                                                     \
                                                                                \
@@ -2143,8 +2154,8 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
         }
       }
 
-      top = ax[1] >> 16;
-      middle = ax[4] >> 16;
+      top = Q_16_16_TO_INT(ax[1]);
+      middle = Q_16_16_TO_INT(ax[4]);
       bottom = Q_16_16_UPPER_HALF(ax[7]);
       if (top != middle)
         slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
@@ -2191,16 +2202,16 @@ struct MeshFace {
     s32 rowOffset;                                                             \
     s32 x;                                                                     \
                                                                                \
-    row += ((vA >> 16) << textureShift) + (uA >> 16);                          \
-    left = xA >> 16;                                                           \
-    right = xB >> 16;                                                          \
+    row += ((Q_16_16_TO_INT(vA)) << textureShift) + (Q_16_16_TO_INT(uA));      \
+    left = Q_16_16_TO_INT(xA);                                                 \
+    right = Q_16_16_TO_INT(xB);                                                \
     u = 0;                                                                     \
     v = 0;                                                                     \
     if (left > right)                                                          \
       XOR_SWAP(left, right);                                                   \
     rowOffset = (((y) & 7) << 3) + (((y) >> 3) << 10);                         \
     for (x = left; x != right; x++) {                                          \
-      s32 texel = (u >> 16) + ((v >> 16) << textureShift);                     \
+      s32 texel = (Q_16_16_TO_INT(u)) + ((Q_16_16_TO_INT(v)) << textureShift); \
       s32 at = ((x >> 3) << 6) + (x & 7) + rowOffset;                          \
                                                                                \
       if (canvas[at] < row[texel])                                             \
@@ -2313,9 +2324,9 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
         }
       }
 
-      top = ax[1] >> 16;
-      middle = ax[4] >> 16;
-      bottom = ax[7] >> 16;
+      top = Q_16_16_TO_INT(ax[1]);
+      middle = Q_16_16_TO_INT(ax[4]);
+      bottom = Q_16_16_TO_INT(ax[7]);
       if (top != middle) {
         s32 height = ax[4] - ax[1];
 

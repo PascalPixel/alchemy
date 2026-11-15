@@ -154,7 +154,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       if ((u32)ring->variant > 15) {
         continue;
       }
-      size = ((Trig_Sin(ring->variant << 11) * ring->velocityX) >> 16) * 2;
+      size =
+          (Q_16_16_TO_INT(Trig_Sin(ring->variant << 11) * ring->velocityX)) * 2;
       index = size - 2;
       ring->variant++;
       if ((u32)index > 61) {

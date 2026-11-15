@@ -74,8 +74,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = ((-Trig_Sin(orbit) << 2) >> 16) + screen[0] / 2 - 10;
-      y = ((Trig_Cos(orbit) << 1) >> 16) + screen[1] - 22;
+      x = (Q_16_16_TO_INT(-Trig_Sin(orbit) << 2)) + screen[0] / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(orbit) << 1)) + screen[1] - 22;
       // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
@@ -223,8 +223,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       // off from frame 17; the first four frames add a bright copy.
       if (args->prelude == 1) {
         s32 angle = frame << 11;
-        s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
-        s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
+        s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) << 2)) + screen[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) << 1)) + screen[1] - 22;
 
         if (frame > 16)
           y = y - frame * 2 + 32;

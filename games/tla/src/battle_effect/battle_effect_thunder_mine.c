@@ -167,7 +167,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
       ball->variant++;
       x = ball->x >> 17;
-      y = ball->y >> 16;
+      y = Q_16_16_TO_INT(ball->y);
       if (mode == BOLT_TRAIL_THUNDER_MINE) {
         radius = frame * 2 + 16;
         largest = 48;
@@ -194,9 +194,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
-        s32 flashX = x + ((Trig_Sin(angle) * half) >> 16) -
+        s32 flashX = x + (Q_16_16_TO_INT(Trig_Sin(angle) * half)) -
                      (gBattleEffect_GlintPictureWidths[cell] >> 1);
-        s32 flashY = y + ((Trig_Cos(angle) * half) >> 16) -
+        s32 flashY = y + (Q_16_16_TO_INT(Trig_Cos(angle) * half)) -
                      (gBattleEffect_GlintPictureHeights[cell] >> 1);
         s32 flags = 3 | gBoltTrail_GlintFlips[Random16() & 3];
 
@@ -222,11 +222,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
           for (step = 0; step != 8; step++) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    (dot->x >> 16) - size / 2, (dot->y >> 16) - size, size,
-                    size * 2);
+                    (Q_16_16_TO_INT(dot->x)) - size / 2,
+                    (Q_16_16_TO_INT(dot->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
-          if ((dot->y >> 16) > 111) {
+          if ((Q_16_16_TO_INT(dot->y)) > 111) {
             dot->velocityY = -dot->velocityY * 48 / 64;
           }
           dot->variant--;
@@ -440,7 +440,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     if (frame > 63) {
       if (frame <= 111) {
         s32 picture = (frame / 4) % 3;
-        s32 sway = ((Trig_Sin(frame << 11) << 3) >> 16) - 16;
+        s32 sway = (Q_16_16_TO_INT(Trig_Sin(frame << 11) << 3)) - 16;
         s32 which = frame == 108;
         DrawRectangle *draw = &blitters[which];
         u8 *cells = work->sheet + picture * 3 * 0x800;
@@ -451,7 +451,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           s32 flickerFrame = (frame / 2) % 3;
           u8 *flickerPixels;
 
-          sway = (Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3) >> 16;
+          sway = Q_16_16_TO_INT(Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3);
           flickerPixels = work->sheet + flickerFrame * 3 * 0x800;
           (*draw)(canvas, flickerPixels, sway, 0, 96, 64);
           (*draw)(canvas, flickerPixels, sway, 64, 96, 52);
@@ -716,7 +716,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   // The beam's body: a 32-line gradient.
   row = work->sheet + 0x1a20;
   for (i = 0; i != 32; i++) {
-    s32 shade = (Trig_Sin(i << 9) * 63) >> 16;
+    s32 shade = Q_16_16_TO_INT(Trig_Sin(i << 9) * 63);
     s32 j;
 
     for (j = 0; j != 32; j++) {
@@ -871,7 +871,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           fade = frame * 8 - 640;
         }
         for (i = 0; i != 32; i++) {
-          s32 shade = ((Trig_Sin(i << 9) * 63) >> 16) - fade;
+          s32 shade = (Q_16_16_TO_INT(Trig_Sin(i << 9) * 63)) - fade;
           s32 j;
 
           if (shade < 0) {

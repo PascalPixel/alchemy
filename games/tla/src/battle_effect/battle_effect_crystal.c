@@ -99,8 +99,9 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
       // The pillar of light.
       if (frame <= 19) {
-        s32 x = ((Trig_Sin(frame << 11) * 8) >> 16) + center[0] / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + center[1] - 24;
+        s32 x =
+            (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 8)) + center[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + center[1] - 24;
 
         y += frame * 3;
 
@@ -121,7 +122,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
             EffectPosition_ProjectPoint(&shard->x, &screen);
             screen.x >>= 1;
             width = shard->velocityZ;
-            width += Trig_Sin(shard->velocityX) * width / 2 >> 16;
+            width += Q_16_16_TO_INT(Trig_Sin(shard->velocityX) * width / 2);
             shard->velocityX += px(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {

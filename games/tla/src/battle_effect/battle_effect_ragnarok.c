@@ -212,8 +212,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 py = y >> 16;
-                s32 px = x >> 16;
+                s32 py = Q_16_16_TO_INT(y);
+                s32 px = Q_16_16_TO_INT(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;

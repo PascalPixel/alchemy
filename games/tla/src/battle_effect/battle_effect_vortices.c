@@ -220,12 +220,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
     for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = ((gVortices_Shapes[args->variant * 3 + 1] *
-                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-            wave) >>
-           16) +
+      x = (Q_16_16_TO_INT(gVortices_Shapes[args->variant * 3 + 1] *
+                              Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
+                          wave)) +
           40;
-      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
+      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
       draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,

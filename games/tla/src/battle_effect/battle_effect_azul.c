@@ -213,7 +213,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           p->y = px((Random16() & 15) + 120);
           p->velocityX = ((Random16() & mask) - 16) << 13;
           p->velocityY = ((Random16() & mask) - 63) << 12;
-          p->variant = (Trig_Cos(i << 9) << 5 >> 16) - 32;
+          p->variant = (Q_16_16_TO_INT(Trig_Cos(i << 9) << 5)) - 32;
         }
       }
       i = 0;
@@ -222,7 +222,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (p->variant >= 0) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
-          blit(canvas, work->sheet + 0x2df8, ((p->x + (s << 4)) >> 16) - 6,
+          blit(canvas, work->sheet + 0x2df8,
+               (Q_16_16_TO_INT(p->x + (s << 4))) - 6,
                Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);
         }
@@ -519,15 +520,15 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       angle = 0;
       offset = 0;
       for (; k != 16; angle += 0x888, offset += 64, k++) {
-        s32 y = -Trig_Cos(angle) * 48 >> 16;
-        s32 radius = Trig_Sin(angle) * 48 >> 16;
+        s32 y = Q_16_16_TO_INT(-Trig_Cos(angle) * 48);
+        s32 radius = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
         struct ModelVertex *v;
 
         j = 0;
         v = (struct ModelVertex *)(sphere + offset);
         for (; j != 16; j++) {
-          SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
-                       Trig_Cos(j << 12) * radius >> 16);
+          SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(j << 12) * radius), y,
+                       Q_16_16_TO_INT(Trig_Cos(j << 12) * radius));
           v++;
         }
       }
@@ -570,7 +571,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                             BLITTER_ADDITIVE);
         blit2 = Ram_HeapSlots->ramCodePaired;
         i = 0;
-        y = (base.y >> 16) - 32;
+        y = (Q_16_16_TO_INT(base.y)) - 32;
         width = 16;
         height = 64;
         f = frame;

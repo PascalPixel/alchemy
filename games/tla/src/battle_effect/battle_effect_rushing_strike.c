@@ -471,7 +471,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     for (j = 0; j != SEGMENTS; j++) {
       for (i = 0; i != 2; i++) {
         ((struct Corner *)(cells + j))[i].x =
-            i * 20 + ((Trig_Sin(j * 2018 + (frame << 10)) * 2) >> 16) - 10;
+            i * 20 + (Q_16_16_TO_INT(Trig_Sin(j * 2018 + (frame << 10)) * 2)) -
+            10;
         ((struct Corner *)(cells + j))[i].z = 0;
         ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
       }

@@ -92,14 +92,14 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   for (j = 0; j != 16; j++) {
     s32 c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
-    s32 y = (c * 16) >> 16;
-    s32 r = (s * 48) >> 16;
+    s32 y = Q_16_16_TO_INT(c * 16);
+    s32 r = Q_16_16_TO_INT(s * 48);
 
     for (m = 0; m != 2; m++) {
       struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      SET_POSITION(v, (Trig_Sin(m << 13) * r) >> 16, y + 24,
-                   (Trig_Cos(m << 13) * r) >> 16);
+      SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(m << 13) * r), y + 24,
+                   Q_16_16_TO_INT(Trig_Cos(m << 13) * r));
     }
   }
   casterValue = caster[18];
@@ -198,10 +198,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         s32 r = 80;
 
         if (i != 1) {
-          r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
+          r = (Q_16_16_TO_INT(Trig_Sin((frame + k * 4) << 12) * 2)) + 120;
         }
-        SET_POSITION(v, (Trig_Sin(k << 11) * r) >> 16,
-                     (Trig_Cos(k << 11) * r) >> 16, zero);
+        SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(k << 11) * r),
+                     Q_16_16_TO_INT(Trig_Cos(k << 11) * r), zero);
       }
     }
 

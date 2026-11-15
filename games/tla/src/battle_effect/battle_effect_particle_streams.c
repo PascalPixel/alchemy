@@ -440,9 +440,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         cell = 0;
       maxBlend(
           canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[cell],
-          (x >> 16) -
+          (Q_16_16_TO_INT(x)) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[cell]) >> 1),
-          (y >> 16) -
+          (Q_16_16_TO_INT(y)) -
               ((height = gHelmSplitter_ImpactBurstPictureHeights[cell]) >> 1),
           width, height);
     }

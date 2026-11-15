@@ -145,12 +145,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         if (spark->y > px(PILLAR_BASE_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = spark->x >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = spark->y >> 16;
+            y = Q_16_16_TO_INT(spark->y);
             size = spark->variant / 8 + 1;
             draw[k & 1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                         x - size / 2, y - size, size, size * 2);
@@ -371,8 +371,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s16 y = spark->y >> 16;
-              s16 x = spark->x >> 16;
+              s16 y = Q_16_16_TO_INT(spark->y);
+              s16 x = Q_16_16_TO_INT(spark->x);
               s32 size = spark->variant / 5 + 1;
 
               draw[j & 1](canvas,

@@ -220,10 +220,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         for (i = 0; i != 6; i++) {
           s32 k = i & 3;
           s32 a = Random16() & 0xffff;
-          s32 x =
-              ((size * Trig_Sin(a)) >> 16) - (gJudgment_ShardWidths[k] >> 1);
-          s32 y =
-              ((size * Trig_Cos(a)) >> 16) - (gJudgment_ShardHeights[k] / 2);
+          s32 x = (Q_16_16_TO_INT(size * Trig_Sin(a))) -
+                  (gJudgment_ShardWidths[k] >> 1);
+          s32 y = (Q_16_16_TO_INT(size * Trig_Cos(a))) -
+                  (gJudgment_ShardHeights[k] / 2);
 
           draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
                   y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
@@ -689,8 +689,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 angle = -TRIG_TURN / 4;
 
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
-        s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
-        s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
+        s32 x = Q_16_16_TO_INT((frame - 86) * Trig_Sin(angle));
+        s32 y = Q_16_16_TO_INT((frame - 70) * Trig_Cos(angle));
 
         draw[0](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000,
                 x + 44, y + 17, 32, 54);

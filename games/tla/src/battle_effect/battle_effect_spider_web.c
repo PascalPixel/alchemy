@@ -99,7 +99,7 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
     s32 shade;
     s32 col;
 
-    shade = (Trig_Cos((radius << 14) / last) * 63) >> 16;
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
     shade = shade * scale / (Q16_ONE);
 
     if (shade > 63)
@@ -133,7 +133,7 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     s32 col;
     s32 row;
 
-    shade = (Trig_Cos((radius << 14) / last) * 63) >> 16;
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
     shade = shade * scale / (Q16_ONE);
     if (shade > 63)
       shade = 63;
@@ -370,7 +370,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame <= 75) {
       s32 k = (frame / 4) % 18;
-      s32 x = 60 - ((Trig_Sin(frame * 860) << 3) >> 16);
+      s32 x = 60 - (Q_16_16_TO_INT(Trig_Sin(frame * 860) << 3));
       s32 y = frame - 8;
       u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
       u8 w = gUlysses_PictureWidths[k];
@@ -608,9 +608,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
             step->velocityY -= px(1) / 2;
           }
           if (step->z >= 0) {
-            step->z += (Trig_Sin(step->velocityZ) * 3 << 8) >> 16;
+            step->z += Q_16_16_TO_INT(Trig_Sin(step->velocityZ) * 3 << 8);
           } else {
-            step->z -= (Trig_Sin(step->velocityZ) * 3 << 8) >> 16;
+            step->z -= Q_16_16_TO_INT(Trig_Sin(step->velocityZ) * 3 << 8);
           }
           step->velocityZ += 1024;
           if (draw) {

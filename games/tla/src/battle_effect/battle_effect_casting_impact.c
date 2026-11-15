@@ -642,7 +642,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         scrollA = 0xffc80000;
         scrollB = 0xfffe0000;
       }
-      REG_BG2X = (scrollA >> 16) << 8;
+      REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_ASURA ||
                kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
       REG_BG2PA = Q_8_8(1);
@@ -653,7 +653,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         scrollA = 0;
         scrollB = 0xfff40000;
       }
-      REG_BG2X = (scrollA >> 16) << 8;
+      REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
     }
     if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
       REG_BG2PA = Q_8_8(1);
@@ -711,7 +711,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     Iwram_ClearWords(BG_VRAM, 0x3c00);
     if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
       for (i = 1; i != 64; i++) {
-        v = 31 - ((Trig_Cos(i << 8) << 5) >> 16);
+        v = 31 - (Q_16_16_TO_INT(Trig_Cos(i << 8) << 5));
         BG_PLTT[i] = (v << 10) | (v << 5) | v;
       }
     }
@@ -1237,7 +1237,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 m;
             angle = frame * 1848 + i * (TRIG_TURN / 4);
             m = ((frame + i * 3) / 2) & 3;
-            x = target[0] / 2 + ((Trig_Sin(angle) << 5) >> 16);
+            x = target[0] / 2 + (Q_16_16_TO_INT(Trig_Sin(angle) << 5));
             // DEAD: the cosine is computed and dropped; the source keeps the
             // call.
             Trig_Cos(angle);
@@ -1262,9 +1262,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 x;
             m = i & 3;
             angle = Random16() & 0xffff;
-            x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
+            x = (Q_16_16_TO_INT(Trig_Sin(angle) << 3)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
-            y = ((Trig_Cos(angle) * amp) >> 16) + off -
+            y = (Q_16_16_TO_INT(Trig_Cos(angle) * amp)) + off -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             EFFECT_RELEASE_BLITTERS();
             /* FAKEMATCH(dead): a once-only block. */
@@ -1289,9 +1289,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 x;
             m = i & 3;
             angle = Random16() & 0xffff;
-            x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
+            x = (Q_16_16_TO_INT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
-            y = ((Trig_Cos(angle) << 4) >> 16) -
+            y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             RELEASE_BLITTERS();
             BattleEffect_BuildBlitter(
@@ -1424,7 +1424,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       } else if (kind == CASTING_IMPACT_IMPACT_FLINT) {
       } else if (kind == CASTING_IMPACT_IMPACT_ECHO) {
       } else if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-        y = (target[1] >> 16) + ((Trig_Cos(frame << 9) << 2) >> 16) + 16;
+        y = (Q_16_16_TO_INT(target[1])) +
+            (Q_16_16_TO_INT(Trig_Cos(frame << 9) << 2)) + 16;
         if (frame < 4) {
           drawFuncs.draw[0](screen, work->frames,
                             gCastingImpact_PictureX[action->side * 7],
@@ -1599,7 +1600,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         scrollA += scrollB;
         if (frame > 6)
           scrollB = scrollB * 48 / 64;
-        REG_BG2X = (scrollA >> 16) << 8;
+        REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 28;
         if (t >= 0 && t < 16)
           REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
@@ -1656,7 +1657,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           scrollA += 0x200000;
         if (frame > 6)
           scrollB = scrollB * 48 / 64;
-        REG_BG2X = (scrollA >> 16) << 8;
+        REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 29;
         if (t >= 0 && t < 16)
           REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
@@ -1713,7 +1714,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         scrollA += scrollB;
         if (frame > 6)
           scrollB = scrollB * 48 / 64;
-        REG_BG2X = (scrollA >> 16) << 8;
+        REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         if (frame == 0)
           REG_BLDALPHA = BLEND_ALPHA(16, 8);
         t = frame - 24;
@@ -1838,8 +1839,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         }
         if (frame < 32) {
-          drawFuncs.draw[1](screen, buffer + 0x800, (p->x >> 16) - 24,
-                            (p->y >> 16) - 96, 48, 96);
+          drawFuncs.draw[1](screen, buffer + 0x800, (Q_16_16_TO_INT(p->x)) - 24,
+                            (Q_16_16_TO_INT(p->y)) - 96, 48, 96);
           if (frame < 12)
             BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
           else if (frame == 12)
@@ -1907,8 +1908,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             }
             drawFuncs.draw[i > 2 ? 0 : 1](
                 screen, buffer + 0x800 + gPrism_ShardPictures[m],
-                (particle->x >> 16) - gPrism_ShardWidths[m] / 2,
-                (particle->y >> 16) - gPrism_ShardHeights[m] / 2,
+                (Q_16_16_TO_INT(particle->x)) - gPrism_ShardWidths[m] / 2,
+                (Q_16_16_TO_INT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
             BattleEffectKernels_IntegrateVector2(particle, 64, px(1) / 8);
             particle->variant += particle->z;
@@ -1964,8 +1965,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             m = i % 5 * 3;
             m += particle->z / 96 % 3;
             w = gSpire_ShardWidths[m];
-            left = (particle->x >> 16) - w / 2;
-            top = particle->y >> 16;
+            left = (Q_16_16_TO_INT(particle->x)) - w / 2;
+            top = Q_16_16_TO_INT(particle->y);
             h = gSpire_ShardHeights[m];
             top -= h / 2;
             drawFuncs.draw[0](screen, buffer + 0x83c + gSpire_ShardPictures[m],
@@ -2003,9 +2004,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 x;
             m = i & 3;
             angle = Random16() & 0xffff;
-            x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
+            x = (Q_16_16_TO_INT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
-            y = ((Trig_Cos(angle) << 4) >> 16) -
+            y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             RELEASE_BLITTERS();
             BattleEffect_BuildBlitter(
@@ -2233,11 +2234,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               s32 k;
               p = &SPARKS[i];
               for (k = 0; k != 12; k++) {
-                r = (p->y >> 16) - k * 2;
+                r = (Q_16_16_TO_INT(p->y)) - k * 2;
                 if (r >= 0) {
                   s32 n;
-                  x = target[0] / 2 + ((Trig_Sin(p->x) * r) >> 16);
-                  y = target[1] + ((Trig_Cos(p->x) * r) >> 16);
+                  x = target[0] / 2 + (Q_16_16_TO_INT(Trig_Sin(p->x) * r));
+                  y = target[1] + (Q_16_16_TO_INT(Trig_Cos(p->x) * r));
                   n = 2 - k / 8;
                   drawFuncs.draw[0](
                       screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
@@ -2388,8 +2389,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 x;
             s32 y;
             m = i % 3;
-            x = targetPoint[0] + ((Trig_Sin(p->x) * p->z) >> 16);
-            y = targetPoint[1] + ((Trig_Cos(p->x) * p->z) >> 16);
+            x = targetPoint[0] + (Q_16_16_TO_INT(Trig_Sin(p->x) * p->z));
+            y = targetPoint[1] + (Q_16_16_TO_INT(Trig_Cos(p->x) * p->z));
             p->z -= 4;
             p->x += p->velocityX;
             // Unused: this arm runs only for kind 15, so the kind 16 draw never

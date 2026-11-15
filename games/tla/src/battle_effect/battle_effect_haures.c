@@ -257,11 +257,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
-          Data_020104f0[i].x = -(Trig_Cos(i * 992) << 6) >> 16;
-          Data_020104f0[i].y = -(Trig_Sin(i * 992) * 18) >> 16;
+          Data_020104f0[i].x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          Data_020104f0[i].y = Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
           Data_020104f0[i].x2 = i * 4 - 64;
           Data_020104f0[i].z = 0;
-          Data_020104f0[i].x2 = -(Trig_Cos(i * 992) << 6) >> 16;
+          Data_020104f0[i].x2 = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
           Data_020104f0[i].y2 = (u32)(Trig_Sin(i * 992) * 9) >> 15;
           Data_020104f0[i].z2 = 0;
         }
@@ -687,7 +687,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
-                (p->y >> 16) >= -16 && (p->y >> 16) <= 136) {
+                (Q_16_16_TO_INT(p->y)) >= -16 &&
+                (Q_16_16_TO_INT(p->y)) <= 136) {
               Transform_Reset();
               Transform_ApplyTranslation(p->x - px(64), p->y - px(64), 0);
               Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -964,9 +965,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       model->scrollU = (frame * 8) & 127;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
-        v = Trig_Sin((frame << 10) + -0xe000) * 80 >> 16;
+        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -0xe000) * 80);
       } else if (frame > 79) {
-        v = Trig_Sin((frame << 10) + -TRIG_TURN) * 80 >> 16;
+        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
       } else {
         v = 80;
       }

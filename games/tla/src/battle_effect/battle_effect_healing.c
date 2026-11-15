@@ -369,8 +369,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     if (args->prelude == 1) {
       if (narrow == 0) {
-        s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+        s32 x = (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] +
+                shift - 20;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -378,8 +379,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         if (frame <= 3)
           draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, 40, 40);
       } else {
-        s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + origin[0] / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+        s32 x =
+            (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 10)) + origin[0] / 2 - 10;
+        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;

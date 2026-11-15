@@ -212,7 +212,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
            * width table's address. */
           __asm__("" : "=r"(w) : "0"(w));
-          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+          y = base.y - (Q_16_16_TO_INT(Trig_Cos(angle) * radius)) -
               (({
                  h = gBattleEffect_GlintPictureHeights;
                  h;
@@ -427,10 +427,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         cel = (one->variant / 16) & 7;
         if (cel < 4)
           drawA(canvas, work->sheet + (cel << 10) + 0x800,
-                scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
+                scroll + (Q_16_16_TO_INT(one->x)) - 16,
+                (Q_16_16_TO_INT(one->y)) - 16, 32, 32);
         else
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
-                scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
+                scroll + (Q_16_16_TO_INT(one->x)) - 16,
+                (Q_16_16_TO_INT(one->y)) - 16, 32, 32);
         one->y += one->velocityY;
         one->velocityY += px(1) / 8;
         one->variant += one->z;

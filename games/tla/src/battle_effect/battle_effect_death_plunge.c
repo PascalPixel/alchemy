@@ -125,8 +125,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       if (frame >= 56 && frame <= 67) {
         for (i = 0; i != 16; i++) {
           s32 angle = i << 12;
-          s32 rx = screen.x + ((Trig_Sin(angle) * (frame - 46) * 2) >> 16);
-          s32 ry = ((Trig_Cos(angle) * (frame - 46) * 2) >> 16) - frame + 100;
+          s32 rx =
+              screen.x + (Q_16_16_TO_INT(Trig_Sin(angle) * (frame - 46) * 2));
+          s32 ry = (Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46) * 2)) -
+                   frame + 100;
 
           draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry,
                   32, 64);

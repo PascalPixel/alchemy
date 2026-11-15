@@ -120,8 +120,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       if (height > 39)
         height = 40;
       blit[0](canvas, work->sheet + DJINNI_OFFSET,
-              ((Trig_Sin(frame << 10) << 5) >> 16) + 44, center[1] - 20, 40,
-              height);
+              (Q_16_16_TO_INT(Trig_Sin(frame << 10) << 5)) + 44, center[1] - 20,
+              40, height);
     }
 
     Transform_Reset();

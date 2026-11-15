@@ -651,9 +651,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           src = sprites + gBattleEffect_MotePictures[9];
           x0 = p->x / 8 - 5;
           bx = span - drift;
-          x = x0 + (bx / 2 >> 16);
+          x = x0 + (Q_16_16_TO_INT(bx / 2));
           y0 = p->y / 8 - 10;
-          y = y0 + ((camZ + sway) >> 16);
+          y = y0 + (Q_16_16_TO_INT(camZ + sway));
           blit[0](canvas, src, x, y, w, h);
           switch (i) {
           case 0:
@@ -830,7 +830,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Transform_ApplyRoll(i * 21845 + 10922);
           {
             s32 phase = i * 21845 + 10922;
-            model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);
+            model->shade = -24 - (Q_16_16_TO_INT(Trig_Cos(phase + a) << 3));
           }
           Transform_ApplyTranslation(0, -px(16), 0);
           if (frame > 579) {
@@ -1043,12 +1043,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Palette_BrightenSavedBattleBg(d - 11, frame - 136, 3 - d);
         }
         r = 16;
-        ry = rise >> 16;
+        ry = Q_16_16_TO_INT(rise);
         if (frame > 92) {
           r = frame - 75;
         }
         if (frame <= 79) {
-          r += Trig_Sin(frame << 11) * 2 >> 16;
+          r += Q_16_16_TO_INT(Trig_Sin(frame << 11) * 2);
         }
         if (r <= 64) {
           BattleEffect_DrawShadedCircles(work->sheet, r, 95536);
@@ -1129,7 +1129,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialTexture.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
             s32 k = i * 21845 + 10922;
-            s32 tone = sh2 + (Trig_Cos(a + k) << 3 >> 16) - 16;
+            s32 tone = sh2 + (Q_16_16_TO_INT(Trig_Cos(a + k) << 3)) - 16;
             s32 v;
 
             Transform_Push();
@@ -1247,8 +1247,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               s32 angle = i * 1365;
               s32 rr = (a & 31) + 32;
 
-              SET_POSITION(p, (Trig_Sin(angle) * rr >> 16) + 60,
-                           (Trig_Cos(angle) * rr >> 16) + 60,
+              SET_POSITION(p, (Q_16_16_TO_INT(Trig_Sin(angle) * rr)) + 60,
+                           (Q_16_16_TO_INT(Trig_Cos(angle) * rr)) + 60,
                            (Random16() & 3) + 5);
               p->variant = -(Random16() & 15);
             }
@@ -1257,7 +1257,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           p3 = &work->particles[16];
           for (; i != 48; i++, p3++) {
             if ((u32)p3->variant <= 7) {
-              s32 n = (Trig_Sin(p3->variant << 12) * p3->z >> 16) + 1;
+              s32 n = (Q_16_16_TO_INT(Trig_Sin(p3->variant << 12) * p3->z)) + 1;
 
               blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                       p3->x - n / 2, p3->y - n, n, n * 2);
@@ -1438,7 +1438,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
                i != 2; i++, x += 10, v++) {
             SET_POSITION(
-                v, x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5,
+                v,
+                x + (Q_16_16_TO_INT(Trig_Sin((frame + j * 2) << 10) * 2)) +
+                    jitter - 5,
                 y, z);
           }
           jitter = jitter + (Random16() & 7) - 4;

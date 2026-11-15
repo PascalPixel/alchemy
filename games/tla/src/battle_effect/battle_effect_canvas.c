@@ -254,7 +254,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
            * its own. */
           s32 size = work->particles[16].variant;
 
-          Canvas_BlitAtFoot(work->sheet, cx >> 16, cy >> 16, size * 2);
+          Canvas_BlitAtFoot(work->sheet, Q_16_16_TO_INT(cx), Q_16_16_TO_INT(cy),
+                            size * 2);
         }
       }
       if (frame > 47) {
@@ -360,18 +361,19 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           if (frame <= 171) {
             s32 size = work->particles[16].variant * 2;
 
-            x = Random16() % size + (cx >> 16) - (size >> 1) -
+            x = Random16() % size + (Q_16_16_TO_INT(cx)) - (size >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1);
-            y = Random16() % size + (cy >> 16) - (size >> 1) -
+            y = Random16() % size + (Q_16_16_TO_INT(cy)) - (size >> 1) -
                 (gBattleEffect_GlintPictureHeights[t] >> 1);
           } else {
             u32 a = Random16() & 63;
             s32 r = work->particles[16].variant;
 
-            x = (cx >> 16) - (a >> 1) -
+            x = (Q_16_16_TO_INT(cx)) - (a >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1) + Random16() % r -
                 r / 2 - 8;
-            y = a + (cy >> 16) - (gBattleEffect_GlintPictureHeights[t] >> 1);
+            y = a + (Q_16_16_TO_INT(cy)) -
+                (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     gEclipse_GlintFlips[Random16() & 3] | 3, 1);
@@ -483,7 +485,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
           BattleEffect_DrawShadedCircles(cells, 96, 0x10000);
-          Canvas_BlitAtFoot(cells, q->x >> 16, q->y >> 16, 96);
+          Canvas_BlitAtFoot(cells, Q_16_16_TO_INT(q->x), Q_16_16_TO_INT(q->y),
+                            96);
         }
         Transform_Reset();
         Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
@@ -593,7 +596,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
             blit[0](canvas,
                     sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
-                    (p->x >> 16) - n / 2, (p->y >> 16) - n, n, n * 2);
+                    (Q_16_16_TO_INT(p->x)) - n / 2, (Q_16_16_TO_INT(p->y)) - n,
+                    n, n * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 4);
             p->variant--;
           }
@@ -631,15 +635,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != 8;
                ringAngle += 0x888, offset += 64, ring++) {
-            s32 y = -Trig_Cos(ringAngle) * 96 >> 16;
-            s32 rr = Trig_Sin(ringAngle) * 48 >> 16;
+            s32 y = Q_16_16_TO_INT(-Trig_Cos(ringAngle) * 96);
+            s32 rr = Q_16_16_TO_INT(Trig_Sin(ringAngle) * 48);
             struct ModelVertex *v = (struct ModelVertex *)Data_02010800;
 
             k = 0;
             v = (struct ModelVertex *)((u8 *)v + offset);
             for (; k != 16; k++) {
-              SET_POSITION(v, Trig_Sin(k << 12) * rr >> 16, y,
-                           Trig_Cos(k << 12) * rr >> 16);
+              SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(k << 12) * rr), y,
+                           Q_16_16_TO_INT(Trig_Cos(k << 12) * rr));
               v++;
             }
           }
@@ -915,7 +919,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           size = width * 2;
           BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, 0x10000);
         }
-        Canvas_BlitAtFoot(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
+        Canvas_BlitAtFoot(Ram_MapCellBuffer, Q_16_16_TO_INT(cx),
+                          Q_16_16_TO_INT(cy), size);
       }
 
       // Each ring has an angle (x), a spin (y) and an age (variant), the

@@ -126,8 +126,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // after frame 32, and a fan of light lines spreads from the canvas's
     // middle while the canvas fades.
     if (args->prelude == 1) {
-      x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
-      y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
+      x = (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 20)) + 44;
+      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
       draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
@@ -144,8 +144,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
-          lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
-          lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
+          lineX = (Q_16_16_TO_INT(Trig_Sin(angle) * frame)) + 64;
+          lineY = (Q_16_16_TO_INT((Trig_Cos(angle) * frame) / 8)) - 16;
           draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
           angle += TRIG_TURN / 16;
         }
@@ -526,7 +526,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
       blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
-              (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
+              (Q_16_16_TO_INT(position.x / 2)) - 12,
+              (Q_16_16_TO_INT(position.y)) - 58, 60, 100);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);

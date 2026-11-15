@@ -79,8 +79,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame << 9;
-    screenX = (curve[0] >> 16) + ((Trig_Sin(spin) << 4) >> 16) + 48;
-    screenY = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
+    screenX =
+        (Q_16_16_TO_INT(curve[0])) + (Q_16_16_TO_INT(Trig_Sin(spin) << 4)) + 48;
+    screenY =
+        (Q_16_16_TO_INT(curve[1])) + (Q_16_16_TO_INT(Trig_Cos(spin) << 2)) + 16;
 
     // It jumps closer at frame 24 and onto the target at frame 48, hidden
     // for the frame of each jump.

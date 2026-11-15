@@ -68,9 +68,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 k;
 
         if (args->variant == EFFECT_VARIANT_BASIC)
-          shade = ((Trig_Sin(j << 10) << 7) >> 16) - i * 4 - 64;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
         else
-          shade = ((Trig_Sin(j << 10) * 63) >> 16) - i * 4;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * 63)) - i * 4;
         if (shade > 63)
           shade = 63;
         if (shade < 0)
@@ -209,8 +209,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != 32; i++) {
           step = &work->particles[32 + i];
           if (++step->variant >= 0) {
-            s32 x = mouthX + ((Trig_Sin(step->x) * step->y) >> 16);
-            s32 y = mouthY + ((Trig_Cos(step->x) * step->y) >> 16);
+            s32 x = mouthX + (Q_16_16_TO_INT(Trig_Sin(step->x) * step->y));
+            s32 y = mouthY + (Q_16_16_TO_INT(Trig_Cos(step->x) * step->y));
             s32 size = (i & 3) + 3;
 
             if (step->y > 1) {

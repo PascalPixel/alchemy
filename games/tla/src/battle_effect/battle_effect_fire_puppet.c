@@ -136,26 +136,28 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 
       // The arm's vertices, thicker at its root.
       for (j = 0; j != PUPPET_SEGMENTS; j++) {
-        s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
-        s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
+        s32 width = 50 - (Q_16_16_TO_INT(Trig_Sin(j * 862 + 4310) * 44));
+        s32 wobble =
+            (Q_16_16_TO_INT(Trig_Sin((frame + j) << 11) << 4)) * j / 32;
         s32 outer;
 
         i = 0;
         outer = width + wobble;
         do {
-          cells[j][i].x =
-              ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
-              outer / 2 - 16;
-          cells[j][i].y =
-              -((Trig_Sin(j * length) * (i * width + j + wobble + 32)) >> 16);
+          cells[j][i].x = (Q_16_16_TO_INT(Trig_Cos(j * length) *
+                                          (i * width + wobble + 16))) -
+                          outer / 2 - 16;
+          cells[j][i].y = -(Q_16_16_TO_INT(Trig_Sin(j * length) *
+                                           (i * width + j + wobble + 32)));
           cells[j][i].z = 0;
           i++;
         } while (i != 2);
         if (j == 32) {
-          endX = ((Trig_Cos(length << 5) * (width / 2 + wobble + 16)) >> 16) -
+          endX = (Q_16_16_TO_INT(Trig_Cos(length << 5) *
+                                 (width / 2 + wobble + 16))) -
                  (width + wobble) / 2 - 16;
-          endY =
-              -((Trig_Sin(length << 5) * (width / 2 + j + wobble + 32)) >> 16);
+          endY = -(Q_16_16_TO_INT(Trig_Sin(length << 5) *
+                                  (width / 2 + j + wobble + 32)));
         }
       }
 

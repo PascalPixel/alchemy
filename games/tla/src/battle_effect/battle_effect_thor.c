@@ -186,7 +186,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                    px(gThor_Points[i][1] - 96));
         EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
-        screen[i].y = (screen[i].y >> 16) + 60;
+        screen[i].y = (Q_16_16_TO_INT(screen[i].y)) + 60;
       }
       for (i = 0; i != 3; i++) {
         dotCount = count * 2 - i * 48 - 256;
@@ -238,7 +238,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         point[2] = -(Trig_Cos(i << 9) * 96);
         EffectPosition_ProjectPoint(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
-        screen[0].y = (screen[0].y >> 16) + 60;
+        screen[0].y = (Q_16_16_TO_INT(screen[0].y)) + 60;
         drawAlt(canvas,
                 work->sheet +
                     (level * STORM_DIMMED_DOT_BYTES +
@@ -437,8 +437,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 angle;
           radius &= Random16();
           angle = Random16() & 0xffff;
-          mirrorX = ((Trig_Sin(angle) * (radius + 8)) >> 16) + 72;
-          moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
+          mirrorX = (Q_16_16_TO_INT(Trig_Sin(angle) * (radius + 8))) + 72;
+          moteY = 32 - (Q_16_16_TO_INT(Trig_Cos(angle) * (radius + 8)));
         }
         Canvas_BlitAtFoot(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
         spawned = 0;
@@ -475,8 +475,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
-              s32 x = spark->x >> 16;
-              s32 y = spark->y >> 16;
+              s32 x = Q_16_16_TO_INT(spark->x);
+              s32 y = Q_16_16_TO_INT(spark->y);
               s32 dotSize = spark->variant / 16 + 1;
               draw(canvas, sprites + gBattleEffect_MotePictures[dotSize - 1],
                    x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
@@ -513,9 +513,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 neverToo = 0;
           cell = i & 3;
           angle = Random16() & 0xffff;
-          x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
+          x = (Q_16_16_TO_INT(Trig_Sin(angle) * 8)) + formationScreenX -
               (gBattleEffect_GlintPictureWidths[cell] >> 1);
-          y = ((Trig_Cos(angle) * 40) >> 16) -
+          y = (Q_16_16_TO_INT(Trig_Cos(angle) * 40)) -
               (gBattleEffect_GlintPictureHeights[cell] >> 1);
           /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
            * that clears y. */

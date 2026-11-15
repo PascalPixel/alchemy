@@ -272,15 +272,15 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
               for (j = 0; j != RING_POINTS; j++) {
                 ring[i * 10 + j].velocityX =
                     pos.x +
-                    ((Trig_Sin(j * 0x199a - ((frame - star->variant) << 11)) *
-                      gStar_Radii[j & 1]) /
-                         2 >>
-                     16);
+                    (Q_16_16_TO_INT((Trig_Sin(j * 0x199a -
+                                              ((frame - star->variant) << 11)) *
+                                     gStar_Radii[j & 1]) /
+                                    2));
                 ring[i * 10 + j].velocityY =
                     pos.y -
-                    (Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
-                         gStar_Radii[j & 1] >>
-                     16);
+                    (Q_16_16_TO_INT(
+                        Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
+                        gStar_Radii[j & 1]));
               }
               for (j = 0; j != RING_POINTS; j++) {
                 struct Particle *from = &ring[j + i * 10];

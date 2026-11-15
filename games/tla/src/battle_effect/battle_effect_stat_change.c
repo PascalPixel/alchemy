@@ -298,8 +298,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     prelude = args->prelude;
     if (prelude == 1) {
-      s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+      s32 x =
+          (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);

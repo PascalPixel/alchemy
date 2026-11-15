@@ -645,7 +645,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               &work->frames[(gDaedalus_DriftPictures[(p->variant / 4) % 12]
                              << 8) +
                             0x36c0],
-              p->x >> 16, p->y >> 16, 16, 16);
+              Q_16_16_TO_INT(p->x), Q_16_16_TO_INT(p->y), 16, 16);
           p->x += p->velocityX;
           p->y += p->velocityY;
           p->variant++;
@@ -898,7 +898,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q = &PARTICLES[400 + i];
             if ((u32)q->variant <= 5) {
               ((BlitFunc)blits[1])(dest, &work->frames[q->variant * 288],
-                                   (q->x >> 16) - 2, (q->y >> 16) - 12, 12, 24);
+                                   (Q_16_16_TO_INT(q->x)) - 2,
+                                   (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
               BattleEffectKernels_IntegrateVector2(q, 64, 0);
               q->variant++;
             }
@@ -910,7 +911,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             if ((u32)q->variant <= 23) {
               ((BlitFunc)blits[1])(
                   dest, &work->frames[(q->variant / 4 << 11) + 0x6c0],
-                  (q->x >> 16) - 16, (q->y >> 16) - 32, 32, 64);
+                  (Q_16_16_TO_INT(q->x)) - 16, (Q_16_16_TO_INT(q->y)) - 32, 32,
+                  64);
               q->velocityX += px(1) / 16;
               BattleEffectKernels_IntegrateVector2(q, 64, 0);
               q->variant++;
@@ -977,7 +979,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             frame < gDaedalus_RingStarts[j] + 26) {
           s32 n;
 
-          radius = *ringX >> 16;
+          radius = Q_16_16_TO_INT(*ringX);
           n = (frame - gDaedalus_RingStarts[j]) / 2;
           *ringX += work->particles[30].velocityX;
           work->particles[30].velocityX =
@@ -986,10 +988,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             for (i = 0; i != 32; i++) {
               s32 v;
 
-              v = (Trig_Sin(i << 11) * radius / 2 >> 16) + gDaedalus_RingX[j];
-              ((BlitFunc)blit[0])(dest, &work->frames[n * 288], v - 6,
-                                  (Trig_Cos(i << 11) * radius * 2 >> 16) + 60,
-                                  12, 24);
+              v = (Q_16_16_TO_INT(Trig_Sin(i << 11) * radius / 2)) +
+                  gDaedalus_RingX[j];
+              ((BlitFunc)blit[0])(
+                  dest, &work->frames[n * 288], v - 6,
+                  (Q_16_16_TO_INT(Trig_Cos(i << 11) * radius * 2)) + 60, 12,
+                  24);
             }
           }
         }
@@ -1135,7 +1139,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
             x = gDaedalus_SplashPoints[j][i][0];
             n = (frame - (i * 2 + 490)) / 2;
-            y = gDaedalus_SplashPoints[j][i][1] + (swayY >> 16) -
+            y = gDaedalus_SplashPoints[j][i][1] + (Q_16_16_TO_INT(swayY)) -
                 gDaedalus_ShakeOffsets[work->shakeFrames];
             ((BlitFunc)blit[0])(dest, &work->frames[n * 288], x - 6, y - 12, 12,
                                 24);
@@ -1149,7 +1153,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           q = &PARTICLES[i * 32 + j];
           if ((u32)q->variant <= 5) {
             ((BlitFunc)blit[0])(dest, &work->frames[q->variant * 288],
-                                (q->x >> 16) - 2, (q->y >> 16) - 12, 12, 24);
+                                (Q_16_16_TO_INT(q->x)) - 2,
+                                (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
             q->x += q->velocityX;
             q->y += q->velocityY;
             q->velocityY -= px(1) / 4;
@@ -1309,7 +1314,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           v = q->variant - 2;
           if (v >= 0)
             ((BlitFunc)blits[1])(dest, &work->frames[v * 288 + 0x3000],
-                                 (q->x >> 16) - 6, (q->y >> 16) - 12, 12, 24);
+                                 (Q_16_16_TO_INT(q->x)) - 6,
+                                 (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
           q->variant++;
         }
       }
@@ -1322,8 +1328,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           v = q->variant / 3;
           ((BlitFunc)blits[i & 1])(dest, &work->frames[v << 11],
-                                   (q->x >> 16) - 16, (q->y >> 16) - 48, 32,
-                                   64);
+                                   (Q_16_16_TO_INT(q->x)) - 16,
+                                   (Q_16_16_TO_INT(q->y)) - 48, 32, 64);
           BattleEffectKernels_IntegrateVector2(q, 56, -px(1) / 8);
           q->variant++;
         }
@@ -1538,7 +1544,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(cells, size, 0x10000);
       }
       cells = gMapGridCellBuffer;
-      Canvas_BlitAtFoot(cells, i >> 16, discY >> 16, size);
+      Canvas_BlitAtFoot(cells, Q_16_16_TO_INT(i), Q_16_16_TO_INT(discY), size);
       if (frame == 56) {
         s32 delay;
 

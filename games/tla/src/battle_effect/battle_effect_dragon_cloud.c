@@ -103,10 +103,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   for (i = 0, angle = -TRIG_TURN / 4; i != 8; angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
     if (args->side == EFFECT_SIDE_PARTY)
-      step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
+      step->x = (Q_16_16_TO_INT(Trig_Sin(angle) * 24)) + 88;
     else
-      step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
-    step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
+      step->x = (Q_16_16_TO_INT(-(Trig_Sin(angle) * 24))) + 16;
+    step->y = (Q_16_16_TO_INT(Trig_Cos(angle) * 16)) + 40;
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);

@@ -586,9 +586,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       for (column = 0, vertex = (s8 *)gMapGridCellBuffer + offset + 1;
            column != WATER_COLUMNS; column++, vertex += 4) {
         s32 amplitude = (16 - column) * height / 32;
-        s32 y = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
-                  amplitude) >>
-                 16) -
+        s32 y = (Q_16_16_TO_INT(
+                    Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
+                    amplitude)) -
                 amplitude;
 
         /* FAKEMATCH(temporary): the height stored through the vertex it is part
@@ -600,10 +600,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     height /= 2;
     for (bubble = work->particles; i != 20; i++, bubble++) {
       if (bubble->variant == 0) {
-        bubble->y =
-            (((Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height) >> 16) -
-             height + 64)
-            << 16;
+        bubble->y = ((Q_16_16_TO_INT(
+                         Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height)) -
+                     height + 64)
+                    << 16;
       }
     }
 
@@ -848,8 +848,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     if (frame <= 79) {
       s32 y;
 
-      x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2 - 10;
-      y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y - 24;
+      x = (Q_16_16_TO_INT(Trig_Sin(frame << 11) << 3)) + screen.x / 2 - 10;
+      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) << 2)) + screen.y - 24;
 
       if (frame > 7) {
         y = y - frame * 4 + 32;
@@ -879,10 +879,10 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == WIND_FUNNEL_WAFT) {
       angle = frame << 12;
-      height = 80 - ((Trig_Sin(frame * 820) * 80) >> 16);
+      height = 80 - (Q_16_16_TO_INT(Trig_Sin(frame * 820) * 80));
     } else {
       angle = yaw;
-      height = 30 - ((Trig_Sin(frame * 820) * 20) >> 16);
+      height = 30 - (Q_16_16_TO_INT(Trig_Sin(frame * 820) * 20));
     }
     k = 0;
     corner = (s8 *)funnel;

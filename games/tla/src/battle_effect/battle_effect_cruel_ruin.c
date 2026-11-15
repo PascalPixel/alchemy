@@ -485,8 +485,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
         if (mote->variant >= 0 && mote->y > 0) {
           s32 size = (mote->variant >> 3) + 1;
-          s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
-          s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
+          s32 x = (Q_16_16_TO_INT(mote->y * Trig_Sin(mote->x))) + 64;
+          s32 y = (Q_16_16_TO_INT(mote->y * Trig_Cos(mote->x))) + ground.y;
 
           if (size <= 0)
             size = 1;
@@ -914,7 +914,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           fr += dr;
           fg += dg;
           fb += db;
-          Palette_BrightenSavedBattleBg(fr >> 16, fg >> 16, fb >> 16);
+          Palette_BrightenSavedBattleBg(Q_16_16_TO_INT(fr), Q_16_16_TO_INT(fg),
+                                        Q_16_16_TO_INT(fb));
         }
         if (frame == 124) {
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
@@ -938,7 +939,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           if (frame > 35) {
             y = 20;
           } else if (frame > 19) {
-            y = (Trig_Cos((frame << 10) + -0x5000) * 44 >> 16) + 14;
+            y = (Q_16_16_TO_INT(Trig_Cos((frame << 10) + -0x5000) * 44)) + 14;
           }
           if (size <= 7) {
             size = 8;
@@ -954,7 +955,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             struct Particle *p = &work->particles[i + 32];
 
             if ((u32)p->variant <= 15) {
-              s32 s = Trig_Sin(p->variant << 10) * p->z >> 16;
+              s32 s = Q_16_16_TO_INT(Trig_Sin(p->variant << 10) * p->z);
 
               draw[0](canvas,
                       work->sheet + 0x3a48 + gCruelRuin_CirclePictures[s - 1],
@@ -1165,8 +1166,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         half = w / 2;
         for (i = 0; i != 2; i++, acc += w, v += 4) {
           v[0] = height;
-          v[1] = (Trig_Sin(c * 0x92c) * gCruelRuin_PillarSways[k] >> 16) + acc -
-                 half;
+          v[1] = (Q_16_16_TO_INT(Trig_Sin(c * 0x92c) *
+                                 gCruelRuin_PillarSways[k])) +
+                 acc - half;
           v[2] = 0;
         }
       }
@@ -1308,7 +1310,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
           if ((u32)d <= 15) {
-            s32 r = (Trig_Sin(d << 11) * gCruelRuin_BlastSizes[i] >> 16) + 2;
+            s32 r =
+                (Q_16_16_TO_INT(Trig_Sin(d << 11) * gCruelRuin_BlastSizes[i])) +
+                2;
 
             if (r > 1) {
               s32 x = gCruelRuin_BlastX[i] + d * 8;

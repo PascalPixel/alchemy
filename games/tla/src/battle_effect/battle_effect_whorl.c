@@ -287,7 +287,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
             MAP_CELLS[j][i][0] = -j * 4 + 64;
             MAP_CELLS[j][i][1] =
-                ((Trig_Cos((j << 10) - (frame << 11)) * r) >> 16) + i * 48 - 24;
+                (Q_16_16_TO_INT(Trig_Cos((j << 10) - (frame << 11)) * r)) +
+                i * 48 - 24;
             MAP_CELLS[j][i][2] = zero;
           }
         }
@@ -302,7 +303,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           for (i = 0; i != 2; i++) {
             MAP_CELLS[j][i][0] = -j * 3;
             MAP_CELLS[j][i][1] =
-                ((Trig_Cos((j << 10) - (frame << 11)) * r) >> 16) +
+                (Q_16_16_TO_INT(Trig_Cos((j << 10) - (frame << 11)) * r)) +
                 (i * w << 1) - w;
             MAP_CELLS[j][i][2] = 0;
           }
@@ -321,8 +322,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           for (i = 0; i != 2; i++) {
             // -4 * j, built on the row's j * 2 so it is worked out here.
             MAP_CELLS[j][i][0] = -(j + j) * 2;
-            MAP_CELLS[j][i][1] = ((Trig_Cos((frame + j * 2) << 10) * r) >> 16) +
-                                 (i * w << 1) - w;
+            MAP_CELLS[j][i][1] =
+                (Q_16_16_TO_INT(Trig_Cos((frame + j * 2) << 10) * r)) +
+                (i * w << 1) - w;
             MAP_CELLS[j][i][2] = 0;
           }
         }
@@ -399,7 +401,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               if (q->variant <= 23) {
                 blit[0](canvas,
                         (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
-                        (s16)(q->x >> 16) - 16, (s16)(q->y >> 16) - 32, 32, 64);
+                        (s16)(Q_16_16_TO_INT(q->x)) - 16,
+                        (s16)(Q_16_16_TO_INT(q->y)) - 32, 32, 64);
                 BattleEffectKernels_IntegrateVector2(q, 60, -px(1) / 8);
                 q->variant++;
               }
@@ -409,7 +412,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         model->scrollU = ~(frame << 3) & 127;
         model->scrollV = 0;
         for (i = 0; i != 3; i++) {
-          s32 y = 64 - ((Trig_Sin(frame * 630) << 6) >> 16);
+          s32 y = 64 - (Q_16_16_TO_INT(Trig_Sin(frame * 630) << 6));
 
           Transform_Push();
           Transform_ApplyTranslation(0, px(y - i * 8) + px(48), 0);
@@ -492,7 +495,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyPitch(i << 15);
-          Transform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
+          Transform_ApplyRoll(
+              Q_16_16_TO_INT(Trig_Sin((frame + i * 8) << 11) << 11));
           Transform_ApplyAxisScale(0x14e20, Q16_ONE / 2, Q16_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);

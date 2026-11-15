@@ -143,7 +143,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
            j != FUME_SEGMENTS; sweep += step, vertex += 2, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
         s32 angle = sweep + arc.tail * 33;
-        s32 wobble = ((Trig_Sin((frame + j) << 12) << 2) >> 16) * j / 32;
+        s32 wobble =
+            (Q_16_16_TO_INT(Trig_Sin((frame + j) << 12) << 2)) * j / 32;
         s32 height;
         s32 thickness;
         s32 radiusX;
@@ -167,15 +168,16 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         radiusX = distance + half + wobble;
         for (; i != 2; i++) {
           corners[vertex + i].x =
-              ((Trig_Cos(angle) * radiusX) >> 16) - distance;
-          corners[vertex + i].y = -((Trig_Sin(angle) * radiusY) >> 16);
+              (Q_16_16_TO_INT(Trig_Cos(angle) * radiusX)) - distance;
+          corners[vertex + i].y = -(Q_16_16_TO_INT(Trig_Sin(angle) * radiusY));
           corners[vertex + i].z = 0;
           radiusY += thickness;
           radiusX += thickness;
         }
         if (j == 32) {
-          endX = (((distance + wobble) * Trig_Cos(angle)) >> 16) - distance;
-          endY = -(((height + wobble) * Trig_Sin(angle)) >> 16);
+          endX = (Q_16_16_TO_INT((distance + wobble) * Trig_Cos(angle))) -
+                 distance;
+          endY = -(Q_16_16_TO_INT((height + wobble) * Trig_Sin(angle)));
         }
       }
 

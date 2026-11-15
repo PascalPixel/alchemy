@@ -161,8 +161,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     prelude = args->prelude;
     if (prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn[0] + offsetX - 20;
-      s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn[1] - 24;
+      s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) * 20)) + djinn[0] + offsetX - 20;
+      s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + djinn[1] - 24;
 
       BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
@@ -200,7 +200,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
 
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x += offsetX;
-            sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
+            sway = Q_16_16_TO_INT(Trig_Sin(mote->variant << 10) * 16);
             if (i & 1)
               pos.x -= sway;
             else

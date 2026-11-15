@@ -179,7 +179,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         if (frame >= i + 72 && thorn->y < px(104)) {
           s32 cel = (frame + i) / 4 % 5;
           s32 x = Q_16_16_UPPER_HALF(thorn->x);
-          s32 y = thorn->y >> 16;
+          s32 y = Q_16_16_TO_INT(thorn->y);
           u8 *cell = work->sheet + gCybele_ThornPictures[cel];
           u32 width = gCybele_ThornWidths[cel];
           u32 tall;

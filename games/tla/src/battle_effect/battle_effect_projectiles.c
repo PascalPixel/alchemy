@@ -303,8 +303,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
           s32 size = (mote->variant >> 3) + 2;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  (s16)(mote->x >> 16) - size / 2, (s16)(mote->y >> 16) - size,
-                  size, size * 2);
+                  (s16)(Q_16_16_TO_INT(mote->x)) - size / 2,
+                  (s16)(Q_16_16_TO_INT(mote->y)) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(mote, 60, 0);
           mote->variant--;
         }
@@ -818,8 +818,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       // The prelude: a small Mercury Djinn circles, then from frame 70
       // flies off upwards.
       if (args->prelude == 1) {
-        s32 djinnX = (-Trig_Sin(frame << 11) << 2 >> 16) + screen.x / 2 - 10;
-        s32 djinnY = (Trig_Cos(frame << 11) << 1 >> 16) + screen.y - 24;
+        s32 djinnX =
+            (Q_16_16_TO_INT(-Trig_Sin(frame << 11) << 2)) + screen.x / 2 - 10;
+        s32 djinnY =
+            (Q_16_16_TO_INT(Trig_Cos(frame << 11) << 1)) + screen.y - 24;
 
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;

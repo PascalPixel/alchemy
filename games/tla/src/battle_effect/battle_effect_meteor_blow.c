@@ -132,8 +132,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, arcAngle = 0; frame != 16;
        arcAngle += 1092, offset += 8, frame++) {
-    s32 y = (-Trig_Cos(arcAngle) * 48) >> 16;
-    s32 r = (Trig_Sin(arcAngle) * 48) >> 16;
+    s32 y = Q_16_16_TO_INT(-Trig_Cos(arcAngle) * 48);
+    s32 r = Q_16_16_TO_INT(Trig_Sin(arcAngle) * 48);
     u8 *v;
 
     j = 0;
@@ -141,9 +141,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     for (; j != 2; v += 4) {
       s32 c;
 
-      v[0] = (Trig_Sin(j << 13) * r) >> 16;
+      v[0] = Q_16_16_TO_INT(Trig_Sin(j << 13) * r);
       v[1] = y;
-      c = (Trig_Cos(j << 13) * r) >> 16;
+      c = Q_16_16_TO_INT(Trig_Cos(j << 13) * r);
       j++;
       /* FAKEMATCH(dead): a once-only block. */
       do {
@@ -168,7 +168,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 b;
 
     current->y = Trig_Sin(a) * r;
-    r = (Trig_Cos(a) * r) >> 16;
+    r = Q_16_16_TO_INT(Trig_Cos(a) * r);
     b = Random16() & 0x7fff;
     current->x = Trig_Sin(b) * r;
     current->z = Trig_Cos(b) * r;
@@ -309,14 +309,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       // DEAD: frame is at most 115 here, so the second arm never runs; the
       // source keeps both tests.
       if (frame <= 159) {
-        pitch = ((pitch << 16) + (256 << 16)) >> 16;
+        pitch = Q_16_16_TO_INT((pitch << 16) + (256 << 16));
       } else if (frame <= 191) {
-        pitch = (((u16)pitch - frame * 8 + 1216) << 16) >> 16;
+        pitch = Q_16_16_TO_INT(((u16)pitch - frame * 8 + 1216) << 16);
       }
       if (frame <= 47) {
-        yaw = ((yaw << 16) + (256 << 16)) >> 16;
+        yaw = Q_16_16_TO_INT((yaw << 16) + (256 << 16));
       } else if (frame <= 111) {
-        yaw = (((u16)yaw - frame * 4 + 448) << 16) >> 16;
+        yaw = Q_16_16_TO_INT(((u16)yaw - frame * 4 + 448) << 16);
       }
       position[0] = 120;
       position[1] = 64;

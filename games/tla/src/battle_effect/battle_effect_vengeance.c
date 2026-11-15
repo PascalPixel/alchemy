@@ -163,16 +163,16 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
 
     // The avenger slides in, its window following.
     if (frame <= 24) {
-      REG_BG2X = -(backgroundX >> 16) << 8;
+      REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        REG_WIN0H = ((backgroundX >> 16) + 120) << 8 | 0xf0;
-        REG_WIN1H = ((backgroundX >> 16) + 120) << 8 | 0xf0;
+        REG_WIN0H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
+        REG_WIN1H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
       } else {
-        REG_WIN0H = (backgroundX >> 16) + 240;
-        REG_WIN1H = (backgroundX >> 16) + 240;
+        REG_WIN0H = (Q_16_16_TO_INT(backgroundX)) + 240;
+        REG_WIN1H = (Q_16_16_TO_INT(backgroundX)) + 240;
       }
     } else {
-      REG_BG2X = -(backgroundX >> 16) << 8;
+      REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
       REG_WIN0H = WIN_RANGE(0, 240);
       REG_WIN1H = WIN_RANGE(0, 240);
     }
@@ -217,10 +217,10 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
         s32 hit = 0;
 
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          if ((blade->x >> 16) < pos.x / 2 + 16) {
+          if ((Q_16_16_TO_INT(blade->x)) < pos.x / 2 + 16) {
             hit = 1;
           }
-        } else if ((blade->x >> 16) > pos.x / 2 + 48) {
+        } else if ((Q_16_16_TO_INT(blade->x)) > pos.x / 2 + 48) {
           hit = 1;
         }
         if (hit == 1) {
@@ -245,7 +245,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       }
       if (args->side == EFFECT_SIDE_ENEMIES) {
         if (blade->variant == 0) {
-          draw[0](canvas, work->sheet + 0x42cc, (blade->x >> 16) - 111,
+          draw[0](canvas, work->sheet + 0x42cc,
+                  (Q_16_16_TO_INT(blade->x)) - 111,
                   Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
           draw[0](canvas, work->sheet + 0x42cc,
                   Q_16_16_UPPER_HALF(blade->x) + 17,
@@ -262,7 +263,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
         }
       } else if (blade->variant == 0) {
-        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16,
+        draw[1](canvas, work->sheet + 0x42cc, Q_16_16_TO_INT(blade->x),
                 Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
         draw[1](canvas, work->sheet + 0x42cc,
                 Q_16_16_UPPER_HALF(blade->x) - 128,
@@ -401,7 +402,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     }
     reaperX -= speed;
     speed = speed * 60 / 64;
-    x = reaperX >> 16;
+    x = Q_16_16_TO_INT(reaperX);
     if (x > 120) {
       shift = x - 120;
       x = 120;
@@ -412,7 +413,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     REG_BG2X = -x << 8;
     if ((u32)(frame - 24) <= 39) {
       x = args->side == EFFECT_SIDE_ENEMIES ? 64 : 5;
-      blit[0](canvas, Data_020112e8, x + shift, reaperY >> 16, 59, 89);
+      blit[0](canvas, Data_020112e8, x + shift, Q_16_16_TO_INT(reaperY), 59,
+              89);
     } else {
       if (args->side == EFFECT_SIDE_ENEMIES) {
         x = frame * 2 + 16;
@@ -425,7 +427,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
           x = 9;
         }
       }
-      blit[0](canvas, gMapGridCellBuffer, x + shift, reaperY >> 16, 55, 88);
+      blit[0](canvas, gMapGridCellBuffer, x + shift, Q_16_16_TO_INT(reaperY),
+              55, 88);
     }
 
     // The scythe's path: still, a backswing at 24, the strike at 33.
@@ -754,10 +757,10 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
           drop->variant--;
           BattleEffectKernels_IntegrateVector2(drop, 60,
                                                gGeyser_DropGravity[mode]);
-          y = drop->y >> 16;
+          y = Q_16_16_TO_INT(drop->y);
           if (y > 120) {
             drop->velocityY = -drop->velocityY / 2;
-          } else if (drop->x >= 0 && (x = drop->x >> 16) <= 126 &&
+          } else if (drop->x >= 0 && (x = Q_16_16_TO_INT(drop->x)) <= 126 &&
                      drop->y >= 0) {
             s32 size = (drop->variant - 16) / 8;
 
@@ -1719,8 +1722,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
         if (work->particles[k * 7 + 6].variant >= 0) {
           s32 n = 14 - Q_16_16_UPPER_HALF(step->z);
-          s32 x =
-              (step->x + (Trig_Sin((frame - (i % 7) * 8) << 10) << 2)) >> 16;
+          s32 x = Q_16_16_TO_INT(step->x +
+                                 (Trig_Sin((frame - (i % 7) * 8) << 10) << 2));
 
           if (i == 0) {
             top = step->y;
@@ -1732,7 +1735,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             u8 *src = work->sheet + 0x53b8 + gCoatlicue_Pictures[n];
             u8 w = gCoatlicue_PictureWidths[n];
             s32 x0 = x - (w >> 1);
-            s32 y0 = top >> 16;
+            s32 y0 = Q_16_16_TO_INT(top);
             u8 h = gCoatlicue_PictureHeights[n];
 
             blit[0](canvas, src, x0, y0 - (h >> 1), w, h);

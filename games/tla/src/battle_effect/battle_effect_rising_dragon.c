@@ -205,16 +205,16 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           for (i = 0; i != 2; i++) {
             struct StripVertex *corner = strip0 + (j * 2 + i);
 
-            corner->x =
-                ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) -
-                distance;
-            corner->y =
-                -((Trig_Sin(angle) * (height + start + i * width)) >> 16);
+            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
+                                        (distance + start + i * width))) -
+                        distance;
+            corner->y = -(
+                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width)));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[0] = ((Trig_Cos(angle) * distance) >> 16) - distance;
-            endY[0] = -((Trig_Sin(angle) * height) >> 16);
+            endX[0] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
+            endY[0] = -(Q_16_16_TO_INT(Trig_Sin(angle) * height));
           }
         }
         for (j = 0; j != DRAGON_SEGMENTS; j++) {
@@ -239,15 +239,16 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                 (struct StripVertex *)Ram_MapCellBuffer + 66;
             struct StripVertex *corner = strip1 + (j * 2 + i);
 
-            corner->x =
-                ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) -
-                distance;
-            corner->y = (Trig_Sin(angle) * (height + start + i * width)) >> 16;
+            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
+                                        (distance + start + i * width))) -
+                        distance;
+            corner->y =
+                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[1] = ((Trig_Cos(angle) * distance) >> 16) - distance;
-            endY[1] = (Trig_Sin(angle) * height) >> 16;
+            endX[1] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
+            endY[1] = Q_16_16_TO_INT(Trig_Sin(angle) * height);
           }
         }
 
@@ -393,9 +394,9 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 
     // The sway, and the canvas moved with the figure.
     x = Q_16_16_UPPER_HALF(work->particles[0].x) +
-        ((Trig_Sin(frame << 8) << 3) >> 16);
+        (Q_16_16_TO_INT(Trig_Sin(frame << 8) << 3));
     y = Q_16_16_UPPER_HALF(work->particles[0].y) +
-        ((Trig_Cos(frame << 8) << 3) >> 16);
+        (Q_16_16_TO_INT(Trig_Cos(frame << 8) << 3));
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.

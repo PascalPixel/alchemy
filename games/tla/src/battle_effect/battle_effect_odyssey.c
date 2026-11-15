@@ -686,7 +686,7 @@ void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -715,7 +715,7 @@ void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -746,7 +746,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = (scale * total) >> 16;
+    value = Q_16_16_TO_INT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;

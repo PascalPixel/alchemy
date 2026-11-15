@@ -976,7 +976,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 height = 54;
 
         if (frame > 349) {
-          height = ((-(Trig_Sin((frame << 10) - 0x57800) * 54)) >> 16) + 54;
+          height =
+              (Q_16_16_TO_INT(-(Trig_Sin((frame << 10) - 0x57800) * 54))) + 54;
         }
         if (frame == 360) {
           work->transferMode = CANVAS_COPY;
@@ -1057,9 +1058,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       w = 4;
       for (i = 0, h = 8; i != 256; i++) {
-        x = (Trig_Sin(i << 8) * radius * 2) >> 16;
+        x = Q_16_16_TO_INT(Trig_Sin(i << 8) * radius * 2);
         cosine = Trig_Cos(i << 8);
-        y = ((cosine * radius) >> 16) + 68;
+        y = (Q_16_16_TO_INT(cosine * radius)) + 68;
         x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
       }
@@ -1126,7 +1127,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u16 *entry = PLTT + 0xe0;
 
         for (i = 0; i != 16; i++, color++, entry++) {
-          s32 add = ((Trig_Cos(t56 << 9) * 12) >> 16) + 16;
+          s32 add = (Q_16_16_TO_INT(Trig_Cos(t56 << 9) * 12)) + 16;
           s32 r = (*color & 31) + add;
           s32 g = ((*color >> 5) & 31) + add;
           s32 b = ((*color >> 10) & 31) + add;
@@ -1435,11 +1436,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (p->timer >= 0 && p->timer < 24) {
           s32 row = (p->timer / 4) * 2048;
           u8 *buffer = SPRITE_BUFFER;
-          s32 x = (p->x >> 16) - 16;
+          s32 x = (Q_16_16_TO_INT(p->x)) - 16;
 
           row += (s32)buffer;
           buffer = (u8 *)row;
-          routine[0](canvas, buffer, x, (p->y >> 16) - 32, 32, 64);
+          routine[0](canvas, buffer, x, (Q_16_16_TO_INT(p->y)) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 8);
         }
         p->timer++;
@@ -1453,8 +1454,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
           for (k = 0; k != 4; k++) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
-                       size * 2);
+                       (Q_16_16_TO_INT(p->x)) - size / 2,
+                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
             if (p->y > 224 << 15) {
               p->vy = -p->vy;
@@ -1596,7 +1597,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               column = work->columns, halfCell = width / 2;
                i != 4;
                y2 += 30, y += 30, x += 8, phase += 0x2000, column++, i++) {
-            column->x = x + ((Trig_Sin(phase) * 4) >> 16);
+            column->x = x + (Q_16_16_TO_INT(Trig_Sin(phase) * 4));
             column->y = y;
             if (i == 3) {
               column->x -= 8;
@@ -1623,8 +1624,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->vy = -0x10000;
           }
           if (drop->timer >= 0) {
-            Canvas_BlitAtFoot(work->buffer + 0x1000, drop->x >> 16,
-                              drop->y >> 16, 16);
+            Canvas_BlitAtFoot(work->buffer + 0x1000, Q_16_16_TO_INT(drop->x),
+                              Q_16_16_TO_INT(drop->y), 16);
             drop->x += drop->vx;
             drop->y += drop->vy;
           }
@@ -1652,8 +1653,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             s32 size = (p->timer >> 3) + 2;
 
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
-                       size * 2);
+                       (Q_16_16_TO_INT(p->x)) - size / 2,
+                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);
             p->timer--;
           }

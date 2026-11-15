@@ -285,7 +285,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          if ((PARTICLES[i].x >> 16) < -16 || (PARTICLES[i].y >> 16) > 120) {
+          if ((Q_16_16_TO_INT(PARTICLES[i].x)) < -16 ||
+              (Q_16_16_TO_INT(PARTICLES[i].y)) > 120) {
             PARTICLES[i].x = px(72);
             PARTICLES[i].y = px(56);
           }
@@ -420,7 +421,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
              Q_16_16_UPPER_HALF(work->particles[i].y) - 24, 24, 48);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
-        if ((work->particles[i].y >> 16) > 120 && frame <= 47) {
+        if ((Q_16_16_TO_INT(work->particles[i].y)) > 120 && frame <= 47) {
           work->particles[i].x = px((Random16() & 127) + 64);
           work->particles[i].y = -px(16);
         }

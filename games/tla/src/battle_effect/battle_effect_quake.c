@@ -97,8 +97,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         s32 top;
 
         // Up and down along a sine, 1/64 of a turn a frame.
-        height =
-            (heights.column[column] * Trig_Sin((frame - start) << 10)) >> 16;
+        height = Q_16_16_TO_INT(heights.column[column] *
+                                Trig_Sin((frame - start) << 10));
         if (height < 0)
           height = -height;
         top = 112 - height;

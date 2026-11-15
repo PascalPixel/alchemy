@@ -805,16 +805,16 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       cell = speed >> 17;
       if (frame < i * 4 + 25) {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               (dagger->x >> 16) - 16, (dagger->y >> 16) - 16,
-                               32, 32);
+                               (Q_16_16_TO_INT(dagger->x)) - 16,
+                               (Q_16_16_TO_INT(dagger->y)) - 16, 32, 32);
         if (frame >= i * 4 + 16) {
           dagger->x += dagger->velocityX;
           dagger->y += dagger->velocityY;
         }
       } else {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               (dagger->x >> 16) - 16, (dagger->y >> 16) - 16,
-                               32, 32);
+                               (Q_16_16_TO_INT(dagger->x)) - 16,
+                               (Q_16_16_TO_INT(dagger->y)) - 16, 32, 32);
       }
     }
 

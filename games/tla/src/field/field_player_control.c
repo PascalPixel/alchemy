@@ -419,12 +419,12 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
     Actor_StartScript(created, gActor_SplashScript);
     created->motionFlags = 0;
     if (child != NULL) {
-      Sprite_StartAnimation((struct ActorSpriteView *)child, 1);
+      Sprite_StartAnimation((struct Sprite *)child, 1);
       child->value1a = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Animation_ApplyChildValuesToRecord((struct ActorSpriteView *)child, 13);
-        Sprite_SetAnimationSpeed((struct ActorSpriteView *)child, 8);
+        Animation_ApplyChildValuesToRecord((struct Sprite *)child, 13);
+        Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
       }
     }
   }

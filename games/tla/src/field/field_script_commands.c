@@ -13,7 +13,6 @@
 #include "system/scene.h"
 #include "macros.h"
 #include "field/field_event.h"
-#include "field/actor_script_view.h"
 #include "system/input.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
@@ -789,7 +788,7 @@ struct ScriptObjectEntry;
 /// that no solid actor or wall blocks, with clear ground 8 pixels further at
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
-s32 Actor_Wander(struct ActorScriptView *actor) {
+s32 Actor_Wander(struct Actor *actor) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -811,28 +810,32 @@ s32 Actor_Wander(struct ActorScriptView *actor) {
 retry:
   attempts++;
   if (attempts <= SCRIPT_WANDER_TRIES) {
-    SET_POSITION(&candidatePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
-    heading = actor->scriptValue + (Random16() >> 2) - (Random16() >> 2);
+    heading = actor->facing + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
                                  (s32 *)&candidatePosition) != 0 ||
-        MapGrid_CheckCollision((struct Actor *)actor, &candidatePosition) != 0)
+        MapGrid_CheckCollision(actor, &candidatePosition) != 0)
       goto retry;
     travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
-    SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     // BUG: the probe straight ahead is placed but never tested, so only the
     // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
     Vector_AddPolarOffset(travelDistance, heading, &probePosition);
-    SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     Vector_AddPolarOffset(
         travelDistance, heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
-    if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+    if (MapGrid_CheckCollision(actor, &probePosition) != 0)
       goto retry;
-    SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     Vector_AddPolarOffset(
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
-    if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+    if (MapGrid_CheckCollision(actor, &probePosition) != 0)
       goto retry;
     /* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
     if (actor != 0) {
@@ -847,12 +850,12 @@ retry:
   } else {
     // Out of tries: face the other way and stay on this command, to try
     // again next frame.
-    actor->scriptValue += SCRIPT_HALF_TURN;
-    actor->turnedBack = 1;
+    actor->facing += SCRIPT_HALF_TURN;
+    actor->wait = 1;
     return 0;
   }
-  Actor_SetMoveTarget((struct Actor *)actor, candidatePosition.x,
-                      candidatePosition.y, candidatePosition.z);
+  Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
+                      candidatePosition.z);
   actor->scriptCursor += 4;
   return 1;
 }
@@ -867,7 +870,7 @@ struct ScriptObjectEntry;
 /// cells beside it. An actor outside its home radius (or out of tries) heads
 /// back toward home instead. Operands: the minimum distance, the distance range
 /// and the home radius.
-s32 ActorScript_WanderNearHome(struct ActorScriptView *actor) {
+s32 ActorScript_WanderNearHome(struct Actor *actor) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -885,11 +888,11 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *actor) {
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / Q16_ONE;
-  angle = actor->scriptValue;
+  angle = actor->facing;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
-  dx = actor->x / Q16_ONE - actor->homeX;
-  dz = actor->z / Q16_ONE - actor->homeZ;
+  dx = actor->x.fixed / Q16_ONE - actor->homeX;
+  dz = actor->z.fixed / Q16_ONE - actor->homeZ;
   if (dx * dx + dz * dz <= homeRadiusSquared) {
   roam:
     attempts++;
@@ -897,53 +900,58 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *actor) {
       travelDistance =
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
       heading = angle + (Random16() >> 2) - (Random16() >> 2);
-      SET_POSITION(&candidatePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                             &candidatePosition);
       if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
                                    (s32 *)&candidatePosition) != 0)
         goto roam;
-      SET_POSITION(&candidatePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &candidatePosition) !=
-          0)
+      if (MapGrid_CheckCollision(actor, &candidatePosition) != 0)
         goto roam;
-      probePosition.x = actor->x;
-      probePosition.y = actor->y;
+      probePosition.x = actor->x.fixed;
+      probePosition.y = actor->y.fixed;
       travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
-      probePosition.z = actor->z;
+      probePosition.z = actor->z.fixed;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+      if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         goto roam;
-      SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(travelDistance,
                             heading + SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+      if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         goto roam;
-      SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(travelDistance,
                             heading - SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+      if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         goto roam;
-      SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(travelDistance, heading + SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+      if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         goto roam;
-      SET_POSITION(&probePosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(travelDistance, heading - SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckCollision((struct Actor *)actor, &probePosition) != 0)
+      if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         goto roam;
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
-      actor->flags59 |= 2;
-      Actor_SetMoveTarget((struct Actor *)actor, candidatePosition.x,
-                          candidatePosition.y, candidatePosition.z);
+      actor->collisionFlags |= 2;
+      Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
+                          candidatePosition.z);
       goto done;
     }
   }
@@ -954,19 +962,21 @@ back:
   if (attempts <= SCRIPT_WANDER_TRIES) {
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = angle + (Random16() >> 2) - (Random16() >> 2);
-    SET_POSITION(&candidatePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                           &candidatePosition);
     if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
                                  (s32 *)&candidatePosition) != 0)
       goto back;
-    SET_POSITION(&candidatePosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
+                 actor->z.fixed);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (MapGrid_CheckCollision((struct Actor *)actor, &candidatePosition) != 0)
+    if (MapGrid_CheckCollision(actor, &candidatePosition) != 0)
       goto back;
-    actor->flags59 &= ~2;
-    Actor_SetMoveTarget((struct Actor *)actor, candidatePosition.x,
-                        candidatePosition.y, candidatePosition.z);
+    actor->collisionFlags &= ~2;
+    Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
+                        candidatePosition.z);
   }
 done:
   actor->scriptCursor += 4;

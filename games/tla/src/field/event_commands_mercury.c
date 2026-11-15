@@ -127,7 +127,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(slot,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
+    Animation_ApplyChildValuesToRecordFar(*(struct Sprite **)slot, 9);
     remaining--;
     wait(1);
     slot += 72;

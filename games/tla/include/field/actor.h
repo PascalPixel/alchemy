@@ -28,7 +28,14 @@ enum ActorPriorityFlag {
   /// The depth sort treats it as 320 pixels higher on the screen.
   ACTOR_PRIORITY_UNDERFOOT = 0x02,
   /// The depth sort treats it as 320 pixels lower on the screen.
-  ACTOR_PRIORITY_OVERHEAD = 0x04
+  ACTOR_PRIORITY_OVERHEAD = 0x04,
+  /// Drawn at the depth its riseCounter byte holds, not its own place
+  /// (Render_ApplyProjectedPlacementAtDepth).
+  ACTOR_PRIORITY_OWN_DEPTH = 0x08,
+  ACTOR_PRIORITY_NOT_DRAWN = 0x10, ///< placed nowhere, as if off screen
+  /// With ACTOR_PRIORITY_AUTOMATIC, takes the priority of the cells under it
+  /// even where the ground in front rises, which would put it behind.
+  ACTOR_PRIORITY_IGNORES_RISES = 0x20
 };
 
 /// Actor.motionFlags bits.
@@ -153,6 +160,12 @@ struct Actor {
       s16 timer;
       /// The side of the player's next footprint, or scene scratch.
       s16 userValue;
+    };
+    /// Where SC_WANDER_HOME wanders around, in pixels: where it was created
+    /// or placed.
+    struct {
+      s16 homeX;
+      s16 homeZ;
     };
     /// A Venus Djinni's falling motes
     /// (FieldEffect_UpdateDescendingOrbitActor).

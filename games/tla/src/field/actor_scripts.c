@@ -18,7 +18,7 @@
 s32 Actor_StepAngle();
 s32 Actor_ClearChildAndCollisionFlags();
 s32 Actor_ClearChildFlags();
-s32 Actor_SetPriorityBit5();
+s32 Actor_IgnoreRises();
 s32 Actor_MoveTowardTarget();
 s32 Actor_TurnTowardWatchedActor();
 s32 Actor_TakeLeaderLayer();
@@ -162,7 +162,7 @@ const s32 gMovementType_ClearChildScript[] = {
 };
 
 const s32 gMovementType_ResetActionScript[] = {
-    SC_CALL(Actor_SetPriorityBit5),
+    SC_CALL(Actor_IgnoreRises),
     SC_END,
 };
 

@@ -616,11 +616,6 @@ struct LinkedEffectObject {
   void (*callback)(void);
 };
 
-struct ObjectFlags23 {
-  u8 unused[0x23]; ///< no code names it
-  u8 flags23;
-};
-
 struct ObjectLayerAnimation {
   u8 unused[9]; ///< no code names it
   u8 unused09 : 2;

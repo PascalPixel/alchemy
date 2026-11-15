@@ -49,7 +49,6 @@
 #include "battle/battle_system.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "field/actor_script_view.h"
 #include "field/objdisp.h"
 #include "system/heap_release.h"
 #include "field/flag_call.h"

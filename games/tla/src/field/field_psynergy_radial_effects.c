@@ -429,46 +429,46 @@ void FieldPsynergy_Halt(void) {
 
 /// Per-frame update of a paused actor: gives its sprite one of the table's
 /// eight params at random.
-void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {
+void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   s8 *table = gBattleEffect_RandomChildValues;
-  s32 index = Random16();
-  Actor_SetSpriteColorModeFar(object, table[(u32)(index * 8) >> 16]);
+  s32 random = Random16();
+  Actor_SetSpriteColorModeFar(actor, table[(u32)(random * 8) >> 16]);
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
 /// first animation's param in gMainRoutineWork.
-void FieldPsynergy_HaltActor(s32 id) {
-  struct ActorView *object;
+void FieldPsynergy_HaltActor(s32 actorId) {
+  struct Actor *actor;
   struct SpriteAnimation *entry;
 
-  object = Actor_Lookup(id);
-  if (object != NULL) {
-    gMainRoutineWork.pausedUpdate = (u32)object->update;
+  actor = Actor_Lookup(actorId);
+  if (actor != NULL) {
+    gMainRoutineWork.pausedUpdate = (u32)actor->update;
     gMainRoutineWork.pausedPose = 0;
-    if (object->kind == 1) {
-      entry = object->target.animation->entries[0];
+    if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+      entry = ((struct Sprite *)actor->sprite)->entries[0];
       if (entry != NULL) {
         gMainRoutineWork.pausedPose = entry->colorMode;
       }
     }
-    object->update = FieldPsynergy_UpdateHaltedActor;
-    object->value5b = 1;
-    Actor_SetAnimationSpeedFar(object, 0);
+    actor->update = (void (*)(void))FieldPsynergy_UpdateHaltedActor;
+    actor->paused = 1;
+    Actor_SetAnimationSpeedFar(actor, 0);
   }
 }
 
 /// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
-void FieldPsynergy_ResumeHaltedActor(s32 id) {
-  struct ActorView *object = Actor_Lookup(id);
+void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (object != NULL) {
-    if (object->update == FieldPsynergy_UpdateHaltedActor) {
-      object->update = (void *)gMainRoutineWork.pausedUpdate;
+  if (actor != NULL) {
+    if (actor->update == (void (*)(void))FieldPsynergy_UpdateHaltedActor) {
+      actor->update = (void (*)(void))gMainRoutineWork.pausedUpdate;
       gMainRoutineWork.pausedUpdate = 0;
-      Actor_SetSpriteColorModeFar(object, (s8)gMainRoutineWork.pausedPose);
+      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineWork.pausedPose);
     }
-    object->value5b = 0;
-    Actor_SetAnimationSpeedFar(object, 16);
+    actor->paused = 0;
+    Actor_SetAnimationSpeedFar(actor, 16);
   }
 }
 
@@ -729,8 +729,8 @@ void FieldPsynergy_Lash(void) {
   if (object != 0) {
     object->facing = caster->facing;
     object->motionFlags = 0;
-    if (caster->priorityFlags & 0x20)
-      object->priorityFlags |= 0x20;
+    if (caster->priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)
+      object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SelectAnimationFar(object, 0);
     Sound_PlayFar(SE_ITEM_BREAK);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),

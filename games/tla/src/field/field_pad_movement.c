@@ -193,7 +193,7 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys) and
 /// steps the script on. Returns 1.
-s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
   Field_CheckConfiguredKeys();
   interpreter->scriptCursor++;
   return 1;

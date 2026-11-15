@@ -102,9 +102,10 @@ s32 Actor_ClearChildFlags(struct Actor *obj) {
   return 0;
 }
 
-/// Actor script hook: sets priorityFlags bit 5.
-s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
-  obj->flags23 |= 0x20;
+/// Actor script hook: the actor takes its cells' priority even where the
+/// ground in front rises.
+s32 Actor_IgnoreRises(struct Actor *actor) {
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   return 0;
 }
 

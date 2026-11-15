@@ -132,8 +132,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->timer = object->x.fixed / Q16_ONE;
-        object->userValue = object->z.fixed / Q16_ONE;
+        object->homeX = object->x.fixed / Q16_ONE;
+        object->homeZ = object->z.fixed / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->actors[FIELD_TREASURE_ACTOR + i] = object;
@@ -224,19 +224,19 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 /// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
 /// again and drops it back home (homeX, homeZ) at Scoop's anchor.
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
-  struct ActorScriptView *object;
+  struct Actor *object;
 
-  object = (struct ActorScriptView *)Actor_Lookup(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (mode == 1)
-    object->z = 0;
+    object->z.fixed = 0;
   if (mode == 2) {
     GameFlag_Set(flag);
-    if (object->x != 0)
+    if (object->x.fixed != 0)
       Actor_SetSquareSprite(objectId);
-    object->x = object->homeX << 16;
-    object->z = object->homeZ << 16;
+    object->x.fixed = object->homeX << 16;
+    object->z.fixed = object->homeZ << 16;
     BattleEffect_DropObjectAtAnchor(objectId);
   }
 }
@@ -319,16 +319,16 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
 void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
-  struct ActorScriptView *object;
+  struct Actor *object;
 
-  object = (struct ActorScriptView *)Actor_Lookup(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (x == -1)
     x = object->homeX << 16;
   if (z == -1)
     z = object->homeZ << 16;
-  object->x = x;
-  object->z = z;
-  object->y = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
+  object->x.fixed = x;
+  object->z.fixed = z;
+  object->y.fixed = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
 }

@@ -210,6 +210,7 @@ static __inline__ void KandoreanTemple_CopyTouchedCells(s32 a, s32 b, s32 c,
 #include "field/field_sequence_event.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// The Kandorean Temple's story, from the hidden passage Kraden suspects to
 /// the ladder Poi's students lower once the party has Lash.
@@ -3158,24 +3159,16 @@ u32 gFieldEffect_LongScript[] = {
   };
 
 s32 gKandoreanTemple_SteamScript[] = {
-    0,
-    44,
-    22,
-    38,
-    0,
-    3,
-    0,
-    1,
-    38,
-    46,
-    (s32)KandoreanTemple_CountDownSteam,
-    22,
-    38,
-    0,
-    3,
-    0,
-    1,
-    38,
+    SC_WAIT(44),
+    SC_SET(SW_HOOK, 0),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_CALL((s32)KandoreanTemple_CountDownSteam),
+    SC_SET(SW_HOOK, 0),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s16 gKandoreanTemple_BlockActors[] = {
@@ -3187,11 +3180,15 @@ s16 gKandoreanTemple_PillarActors[] = {
 };
 
 u32 gKandoreanTemple_PuffScript[] = {
-    0, 24, 38,
+    SC_WAIT(24),
+    SC_FREE,
 };
 
 u32 gKandoreanTemple_StreamPuffScript[] = {
-    0, 15, 3, 0, 1, 38,
+    SC_WAIT(15),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -3209,8 +3206,7 @@ u32 gKandoreanTemple_LookAroundScript[] = {
 };
 
 s32 gKandoreanTemple_MeditateScript[] = {
-    46,
-    (s32)KandoreanTemple_MeditateRestlessly,
+    SC_CALL((s32)KandoreanTemple_MeditateRestlessly),
 };
 
 s32 gKandoreanTemple_LevitateScript[] = {

@@ -42,6 +42,8 @@
 #include "system/heap_release.h"
 #include "field_sprite.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
 /// from then on.
@@ -1737,12 +1739,19 @@ struct Trigger gSceneEvents[] = {
 
 // clang-format off
 u32 gVenusLighthouseEntrance_BirdLands[] = {
-    1, 0, 1, 39, 2, 0,
-    4, 22, 26, 3, 22, 13,
-    0, 0, 1, 17,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_ARG(2),
+    SC_WAIT(4),
+    SC_SET(SW_MOTION, 3),
+    SC_SET(SW_VELOCITY_Y, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gVenusLighthouseEntrance_BirdFlies[] = {
-    1, 0, 1, 38,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_FREE,
 };
 // clang-format on

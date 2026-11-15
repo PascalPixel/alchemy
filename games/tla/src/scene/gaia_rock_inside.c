@@ -4188,13 +4188,19 @@ u32 gFieldEffect_LongScript[] = {
   };
 
 u32 gGaiaRockInside_SprayScript[] = {
-    0, 230, 22, 38, 0, 3,
-    0, 1, 38,
+    SC_WAIT(230),
+    SC_SET(SW_HOOK, 0),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gGaiaRockInside_FlameScript[] = {
-    0, 25, 22, 38, 0, 3,
-    0, 1, 38,
+    SC_WAIT(25),
+    SC_SET(SW_HOOK, 0),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gGaiaRockInside_AltarShakesScript[] = {                                                               
@@ -4233,7 +4239,9 @@ u16 gGaiaRockInside_CobwebCells[] = {
 };
 
 u32 gGaiaRockInside_SparkScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gGaiaRockInside_RisingSparkScript[] = {                                                               
@@ -4288,15 +4296,28 @@ s16 gGaiaRockInside_RockSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {
 s16 gGaiaRockInside_PlatformPlaces[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
 u32 gGaiaRockInside_SerpentGlowScript[] = {
-    0, 1, 13, 44, 0, 0, 1, 2, 0, 0, 0, 0, 1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gGaiaRockInside_SerpentSmokeScript[] = {
-    0, 1, 13, 44, 0, 0, 1, 2, 0, 0, 0, 0, 1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gGaiaRockInside_KushinadaScript[] = {
-    0, 1, 17,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gGaiaRockInside_SavedCollision[] = {
@@ -4598,12 +4619,12 @@ s32 gGaiaRockInside_PlatformUpScript[] = {
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(3)),
     SC_LABEL(4),
-    SC_ADD(SW_SCALE_Y, -4096),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(4)),
     SC_ADD(SW_SCALE_Y, 0x1000),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_Y, -4096),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(1),
     SC_END,
 };
@@ -4622,12 +4643,12 @@ s32 gGaiaRockInside_PlatformDownScript[] = {
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(3)),
     SC_LABEL(4),
-    SC_ADD(SW_SCALE_X, -4096),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(4)),
     SC_ADD(SW_SCALE_X, 0x1000),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, -4096),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
     SC_WAIT(1),
     SC_END,
 };

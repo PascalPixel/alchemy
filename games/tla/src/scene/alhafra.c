@@ -31,6 +31,8 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "text/msg_ids.h"
 
@@ -1090,10 +1092,15 @@ s16 gAlhafra_Puddles[] = {
 };
 
 u32 gAlhafra_LookAroundScript[] = {
-    22, 3, 0xd000, 0, 40, 22,
-    3, 0xb000, 0, 60, 22, 3,
-    0xd000, 0, 20, 22, 3, 0xb000,
-    0, 60, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(40),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(60),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1517,16 +1524,26 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
 };
 
 s32 gAlhafra_OfficialStepsBackScript[] = {
-    39, 2, 5, 0, 0, -0x80000,
-    1, 5, 0x200000, 0, -0x200000, 1,
-    39, 1, 22, 3, 0x8000, 0,
-    1, 39, 5, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, -px(8)),
+    SC_SYNC,
+    SC_MOVE_BY(px(32), 0, -px(32)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(1),
+    SC_ARG(5),
+    SC_END,
 };
 
 u32 gAlhafra_PasserbyWalksOffScript[] = {
-    39, 2, 4, 0x2280000, 0, 0x3280000,
-    1, 4, 0x2180000, 0, 0x2f80000, 1,
-    39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(552), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(536), 0, px(760)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {                                                               
@@ -1552,10 +1569,16 @@ u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
   };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
-    39, 2, 4, 0x1980000, 0, 0x2f80000,
-    1, 4, 0x1980000, 0, 0x2a80000, 1,
-    4, 0x1080000, 0, 0x2a80000, 1, 39,
-    1, 22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE(px(408), 0, px(760)),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(680)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(680)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_ElderFollowsFromCell21Script[] = {                                                               
@@ -1564,14 +1587,24 @@ u32 gAlhafra_ElderFollowsFromCell21Script[] = {
   };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
-    39, 2, 5, 0x100000, 0, 0,
-    1, 4, 0x1980000, 0, 0x2f80000, 1,
-    4, 0x1980000, 0, 0x2f80000, 1, 4,
-    0x1980000, 0, 0x2a80000, 1, 4, 0x1180000,
-    0, 0x2a80000, 1, 4, 0x1180000, 0,
-    0x2b80000, 1, 4, 0x1080000, 0, 0x2b80000,
-    1, 39, 1, 22, 3, 0xd000,
-    17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(16), 0, 0),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(760)),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(760)),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(680)),
+    SC_SYNC,
+    SC_MOVE(px(280), 0, px(680)),
+    SC_SYNC,
+    SC_MOVE(px(280), 0, px(696)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(696)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {                                                               
@@ -1581,64 +1614,118 @@ u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
   };
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
-    39, 2, 5, 0, 0, -0x100000,
-    1, 5, -0x100000, 0, 0, 1,
-    5, -0x100000, 0, 0x100000, 1, 4,
-    0xf80000, 0, 0x3280000, 1, 4, 0xf80000,
-    0, 0x2780000, 1, 39, 1, 22,
-    3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, -px(16)),
+    SC_SYNC,
+    SC_MOVE_BY(-px(16), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(-px(16), 0, px(16)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(632)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_MayorFollowsFromCell20Script[] = {
-    39, 2, 4, 0x1480000, 0, 0x3280000,
-    1, 4, 0xf80000, 0, 0x3280000, 1,
-    4, 0xf80000, 0, 0x2980000, 1, 39,
-    1, 22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(664)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
-    39, 2, 4, 0x1480000, 0, 0x3280000,
-    1, 4, 0x1080000, 0, 0x3280000, 1,
-    4, 0x1080000, 0, 0x2980000, 1, 39,
-    1, 22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(664)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
-    39, 2, 4, 0x1480000, 0, 0x3280000,
-    1, 4, 0xf80000, 0, 0x3280000, 1,
-    4, 0xf80000, 0, 0x2a80000, 1, 39,
-    1, 22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(680)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_ElderFollowsFromCell20Script[] = {
-    39, 2, 5, 0, 0, 0x100000,
-    1, 4, 0x1480000, 0, 0x3280000, 1,
-    4, 0xf80000, 0, 0x3280000, 1, 4,
-    0xf80000, 0, 0x2b80000, 1, 39, 1,
-    22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, px(16)),
+    SC_SYNC,
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(248), 0, px(696)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
-    39, 2, 5, 0, 0, 0x100000,
-    1, 4, 0x1480000, 0, 0x3280000, 1,
-    4, 0x1080000, 0, 0x3280000, 1, 4,
-    0x1080000, 0, 0x2a80000, 1, 39, 1,
-    22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, px(16)),
+    SC_SYNC,
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(680)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
-    39, 2, 5, 0, 0, 0x200000,
-    1, 4, 0x1480000, 0, 0x3280000, 1,
-    4, 0x1080000, 0, 0x3280000, 1, 4,
-    0x1080000, 0, 0x2b80000, 1, 39, 1,
-    22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(0, 0, px(32)),
+    SC_SYNC,
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(264), 0, px(696)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 
 s32 gAlhafra_SecondMadranFollowsFromCell20Script[] = {
-    39, 2, 5, -0x140000, 0, 0x200000,
-    1, 4, 0x1480000, 0, 0x3280000, 1,
-    4, 0x1000000, 0, 0x3280000, 1, 4,
-    0x1000000, 0, 0x2c80000, 1, 39, 1,
-    22, 3, 0xd000, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(-px(20), 0, px(32)),
+    SC_SYNC,
+    SC_MOVE(px(328), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(256), 0, px(808)),
+    SC_SYNC,
+    SC_MOVE(px(256), 0, px(712)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
 };
 // clang-format on

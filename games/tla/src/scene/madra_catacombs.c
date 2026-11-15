@@ -683,8 +683,8 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 s32 gMadraCatacombs_WalkIntoDoorway[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  

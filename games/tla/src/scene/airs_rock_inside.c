@@ -13,6 +13,8 @@
 #include "system/iwram_call.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set once Move has left the first inner room's pillar on cell (103, 41) in
 /// half cells.
@@ -3456,21 +3458,33 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAirsRockInside_Room1Pillars[] = {
@@ -3502,12 +3516,16 @@ s16 gAirsRockInside_Room9Pillars[] = {
 };
 
 u32 gAirsRockInside_OrbitSparkScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_RisingSparkScript[] = {
-    5, 0, 0xa00000, 0, 1, 38,
-    17,
+    SC_MOVE_BY(0, px(160), 0),
+    SC_SYNC,
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAirsRockInside_OrbitingSparkScript[] = {                                                               
@@ -3522,23 +3540,33 @@ s32 gAirsRockInside_SeekingSparkScript[] = {
   };
 
 u32 gAirsRockInside_TabletRiseScript[] = {
-    5, 0, 0x180000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 u32 gAirsRockInside_ShebaRiseScript[] = {
-    5, 0, 0x100000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAirsRockInside_TabletSettleScript[] = {
-    22, 26, 0, 5, 0, -0x180000,
-    0, 1, 22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 s32 gAirsRockInside_ShebaSettleScript[] = {
-    22, 26, 0, 5, 0, -0x100000,
-    0, 1, 22, 26, 3, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 3),
+    SC_END,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -3548,22 +3576,33 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 u32 gAirsRockInside_WhirlwindRisesScript[] = {
-    39, 5, 0, 12, 38, 17,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_WhirlwindFadesScript[] = {
-    0, 60, 39, 5, 0, 12,
-    38, 17,
+    SC_WAIT(60),
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAirsRockInside_PooledWhirlwindFadesScript[] = {
-    39, 5, 0, 12, 2, 0,
-    0, 0, 0, 1, 17,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gAirsRockInside_StatueScript[] = {
-    22, 10, 0x18000, 22, 31, 0,
-    39, 2, 17,
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_STEERING, 0),
+    SC_ARG(2),
+    SC_END,
 };
 
 u16 gAirsRockInside_Room7Cones[] = {

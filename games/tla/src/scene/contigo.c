@@ -19,6 +19,8 @@
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct ContigoObject;
 
@@ -2631,21 +2633,33 @@ s32 gContigo_SparkleTiles[] = {
 };
 
 u32 gContigo_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gContigo_Topics[] = {
@@ -2655,8 +2669,11 @@ u32 gContigo_Topics[] = {
 };
 
 s32 gContigo_EnterGameDoorScript[] = {
-    22, 26, 0, 23, 7, -0x8000,
-    0, 1, 13, 24, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
 };
 
 s16 gContigo_PaletteSlots[] = {
@@ -2699,88 +2716,119 @@ u32 gContigo_PacerScript[] = {
   };
 
 u32 gContigo_JennaReunionScript[] = {
-    39, 2, 4, 0xa40000, 0, 0x1680000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 22, 3,
-    0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(164), 0, px(360)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_PiersReunionScript[] = {
-    39, 2, 4, 0xbe0000, 0, 0x1600000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(190), 0, px(352)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_ShebaReunionScript[] = {
-    39, 2, 4, 0xbe0000, 0, 0x1860000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(190), 0, px(390)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_KradenReunionScript[] = {
-    39, 2, 4, 0xb60000, 0, 0x1700000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(182), 0, px(368)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_IsaacLeavesScript[] = {
-    39, 2, 4, 0xa00000, 0, 0x17e0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17, 39, 2, 0,
-    10, 13, 0xffff, 0,
+    SC_ARG(2),
+    SC_MOVE(px(160), 0, px(382)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
+    SC_ARG(2),
+    SC_WAIT(10),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gContigo_Room2WatcherScript[] = {
-    22, 9, 0x10000, 22, 10, 0x10000,
-    23, 9, -0x2800, 23, 10, 0x800,
-    0, 2, 23, 9, 0x1400, 23,
-    10, -1024, 0, 2, 23, 9,
-    0xa00, 23, 10, -512, 0, 2,
-    23, 9, 0xa00, 23, 10, -512,
-    0, 2, 13, 0xffff, 0,
+    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE * 5 / 32),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE * 5 / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gContigo_LeaderVisitsScript[] = {
-    39, 2, 4, 0x800000, 0, 0x17a0000,
-    1, 4, 0x840000, 0, 0x1680000, 1,
-    39, 1, 0, 10, 22, 3,
-    0, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(128), 0, px(378)),
+    SC_SYNC,
+    SC_MOVE(px(132), 0, px(360)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gContigo_HostScript[] = {
-    39, 2, 4, 0x840000, 0, 0x1670000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(132), 0, px(359)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gContigo_StatueScript[] = {
-    22,
-    3,
-    0x8000,
-    0,
-    120,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    22,
-    3,
-    0x8000,
-    0,
-    20,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    46,
-    (s32)Contigo_ShowSurprise,
-    0,
-    120,
-    13,
-    0xffff,
-    0,
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(120),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_CALL((s32)Contigo_ShowSurprise),
+    SC_WAIT(120),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gSceneEntrances[] = {

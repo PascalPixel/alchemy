@@ -40,6 +40,7 @@
 #include "module/scene/scene.h"
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
+#include "objcmd.h"
 
 struct Actor;
 struct CellTarget;
@@ -1892,25 +1893,39 @@ extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
 u32 gAnemosInnerSanctum_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_TileGlowScript[] = {
-    0, 20, 38, 17,
+    SC_WAIT(20),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_OrbScript[] = {                                                               
@@ -1921,54 +1936,57 @@ s32 gAnemosInnerSanctum_OrbScript[] = {
   };
 
 s32 gAnemosInnerSanctum_DustScript[] = {
-    0x80010000, 23, 9, 0xffffe667, 23, 10,
-    0xffffe667, 0, 1, 13, 8, 0xc0010000,
-    38, 17,
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TO(1)),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_PillarRisesScript[] = {
-    0, 50, 0x80010000, 23, 9, 0x1999,
-    23, 10, 0x1999, 23, 6, 0x30000,
-    0, 2, 13, 10, 0xc0010000, 22,
-    26, 4, 17,
+    SC_WAIT(50),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, 6553),
+    SC_ADD(SW_SCALE_Y, 6553),
+    SC_ADD(SW_Y, px(3)),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_PillarSparkScript[] = {
-    0, 30, 22, 26, 0, (s32)0x80010000,
-    23, 9, (s32)0xffffe667, 23, 10, (s32)0xffffe667,
-    23, 6, -0x30000, 0, 2, 13,
-    10, (s32)0xc0010000, 17,
+    SC_WAIT(30),
+    SC_SET(SW_MOTION, 0),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_ADD(SW_Y, -px(3)),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_END,
 };
 
 u32 gAnemosInnerSanctum_MoteScript[] = {
-    0, 3, 38, 17,
+    SC_WAIT(3),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_SparkScript[] = {
-    22,
-    9,
-    0x20000,
-    22,
-    10,
-    0x20000,
-    (s32)0x80010000,
-    23,
-    9,
-    (s32)0xffffe667,
-    23,
-    10,
-    (s32)0xffffe667,
-    0,
-    2,
-    13,
-    10,
-    (s32)0xc0010000,
-    46,
-    (s32)AnemosInnerSanctum_SpiralMover,
-    46,
-    (s32)AnemosInnerSanctum_SpawnOrbitSparks,
-    38,
-    17,
+    SC_SET(SW_SCALE_X, 0x20000),
+    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -6553),
+    SC_ADD(SW_SCALE_Y, -6553),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_CALL((s32)AnemosInnerSanctum_SpiralMover),
+    SC_CALL((s32)AnemosInnerSanctum_SpawnOrbitSparks),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAnemosInnerSanctum_Room2Blocks[] = {
@@ -1990,21 +2008,33 @@ s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
 };
 
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctum_DurationScripts[] = {
@@ -2035,9 +2065,8 @@ u16 gAnemosInnerSanctum_CycleSlots[] = {
   };
 
 s32 gAnemosInnerSanctum_StatueScript[] = {
-    46,
-    (s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags,
-    17,
+    SC_CALL((s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

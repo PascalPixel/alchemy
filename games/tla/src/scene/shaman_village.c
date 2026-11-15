@@ -4,6 +4,8 @@
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
 /// and blown the sand away.
@@ -2860,21 +2862,33 @@ void ShamanVillage_SetUpRoom6(void) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gShamanVillage_LetteringCountScript[] = {
@@ -2908,9 +2922,13 @@ u8 gShamanVillage_LetteringPalettes[] = {
 
 // clang-format off
 s32 gShamanVillage_EnterDoorScript[] = {
-    22, 26, 0, 23, 7, -0x8000,
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 24, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -2920,113 +2938,201 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 u32 gShamanVillage_WalkToLeftStartScript[] = {
-    39, 2, 4, 0xb80000, 0, 0xd80000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xc000, 22, 40, 1, 0,
-    10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(184), 0, px(216)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_SET(SW_BYTE_63, 1),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_WalkToRightStartScript[] = {
-    39, 2, 4, 0x1080000, 0, 0xd80000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xc000, 22, 40, 1, 0,
-    10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(264), 0, px(216)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_SET(SW_BYTE_63, 1),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_KradenStandsByRodScript[] = {
-    39, 2, 4, 0x980000, 0, 0x1080000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xb000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(264)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_PiersStandsByRodScript[] = {
-    39, 2, 4, 0x880000, 0, 0x1080000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xc000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(136), 0, px(264)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_JennaStandsByRodScript[] = {
-    39, 2, 4, 0x680000, 0, 0x1080000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xc000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(104), 0, px(264)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_ShebaStandsByRodScript[] = {
-    39, 2, 4, 0x580000, 0, 0x1080000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xc000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(88), 0, px(264)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_MoapaLeavesHouseScript[] = {
-    39, 2, 4, 0x780000, 0, 0xfc0000,
-    1, 4, 0xfc0000, 0, 0xfc0000, 1,
-    4, 0xfc0000, 0, 0x780000, 1, 39,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(120)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gShamanVillage_GuardLeavesHouseScript[] = {
-    39, 2, 4, 0x880000, 0, 0xfc0000,
-    1, 4, 0xfc0000, 0, 0xfc0000, 1,
-    4, 0xfc0000, 0, 0x780000, 1, 39,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(136), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(120)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gShamanVillage_OtherGuardLeavesHouseScript[] = {
-    39, 2, 4, 0x680000, 0, 0xfc0000,
-    1, 4, 0xfc0000, 0, 0xfc0000, 1,
-    4, 0xfc0000, 0, 0x780000, 1, 39,
-    1, 22, 40, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(104), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(252)),
+    SC_SYNC,
+    SC_MOVE(px(252), 0, px(120)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_BYTE_63, 1),
+    SC_END,
 };
 
 u32 gShamanVillage_RejoinLeaderAtHouseScript[] = {
-    39, 2, 4, 0x780000, 0, 0x1080000,
-    1, 39, 1, 0, 1, 3,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(264)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_END,
 };
 
 u32 gShamanVillage_KradenWatchesShebaScript[] = {
-    39, 2, 4, 0x880000, 0, 0x2280000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xd000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(136), 0, px(552)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_LeaderWatchesShebaScript[] = {
-    39, 2, 4, 0xb80000, 0, 0x2180000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(184), 0, px(536)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_JennaWatchesShebaScript[] = {
-    39, 2, 4, 0x980000, 0, 0x2180000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xe000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(536)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_PiersWatchesShebaScript[] = {
-    39, 2, 4, 0xc80000, 0, 0x2280000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(200), 0, px(552)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gShamanVillage_HeadForTrialRoadScript[] = {
-    39, 2, 4, 0xd80000, 0, 0x2340000,
-    1, 4, 0xd80000, 0, 0x1d60000, 1,
-    4, 0xa80000, 0, 0x1b20000, 1, 4,
-    0xa80000, 0, 0x17c0000, 1, 39, 1,
-    22, 40, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(216), 0, px(564)),
+    SC_SYNC,
+    SC_MOVE(px(216), 0, px(470)),
+    SC_SYNC,
+    SC_MOVE(px(168), 0, px(434)),
+    SC_SYNC,
+    SC_MOVE(px(168), 0, px(380)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_BYTE_63, 1),
+    SC_END,
 };
 
 u32 gShamanVillage_RejoinLeaderAtSandScript[] = {
-    39, 2, 4, 0xb80000, 0, 0x2180000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(184), 0, px(536)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gShamanVillage_HopFortuneTellerScript[] = {
-    23, 9, 0x2000, 23, 10, 0x4000,
-    0, 1, 13, 4, 0, (s32)0x80010000,
-    23, 9, -4096, 23, 10, -0x2000,
-    0, 1, 13, 8, (s32)0xc0010000, 17,
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(4, SC_TOP),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 8),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TO(1)),
+    SC_END,
 };
 
 s16 gShamanVillage_LetteringVramEntry[] = {
@@ -3570,9 +3676,8 @@ struct Trigger gShamanVillage_Room6Triggers[] = {
 };
 
 u32 gDriftScene_SpawnScript[] = {
-    0,
-    46,
-    38,
+    SC_WAIT(46),
+    SC_FREE,
 };
 #undef TLA_SHAMAN_VILLAGE_H
 #undef SHAMAN_VILLAGE_EMOTE

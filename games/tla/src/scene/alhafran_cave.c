@@ -32,6 +32,8 @@
 #include "map.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void Pillars_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
@@ -742,19 +744,32 @@ s16 gAlhafranCave_Puddles[] = {
 };
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
-    39, 2, 5, 0x100000, 0, 0,
-    1, 5, 0, 0, -0x3c0000, 1,
-    5, -0x40000, 0, 0, 1, 39,
-    1, 22, 3, 0x8000, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(16), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(0, 0, -px(60)),
+    SC_SYNC,
+    SC_MOVE_BY(-px(4), 0, 0),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gAlhafranCave_VisitorsLeaveScript[] = {
-    39, 2, 4, 0x30c0000, 0, 0x1200000,
-    1, 5, 0, 0, 0xc0000, 1,
-    5, 0x400000, 0, 0, 1, 5,
-    0x200000, 0, 0x200000, 1, 5, 0,
-    0, 0x360000, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(780), 0, px(288)),
+    SC_SYNC,
+    SC_MOVE_BY(0, 0, px(12)),
+    SC_SYNC,
+    SC_MOVE_BY(px(64), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(px(32), 0, px(32)),
+    SC_SYNC,
+    SC_MOVE_BY(0, 0, px(54)),
+    SC_SYNC,
+    SC_END,
 };
 
 s16 gAlhafranCave_Pillars[] = {

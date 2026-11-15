@@ -68,6 +68,7 @@
 #include "call.h"
 #include "map.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 extern u8 Data_0202c001[];
 
@@ -3601,7 +3602,7 @@ s8 gGabombaStatue_CogAnimations[] = {
 };
 
 u32 gGabombaStatue_Room2GuardScript[] = {
-    38,
+    SC_FREE,
 };
 
 #undef FIELD_AT

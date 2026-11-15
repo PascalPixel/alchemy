@@ -50,6 +50,7 @@
 #include "flags.h"
 #include "module/scene/scene.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 /// Set once the leader has been walked back from the edge of the map by
@@ -1819,15 +1820,23 @@ u32 gIdejima_KradenStepsAsideScript[] = {
 };
 
 u32 gIdejima_JoinTheLeaderScript[] = {
-    39, 2, 4, 0x980000, 0, 0x2f40000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(756)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gIdejima_GoAfterAlexScript[] = {
-    39, 2, 4, 0x680000, 0, 0x2d80000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(104), 0, px(728)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct SceneEntrance gIdejimaEntrances[] = {
@@ -1883,7 +1892,6 @@ struct Trigger gIdejimaEventsWake[] = {
 };
 
 u32 gDriftScene_SpawnScript[] = {
-    0,
-    46,
-    38,
+    SC_WAIT(46),
+    SC_FREE,
 };

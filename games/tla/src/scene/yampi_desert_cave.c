@@ -33,6 +33,8 @@
 #include "scene_tables.h"
 #include "version.h"
 #include "shared/tables.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct Actor;
 
@@ -1073,7 +1075,8 @@ u32 gSceneExits[] = {
 };
 
 u32 gYampiDesertCave_Settle[] = {
-    22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 struct ActorPlacement gYampiDesertCave_Placements[] = {

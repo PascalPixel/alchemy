@@ -50,6 +50,7 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.
@@ -1236,7 +1237,9 @@ u32 gPaletteCyclePausesInEvents[] = {
 };
 
 s32 gJupiterLighthouse_OrbScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 

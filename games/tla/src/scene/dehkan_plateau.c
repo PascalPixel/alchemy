@@ -1844,26 +1844,41 @@ u32 gRubble_BurstScript[] = {
 };
 
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gDehkanPlateau_DustScript[] = {
-    0, 33, 22, 38, 0, 3,
-    0, 1, 38,
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

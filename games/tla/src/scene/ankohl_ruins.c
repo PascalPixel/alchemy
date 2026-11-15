@@ -3,6 +3,8 @@
 /// puzzles, in seven rooms that share this overlay (SceneId_AnkohlRuins1 to
 /// SceneId_AnkohlRuins8).
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 #include "types.h"
@@ -1790,21 +1792,33 @@ void AnkohlRuins_HideGap(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[] = {
@@ -1961,11 +1975,13 @@ s32 gAnkohlRuins_ShrunkenSpriteScript[] = {
 };
 
 u32 gAnkohlRuins_Room2Script[] = {
-    22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 u32 gAnkohlRuins_Room3Script[] = {
-    22, 30, 0, 17,
+    SC_SET(SW_COLLISION, 0),
+    SC_END,
 };
 
 struct ActorPlacement gAnkohlRuins_Placements[] = {

@@ -4,6 +4,7 @@
 /// scorpion in its way, the stakes Pound sinks and the sand slides Sand slips
 /// under, and its tables of entrances, placements and triggers by room.
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
 
 #include "../field/field_effect/move.c"
 
@@ -2155,15 +2156,15 @@ void YampiDesert_SetUpRoom5(void) {
         !GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN))
       YampiDesert_SetUpRoom5Scorpion();
   } else {
-    Actor_SetPositionFixed(11, 200 << 16, 248 << 16);
-    Actor_SetPositionFixed(12, 168 << 16, 280 << 16);
-    Actor_SetPositionFixed(13, 152 << 16, 344 << 16);
-    Actor_SetPositionFixed(14, 184 << 16, 360 << 16);
-    Actor_SetPositionFixed(15, 328 << 16, 264 << 16);
-    Actor_SetPositionFixed(16, 296 << 16, 296 << 16);
-    Actor_SetPositionFixed(17, 344 << 16, 312 << 16);
-    Actor_SetPositionFixed(18, 312 << 16, 360 << 16);
-    Actor_SetPositionFixed(19, 280 << 16, 376 << 16);
+    Actor_SetPosition(11, 200, 248);
+    Actor_SetPosition(12, 168, 280);
+    Actor_SetPosition(13, 152, 344);
+    Actor_SetPosition(14, 184, 360);
+    Actor_SetPosition(15, 328, 264);
+    Actor_SetPosition(16, 296, 296);
+    Actor_SetPosition(17, 344, 312);
+    Actor_SetPosition(18, 312, 360);
+    Actor_SetPosition(19, 280, 376);
     Actor_SetHorizontalPositionWithTerrain(20, 328 << 16, 392 << 16);
     if (GameFlag_Get(FLAG_KING_SCORPION_BEATEN)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP)) {
@@ -2264,7 +2265,7 @@ void YampiDesert_SetUpRoom10(void) {
   }
   if (GameFlag_Get(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP)) {
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
-    Actor_SetPositionFixed(9, 232 << 16, 200 << 16);
+    Actor_SetPosition(9, 232, 200);
   }
   YampiDesert_StartRisingSand(0, 240);
   YampiDesert_AddRisingSand(0, 9, 0, 0, 64);
@@ -2571,21 +2572,33 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gYampiDesert_SandCloudCells[] = {

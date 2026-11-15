@@ -3,6 +3,8 @@
 /// party reaches with Teleport once it has all seventy-two Djinn
 /// (SceneId_AnemosInnerSanctumEntrance).
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 #include "flags.h"
@@ -489,39 +491,63 @@ void AnemosInnerSanctumEntrance_SetLightPicture(u16 value) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
-    23, 9, 0x400, 23, 10, 0x400,
-    23, 6, -0x4000, 0, 1, 13,
-    40, 0, 17,
+    SC_ADD(SW_SCALE_X, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
+    SC_ADD(SW_Y, -0x4000),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_END,
 };
 
 s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
-    23, 9, -2048, 23, 10, -2048,
-    23, 6, 0x4000, 0, 1, 13,
-    24, 0, 3, 0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gAnemosInnerSanctumEntrance_ShadowScript[] = {
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 40, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 

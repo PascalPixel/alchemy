@@ -29,6 +29,8 @@
 #include "map.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// The crate pushed onto cell (24, 40), out of the way.
 #define FLAG_CRATE_MOVED 0x900
@@ -1546,27 +1548,48 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
 
 // clang-format off
 u32 gEasternAlhafraShip_FirstPirateRunsScript[] = {
-    39, 2, 5, 0x200000, 0, 0,
-    1, 5, 0, 0, 0x1c0000, 1,
-    5, 0x300000, 0, 0, 1, 5,
-    0xc0000, 0, 0xc0000, 1, 4, 0x1c80000,
-    0, 0x1b80000, 1, 39, 1, 22,
-    3, 0xc000, 0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(32), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(0, 0, px(28)),
+    SC_SYNC,
+    SC_MOVE_BY(px(48), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(px(12), 0, px(12)),
+    SC_SYNC,
+    SC_MOVE(px(456), 0, px(440)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gEasternAlhafraShip_SecondPirateRunsScript[] = {
-    39, 2, 5, 0x200000, 0, 0,
-    1, 5, 0xc0000, 0, -0xc0000, 1,
-    5, 0x340000, 0, 0, 1, 5,
-    0xc0000, 0, 0xc0000, 1, 4, 0x1d80000,
-    0, 0x1b80000, 1, 39, 1, 22,
-    3, 0xb000, 0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE_BY(px(32), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(px(12), 0, -px(12)),
+    SC_SYNC,
+    SC_MOVE_BY(px(52), 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(px(12), 0, px(12)),
+    SC_SYNC,
+    SC_MOVE(px(472), 0, px(440)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gEasternAlhafraShip_LeaveTheDeckScript[] = {
-    39, 2, 4, 0x1d80000, 0, 0x1080000,
-    1, 4, 0x1b80000, 0, 0x1080000, 1,
-    38,
+    SC_ARG(2),
+    SC_MOVE(px(472), 0, px(264)),
+    SC_SYNC,
+    SC_MOVE(px(440), 0, px(264)),
+    SC_SYNC,
+    SC_FREE,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1639,5 +1662,5 @@ struct Trigger gSceneEvents[] = {
 };
 
 u32 gEasternAlhafraShip_NoteScript[] = {
-    38,
+    SC_FREE,
 };

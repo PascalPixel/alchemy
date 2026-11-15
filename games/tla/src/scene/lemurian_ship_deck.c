@@ -33,6 +33,7 @@
 #include "system/task.h"
 #include "call.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 extern s32 gLemurianShipDeck_WaveScroll;
@@ -1175,9 +1176,14 @@ s16 gLemurianShipDeck_Puddles[] = {
 };
 
 u32 gLemurianShipDeck_ReachPiersShipScript[] = {
-    39, 2, 4, 0x1070000, 0, 0xb00000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(263), 0, px(176)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gLemurianShipDeck_ReturnToShipScript[] = {

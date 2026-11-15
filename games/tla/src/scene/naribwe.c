@@ -15,6 +15,8 @@
 #include "field/field.h"
 #include "shared/tables.h"
 #include "field/sprite.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -366,16 +368,20 @@ s16 gNaribwe_UnusedList[] = {
 
 // The braziers burn, the fire's flames rising above them.
 u32 gNaribwe_BrazierBurns[] = {
-    39, 2, 17,
+    SC_ARG(2),
+    SC_END,
 };
 
 u32 gNaribwe_FlameRises[] = {
-    39, 0, 22, 26, 0, 23,
-    6, 0x180000, 17,
+    SC_ARG(0),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, px(24)),
+    SC_END,
 };
 
 u32 gNaribwe_IvyAnimation[] = {
-    39, 3, 17,
+    SC_ARG(3),
+    SC_END,
 };
 
 // The cell animation of the village's doors.

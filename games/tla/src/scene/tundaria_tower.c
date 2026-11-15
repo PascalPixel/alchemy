@@ -10,6 +10,8 @@
 /// pillars (room 6), Reveal opens an icy wall and Burst a brown one outside;
 /// Burst on the dead end by the chests (room 7) brings its rocks down.
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/field_effect/move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
@@ -1624,21 +1626,33 @@ void TundariaTower_LiftPillar(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gTundariaTower_Room6Pillars[] = {
@@ -1663,13 +1677,19 @@ s16 gSlideOnIce_AnglesByKey[] = {
 };
 
 u32 gTundariaTower_RubbleScript[] = {
-    0, 33, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gTundariaTower_DustRingScript[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_WAIT(44),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

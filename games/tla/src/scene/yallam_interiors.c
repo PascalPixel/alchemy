@@ -27,6 +27,8 @@
 #include "module/game/game.h"
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct YallamInteriorsObject {
   u8 unk00[6];
@@ -553,22 +555,48 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The villager who asks about children's songs wanders between two corners of
 /// the room.
 u32 gYallamInteriors_SongLoverWanders[] = {
-    22, 30, 131, 22, 16, 0x1999,
-    22, 15, 0x4ccc, 0x80010000, 39, 2,
-    4, 0x780000, 0, 0x680000, 1, 4,
-    0x800000, 0, 0x5c0000, 1, 0, 20,
-    39, 1, 0, 20, 39, 2,
-    4, 0x780000, 0, 0x680000, 1, 4,
-    0x580000, 0, 0x680000, 1, 0, 20,
-    39, 1, 0, 20, 13, 0xffff,
-    0xc0010000, 17, 22, 30, 129, 22,
-    16, 0x1999, 22, 15, 0x4ccc, 0x80010000,
-    39, 2, 4, 0x1b50000, 0, 0x7f0000,
-    1, 0, 20, 39, 1, 22,
-    3, 0x2000, 0, 60, 39, 2,
-    4, 0x1c50000, 0, 0x720000, 1, 0,
-    20, 39, 1, 22, 3, 0x2000,
-    0, 60, 13, 0xffff, 0xc0010000, 17,
+    SC_SET(SW_COLLISION, 131),
+    SC_SET(SW_ACCEL, Q16(0.1)),
+    SC_SET(SW_SPEED, Q16(0.3)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(104)),
+    SC_SYNC,
+    SC_MOVE(px(128), 0, px(92)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_WAIT(20),
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(104)),
+    SC_SYNC,
+    SC_MOVE(px(88), 0, px(104)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_ACCEL, Q16(0.1)),
+    SC_SET(SW_SPEED, Q16(0.3)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(437), 0, px(127)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(60),
+    SC_ARG(2),
+    SC_MOVE(px(453), 0, px(114)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

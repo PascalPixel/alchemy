@@ -35,6 +35,7 @@
 #include "module/field/field.h"
 #include "field/cell_target.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "call.h"
 #include "field/event_inline.h"
 #include "system/main_routine_work.h"
@@ -328,7 +329,9 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 // clang-format on
 

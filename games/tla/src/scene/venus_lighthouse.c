@@ -36,6 +36,8 @@
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "version.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// The scene's placed actors. At ENTRANCE_OPENING Felix and Jenna are placed as
 /// the first two rows of gActorPlacementsEntrance99 and keep their own ids.
@@ -1171,21 +1173,30 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gPushLeaderSteps[] = {                                                               
@@ -1304,18 +1315,11 @@ s32 gVenusLighthouse_StatueGlows[] = {
 };
 
 s32 gVenusLighthouse_ShrinkAndHide[] = {
-    22,
-    9,
-    0x9999,
-    22,
-    10,
-    0x9999,
-    22,
-    30,
-    0,
-    46,
-    (s32)SceneActor_ClearSingleChildField,
-    17,
+    SC_SET(SW_SCALE_X, 0x9999),
+    SC_SET(SW_SCALE_Y, 0x9999),
+    SC_SET(SW_COLLISION, 0),
+    SC_CALL((s32)SceneActor_ClearSingleChildField),
+    SC_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {

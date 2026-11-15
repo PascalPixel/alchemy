@@ -63,6 +63,7 @@ void Garoh_PuffAround(s32 id);
 #include "module/field/field_effect.h"
 #include "call.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 /// The village's people by night and by day (SceneId_Garoh1), numbering the
@@ -3397,7 +3398,7 @@ struct Trigger gGaroh_Room5Triggers[] = {
 s32 gGaroh_HowlCounter = 0;
 
 u32 gGaroh_PuffScript[] = {
-    38,
+    SC_FREE,
 };
 #undef ACTOR_MODE_THEN_WAIT
 #undef FOLLOW_LEADER

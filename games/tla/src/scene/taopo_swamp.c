@@ -24,6 +24,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "module/scene/lemurian_ship.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -1956,9 +1958,13 @@ u8 gTaopoSwamp_Room7HoleVents[] = {
 
 // clang-format off
 u32 gTaopoSwamp_PuffSteamScript[] = {
-    22, 26, 0, 39, 2, 0x80010000,
-    23, 6, 0x10000, 0, 1, 13,
-    30, 0xc0010000, 38,
+    SC_SET(SW_MOTION, 0),
+    SC_ARG(2),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, px(1)),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TO(1)),
+    SC_FREE,
 };
 
 u32 gTaopoSwamp_TremorPillarScript[] = {
@@ -1972,15 +1978,13 @@ u32 gTaopoSwamp_SparkFades[] = {
 };
 
 s32 gTaopoSwamp_DripAtRandomScript[] = {
-    46,
-    (s32)TaopoSwamp_LandDrop,
-    38,
+    SC_CALL((s32)TaopoSwamp_LandDrop),
+    SC_FREE,
 };
 
 s32 gTaopoSwamp_DripFromCeilingScript[] = {
-    46,
-    (s32)TaopoSwamp_LandDrip,
-    38,
+    SC_CALL((s32)TaopoSwamp_LandDrip),
+    SC_FREE,
 };
 
 s32 gTaopoSwamp_DropFalls[] = {

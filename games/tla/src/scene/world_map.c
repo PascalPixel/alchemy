@@ -45,6 +45,7 @@
 #include "macros.h"
 #include "shared/tables.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
 
 struct Actor;
 
@@ -2560,14 +2561,16 @@ s32 gData_02004f70[] = {
 };
 
 s32 gWorldMap_SparkScript[] = {
-    46,
-    (s32)WorldMap_RiseFromAnchor,
-    38,
+    SC_CALL((s32)WorldMap_RiseFromAnchor),
+    SC_FREE,
 };
 
 u32 gWorldMap_ParticleScript[] = {
-    0, 39, 22, 5, 0, 22,
-    7, 0, 0, 1, 38,
+    SC_WAIT(39),
+    SC_SET(SW_X, 0),
+    SC_SET(SW_Z, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gData_02004fc8[] = {

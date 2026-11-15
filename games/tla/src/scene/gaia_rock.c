@@ -34,6 +34,7 @@
 #include "actor_view.h"
 #include "module/field/event_commands.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 /// The two pillars Moved into the gaps: the first dropped in at the west end,
@@ -827,7 +828,7 @@ struct Trigger gGaiaRock_Triggers[] = {
 };
 
 u32 gGaiaRock_LeafScript[] = {
-    38,
+    SC_FREE,
 };
 
 s32 gGaiaRock_WindScript[] = {

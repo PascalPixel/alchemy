@@ -56,6 +56,7 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// The energy path block pushed into its gap at (63, 15), outside the aerie:
 /// the hover tile beyond it lights.
@@ -1936,15 +1937,21 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 // clang-format off
 u32 gJupiterLighthouse_KarstStepsUpScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioStepsUpScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioTurnsScript[] = {
-    1, 39, 1, 17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioFacesSouthScript[] = {

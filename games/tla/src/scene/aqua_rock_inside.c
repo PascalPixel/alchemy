@@ -20,6 +20,8 @@
 #include "field_sprite.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
@@ -2500,32 +2502,48 @@ void AquaRockInside_SetVentValue(s32 index, s32 value) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 u32 gAquaRockInside_SparkScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gAquaRockInside_TabletGlowScript[] = {
-    5, 0, 0xa00000, 0, 1, 38,
-    17,
+    SC_MOVE_BY(0, px(160), 0),
+    SC_SYNC,
+    SC_FREE,
+    SC_END,
 };
 
 s32 gAquaRockInside_RisingSparkScript[] = {                                                               
@@ -2540,27 +2558,39 @@ s32 gAquaRockInside_RiserScript[] = {
   };
 
 u32 gAquaRockInside_TabletRiseScript[] = {
-    5, 0, 0x180000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 u32 gAquaRockInside_PiersRiseScript[] = {
-    5, 0, 0x100000, 0, 1, 22,
-    26, 4, 17,
+    SC_MOVE_BY(0, px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
 };
 
 s32 gAquaRockInside_TabletSettleScript[] = {
-    22, 26, 0, 5, 0, -0x180000,
-    0, 1, 22, 26, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
 };
 
 s32 gAquaRockInside_PiersSettleScript[] = {
-    22, 26, 0, 5, 0, -0x100000,
-    0, 1, 22, 26, 3, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, -px(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 3),
+    SC_END,
 };
 
 u32 gAquaRockInside_SplashScript[] = {
-    0, 1, 13, 30, 0, 38,
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 
 u16 gAquaRockInside_FirstOutletSpots[] = {
@@ -2580,12 +2610,15 @@ u32 gAquaRockInside_SecondOutletLevels[] = {
 };
 
 u32 gAquaRockInside_StreamSplashScript[] = {
-    0, 20, 38,
+    SC_WAIT(20),
+    SC_FREE,
 };
 
 u32 gWaterDropScript[] = {
-    23, 6, 0x4000, 0, 1, 13,
-    30, 0, 38,
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 // clang-format on
 

@@ -26,6 +26,7 @@
 #include "system/system.h"
 #include "version.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "module/field/event_commands.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -559,7 +560,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
 u32 gGabombaCatacombs_SprayScript[] = {
-    0, 15, 3, 0, 1, 38,
+    SC_WAIT(15),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gFieldEffect_MediumScript[] = {                                                               

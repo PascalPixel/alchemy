@@ -2007,16 +2007,27 @@ struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
 };
 
 s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
-    23, 9, 0x3000, 23, 10, 0x3000,
-    23, 6, -0x1800, 0, 1, 13,
-    8, 0, (s32)0x80010000, 23, 9, -0x3000,
-    23, 10, -0x3000, 23, 6, 0x1800,
-    0, 1, 13, 12, (s32)0xc0010000, 3,
-    0, 1, 38,
+    SC_ADD(SW_SCALE_X, 0x3000),
+    SC_ADD(SW_SCALE_Y, 0x3000),
+    SC_ADD(SW_Y, -0x1800),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TOP),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -Q16_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE * 3 / 16),
+    SC_ADD(SW_Y, 0x1800),
+    SC_WAIT(1),
+    SC_LOOP(12, SC_TO(1)),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
-    0, 20, 3, 0, 1, 38,
+    SC_WAIT(20),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 // clang-format on
 

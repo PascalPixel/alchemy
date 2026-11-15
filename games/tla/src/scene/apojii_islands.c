@@ -7,6 +7,8 @@
 /// Its sea, falls and stone cycle their colours.
 #include "flags.h"
 #include "djinn_ids.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
@@ -951,30 +953,45 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gApojiiIslands_SplashScript[] = {
-    0, 20, 38,
+    SC_WAIT(20),
+    SC_FREE,
 };
 
 u32 gWaterDropScript[] = {
-    23, 6, 0x4000, 0, 1, 13,
-    30, 0, 38,
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_FREE,
 };
 
 s16 gGroundParticleFrames[] = {                                                               
@@ -999,60 +1016,30 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gApojiiIslands_PaceScript[] = {
-    22,
-    30,
-    PACE_SCRIPT_THIRD_WORD,
-    22,
-    16,
-    0x3333,
-    22,
-    15,
-    0x9999,
-    (s32)0x80010000,
-    39,
-    2,
-    4,
-    0x1280000,
-    0,
-    0x880000,
-    1,
-    4,
-    0x1280000,
-    0,
-    0x680000,
-    1,
-    39,
-    1,
-    0,
-    60,
-    0,
-    10,
-    0,
-    60,
-    39,
-    2,
-    4,
-    0x1280000,
-    0,
-    0x880000,
-    1,
-    4,
-    0x1180000,
-    0,
-    0x880000,
-    1,
-    39,
-    1,
-    0,
-    60,
-    0,
-    10,
-    0,
-    60,
-    13,
-    0xffff,
-    (s32)0xc0010000,
-    17,
+    SC_SET(SW_COLLISION, PACE_SCRIPT_THIRD_WORD),
+    SC_SET(SW_ACCEL, Q16(0.2)),
+    SC_SET(SW_SPEED, Q16(0.6)),
+    SC_LABEL(1),
+    SC_ARG(2),
+    SC_MOVE(px(296), 0, px(136)),
+    SC_SYNC,
+    SC_MOVE(px(296), 0, px(104)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(60),
+    SC_WAIT(10),
+    SC_WAIT(60),
+    SC_ARG(2),
+    SC_MOVE(px(296), 0, px(136)),
+    SC_SYNC,
+    SC_MOVE(px(280), 0, px(136)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(60),
+    SC_WAIT(10),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

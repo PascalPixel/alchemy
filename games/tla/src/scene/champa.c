@@ -34,6 +34,8 @@
 #include "call.h"
 #include "version.h"
 #include "system/frame.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 struct Actor;
 extern struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[];
@@ -1614,5 +1616,5 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
 };
 
 u32 gChampa_GlareSparkScript[] = {
-    38,
+    SC_FREE,
 };

@@ -29,6 +29,7 @@
 #include "scene_ids.h"
 #include "graphics/resource.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "text/msg_ids.h"
 
 extern u32 gLoho_VillagerMovesNorth[];
@@ -792,14 +793,26 @@ s32 Scene_PrepareMap(void) {
 
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {
-    39, 2, 48, 0x21b0000, 0x1470000, 1,
-    48, 0x2470000, 0x1470000, 1, 48, 0x2470000,
-    0x12c0000, 1, 3, 0, 150, 22,
-    26, 1, 2, 0x2460000, 0, 0x10a0000,
-    4, 0x2460000, 0, 0xf80000, 1, 48,
-    0x23a0000, 0xf80000, 1, 48, 0x23a0000, 0x1160000,
-    1, 39, 1, 22, 3, 0x6000,
-    17,
+    SC_ARG(2),
+    SC_MOVE_XZ(px(539), px(327)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(583), px(327)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(583), px(300)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_WAIT(150),
+    SC_SET(SW_MOTION, 1),
+    SC_POSITION(px(582), 0, px(266)),
+    SC_MOVE(px(582), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(570), px(248)),
+    SC_SYNC,
+    SC_MOVE_XZ(px(570), px(278)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_END,
 };
 
 s32 gLoho_SecondMinerStepsUp[] = {
@@ -823,10 +836,16 @@ s32 gLoho_ThirdMinerStepsUp[] = {
 };
 
 u32 gLoho_FirstMinerWalksBack[] = {
-    39, 2, 4, 0x23a0000, 0, 0xf80000,
-    1, 4, 0x2470000, 0, 0xf80000, 1,
-    4, 0x2460000, 0, 0x10a0000, 1, 3,
-    0, 20, 17,
+    SC_ARG(2),
+    SC_MOVE(px(570), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(583), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(582), 0, px(266)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_WAIT(20),
+    SC_END,
 };
 
 u32 gLoho_FirstMinerFetchesCannon[] = {

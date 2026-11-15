@@ -82,6 +82,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "shared/tundaria_tower.h"
 #include "system/task.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = FieldActor_Create(kind, x, y, z);
@@ -2914,13 +2915,21 @@ s32 gPushLeaderSteps[] = {
   };
 
 u32 gMagmaRockInside_EmberScript[] = {
-    39, 2, 0, 18, 3, 0,
-    1, 38, 17,
+    SC_ARG(2),
+    SC_WAIT(18),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gMagmaRockInside_FlameEmberScript[] = {
-    39, 3, 0, 23, 3, 0,
-    1, 38, 17,
+    SC_ARG(3),
+    SC_WAIT(23),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gMagmaRockInside_PlatformPath1[] = {                                                               
@@ -3043,7 +3052,9 @@ s16 gMagmaRockInside_Room7Pillars[] = {
 };
 
 u32 gMagmaRockInside_FlameScript[] = {
-    0, 6, 38, 17,
+    SC_WAIT(6),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gMagmaRockInside_TorchScript[] = {                                                               

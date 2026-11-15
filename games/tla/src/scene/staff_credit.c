@@ -43,6 +43,8 @@
 #include "system/task.h"
 #include "macros.h"
 #include "shared/tables.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 extern s32 gStaffCredit_BeamsLightPalette[];
 
@@ -961,15 +963,17 @@ void Gauge_End(void) {
 }
 
 s32 gWorldMap_SparkScript[] = {
-    46,
-    (s32)WorldMap_RiseFromAnchor,
-    38,
+    SC_CALL((s32)WorldMap_RiseFromAnchor),
+    SC_FREE,
 };
 
 // clang-format off
 u32 gWorldMap_ParticleScript[] = {
-    0, 39, 22, 5, 0, 22,
-    7, 0, 0, 1, 38,
+    SC_WAIT(39),
+    SC_SET(SW_X, 0),
+    SC_SET(SW_Z, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gStaffCredit_ColorModes[] = {

@@ -37,6 +37,7 @@
 #include "system/vector3.h"
 #include "shared/tables.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/shrine_of_the_sea_god.h"
 
@@ -2629,8 +2630,8 @@ u32 gIslets_SpinScript[] = {
 s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -2771,7 +2772,10 @@ s32 gIslets_BirdFliesOffScript[] = {
 };
 
 u32 gSmokeScript[] = {
-    0, 15, 3, 0, 1, 38,
+    SC_WAIT(15),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gIslets_TurtleSwimsScript[] = {                                                               

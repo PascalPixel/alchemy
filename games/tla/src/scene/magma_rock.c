@@ -2389,13 +2389,21 @@ s32 gPushLeaderSteps[] = {
   };
 
 u32 gMagmaRock_EmberScript[] = {
-    39, 2, 0, 18, 3, 0,
-    1, 38, 17,
+    SC_ARG(2),
+    SC_WAIT(18),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gMagmaRock_FlameEmberScript[] = {
-    39, 3, 0, 23, 3, 0,
-    1, 38, 17,
+    SC_ARG(3),
+    SC_WAIT(23),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gMagmaRock_Room1Pillars[] = {

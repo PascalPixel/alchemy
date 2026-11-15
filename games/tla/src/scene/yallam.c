@@ -26,6 +26,8 @@
 #include "system/task.h"
 #include "macros.h"
 #include "shared/tables.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void Yallam_SingMoonSong(void);
 
@@ -1840,17 +1842,27 @@ void Yallam_TalkAboutSongCircles(void);
 extern s32 gYallam_PillarShadowSunk[];
 
 s32 gYallam_PillarRaised[] = {
-    39, 3, 22, 26, 0, 23, 6, 0x20000, 46, (s32)Yallam_HideSprite, 17,
+    SC_ARG(3),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, px(2)),
+    SC_CALL((s32)Yallam_HideSprite),
+    SC_END,
 };
 
 s32 gYallam_PillarSunk[] = {
-    22, 26, 0, 23, 6, -0x100000, 46, (s32)Yallam_HideSprite, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, -px(16)),
+    SC_CALL((s32)Yallam_HideSprite),
+    SC_END,
 };
 
 s32 gYallam_PillarShadowSunk[] = {
-    22, 9, 0x9999, 22, 10,        0x9999, 22,
-    26, 0, 23,     6,  -0x100000, 46,     (s32)Yallam_HideSprite,
-    17,
+    SC_SET(SW_SCALE_X, 0x9999),
+    SC_SET(SW_SCALE_Y, 0x9999),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, -px(16)),
+    SC_CALL((s32)Yallam_HideSprite),
+    SC_END,
 };
 
 // clang-format off

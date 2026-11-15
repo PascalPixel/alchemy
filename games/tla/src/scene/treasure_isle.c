@@ -30,6 +30,8 @@
 #include "system/task.h"
 #include "edition.h"
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 
@@ -564,21 +566,33 @@ void TreasureIsle_LiftThirdRock(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gTreasureIsle_RockDust[] = {
@@ -649,7 +663,9 @@ u32 gSceneExits[] = {
 };
 
 u32 gTreasureIsle_PostStill[] = {
-    39, 1, 0, 1, 17,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct ActorPlacement gTreasureIsle_Placements[] = {                                             
@@ -683,8 +699,10 @@ struct ActorPlacement gTreasureIsle_Room3Placements[] = {
 };
 
 u32 gTreasureIsle_LiftRockScale[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    0, 1, 17,
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct ActorPlacement gTreasureIsle_Room4Placements[] = {

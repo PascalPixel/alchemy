@@ -26,6 +26,8 @@
 #include "actor.h"
 #include "call.h"
 #include "version.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 // Talks each person gives once, the first time spoken to.
 #define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
@@ -520,9 +522,14 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
 
 // clang-format off
 u32 gAlhafraInteriors_TravelersWalkOffScript[] = {
-    39, 2, 4, 0x2080000, 0, 0x1480000,
-    1, 4, 0x2080000, 0, 0x1380000, 1,
-    4, 0x2280000, 0, 0x1380000, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(520), 0, px(328)),
+    SC_SYNC,
+    SC_MOVE(px(520), 0, px(312)),
+    SC_SYNC,
+    SC_MOVE(px(552), 0, px(312)),
+    SC_SYNC,
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -18,6 +18,8 @@
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set once Move has left the second room's first pillar on its ledge, cell
 /// (16, 43).
@@ -1935,21 +1937,33 @@ void AirsRock_MoveSecondPillar(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gAirsRock_Room2Pillars[] = {
@@ -1963,30 +1977,34 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gAirsRock_WindStoneScript[] = {
-    22,
-    10,
-    0x18000,
-    39,
-    2,
-    46,
-    (s32)AirsRock_ClearScriptedActorSpriteFlags,
-    17,
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_ARG(2),
+    SC_CALL((s32)AirsRock_ClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
 u32 gAirsRock_WhirlwindFadesScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 
 u32 gAirsRock_WhirlwindRisesScript[] = {
-    0, 60, 39, 5, 0, 12,
-    38,
+    SC_WAIT(60),
+    SC_ARG(5),
+    SC_WAIT(12),
+    SC_FREE,
 };
 
 s32 gAirsRock_RubbleScript[] = {
-    0, 1, 23, 9, -1310, 23,
-    10, -1310, 13, 32, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38,
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, -1310),
+    SC_ADD(SW_SCALE_Y, -1310),
+    SC_LOOP(32, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s16 gAirsRock_FrozenPuddle[] = {

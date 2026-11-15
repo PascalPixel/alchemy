@@ -3272,15 +3272,19 @@ void Kibombo_StopTrackingLeader(void);
 
 // clang-format off
 u32 gKibombo_EmberScript[] = {
-    0, 28, 22, 38, 0, 0,
-    1, 3, 0, 1, 38,
+    SC_WAIT(28),
+    SC_SET(SW_HOOK, 0),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gKibombo_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -1024),                                               
-      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -3313,8 +3317,8 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_WAIT(1),
     SC_LOOP(10, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -2048),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_CALL(Kibombo_SpinSprite),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
@@ -3322,9 +3326,13 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
 };
 
 u32 gKibombo_PartyGathersScript[] = {
-    39, 2, 4, 0x580000, 0, 0x1880000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(88), 0, px(392)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gKibombo_LeaderStepsUpScript[] = {
@@ -3363,9 +3371,13 @@ u32 gKibombo_ShebaJoinsPiersScript[] = {
   };
 
 u32 gKibombo_PartyFollowsScript[] = {
-    39, 2, 4, 0x380000, 0, 0x1740000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(56), 0, px(372)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gKibombo_JennaAtDeadEndScript[] =                                                                 
@@ -3399,16 +3411,18 @@ u32 gKibombo_PiersAtDeadEndScript[] =
   };
 
 u32 gKibombo_PartyLeavesDeadEndScript[] = {
-    39, 2, 4, 0x11c0000, 0, 0xbc0000,
-    1, 39, 1, 3, 0, 1,
-    17,
+    SC_ARG(2),
+    SC_MOVE(px(284), 0, px(188)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gKibombo_JawsSettleScript[] = {
-    46,
-    (s32)Kibombo_KeepShakeCentre,
-    46,
-    (s32)Kibombo_ShakeInPlace,
+    SC_CALL((s32)Kibombo_KeepShakeCentre),
+    SC_CALL((s32)Kibombo_ShakeInPlace),
 };
 
 s32 gKibombo_JawsOpenScript[] = {

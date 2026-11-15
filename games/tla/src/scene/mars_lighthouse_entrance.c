@@ -2822,7 +2822,8 @@ u32 gSceneExits[] = {
 };
 
 u32 gMarsLighthouseEntrance_IceConeScript[] = {
-    39, 7, 17,
+    SC_ARG(7),
+    SC_END,
 };
 
 struct ActorPlacement gMarsLighthouseEntrance_Placements[] = {

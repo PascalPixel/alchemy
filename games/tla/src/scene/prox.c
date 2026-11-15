@@ -11,6 +11,7 @@
 /// farewell at the south gate before the credits.
 #include "../field/object/set_sprite_priority.c"
 #include "field/sprite.h"
+#include "objcmd.h"
 
 #include "../field/field_effect/move.c"
 #include "types.h"
@@ -2297,27 +2298,43 @@ extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gProx_EnterDoorScript[] = {
-    22, 26, 0, 23, 7, -0x8000,
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 24, 0, 17,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
 };
 
 s16 gSlideOnIce_SteerAngles[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
@@ -2349,21 +2366,36 @@ u32 gProx_ThirdChildRuns[] = {
   };
 
 u32 gProx_KradenStepsUpToPuelle[] = {
-    39, 2, 4, 0xb00000, 0, 0x9a0000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xb000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(176), 0, px(154)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gProx_IsaacStepsUpToPuelle[] = {
-    39, 2, 4, 0xa00000, 0, 0x9a0000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(160), 0, px(154)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gProx_StepBackFromPuelle[] = {
-    39, 2, 4, 0x900000, 0, 0x9a0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(144), 0, px(154)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -2798,87 +2830,158 @@ struct Trigger gProx_Room6Triggers[] = {
 };
 
 u32 gProx_IsaacStepsForward[] = {
-    39, 2, 4, 0x780000, 0, 0xc40000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x4000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(196)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gProx_KradenStepsForward[] = {
-    39, 2, 4, 0x980000, 0, 0xc40000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x5000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(196)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gProx_SecondParentWalksSouth[] = {
-    39, 2, 4, 0x880000, 0, 0x15c0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(136), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_ThirdParentWalksSouth[] = {
-    39, 2, 4, 0x980000, 0, 0x15c0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_LeftFileWalksSouth[] = {
-    39, 2, 4, 0x880000, 0, 0xf80000,
-    1, 4, 0x880000, 0, 0x15c0000, 1,
-    39, 1, 0, 1, 3, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(136), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(136), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_RightFileWalksSouth[] = {
-    39, 2, 4, 0x980000, 0, 0xf80000,
-    1, 4, 0x980000, 0, 0x15c0000, 1,
-    39, 1, 0, 1, 3, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(152), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_GaretWalksSouth[] = {
-    39, 2, 4, 0x980000, 0, 0xf80000,
-    1, 4, 0x980000, 0, 0x1100000, 1,
-    39, 1, 0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(248)),
+    SC_SYNC,
+    SC_MOVE(px(152), 0, px(272)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_JennaWalksSouth[] = {
-    39, 2, 4, 0xa80000, 0, 0x1100000,
-    1, 39, 1, 0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(168), 0, px(272)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_IsaacWalksSouth[] = {
-    39, 2, 4, 0x780000, 0, 0xdc0000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x2000, 0, 5, 22, 3,
-    0, 0, 20, 22, 3, 0xe000,
-    0, 5, 22, 3, 0xc000, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(120), 0, px(220)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_LeaderWalksSouth[] = {
-    39, 2, 4, 0x8c0000, 0, 0xdc0000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x6000, 0, 5, 22, 3,
-    0x8000, 0, 20, 22, 3, 0xa000,
-    0, 5, 22, 3, 0xc000, 0,
-    1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(140), 0, px(220)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_KradenWalksSouth[] = {
-    39, 2, 4, 0x980000, 0, 0xf00000,
-    1, 39, 1, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(240)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gProx_JennaRunsAhead[] = {
-    39, 2, 4, 0xa80000, 0, 0x15c0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(168), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gProx_GaretRunsAhead[] = {
-    39, 2, 4, 0x980000, 0, 0x15c0000,
-    1, 39, 1, 0, 1, 3,
-    0, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(px(152), 0, px(348)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 #undef FIELD_AT

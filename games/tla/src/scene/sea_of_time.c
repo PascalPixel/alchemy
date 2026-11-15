@@ -8,6 +8,8 @@
 /// (SeaOfTime_CrossToLemuria).
 
 #include "../field/object/set_sprite_priority.c"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 #include "../field/object/prepare_object.c"
 #include "flags.h"
@@ -1326,21 +1328,33 @@ s32 Scene_PrepareMap(void) {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
@@ -1362,9 +1376,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSeaOfTime_ShipRests[] = {
-    46,
-    (s32)SeaOfTime_HideSprite,
-    17,
+    SC_CALL((s32)SeaOfTime_HideSprite),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

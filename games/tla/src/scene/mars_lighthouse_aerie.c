@@ -48,6 +48,7 @@
 #include "system/task.h"
 #include "system/vector3.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
 /// fire burns at the aerie from then on.
@@ -3344,14 +3345,18 @@ u32 gMarsLighthouseAerie_KradenApproachScript[] =
   };
 
 s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 64, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(64, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
-    SC_ADD(SW_SCALE_X, 512),
-    SC_ADD(SW_SCALE_Y, 512),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 128),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 128),
     SC_ADD(SW_Y, 0x2000),
     SC_WAIT(1),
     SC_LOOP(128, SC_TOP),
@@ -3486,20 +3491,34 @@ s32 gMarsLighthouseAerie_BeamNarrowScript[] = {
   };
 
 u32 gMarsLighthouseAerie_BeamShootUpScript[] = {
-    23, 6, 0x40000, 0, 1, 13,
-    30, 0, 3, 0, 1, 17,
+    SC_ADD(SW_Y, px(4)),
+    SC_WAIT(1),
+    SC_LOOP(30, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_BeamRiseScript[] = {
-    23, 6, 0x20000, 0, 1, 13,
-    160, 0, 3, 0, 1, 17,
+    SC_ADD(SW_Y, px(2)),
+    SC_WAIT(1),
+    SC_LOOP(160, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    39, 1, (s32)0x80010000, 23, 6, -0x10000,
-    0, 1, 13, 16, (s32)0xc0010000, 3,
-    0, 1, 38,
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_ARG(1),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, -px(1)),
+    SC_WAIT(1),
+    SC_LOOP(16, SC_TO(1)),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
@@ -3507,7 +3526,7 @@ s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -4096),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_LOOP(SC_FOREVER, SC_TOP),

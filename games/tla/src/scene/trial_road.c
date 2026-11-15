@@ -45,6 +45,8 @@
 #include "field_sprite.h"
 #include "field_event.h"
 #include "graphics/vram_tab.h"
+#include "objcmd.h"
+#include "fixed_math.h"
 
 void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
@@ -3656,15 +3658,13 @@ s32 TrialRoad_RivalIsWaiting(void) {
 void TrialRoad_DoNothing(void) {}
 
 s32 gTrialRoad_SettleScript[] = {
-    46,
-    (s32)TrialRoad_SettleOnGround,
-    17,
+    SC_CALL((s32)TrialRoad_SettleOnGround),
+    SC_END,
 };
 
 s32 gTrialRoad_PillarTopScript[] = {
-    46,
-    (s32)TrialRoad_FollowPillar,
-    17,
+    SC_CALL((s32)TrialRoad_FollowPillar),
+    SC_END,
 };
 
 u32 gTrialRoad_PoundPartners[] = {
@@ -3673,26 +3673,40 @@ u32 gTrialRoad_PoundPartners[] = {
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_MediumScript[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gFieldEffect_LongScript[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+    SC_END,
 };
 
 u32 gTrialRoad_GaspHopScript[] = {
-    23, 3, 0x1000, 0, 1, 13,
-    0xffff, 0,
+    SC_ADD(SW_FACING, FACING_EAST_SOUTHEAST),
+    SC_WAIT(1),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 void (*gTrialRoad_StageSetUps[])(void) = {
@@ -3731,63 +3745,117 @@ s8 gTrialRoad_KeyStages[] = {
 };
 
 u32 gTrialRoad_RightKnightEntersScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0x1380000, 22, 7, 0x2a80000,
-    39, 5, 4, 0x1380000, 0, 0x2780000,
-    1, 4, 0x1580000, 0, 0x2680000, 1,
-    4, 0x1980000, 0, 0x2680000, 1, 4,
-    0x1a80000, 0, 0x2580000, 1, 4, 0x1a80000,
-    0, 0x1c80000, 1, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(312)),
+    SC_SET(SW_Z, px(680)),
+    SC_ARG(5),
+    SC_MOVE(px(312), 0, px(632)),
+    SC_SYNC,
+    SC_MOVE(px(344), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(408), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(424), 0, px(600)),
+    SC_SYNC,
+    SC_MOVE(px(424), 0, px(456)),
+    SC_SYNC,
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightEntersScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0xe80000, 22, 7, 0x2a80000,
-    39, 5, 4, 0xe80000, 0, 0x2780000,
-    1, 4, 0xc80000, 0, 0x2680000, 1,
-    4, 0x880000, 0, 0x2680000, 1, 4,
-    0x780000, 0, 0x2580000, 1, 4, 0x780000,
-    0, 0x1c80000, 1, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(232)),
+    SC_SET(SW_Z, px(680)),
+    SC_ARG(5),
+    SC_MOVE(px(232), 0, px(632)),
+    SC_SYNC,
+    SC_MOVE(px(200), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(136), 0, px(616)),
+    SC_SYNC,
+    SC_MOVE(px(120), 0, px(600)),
+    SC_SYNC,
+    SC_MOVE(px(120), 0, px(456)),
+    SC_SYNC,
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightToChestScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    22, 5, 0x780000, 22, 7, 0x1280000,
-    39, 5, 4, 0x780000, 0, 0xd80000,
-    1, 4, 0x880000, 0, 0xc80000, 1,
-    4, 0xd80000, 0, 0xc80000, 1, 4,
-    0xe80000, 0, 0xb80000, 1, 0, 2,
-    22, 3, 0xc000, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_SET(SW_X, px(120)),
+    SC_SET(SW_Z, px(296)),
+    SC_ARG(5),
+    SC_MOVE(px(120), 0, px(216)),
+    SC_SYNC,
+    SC_MOVE(px(136), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(216), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(184)),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_END,
 };
 
 u32 gTrialRoad_LeftKnightLeavesScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    39, 5, 4, 0xd80000, 0, 0xa80000,
-    1, 4, 0xe80000, 0, 0x980000, 1,
-    4, 0xe80000, 0, 0x880000, 1, 22,
-    5, 0, 22, 7, 0, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_ARG(5),
+    SC_MOVE(px(216), 0, px(168)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(152)),
+    SC_SYNC,
+    SC_MOVE(px(232), 0, px(136)),
+    SC_SYNC,
+    SC_SET(SW_X, 0),
+    SC_SET(SW_Z, 0),
+    SC_END,
 };
 
 u32 gTrialRoad_RightKnightToChestsScript[] = {
-    22, 15, 0x10000, 22, 16, 0x8000,
-    22, 5, 0x1580000, 22, 7, 0xb80000,
-    39, 2, 4, 0x1380000, 0, 0xa80000,
-    1, 39, 1, 0, 2, 22,
-    3, 0x8000, 0, 2, 22, 3,
-    0x6000, 0, 2, 22, 3, 0x4000,
-    17,
+    SC_SET(SW_SPEED, Q16(1)),
+    SC_SET(SW_ACCEL, Q16(0.5)),
+    SC_SET(SW_X, px(344)),
+    SC_SET(SW_Z, px(184)),
+    SC_ARG(2),
+    SC_MOVE(px(312), 0, px(168)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
 };
 
 u32 gTrialRoad_RightKnightLeavesScript[] = {
-    22, 15, 0x18000, 22, 16, 0x10000,
-    39, 5, 4, 0x1780000, 0, 0xc80000,
-    1, 4, 0x1d80000, 0, 0xc80000, 1,
-    4, 0x1e80000, 0, 0xb80000, 1, 4,
-    0x1e80000, 0, 0x880000, 1, 39, 1,
-    0, 2, 22, 3, 0xa000, 0,
-    2, 22, 3, 0x8000, 0, 2,
-    22, 3, 0x6000, 0, 2, 22,
-    3, 0x4000, 17,
+    SC_SET(SW_SPEED, Q16(1.5)),
+    SC_SET(SW_ACCEL, Q16(1)),
+    SC_ARG(5),
+    SC_MOVE(px(376), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(472), 0, px(200)),
+    SC_SYNC,
+    SC_MOVE(px(488), 0, px(184)),
+    SC_SYNC,
+    SC_MOVE(px(488), 0, px(136)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(2),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
 };
 // clang-format on
 #undef MARKER

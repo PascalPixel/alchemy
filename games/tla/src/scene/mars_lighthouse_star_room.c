@@ -2504,21 +2504,34 @@ s32 gMarsLighthouseStarRoom_LightRiseScript[] = {
 };
 
 s32 gMarsLighthouseStarRoom_LightSinkScript[] = {
-    23, 9, -2048, 23, 10, -2048,
-    23, 6, 0x4000, 0, 1, 13,
-    24, 0, 3, 0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_Y, 0x4000),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gMarsLighthouseStarRoom_AgatioDragonShrinkScript[] = {
-    23, 9, -1024, 23, 10, -1024,
-    0, 1, 13, 40, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gMarsLighthouseStarRoom_KarstDragonShrinkScript[] = {
-    23, 9, 0x400, 23, 10, -1024,
-    0, 1, 13, 40, 0, 3,
-    0, 1, 17,
+    SC_ADD(SW_SCALE_X, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_CMD_03,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 

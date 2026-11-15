@@ -1901,10 +1901,9 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 #undef BOW_NEXT_PHASE
 
 /* VIEW(f0e2718): variable gSceneLocalState as struct TouchCopies
- * gTileCopies_RestoreState;
- * system/ram_buffer.h has u8 gSceneLocalState[]; tried as the one declaration,
- * the restore's address is shared with the copies above and its loop moves (29
- * lines in tla-en). */
+ * gTileCopies_RestoreState; system/ram_buffer.h has u8 gSceneLocalState[];
+ * tried as the one declaration, the restore's address is shared with the copies
+ * above and its loop moves (29 lines in tla-en). */
 extern struct TouchCopies gTileCopies_RestoreState __asm__("gSceneLocalState");
 
 /// Makes again each copy TileCopies_CopyTouchedCells recorded: copies the cell

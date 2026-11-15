@@ -23,7 +23,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"
-#include "field/map_grid.h"
 #include "system/iwram_call.h"
 #include "system/task.h"
 

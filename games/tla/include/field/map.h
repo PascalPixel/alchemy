@@ -24,10 +24,14 @@ struct ReflectionAnimation {
 };
 
 struct WorldMapBlock {
-  u8 unused[2]; ///< no code names it
-  u8 unk2;
-  u8 unusedB; ///< no code names it
+  u8 unused[2];        ///< no code names it
+  u8 place;            ///< WORLD_MAP_NO_PLACE where the map has no block
+  u8 unusedAfterPlace; ///< the terrain kind and flags
+                       ///< (WorldMap_GetBattleEnvironment)
 };
+
+/// WorldMapBlock.place where the world map has no block: nothing may go there.
+#define WORLD_MAP_NO_PLACE 255
 
 struct WorldMover {
   u8 unused[12]; ///< no code names it

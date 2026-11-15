@@ -42,7 +42,12 @@ enum ActorPriorityFlag {
   ACTOR_PRIORITY_NOT_DRAWN = 0x10, ///< placed nowhere, as if off screen
   /// With ACTOR_PRIORITY_AUTOMATIC, takes the priority of the cells under it
   /// even where the ground in front rises, which would put it behind.
-  ACTOR_PRIORITY_IGNORES_RISES = 0x20
+  ACTOR_PRIORITY_IGNORES_RISES = 0x20,
+  /// The actor steps up onto platform actors a cell below it, as the leader
+  /// does onto pushed blocks and statues.
+  ACTOR_PRIORITY_WALKS_ON_PLATFORMS = 0x40,
+  /// Others with ACTOR_PRIORITY_WALKS_ON_PLATFORMS may stand on it.
+  ACTOR_PRIORITY_PLATFORM = 0x80
 };
 
 /// Actor.motionFlags bits.

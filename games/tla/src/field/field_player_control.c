@@ -15,8 +15,6 @@
 #include "macros.h"
 #include "version.h"
 
-// The heading of each direction-pad combination, -1 for none.
-
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
@@ -32,6 +30,22 @@ enum FieldShortcutKind {
 
 #define FIELD_SHORTCUT_KEYS gKeysHeld
 #define WORLD_MAP_PROBE_RADIUS px(8)
+
+// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+// point, as The Broken Seal's; on the world map this game runs with twice the
+// walk's acceleration.
+#define FIELD_WALK_SPEED px(1)         ///< 1 pixel a frame
+#define FIELD_RUN_SPEED (px(3) / 2)    ///< 1.5, with a dash key held
+#define FIELD_ACCELERATION (px(1) / 4) ///< a quarter pixel faster each frame
+#define FIELD_FAST_WALK_SPEED px(4)    ///< 4, B held with FLAG_FAST_WALK
+#define FIELD_FAST_WALK_ACCELERATION px(1)
+#define WORLD_MAP_WALK_SPEED (px(1) / 2) ///< half a pixel a frame
+#define WORLD_MAP_RUN_SPEED px(1)        ///< 1, with a dash key held
+#define WORLD_MAP_RUN_ACCELERATION (px(1) / 2)
+#define WORLD_MAP_ACCELERATION (px(1) / 4)
+/// The world map camera turns toward the pad's yaw by at most about 2.8
+/// degrees a frame.
+#define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
 /// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
 /// Actor_MoveOnWorldMap).
 enum PlayerStepBlock {
@@ -69,28 +83,28 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   struct Actor *other;
   struct FieldWork *work;
 
-  movementAnimation = 2;
+  movementAnimation = ANIM_WALK;
   collision = 0;
   pushed = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
-    object->acceleration = 0xccc;
-    movementAnimation = 5;
+    object->acceleration = px(1) / 20;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
     object->speedLimit = px(1);
-    object->acceleration = 0xccc;
+    object->acceleration = px(1) / 20;
   }
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if (angle == 0xffff) {
-    collision |= 4;
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
     goto counted;
   }
   // DEAD: collision is already 0 here; the ROM keeps its clearing.
   collision = 0;
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(8), angle, &position);
-  if (object->priorityFlags & 0x40) {
+  if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     s32 withinHalfCell;
 
     onObject = 0;
@@ -102,7 +116,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
 
       if (other->script == NULL)
         continue;
-      if (!(other->priorityFlags & 0x80))
+      if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
         continue;
       if (other == object)
         continue;
@@ -281,13 +295,13 @@ counted:
       work->blockedSteps = 0;
   }
   if (pushed != 0) {
-    Actor_SelectAnimation(object, 8);
+    Actor_SelectAnimation(object, ANIM_PUSH);
   } else if (collision != 0) {
     s32 action;
 
-    action = 9;
+    action = ANIM_LEADER_LOOK_AROUND;
     if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
-      action = 22;
+      action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(object, action);
   } else {
     Actor_SelectAnimation(object, movementAnimation);
@@ -444,7 +458,6 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 #undef SAME_CELL
 
 extern struct MapCell gMapGridCellBuffer[];
-// The heading of each direction-pad combination, -1 for none.
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -475,30 +488,30 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   u32 attribute;
 
   sprite = object->sprite;
-  movementAnimation = 2;
+  movementAnimation = ANIM_WALK;
   onObject = 0;
   work = Ram_HeapSlots->fieldWork;
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapGrid;
   collision = 0;
   pushed = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {
-    object->speedLimit = px(3) / 2;
-    object->acceleration = px(1) / 4;
-    movementAnimation = 5;
+    object->speedLimit = FIELD_RUN_SPEED;
+    object->acceleration = FIELD_ACCELERATION;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
-    object->speedLimit = px(1);
-    object->acceleration = px(1) / 4;
+    object->speedLimit = FIELD_WALK_SPEED;
+    object->acceleration = FIELD_ACCELERATION;
   }
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
-    collision |= 4;
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
     goto counted;
   }
   collision = 0;
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(8), (u16)angle, &position);
-  if (object->priorityFlags & 0x40) {
+  if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     // Standing on another object a cell below: the step is clear when the
     // object under the step (and, after Japanese, both its sides) is a still
     // one.
@@ -515,7 +528,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
 
       if (other->script == NULL)
         continue;
-      if (!(other->priorityFlags & 0x80))
+      if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
         continue;
       if (other == object)
         continue;
@@ -689,13 +702,13 @@ counted:
     work->heldKeys = gInput.held;
   }
   if (pushed != 0) {
-    Actor_SelectAnimation(object, 8);
+    Actor_SelectAnimation(object, ANIM_PUSH);
   } else if (collision != 0) {
     s32 action;
 
-    action = 9;
+    action = ANIM_LEADER_LOOK_AROUND;
     if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
-      action = 22;
+      action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(object, action);
   } else {
     Actor_SelectAnimation(object, movementAnimation);

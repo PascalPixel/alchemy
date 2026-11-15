@@ -47,6 +47,22 @@ enum FieldRaisedTrigger {
 /// FLAG_MENUS_RAISE_TRIGGER is set, as The Broken Seal's.
 #define FIELD_RAISED_TRIGGER_MENUS 250
 
+/// The raised triggers the world map's movement passes to its scene, whose
+/// events change how the party travels.
+enum WorldMapRaisedTrigger {
+  /// A on the world map: WorldMap_BoardShip, the party boards the ship
+  /// where it lies.
+  WORLD_MAP_RAISED_BOARD_SHIP = 251,
+  /// A while sailing: WorldMap_LeaveShip, the party goes ashore.
+  WORLD_MAP_RAISED_LEAVE_SHIP = 252,
+  /// A dash key while sailing, once the ship has its wings:
+  /// WorldMap_SetUpFlyingShip, the ship takes off.
+  WORLD_MAP_RAISED_TAKE_OFF = 253,
+  /// The winged ship come down to the water: WorldMap_SetUpShip, it sails
+  /// again.
+  WORLD_MAP_RAISED_LAND = 254
+};
+
 /// How the actors are moved and drawn (FieldWork.mode, ActorSystem_Initialize).
 enum ActorSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.

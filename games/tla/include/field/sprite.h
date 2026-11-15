@@ -184,6 +184,19 @@ enum ActorAnimation {
   ANIM_WALK = 2,
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
+  /// Running, leaning forward, four frames a step to the walk's six. This and
+  /// the leader's other poses below are as the leader's sprite draws them, as
+  /// The Broken Seal numbers them.
+  ANIM_LEADER_RUN = 5,
+  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  /// The leader leaning into what it pushes, as when it walks into a pushable
+  /// actor (Actor_UpdatePlayerControl).
+  ANIM_PUSH = 8,
+  /// ANIM_STAND's idle with more glances to each side, as when the leader's
+  /// step is blocked.
+  ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the
   /// leader turning: an arrival grows from a small figure seen side-on to full
   /// size facing the player, a leaving turns from his back to side-on as he

@@ -140,6 +140,26 @@ struct WorldPosition {
   s32 y;
 };
 
+/// The world map's collision values (WorldMap_GetCollision), 1 to 15, as The
+/// Broken Seal's, with the sea this game sails.
+enum WorldMapCollision {
+  /// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to
+  /// WORLD_MAP_COLLISION_SEA_LAST and on shallow water (WorldMap_IsSailable).
+  WORLD_MAP_COLLISION_SEA_FIRST = 1,
+  WORLD_MAP_COLLISION_SEA_LAST = 4,
+  /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
+  /// WORLD_MAP_COLLISION_WALKABLE_LAST (WorldMap_IsWalkable).
+  WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
+  /// Shallow water: a ripple follows the leader as it walks, and the ship
+  /// sails there too.
+  WORLD_MAP_COLLISION_SHALLOW_WATER = 6,
+  /// Where neither collision layer has a value.
+  WORLD_MAP_COLLISION_DEFAULT = 7,
+  /// Forest: the leader's sprite shows its second layer and no shadow.
+  WORLD_MAP_COLLISION_FOREST = 9,
+  WORLD_MAP_COLLISION_WALKABLE_LAST = 12
+};
+
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,

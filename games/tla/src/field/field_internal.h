@@ -267,8 +267,11 @@ enum {
 
 /// Sprite ids the field's own code creates actors of.
 enum {
-  FIELD_SPRITE_RIPPLE = 24,   ///< the ripple behind the leader in shallow water
-  FIELD_SPRITE_FOOTPRINT = 25 ///< a footprint, on maps that show them
+  FIELD_SPRITE_RIPPLE = 24, ///< the ripple behind the leader in shallow water
+  FIELD_SPRITE_FOOTPRINT = 25, ///< a footprint, on maps that show them
+  /// The ripple behind the leader or the ship in the world map's shallow
+  /// water, rings that widen and fade (spr_269.png).
+  WORLD_MAP_SPRITE_RIPPLE = 269
 };
 
 /// How a layout's cell picture data is packed: the method byte

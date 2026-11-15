@@ -409,10 +409,6 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (cellsCopied <= 63);
 }
 
-void WorldMap_BuildScanlineTable__resource_slot(
-    s32 ratio, s32 *position,
-    void *affineWork) __asm__("WorldMap_BuildScanlineTable");
-
 /// Each frame: follows the followed point with the screen shake, draws the rows
 /// and columns that came into view, and recomputes the projection and the
 /// ground plane for the current pitch and yaw; while the still picture shows,

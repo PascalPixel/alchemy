@@ -257,7 +257,7 @@ void Actor_UpdateAllThumb(void) {
           velocityZ = z + object->velocityZ;
           standing = 0;
           object->standingOn = NULL;
-          if (object->priorityFlags & 0x40) {
+          if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
             struct MotionObject *other = Ram_HeapSlots->actors;
             s32 i;
 
@@ -266,7 +266,7 @@ void Actor_UpdateAllThumb(void) {
 
               if (other->script == NULL)
                 continue;
-              if (!(other->priorityFlags & 0x80))
+              if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
                 continue;
               if (other == object)
                 continue;

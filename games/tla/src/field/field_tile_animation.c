@@ -1203,18 +1203,15 @@ s32 MapGrid_IsWallAt(s32 *position) {
 }
 
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
- * gCellPictures[] under a name of its own; system/ram_buffer.h has u32
+ * gWorldMapBlocks[] under a name of its own; system/ram_buffer.h has u32
  * gCellPictures[]; read through it with a cast, the field object shares the
  * address with the other reads and the block read moves (4 lines in tla-en). */
-extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
+extern struct WorldMapBlock gWorldMapBlocks[] __asm__("gCellPictures");
 
-/// Byte 2 of the world map block under position (blocks 32 pixels square on a
-/// 32 by 32 grid): the place the world map's searches look for among the
-/// scene's events of kind 2, and 255 where the ship may not go.
+/// The place of the world map block under position (blocks 32 pixels square on
+/// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none.
 // XXX: what the byte numbers besides 255; the world map scene's events of
 // kind 2 against the blocks in gCellPictures would settle it.
-/// The World Map block under position (blocks of 32 pixels, 32 to a row): its
-/// third byte, 255 where the map has no block.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
@@ -1225,75 +1222,90 @@ s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   if (z < 0)
     z += 0x1fffff;
   z = z >> 21 & 31;
-  return gMapBlocks__f02c58c[x + z * 32].unk2;
+  return gWorldMapBlocks[x + z * 32].place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper
-/// collision layer where it has one, else the lower, else 7.
+/// collision layer where it has one, else the lower, else
+/// WORLD_MAP_COLLISION_DEFAULT.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
-  s32 x_step = position->x >> 17;
+  s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
-  s32 y_step = y >> 17;
-  u32 cell;
-  u32 pixel_offset;
-  u8 tile;
-  u8 packed_pixels;
+  s32 halfPixelY = y >> 17;
+  u32 collisionCell;
+  u32 pixelOffset;
+  u8 collisionTile;
+  u8 packedCollisions;
   u32 result;
 
-  cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
-  pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
+  // Coordinates in 2-pixel units.
+  collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
+  pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
-  tile = BG_SCREEN_BLOCK(10)[cell];
-  packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  // The upper layer: its tile map in screen block 10, its tiles 0x800 bytes
+  // into the collision buffer.
+  collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
+  packedCollisions =
+      *(Ram_MapCollision + 0x800 + (collisionTile << 3) + pixelOffset);
+  if (packedCollisions != 0) {
+    if (halfPixelX & 2)
+      result = packedCollisions >> 4;
     else
-      result = packed_pixels & 15;
+      result = packedCollisions & 15;
     if (result != 0)
       return result;
   }
 
-  tile = BG_SCREEN_BLOCK(8)[cell];
-  packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  // The lower layer: its tile map in screen block 8, its tiles at the start.
+  collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
+  packedCollisions = *(Ram_MapCollision + (collisionTile << 3) + pixelOffset);
+  if (packedCollisions != 0) {
+    if (halfPixelX & 2)
+      result = packedCollisions >> 4;
     else
-      result = packed_pixels & 15;
+      result = packedCollisions & 15;
     if (result != 0)
       return result;
   }
 
-  return 7;
+  return WORLD_MAP_COLLISION_DEFAULT;
 }
 
 /// Returns 0 when the world map at position can be walked on (a place there,
-/// and collision 5 to 12), else -1.
+/// and collision WORLD_MAP_COLLISION_WALKABLE_FIRST to
+/// WORLD_MAP_COLLISION_WALKABLE_LAST), else -1.
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != 255) {
-    if ((u32)(WorldMap_GetCollision(position) - 5) <= 7)
+  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
+    if ((u32)(WorldMap_GetCollision(position) -
+              WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
+        WORLD_MAP_COLLISION_WALKABLE_LAST - WORLD_MAP_COLLISION_WALKABLE_FIRST)
       return 0;
   }
   return -1;
 }
 
-/// Returns 0 where the ship can sail (collision 1 to 4, or 6), else -1.
+/// Returns 0 where the ship can sail (the sea or shallow water), else -1.
 s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != 255) {
+  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 mode;
 
     mode = work->terrainKind;
     if (mode == 0) {
-      if ((u32)(collision - 1) <= 3 || collision == 6)
+      if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+              WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
+          collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
         return 0;
     } else if (mode == 1) {
-      if ((u32)(collision - 1) <= 3 || collision == 6)
+      if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+              WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
+          collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
         return 0;
     } else if (mode == 2) {
-      if ((u32)(collision - 1) <= 3 || collision == 6)
+      if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+              WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
+          collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
         return 0;
     }
   }
@@ -1304,14 +1316,16 @@ s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
 /// sail; higher, more of the ground by the kind it last flew over.
 s32 WorldMap_IsFlyable(struct WorldMover *mover,
                        struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != 255) {
+  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     s32 height = mover->height;
 
     if (height < px(4)) {
-      if ((u32)(collision - 1) > 3 && collision != 6)
+      if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) >
+              WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST &&
+          collision != WORLD_MAP_COLLISION_SHALLOW_WATER)
         return -1;
       return 0;
     } else {

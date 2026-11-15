@@ -372,7 +372,7 @@ again:
     canJump = 1;
 
   // A platform 16 pixels below the landing makes it a jump spot.
-  if (leader->priorityFlags & 0x40) {
+  if (leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       s32 bound = 0x7ffff;
@@ -381,7 +381,7 @@ again:
 
       if (entry->script == NULL)
         continue;
-      if (!(entry->priorityFlags & 0x80))
+      if (!(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM))
         continue;
       if (entry->arrivalAxis != 0)
         continue;
@@ -410,8 +410,9 @@ again:
   // A solid object at the landing blocks it.
   entry = Ram_HeapSlots->actors;
   for (i = 0; i < 64; i++, entry++) {
-    if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
-        entry != leader && entry->collisionFlags != 0 &&
+    if (entry->script != NULL &&
+        !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
+        entry->collisionFlags != 0 &&
         FIELD_CELL(position[0] - entry->x.fixed + px(8)) == 0 &&
         FIELD_CELL(position[2] - entry->z.fixed + px(8)) == 0) {
       s32 d = position[1] - entry->y.fixed;

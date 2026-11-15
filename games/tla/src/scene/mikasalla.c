@@ -295,7 +295,19 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 }
 
 /// Stepping onto a ladder top facing south, the leader turns and climbs down.
-#include "shared/scene_turn_actor_and_run.h"
+/// Turns actor 4, then runs Mikasalla_ClimbDownLadder.
+void Mikasalla_TurnAndClimbDownLadder(void) {
+  s32 id, a;
+
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  a = 192;
+  id = 4;
+  /* FAKEMATCH(barrier): the id held at an empty asm. */
+  __asm__ volatile("" : "+r"(id));
+  Actor_FaceDirectionById(id, a << 8, 0);
+  Mikasalla_ClimbDownLadder();
+}
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].pixel;

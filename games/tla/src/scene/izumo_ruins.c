@@ -311,7 +311,14 @@ void IzumoRuins_SinkIntoSand(void) {
   return;
 }
 
-#include "shared/leader_set_layer.h"
+/// Puts the leader on map layer 0.
+void Leader_SetLayer(void) {
+  struct Actor *object0;
+
+  object0 = Actor_Get(gMainRoutineWork.leaderActorId);
+  object0->layer = 0;
+  return;
+}
 
 /// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 /// to 0xff; then starts the room's effect.

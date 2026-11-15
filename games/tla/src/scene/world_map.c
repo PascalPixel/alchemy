@@ -2202,7 +2202,17 @@ s32 Func_020035e0(struct Actor *object) {
 #undef Actor_SetSpriteColorMode
 #include "shared/world_map_objects.c"
 
-#include "shared/actor_flicker.h"
+/// Flickers an actor, running WorldMap_SpawnSparkPair every sixteenth frame.
+void Func_02003b38(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    WorldMap_SpawnSparkPair(object);
+  }
+}
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA u32 gData_02006be4[],
@@ -2212,9 +2222,31 @@ s32 Func_020035e0(struct Actor *object) {
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
-#include "shared/actor_cycle_child_values.h"
+/// Cycles an actor's child values, running WorldMap_SpawnParticle every fourth
+/// frame.
+void Actor_CycleChildValues(struct Actor *object) {
+  if (gFrameCount & 1) {
+    Actor_SetSpriteColorMode(object, gData_02004fc8[gData_02006be4]);
+    gData_02006be4 = (gData_02006be4 + 1) & 3;
+  }
+  if (!(gFrameCount & 3)) {
+    WorldMap_SpawnParticle(object);
+  }
+}
 
-#include "shared/actor_set_flight_mode.h"
+/// Sets an actor's update by mode.
+void Actor_SetFlightMode(struct Actor *object, s32 mode) {
+  if (mode == 0) {
+    object->update = 0;
+    Actor_SetSpriteColorMode(object, 0);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
+  } else if (mode == 1) {
+    object->update = (void (*)(void))Func_02003b38;
+  } else {
+    object->update = (void (*)(void))Actor_CycleChildValues;
+    Event_PlaySound(SE_TAKE_FLIGHT);
+  }
+}
 
 #include "shared/leader_search.h"
 
@@ -2421,7 +2453,15 @@ void Func_02004500(struct Actor *object) {
   }
 }
 
-#include "shared/actor_animate_and_emit.h"
+/// Animates an actor, running Func_02004634 every sixteenth frame.
+void Actor_AnimateAndEmit(struct Actor *object) {
+  u32 frame = gFrameCount;
+
+  if (frame & 1)
+    Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
+  if ((gFrameCount & 15) == 0)
+    Func_02004634(object);
+}
 
 #include "shared/actor_animate.h"
 
@@ -2482,7 +2522,100 @@ extern s16 gData_02006e0c;
 extern s16 gData_02006e0e;
 extern u8 gData_02006f20[][32];
 
-#include "shared/gauge_draw.h"
+/// Redraws the gauge for `progress`.
+void Gauge_Draw(s32 progress) {
+  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
+  s32 kind = 0;
+  s32 count, base, i;
+
+  if (progress != 0)
+    kind = 100;
+  if (level <= 15 && (gFrameCount & 15) <= 1)
+    kind = 200;
+  if (level <= 7 && (gFrameCount & 7) <= 1)
+    kind = 200;
+  if (kind + level == gData_02006e0c)
+    return;
+  gData_02006e0c = kind + level;
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
+  {
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    if (kind == 0) {
+      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      goto done;
+    }
+    if (kind == 100)
+      copy(Data_02006e20, gData_02006f20[4], 0x80);
+    else
+      copy(Data_02006e20, gData_02006f20[8], 0x80);
+  }
+  base = 0;
+  count = level;
+  if (count > 7) {
+    Iwram_CopyWordsEntry(Data_02006e20, gData_02006f20, 32);
+    base = 8;
+    count -= 8;
+  }
+  if (level > 15) {
+    Iwram_CopyWordsEntry(Data_02006e20[1], gData_02006f20[1], 32);
+    count = level;
+    base = 16;
+    count -= 16;
+  }
+  if (level > 23) {
+    Iwram_CopyWordsEntry(Data_02006e20[2], gData_02006f20[2], 32);
+    count = level;
+    base = 24;
+    count -= 24;
+  }
+  if (level > 30) {
+    Iwram_CopyWordsEntry(Data_02006e20[3], gData_02006f20[3], 32);
+    base = 0;
+    count = 0;
+  }
+  if (count != 0) {
+    i = 0;
+    if (i >= count)
+      goto done;
+  loop:
+    {
+      s32 j;
+      u8 *source = &gData_02006f20[base / 8][4] + i / 2;
+      u8 *dest = &Data_02006e20[base / 8][4] + i / 2;
+      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
+       * rank. */
+      asm("" : "=r"(dest) : "0"(dest));
+
+      j = 2;
+      if ((i & 1) == 0) {
+        j = 1;
+      even:
+        *dest = (*dest & 240) | (*source & 15);
+        j++;
+        source += 4;
+        dest += 4;
+        if (j > 3)
+          goto next;
+        goto even;
+      } else {
+      oddLoop:
+        *dest = (*dest & 15) | (*source & 240);
+        j--;
+        source += 4;
+        dest += 4;
+        if (j >= 0)
+          goto oddLoop;
+      }
+    }
+  next:
+    i++;
+    if (i < count)
+      goto loop;
+  }
+done:
+  Vram_Load(gData_02006e0e, 0x100, Data_02006e20);
+}
 
 /// The world map cursor: counts down while A or B is held, redraws the gauge
 /// and queues its sprite over the leader.
@@ -2515,9 +2648,23 @@ void Func_020048f4(void) {
   Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-#include "shared/gauge_init.h"
+/// Sets up the gauge.
+void Gauge_Init(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
+  gData_02006e0e = VramCache_FindFreeEntry();
+  Vram_Load(gData_02006e0e, 0x100, 0);
+  gData_02006e0c = -1;
+  gData_02006e10 = 10;
+  Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
+}
 
-#include "shared/gauge_end.h"
+/// Takes the gauge down.
+void Gauge_End(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
+  VramCache_FreeEntry(gData_02006e0e);
+  gData_02006e0c = -1;
+  FieldTask_Remove(Func_020048f4);
+}
 
 // clang-format off
 u32 gData_02004e38[] = {

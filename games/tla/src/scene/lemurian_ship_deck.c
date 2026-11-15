@@ -1133,7 +1133,20 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-#include "shared/actor_emit_smoke.h"
+/// Smoke rises from an actor on the frames 7 picks.
+void Actor_EmitSmoke(struct Actor *object) {
+  struct Actor *spawned;
+
+  if ((gFrameCount & 7) == 0) {
+    spawned = FieldActor_Create(14, object->x.fixed, object->y.fixed,
+                                object->z.fixed);
+    if (spawned != 0) {
+      Actor_SetSpriteFlags(spawned, 0);
+      Actor_SelectAnimation(spawned, 1);
+      Actor_StartScript(spawned, gLemurianShipDeck_SmokePuff);
+    }
+  }
+}
 
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {

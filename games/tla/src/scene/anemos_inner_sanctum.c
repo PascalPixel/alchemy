@@ -186,7 +186,15 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     AnemosInnerSanctum_TeleportIn();
 }
 
-#include "shared/palette_cycle_start.h"
+/// Starts a palette cycle's task.
+void PaletteCycle_Start(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 15;
+  gPaletteCycleTimer = 16;
+  gPaletteCycleBright = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void AnemosInnerSanctum_StopPaletteCycle(void) {
   gFieldWork->transition = 0x100;

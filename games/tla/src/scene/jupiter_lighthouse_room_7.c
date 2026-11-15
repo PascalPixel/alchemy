@@ -126,15 +126,56 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-#include "shared/jupiter_lighthouse_open_door.h"
+/// Opens a door three cells high, with its sound when `mode` is 1.
+void JupiterLighthouse_OpenDoor(s32 mode) {
+  if (mode == 1) {
+    Event_PlaySound(SE_IMPACT);
+    MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
+    System_Wait(6);
+  }
+  MapGrid_CopyCellsLayered(81, 42, 4, 3, 76, 35);
+  MapGrid_CopyCellAttributes(12, 41, 4, 1, 12, 35);
+}
 
-#include "shared/jupiter_lighthouse_close_door.h"
+/// Closes a door three cells high.
+void JupiterLighthouse_CloseDoor(void) {
+  Event_PlaySound(SE_HEAVY_IMPACT);
+  MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
+  System_Wait(6);
+  MapGrid_CopyCellsLayered(71, 42, 4, 3, 76, 35);
+  MapGrid_CopyCellAttributes(12, 36, 4, 1, 12, 35);
+}
 
-#include "shared/jupiter_lighthouse_check_block_on_cell.h"
+/// Opens the door for good once the pillar stands on its button, cell (8, 37).
+void JupiterLighthouse_CheckBlockOnCell(void) {
+  struct Actor *object = Actor_Get(ACTOR_BUTTON_PILLAR);
 
-#include "shared/button_step_on.h"
+  if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) && object->x.fixed >> 20 == 8 &&
+      object->z.fixed >> 20 == 37) {
+    Event_SetFlag(FLAG_BUTTON_PILLAR_PLACED);
+    JupiterLighthouse_OpenDoor(1);
+  }
+}
 
-#include "shared/button_step_off.h"
+/// The leader steps onto a door's button: the door opens and 0x202 says the
+/// button holds it.
+void JupiterLighthouse_StepOnButton(void) {
+  if (!Event_GetFlag(0x202)) {
+    Event_SetFlag(0x202);
+    JupiterLighthouse_OpenDoor(1);
+  }
+}
+
+/// The leader steps off a door's button: a door the button held open (0x202
+/// set) closes, unless the block now stands on the button
+/// (JupiterLighthouse_CheckBlockOnCell).
+void JupiterLighthouse_StepOffButton(void) {
+  if (Event_GetFlag(0x202) == 1) {
+    Event_ClearFlag(0x202);
+    JupiterLighthouse_CloseDoor();
+  }
+  JupiterLighthouse_CheckBlockOnCell();
+}
 
 void JupiterLighthouse_MoveButtonPillar(void) {
   System_Wait(10);

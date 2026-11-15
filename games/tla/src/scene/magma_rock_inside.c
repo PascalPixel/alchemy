@@ -623,7 +623,13 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
                     0, vz, 0x320001, &options);
 }
 
-#include "shared/actor_flash_color.h"
+/// Flashes an actor in colour 10 on the frames its mask picks.
+void MagmaRockInside_FlashStatue(struct Actor *object) {
+  if (gFrameCount & object->blockMarked)
+    FieldActor_SetSpriteColor(object, 10);
+  else
+    FieldActor_SetSpriteColor(object, 0);
+}
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's

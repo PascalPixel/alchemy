@@ -220,7 +220,46 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
-#include "shared/orbs_spawn_rising.h"
+void Orbs_SpawnRising(void) {
+  struct Actor *center;
+  struct OrbitEffect *effect;
+  struct FieldSprite *sprite;
+  s32 angle;
+
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) == 0 && gFrameCount % 3 != 0)
+    return;
+  center = Actor_Get(ACTOR_LOWER_BEAM);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) != 0) {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
+  } else {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
+  }
+  if (effect != 0) {
+    sprite = effect->sprite;
+    Actor_StartScript(effect, gOrbScript);
+    FieldActor_SetSpriteColor(effect, 1);
+    effect->motionFlags = 0;
+    angle = Random16() & 0xffff000;
+    effect->angle = angle;
+    effect->unk66 = 0;
+    effect->update = (void (*)(struct OrbitEffect *))Orb_Update;
+    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    sprite->nextFrame = 0;
+    sprite->priority = 1;
+  }
+}
 
 /* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseStep as this
  * part declared it; the joined file has another; tried as the definition's

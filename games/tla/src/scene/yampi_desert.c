@@ -1048,7 +1048,19 @@ void YampiDesert_HideSlideActors(void) {
   GameFlag_Clear(FLAG_YAMPI_DESERT_SLIDE_ACTORS_SHOWN);
 }
 
-#include "shared/actors_set_hidden.h"
+/// Shows or hides `count` actors from `first`.
+void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count) {
+  u32 i;
+
+  for (i = 0; i < count; i++) {
+    struct Actor *actor = Actor_GetById(first + i);
+
+    if (show)
+      actor->priorityFlags &= ~0x10;
+    else
+      actor->priorityFlags |= 0x10;
+  }
+}
 
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
@@ -1873,7 +1885,16 @@ void YampiDesert_ScorpionUsesScoop(void) {
 
 #include "shared/actor_hide.h"
 
-#include "shared/scene_run_unless_flag.h"
+/// Runs YampiDesert_HideSlideActors unless flag 0x20d is set, setting it when
+/// the party keeps its place.
+void Scene_RunUnlessFlag(void) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    if (GameFlag_Get(0x20d) == 0)
+      YampiDesert_HideSlideActors();
+  } else {
+    GameFlag_Set(0x20d);
+  }
+}
 
 void YampiDesert_SetUpRoom8SlideActors(void) {
   Actor_Hide(11);
@@ -1881,7 +1902,14 @@ void YampiDesert_SetUpRoom8SlideActors(void) {
   Scene_RunUnlessFlag();
 }
 
-#include "shared/actors_for_range.h"
+/// Runs Actor_Hide for each id from 9 to `9 + 6`, then Scene_RunUnlessFlag.
+void YampiDesert_SetUpRoom12SlideActors(void) {
+  u32 i;
+
+  for (i = 0; i <= 6; i++)
+    Actor_Hide(i + 9);
+  Scene_RunUnlessFlag();
+}
 
 void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;

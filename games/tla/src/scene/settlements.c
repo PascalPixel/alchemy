@@ -725,7 +725,16 @@ void Scroll_HBlank(void) {
   }
 }
 
-#include "shared/layer_track_scroll.h"
+/// Follows the third map layer's scroll.
+void Layer_TrackScroll(void) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  s16 y = layer->y >> 16;
+
+  gSettlements_WaterfallLine = 1448 - y;
+  gSettlements_WaterfallScrollAbove = layer->x >> 16;
+  gSettlements_WaterfallScrollBelow =
+      (s16)(layer->x >> 16) - (gFrameCount >> 2);
+}
 
 #include "shared/scroll_start_hblank.h"
 

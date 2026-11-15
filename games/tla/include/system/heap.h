@@ -44,7 +44,7 @@ struct HeapSlots {
   /// The 3D camera (struct BattleCamera) of a battle, the world map or the
   /// dice games.
   void *cameraWork;
-  void *unk34;
+  void *unusedAfterCamera; ///< no code allocates or reads this slot
   /// A scratch buffer, usually 1 KB, that a picture is decoded into and
   /// released as soon as its tiles are in VRAM.
   void *tileScratch;
@@ -52,7 +52,7 @@ struct HeapSlots {
   void *partyStatus;   ///< the party status window's layout
   void *glyphTransfer; ///< the buffers an icon or portrait is decoded through
   void *selectionMenu; ///< the selection screen's work
-  void *unk4c;
+  void *unusedAfterSelectionMenu; ///< no code allocates or reads this slot
   /// Lives for one frame: wait() builds the OAM list in it, and the field
   /// sprite decoder keeps its code there between its own uses.
   void *frameScratch;
@@ -78,14 +78,14 @@ struct HeapSlots {
   /// The palette fade that moves the BG and sprite palettes toward target
   /// colours (struct PaletteFade).
   void *paletteFade;
-  void *unk84;
-  void *lineScroll; ///< the line scroll's work
-  void *unk8c;
-  void *fadeOverlay;   ///< the fade overlay's work
-  void *battleMessage; ///< the battle message window's work
-  void *unk98;
-  void *rope;             ///< a rope's work (struct RopeWork)
-  void *tightrope;        ///< a tightrope's work (struct TightropeWork)
+  void *unusedAfterPaletteFade;   ///< no code allocates or reads this slot
+  void *lineScroll;               ///< the line scroll's work
+  void *unusedAfterLineScroll;    ///< no code allocates or reads this slot
+  void *fadeOverlay;              ///< the fade overlay's work
+  void *battleMessage;            ///< the battle message window's work
+  void *unusedAfterBattleMessage; ///< no code allocates or reads this slot
+  void *rope;                     ///< a rope's work (struct RopeWork)
+  void *tightrope;                ///< a tightrope's work (struct TightropeWork)
   void *hangingVine;      ///< a hanging vine's work (struct HangingVineWork)
   void *battleEntryTimer; ///< the battle's entry transition timer, in frames
   void *titleIntro;       ///< the title intro's state

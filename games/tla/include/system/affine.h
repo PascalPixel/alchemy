@@ -7,10 +7,10 @@
 /// A sprite's rotation and scale: scales in 8.8 fixed point (0x100 is full
 /// size), the angle in 1/65536 turns.
 struct AffineTransform {
-  u16 scaleX; ///< 8.8 fixed point, read signed
-  u16 scaleY; ///< 8.8 fixed point, read signed
-  u16 angle;  ///< 1/65536 turns
-  u16 unk06;  ///< not read by OamMatrix_AllocFromTransform
+  u16 scaleX;  ///< 8.8 fixed point, read signed
+  u16 scaleY;  ///< 8.8 fixed point, read signed
+  u16 angle;   ///< 1/65536 turns
+  u16 padding; ///< never read; keeps the struct 8 bytes
 };
 
 /// One OAM rotation-scaling matrix: pa, pb, pc and pd in 8.8 fixed point, the

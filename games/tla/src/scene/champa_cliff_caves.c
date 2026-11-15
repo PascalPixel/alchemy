@@ -413,7 +413,7 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
   Actor_WalkByAndWaitById(ACTOR_OBABA, 0, 6);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(ACTOR_OBABA))->solid |= 1;
+  Actor_GetById(ACTOR_OBABA)->steeringFlags |= 1;
   Event_Wait(10);
   Actor_SetAnimationById(ACTOR_OBABA, 8);
   Event_Wait(15);
@@ -425,7 +425,7 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
     Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
     Actor_WalkByAndWait(ACTOR_OBABA, 0, -6);
     Event_Wait(1);
-    ((struct ActorSolid *)Actor_GetById(ACTOR_OBABA))->solid |= 1;
+    Actor_GetById(ACTOR_OBABA)->steeringFlags |= 1;
     Event_Wait(10);
   }
 }
@@ -807,8 +807,6 @@ chosen:
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly, 0xc00)
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct Position {
   s32 x;
@@ -940,8 +938,8 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_OBABA, 6);
   Actor_SetPosition(ACTOR_SALAMANDER, 724, 252);
-  WORD_AT(Actor_GetById(ACTOR_SALAMANDER), 24) = 0x13333;
-  WORD_AT(Actor_GetById(ACTOR_SALAMANDER), 28) = 0x13333;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleX = 0x13333;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleY = 0x13333;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -965,7 +963,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
     ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
     ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
-    WORD_AT(object, 72) = 0x4000;
+    object->gravity = 0x4000;
     object->motionFlags = 2;
     object->groundHeight = 0xfc190000;
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
@@ -1001,13 +999,13 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
-    WORD_AT(object, 72) = 0x10000;
+    object->gravity = 0x10000;
     object->motionFlags = 2;
     object->groundHeight = 0;
     object->y.fixed = px(32);
-    WORD_AT(object, 24) = 0x4000;
-    WORD_AT(object, 108) = (s32)ChampaCliffCaves_GrowThrownSlowly;
-    WORD_AT(object, 28) = 0x4000;
+    object->scaleX = 0x4000;
+    object->update = (s32)ChampaCliffCaves_GrowThrownSlowly;
+    object->scaleY = 0x4000;
     Actor_Jump(ACTOR_AVIMANDER, 11, 0);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(ACTOR_AVIMANDER, 3.2);

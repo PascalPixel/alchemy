@@ -792,7 +792,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LAST_ROCK), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_ROCK), 0);
   FieldActor_SetSpritePriority(ACTOR_FIRST_CRATE, 2);
-  ((u8 *)Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP))[0x62] = 1;
+  Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->riseCounter = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0) {
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
@@ -804,13 +804,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void EasternAlhafra_PlaceClearedDebris(void) {
   struct Actor *object;

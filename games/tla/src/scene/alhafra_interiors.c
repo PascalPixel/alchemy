@@ -152,13 +152,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Stepping into Alhafra's inn the first time: Felix walks up to Alex, who
 /// says he too is resting here while he looks for a boat
 /// (FLAG_ALHAFRA_MET_ALEX).

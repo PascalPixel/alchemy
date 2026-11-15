@@ -1079,8 +1079,6 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 // Moves around in a circle.
 #include "shared/orbit_update.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 #include "shared/actor_aim_at_watched.h"
 
 #include "shared/actor_step_to_watched.h"

@@ -342,8 +342,6 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
   return 0;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 extern u32 gAnemosInnerSanctum_MoteScript[];
 
 void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
@@ -351,7 +349,7 @@ void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
                                             source->y.fixed, source->z.fixed));
 
   object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, BYTE_AT(source, 98));
+  FieldActor_SetSpriteColor(object, source->riseCounter);
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
@@ -477,8 +475,6 @@ void AnemosInnerSanctum_SendSpark(struct Vector3 *from, struct Vector3 *to,
   AnemosInnerSanctum_SpiralMover(actor);
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
@@ -489,8 +485,8 @@ void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
     FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
     object->timer = angle;
     object->userValue = a3;
-    BYTE_AT(object, 98) = i;
-    BYTE_AT(object, 99) = part;
+    object->riseCounter = i;
+    object->blockMarked = part;
     object->bounce = x;
     object->riseBaseY = 0x200000;
     object->gravity = y;
@@ -1095,7 +1091,7 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
     dust->x.fixed += ((Random16() & 15) - 8) << 16;
     dust->y.fixed += ((Random16() & 31) - 4) << 16;
     dust->motionFlags = 0;
-    FieldActor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
+    FieldActor_SetSpriteColor(dust, self->riseCounter);
     Scene_SetActorSpritePriority(dust, 2);
     Actor_SelectAnimation(dust, 1);
     Actor_SetSpriteFlags(dust, 0);

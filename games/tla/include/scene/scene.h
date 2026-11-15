@@ -44,29 +44,12 @@ struct Cell {
   s32 x, z;
 };
 
-struct ObjBits {
-  u8 unk00[35];
-  u8 flags : 8;
-};
-
-struct Shot {
-  u8 unk00[0x62];
-  u8 unk62; ///< set once it has hit the leader
-  u8 unk63; ///< set with unk62, cleared when it ends
-};
-
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
 struct SpriteAttr2High {
   u8 unk00[9];
   u8 tileHigh : 2;
   u8 priority : 2;
-};
-
-/// An object's priority flags read as a whole-byte bit-field.
-struct ObjectPriorityByte {
-  u8 unk00[35];
-  u8 priorityFlags : 8;
 };
 
 struct GabombaStatueEffectWork {
@@ -182,11 +165,6 @@ struct AnkohlRuinsSandRow {
   u8 x;
   u8 z;
   u8 unused[3];
-};
-
-struct ActorTail {
-  u8 head[0x5e];
-  u16 unk5e;
 };
 
 struct MapBits {

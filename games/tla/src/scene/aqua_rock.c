@@ -251,7 +251,7 @@ again:
     goto found;
   }
   object->facing += 0x8000;
-  ((struct ActorTail *)object)->unk5e = 1;
+  object->wait = 1;
   goto end;
 found:
   coordinate = p->y;

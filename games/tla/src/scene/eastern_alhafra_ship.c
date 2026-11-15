@@ -122,14 +122,14 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
   v6 = 192;
   v6 = (v6 << 11);
-  *(s32 *)((u8 *)object0 + 40) = v6;
+  object0->velocityY = v6;
   Actor_SetSpeed(*(s32 *)((u8 *)v5 + 0), 2);
   Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
   Event_Wait(10);
   Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
   Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
   object1 = Actor_GetById(ACTOR_LARGE_BREAD);
-  *(s32 *)((u8 *)object1 + 40) = v6;
+  object1->velocityY = v6;
   Sound_Play(SE_POUND);
   Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
   Actor_SetAnimationById(*(s32 *)((u8 *)v5 + 0), 1);

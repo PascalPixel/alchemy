@@ -8,6 +8,6 @@ s32 Actor_AimAtWatched(struct Actor *object) {
   from = object->y.fixed;
   object->riseBaseY = (target->y.fixed - from + 0x100000) / steps;
   object->gravity = (target->z.fixed - object->z.fixed) / steps;
-  BYTE_AT(object, 98) = steps;
+  object->riseCounter = steps;
   return 0;
 }

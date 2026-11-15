@@ -29,8 +29,6 @@
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 void AncientLemuria_StillTheStatue(s32 id);
 void AncientLemuria_MeetTheLemurians(void);
 void Field_TryJumpForward(void);
@@ -89,7 +87,7 @@ void AncientLemuria_StillTheStatue(s32 id) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
-  WORD_AT(object, 108) = 0;
+  object->update = 0;
   object->timer = 0;
   sprite->rotation = 0;
 }

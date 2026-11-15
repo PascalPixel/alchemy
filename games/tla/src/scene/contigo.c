@@ -478,8 +478,6 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   return result;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
@@ -500,12 +498,12 @@ s32 Contigo_FaceTalker(struct Actor *self) {
     if (effect[0x713] != 0)
       goto near;
   }
-  if (BYTE_AT(self, 99) == 1)
+  if (self->blockMarked == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
     goto far;
-  if (BYTE_AT(self, 98) == 1)
+  if (self->riseCounter == 1)
     other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
     other = Actor_GetById(ACTOR_WANDERER);
@@ -2312,8 +2310,8 @@ void Contigo_InitializeVillage(void) {
   /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
    * address. */
   zero = 0;
-  BYTE_AT(object, 98) = 1;
-  BYTE_AT(object, 99) = zero;
+  object->riseCounter = 1;
+  object->blockMarked = zero;
   *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9b2) == 0) {
     Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);
@@ -2322,8 +2320,8 @@ void Contigo_InitializeVillage(void) {
     Contigo_OpenGamesRooms();
   } else {
     object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
-    BYTE_AT(object, 98) = 0;
-    BYTE_AT(object, 99) = 0;
+    object->riseCounter = 0;
+    object->blockMarked = 0;
     *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   }
   if (GameFlag_Get(0x9e7) != 0 && GameFlag_Get(0x9e6) == 0) {
@@ -2603,13 +2601,13 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   if (*count & 1)
     Actor_SetSpriteColorMode(
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
-  if (((u8 *)object)[98] == 0) {
+  if (object->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Sound_Play(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
-  } else if (((u8 *)object)[98] == 1) {
+  } else if (object->riseCounter == 1) {
     if (work->unka0[0] > 31 && work->unka0[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
@@ -2705,8 +2703,8 @@ void Contigo_StartSparkle(struct Actor *object,
   work->unka0 = 999;
   work->unka2 = 999;
   work->object = object;
-  ((u8 *)object)[0x62] = 0;
-  ((u8 *)object)[0x63] = 0;
+  object->riseCounter = 0;
+  object->blockMarked = 0;
   object->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedActor = (struct Actor *)work;

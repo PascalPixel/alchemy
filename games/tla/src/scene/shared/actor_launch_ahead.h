@@ -1,6 +1,6 @@
 /// Launches an actor ahead of another, 32 pixels out.
 void Actor_LaunchAhead(struct Actor *self) {
-  struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
+  struct Actor *actor = Actor_Get(self->riseCounter);
   s32 angle = (s16)self->userValue;
   struct FieldSprite *sprite = actor->sprite;
   /* volatile: the call reads position[0] before [1] and [2] (as a plain */

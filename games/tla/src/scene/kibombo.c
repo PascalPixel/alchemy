@@ -106,6 +106,8 @@ void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
 void PaletteFade_SetTarget(s32 a, s32 b);
 
+/// Adds a task, discarding the slot Task_Add returns: called directly, the
+/// s32 Task_Add moves two instructions of each caller.
 static inline void Kibombo_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
@@ -2194,19 +2196,10 @@ void Kibombo_DigMarkingUnderLeader(void) {
   }
 }
 
-/* VIEW(kibombo): routine Task_Add as void Task_Add(void (*func)(void), s32
- * order), as this routine calls it; task.h has s32 Task_Add(TaskFunc func, s32
- * order); called through the definition's s32, 2 of 31 instructions move in
- * every edition; tried as the 3 declarations' void Task_Add(void(*func) (void),
- * s32 priority), it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:1904: conflicting types for `Task_Add'. */
-extern void Task_AddVoid__kibombo(void (*func)(void),
-                                  s32 order) __asm__("Task_Add");
-
 /// Felix casts Scoop on the marking he stands on.
 void Kibombo_CastScoop(void) {
   FieldPsynergy_LoadResources(ABILITY_SCOOP, 1);
-  Task_AddVoid__kibombo(Kibombo_DigMarkingUnderLeader, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_DigMarkingUnderLeader, TASK_PASS_VBLANK);
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);

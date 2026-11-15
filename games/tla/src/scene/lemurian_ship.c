@@ -1908,9 +1908,9 @@ struct ActorPlacement gLemurianShip_Placements[] = {
 };
 
 struct ActorPlacement gLemurianShip_TwoJellyRoomPlacements[] = {                                             
-      {248, CONDITION_ALWAYS, 1, px(104), 0, px(424), FACING_SOUTH, 0,   
+      {SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, 1, px(104), 0, px(424), FACING_SOUTH, 0,   
        0},                                                                     
-      {248, CONDITION_ALWAYS, 1, px(104), 0, px(536), FACING_SOUTH, 0,   
+      {SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, 1, px(104), 0, px(536), FACING_SOUTH, 0,   
        0},                                                                     
       ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),               
       ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),               
@@ -1970,9 +1970,9 @@ struct ActorPlacement gLemurianShip_HoldPlacements[] = {
 };
 
 struct ActorPlacement gLemurianShip_PillarRoomPlacements[] = {                                             
-      {314, CONDITION_ALWAYS, 1, px(584), 0, px(168), FACING_SOUTH, 2,   
+      {SPRITE_SINKING_PILLAR, CONDITION_ALWAYS, 1, px(584), 0, px(168), FACING_SOUTH, 2,   
        0},                                                                     
-      {314, CONDITION_ALWAYS, 1, px(472), 0, px(152), FACING_SOUTH, 2,   
+      {SPRITE_SINKING_PILLAR, CONDITION_ALWAYS, 1, px(472), 0, px(152), FACING_SOUTH, 2,   
        0},                                                                     
       ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),               
       ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),               

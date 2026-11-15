@@ -363,9 +363,9 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS,                    \
                       MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH,          \
                       TALK_FACING_PARTY, 0),                                   \
-      {304, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(316), 0, px(132),      \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(316), 0, px(132),      \
        FACING_SOUTH, 0, 0},                                                    \
-      {304, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(372), 0, px(132),      \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(372), 0, px(132),      \
        FACING_SOUTH, 0, 0},                                                    \
       {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(316), 0, px(132),        \
        FACING_SOUTH, 0, 0},                                                    \
@@ -394,7 +394,7 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
                       MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
-      {307, CONDITION_ALWAYS, gNaribwe_IvyAnimation, px(40), 0, px(168),       \
+      {SPRITE_IVY, CONDITION_ALWAYS, gNaribwe_IvyAnimation, px(40), 0, px(168),       \
        FACING_SOUTH, 2, 0},                                                    \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
                       MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \

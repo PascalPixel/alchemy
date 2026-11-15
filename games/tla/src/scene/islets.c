@@ -33,6 +33,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
@@ -2263,16 +2264,7 @@ void Islets_JumpForward(void) {
   return;
 }
 
-// Rewrites the map cells under a pushable actor. The actor's sprite
-// shape picks one of the six footprints in gPushFootprints (four signed bytes
-// each, in sixteenths of a cell); the cells under it are copied from the
-// map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
-// layers there is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for
-// a shape with no footprint.
-
 extern s8 gPushFootprints[][4];
-
-static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 /// Rewrites the map cells under a pushable actor. The actor's sprite shape
 /// picks one of the six footprints in gPushFootprints (four signed bytes each,
@@ -2304,9 +2296,9 @@ s32 PushTarget_FillFootprint(s32 id) {
   if (fromX == 6)
     return 0;
   a = gPushFootprints[fromX][0];
-  width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
+  width = (ABS(a) + ABS(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
-  height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
+  height = (ABS(b) + ABS(gPushFootprints[fromX][3])) >> 4;
   x = actor->x.fixed + px(a);
   z = actor->z.fixed + px(b);
   b = FIELD_CELL(map->layers[1].offsetX);
@@ -2339,81 +2331,12 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
 
 extern s32 gPushLeaderSteps[];
 
-static __inline__ s32 RowByte(s8 *row, s32 index) { return row[index]; }
-
-static __inline__ s32 BoxSpan(s32 kind, s32 start) {
-  return (Abs(gPushFootprints[kind][start]) +
-          Abs(gPushFootprints[kind][start + 2])) >>
-         4;
-}
-
 static __inline__ s32 PushTarget_CheckCollision(struct Actor *object,
                                                 struct Vector3 *cell) {
   return MapGrid_CheckCollision(object, cell);
 }
 
-s32 PushTarget_FindSlide(struct PushTarget *push) {
-  struct Actor *object;
-  struct Vector3 cell;
-  s32 direction, kind;
-  s32 dx, dz, steps, i, j, offset, result;
-
-  object = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
-  if (object != 0) {
-    kind = push->footprint;
-    /* FAKEMATCH(dead): the address of kind taken and dropped. */
-    (void)&kind;
-    {
-      s32 width = BoxSpan(kind, 0);
-      s32 height = BoxSpan(kind, 1);
-      u8 *layer;
-      s32 index;
-
-      offset = gPushLeaderSteps[direction];
-      dx = offset & 0xffff0000;
-      dz = px(offset);
-      push->callback = 0;
-      steps = 0;
-      layer = &object->layer;
-      *layer = 2;
-      push->x = object->x.fixed + dx;
-      push->z = object->z.fixed + dz;
-      cell.y = object->y.fixed;
-      for (;;) {
-        s8 *table = gPushFootprints[0];
-
-        index = kind * 4;
-        /* FAKEMATCH(wrapper): the read through RowByte. */
-        cell.z = push->z + px(RowByte(table, index + 1));
-        for (j = 0; j < height; j++) {
-          cell.x = push->x + px(gPushFootprints[0][index]);
-          for (i = 0; i < width; i++) {
-            /* FAKEMATCH(wrapper): the call through PushTarget_CheckCollision.
-             */
-            if (PushTarget_CheckCollision(object, &cell) == 2)
-              goto blocked;
-            cell.x += px(16);
-          }
-          cell.z += px(16);
-        }
-        push->x += dx;
-        steps++;
-        push->z += dz;
-      }
-    blocked:
-      *layer = 0;
-    }
-    result = 0;
-    if (steps != 0) {
-      push->x = object->x.fixed + dx * steps;
-      result = 1;
-      push->y = object->y.fixed;
-      push->z = object->z.fixed + dz * steps;
-    }
-  } else
-    result = 0;
-  return result;
-}
+#include "shared/push_target_find_slide.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define HI(v) (((s16 *)&(v))[1])

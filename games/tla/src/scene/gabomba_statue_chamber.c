@@ -172,7 +172,6 @@ void ActorSystem_ResumeProjectionAndHideLayers(void);
 void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   struct Actor *object, *leader;
   u32 i;
-  volatile u16 *color;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -286,13 +285,14 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_SetAnimationById(ACTOR_STATUE, 3);
   PaletteFade_ApplySource(0x10000, 2);
   PaletteFade_SetTarget(0x10003, 2);
-  /* FAKEMATCH(temporary): the palette entry's address taken before the fade's
-   * wait. */
-  color = &OBJ_PLTT_COLOR(0, 15);
-  PaletteFade_StartInterpolation(10);
-  wait(10);
-  *color = 0x7fff;
-  wait(1);
+  {
+    volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
+
+    PaletteFade_StartInterpolation(10);
+    wait(10);
+    *color = 0x7fff;
+    wait(1);
+  }
   FieldMessage_ShowCentered((s16)(((struct FieldWork *)EVENT_WORK)->message)++,
                             0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
@@ -629,41 +629,40 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
 #undef EVENT_WORK
 #undef OBJECT
 
-#define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
+#define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, item)                    \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(8);                                   \
     s32 x = leader->x.fixed;                                                   \
     s32 z = leader->z.fixed;                                                   \
-    /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,  \
-     * set before the null test. */                                            \
-    s32 zero = 0;                                                              \
-    struct Actor *object;                                                      \
+    struct Actor *actor;                                                       \
+    struct Sprite *sprite;                                                     \
+    u8 *icon;                                                                  \
+    u8 clear = 0;                                                              \
                                                                                \
-    if ((gGabombaStatueChamber_ShownItem = object = ((                         \
-             struct Actor *)Import_ActorCreate(489, x, px(18), z))) != NULL) { \
-      struct FieldSprite *sprite = object->sprite;                             \
-      u8 *block;                                                               \
-                                                                               \
-      sprite->fullColor = 0;                                                   \
-      sprite->palette = 0;                                                     \
-      sprite->priority = 2;                                                    \
-      object->motionFlags = zero;                                              \
-      object->retainSpriteCache = 1;                                           \
-      object->update = GabombaStatueChamber_KeepItemWithStatue;                \
-      sprite->nextFrame = zero;                                                \
-      sprite->unk1b[0] = zero;                                                 \
-      block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);                 \
-      Icon_DrawItem(n1);                                                       \
-      VramCache_Load(sprite->vramBlock, 128, block + 0x400);                   \
+    gGabombaStatueChamber_ShownItem = actor =                                  \
+        Import_ActorCreate(489, x, px(18), z);                                 \
+    if (actor != NULL) {                                                       \
+      sprite = actor->sprite;                                                  \
+      sprite->image.fullColor = 0;                                             \
+      sprite->image.palette = 0;                                               \
+      sprite->image.priority = 2;                                              \
+      actor->motionFlags = clear;                                              \
+      actor->retainSpriteCache = 1;                                            \
+      actor->update = GabombaStatueChamber_KeepItemWithStatue;                 \
+      sprite->flags = clear;                                                   \
+      sprite->count = clear;                                                   \
+      icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);                  \
+      Icon_DrawItem(item);                                                     \
+      VramCache_Load(sprite->slot, 128, icon + 0x400);                         \
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);                              \
     }                                                                          \
   }
 
 DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(GabombaStatueChamber_ShowDragonsEye,
-                                        230)
+                                        ITEM_DRAGONS_EYE)
 
 DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(GabombaStatueChamber_ShowBlackCrystal,
-                                        242)
+                                        ITEM_BLACK_CRYSTAL)
 
 void GabombaStatueChamber_OpenThePassage(void) {
   MapGrid_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
@@ -694,7 +693,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   struct FieldSprite *sprite;
   u8 *block;
   s32 turnA, turnB;
-  s32 owner;
+  s32 leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -702,9 +701,9 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
                                        px(268));
   wait(1);
-  /* FAKEMATCH(temporary): the leader read before the first turn is built. */
-  owner = gMainRoutineWork.leaderActorId;
-  Actor_SetPositionAndFacing(owner, px(360), px(184), turnA = FACING_NORTHEAST);
+  leader = gMainRoutineWork.leaderActorId;
+  Actor_SetPositionAndFacing(leader, px(360), px(184),
+                             turnA = FACING_NORTHEAST);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(184), turnA);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, px(360), px(168), turnA);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(423), px(168),

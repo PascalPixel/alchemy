@@ -230,7 +230,7 @@ void WorldPicture_UpdateMarkers(void) {
     }
   } else {
     // The d-pad: faster the longer it is held.
-    angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
+    angle = gWorldMap_CursorDirectionAngles[DPAD_INDEX(gKeysHeld)];
     if (angle != 0xffff) {
       position.x = work->cursorX.fixed;
       position.y = 0;

@@ -239,7 +239,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // Step 8 pixels the way the direction pad points, when that step and the
   // ones 22.5 and 45 degrees either side are clear (debug L walks through
   // walls); otherwise try headings up to 67.5 degrees off.
-  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= PLAYER_STEP_STOPPED;
   } else {
@@ -567,7 +567,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   if ((gKeysRepeat & KEY_L) != 0)
     actor->speedLimit = WORLD_MAP_FAST_SPEED;
 
-  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= PLAYER_STEP_STOPPED;
@@ -770,7 +770,7 @@ update_actor:
   // frame, at most WORLD_MAP_YAW_STEP_MAX, finishing the turn once
   // the step falls under 16.
   perspective = gMapGridWork[0];
-  targetCameraYaw = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gKeysHeld)];
   yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
   if (yawStep > WORLD_MAP_YAW_STEP_MAX)
     yawStep = WORLD_MAP_YAW_STEP_MAX;
@@ -849,7 +849,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   actor->speedLimit = px(1) / 2;
   actor->acceleration = px(1) / 4;
   animation = ANIM_LEADER_CLING;
-  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = PLAYER_STEP_STOPPED;
   } else {

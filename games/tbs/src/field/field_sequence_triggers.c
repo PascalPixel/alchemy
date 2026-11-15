@@ -217,13 +217,14 @@ s32 Scene_TalkToActor(s32 id) {
 
   if (trigger != 0 && trigger->value != 0) {
     if (!actorPaused) {
-      // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
-      // and make each watch the other.
+      // Stop the actor; with any talk facing but TALK_FACING_KEEP, also stop
+      // the leader and make each watch the other.
       actor->paused = 1;
       Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
       talkFacing = (u8)placement->talkFacing << 24;
-      if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
+      if (talkFacing <= (TALK_FACING_PARTY_AND_BACK << 24) ||
+          talkFacing == (TALK_FACING_PARTY_THEN_WATCH << 24)) {
         struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
         leader->targetX = leader->x.fixed;
@@ -246,20 +247,20 @@ s32 Scene_TalkToActor(s32 id) {
       ((void (*)(s32))trigger->value)(id);
     }
     if (!actorPaused) {
-      // An actor left idle (script command 16) goes back to what its
-      // talk facing says: following the leader (3) or its old angle (1).
-      if (actor->script[actor->scriptCursor] == 16) {
-        if ((s8)placement->talkFacing == 3) {
+      // An actor whose script has ended goes back to what its talk facing
+      // says: watching the leader or its old angle.
+      if (actor->script[actor->scriptCursor] == SCRIPT_CMD_END) {
+        if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
-        } else if ((s8)placement->talkFacing == 1) {
+        } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
           actor->timer = savedAngle;
           Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
         }
       }
       actor->paused = 0;
-      Actor_SetAnimationSpeedFar(actor, 16);
+      Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
     }
     result = 0;
   }

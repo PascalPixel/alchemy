@@ -819,7 +819,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
   s32 sprite = -1;
   struct Actor *entry;
 
-  actorId &= 0x0fff;
+  actorId &= SPEAKER_ACTOR_MASK;
   // BUG: the -1 sentinel becomes index 4095, beyond the field work. All
   // indices from ACTOR_ID_COUNT to 4095 lie outside the actor table.
   if (actorId >= ACTOR_ID_COUNT)
@@ -828,7 +828,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 #else
   struct FieldWork *state = gFieldWork;
   s32 sprite = -1;
-  struct Actor *entry = state->actors[actorId & 0x0fff];
+  struct Actor *entry = state->actors[actorId & SPEAKER_ACTOR_MASK];
 #endif
 
   if (entry != 0 && entry->spriteStorageKind == ACTOR_SPRITE_ONE)

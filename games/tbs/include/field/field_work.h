@@ -22,10 +22,10 @@ struct MapGridCell;
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
   struct Actor *actor; ///< the actor placed for it
-  u8 id;               ///< the subject of its trigger, 100 to 239
-  u8 unused;           ///< cleared with the slot
-  u8 column;           ///< its 16-pixel cell
-  u8 row;              ///< its 16-pixel cell
+  u8 id;     ///< the subject of its trigger (TREASURE_SPOT_FIRST_ID on)
+  u8 unused; ///< cleared with the slot
+  u8 column; ///< its 16-pixel cell
+  u8 row;    ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct TreasureSpot) == 8);

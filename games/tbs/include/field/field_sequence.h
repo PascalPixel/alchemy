@@ -147,11 +147,18 @@ void FieldPsynergy_Carry(void);
 #define FIELD_PIXEL(coordinate) ((coordinate) >> 16)
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
+/// The 16.16 coordinate of the middle of a map grid cell.
+#define FIELD_CELL_CENTER(cell) (((cell) << 20) + px(8))
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------
 #define TREASURE_SPOT_MAX 10
+/// The ids a treasure spot's trigger answers to; the map's list of spots
+/// ends at column and row 255.
+#define TREASURE_SPOT_FIRST_ID 100
+#define TREASURE_SPOT_LAST_ID 239
+#define TREASURE_SPOT_LIST_END 255
 
 s32 Party_GetCharacterSprite(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);

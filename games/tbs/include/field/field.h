@@ -25,6 +25,10 @@ struct Actor;
 /// colours.
 #define PALETTE_HALF_COLORS (BG_PLTT_SIZE / sizeof(u16))
 
+/// The direction pad's four keys (KEY_RIGHT to KEY_DOWN) as a number 0 to 15,
+/// to index a table with a row for each combination held.
+#define DPAD_INDEX(keys) (((keys) >> 4) & 15)
+
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it.
 extern s32 gCamera_UnreadWord1;

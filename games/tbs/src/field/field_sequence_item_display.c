@@ -350,11 +350,11 @@ void FieldEffect_SpawnRevealMarkers(void) {
   leaderRow = FIELD_CELL(actor->z.fixed);
   if (markerData != 0) {
     while (column = *markerData++, row = *markerData++,
-           column != 0xff || row != 0xff) {
+           column != TREASURE_SPOT_LIST_END || row != TREASURE_SPOT_LIST_END) {
       id = *markerData++;
       if (TreasureSpot_GetActor(id) != NULL)
         continue;
-      if (id < 100 || id > 239)
+      if (id < TREASURE_SPOT_FIRST_ID || id > TREASURE_SPOT_LAST_ID)
         continue;
       if (leaderColumn - column >= 0) {
         if (leaderColumn - column > 8)

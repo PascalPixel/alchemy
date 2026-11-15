@@ -65,9 +65,9 @@ void Field_PlaceTreasureSpots(void) {
 
   column = *list++;
   row = *list++;
-  while (column != 255 || row != 255) {
+  while (column != TREASURE_SPOT_LIST_END || row != TREASURE_SPOT_LIST_END) {
     id = *list++;
-    if (id >= 100 && id <= 239) {
+    if (id >= TREASURE_SPOT_FIRST_ID && id <= TREASURE_SPOT_LAST_ID) {
       // The first event with this trigger that places something wins; the
       // event's value says what the search gives (its FIND_ type, as
       // Field_ExamineCell reads it).
@@ -77,11 +77,10 @@ void Field_PlaceTreasureSpots(void) {
           continue;
         if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
             EXAMINE_TRIGGER(EXAMINE_CHEST)) {
-          // A chest, at the centre of its cell (cells are 16 pixels, and
-          // positions 16.16).
-          markerActor =
-              Actor_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
-                              (column << 20) + px(8), 0, (row << 20) + px(8));
+          // A chest, at the centre of its cell.
+          markerActor = Actor_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
+                                        FIELD_CELL_CENTER(column), 0,
+                                        FIELD_CELL_CENTER(row));
           if (markerActor == NULL)
             continue;
           Actor_SnapToTerrain(markerActor);
@@ -115,9 +114,9 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           if (GameFlag_GetFar(trigger->condition))
             continue;
-          markerActor =
-              Actor_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
-                              (column << 20) + px(8), 0, (row << 20) + px(8));
+          markerActor = Actor_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
+                                        FIELD_CELL_CENTER(column), 0,
+                                        FIELD_CELL_CENTER(row));
           if (markerActor == NULL)
             continue;
           Actor_SnapToTerrain(markerActor);
@@ -284,9 +283,9 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
     actor = marker->actor;
     if (actor != NULL) {
       if (spotX == -1)
-        spotX = (marker->column << 20) + px(8);
+        spotX = FIELD_CELL_CENTER(marker->column);
       if (spotZ == -1)
-        spotZ = (marker->row << 20) + px(8);
+        spotZ = FIELD_CELL_CENTER(marker->row);
       actor->x.fixed = spotX;
       actor->z.fixed = spotZ;
       groundHeight = MapGrid_GetTerrainHeightFar(0, spotX, spotZ);

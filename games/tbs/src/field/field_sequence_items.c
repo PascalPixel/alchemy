@@ -22,14 +22,11 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
   // Query both target forms once; matching events choose actor or cell
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
-
-  // subject bits: 15..12 facing | 11 facing required | 7..0 actor or
-  // cell behavior; control bits: 15..8 item | 4 on an actor | 3..0
-  // kind.
+  // The kind's bits: 15..8 the item, 4 on an actor, 3..0 the kind.
   while (trigger->kind != -1) {
-    s32 eventFacing = trigger->subject & 0xf000;
-    s16 requiresFacing = trigger->subject & 0x0800;
-    s32 eventTarget = trigger->subject & 0xff;
+    s32 eventFacing = trigger->subject & TRIGGER_SUBJECT_FACING;
+    s16 requiresFacing = trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 eventTarget = trigger->subject & TRIGGER_SUBJECT_TARGET;
 
     if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_ITEM &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
@@ -203,9 +200,9 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
     anyPhase = 1;
 
   while (trigger->kind != -1) {
-    s32 eventFacing = trigger->subject & 0xf000;
-    s16 requiresFacing = trigger->subject & 0x0800;
-    s32 eventTarget = trigger->subject & 0xff;
+    s32 eventFacing = trigger->subject & TRIGGER_SUBJECT_FACING;
+    s16 requiresFacing = trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 eventTarget = trigger->subject & TRIGGER_SUBJECT_TARGET;
 
     if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&

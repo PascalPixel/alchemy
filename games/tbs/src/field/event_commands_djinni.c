@@ -84,8 +84,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
                            djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
-      copy->scaleY = Q16_ONE * 15 / 16;
-      copy->scaleX = Q16_ONE * 15 / 16;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= ACTOR_FACES_MOTION;

@@ -218,6 +218,13 @@ STATIC_ASSERT(sizeof(struct Trigger) == 12);
 /// examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 
+/// Trigger.subject for an item or Psynergy trigger: bits 15 to 12 the leader's
+/// facing (an angle's top four bits), heeded only with bit 11 set, and bits 7
+/// to 0 the actor id or cell behavior it answers.
+#define TRIGGER_SUBJECT_FACING 0xf000
+#define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
+#define TRIGGER_SUBJECT_TARGET 0xff
+
 /// Trigger.kind's low four bits: what the trigger answers.
 enum TriggerKind {
   TRIGGER_TALK = 0, ///< the A button on an actor; the subject is its id

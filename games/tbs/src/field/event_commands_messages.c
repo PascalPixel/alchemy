@@ -40,9 +40,9 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   extra = 0;
   portraitTop = 0;
   margin = 4;
-  flags = actorId & 0xf000;
+  flags = actorId & SPEAKER_FLAGS;
   message = work->message;
-  actorId &= 0xfff;
+  actorId &= SPEAKER_ACTOR_MASK;
   x = 0;
   actor = Actor_Lookup(actorId);
   work->speaker = actorId;
@@ -234,7 +234,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_GetSpriteById(actorId);
   if (actorId <= 7) {
-    member = actorId & 0x0fff;
+    member = actorId & SPEAKER_ACTOR_MASK;
 
     if (Scene_FindActorPlacement(member) == 0) {
       sprite = member;
@@ -308,7 +308,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 #endif
   struct FieldWork *state = gFieldWork;
 
-  speaker &= 0xfff;
+  speaker &= SPEAKER_ACTOR_MASK;
 #ifdef UBFIX
   // Only the actor slots hold actor pointers;
   // Actor_Lookup's legacy range also exposes the event fields after

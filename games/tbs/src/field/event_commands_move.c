@@ -9,7 +9,7 @@
 /// DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];
+  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gKeysHeld)];
 }
 
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it

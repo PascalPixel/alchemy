@@ -338,7 +338,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyColumn = NAME_COMMAND_COLUMN;
   vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_FINISH_ROW;
-  if (vramSlot <= 95) {
+  if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
@@ -351,7 +351,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     keyMotion = &keyCursor.cursor;
   }
   vramSlot = VramCache_FindFreeEntry();
-  if (vramSlot <= 95) {
+  if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
@@ -627,7 +627,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyRow = 5;
   vramSlot = VramCache_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
-  if (vramSlot <= 95) {
+  if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
@@ -640,7 +640,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     keyMotion = &keyCursor.cursor;
   }
   vramSlot = VramCache_FindFreeEntry();
-  if (vramSlot <= 95) {
+  if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,

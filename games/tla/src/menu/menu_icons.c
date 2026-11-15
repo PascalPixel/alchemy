@@ -521,7 +521,7 @@ void MenuIcon_LoadSlots(void) {
 
   for (i = 0; i < 5; i++) {
     entry = VramCache_FindFreeEntry();
-    if (entry <= 95) {
+    if (entry < VRAM_CACHE_ENTRY_COUNT) {
       u32 *attributes;
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own. */

@@ -555,14 +555,14 @@ struct RenderInput *MenuCursor_Create(void *source) {
   work->tabIndex[1] = zero;
   work->sideIcon[1]->sentinel = sentinel;
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;

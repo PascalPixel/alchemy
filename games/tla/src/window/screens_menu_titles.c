@@ -19,7 +19,7 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
-  if (resourceIndex <= 0x5F) {
+  if (resourceIndex < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)resourceAddress, stagingBuffer);
     VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -36,7 +36,7 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
   struct WindowSprite *second;
 
   index = VramCache_FindFreeEntry();
-  if (index > 95)
+  if (index >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
   MenuTitle_Load(group, index);
@@ -74,7 +74,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  if (value <= 95) {
+  if (value < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);

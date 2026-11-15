@@ -260,7 +260,7 @@ struct Orbiter__gabomba_statue {
   s32 y;
   s32 z;
   u8 unk14[15];
-  u8 flags23;
+  u8 priorityFlags;
   u8 unk24[62];
   u8 phase;
   u8 unk63;
@@ -301,7 +301,7 @@ s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
   s32 angle = *phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 next;
 
-  actor->flags23 = 0;
+  actor->priorityFlags = 0;
   SET_POSITION(actor, px(actor->centerX + 16), px(16), px(actor->centerZ));
   FieldVector_AddPolarOffset(13, angle + TRIG_TURN / 2, &actor->x);
   next = *phase + gGabombaStatue_CogDirection;
@@ -396,7 +396,7 @@ struct Orbiter__find_near {
   s32 y;
   s32 z;
   u8 unk14[15];
-  u8 flags23;
+  u8 priorityFlags;
   u8 unk24[44];
   void **animation;
   u8 kind;

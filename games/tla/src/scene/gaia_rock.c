@@ -380,18 +380,9 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   return 0;
 }
 
-struct A4SlotValues {
-  s16 id;
-  s16 unk02;
-  s32 value04;
-  u8 unk08[8];
-  s32 value10;
-  u8 unk14[8];
-};
-
-static inline struct A4SlotValues *FindSlot(s32 id) {
+static inline struct HangingVineSlot *FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
-  struct A4SlotValues *found = NULL;
+  struct HangingVineSlot *found = NULL;
   s32 i;
 
   // Default: as HangingVine_FindSlot, the index zero is copied from found.
@@ -399,7 +390,7 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
 
   for (i = 0; i < 8; i++) {
     if (work->slots[i].id == id) {
-      found = (struct A4SlotValues *)&work->slots[i];
+      found = &work->slots[i];
       break;
     }
   }
@@ -407,17 +398,17 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
 }
 
 void GaiaRock_StartVineSwing(void) {
-  struct A4SlotValues *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(8);
 
-  slot->value10 = 0x4000;
-  slot->value04 = 64;
+  slot->phase = 0x4000;
+  slot->swing = 64;
 }
 
 void GaiaRock_SwingVineHarder(void) {
-  struct A4SlotValues *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(8);
 
-  slot->value10 = 0x4000;
-  slot->value04 += 128;
+  slot->phase = 0x4000;
+  slot->swing += 128;
 }
 
 void Actor_PlaySoundInView(struct Actor *object, s32 a);

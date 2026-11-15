@@ -195,17 +195,6 @@ struct UnitItems {
   u16 items[15];
 };
 
-struct SceneActor {
-  u8 pad0[16];
-  s32 unk_10;
-  u8 pad14[35 - 20];
-  u8 unk_23;
-  u8 pad24[64 - 36];
-  s32 unk_40;
-  u8 pad44[85 - 68];
-  u8 unk_55;
-};
-
 /// The object this update drives: an Actor with its own bytes over the callback
 /// word.
 struct Object6a5 {
@@ -2124,14 +2113,14 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   }
 
   for (i = 0; i <= 4 && list[i] != 64; i++) {
-    ((struct SceneActor *)Actor_Get(list[i]))->unk_55 = 0;
+    Actor_Get(list[i])->motionFlags = 0;
     FieldActor_SetSpritePriority(list[i], 1);
     count++;
   }
 
   for (i = 0; i <= 5; i++) {
-    ((struct SceneActor *)Actor_Get(gJupiterLighthouse_BeamObjects[i]))
-        ->unk_23 |= 32;
+    Actor_Get(gJupiterLighthouse_BeamObjects[i])->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
     FieldActor_SetSpritePriority(gJupiterLighthouse_BeamObjects[i], 0);
   }
 
@@ -2140,11 +2129,11 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   for (i = 0; i <= 227; i++) {
     beam->offsetY -= speed;
     for (j = 0; j < count; j++) {
-      struct SceneActor *actor;
+      struct Actor *actor;
 
-      ((struct SceneActor *)Actor_Get(list[j]))->unk_10 += speed;
-      actor = ((struct SceneActor *)Actor_Get(list[j]));
-      actor->unk_40 = ((struct SceneActor *)Actor_Get(list[j]))->unk_10;
+      Actor_Get(list[j])->z.fixed += speed;
+      actor = Actor_Get(list[j]);
+      actor->targetZ = Actor_Get(list[j])->z.fixed;
     }
     if ((i & 3) == 3)
       speed += 0x1999;
@@ -2170,14 +2159,14 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
   }
 
   for (i = 0; i <= 5; i++) {
-    ((struct SceneActor *)Actor_Get(gJupiterLighthouse_BeamObjects[i]))
-        ->unk_23 &= 223;
+    Actor_Get(gJupiterLighthouse_BeamObjects[i])->priorityFlags &=
+        ~ACTOR_PRIORITY_IGNORES_RISES;
     FieldActor_SetSpritePriority(gJupiterLighthouse_BeamObjects[i], 1);
   }
 
   for (i = 0; i < count; i++) {
     Actor_SetPosition(list[i], 0, 0);
-    ((struct SceneActor *)Actor_Get(list[i]))->unk_55 = 0;
+    Actor_Get(list[i])->motionFlags = 0;
   }
 }
 

@@ -114,12 +114,6 @@ struct ActionScript {
   u32 words[9];
 };
 
-struct IsletsMapWork {
-  u8 unk000[0x190];
-  s32 value190;
-  s32 value194;
-};
-
 void Actor_Release(struct Actor *object);
 void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
@@ -2028,14 +2022,14 @@ void Islets_InitializeCow(void) {
 
 /// Sets up the room's actors and map work.
 void Islets_InitializePier(void) {
-  struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(ACTOR_BIRD);
   struct Actor *last;
   s32 set;
   s32 zero = 0;
 
-  map->value190 = zero;
-  map->value194 = zero;
+  map->layers[2].speedX = zero;
+  map->layers[2].speedY = zero;
   if (gMainRoutineWork.entrance == 11)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2243,17 +2237,17 @@ void Islets_ShimmerWater(void) {
 }
 
 void Islets_DropThroughHole(void) {
-  s32 v5;
-  struct Actor *object0;
+  s32 party;
+  struct Actor *leader;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DROP_THROUGH_HOLE);
-  v5 = &gMainRoutineWork;
-  v5 = (v5 + 0x214);
-  object0 = Actor_Get(*(s32 *)((u8 *)v5 + 0));
-  Actor_SetSpriteFlags((s32)object0, 0);
-  Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
+  party = &gMainRoutineWork;
+  party = (party + offsetof(struct MainRoutineWork, leaderActorId));
+  leader = Actor_Get(*(s32 *)((u8 *)party + 0));
+  Actor_SetSpriteFlags((s32)leader, 0);
+  Actor_SetAnimation(*(s32 *)((u8 *)party + 0), 18);
   FieldEvent_Wait(40);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();

@@ -113,7 +113,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           force = (Random16() & 255) + 32;
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             spark->velocityX += -(px(1) / 2);
           else
             spark->velocityX += px(1) / 2;

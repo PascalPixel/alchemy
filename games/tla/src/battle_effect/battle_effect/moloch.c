@@ -981,7 +981,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedZoom = camera[27];
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     s32 yaw = TRIG_TURN / 4;
 
     camera[27] = yaw;

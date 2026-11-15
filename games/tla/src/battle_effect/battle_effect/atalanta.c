@@ -324,7 +324,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
               BattleEffect_TintBattler(args->targets[member],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
                                        8);
-              BattleMotion_ApplyKnockbackFar(args->targets[member], 1);
+              BattleMotion_ApplyKnockbackFar(args->targets[member],
+                                             KNOCKBACK_HOP);
             }
           }
         }

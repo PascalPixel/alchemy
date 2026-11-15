@@ -70,7 +70,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
                              1);
   pixels = Ram_MapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
-  if (args->variant == 1) {
+  if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
@@ -138,7 +138,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
     }
 
-    if (args->variant == 0) {
+    if (args->variant == EFFECT_VARIANT_BASIC) {
       // The flash, and the ring of flashes, at the user.
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
@@ -192,7 +192,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       }
     }
 
-    if (args->variant == 1) {
+    if (args->variant == EFFECT_VARIANT_STRONGER) {
       // The jaw, twice, a quarter turn apart: it grows from frame 56 and
       // fades out from frame 64.
       vertices = Heap_AllocEwram(512);
@@ -241,7 +241,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       Actor_SelectAnimationFar(user, 0);
     }
     if (frame == 54) {
-      if (args->variant == 0)
+      if (args->variant == EFFECT_VARIANT_BASIC)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_CRASH);

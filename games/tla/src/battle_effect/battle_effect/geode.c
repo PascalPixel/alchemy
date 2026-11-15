@@ -67,7 +67,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
                WINOUT_WINOBJ_ALL;
   transition[4] = 1;
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {
@@ -183,7 +183,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     }
     if ((u32)(frame - 34) <= 5) {
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         REG_WIN0H = WIN_RANGE(32, 240);
         REG_WIN1H = WIN_RANGE(32, 240);
       } else {
@@ -208,7 +208,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       y = (t << 6) / 12 + 16;
       gBgScroll[1].x = 64 - x;
       gBgScroll[1].y = t * -46 / 12 + 78;
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x = x / 2 + 20;
       } else {
         x = x / 2 - 20;

@@ -87,7 +87,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                              work->sheet + 0x2f10, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -182,7 +182,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           angle += TRIG_TURN / 2;
         shard->x = px(to.x / 2);
         shard->y = to.y << 16;
@@ -199,7 +199,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame > 85) {
       s32 x;
 
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x = 2872 - frame * 32;
         if (x < -38)
           x = -38;
@@ -209,7 +209,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           x = 0;
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
       else
@@ -249,7 +249,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
 
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             if (i != 0)
               angle += TRIG_TURN / 4;
           } else if (i == 0) {
@@ -275,7 +275,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 y;
 
         if (age <= 8) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             x = to.x / 2 - age * 10 + 80;
           else
             x = to.x / 2 + age * 10 - 80;
@@ -285,14 +285,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
             y = 168 - age * 16;
         } else {
           // DEAD: both arms alike; the ROM keeps the test of effect->side.
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             x = to.x / 2;
           else
             x = to.x / 2;
           y = i == 0 ? 8 : 40;
         }
         if (i == 1) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                 BLITTER_MAX);
@@ -778,7 +778,7 @@ void Iris_RestoreBattle(void) {
 
     SET_POSITION(object, 0, px(120), 0);
     object->verticalMotionStrength = 0xab85;
-    BattleMotion_ApplyKnockbackFar(work->args->targets[i], 1);
+    BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->active = 0;
   gCameraSceneParameters[3] = 120;

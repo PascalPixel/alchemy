@@ -329,7 +329,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));

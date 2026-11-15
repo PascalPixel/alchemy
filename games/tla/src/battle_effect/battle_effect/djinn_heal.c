@@ -79,7 +79,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - anchor[0]) << 8;
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -347,7 +347,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame == 161 || frame == 165 || frame == 169) {
     strike:
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 4);
       }

@@ -602,7 +602,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     // the caster.
     if (mode == 0)
       dir = 1;
-    else if (args->side == 1)
+    else if (args->side == EFFECT_SIDE_PARTY)
       dir = -1;
     else
       dir = 1;
@@ -610,7 +610,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectScaledBattler(args->user, &origin);
       origin.x /= 2;
       origin.y = 66;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         origin.x = 76;
       else
         origin.x = 44;
@@ -654,7 +654,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                    POSE_DAMAGE, TINT_KEEP, 0);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
         frame = 160;
       }
@@ -875,7 +875,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                    POSE_DAMAGE, TINT_KEEP, 0);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
       }
 

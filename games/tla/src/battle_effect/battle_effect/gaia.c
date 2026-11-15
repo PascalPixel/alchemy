@@ -62,15 +62,15 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
 
   // The larger variants stretch the wall wider: BG2 at 1.25 and 1.5.
-  if (args->variant == 0)
+  if (args->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = 204;
-  else if (args->variant == 1)
+  else if (args->variant == EFFECT_VARIANT_STRONGER)
     REG_BG2PA = 170;
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     wallX = 8;
-    if (args->variant == 0)
+    if (args->variant == EFFECT_VARIANT_BASIC)
       rockX = 40;
-    else if (args->variant == 1)
+    else if (args->variant == EFFECT_VARIANT_STRONGER)
       rockX = 36;
     else
       rockX = 40;
@@ -313,9 +313,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (args->variant == 0)
+                if (args->variant == EFFECT_VARIANT_BASIC)
                   rock->x = Random16() % 96 + 42;
-                else if (args->variant == 1)
+                else if (args->variant == EFFECT_VARIANT_STRONGER)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;
@@ -339,7 +339,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 5);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_SKID);
         }
       }
     }

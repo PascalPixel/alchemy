@@ -226,7 +226,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           SceneTransform_ApplyPosition3((caster.x / 2 - 64) << 16,
                                         (caster.y << 16) + 0xffc00000, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 1) {
+          if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           SceneTransform_ApplyUniformScale(Q16_ONE * 4);

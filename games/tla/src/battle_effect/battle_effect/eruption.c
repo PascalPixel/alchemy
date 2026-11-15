@@ -59,7 +59,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 32; i++) {
     struct Particle *puff = &work->particles[i];
 
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -73,7 +73,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 1024; i++) {
     struct Particle *mote = &MOTES[i];
 
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -154,7 +154,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
         if (frame == i + 6) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_LEAP);
         }
       }
     } else {

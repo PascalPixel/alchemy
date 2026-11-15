@@ -82,7 +82,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -147,7 +147,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->shakeFrames = 8;
         if (frame == 28) {
-          if (args->variant == 0) {
+          if (args->variant == EFFECT_VARIANT_BASIC) {
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
           } else {
             Sound_PlayFar(SE_CLATTER);
@@ -288,7 +288,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           model->mesh = stripMesh;
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             SceneTransform_ApplyPosition3((source.x / 2 - 68) << 16,
                                           (source.y << 16) - 0x600000, 0);
           } else {
@@ -296,7 +296,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                                           (source.y << 16) - 0x600000, 0);
           }
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 1) {
+          if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
@@ -381,12 +381,12 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     // It starts 100 pixels above the canvas and to the target's far side,
     // and comes down at it for 32 frames.
     if (frame == 0) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         work->particles[0].x = px(target.x + 40);
       else
         work->particles[0].x = px(target.x - 168);
       work->particles[0].y = -px(100);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         work->particles[0].velocityX = -px(6);
       else
         work->particles[0].velocityX = px(6);
@@ -417,7 +417,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2, 96,
                        83);
       if ((u32)frame < 48)
@@ -441,7 +441,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     if (frame >= 28 && frame < 40) {
       s32 cel = (frame - 28) / 3;
 
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         draw[args->side](
             canvas,
             Ram_MapCellBuffer + FIGURE_SWING + gHeartbreak_SwingPictures[cel],
@@ -462,7 +462,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     // The fist: raised to frame 47, then falling six frames a cel from 56.
     if (frame > 39) {
       if (frame <= 47) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 30, y + 46,
                            32, 29);
         else
@@ -474,7 +474,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
         if (cel < 0)
           cel = 0;
         if (cel <= 7) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             draw[args->side](canvas,
                              Ram_MapCellBuffer + FIGURE_FIST +
                                  gHeartbreak_FistPictures[cel],

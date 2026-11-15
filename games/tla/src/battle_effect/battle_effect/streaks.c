@@ -91,7 +91,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     drawUpper = heap->ramCode;
@@ -337,7 +337,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
     mote = &EFFECT_STEPS[i];
     if (mode == MODE_SLAVER) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
         angle = Random16() & 0x7fff;

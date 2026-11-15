@@ -108,7 +108,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 3);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_LAUNCH);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -116,7 +116,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 32, 32);
@@ -181,7 +181,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
                                  otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
@@ -224,7 +224,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
         if (frame > 16)
           y = y - frame * 2 + 32;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -327,7 +327,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               Sound_PlayFar(SE_HEAVY_IMPACT);
               BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, 0, 4);
-              BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+              BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             }
           }
         }

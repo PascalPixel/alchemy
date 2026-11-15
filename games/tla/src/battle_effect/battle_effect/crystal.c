@@ -63,7 +63,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {

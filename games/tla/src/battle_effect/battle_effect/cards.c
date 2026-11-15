@@ -74,13 +74,13 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
   BattleEffect_StartTiledCanvas(0x2001);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
     else
@@ -88,7 +88,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
   } else {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -149,7 +149,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectSprite(args->user, &card);
       BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           middle.x += 32;
         else
           middle.x -= 32;
@@ -261,13 +261,13 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
       SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
       if (frame <= 47) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll((frame << 10) - 0xd000);
         else
           Transform_ApplyRoll((52 - frame) << 10);
         Transform_ApplyPitch((52 - frame) << 10);
       } else {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll(-TRIG_TURN / 16);
         else
           Transform_ApplyRoll(TRIG_TURN / 16);

@@ -106,7 +106,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   if (kind == 5 || kind == 6) {
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           BLITTER_ADDITIVE);
@@ -120,7 +120,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
   } else {
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
@@ -173,7 +173,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // The layer is centred on the first target, kept within 128 pixels.
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectSprite(args->targets[0], &anchor);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     shake = 96 - anchor.x;
   else
     shake = 32 - anchor.x;
@@ -214,14 +214,14 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     // The target recoils, harder for some kinds.
     if (frame == 4) {
       if (kind == 7)
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       else if (kind == 5 || kind == 6)
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       else if (kind == 8)
         BattleEffect_StartActorMotion(args->targets[0], 1, 0x10000, 0x40000,
                                       0x30000, 150);
       else
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     pos.y += 16;
@@ -232,7 +232,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (kind == 4) {
       // The wave: six cels, two frames each, played backwards.
       if (frame <= 11) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300,
                   pos.x + shake - 48, pos.y - 8, 48, 16);
         else
@@ -242,7 +242,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     } else if ((u32)kind <= 2 || kind == 5 || kind == 6) {
       // The arc: six cels, two frames each.
       if (frame <= 11) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake - 48,
                   pos.y - 40, 48, 72);
         else
@@ -254,7 +254,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       if (frame <= 17) {
         s32 cel = frame / 3;
 
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           draw[0](canvas, work->sheet + gBeam_Pictures[cel],
                   pos.x + gBeam_PictureReaches[cel] + shake - 58,
                   pos.y - gBeam_PictureHeights[cel] / 2,
@@ -343,7 +343,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   wait(1);
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -452,7 +452,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(args->targets[0], &anchor);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     shake = 32 - anchor.x;
   else
     shake = 96 - anchor.x;
@@ -485,7 +485,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     pos.y += 16;
     // The flash: four cels, two frames each.

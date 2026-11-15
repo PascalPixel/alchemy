@@ -85,13 +85,13 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (args->variant != 0 && frame == HIT_FRAME)
+    if (args->variant != EFFECT_VARIANT_BASIC && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
     EffectPosition_ProjectScaledBattler(args->user, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
       else
@@ -99,7 +99,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2 - 24, user.y - 24, 48, 72);
@@ -119,7 +119,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (step > 2)
         step = 2;
-      if (args->variant == 0)
+      if (args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
@@ -158,7 +158,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
     // The hit's knock-back, and the target's flashes.
     if (frame == HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)

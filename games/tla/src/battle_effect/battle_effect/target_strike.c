@@ -275,7 +275,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         s32 speed = Random16() & 255;
 
         gSparks[i].velocityX = (Random16() & 0x1ff) << 11;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           gSparks[i].velocityX = -gSparks[i].velocityX;
         gSparks[i].velocityY = Trig_Sin(angle) * speed >> 4;
         gSparks[i].velocityZ = Trig_Cos(angle) * speed >> 4;
@@ -327,7 +327,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           targetPosition.y += (alternate.y - targetPosition.y) / 2;
           targetPosition.y += (Random16() & 15) - 8;
         }
-        if (args->side == 1) {
+        if (args->side == EFFECT_SIDE_PARTY) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
@@ -385,14 +385,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             work->shakeFrames = 8;
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
             work->shakeFrames = 8;
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
@@ -474,14 +474,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           work->shakeFrames = 8;
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
           work->shakeFrames = 8;
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         }

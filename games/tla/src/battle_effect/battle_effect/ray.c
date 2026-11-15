@@ -39,11 +39,11 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   xOffset = 0;
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
-  if (args->variant == 2)
+  if (args->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5); // twice as wide
   else
     REG_BG2PA = Q_8_8(1);
@@ -58,8 +58,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
   // Scroll the canvas: a fixed offset for the wide variant, else onto the
   // targets' midpoint.
-  if (args->variant == 2) {
-    if (work->args->side == 1)
+  if (args->variant == EFFECT_VARIANT_STRONGEST) {
+    if (work->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -0x1000;
     else
       REG_BG2X = 0x1000;
@@ -109,7 +109,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -((Trig_Cos(angle) << 3) >> 16) - 8;
-        if (args->variant == 0)
+        if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
                   xOffset + x + (Random16() & 7) - 16, y, 24, 120);

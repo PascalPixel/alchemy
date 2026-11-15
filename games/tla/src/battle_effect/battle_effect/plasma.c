@@ -46,7 +46,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  if (args->variant != 2) {
+  if (args->variant != EFFECT_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
@@ -66,7 +66,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
     // The strongest variant pans the camera over the first 64 frames.
-    if (args->variant == 2 && frame <= 63) {
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 63) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -74,7 +74,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         speed = 256;
       else
         speed = 704 - frame * 8;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
@@ -129,7 +129,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       // Four frames after each strike the targets recoil and flash.
       if (frame == start + 4) {
         for (k = 0; k != args->targetCount; k++) {
-          BattleMotion_ApplyKnockbackFar(args->targets[k], 1);
+          BattleMotion_ApplyKnockbackFar(args->targets[k], KNOCKBACK_HOP);
           BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 8);
         }
@@ -273,7 +273,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       spark = sparks + i * SPARK_COUNT + j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         spark->x = px(originX - GROUP_X(i) + 28);
       else
         spark->x = px(originX + GROUP_X(i) - 28);
@@ -290,8 +290,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
     // The strongest variant pans the camera; the next one wipes the canvas
     // at frame 4.
-    if (args->variant == 2 && frame <= 51) {
-      if (args->side == 0)
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 51) {
+      if (args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw += 256;
       else
         camera->yaw -= 256;
@@ -318,7 +318,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       // The big flash, for two frames.
       if (frame >= start && frame < start + 2) {
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           draw[0](canvas, work->sheet, originX - GROUP_X(i) + 12, originY - 32,
                   32, 64);
         else
@@ -335,7 +335,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
           point = &work->particles[i * FLASH_POINTS + j];
           y = Q_16_16_UPPER_HALF(point->y) + originY;
-          if (args->side == 1)
+          if (args->side == EFFECT_SIDE_PARTY)
             x = Q_16_16_UPPER_HALF(point->x) + originX - GROUP_X(i) + 28;
           else
             x = Q_16_16_UPPER_HALF(point->x) + originX + GROUP_X(i) - 28;
@@ -385,7 +385,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         if (frame == start + 6) {
           BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[j], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_HURL);
         }
       }
     }

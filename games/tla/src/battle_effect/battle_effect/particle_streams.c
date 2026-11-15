@@ -728,7 +728,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     user->verticalMotionStrength = 0x91eb;
     BattleEffect_TintBattler(args->user, TINT_KEEP, 2, TINT_KEEP, 0);
     Sound_PlayFar(SE_CRASH);
-    direction = args->side == 1 ? mode : -1;
+    direction = args->side == EFFECT_SIDE_PARTY ? mode : -1;
   } else {
     direction = -1;
   }

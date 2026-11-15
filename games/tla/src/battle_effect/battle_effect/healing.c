@@ -25,7 +25,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSpring, BattleEffect_RunHealingMotes, 8)
 DEFINE_EFFECT_KIND(BattleEffect_RunBreath, BattleEffect_RunHealingMotes, 9)
 
 void BattleEffect_RunCurePoison(struct BattleEffectParams *args) {
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunHealingMotes(args, 3);
     return;
   }
@@ -144,7 +144,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     work->sheet[BEAM_BYTES + i] = work->sheet[BEAM_SHEET + i * 2];
   if (mode <= 1 || mode == 3 || mode == 4 || mode == 5 || mode == 8 ||
       mode == 12) {
-    if (args->variant == 0)
+    if (args->variant == EFFECT_VARIANT_BASIC)
       palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
@@ -285,9 +285,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   // Motes a target: 32 for variant 0, 128 for variant 2, else 64; mode 8
   // takes 128 and mode 12 16.
   limit = 64;
-  if (args->variant == 0)
+  if (args->variant == EFFECT_VARIANT_BASIC)
     limit = 32;
-  else if (args->variant == 2)
+  else if (args->variant == EFFECT_VARIANT_STRONGEST)
     limit = 128;
   if (mode == 8)
     limit = 128;

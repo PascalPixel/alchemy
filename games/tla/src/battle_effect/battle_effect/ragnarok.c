@@ -61,7 +61,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, 2);
   Actor_SetAnimationSpeedFar(user, 48);
   EffectPosition_ProjectBattler(args->targets[0], &target);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     baseX = target.x / 2 - 24;
   else
     baseX = target.x / 2 - 92;
@@ -127,7 +127,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 top;
 
       height = 128;
-      if (args->side == 1) {
+      if (args->side == EFFECT_SIDE_PARTY) {
         if (frame < BLADE_SWING_FRAMES) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;
@@ -240,7 +240,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         if (frame == start + 6) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
       }
       col++;
@@ -598,7 +598,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 7);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_JOLT);
       }
     }
 

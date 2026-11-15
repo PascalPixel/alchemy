@@ -956,14 +956,53 @@ extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 
 // flurry.c
+void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode);
 extern char ResourceId_YellowOrbSheet;
 extern char ResourceId_BlueArcSheetA;
 extern char ResourceId_BlueArcSheetB;
 extern char ResourceId_WaveSheet;
-// The variants' records, eight bytes each.
-extern u8 gBurstScene_Styles[];
-// A glint's four flips.
-extern const u8 gBurstScene_GlintFlips[];
+/// BattleEffect_RunFlurry's modes, by the abilities that play them: the rows
+/// of gFlurry_Styles. Gust and Flying Attack take one, two or three strikes as
+/// a double or triple blow raises their variant.
+enum FlurryMode {
+  FLURRY_BEAR_CLAW,            ///< five strikes; also Ransack
+  FLURRY_BACTERIA_RUSH,        ///< seven strikes, in lime
+  FLURRY_FREEBITE_RUSH,        ///< nine strikes, in blue
+  FLURRY_FLYING_ATTACK,        ///< one strike, in embers
+  FLURRY_FLYING_ATTACK_DOUBLE, ///< two
+  FLURRY_FLYING_ATTACK_TRIPLE, ///< three
+  FLURRY_GUST,                 ///< one strike, each filling the canvas
+  FLURRY_GUST_DOUBLE,          ///< two
+  FLURRY_GUST_TRIPLE,          ///< three
+  FLURRY_UR_FLASH,             ///< three strikes, in the Mars Djinni's colours
+  FLURRY_CRUSHER_GRIP,         ///< one strike, with glints
+  FLURRY_VANISH_CLAW,          ///< one strike, with a ripple and smoke
+  FLURRY_CLAW_ATTACK           ///< one strike after a longer lunge, in embers
+};
+/// A flurry's arcs, its FLURRY_ARC_SHEET.
+enum FlurryArcs {
+  FLURRY_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
+                         ///< fourth of every four strikes
+  FLURRY_ARCS            ///< blue arc B for every strike
+};
+/// Whose palette a flurry takes, its FLURRY_PALETTE.
+enum FlurryPalette {
+  FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
+  FLURRY_PALETTE_LIME,
+  FLURRY_PALETTE_BLUE_ARC,
+  FLURRY_PALETTE_EMBER ///< the ember streak sheet's
+};
+/// What else a flurry plays around its target, its FLURRY_EXTRA.
+enum FlurryExtra {
+  FLURRY_EXTRA_NONE,
+  FLURRY_EXTRA_GLINTS, ///< three glints a frame until frame 31
+  FLURRY_EXTRA_RIPPLE  ///< BG2 swings on a sine wave and smoke rises
+};
+/// A flurry's style, one row a mode (enum FlurryMode), one byte a column
+/// (enum FlurryColumn).
+extern u8 gFlurry_Styles[][8];
+/// A glint's four flips.
+extern const u8 gFlurry_GlintFlips[];
 
 // gaia.c
 extern char ResourceId_EarthWallSheet;

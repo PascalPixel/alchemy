@@ -102,7 +102,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         ball->y = px(source.y - 32);
         ball->velocityX = ((target.x << 16) - ball->x) / frames;
       } else {
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           ball->x = px(source.x - 32);
         } else {
           ball->x = px(source.x + 32);
@@ -155,7 +155,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       }
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       if (mode == 0) {
@@ -735,7 +735,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   flip = 4;
-  if (args->side != 0) {
+  if (args->side != EFFECT_SIDE_ENEMIES) {
     flip = 0;
   }
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flip | 3, 1);
@@ -757,7 +757,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     } else {
       work->cameraDelta = 0;
     }
-    if (args->side == 1) {
+    if (args->side == EFFECT_SIDE_PARTY) {
       work->cameraDelta = -work->cameraDelta;
     }
     if (frame > 79) {
@@ -852,7 +852,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         if (frame == 72) {
           work->shakeFrames = 8;
           EFFECT_SHOW_DAMAGE(SE_CRASH);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
@@ -862,7 +862,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           point[2] = caster->z;
           EffectPosition_ProjectPoint(point, &segment);
           segment.x >>= 1;
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             segment.x -= 32;
           }
           if (i > 0) {

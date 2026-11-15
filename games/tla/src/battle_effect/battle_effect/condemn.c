@@ -63,7 +63,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
   // The image starts off to the side, above the field.
   visible = 1;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     curve[0] = -0x500000;
   else
     curve[0] = 0x700000;
@@ -86,7 +86,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // It jumps closer at frame 24 and onto the target at frame 48, hidden
     // for the frame of each jump.
     if (frame == 24) {
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         curve[0] = -0x200000;
       else
         curve[0] = 0x480000;
@@ -99,7 +99,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     if (frame == 48) {
       EffectPosition_ProjectScaledBattler(args->targets[0], pos);
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         curve[0] = (pos[0].x - 128) << 16;
       else
         curve[0] = (pos[0].x - 64) << 16;
@@ -191,7 +191,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 68)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 72) {
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
     }

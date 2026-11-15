@@ -303,7 +303,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
               burst->y += up << 13;
               burst->variant = (Random16() & 15) + 8;
             }
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
             Sound_PlayFar(SE_HEAVY_IMPACT);
           }
         }

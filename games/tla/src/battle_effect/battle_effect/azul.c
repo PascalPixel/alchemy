@@ -704,7 +704,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;

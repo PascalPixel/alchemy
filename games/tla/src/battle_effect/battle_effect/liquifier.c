@@ -588,11 +588,11 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         if (mode == 0 || mode == 2 || mode == 3) {
           EFFECT_SHOW_DAMAGE(SE_CRASH);
           for (i = 0; i != args->targetCount; i++)
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         } else {
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
           for (i = 0; i != args->targetCount; i++)
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
         }
         for (i = 0; i != args->targetCount; i++)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,

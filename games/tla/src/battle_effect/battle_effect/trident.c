@@ -490,7 +490,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   // The blitter faces the caster's side.
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -602,13 +602,14 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           work->shakeFrames = 4;
           if (mode == 0) {
             EFFECT_SHOW_DAMAGE(SE_CRASH);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
           } else {
             Sound_PlayFar(SE_CRASH);
             for (i = 0; i != args->targetCount; i++) {
-              BattleMotion_ApplyKnockbackFar(args->targets[i], 3);
+              BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                             KNOCKBACK_LAUNCH);
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 16);
             }
@@ -648,7 +649,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
                                         0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(-0x3388);
           } else {
             Transform_ApplyYaw(TRIG_TURN / 2);

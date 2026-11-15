@@ -398,7 +398,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
       }
       EFFECT_SHOW_DAMAGE(SE_CRASH);
     }

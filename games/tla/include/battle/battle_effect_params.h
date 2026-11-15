@@ -4,6 +4,9 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// BattleEffectParams.side: the side the targets are on.
+enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
+
 /// The command shared by an effect's caller, dispatcher and handlers.
 struct BattleEffectParams {
   s32 kind;        ///< the effect's index in the handler table

@@ -124,7 +124,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
                                    SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                    i % args->targetCount, 4);
           BattleMotion_ApplyKnockbackFar(args->targets[i % args->targetCount],
-                                         0);
+                                         KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
           Sound_PlayFar(SE_WATER);
         }
@@ -210,7 +210,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
     // Sway toward the targets' side; fade in over 16 frames and out over the
     // last 16.
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       wave += 0x200000;
     else
       wave -= 0x200000;
@@ -261,7 +261,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
         if (frame == i * 8 + j * 3 + 16) {
           BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 4);
-          BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+          BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
         }
       }
     }

@@ -17,7 +17,7 @@
 /// Each entry passes a particle type (color and count) to
 /// BattleEffect_RunTargetMotes. effect: effect arguments.
 void BattleEffect_RunTaint(struct BattleEffectParams *args) {
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunTargetMotes(args, 0);
     return;
   }
@@ -140,7 +140,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
         BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
       if (frame == total - 32) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
@@ -446,7 +446,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -477,7 +477,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           // The marker at the target's feet, then the flame, six frames a cel.
           marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
-          if (args->side == 1) {
+          if (args->side == EFFECT_SIDE_PARTY) {
             pos.x -= 112;
           }
           y = pos.y;

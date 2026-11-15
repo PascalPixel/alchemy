@@ -171,7 +171,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
       for (i = 0; i != args->targetCount; i++)
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 6);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
       Sound_PlayFar(SE_WHOOSH);

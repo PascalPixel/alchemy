@@ -34,7 +34,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
@@ -134,7 +134,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          if (args->variant == 2)
+          if (args->variant == EFFECT_VARIANT_STRONGEST)
             Sound_PlayFar(SE_HEAVY_IMPACT);
           else
             Sound_PlayFar(SE_WHOOSH);

@@ -65,7 +65,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
   /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords. */
-  if (args->variant == 1)
+  if (args->variant == EFFECT_VARIANT_STRONGER)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -108,7 +108,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // The eight puffs, on an arc over the user, each two frames after the last.
   for (i = 0, angle = -TRIG_TURN / 4; i != 8; angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
@@ -124,7 +124,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 83) {
-      if (args->variant == 0)
+      if (args->variant == EFFECT_VARIANT_BASIC)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -135,7 +135,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_WHOOSH);
 
     // For 64 frames the camera turns away from the user's side.
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       if (frame <= 63)
         camera->yaw -= 0x100;
     } else {
@@ -167,7 +167,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
-    if (args->variant == 1) {
+    if (args->variant == EFFECT_VARIANT_STRONGER) {
       if (frame == 0) {
         for (i = 0; i != 128; i++) {
           s32 angle;
@@ -245,7 +245,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
       if (frame >= 78 && frame <= 118)
         position.x = x;
-      else if (args->side == 1)
+      else if (args->side == EFFECT_SIDE_PARTY)
         position.x = 64 - x / 2;
       else
         position.x = x / 2 + 64;
@@ -302,7 +302,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           if (i >= gDragonCloud_SparkCounts[args->variant]) {
             s32 cell;
 
-            if (args->variant == 0)
+            if (args->variant == EFFECT_VARIANT_BASIC)
               cell = step->variant / 2;
             else
               cell = step->variant / 4;
@@ -321,7 +321,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
 
       // Variant 1's 128 sparks at the target.
-      if (args->variant == 1) {
+      if (args->variant == EFFECT_VARIANT_STRONGER) {
         for (i = 0; i != 128; i++) {
           s32 size;
 
@@ -343,7 +343,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     }
 
     // Variant 1: the sparks the head shed.
-    if (args->variant == 1) {
+    if (args->variant == EFFECT_VARIANT_STRONGER) {
       struct Particle *spark = &SPARKS[256];
 
       for (i = 0; i != 128; i++, spark++) {
@@ -364,7 +364,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
     }
     if (frame == 50) {
       work->shakeFrames = 12;

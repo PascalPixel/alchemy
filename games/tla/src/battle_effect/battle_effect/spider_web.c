@@ -915,7 +915,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   canvas = slots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = Q_8_8(1);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->ramCode;
@@ -939,7 +939,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   // BG2 is placed on the first target.
   object = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectScaledBattler(args->targets[0], &position);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -966,7 +966,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     if (frame == 8) {
       if (mode == 0) {
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       } else {
         Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,

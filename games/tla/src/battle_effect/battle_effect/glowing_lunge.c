@@ -179,7 +179,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       SceneTransform_ApplyScale3(gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode]);
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         Transform_ApplyYaw(TRIG_TURN / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
@@ -205,7 +205,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       quad->faces = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         SceneTransform_ApplyPosition3((target.x - 144) << 16,
                                       (target.y - 84) << 16, 0);
       else
@@ -222,7 +222,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame == LUNGE_HIT_FRAME) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, LUNGE_HIT_FRAME);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       if (mode == 5)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else

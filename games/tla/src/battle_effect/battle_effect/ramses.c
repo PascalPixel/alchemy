@@ -221,7 +221,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     if (frame == RAMSES_STRIKE_FRAME) {
       // The strike: every target recoils and flashes white.
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
       }

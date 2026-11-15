@@ -91,7 +91,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         view->yaw -= speed;
       else
         view->yaw += speed;

@@ -146,7 +146,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       } else {
         turn = 0xa00 - (frame << 5);
       }
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         camera->yaw += turn;
       } else {
         camera->yaw -= turn;
@@ -263,7 +263,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         flash->variant = 0;
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 2);
       }

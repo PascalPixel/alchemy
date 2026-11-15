@@ -504,13 +504,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // A 128x128 blitter, mirrored for the other side.
   if (mode == 5 || mode == 12 || mode == 13) {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
@@ -766,7 +766,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -880,9 +880,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
                   mode != 14 && mode != 15 && mode != 16 && mode != 17) {
                 if (mode == 5)
-                  BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+                  BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                                 KNOCKBACK_HURL);
                 else
-                  BattleMotion_ApplyKnockbackFar(args->targets[i], 5);
+                  BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                                 KNOCKBACK_SKID);
               }
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.
@@ -918,7 +920,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           if (mode == 0 || mode == 5 || mode == 8) {
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
-            if (args->side == 1)
+            if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   BLITTER_MAX);
@@ -929,7 +931,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                            pos->y - gProjectileVolley_CometHeights[kind], 32,
                            gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-            if (args->side == 1)
+            if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);

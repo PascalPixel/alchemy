@@ -65,7 +65,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -158,7 +158,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // On the far side the background and the spirals move 112 pixels left.
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
@@ -173,7 +173,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     // The background waves sideways line by line.
     camera = Ram_HeapSlots->cameraWork;
     row = work->bg2xLines;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       s32 angle;
       s32 base;
 

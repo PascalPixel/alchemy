@@ -130,23 +130,3 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   // Teardown.
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-
-// Effects: burst effect entry points.
-
-/// Each entry passes a burst type to BattleEffect_RunBurstScene.
-/// step: effect arguments.
-void BattleEffect_RunGust(struct Particle *step) {
-  if (step->variant == 0) {
-    BattleEffect_RunBurstScene(step, 6);
-    return;
-  }
-  if (step->variant == 1) {
-    BattleEffect_RunBurstScene(step, 7);
-    return;
-  }
-  BattleEffect_RunBurstScene(step, 8);
-}
-
-void BattleEffect_RunBearClaw(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 0);
-}

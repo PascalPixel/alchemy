@@ -381,7 +381,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 8);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet
@@ -430,7 +430,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 BattleEffect_TintBattler(args->targets[j],
                                          gThor_TargetPalettes[Random16() & 3],
                                          POSE_DAMAGE, j, 4);
-                BattleMotion_ApplyKnockbackFar(args->targets[j], 4);
+                BattleMotion_ApplyKnockbackFar(args->targets[j],
+                                               KNOCKBACK_HURL);
               }
             }
           }

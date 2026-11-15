@@ -179,7 +179,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     if (frame == 0) {
       for (i = 0; i != ROCKS; i++) {
         rock = &work->particles[i];
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           rock->x = px(Random16() % 40 + 8);
         else
           rock->x = px(120 - Random16() % 40);
@@ -197,7 +197,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 
     // From frame 64 the background follows the boulders, ever faster.
     if (frame > 64) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         scroll += scrollSpeed;
       else
         scroll -= scrollSpeed;
@@ -224,7 +224,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
            Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
            gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           if (targetPosition.x >
               Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
             rock->variant = 1;
@@ -241,7 +241,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       BattleEffectKernels_IntegrateVector2(rock, 60, 0);
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           rock->velocityX -= px(1) / 2;
         else
           rock->velocityX += px(1) / 2;
@@ -563,7 +563,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     BattleEffect_StartTiledCanvasFilled(0x2000);
   } else {
     BattleEffect_StartTiledCanvas(0x2000);
@@ -679,12 +679,12 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         } else {
           turn = 1600 - frame * 20;
         }
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           camera->yaw -= turn;
         } else {
           camera->yaw += turn;
         }
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           if ((s16)camera->yaw < -14000) {
             camera->yaw = -14000;
           }

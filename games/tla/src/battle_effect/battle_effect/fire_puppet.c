@@ -69,7 +69,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -183,7 +183,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
                                     (pos.y << 16) + 0xffd60000, 0);
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      if (args->side == 1) {
+      if (args->side == EFFECT_SIDE_PARTY) {
         Transform_ApplyYaw(TRIG_TURN / 2);
       }
       Transform_ApplyRoll(TRIG_TURN / 4);
@@ -246,7 +246,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   sparkCels = heap->battleSheet;
 
   BattleEffect_StartCanvasLayer(1);
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
   } else {
@@ -265,7 +265,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
     EffectPosition_ProjectBattler(args->user, &caster);
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       switch (frame / 6) {
       case 0:
         draw[0](canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
@@ -313,7 +313,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 
     // The hit, and the sparks sprayed from 48 pixels out.
     if (frame == SWING_HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -323,14 +323,14 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
         s32 speed;
 
         spark = &((struct Particle *)Ram_MapCellBuffer)[i];
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           spark->x = px(caster.x / 2 - 48);
         else
           spark->x = px(caster.x / 2 + 48);
         spark->y = px(caster.y - (Random16() & 7));
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - (8 << 16);
         else
           spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + (8 << 16);

@@ -50,7 +50,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -px(64);
-    if (args->side == 1) {
+    if (args->side == EFFECT_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -65,7 +65,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gPrism_Counts[args->variant * 3 + 1]; frame++) {
     // The strongest variant turns the camera, slowing from frame 96.
-    if (args->variant == 2 && frame <= 103) {
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 103) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -73,7 +73,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;

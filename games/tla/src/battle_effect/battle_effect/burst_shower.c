@@ -210,7 +210,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (args->prelude == 1) {
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       BattleEffect_FetchRectangleBlitters(0, pair);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -431,26 +431,26 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
       EffectPosition_ProjectScaledBattler(args->targets[i],
                                           (struct ScreenPoint *)targets[i]);
     if (mode == 12 || mode == 15) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         user->x -= 24;
       else
         user->x += 24;
     }
     if (mode == 20) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         user->x -= 48;
       else
         user->x += 48;
     }
     if (mode == 21) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         user->x -= 16;
       else
         user->x += 16;
       user->y -= 40;
     }
     if (mode == 16) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         user->x -= 32;
       else
         user->x += 32;
@@ -475,13 +475,13 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
         targets[i][1] += 80;
     }
     if (mode == 4) {
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         user->x += 28;
       else
         user->x -= 28;
     }
     if (mode == 7) {
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         user->x += 16;
       else
         user->x -= 16;
@@ -552,7 +552,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
 
       if (mode == 5 || mode == 23) {
         // One big picture at the user, three frames a cel.
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           pair[0](canvas,
                   work->sheet + VOLLEY_B_PICTURE + frame / 3 % 3 * 0x1200,
                   user->x - 2, user->y - 32, 72, 62);

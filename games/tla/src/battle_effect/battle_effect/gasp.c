@@ -192,7 +192,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (*p > 63)
         *p = 63;
     }
-    if (args->variant == 2) {
+    if (args->variant == EFFECT_VARIANT_STRONGEST) {
       LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     } else {
       LOAD_BG_PALETTE(ResourceId_BlastSheet);
@@ -220,7 +220,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == 2 || mode == 7 || mode == 4) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
@@ -228,7 +228,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
   } else if (mode == 3 || mode == 5) {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
@@ -236,7 +236,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
   } else {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
@@ -329,7 +329,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             p->variant = (Random16() & 15) + 16;
           }
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           work->shakeFrames = 8;
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
@@ -459,7 +459,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         flash->x = pos.x;
         flash->y = pos.y;
         EFFECT_SHOW_DAMAGE(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 24);
         work->shakeFrames = 16;
@@ -744,10 +744,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s += 64;
           q->velocityX = Trig_Sin(a) * s >> 6;
           q->velocityY = Trig_Cos(a) * s >> 4;
-          if (args->variant == 0) {
+          if (args->variant == EFFECT_VARIANT_BASIC) {
             q->velocityX /= 4;
             q->velocityY /= 4;
-          } else if (args->variant == 1) {
+          } else if (args->variant == EFFECT_VARIANT_STRONGER) {
             q->velocityX /= 2;
             q->velocityY /= 2;
           }
@@ -768,7 +768,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p->y = px(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           p->velocityX = -v;
         p->velocityY = -((Random16() & mask) + 256) << 4;
         p->variant = i;
@@ -804,9 +804,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         s32 scale = ((frame - 10) << 15) + Q16_ONE / 4;
         s32 shade = 0;
 
-        if (args->variant == 0)
+        if (args->variant == EFFECT_VARIANT_BASIC)
           scale /= 4;
-        else if (args->variant == 1)
+        else if (args->variant == EFFECT_VARIANT_STRONGER)
           scale /= 2;
         if (frame > 15)
           shade = (16 - frame) * 8;
@@ -828,7 +828,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 10) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         work->shakeFrames = args->variant * 2 + 8;
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 12);
       }
@@ -953,7 +953,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         work->shakeFrames = 8;
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 12);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame > 27) {
@@ -1005,7 +1005,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->vertices = verts;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         SceneTransform_ApplyPosition3((pos.x - 136) << 16, (pos.y - 48) << 16,
                                       0);
       else
@@ -1026,19 +1026,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             continue;
           if (d > 80)
             d = 80;
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             SceneTransform_ApplyPosition3(d * 3 << 13, d * 7 << 11, 0);
           else
             SceneTransform_ApplyPosition3(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + TRIG_TURN * 3 / 8;
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             angle = -angle;
           Transform_ApplyRoll(angle);
         } else {
           if (i != 0)
             continue;
-          Transform_ApplyRoll(args->side == 0 ? -TRIG_TURN * 3 / 8
-                                              : TRIG_TURN * 3 / 8);
+          Transform_ApplyRoll(args->side == EFFECT_SIDE_ENEMIES
+                                  ? -TRIG_TURN * 3 / 8
+                                  : TRIG_TURN * 3 / 8);
         }
         model->shade = -i << 3;
         if (frame <= 23)

@@ -61,7 +61,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
   // On the far side the canvas moves 112 pixels right, and the targets'
   // screen positions with it.
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {

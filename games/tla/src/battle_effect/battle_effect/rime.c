@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);

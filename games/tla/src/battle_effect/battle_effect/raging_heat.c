@@ -115,7 +115,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         }
         EFFECT_SHOW_DAMAGE(SE_CRASH);
         for (i = 0; i != args->targetCount; i++) {
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
@@ -283,7 +283,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
-  if (args->variant == 2) {
+  if (args->variant == EFFECT_VARIANT_STRONGEST) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
@@ -372,7 +372,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++) {
         EffectPosition_ProjectSprite(args->targets[i], &target);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {

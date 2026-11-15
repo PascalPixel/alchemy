@@ -154,14 +154,14 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           SceneTransform_ApplyPosition3((source.x / 2 - 64) << 16,
                                         (source.y - 88) << 16, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(TRIG_TURN / 2 - step->variant);
           } else {
             Transform_ApplyRoll(step->variant + TRIG_TURN / 2);
           }
           SceneTransform_ApplyPosition3(0, 0xfff00000, 0);
           SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
@@ -179,7 +179,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           work->particles[i].velocityX = (target.x / 2 - source.x / 2) << 11;
           work->particles[i].velocityY = (target.y - source.y) << 11;
           work->particles[i].z = zero;
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             work->particles[i].velocityZ = -(px(1) / 16);
           } else {
             work->particles[i].velocityZ = px(1) / 16;
@@ -195,7 +195,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
                                       work->particles[0].y - 0x400000, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE / 2);
         Transform_ApplyRoll(work->particles[0].z);
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -208,7 +208,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
     if (frame == gHeavyBlow_StrikeFrames[mode]) {
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       work->shakeFrames = 8;
@@ -356,7 +356,8 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
             BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, member, 3);
-            BattleMotion_ApplyKnockbackFar(args->targets[member], 0);
+            BattleMotion_ApplyKnockbackFar(args->targets[member],
+                                           KNOCKBACK_NUDGE);
             Sound_PlayFar(SE_POWER_UP);
             work->shakeFrames = 3;
           }
@@ -480,7 +481,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -674,7 +675,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     for (i = 0; i != 6; i++) {
       if (frame == i * 4 + 80) {
         work->shakeFrames = 2;
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 2);
         if (i == 0) {
@@ -795,7 +796,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -811,7 +812,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
         if (burst->variant == 8) {
           Sound_PlayFar(SE_CLATTER);
           work->shakeFrames = 8;
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
@@ -926,7 +927,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   // every 16 rows against the wind.
   Iwram_ClearWordsEntry(work->sheet, 256);
   for (i = 0; i != STREAKS; i++) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       work->sheet[i * 4 - i / 16 + 3] = 24;
     else
       work->sheet[i * 4 + i / 16] = 24;
@@ -944,7 +945,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       for (i = 0; i != STREAKS; i++) {
         streak = &work->particles[i];
         streak->y = px((Random16() & 31) - 64);
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           streak->x = px((Random16() & 63) + 40);
           streak->velocityX = -px(1);
         } else {
@@ -959,7 +960,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(3));
     if (frame == 46) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
 
     // Each splash rises and spreads through its six pictures, four frames

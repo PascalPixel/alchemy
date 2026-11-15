@@ -218,7 +218,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &base);
     shift = -base.x * 4 / 5 + 64;
   } else {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       shift = -64;
     else
       shift = 0;
@@ -228,7 +228,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
@@ -520,7 +520,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     }
   }
 
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
     xOffset = -112;
   } else {
@@ -544,7 +544,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       shard->y = px((i & 31) / 4 * 6 - 10);
       shard->z = px(i % 4 * 8 - 16);
     }
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       shard->velocityX = Q16_ONE * 2;
     else
       shard->velocityX = -Q16_ONE * 2;

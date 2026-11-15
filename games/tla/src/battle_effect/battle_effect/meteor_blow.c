@@ -490,7 +490,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
       }

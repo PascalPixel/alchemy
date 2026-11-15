@@ -481,7 +481,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (frame == i * 16 + 8) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != 1024; i++) {

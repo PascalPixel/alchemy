@@ -802,7 +802,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           s->variant = 15;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
         }

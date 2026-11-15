@@ -93,7 +93,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 shade;
         s32 k;
 
-        if (args->variant == 0)
+        if (args->variant == EFFECT_VARIANT_BASIC)
           shade = ((Trig_Sin(j << 10) << 7) >> 16) - i * 4 - 64;
         else
           shade = ((Trig_Sin(j << 10) * 63) >> 16) - i * 4;
@@ -114,7 +114,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
@@ -130,7 +130,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);
   EffectPosition_ProjectBattler(args->user, &user);
   if (mode == BREATH_BLAST) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       user.x -= 32;
     else
       user.x += 32;
@@ -162,7 +162,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       s32 mouthY;
 
       mouthY = user.y - 32;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         mouthX = user.x / 2 - 8;
       else
         mouthX = user.x / 2 + 8;
@@ -207,7 +207,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             step->x = mouthX << 16;
             step->y = mouthY << 16;
             step->velocityY = ((Random16() & 63) - 32) << 14;
-            if (args->side == 0)
+            if (args->side == EFFECT_SIDE_ENEMIES)
               step->velocityX = -(Random16() & 63) << 13;
             else
               step->velocityX = (Random16() & 63) << 13;
@@ -219,9 +219,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (step->variant >= 0) {
             s32 size = (i & 3) + 1;
 
-            if (args->variant == 1)
+            if (args->variant == EFFECT_VARIANT_STRONGER)
               size++;
-            else if (args->variant == 2)
+            else if (args->variant == EFFECT_VARIANT_STRONGEST)
               size = (i & 3) + 3;
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         Q_16_16_UPPER_HALF(step->x) - size / 2,
@@ -261,7 +261,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (ring > 15)
             ring = 15;
           for (i = 0; i != 4; i++) {
-            if (args->side == 0) {
+            if (args->side == EFFECT_SIDE_ENEMIES) {
               draw[0](canvas, work->sheet + (ring << 10), x - 40, y - 48, 32,
                       32);
               x -= 32;
@@ -306,9 +306,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           s32 scale = age * growth + Q16_ONE / 2;
           s32 alpha = 128 - age * 8;
 
-          if (args->variant == 0)
+          if (args->variant == EFFECT_VARIANT_BASIC)
             scale /= 2;
-          else if (args->variant == 1)
+          else if (args->variant == EFFECT_VARIANT_STRONGER)
             scale = scale * 3 / 2;
           if (alpha > 0)
             alpha = 0;
@@ -325,7 +325,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
-                if (args->side == 0)
+                if (args->side == EFFECT_SIDE_ENEMIES)
                   SceneTransform_ApplyPosition3((mouthX - 72) << 16,
                                                 (mouthY - 64) << 16, 0);
                 else
@@ -345,7 +345,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         }
 
         // Variant 2: four jaws open one after another.
-        if (args->variant == 2) {
+        if (args->variant == EFFECT_VARIANT_STRONGEST) {
           texture.pixels = JAW_TEXTURE;
           model->kind = 7;
           model->mesh = gBattleEffect_CylinderMesh;
@@ -365,7 +365,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 Transform_Reset();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
-                  if (args->side == 0)
+                  if (args->side == EFFECT_SIDE_ENEMIES)
                     SceneTransform_ApplyPosition3(
                         (mouthX + gBreaths_RingX[mode * 4 + i] - 48) << 16,
                         (mouthY - 64) << 16, 0);
@@ -374,7 +374,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                         (mouthX - gBreaths_RingX[mode * 4 + i] - 80) << 16,
                         (mouthY - 64) << 16, 0);
                 } else {
-                  if (args->side == 0)
+                  if (args->side == EFFECT_SIDE_ENEMIES)
                     SceneTransform_ApplyPosition3(
                         (mouthX + gBreaths_RingX[mode * 4 + i] - 64) << 16,
                         (mouthY - 64) << 16, 0);
@@ -415,7 +415,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
-          if (args->side == 1)
+          if (args->side == EFFECT_SIDE_PARTY)
             angle = -angle;
           Transform_ApplyRoll(angle);
           SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
@@ -462,7 +462,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       } else if (frame == gBreaths_FlashFrames[mode]) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != args->targetCount; i++) {
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
@@ -512,11 +512,11 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartTiledCanvas(0);
   if (mode == 0) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
-    if (args->side != 0)
+    if (args->side != EFFECT_SIDE_ENEMIES)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   } else {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y;
-    if (args->side != 0)
+    if (args->side != EFFECT_SIDE_ENEMIES)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
@@ -567,7 +567,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
       s32 y = mode != 0 ? 16 : 0;
       s32 x;
 
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         x = position[0] / 2 - 48;
       else
         x = position[0] / 2 - 80;

@@ -405,7 +405,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
       gCameraSceneParameters[4] = 240;
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
       } else {
@@ -503,7 +503,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
     SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
-    if (args->side == 1) {
+    if (args->side == EFFECT_SIDE_PARTY) {
       Transform_ApplyYaw(TRIG_TURN / 2);
     }
     SceneTransform_ApplyUniformScale(0x21770);

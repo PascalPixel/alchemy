@@ -63,7 +63,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   // sword and the flash.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   else
@@ -86,7 +86,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
     // target, on the user's side, toward it.
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->targets[0], &target);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         start.x = target.x + 80;
       else
         start.x = target.x - 80;
@@ -209,7 +209,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
         Transform_ApplyPitch(0x5900);
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyYaw(0x1900);
         else
           Transform_ApplyYaw(-0x1900);
@@ -236,7 +236,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(48), 0);
             Transform_ApplyPitch(0x5900);
-            if (args->side == 0)
+            if (args->side == EFFECT_SIDE_ENEMIES)
               Transform_ApplyYaw(0x1900);
             else
               Transform_ApplyYaw(-0x1900);
@@ -579,7 +579,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                                     (card.y << 16) - px(64), 0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           SceneTransform_ApplyPosition3(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
           SceneTransform_ApplyPosition3(Trig_Sin(frame * 682) << 7, 0, 0);
@@ -655,7 +655,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         SceneTransform_ApplyPosition3((step->x - 60) << 16,
                                       (step->y - 64) << 16, 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           Transform_ApplyYaw(TRIG_TURN / 2);
         Transform_ApplyRoll(step->velocityZ);
         if (mode == CARD_BRAMBLE) {

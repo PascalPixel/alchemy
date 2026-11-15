@@ -121,7 +121,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &one);
     offsetX = 64 - one.x;
   } else {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       offsetX = -112;
     else
       offsetX = 0;

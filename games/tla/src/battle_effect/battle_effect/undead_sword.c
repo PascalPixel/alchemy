@@ -85,7 +85,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
     }
@@ -236,7 +236,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         step->variant = (Random16() & 7) + 48;
       }
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
@@ -500,7 +500,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         work->particles[i].variant = -1;
       }
     }
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       if ((s16)camera->yaw <= 11999) {
         camera->yaw = (s16)camera->yaw + 128;
       }
@@ -520,7 +520,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (frame == 17) {
         Sound_PlayFar(SE_CRASH);
         for (i = 0; i != args->targetCount; i++) {
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
@@ -610,7 +610,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     if (mode != 0) {
       Transform_ApplyPitch(4000);
     }
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       Transform_ApplyYaw((s16)camera->yaw);
     } else {
       Transform_ApplyYaw((s16)camera->yaw + TRIG_TURN / 2);
@@ -769,7 +769,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_RunDjinniEntrance(args, args->side << 4 | 35, (s32 *)&screen,
                                    (s32 *)&other);
   }
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -1073,7 +1073,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
             BattleEffect_SetApproachMotion(args->user, args->targets[0], 16,
                                            70);
           } else {
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }

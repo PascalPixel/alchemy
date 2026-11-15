@@ -155,7 +155,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
           for (j = 0; j != args->targetCount; j++) {
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -273,7 +273,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
           for (j = 0; j != args->targetCount; j++) {
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -414,7 +414,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
           for (j = 0; j != args->targetCount; j++) {
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
           }
         }
         column->y -= 12;
@@ -585,7 +585,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       for (member = 0; member != args->targetCount; member++) {
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, member, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[member], 6);
+        BattleMotion_ApplyKnockbackFar(args->targets[member], KNOCKBACK_BOUNCE);
       }
     }
 

@@ -55,7 +55,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -0x7000;
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {

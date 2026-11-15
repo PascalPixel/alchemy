@@ -64,7 +64,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
       shard = &work->particles[i];
       x = (Random16() & 63) + (Random16() & 7) + 24;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         x = x + slant + 24;
       else
         x = x - slant + 80;
@@ -78,7 +78,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
                         BLITTER_ADDITIVE);
@@ -93,7 +93,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -117,7 +117,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (args->variant == 1)
+  if (args->variant == EFFECT_VARIANT_STRONGER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -136,10 +136,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(canvas, work->sheet,
-                                                          x, y, 32, 32);
+        ((DrawRectangle)
+             draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
+            canvas, work->sheet, x, y, 32, 32);
         if (shard->y <= 0x27f) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             shard->x -= 64;
           else
             shard->x += 64;
@@ -162,7 +163,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 y = shard->y / 8;
 
         if (shard->variant >= 1 && shard->variant <= 14) {
-          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)
+               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -192,7 +194,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
-          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)
+               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas, graphics + gBattleEffect_SparklePictures[image], x, y,
               gBattleEffect_SparkleSizes[image],
               gBattleEffect_SparkleSizes[image]);
@@ -283,7 +286,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     drop = &work->particles[i];
     x = Random16() & 63;
     y = -(i * DROP_SPACING(args->variant) + 16);
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
@@ -294,7 +297,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // drops' fall, then the targets' width, then nothing.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -318,9 +321,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (args->variant == 1) {
+  } else if (args->variant == EFFECT_VARIANT_STRONGER) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -342,7 +345,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         // Falling: draw the drop and move it on, or land it.
         draw[0](canvas, work->sheet + 0x604, x, y, 24, 24);
         if (drop->y <= 0x27f) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
           else
             drop->x += 32;
@@ -357,7 +360,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             splash->x = px(x + 12);
             splash->y = y << 16;
             splash->velocityX = ((Random16() & 255) - 128) << 9;
-            if (args->variant == 2)
+            if (args->variant == EFFECT_VARIANT_STRONGEST)
               splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
             else
               splash->velocityY = ((Random16() & 255) - 255) << 10;

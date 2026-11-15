@@ -38,13 +38,13 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
-  } else if (args->variant == 2) {
+  } else if (args->variant == EFFECT_VARIANT_STRONGEST) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -79,8 +79,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
-    if (args->variant == 2 && frame < 64) {
-      if (args->side == 0)
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
+      if (args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
@@ -158,7 +158,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           for (i = 0; i != args->targetCount; i++) {
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                      POSE_DAMAGE, i, 8);
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
           }
         }
       }

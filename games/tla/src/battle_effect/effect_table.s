@@ -1214,8 +1214,8 @@ gSpire_DropFrames:
 	.global gSpire_RockCounts
 gSpire_RockCounts:
 	.byte 1, 3, 5
-	.global gBurstScene_Styles
-gBurstScene_Styles:
+	.global gFlurry_Styles
+gFlurry_Styles:
 	.byte 1, 0, 5, 16, 12, 80, 0, 0, 1, 1, 7, 16, 12, 104, 0, 0
 	.byte 1, 2, 9, 16, 12, 128, 0, 0, 1, 3, 1, 16, 16, 36, 0, 0
 	.byte 1, 3, 2, 20, 16, 52, 0, 0, 1, 3, 3, 24, 16, 68, 0, 0
@@ -1223,8 +1223,8 @@ gBurstScene_Styles:
 	.byte 0, 2, 3, 32, 12, 52, 1, 0, 1, 0, 3, 16, 12, 50, 0, 0
 	.byte 1, 0, 1, 16, 12, 40, 0, 1, 1, 0, 1, 16, 12, 80, 0, 2
 	.byte 1, 3, 1, 16, 16, 30, 0, 0
-	.global gBurstScene_GlintFlips
-gBurstScene_GlintFlips:
+	.global gFlurry_GlintFlips
+gFlurry_GlintFlips:
 	.byte 0, 4, 8, 12, 0
 	.global gGaia_RowPictures
 gGaia_RowPictures:

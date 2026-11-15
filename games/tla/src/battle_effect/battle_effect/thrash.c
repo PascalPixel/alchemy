@@ -161,7 +161,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -169,7 +169,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
   else
@@ -223,7 +223,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);

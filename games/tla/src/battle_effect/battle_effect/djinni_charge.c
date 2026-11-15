@@ -72,7 +72,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     s32 frames;
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
     } else {
@@ -155,7 +155,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           } else {
             turn = 2560 - (frame << 5);
           }
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             camera->yaw -= turn;
           } else {
             camera->yaw += turn;
@@ -207,7 +207,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             }
             SET_POSITION(p, target[2], target[3] + 0x50000, target[4]);
             p->velocityX = ((Random16() & 511) + 256) << 10;
-            if (args->side == 1) {
+            if (args->side == EFFECT_SIDE_PARTY) {
               p->velocityX = -p->velocityX;
             }
             p->velocityY = ((Random16() & 511) + 256) << 9;
@@ -232,7 +232,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 6);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
           for (i = 0; i != 63; i++) {
             s32 angle;
             s32 speed;
@@ -271,7 +271,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           s32 picture = (frame / 4) & 3;
           s32 x;
 
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             x = screen.x / 2 - 14;
           } else {
             x = screen.x / 2 - 46;
@@ -363,7 +363,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
         SceneTransform_ApplyPosition3(0, 0x100000, 0);
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyRoll(20576);
         } else {
           Transform_ApplyRoll(44960);

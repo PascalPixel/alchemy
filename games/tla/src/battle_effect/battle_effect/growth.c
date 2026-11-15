@@ -67,7 +67,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
@@ -412,7 +412,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

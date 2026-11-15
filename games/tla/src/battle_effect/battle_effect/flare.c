@@ -65,7 +65,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   } while (i != FLAME_COUNT);
 
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (args->variant == 2)
+  if (args->variant == EFFECT_VARIANT_STRONGEST)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -87,12 +87,12 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
              p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
              p->y + gBattleEffect_PuffArcPictureBiasY[cell], w,
              gBattleEffect_PuffArcPictureHeights[cell]);
-        if (args->variant != 0)
+        if (args->variant != EFFECT_VARIANT_BASIC)
           draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
                (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, w,
                gBattleEffect_PuffArcPictureHeights[cell]);
-        if (args->variant == 2)
+        if (args->variant == EFFECT_VARIANT_STRONGEST)
           draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
                (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, w,

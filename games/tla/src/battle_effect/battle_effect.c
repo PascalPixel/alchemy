@@ -53,7 +53,6 @@
 #undef CLIP
 #undef RECORD_FRAMES
 #undef SPARK_COUNT
-#undef BLITTER
 
 // The effects from the Cybele summon to Bolt.
 #include "battle_effect/cybele.c"

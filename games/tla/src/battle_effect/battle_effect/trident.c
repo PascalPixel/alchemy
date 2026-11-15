@@ -10,8 +10,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 extern const struct Scale gTrident_UnitScale;
 
 /// Poseidon (four objects) rises behind the targets as rings of foam

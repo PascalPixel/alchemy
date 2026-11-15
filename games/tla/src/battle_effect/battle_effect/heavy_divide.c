@@ -10,8 +10,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 /// a great sword (with four fading after-images, each a dimmer copy of the
 /// sheet) swings down from over the caster, striking at frame
@@ -691,8 +689,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 #undef BLITTER
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define FLAMES 32
 
 /// Radiant Fire: eight bursts of fire bloom one after another around the

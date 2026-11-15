@@ -633,7 +633,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 /// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
 /// the COMPOSITE_ flags in the low one.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define STREAM_FRAMES 192
 #define BLAST_FRAMES 54

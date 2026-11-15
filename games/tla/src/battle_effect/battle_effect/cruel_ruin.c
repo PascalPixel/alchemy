@@ -17,7 +17,6 @@
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The battle background's id, read through a union whose s32 member gives

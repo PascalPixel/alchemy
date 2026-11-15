@@ -8,8 +8,6 @@
 
 struct MeshTriangle;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 

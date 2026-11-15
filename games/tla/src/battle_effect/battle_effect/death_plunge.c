@@ -6,10 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-#define TASK_PASS_FRAME 0xc80
-
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.

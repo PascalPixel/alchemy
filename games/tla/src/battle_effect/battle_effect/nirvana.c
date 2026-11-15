@@ -119,7 +119,6 @@ static inline s16 *Fixed_Halves(s32 *value) {
 }
 
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define ROCKS 21
 

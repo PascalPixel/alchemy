@@ -209,8 +209,6 @@ void Ulysses_MoveLastParticle(void) {
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 extern const struct Scale gUlysses_ShipScale;
 
 /// Ulysses: the hero's ship sails out of a whirlpool, its crew of six
@@ -993,8 +991,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 /// Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE,                                 \
-                           BLITTER(BLITTER_TRANSPARENT, flags))
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_TRANSPARENT)
 
 /// Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \

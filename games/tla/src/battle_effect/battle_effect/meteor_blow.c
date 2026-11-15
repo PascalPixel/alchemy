@@ -9,8 +9,6 @@
 struct MeshTriangle;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// One star of the opening sky: a point on a sphere and its cell kind.
 struct MeteorStar {
   s32 x;

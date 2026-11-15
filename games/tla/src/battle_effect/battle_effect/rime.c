@@ -8,7 +8,6 @@
 #include "macros.h"
 
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /// The Djinni's picture, 40 pixels wide, at the end of the work sheet.
 #define DJINNI_OFFSET 0x65c0

@@ -6,8 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define BURST_FRAMES 48
 #define BURST_DRAW_FRAMES 28
 

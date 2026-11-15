@@ -323,7 +323,6 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
 }
 
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10

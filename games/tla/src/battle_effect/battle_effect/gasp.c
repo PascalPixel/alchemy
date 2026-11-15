@@ -9,8 +9,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 

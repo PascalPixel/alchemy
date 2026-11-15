@@ -8,8 +8,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
 #define EMBERS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
 

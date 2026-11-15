@@ -497,7 +497,6 @@ struct StripQuad;
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
 
 /// The spark objects' work, in the map cell buffer at 0x1f40.

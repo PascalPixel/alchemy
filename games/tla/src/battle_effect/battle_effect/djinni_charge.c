@@ -10,8 +10,6 @@
 struct MeshTriangle;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 // BattleEffect_RunDjinniEntrance
 
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at

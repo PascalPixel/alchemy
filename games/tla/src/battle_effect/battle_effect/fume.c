@@ -28,8 +28,6 @@ enum {
 
 extern const u16 gFume_Levels[][FUME_COLUMNS];
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 

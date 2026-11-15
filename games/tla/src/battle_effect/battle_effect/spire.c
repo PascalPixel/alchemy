@@ -8,8 +8,6 @@
 
 #undef BLITTER
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// The shards live in the map cell buffer, 21 for each boulder.
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 #define SHARDS_PER_ROCK 21

@@ -225,8 +225,6 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define ZAGAN_PARTS 12
 
 /// The screen slides over to a white field and petals blow across it; Zagan

@@ -235,8 +235,6 @@ void BattleEffect_BuildRepeatingTilemap(void) {
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 struct CornerRow {
   struct Corner corners[2];
 };

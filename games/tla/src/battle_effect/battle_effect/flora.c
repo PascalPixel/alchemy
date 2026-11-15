@@ -11,8 +11,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 struct FloraObject {
   u8 unk0[8];
   u16 tile : 10;

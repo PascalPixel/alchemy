@@ -16,8 +16,6 @@ struct StripQuad;
 #define TARGET_ANCHOR_PERCENT 300
 #endif
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define DRAGON_SEGMENTS 33
 
 /// A strip's vertex, as Render_TransformVertices reads it.

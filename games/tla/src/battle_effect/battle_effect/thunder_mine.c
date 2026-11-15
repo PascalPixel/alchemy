@@ -8,8 +8,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// The sparks, after the map cells.
 #define BOLT_SPARKS ((struct Particle *)gData_02014000)
 

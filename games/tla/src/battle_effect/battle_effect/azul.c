@@ -11,8 +11,6 @@
 struct MeshTriangle;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 struct AzulFace {
   u8 corner[3];
   u8 unk3;

@@ -9,8 +9,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
 // cache entry.
 

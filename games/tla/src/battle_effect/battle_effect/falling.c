@@ -9,8 +9,6 @@
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 

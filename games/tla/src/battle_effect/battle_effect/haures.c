@@ -8,8 +8,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 struct HalfPair {
   u16 x;
   u16 y;

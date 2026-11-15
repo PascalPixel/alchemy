@@ -23,8 +23,6 @@ struct RenderModel__f17bd88 {
   u8 scrollV;
 };
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// The target's motion object, as the effect reads it.
 struct PuppetTarget {
   u8 unk00[8];

@@ -24,8 +24,6 @@ struct RenderModel__megiddo {
   u8 scrollV;
 };
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
 ///

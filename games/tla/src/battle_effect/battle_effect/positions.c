@@ -77,7 +77,6 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
        ->draw)
 
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64
 

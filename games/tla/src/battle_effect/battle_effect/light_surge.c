@@ -9,8 +9,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
 

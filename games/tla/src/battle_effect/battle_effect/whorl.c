@@ -10,7 +10,6 @@
 
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 /// The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
 /// function are constants built from the fixed buffer, not their own symbols.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)

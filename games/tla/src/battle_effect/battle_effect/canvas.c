@@ -14,8 +14,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 /// The flashes, after the map cells.
 #define FLASHES ((struct Particle *)gData_02014000)
 

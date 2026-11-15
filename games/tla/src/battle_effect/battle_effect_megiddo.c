@@ -381,7 +381,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       // The texture's sizes go in as bytes (char stores), its pixels as a word.
       textureBytes[0] = 6;
       model->vertices = transformed;
@@ -418,7 +418,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t->logWidth = 5;
       t->logHeight = 5;
       t->pixels = work->sheet + MEGIDDO_DUST_BLOB_PICTURES;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = meshB;
       tint = -24;
       model->flags = 3;
@@ -520,7 +520,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     scratchTexture.logWidth = 7;
     scratchTexture.logHeight = 7;
     scratchTexture.pixels = fireRing;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->texture = &scratchTexture;
     model->vertices = verts;
@@ -552,7 +552,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
     }
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     scratchTexture.logWidth = 5;
     scratchTexture.logHeight = 6;
     scratchTexture.pixels = work->sheet;

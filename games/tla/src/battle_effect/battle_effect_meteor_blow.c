@@ -278,7 +278,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->mesh = triangles;
       model->vertices = projected;
@@ -518,7 +518,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     waveTexture.logWidth = 6;
     waveTexture.logHeight = 6;
     waveTexture.pixels = work->sheet + METEOR_BLOW_BILLOW;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_RingMesh;
     x0 = hx / 2 - 60;
     step = frame << 11;

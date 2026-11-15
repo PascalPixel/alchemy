@@ -348,7 +348,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           if (sh > 0) {
             sh = 0;
           }
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->shade = sh;
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
@@ -367,7 +367,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = work->sheet + 0x1000;
-          model->kind = 9;
+          model->kind = MODEL_SHADED;
           model->texture = &texture;
           model->mesh = gBattleEffect_SmallSquareMeshReversed;
           model->vertices = verts;
@@ -411,7 +411,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             }
           }
           model->flags = 0;
-          model->kind = 1;
+          model->kind = MODEL_SOLID;
           model->mesh = strip;
           model->vertices = buffer;
           if ((u32)(frame - 236) <= 31) {
@@ -530,7 +530,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         burstTexture.logHeight = 7;
         burstTexture.pixels = SCRATCH;
         model->shade = 0;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &burstTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
@@ -669,7 +669,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         wideTexture.logWidth = 8;
         wideTexture.logHeight = 7;
         wideTexture.pixels = buffer;
-        model->kind = 1;
+        model->kind = MODEL_SOLID;
         model->texture = &wideTexture;
         model->vertices = verts;
         model->shade = (s32)shades;
@@ -916,7 +916,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     model->shade = -8;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &bandTexture;
     bandTexture.logWidth = 6;
     bandTexture.logHeight = 5;
@@ -952,7 +952,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     bandTexture.logWidth = 6;
     bandTexture.logHeight = 5;
     model->mesh = gHaures_BandMesh;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     if ((u32)(frame - 56) <= 31) {
       s32 sh = 0;
       s32 v;

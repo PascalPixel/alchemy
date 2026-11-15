@@ -539,7 +539,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     texture.logHeight = 6;
     model->mesh = gCatastrophe_BurstMesh;
     model->texture = &texture;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->vertices = verts;
     for (i = 0; i != 7; i++) {
       s32 st = gCatastrophe_BurstStarts[i];
@@ -608,7 +608,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     texture.logWidth = 5;
     texture.logHeight = 7;
     model->shade = shade;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->mesh = gBattleEffect_ColumnMesh;
     model->texture = &texture;
     model->vertices = verts;
@@ -764,7 +764,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           n = 2;
         }
       }
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->shade = shade;
       for (i = 0; i != n; i++) {
         struct Particle *p4 = &work->particles[i];
@@ -813,7 +813,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.logWidth = 6;
         texture.logHeight = 6;
         model->shade = shade;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &texture;
         model->mesh = gBattleEffect_SquareMesh;
         model->vertices = verts;
@@ -894,7 +894,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       if (shade > MODEL_SHADE_INVISIBLE) {
         model->shade = shade;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         texture.pixels = Ram_MapCellBuffer + 0x2000;
         texture.logWidth = 7;
         texture.logHeight = 7;
@@ -1122,7 +1122,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialTexture.logWidth = 6;
           aerialTexture.logHeight = 6;
           aerialModel->shade = aerialShade;
-          aerialModel->kind = 6;
+          aerialModel->kind = MODEL_SHADED_MAX;
           aerialModel->texture = &aerialTexture;
           aerialModel->mesh = gBattleEffect_SquareMesh;
           aerialModel->vertices = aerialVertices;
@@ -1191,7 +1191,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               if (aerialShade > MODEL_SHADE_INVISIBLE) {
                 aerialModel->shade = aerialShade;
                 aerialModel->mesh = gBattleEffect_LargeSquareMesh;
-                aerialModel->kind = 6;
+                aerialModel->kind = MODEL_SHADED_MAX;
                 aerialTexture.pixels = Ram_MapCellBuffer + 0x2000;
                 aerialTexture.logWidth = 7;
                 aerialTexture.logHeight = 7;
@@ -1209,7 +1209,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         aerialTexture.logWidth = 5;
         aerialTexture.logHeight = 7;
-        aerialModel->kind = 6;
+        aerialModel->kind = MODEL_SHADED_MAX;
         aerialModel->mesh = gBattleEffect_ColumnMesh;
         aerialModel->shade = zero;
         if (frame == 0) {
@@ -1469,7 +1469,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           y -= 6;
         }
         sweepModel = Render_AllocateModelList(1);
-        sweepModel->kind = 6;
+        sweepModel->kind = MODEL_SHADED_MAX;
         sweepModel->texture = &sweepTexture;
         sweepModel->shade = 0;
         sweepModel->scrollV = 0;

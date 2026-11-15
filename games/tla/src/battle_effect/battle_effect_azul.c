@@ -485,7 +485,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = mapCells;
       model->texture = &texture;
-      model->kind = 8;
+      model->kind = MODEL_TEXTURED;
       model->vertices = vertices;
       model->scrollU = gBgScroll[1].x;
       for (i = 0; i != 31; i++) {
@@ -607,7 +607,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       scratchTexture.logWidth = 7;
       scratchTexture.logHeight = 7;
       scratchTexture.pixels = mapCells;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &scratchTexture;
       model->mesh = grid;
       model->vertices = verts;

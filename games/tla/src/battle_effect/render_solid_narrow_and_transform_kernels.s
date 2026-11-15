@@ -1,11 +1,11 @@
-@ Why Func_0813b7a0 is assembly:
+@ Why Render_SolidNarrowKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11 (fp) as an ordinary register: it holds a byte pointer from its argument
 @ block (ldr fp, [r0, #20]; ldrb r1, [fp, #-1]), not a frame pointer.
 @ movs r7, r8 copies and tests without a shift; the compilers' copy-and-test
 @ is subs r7, r8, #0.
-@ Why Func_0813b9a0 is assembly:
+@ Why Render_TransformKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push saves r5-r9, sl and fp without lr.
@@ -13,11 +13,11 @@
 @ frame pointer.
 .syntax unified
 	.thumb
-	.global Data_0813b7a0
-Data_0813b7a0:
-	.global Func_0813b7a0
+	.global Render_SolidNarrowKernel
+Render_SolidNarrowKernel:
+	.global Render_SolidNarrowKernelEntry
 	.thumb_func
-Func_0813b7a0:
+Render_SolidNarrowKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b7a2:
@@ -162,14 +162,14 @@ AlchemyUncreditedEnd_0813b7a2:
 .L_0813b998:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Data_0813b7a0CodeSize
-	.set Data_0813b7a0CodeSize, . - Data_0813b7a0
+	.global Render_SolidNarrowKernelCodeSize
+	.set Render_SolidNarrowKernelCodeSize, . - Render_SolidNarrowKernel
 	.thumb
-	.global Data_0813b9a0
-Data_0813b9a0:
-	.global Func_0813b9a0
+	.global Render_TransformKernel
+Render_TransformKernel:
+	.global Render_TransformKernelEntry
 	.thumb_func
-Func_0813b9a0:
+Render_TransformKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b9a2:
@@ -221,5 +221,5 @@ AlchemyUncreditedEnd_0813b9a2:
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.4byte	gTransformTranslation
-	.global Data_0813b9a0CodeSize
-	.set Data_0813b9a0CodeSize, . - Data_0813b9a0
+	.global Render_TransformKernelCodeSize
+	.set Render_TransformKernelCodeSize, . - Render_TransformKernel

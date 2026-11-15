@@ -242,7 +242,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         texture.logHeight = 5;
         texture.pixels = work->sheet + 0x3000;
         model->mesh = gBattleEffect_CylinderMesh;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &texture;
         model->vertices = projected;
         model->scrollU = 0;
@@ -468,7 +468,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   SET_POSITION(&position, px(x) - px(63), px(63 - height), 0);
   Transform_ApplyPosition(&position);
 
-  model->kind = 4;
+  model->kind = MODEL_TEXTURED_MAX;
   model->texture = &texture;
   model->mesh = gIris_PillarMesh;
   model->vertices = projected;
@@ -874,7 +874,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           place[2] = 0;
           Transform_ApplyScale(place);
           work->particles[i].velocityZ += px(1) / 8;
-          model->kind = 4;
+          model->kind = MODEL_TEXTURED_MAX;
           model->texture = &texture;
           model->mesh = gIris_ParticleMesh;
           model->vertices = verts;
@@ -1691,7 +1691,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 6;
       Transform_ResetMatrix();
-      model->kind = 4;
+      model->kind = MODEL_TEXTURED_MAX;
       model->mesh = gIris_StripMesh;
       model->vertices = verts;
       if (frame <= 563) {
@@ -1947,7 +1947,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         grow[1] = 0x10000;
       grow[2] = 0;
       Transform_ApplyScale(grow);
-      model->kind = 4;
+      model->kind = MODEL_TEXTURED_MAX;
       model->mesh = gIris_ConeMesh;
       model->texture = &coneTexture;
       model->vertices = verts;
@@ -2830,7 +2830,7 @@ void RamCode_RunKernel0(s32 first, s32 second) {
 void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   void (*routine)(const void *, void *, s32);
 
-  RamCode_Load(routine, Data_0813b9a0, Data_0813b9a0CodeSize);
+  RamCode_Load(routine, Render_TransformKernel, Render_TransformKernelCodeSize);
   routine(corners, vertices, count);
   Heap_Release(routine);
 }
@@ -2937,71 +2937,81 @@ void Render_DrawModelList(struct RenderModel *model) {
     texture = model->texture;
     if (model->kind != lastKind && code != NULL)
       Heap_Release(code);
-    if (model->kind == 0)
+    if (model->kind == MODEL_END)
       break;
     switch (model->kind) {
-    case 1:
+    case MODEL_SOLID:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_08138fc8, Data_08138fc8CodeSize);
+        RamCode_Load(code, Render_SolidKernel, Render_SolidKernelCodeSize);
       code(model);
       break;
-    case 11:
+    case MODEL_SOLID_NARROW:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_0813b7a0, Data_0813b7a0CodeSize);
+        RamCode_Load(code, Render_SolidNarrowKernel,
+                     Render_SolidNarrowKernelCodeSize);
       code(model);
       break;
-    case 2:
+    case MODEL_SOLID_MAX:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_081391c8, Data_081391c8CodeSize);
+        RamCode_Load(code, Render_SolidMaxKernel,
+                     Render_SolidMaxKernelCodeSize);
       code(model);
       break;
-    case 3:
+    case MODEL_SOLID_ADDITIVE:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_081393d8, Data_081393d8CodeSize);
+        RamCode_Load(code, Render_SolidAdditiveKernel,
+                     Render_SolidAdditiveKernelCodeSize);
       code(model);
       break;
-    case 8:
+    case MODEL_TEXTURED:
       if (model->kind != lastKind)
-        LOAD_KERNEL_WORDS(code, Data_081395f8, Data_081395f8CodeSize,
-                          Data_081395f8CodeWords);
+        LOAD_KERNEL_WORDS(code, Render_TexturedKernel,
+                          Render_TexturedKernelCodeSize,
+                          Render_TexturedKernelCodeWords);
       COPY_TEXTURE();
       code(model);
       break;
-    case 9:
+    case MODEL_SHADED:
       if (model->kind != lastKind)
-        LOAD_KERNEL_WORDS(code, Data_0813ae14, Data_0813ae14CodeSize,
-                          Data_0813ae14CodeWords);
+        LOAD_KERNEL_WORDS(code, Render_ShadedKernel,
+                          Render_ShadedKernelCodeSize,
+                          Render_ShadedKernelCodeWords);
       COPY_TEXTURE();
       code(model);
       break;
-    case 10:
+    case MODEL_TEXTURED_NARROW:
       if (model->kind != lastKind)
-        LOAD_KERNEL_WORDS(code, Data_0813b2ec, Data_0813b2ecCodeSize,
-                          Data_0813b2ecCodeWords);
+        LOAD_KERNEL_WORDS(code, Render_TexturedNarrowKernel,
+                          Render_TexturedNarrowKernelCodeSize,
+                          Render_TexturedNarrowKernelCodeWords);
       COPY_TEXTURE();
       code(model);
       break;
-    case 4:
+    case MODEL_TEXTURED_MAX:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_08139aac, Data_08139aacCodeSize);
+        RamCode_Load(code, Render_TexturedMaxKernel,
+                     Render_TexturedMaxKernelCodeSize);
       COPY_TEXTURE();
       code(model);
       break;
-    case 5:
+    case MODEL_TEXTURED_ADDITIVE:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_08139f70, Data_08139f70CodeSize);
+        RamCode_Load(code, Render_TexturedAdditiveKernel,
+                     Render_TexturedAdditiveKernelCodeSize);
       COPY_TEXTURE();
       code(model);
       break;
-    case 6:
+    case MODEL_SHADED_MAX:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_0813a444, Data_0813a444CodeSize);
+        RamCode_Load(code, Render_ShadedMaxKernel,
+                     Render_ShadedMaxKernelCodeSize);
       COPY_TEXTURE();
       code(model);
       break;
-    case 7:
+    case MODEL_SHADED_ADDITIVE:
       if (model->kind != lastKind)
-        RamCode_Load(code, Data_0813a924, Data_0813a924CodeSize);
+        RamCode_Load(code, Render_ShadedAdditiveKernel,
+                     Render_ShadedAdditiveKernelCodeSize);
       COPY_TEXTURE();
       code(model);
       break;

@@ -107,7 +107,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
         texture.size = (texture.size & ~0xff) | 6;
         texture.size = (texture.size & ~0xff00) | 6 << 8;
         texture.pixels = work->sheet + cel * CEL_SIZE;
-        quad->kind = 6;
+        quad->kind = MODEL_SHADED_MAX;
         quad->faces = gBattleEffect_SquareMesh;
         quad->texture = &texture;
         quad->unk14 = gMirroredWall_BurstShades[mode];
@@ -1583,7 +1583,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       texture.logHeight = 2;
       model->vertices = vertices;
       texture.pixels = work->sheet + DAEDALUS_ALT_GLOW_BAND;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;
 

@@ -293,6 +293,27 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// effects skip it.
 #define MODEL_SHADE_INVISIBLE (-64)
 
+/// RenderModel.kind: the rasterizer kernel Render_DrawModelList copies into
+/// IWRAM to draw a model, and how it puts each pixel on the canvas. A solid
+/// model fills its faces with their colours; a textured one maps its texture;
+/// a shaded one adds the model's shade to each texel and skips those it leaves
+/// at 0 or below. The narrow kernels draw into a target half the canvas's
+/// width.
+enum ModelKind {
+  MODEL_END,            ///< ends the list
+  MODEL_SOLID,          ///< Render_SolidKernel: the colour replaces the canvas
+  MODEL_SOLID_MAX,      ///< the colour where it is brighter
+  MODEL_SOLID_ADDITIVE, ///< the colour added, up to the brightest level
+  MODEL_TEXTURED_MAX,   ///< the texel where it is brighter
+  MODEL_TEXTURED_ADDITIVE, ///< the texel added, up to the brightest level
+  MODEL_SHADED_MAX,        ///< the shaded texel where it is brighter
+  MODEL_SHADED_ADDITIVE,   ///< the shaded texel added, up to the brightest
+  MODEL_TEXTURED,          ///< the texel replaces the canvas
+  MODEL_SHADED,            ///< the shaded texel replaces the canvas
+  MODEL_TEXTURED_NARROW,   ///< MODEL_TEXTURED into a narrow target
+  MODEL_SOLID_NARROW       ///< MODEL_SOLID into a narrow target
+};
+
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
@@ -1712,34 +1733,34 @@ extern const u32 BattleEffect_ColorReverse[];
 extern const u32 BattleEffect_ColorForward[];
 extern const u8 Data_081380ac[];
 extern u8 Data_081380acCodeSize[];
-extern const u8 Data_0813b9a0[];
-extern u8 Data_0813b9a0CodeSize[];
+extern const u8 Render_TransformKernel[];
+extern u8 Render_TransformKernelCodeSize[];
 /// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
 /// bytes and, for three of them, in DMA words.
-extern const u8 Data_08138fc8[];
-extern const u8 Data_081391c8[];
-extern const u8 Data_081393d8[];
-extern const u8 Data_081395f8[];
-extern const u8 Data_08139aac[];
-extern const u8 Data_08139f70[];
-extern const u8 Data_0813a444[];
-extern const u8 Data_0813a924[];
-extern const u8 Data_0813ae14[];
-extern const u8 Data_0813b2ec[];
-extern const u8 Data_0813b7a0[];
-extern u8 Data_08138fc8CodeSize[];
-extern u8 Data_081391c8CodeSize[];
-extern u8 Data_081393d8CodeSize[];
-extern u8 Data_081395f8CodeSize[];
-extern u8 Data_08139aacCodeSize[];
-extern u8 Data_08139f70CodeSize[];
-extern u8 Data_0813a444CodeSize[];
-extern u8 Data_0813a924CodeSize[];
-extern u8 Data_0813ae14CodeSize[];
-extern u8 Data_0813b2ecCodeSize[];
-extern u8 Data_0813b7a0CodeSize[];
-extern u8 Data_081395f8CodeWords[];
-extern u8 Data_0813ae14CodeWords[];
-extern u8 Data_0813b2ecCodeWords[];
+extern const u8 Render_SolidKernel[];
+extern const u8 Render_SolidMaxKernel[];
+extern const u8 Render_SolidAdditiveKernel[];
+extern const u8 Render_TexturedKernel[];
+extern const u8 Render_TexturedMaxKernel[];
+extern const u8 Render_TexturedAdditiveKernel[];
+extern const u8 Render_ShadedMaxKernel[];
+extern const u8 Render_ShadedAdditiveKernel[];
+extern const u8 Render_ShadedKernel[];
+extern const u8 Render_TexturedNarrowKernel[];
+extern const u8 Render_SolidNarrowKernel[];
+extern u8 Render_SolidKernelCodeSize[];
+extern u8 Render_SolidMaxKernelCodeSize[];
+extern u8 Render_SolidAdditiveKernelCodeSize[];
+extern u8 Render_TexturedKernelCodeSize[];
+extern u8 Render_TexturedMaxKernelCodeSize[];
+extern u8 Render_TexturedAdditiveKernelCodeSize[];
+extern u8 Render_ShadedMaxKernelCodeSize[];
+extern u8 Render_ShadedAdditiveKernelCodeSize[];
+extern u8 Render_ShadedKernelCodeSize[];
+extern u8 Render_TexturedNarrowKernelCodeSize[];
+extern u8 Render_SolidNarrowKernelCodeSize[];
+extern u8 Render_TexturedKernelCodeWords[];
+extern u8 Render_ShadedKernelCodeWords[];
+extern u8 Render_TexturedNarrowKernelCodeWords[];
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

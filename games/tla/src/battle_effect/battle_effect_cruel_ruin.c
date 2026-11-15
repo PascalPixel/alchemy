@@ -1007,7 +1007,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           s32 t;
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->texture = &texture;
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = verts;
@@ -1097,7 +1097,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           texture.logHeight = 2;
           texture.pixels = work->sheet + CRUEL_RUIN_BAND_A;
           model->mesh = gBattleEffect_SmallSquareMesh;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           shade = -16;
           model->shade = shade;
           for (i = 0; i != 24; i++) {
@@ -1142,7 +1142,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               Canvas_BlitAtFoot(work->sheet, Q_16_16_UPPER_HALF(q->x),
                                 Q_16_16_UPPER_HALF(q->y), r);
             }
-            model->kind = 6;
+            model->kind = MODEL_SHADED_MAX;
             shade = 0;
             model->shade = shade;
             texture.pixels = work->sheet + CRUEL_RUIN_BAND_B;
@@ -1335,7 +1335,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &blastTexture;
         model->vertices = verts;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         for (i = zero; i != 6; i++) {
           s32 d = frame - gCruelRuin_BlastFrames[i];
 
@@ -1684,7 +1684,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_SmallSquareMesh;
           model->texture = &burstTexture;
           model->vertices = verts;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
         }
         if (frame > 31) {
           struct Particle *q = &work->particles[63];

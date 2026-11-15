@@ -228,7 +228,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       texture.logHeight = 6;
       model->vertices = vertices;
       texture.pixels = CARD;
-      model->kind = 8;
+      model->kind = MODEL_TEXTURED;
       model->texture = &texture;
       model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();

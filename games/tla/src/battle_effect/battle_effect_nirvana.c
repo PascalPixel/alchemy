@@ -827,7 +827,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             p->variant = (Random16() & 31) + 32;
           }
         } else {
-          model->kind = 2;
+          model->kind = MODEL_SOLID_MAX;
           model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
@@ -866,7 +866,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = (const u8 *)work->sheet;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->flags = 3;
           model->vertices = vertices;
           model->scrollU = 0;
@@ -887,7 +887,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
           spireShade = -32;
           model->shade = (const void *)spireShade;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
           model->flags = 2;
@@ -898,7 +898,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logWidth = 7;
           texture.logHeight = 7;
           texture.pixels = mistSheet;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &texture;
           model->mesh = gBattleEffect_CylinderMesh;
           model->flags = 0;

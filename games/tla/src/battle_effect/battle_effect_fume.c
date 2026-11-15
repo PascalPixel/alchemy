@@ -195,7 +195,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       }
       if (shade > MODEL_SHADE_INVISIBLE) {
         model = Render_AllocateModelList(1);
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->shade = shade;
         model->scrollV = 0;

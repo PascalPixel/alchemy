@@ -347,7 +347,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       model->texture = &texture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       if (frame > 151) {
@@ -640,7 +640,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       glare.logHeight = 7;
       glare.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       shade = 0;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &glare;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;

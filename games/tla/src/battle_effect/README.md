@@ -77,6 +77,20 @@ Sparks, embers and chips of rock are particles: a position, a speed and
 one spare number the effect uses as it likes, often the frames left to
 live.
 
+## Models
+
+The Lost Age adds what The Broken Seal's effects never draw: models. A
+model is a list of faces with their corners, turned and projected through
+the battle camera, and drawn onto the canvas by a rasterizer, a small ARM
+routine copied into fast memory for a run of models of one kind
+(`Render_DrawModelList`). The kind says how each pixel lands, as a
+blitter's does: a solid model fills its faces with their colours, a
+textured one maps a picture across them, and a shaded one adds the
+model's shade to each texel and leaves out those it darkens to nothing.
+Each of them replaces the canvas, keeps the brighter, or adds
+(`enum ModelKind`). The rings, columns and whirlpools of the summons are
+models; Coatlicue's coils and Iris's pillars are strips of them.
+
 ## A handler's frame loop
 
 A handler reads the way its effect plays: set up, then one frame's work
@@ -111,3 +125,10 @@ of them, each adding something of its own.
   pictures, where and how many, and the handler for each effect kind.
 - The blitters are assembly fragments, put together as an effect needs
   them.
+- The rasterizers are assembly too, one file for each kind of model:
+  `render_solid_kernels.s` (solid, brighter and adding),
+  `render_textured_kernel.s`, `render_textured_max_kernel.s`,
+  `render_textured_additive_kernel.s`, the three `render_shaded_*` files,
+  `render_textured_narrow_kernel.s` and
+  `render_solid_narrow_and_transform_kernels.s`, which also holds the
+  routine that turns a model's corners (`Render_TransformVertices`).

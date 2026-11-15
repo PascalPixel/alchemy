@@ -501,7 +501,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     zero = 0;
     model = Render_AllocateModelList(1);
     tex = &texture;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->shade = zero;
     model->scrollV = zero;
     model->vertices = vertices;

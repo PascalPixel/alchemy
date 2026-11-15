@@ -648,7 +648,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       }
       Transform_ApplyTranslation(px(shift), 0, 0);
     }
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->mesh = mesh;
     model->vertices = vertices;
@@ -964,7 +964,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     texture.logWidth = 7;
     texture.logHeight = 5;
     texture.pixels = work->sheet;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->texture = &texture;
     model->mesh = Ram_MapCellBuffer + 0x318;
     model->scrollU = 0;
@@ -1211,7 +1211,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       texture.pixels = cells;
       model->flags = 0;

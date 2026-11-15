@@ -699,7 +699,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + 0x3200;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->model = gBattleEffect_SquareMesh;
       model->texture = &texture;
       model->corners = corners;

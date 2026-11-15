@@ -391,7 +391,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       }
       texture.logHeight = 5;
       texture.pixels = work->sheet;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = mesh;
       model->vertices = vertices;

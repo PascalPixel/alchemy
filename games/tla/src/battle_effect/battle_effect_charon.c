@@ -645,7 +645,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         lateTexture.logWidth = 7;
         lateTexture.logHeight = 7;
         lateTexture.pixels = work->sheet + CHARON_ACT_PICTURES;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &lateTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = texture;
@@ -676,7 +676,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           lateTexture.pixels = work->sheet;
           model->texture = &lateTexture;
           model->mesh = gBattleEffect_SquareMesh;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->vertices = texture;
           Transform_Reset();
           Transform_ApplyTranslation(-px(8), -px(8), 0);
@@ -814,7 +814,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           revealTexture.logWidth = 7;
           revealTexture.logHeight = 7;
           revealTexture.pixels = work->sheet + CHARON_ACT_PICTURES;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &revealTexture;
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = texture;
@@ -1102,7 +1102,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       risingTexture.logWidth = 6;
       risingTexture.logHeight = 6;
       risingTexture.pixels = work->sheet;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &risingTexture;
       model->mesh = gBattleEffect_SquareMesh;
       model->vertices = texture;
@@ -1592,7 +1592,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         openingTexture.logWidth = 6;
         openingTexture.logHeight = 6;
         openingTexture.pixels = work->sheet + CHARON_GLOW_RING;
-        model->kind = 9;
+        model->kind = MODEL_SHADED;
         model->mesh = gBattleEffect_SquareMesh;
         model->texture = &openingTexture;
         model->vertices = texture;

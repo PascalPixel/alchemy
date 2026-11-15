@@ -75,7 +75,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
     texture.logHeight = 7;
     texture.pixels = pixels;
     model->mesh = gBattleEffect_LargeSquareMesh;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->vertices = vertices;
 

@@ -267,7 +267,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         model = Render_AllocateModelList(1);
         texture.logWidth = 7;
         texture.logHeight = 7;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;
@@ -321,7 +321,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         // Variant 2: four jaws open one after another.
         if (args->variant == EFFECT_VARIANT_STRONGEST) {
           texture.pixels = JAW_TEXTURE;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
             s32 start = gBreaths_RingStarts[mode * 4 + i];
@@ -380,7 +380,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->shade = alpha;
           texture.logWidth = 5;
           texture.logHeight = 2;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
           Transform_Reset();

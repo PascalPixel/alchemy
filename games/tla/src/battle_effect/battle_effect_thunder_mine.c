@@ -252,11 +252,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       texture.logHeight = 7;
       // DEAD: both kinds are overwritten by the 6 below; the source keeps them.
       if (mode == BOLT_TRAIL_THUNDER_MINE) {
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
       } else {
-        model->kind = 9;
+        model->kind = MODEL_SHADED;
       }
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;

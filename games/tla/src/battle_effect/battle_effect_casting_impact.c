@@ -2157,7 +2157,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           model = Render_AllocateModelList(1);
           stunBoltTexture.logWidth = 5;
           stunBoltTexture.logHeight = 7;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->texture = &stunBoltTexture;
           model->mesh = gBattleEffect_ColumnMesh;
           model->vertices = matrix;
@@ -2206,7 +2206,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         reverseStarTexture.logWidth = 6;
         reverseStarTexture.logHeight = 6;
         reverseStarTexture.pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &reverseStarTexture;
         model->mesh = gBattleEffect_SquareMesh;
         model->vertices = matrix;
@@ -2270,7 +2270,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         boscaHitTexture.logHeight = 7;
         boscaHitTexture.pixels = buffer;
         model->texture = &boscaHitTexture;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = matrix;
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
@@ -2389,7 +2389,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         stunJipTexture.logWidth = 7;
         stunJipTexture.logHeight = 7;
         stunJipTexture.pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &stunJipTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = matrix;
@@ -2460,7 +2460,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         model->texture = tex;
         model->vertices = matrix;
         tex->pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;

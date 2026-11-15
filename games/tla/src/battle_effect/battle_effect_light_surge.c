@@ -212,7 +212,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->vertices = vertices;
     model->shade = shade;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     texture.pixels = work->sheet + LIGHT_SURGE_GLOW_BAND;
     for (i = 0, flash = work->particles, glow = &work->particles[16],
         bolt = &work->particles[32];
@@ -275,7 +275,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + LIGHT_SURGE_GLOW_ORB;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);

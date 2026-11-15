@@ -401,7 +401,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           if (shade > 0) {
             shade = 0;
           }
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->texture = &texture;
           model->mesh = mesh;
           model->vertices = projected;

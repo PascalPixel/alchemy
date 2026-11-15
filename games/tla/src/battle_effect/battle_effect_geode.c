@@ -287,7 +287,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = picture;
       model->flags = 3;
-      model->kind = 8;
+      model->kind = MODEL_TEXTURED;
       model->texture = &texture;
       model->mesh = mesh;
       model->vertices = projected;
@@ -320,7 +320,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       dust.logWidth = 6;
       dust.logHeight = 6;
       dust.pixels = work->sheet + GEODE_BILLOW;
-      rings->kind = 7;
+      rings->kind = MODEL_SHADED_ADDITIVE;
       rings->texture = &dust;
       rings->mesh = gBattleEffect_RingMesh;
       rings->vertices = ring;

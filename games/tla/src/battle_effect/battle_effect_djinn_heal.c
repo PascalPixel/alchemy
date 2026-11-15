@@ -169,7 +169,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + SHEET_TEXTURE;
-      job->kind = 6;
+      job->kind = MODEL_SHADED_MAX;
       job->texture = &texture;
       job->faces = gBattleEffect_SquareMesh;
       job->vertices = vertices;
@@ -554,7 +554,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = ringPixels;
       model->texture = &texture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;

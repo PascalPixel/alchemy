@@ -173,7 +173,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       texture.pixels = work->sheet;
       // Stored as an integer: as a pointer this store follows the kind store.
       *(s32 *)&model->mesh = (s32)gBattleEffect_LargeSquareMesh;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->vertices = vertices;
 
@@ -551,7 +551,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     texture.logWidth = 5;
     texture.logHeight = 6;
     texture.pixels = work->sheet;
-    model->kind = 8;
+    model->kind = MODEL_TEXTURED;
     model->texture = &texture;
     model->mesh = gBattleEffect_TallMesh;
     model->vertices = vertices;
@@ -595,7 +595,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       model->vertices = vertices;
       if (mode == CARD_BRAMBLE) {
         // The vines sway, each from its own phase.
-        model->kind = 9;
+        model->kind = MODEL_SHADED;
         if (frame == 48) {
           s32 first = Random16();
 
@@ -614,7 +614,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         }
       } else {
         // The bolts flicker every other frame.
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         if ((frame & 1) == 0) {
           s32 first = Random16();
 

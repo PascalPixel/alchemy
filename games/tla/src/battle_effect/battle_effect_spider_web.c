@@ -528,7 +528,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->shade = shade;
       model->texture = &texture;
       model->mesh = gBattleEffect_SquareMesh;
@@ -687,7 +687,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       quadTexture.logHeight = 7;
       model->texture = &quadTexture;
       quadTexture.pixels = work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       j = 0;

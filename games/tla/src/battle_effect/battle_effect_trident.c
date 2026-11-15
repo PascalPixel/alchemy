@@ -259,7 +259,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = (void *)cells;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->flags = 0;
       model->mesh = gBattleEffect_CylinderMesh;
@@ -303,7 +303,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         texture.logWidth = 5;
         texture.logHeight = 7;
         model->texture = &texture;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_ColumnMesh;
         model->vertices = vertices;
         model->scrollU = 0;
@@ -696,7 +696,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         texture.logWidth = 6;
         texture.logHeight = 6;
         texture.pixels = work->sheet + LEAPING_STRIKE_BILLOW;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 3; i++) {
           s32 start = gLeapingStrike_WaveStarts[i] + 40;

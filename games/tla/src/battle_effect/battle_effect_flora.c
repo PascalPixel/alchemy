@@ -504,7 +504,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = work->sheet;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->vertices = verts;
@@ -939,7 +939,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     texture.logHeight = 5;
     quad->texture = &texture;
     texture.pixels = work->sheet;
-    quad->kind = 9;
+    quad->kind = MODEL_SHADED;
     quad->faces = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
     for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {

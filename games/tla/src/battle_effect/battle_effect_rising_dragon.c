@@ -255,7 +255,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         model = Render_AllocateModelList(1);
         vertices = gMapGridCellBuffer + 0x1000;
         model->scrollV = 0;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->shade = 0;
         model->vertices = vertices;

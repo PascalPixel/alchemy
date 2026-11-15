@@ -549,7 +549,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       width = 7;
       if (scale > 0) {
         model->shade = zero;
-        model->kind = 9;
+        model->kind = MODEL_SHADED;
         model->vertices = vertices;
         model->texture = &texture;
         Transform_Reset();
@@ -596,7 +596,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         if (args->side == EFFECT_SIDE_PARTY) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = gBattleEffect_SmallSquareMeshReversed;
         texture.logWidth = 5;
         texture.logHeight = 5;
@@ -836,7 +836,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
           if (frame > 31)
             brightness = 224 - (frame << 3);
         }
-        column->kind = 7;
+        column->kind = MODEL_SHADED_ADDITIVE;
         column->shade = brightness;
         column->mesh = gGeyser_Mesh;
         column->texture = &texture;
@@ -1814,7 +1814,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s = 85536;
           }
         }
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         texture.pixels = work->sheet;
         sh = (frame << 3) - 1744;
         if (sh > 0) {
@@ -1853,7 +1853,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       if ((u32)(frame - 274) <= 27) {
         s = (frame << 11) - 0x85000;
         texture.pixels = cellBuffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         sh = 0;
         if (frame > 293) {
           sh = (294 - frame) << 3;
@@ -1877,7 +1877,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             texture.pixels = gMapGridCellBuffer;
             sh = -16;
             d = frame - st;
-            model->kind = 6;
+            model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Transform_Reset();
             s = d << 13;
@@ -1910,7 +1910,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s32 d = frame - gCoatlicue_FlashFrames[i];
             s = 0x14000 - (d << 13);
             texture.pixels = cellBuffer;
-            model->kind = 7;
+            model->kind = MODEL_SHADED_ADDITIVE;
             sh = d * 16 - 56;
             if (sh > 0) {
               sh = 0;
@@ -1940,7 +1940,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             }
             texture.pixels = work->sheet;
             sh = -16;
-            model->kind = 6;
+            model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Transform_Reset();
             if (frame > 539) {
@@ -1959,7 +1959,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 4;
       texture.pixels = work->sheet + COATLICUE_SCALES;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = coilMesh;
       model->vertices = verts;
       model->scrollU = zero;
@@ -2134,7 +2134,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     washTexture.logHeight = 7;
     washModel->mesh = gBattleEffect_LargeSquareMesh;
     washModel->vertices = washVertices;
-    washModel->kind = 6;
+    washModel->kind = MODEL_SHADED_MAX;
     washTexture.pixels = work->sheet;
     i = 0;
     lift = frame * 8 - 128;

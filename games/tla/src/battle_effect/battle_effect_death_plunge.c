@@ -188,7 +188,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &texture;
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = vertices;

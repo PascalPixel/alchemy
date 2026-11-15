@@ -163,7 +163,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         void *vertices = Heap_AllocEwram(32);
         struct RenderModel *model = Render_AllocateModelList(1);
 
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;

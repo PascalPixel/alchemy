@@ -191,7 +191,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // Eight flashes turn about the caster, each for 16 frames from its
       // start, swinging wider and back with a sine.
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->vertices = projected;
       texture.logWidth = 6;
@@ -224,7 +224,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       texture.logHeight = 2;
       texture.pixels = work->sheet + LIQUIFIER_GLOW_BAND;
       model->mesh = gBattleEffect_SmallSquareMesh;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != 16; i++) {
         s32 zero = 0;
         struct Particle *step = &work->particles[32 + i];
@@ -250,7 +250,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = splash;
       model->mesh = gBattleEffect_LargeSquareMesh;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != 16; i++) {
         struct Particle *step = &work->particles[i + 32];
         s32 age = frame - 54 - i * 2;

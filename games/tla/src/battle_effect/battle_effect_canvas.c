@@ -297,7 +297,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         texture.logWidth = 5;
         texture.logHeight = 2;
         texture.pixels = work->sheet + ECLIPSE_GLOW_BAND_A;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture;
         model->vertices = verts;
@@ -333,7 +333,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           texture.logWidth = 6;
           model->shade = modelShade;
           texture.logHeight = 6;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           texture.pixels = texturePixels;
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
@@ -482,7 +482,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model->shade = fade;
       model->texture = &breathTexture;
       model->vertices = verts;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       if (frame > 15) {
         struct Particle *q = &work->particles[63];
 
@@ -630,7 +630,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapGridCellBuffer;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &landingTexture;
         Transform_Reset();
         Transform_ApplyTranslation(-px(2), px(16), 0);
@@ -669,7 +669,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       landingTexture.logHeight = 5;
       landingTexture.pixels = work->sheet;
       {
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = mesh;
         model->vertices = vertices;
         model->texture = &landingTexture;
@@ -694,7 +694,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       landingTexture.logWidth = 7;
       landingTexture.pixels = work->sheet + ECLIPSE_FLAME_BAND;
       model->texture = &landingTexture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = bandMesh;
       model->flags = shade;
       model->vertices = vertices;
@@ -950,7 +950,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->shade = bias;
       texture.logHeight = 2;
       texture.pixels = work->sheet + FORM_CHANGE_GLOW_BAND;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->vertices = corners;
@@ -984,7 +984,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->vertices = corners;
       texture.logWidth = 6;
       texture.pixels = Data_02012000;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       texture.logHeight = 6;
       model->mesh = gBattleEffect_RingMesh;
       for (i = 0; i != 4; i++) {

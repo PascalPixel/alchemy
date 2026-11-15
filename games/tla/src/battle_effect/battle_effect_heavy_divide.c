@@ -101,7 +101,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
-    model->kind = 9;
+    model->kind = MODEL_SHADED;
     model->texture = &texture;
     model->vertices = vertices;
     model->shade = zero;
@@ -597,7 +597,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     texture.pixels = work->sheet + WYRD_CURSE_GLOW;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->texture = &texture;
     model->vertices = vertices;
@@ -637,7 +637,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     // The splashes, from frame 64.
     texture.logWidth = 5;
     texture.logHeight = 5;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     splash = 25000;
     /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
@@ -836,7 +836,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet + RADIANT_FIRE_FIRE_RING;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->vertices = vertices;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->texture = &texture;

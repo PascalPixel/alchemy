@@ -170,7 +170,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       shade = 0;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = vertices;

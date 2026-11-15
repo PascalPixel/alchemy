@@ -172,7 +172,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       texture.pixels = work->sheet;
       /* FAKEMATCH(signature): RenderModel's kind and shade typed long, whose
        * alias set. */
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->mesh = buffer;
       model->vertices = projected;
       model->shade = shade;

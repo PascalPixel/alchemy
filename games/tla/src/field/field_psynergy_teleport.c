@@ -142,12 +142,12 @@ void Teleport_PlayWhirl(void) {
       if (frame == 20)
         count = 0;
       if (frame == 40)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     frame++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   FieldPsynergy_MarkWorldMapTilesUsed();
@@ -293,12 +293,12 @@ void Teleport_PlaySparks(void) {
     case 2:
       count = 0;
       if (frame == 20)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     frame++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

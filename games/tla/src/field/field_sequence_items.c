@@ -209,7 +209,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         gMainRoutineWork.next = gMainRoutineWork.retreatScene;
         gMainRoutineWork.entrance = gMainRoutineWork.retreatEntrance;
-        runtime->exit = 999;
+        runtime->exit = EXIT_KEEP_DESTINATION;
       }
 
       MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);

@@ -202,7 +202,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 20)
         work->shake = 1;
       if (work->timer == 72) {
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
         work->timer = -1;
       }
       break;
@@ -295,7 +295,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 5)
         BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
       if (work->timer == 20) {
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
         work->timer = -1;
       }
       break;
@@ -415,7 +415,7 @@ void FieldPsynergy_Burst(void) {
   pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       kind, Scene_SelectPsynergyTarget(kind));
   frame = 0;
-  while (work->phase != 999) {
+  while (work->phase != FIELD_PSYNERGY_FINISHED) {
     wait(1);
     if (work->phase == 999)
       frame = 999;

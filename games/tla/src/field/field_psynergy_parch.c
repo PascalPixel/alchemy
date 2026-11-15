@@ -274,7 +274,7 @@ loaded:
         work->discScaleX += -0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
@@ -309,7 +309,7 @@ loaded:
         work->discScaleX += -0x400;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
@@ -340,14 +340,14 @@ loaded:
       case 2:
         spawn = 1;
         if (timer == 80)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
     wait(1);
     timer++;
     frame++;
-  } while (phase != 999);
+  } while (phase != FIELD_PSYNERGY_FINISHED);
 
   if (found != -1) {
     struct Actor *marked = Actor_GetById(found);

@@ -194,9 +194,9 @@ s32 Actor_CrossRope(struct Actor *object) {
     second = Actor_GetByIdFar(slot->second);
     if (first->y.fixed > second->y.fixed) {
       speed = -speed;
-      turn = 0xc000;
+      turn = TRIG_TURN * 3 / 4;
     } else {
-      turn = 0x4000;
+      turn = TRIG_TURN / 4;
     }
     object->scaleX = speed;
     if (best->x == object->x.fixed && best->y == object->y.fixed &&
@@ -508,7 +508,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         goto climb_moved;
     climb_blocked:
       SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-      collision |= 1;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
     }
   climb_moved:
     if (collision != 0) {
@@ -635,7 +635,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       goto counted;
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & KEY_UP) && groundAhead > y + px(8)) {
     cellX = (position.x & FIELD_CELL_MASK) + 0x80000;
@@ -677,7 +677,7 @@ counted:
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     if (work != NULL) {
-      if (collision & 3)
+      if (collision & PLAYER_STEP_BLOCKED)
         work->blockedSteps++;
       else
         work->blockedSteps = 0;
@@ -691,15 +691,15 @@ counted:
     actor->targetZ = TARGET_UNSET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
       u16 turn = angle;
 
       difference = (s16)(turn - actor->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       actor->facing += difference;
     }
     wakeTimer = (u8 *)actor + 98;
@@ -800,7 +800,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12, &leftPosition);
       rightPosition.x = object->x.fixed;
       /* FAKEMATCH(temporary): y read into its own local before the block. */
       y = object->y.fixed;
@@ -809,7 +809,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
         rightPosition.y = y;
       } while (0);
       rightPosition.z = object->z.fixed;
-      Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
+      Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
@@ -826,10 +826,12 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
           Vector_AddPolarOffset(px(8), direction, &position);
           SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
+          Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12,
+                                &leftPosition);
           SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
+          Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12,
+                                &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -837,7 +839,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
           angle = (s16)direction;
           goto update_object;
         }
-        collision |= 1;
+        collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
     }
   }
@@ -845,7 +847,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
 update_object:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if ((collision & 3) != 0)
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -859,13 +861,13 @@ update_object:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if ((collision & 3) != 0) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
       difference = (s16)(direction - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     timer = (u8 *)object + 98;

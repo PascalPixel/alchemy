@@ -69,4 +69,8 @@ struct WhirlSpark {
   s32 age;
 };
 
+/// The phase or state a field Psynergy's work is left in when it has
+/// finished, which the cast waits for.
+#define FIELD_PSYNERGY_FINISHED 999
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

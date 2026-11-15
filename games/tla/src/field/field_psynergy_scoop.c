@@ -69,7 +69,7 @@ void Scoop_Update(void) {
       if (work->timer == 25)
         work->other->scaleX = 0;
       if (work->timer == 50)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     phase = &work->phase;
@@ -112,7 +112,7 @@ void Scoop_Update(void) {
       if (work->timer == 70)
         work->other->scaleX = 0;
       if (work->timer == 90)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     if (work->phase == 2) {
@@ -144,7 +144,7 @@ void Scoop_Update(void) {
       break;
     case 2:
       if (work->timer == 20)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
   } else {
@@ -162,7 +162,7 @@ void Scoop_Update(void) {
       break;
     case 2:
       if (work->timer == 30)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     particle = work->particles;
@@ -409,7 +409,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (work->mode == 1) {
     frame = 0;
-    while (work->phase != 999) {
+    while (work->phase != FIELD_PSYNERGY_FINISHED) {
       if (frame == 24)
         Scoop_DigUpItem();
       wait(1);
@@ -420,7 +420,7 @@ void FieldPsynergy_Scoop(void) {
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     frame = 0;
-    while (work->phase != 999) {
+    while (work->phase != FIELD_PSYNERGY_FINISHED) {
       stage = 0;
       wait(1);
       if (frame == 30)

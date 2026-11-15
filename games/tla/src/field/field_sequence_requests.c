@@ -87,7 +87,7 @@ void Event_LeaveFor(s16 scene, s16 entrance) {
 
   gMainRoutineWork.next = scene;
   gMainRoutineWork.entrance = entrance;
-  event->exit = 999;
+  event->exit = EXIT_KEEP_DESTINATION;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for

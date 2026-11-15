@@ -279,7 +279,7 @@ s32 FieldSequence_Run(void) {
               WorldMap_SetReturnLeavingScene((s16)restartScene,
                                              (s16)restartEntrance);
             }
-            result = 999;
+            result = EXIT_KEEP_DESTINATION;
             WorldMap_ReloadPendingAreaGraphics();
             goto done;
           }
@@ -352,7 +352,7 @@ s32 FieldSequence_Run(void) {
         party->returnMusic = -1;
         party->next = 510;
         *entrance = work->encounter;
-        work->exit = 999;
+        work->exit = EXIT_KEEP_DESTINATION;
         Field_StartEncounterTransition(work->encounter);
         work->encounterBias = 0;
         work->encounter = 0;

@@ -220,12 +220,12 @@ void FieldPsynergy_GrindOnTarget(void) {
     case 3:
       amplitude = 0;
       if (timer == 0)
-        phase = 999;
+        phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     timer++;
-  } while (phase != 999);
+  } while (phase != FIELD_PSYNERGY_FINISHED);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();

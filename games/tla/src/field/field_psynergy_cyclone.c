@@ -132,7 +132,7 @@ void Cyclone_CarryLeader(void) {
     }
     break;
   case 1:
-    work->state = 999;
+    work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -168,7 +168,7 @@ void Cyclone_LiftLeader(void) {
     owner->y.fixed -= 0x6666;
     if (effect->childOption == 1) {
       if (timer == 40)
-        work->state = 999;
+        work->state = FIELD_PSYNERGY_FINISHED;
     } else if (timer == 40) {
       work->state++;
       work->timer = -1;
@@ -177,7 +177,7 @@ void Cyclone_LiftLeader(void) {
   case 2:
     owner->y.fixed += 0x3cccc;
     if (timer == 40)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -270,7 +270,7 @@ void FieldPsynergy_Cyclone(void) {
     if (spread > px(28))
       spread = px(28);
     step = step * 123 / 128;
-    canvas->angle += 0x400;
+    canvas->angle += TRIG_TURN / 64;
     canvas->command = 3;
     wait(1);
   }
@@ -299,7 +299,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -315,7 +315,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[1] = owner->y.fixed + px(32);
     work->to[2] = event->unkd42 << 16;
     Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
-    while (work->state != 999) {
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
@@ -333,7 +333,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -348,7 +348,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[2] = event->unkd3e << 16;
     Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
-    while (work->state != 999) {
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
@@ -377,7 +377,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -397,7 +397,7 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
       owner->facing += FACING_STEP;
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -443,7 +443,7 @@ void Actor_DepartInRing(s32 actor) {
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
-    spin += 0x400;
+    spin += TRIG_TURN / 64;
     SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - px(6),
                        object->z.fixed);
     wait(1);
@@ -657,12 +657,12 @@ void Blaze_UpdateSpray(void) {
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {
-    work->angle = work->angle + 0x400;
+    work->angle = work->angle + TRIG_TURN / 64;
   } else {
-    if (turn > 0x400)
-      turn = 0x400;
-    if (turn < -0x400)
-      turn = -0x400;
+    if (turn > TRIG_TURN / 64)
+      turn = TRIG_TURN / 64;
+    if (turn < -(TRIG_TURN / 64))
+      turn = -(TRIG_TURN / 64);
     work->angle = work->angle + turn;
   }
 }

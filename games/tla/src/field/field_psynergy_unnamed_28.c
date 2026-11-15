@@ -294,12 +294,12 @@ void FieldPsynergy_Unnamed28(void) {
       case 2:
         repeat = 0;
         if (timer == 16)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
       wait(1);
       timer++;
-    } while (phase != 999);
+    } while (phase != FIELD_PSYNERGY_FINISHED);
 
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);

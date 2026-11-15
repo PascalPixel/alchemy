@@ -465,7 +465,7 @@ void Event_SetDestination(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = 999;
+  event->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->next = scene;
   party->entrance = entrance;
@@ -476,7 +476,7 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = 999;
+  event->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->restartScene = scene;
   party->restartEntrance = entrance;

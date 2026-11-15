@@ -209,7 +209,7 @@ clear:
 
 blocked:
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -243,13 +243,15 @@ push_objects:
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                        other->z.fixed);
-          Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(10), direction + FIELD_PROBE_ANGLE,
+                                &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                          other->z.fixed);
-            Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(10), direction - FIELD_PROBE_ANGLE,
+                                  &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
@@ -263,7 +265,7 @@ push_objects:
         }
       }
     }
-    collision |= 2;
+    collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
   if (collision == 0 && pushed != 0) {
     object->speedLimit = px(1) / 4;
@@ -273,7 +275,7 @@ push_objects:
 counted:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -295,14 +297,14 @@ counted:
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (s16)(angle - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -599,7 +601,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       goto push_objects;
   }
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
   goto push_objects;
 
 clear:
@@ -639,13 +641,15 @@ push_objects:
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                        other->z.fixed);
-          Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(10), direction + FIELD_PROBE_ANGLE,
+                                &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                          other->z.fixed);
-            Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(10), direction - FIELD_PROBE_ANGLE,
+                                  &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
@@ -659,7 +663,7 @@ push_objects:
         }
       }
     }
-    collision |= 2;
+    collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
   if (collision == 0 && pushed != 0) {
     object->speedLimit = px(1) / 4;
@@ -668,7 +672,7 @@ push_objects:
 
 counted:
   if (work != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -697,10 +701,10 @@ counted:
       s32 difference;
 
       difference = (s16)((u16)angle - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;

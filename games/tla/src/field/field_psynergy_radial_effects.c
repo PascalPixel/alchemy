@@ -676,7 +676,7 @@ void FieldPsynergy_UpdateLash(void) {
     object->scaleX = 0;
     work->spawnCount = 0;
     if (work->timer == 30)
-      work->phase = 999;
+      work->phase = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -780,7 +780,7 @@ void FieldPsynergy_Lash(void) {
       work->spawnCount = 1;
       work->hit = 0;
       Task_Add(FieldPsynergy_UpdateLash, TASK_PASS_VBLANK);
-      while (work->phase != 999) {
+      while (work->phase != FIELD_PSYNERGY_FINISHED) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_LASH);
           Rope_Lash(event->targetX, event->targetY, event->targetZ);
@@ -1481,7 +1481,7 @@ again:
     break;
   case 5:
     if (work->bowShrinking == 0)
-      work->phase = 999;
+      work->phase = FIELD_PSYNERGY_FINISHED;
     break;
   }
 
@@ -1714,7 +1714,7 @@ void FieldPsynergy_Unnamed29(void) {
   work->phase = 0;
   work->timer = 0;
   Task_Add(FieldPsynergy_UpdateUnnamed29, TASK_PASS_VBLANK);
-  while (work->phase != 999)
+  while (work->phase != FIELD_PSYNERGY_FINISHED)
     wait(1);
   Task_Remove(FieldPsynergy_UpdateUnnamed29);
   if (work->done != 0 && work->result != -1)

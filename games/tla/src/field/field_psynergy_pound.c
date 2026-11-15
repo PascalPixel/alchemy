@@ -115,7 +115,7 @@ void FieldPsynergy_UpdatePound(void) {
   case 4:
     work->object->y.fixed += px(3) / 2;
     if (work->timer == 13)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -135,7 +135,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
   }
   work->timer++;
 }
@@ -274,7 +274,7 @@ void FieldPsynergy_Pound(void) {
     sprite = &work->sprites[j];
     speed = Random16() * 18 / 10;
     speed += 0x28000;
-    angle = j * 0x1555 + (Random16() >> 5);
+    angle = j * (TRIG_TURN / 12) + (Random16() >> 5);
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
@@ -308,7 +308,7 @@ void FieldPsynergy_Pound(void) {
   work->sparkles = 0;
   if (!inReach) {
     Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_VBLANK);
-    while (work->state != 999)
+    while (work->state != FIELD_PSYNERGY_FINISHED)
       wait(1);
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (j = 15; j >= 0; j--)
@@ -322,7 +322,7 @@ void FieldPsynergy_Pound(void) {
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
     frame = 0;
-    while (work->state != 999) {
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;

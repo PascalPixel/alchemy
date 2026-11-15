@@ -410,7 +410,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;
       if (timer == 60)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     for (i = 0; i < sparks; i++) {
@@ -431,7 +431,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sparks = 0;
     wait(1);
     timer++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   Actor_StartIdleFar(owner);
   owner->scaleX = Q16_ONE;
   owner->scaleY = Q16_ONE;

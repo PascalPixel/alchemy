@@ -251,8 +251,8 @@ void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
       lim <<= 5;
       if (turn > lim)
         turn = lim;
-      if (turn < -0x1000)
-        turn = -0x1000;
+      if (turn < -(TRIG_TURN / 16))
+        turn = -(TRIG_TURN / 16);
       src->angle += turn;
     }
     src->flag5a = 0;

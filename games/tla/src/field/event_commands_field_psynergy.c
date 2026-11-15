@@ -204,7 +204,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 start[3];
   s32 i = 0;
 
-  if (scene->angle != 0xc000)
+  if (scene->angle != TRIG_TURN * 3 / 4)
     Actor_SetSpritePriorityDirectFar(object, 0);
   start[0] = mainActor->x.fixed;
   start[1] = mainActor->y.fixed + px(16);

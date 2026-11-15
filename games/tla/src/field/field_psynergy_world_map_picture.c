@@ -941,7 +941,7 @@ done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    event->exit = 999;
+    event->exit = EXIT_KEEP_DESTINATION;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();

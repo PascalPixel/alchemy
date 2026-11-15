@@ -38,6 +38,8 @@
 /// How far off its heading the leader's pad movement probes for a clear way:
 /// a sixteenth of a turn, 22.5 degrees, and three times that.
 #define FIELD_PROBE_ANGLE (TRIG_TURN / 16)
+/// The most a blocked actor turns toward its heading in one frame.
+#define FIELD_BLOCKED_TURN_MAX (TRIG_TURN / 16)
 
 struct Actor;
 struct FieldPosition;

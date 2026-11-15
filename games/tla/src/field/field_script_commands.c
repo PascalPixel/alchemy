@@ -1330,10 +1330,10 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
 
       difference = (u16)angle - actor->facing;
       difference = (s16)difference;
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       actor->facing += difference;
     }
     actor->timer = 0;

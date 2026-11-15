@@ -80,7 +80,7 @@ s32 Field_UsePsynergy(u32 code) {
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
-    event->exit = 999;
+    event->exit = EXIT_KEEP_DESTINATION;
     retreat = 1;
   }
 

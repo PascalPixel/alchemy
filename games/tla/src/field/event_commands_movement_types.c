@@ -29,7 +29,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
+    if ((flags & 3) == 2 || Actor_IsNotAttachedEffect(object->resource)) {
       child = Actor_CreateFar(264, object->x, object->y, object->z);
     }
   } else {

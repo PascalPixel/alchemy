@@ -23,14 +23,13 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
 /// Returns the sprite id stored by a live actor's animated sprite, or 0 when
 /// that actor has no animated sprite or its sprite-id pointer is absent.
 s32 Speaker_GetActorSprite(u32 objectId) {
-  struct BattleRenderObject *object =
-      (struct BattleRenderObject *)Actor_Lookup(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 
-  if (object->kind != ACTOR_SPRITE_ONE || object->animation == NULL ||
-      object->animation->value28 == NULL) {
+  if (object->spriteStorageKind != ACTOR_SPRITE_ONE || object->sprite == NULL ||
+      ((struct Sprite *)object->sprite)->entries[0] == NULL) {
     return 0;
   }
-  return *object->animation->value28;
+  return ((struct Sprite *)object->sprite)->entries[0]->animationId;
 }
 
 /// Returns the voice of sprite id's messages: the first of its four blip

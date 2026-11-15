@@ -239,7 +239,7 @@ s32 Actor_GetSpriteById(s32 key) {
   struct Actor *object = event->actors[key & 0x0fff];
 
   if (object != NULL && object->spriteStorageKind == 1)
-    result = *((struct ObjectAnimationState *)object->sprite)->value28;
+    result = ((struct Sprite *)object->sprite)->entries[0]->animationId;
   return result;
 }
 
@@ -254,7 +254,7 @@ s32 Actor_FindBySprite(s32 value) {
   for (index = 8; index <= 79; index++) {
     object = event->actors[index];
     if (object != NULL && object->spriteStorageKind == 1 &&
-        *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
+        ((struct Sprite *)object->sprite)->entries[0]->animationId == value) {
       result = index;
       break;
     }

@@ -12,21 +12,6 @@ struct Corner {
   s8 z;
 };
 
-// Columns of gFume_Levels, one row per Fume level (effect->variant): the
-// plume's width, the frame its tail starts, its arc's height, the sparks'
-// spread, count and lift.
-enum {
-  FUME_WIDTH,
-  FUME_TAIL_START,
-  FUME_HEIGHT,
-  FUME_SPREAD,
-  FUME_SPARKS,
-  FUME_LIFT,
-  FUME_COLUMNS
-};
-
-extern const u16 gFume_Levels[][FUME_COLUMNS];
-
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 

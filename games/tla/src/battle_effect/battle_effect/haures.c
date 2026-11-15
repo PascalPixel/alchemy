@@ -7,11 +7,6 @@
 
 struct StripQuad;
 
-struct HalfPair {
-  u16 x;
-  u16 y;
-};
-
 struct WingVertex {
   s8 x;
   s8 y;
@@ -25,7 +20,7 @@ struct WingVertex {
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
 extern struct WingVertex Data_020104f0[];
-extern const struct HalfPair gHaures_FeatherPoints[];
+extern const u16 gHaures_FeatherPoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
@@ -632,9 +627,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               velocity.x; // velocity.x, not velocity.y, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = px(gHaures_FeatherPoints[i].x) + position.x;
+          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i].y) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
@@ -849,18 +844,18 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       if ((u32)t <= 19) {
         openingScale.x = -0x10001;
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = position.x - px(gHaures_FeatherPoints[i].x);
+          bodyPlace[0] = position.x - px(gHaures_FeatherPoints[i][0]);
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i].y) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       } else {
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = px(gHaures_FeatherPoints[i].x) + position.x;
+          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i].y) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);

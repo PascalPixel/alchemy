@@ -106,7 +106,7 @@ of them, each adding something of its own.
   [`battle_effect/`](battle_effect) in ROM order, each named for the first
   ability it draws (`cybele.c`, `bolt.c`, `meteor_blow.c`), with the
   includes they share in `battle_effect_internal.h`.
-- The tables they read, which pictures, where and how many, are still
-  assembly here.
+- [`effect_table.c`](effect_table.c) is the tables they read: which
+  pictures, where and how many, and the handler for each effect kind.
 - The blitters are assembly fragments, put together as an effect needs
   them.

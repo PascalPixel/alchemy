@@ -313,7 +313,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           }
           spinner->z += spinner->velocityZ;
           SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
-          Render_TransformVertices(gTrident_ProngCorners + x * 16, vertices, 4);
+          Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
       }

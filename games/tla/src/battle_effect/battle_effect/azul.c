@@ -310,7 +310,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                            (s32 *)gAzul_UnitScale, 0);
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
         for (i = 0; i != 16; i++) {
           place[0] = px(39 - gAzul_ObjectX[(i & 3) + 5]) + base.x;
@@ -324,7 +324,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
             place[2] = px(160);
           obj = work->sprites[i + 12];
           obj->tile = ((struct AzulObject *)work->sprites[(i & 3) + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
       } else {
@@ -336,7 +336,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                            (s32 *)gAzul_UnitScale, 0);
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
         i = 0;
         xs = gAzul_ObjectX;
@@ -349,7 +349,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           CLAMP_Y(place);
           obj = work->sprites[i + 12];
           obj->tile = ((struct AzulObject *)work->sprites[m + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
       }
@@ -386,7 +386,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         place[0] = px(gAzul_LateObjectX[i]) + x;
         place[2] = px(gAzul_LateObjectZ[i]) + y;
         Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                          (s32 *)gAzul_LateUnitScale, 0);
+                                          (s32 *)&gAzul_LateUnitScale, 0);
       }
     }
     if ((u32)(frame - 138) <= 29) {

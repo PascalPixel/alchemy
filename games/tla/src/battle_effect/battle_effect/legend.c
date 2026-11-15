@@ -286,16 +286,6 @@ enum {
   CARD_THUNDER, // Thunder Card: bolts strike from the card.
 };
 
-/// How each card's sparks move: the kernel's gravity and damping, and how
-/// many steps (each drawn) a frame.
-struct SparkMotion {
-  s32 gravity;
-  s32 damping;
-  s32 steps;
-};
-
-extern struct SparkMotion gElementCards_SparkMotions[];
-
 /// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 /// the user, spinning and growing, for 48 frames, then shows its picture.
 /// From frame 48 the background takes the card's colours; the Frost and

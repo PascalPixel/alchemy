@@ -15,20 +15,6 @@
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// The battle background's id, read through a union whose s32 member gives
-// the read view->secondMode's alias set and not the scroll's, so those two
-// stores stay in source order.
-/* VIEW(f13eb70): tag struct BattleBackgroundId as struct
- * BattleBackgroundId__f13eb70; battle_effect.c has another definition; tried
- * with the definition the rest of the object has,
- * BattleEffect_RunShatteringOpening moves: 1 of 1093 instructions in tla-ja. */
-union BattleBackgroundId__f13eb70 {
-  u16 id;
-  s32 word;
-};
-#define BACKGROUND(battle)                                                     \
-  (((union BattleBackgroundId__f13eb70 *)&(battle)->background)->id)
-
 /// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
 /// the map cell buffer.
 #define PLOT(x, y)                                                             \
@@ -81,7 +67,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, BATTLE_BACKGROUND_ID(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
@@ -169,7 +155,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
-      BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
+      BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(battle), -1);
     }
 
     // From frame 8, step each of colours 6 to 13 one shade towards the
@@ -371,7 +357,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(2, BATTLE_BACKGROUND_ID(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -624,10 +610,7 @@ void BattleEffect_DimBackgroundStep(void) {
   }
 }
 
-#undef BACKGROUND
-
 // The battle background's id.
-#define BACKGROUND(battle) ((battle)->background)
 
 /// Starts the element streaks, which then draw by themselves while the battle
 /// runs on.
@@ -657,7 +640,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                       IO_WRITE_16);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
-  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -1729,7 +1712,6 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef CLIP
-#undef BACKGROUND
 #undef PLOT
 #undef gSparkles
 #undef ALT_BLITTER

@@ -8,17 +8,6 @@
 
 #define KIND125_FRAMES 114
 
-/* VIEW(summon_effects): tag union BattleBackgroundId as union
- * BattleBackgroundId__summon_effects; battle_effect/battle_effect.h has
- * another definition; not tried: struct BattleBackgroundId__summon_effects was
- * not found. */
-union BattleBackgroundId {
-  u16 id;
-  s32 word;
-};
-#define BACKGROUND(battle)                                                     \
-  (((union BattleBackgroundId *)&(battle)->background)->id)
-
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
 
@@ -440,7 +429,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   BattleObject_PutFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
-  BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
+  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
+                           24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
@@ -775,5 +765,4 @@ void Iris_RestoreBattle(void) {
   BattleBackground_LoadFar(1, battle->background, 24);
 }
 #undef KIND125_FRAMES
-#undef BACKGROUND
 #undef SWIRL_MAX_FRAMES

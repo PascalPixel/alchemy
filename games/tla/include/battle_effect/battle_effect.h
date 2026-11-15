@@ -131,9 +131,11 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// A battle background's id, as the summons read it.
+/// A battle background's id, as the summons read it: the word and the bytes
+/// give the read the alias sets of the stores around it.
 union BattleBackgroundId {
   u16 id;
+  s32 word;
   u8 bytes[6];
 };
 

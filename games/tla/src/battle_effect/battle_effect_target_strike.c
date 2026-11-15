@@ -1016,9 +1016,6 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#define BACKGROUND(battle)                                                     \
-  (((union BattleBackgroundId *)&(battle)->background)->id)
-
 /// Unused: nothing refers to it. Shows the cloud swirl
 /// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.
 void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
@@ -1043,7 +1040,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, BATTLE_BACKGROUND_ID(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
@@ -1088,7 +1085,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
-  BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
+  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(battle), -1);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
@@ -1111,7 +1108,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(2, BATTLE_BACKGROUND_ID(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -1145,4 +1142,3 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 #undef gSparks
 #undef BUILD_BLITTER
 #undef gFlecks
-#undef BACKGROUND

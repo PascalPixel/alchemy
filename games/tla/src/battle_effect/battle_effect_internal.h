@@ -217,6 +217,12 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
+/// The battle background's id in the battle work, read through
+/// union BattleBackgroundId, so the stores around it to the background's view
+/// stay in source order.
+#define BATTLE_BACKGROUND_ID(battle)                                           \
+  (((union BattleBackgroundId *)&(battle)->background)->id)
+
 /// The particles an effect keeps in the map cell buffer, from its start.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 

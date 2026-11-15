@@ -122,11 +122,9 @@
 // effects draw with.
 
 #define Texture Texture__summon_effects
-#define BattleBackgroundId BattleBackgroundId__summon_effects
 
 #include "battle_effect_megiddo.c"
 #include "battle_effect_odyssey.c"
 #include "battle_effect_moloch.c"
 
-#undef BattleBackgroundId
 #undef Texture

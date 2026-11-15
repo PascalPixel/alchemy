@@ -113,9 +113,14 @@ extern u32 gTreasureIsle_LiftRockScale[];
 
 void TreasureIsle_PressRoom2Button(void);
 
-extern u16 gTreasureIsle_SavedBgColors[];
-extern volatile u16 gTreasureIsle_SavedObjColors[];
-extern u16 gTreasureIsle_ObjColors[];
+/// One palette's sixteen colours.
+struct Palette {
+  u16 colors[PALETTE_COLORS];
+};
+extern struct Palette gTreasureIsle_SavedBgColors;
+extern struct Palette gTreasureIsle_BgColors;
+extern struct Palette gTreasureIsle_SavedObjColors;
+extern struct Palette gTreasureIsle_ObjColors;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -472,7 +477,6 @@ const u8 *Scene_GetTriggers(void) {
 /// The water colours' cycle frame, -1 until the first frame saves the
 /// palettes.
 extern s32 gTreasureIsle_ColorCycleFrame[];
-extern volatile u16 gTreasureIsle_BgColors[];
 
 /// A task: cycles four colours of a background and an object palette every
 /// eight frames, saving both palettes the first time.
@@ -488,28 +492,28 @@ void TreasureIsle_CycleWaterColors(void) {
   if (busy != 0)
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
-    Iwram_CopyWords(gTreasureIsle_SavedBgColors, (void *)&BG_PLTT_COLOR(3, 0),
-                    32);
-    Iwram_CopyWordsEntry((void *)gTreasureIsle_BgColors,
-                         gTreasureIsle_SavedBgColors, 32);
-    Iwram_CopyWordsEntry((void *)gTreasureIsle_SavedObjColors,
+    Iwram_CopyWords(gTreasureIsle_SavedBgColors.colors,
+                    (void *)&BG_PLTT_COLOR(3, 0), 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_BgColors.colors,
+                         gTreasureIsle_SavedBgColors.colors, 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_SavedObjColors.colors,
                          (void *)&BG_PLTT_COLOR(10, 0), 32);
-    Iwram_CopyWordsEntry(gTreasureIsle_ObjColors,
-                         (void *)gTreasureIsle_SavedObjColors, 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_ObjColors.colors,
+                         gTreasureIsle_SavedObjColors.colors, 32);
     gTreasureIsle_ColorCycleFrame[0] = 0;
   }
-  /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile.
-   */
   phase = gTreasureIsle_ColorCycleFrame[0] / 8 % 4;
   for (i = 0; i <= 3; i++) {
-    gTreasureIsle_BgColors[(phase + i) % 4 + 2] =
-        gTreasureIsle_SavedBgColors[i + 2];
-    gTreasureIsle_ObjColors[(phase + i) % 4 + 2] =
-        gTreasureIsle_SavedObjColors[i + 2];
+    gTreasureIsle_BgColors.colors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedBgColors.colors[i + 2];
+    gTreasureIsle_ObjColors.colors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedObjColors.colors[i + 2];
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gTreasureIsle_BgColors,
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0),
+                      (u32)gTreasureIsle_BgColors.colors,
                       DMA_COPY_WORDS(PALETTE_COLORS / 2));
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(10, 0), (u32)gTreasureIsle_ObjColors,
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(10, 0),
+                      (u32)gTreasureIsle_ObjColors.colors,
                       DMA_COPY_WORDS(PALETTE_COLORS / 2));
   gTreasureIsle_ColorCycleFrame[0]++;
 }

@@ -458,7 +458,7 @@ again:
         cells = gMapGridCellBuffer;
       else
         cells = map->layers[leader->layer & 3].cells;
-      cells += cellX + (cellZ << 7);
+      cells += cellX + cellZ * MAPGRID_SIZE;
       if (cells->attributeB & 16)
         Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }

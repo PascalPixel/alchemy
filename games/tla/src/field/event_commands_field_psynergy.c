@@ -246,7 +246,7 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
 /// Spawns a particle (kind 0x2a1) at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_Spawn(0x2a1, x, y, z);
+  struct Actor *object = Actor_Spawn(SPRITE_SPARKLE, x, y, z);
   s32 magnitude;
 
   if (object != NULL) {

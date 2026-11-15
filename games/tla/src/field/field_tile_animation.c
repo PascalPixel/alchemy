@@ -875,7 +875,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  grid += x / 16 + (z / 16 << 7);
+  grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
   return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15);
 }
@@ -892,7 +892,10 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
+  return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
+                               (z / MAPGRID_CELL_PIXELS << 7)] *
+                          4] &
+         15;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
@@ -909,7 +912,9 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  code = &Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4];
+  code =
+      &Ram_MapCollision
+          [grid[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4];
   kind = code[0];
   if (kind == 7 && code[1] != code[2])
     kind = 99;
@@ -966,7 +971,10 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
+  return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
+                               (z / MAPGRID_CELL_PIXELS << 7)] *
+                          4] &
+         15;
 }
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
@@ -1020,7 +1028,8 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
     shapes = map->layers[layer].terrainIds;
   else
     shapes = gMapShapeGrid;
-  code = Ram_MapCollision + shapes[x / 16 + ((z / 16) << 7)] * 4;
+  code = Ram_MapCollision +
+         shapes[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4;
   return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          base;
 }
@@ -1052,7 +1061,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)
@@ -1092,7 +1101,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)
@@ -1132,7 +1141,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)

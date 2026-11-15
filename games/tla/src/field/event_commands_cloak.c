@@ -467,7 +467,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     struct Actor **walk = shards;
 
     for (i = 0; i < 20; i++) {
-      object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
+      object = Actor_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
         Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);

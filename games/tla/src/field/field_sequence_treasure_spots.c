@@ -122,7 +122,7 @@ void Field_PlaceTreasureSpots(void) {
             cells = (struct MapCell *)gMapGridCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
-            cells += x + (z << 7);
+            cells += x + z * MAPGRID_SIZE;
             if ((u32)(cells->collisionCode - 242) <= 5)
               cells->collisionCode = 0;
           }

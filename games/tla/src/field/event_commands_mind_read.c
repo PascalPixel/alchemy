@@ -265,7 +265,7 @@ void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
 
-  obj = Actor_Spawn(0x2a1, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;
@@ -878,7 +878,7 @@ void FieldPsynergy_Growth(void) {
     randomValue = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(randomValue, Random16(), p->values);
     p->values[1] = *(s32 *)(state + 8);
-    object = Actor_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
+    object = Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
       *((u8 *)object + 0x55) = 2;

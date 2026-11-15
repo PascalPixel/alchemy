@@ -25,6 +25,11 @@ struct MapAnimation {
 
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.
+/// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
+/// edges.
+#define MAPGRID_SIZE 128
+#define MAPGRID_CELL_PIXELS 16
+
 struct MapCell {
   u16 cellPictureAndFlags;
   u8 collisionCode;

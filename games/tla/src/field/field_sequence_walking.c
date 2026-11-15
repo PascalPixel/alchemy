@@ -98,7 +98,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     x = position[0];
     cell = (u8 *)map->layers[0].cells;
     z = position[2];
-    cell += (((x / px(16)) + ((z / px(16)) << 7)) << 2);
+    cell += (x / px(16) + z / px(16) * MAPGRID_SIZE << 2);
   }
   return cell[2];
 }

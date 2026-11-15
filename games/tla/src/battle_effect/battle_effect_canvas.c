@@ -412,13 +412,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(1, battle->background, 24);
-  // Two empty once-only blocks before the fills: without them, 18 differ.
-  do {
-  } while (0);
-  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  do {
-  } while (0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT =

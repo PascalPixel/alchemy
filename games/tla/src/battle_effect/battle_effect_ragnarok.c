@@ -620,13 +620,6 @@ struct StripQuad;
 
 extern const struct Scale gJudgment_UnitScale;
 
-/// Fills words through the IWRAM fill as one statement, the way Judgment clears
-/// and floods its canvas.
-static inline void BattleEffect_FillWords(void *dst, s32 size, s32 value) {
-  do {
-    Iwram_FillWordsEntry(dst, size, value);
-  } while (0);
-}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, x, y, w, h);    \

@@ -31,32 +31,19 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
   UNUSED u8 unused[4];
 
   if (flip == 0) {
-    u32 heap = 0xc0;
-    s32 flags = 19;
-    void **slots;
-
-    /* FAKEMATCH(barrier): an empty asm on heap and flags. */
-    __asm__("" : "+l"(heap), "+l"(flags));
-    slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
-    out[0] = slots[26];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    out[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    out[1] = slots[47];
+    out[1] = Ram_HeapSlots->ramCodePaired;
   } else {
-    u32 heap = 0xc0;
-    s32 flags = 23;
-    void **slots;
-
-    /* FAKEMATCH(barrier): the same asm for the mirrored blitters. */
-    __asm__("" : "+l"(heap), "+l"(flags));
-    slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
-    out[0] = slots[26];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+    out[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
-    out[1] = slots[47];
+    out[1] = Ram_HeapSlots->ramCodePaired;
   }
 }
 

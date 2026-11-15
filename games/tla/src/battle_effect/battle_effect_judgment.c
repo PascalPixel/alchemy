@@ -149,7 +149,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = Q16_ONE * 8;
     }
     if (frame == 143) {
-      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
@@ -406,7 +406,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  BattleEffect_FillWords(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   cx = 60;
   cy = 44;
   squash = 6;
@@ -455,7 +455,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 318) {
-      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
@@ -464,7 +464,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == JUDGMENT_SWEEP_EXPLOSION) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
-      BattleEffect_FillWords(canvas, CANVAS_BYTES, 0);
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
@@ -479,8 +479,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 69) {
-      BattleEffect_FillWords(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 70) {
       BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
@@ -491,15 +491,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       ring = 0;
       rings = 4;
       squash = 8;
-      BattleEffect_FillWords(work->sheet, 0x3840, 0);
-      BattleEffect_FillWords(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == JUDGMENT_SWEEP_FOREST) {
-      BattleEffect_FillWords(work->sheet, 0x3840, 0);
-      BattleEffect_FillWords(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct Particle *p = work->particles;
@@ -515,8 +515,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == JUDGMENT_SWEEP_RETURN) {
       BattleEffect_SetupBlendedDisplay();
-      BattleEffect_FillWords(work->sheet, 0x3840, 0);
-      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
+      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       {
@@ -555,8 +555,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 182) {
-      BattleEffect_FillWords(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
 
     if (frame <= 63) {
@@ -771,8 +771,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
     if (frame == 238) {
-      BattleEffect_FillWords(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if ((u32)(frame - 214) <= 65) {
       gBgScroll[1].x += 8;

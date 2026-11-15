@@ -43,7 +43,7 @@ struct WarpTarget {
 
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];
-extern s32 gLemuriaDock_ExitsWithFlag960[];
+extern s32 gLemuriaDock_ExitsToOtherWayIn[];
 extern struct WarpTarget gLemuriaDock_HouseDoor;
 
 void Event_FinishScreenTransition(void);
@@ -59,10 +59,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
+/// The dock leads back to the way into Lemuria the party came by: Lemuria's
+/// entrance sets flag 0x960 when the party leaves by its fifth exit.
 s32 *Scene_GetExits(void) {
   if (!Event_GetFlag(0x960))
     return gLemuriaDock_Exits;
-  return gLemuriaDock_ExitsWithFlag960;
+  return gLemuriaDock_ExitsToOtherWayIn;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -92,7 +94,7 @@ void LemuriaDock_MoveKraden(void) {
       Actor_SetSpeed(ACTOR_KRADEN, 2);
       Actor_WalkToAndWait(ACTOR_KRADEN, 440, 440);
       Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-      Actor_SetAnimation(ACTOR_KRADEN, 2);
+      Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
       leader = Actor_GetById(party->leaderActorId);
       if (leader != NULL)
         Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
@@ -216,7 +218,8 @@ void LemuriaDock_CyclePalette(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Task_Add(LemuriaDock_CyclePalette, TASK_PASS_VBLANK);
   Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
@@ -258,7 +261,7 @@ s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gLemuriaDock_ExitsWithFlag960[] = {
+s32 gLemuriaDock_ExitsToOtherWayIn[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AncientLemuria, 5, EXIT_FLAG_NONE),
@@ -269,7 +272,7 @@ s32 gLemuriaDock_ExitsWithFlag960[] = {
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 #if TLA_PATCH_1
-    ACTOR_PLACEMENT(420, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CANNON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
 #endif
     {SCENE_TABLE_END},
 };

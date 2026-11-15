@@ -29,6 +29,7 @@
 #include "field/actor_script.h"
 #include "field/sprite.h"
 #include "djinn_ids.h"
+#include "text/msg_ids.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
@@ -214,16 +215,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
-  struct Actor *object;
-  u8 flags;
 
-  object = Actor_GetById(ACTOR_CHICKEN);
-  flags = object->priorityFlags & ~1;
-  do {
-    party = &gMainRoutineWork;
-  } while (0);
-  object->priorityFlags = flags;
-  Actor_GetById(party->leaderActorId)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_CHICKEN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  party = &gMainRoutineWork;
+  Actor_GetById(party->leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (party->next == SCENE_MIKASALLA_NORTH) {
     if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       TilesetAnim_Pause(0);
@@ -261,7 +257,7 @@ void Mikasalla_ClimbDownLadder(void) {
   }
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
@@ -331,8 +327,6 @@ void Mikasalla_StepOntoLadderAhead(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
-
-#include "text/msg_ids.h"
 
 // clang-format off
 /// The doors' cell animations: most doors, the third door's own cells, and
@@ -595,8 +589,8 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 680, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 632, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(203, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(81, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHICKEN, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEEP, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x60, MOVEMENT_TYPE_STAND, 312, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };

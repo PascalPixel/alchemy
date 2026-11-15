@@ -9,12 +9,12 @@
 /// parents and meets Puelle. After the ending the storm is over, the children
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
 #include "resource_ids.h"
 #include "field/sprite.h"
 #include "field/actor_script.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
 #include "types.h"
@@ -39,6 +39,21 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
+#include "field/call.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
+#include "window/item_icon.h"
+#include "scene/magma_rock.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
+#include "system/io_reg.h"
+#include "field/field_event.h"
+#include "fixed_math.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
+#include "text/msg_ids.h"
+#include "scene/falling_rocks.h"
 
 /// The south gate on the farewell, by the rows of
 /// gProx_SouthGateFarewellPlacements; the party's rows go to their party
@@ -174,19 +189,6 @@ enum ProxCaveHomesActorId {
 
 /// The caves: one old man, who fears for Weyard (Prox_FearForWeyard).
 enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
-#include "field/call.h"
-#include "system/input.h"
-#include "system/frame.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "scene/magma_rock.h"
-#include "field/particle.h"
-#include "graphics/resource.h"
-#include "system/io_reg.h"
-#include "field/field_event.h"
-#include "fixed_math.h"
-#include "system/iwram_call.h"
-#include "system/task.h"
 
 #define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
 #define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
@@ -216,7 +218,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -240,7 +243,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -304,11 +307,6 @@ void Prox_MercuryDjinniJoins(void) {
 /// Overlay 6A8's scene layer: the declarations its scenes share and the
 /// inline helpers some of their calls go through, as overlay 694's do.
 
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-
 #define EVENT_WORK gFieldWork
 
 #endif
@@ -327,9 +325,9 @@ extern struct Trigger gProx_MoldTriggers[];
 extern struct Trigger gProx_CaveHomesTriggers[];
 extern struct Trigger gProx_CavesTriggers[];
 
-extern u32 gProx_KradenStepsUpToPuelle[];
+extern s32 gProx_KradenStepsUpToPuelle[];
 
-extern u32 gProx_StepBackFromPuelle[];
+extern s32 gProx_StepBackFromPuelle[];
 extern s32 gProx_EnterDoorScript[];
 
 /// The lower village: after the ending its three children play tag.
@@ -347,14 +345,14 @@ extern u32 gProx_SecondChildRuns[];
 extern u32 gProx_ThirdChildRuns[];
 /// The leader comes down the stairs into a basement.
 void Prox_ComeDownStairs(s32 value);
-extern u32 gProx_KradenStepsForward[];
-extern u32 gProx_SecondParentWalksSouth[];
-extern u32 gProx_ThirdParentWalksSouth[];
-extern u32 gProx_LeftFileWalksSouth[];
-extern u32 gProx_JennaWalksSouth[];
-extern u32 gProx_LeaderWalksSouth[];
-extern u32 gProx_KradenWalksSouth[];
-extern u32 gProx_JennaRunsAhead[];
+extern s32 gProx_KradenStepsForward[];
+extern s32 gProx_SecondParentWalksSouth[];
+extern s32 gProx_ThirdParentWalksSouth[];
+extern s32 gProx_LeftFileWalksSouth[];
+extern s32 gProx_JennaWalksSouth[];
+extern s32 gProx_LeaderWalksSouth[];
+extern s32 gProx_KradenWalksSouth[];
+extern s32 gProx_JennaRunsAhead[];
 void Leader_StopIfPending(void);
 void Particles_UpdateFalling(void);
 
@@ -402,8 +400,6 @@ extern u32 gFieldEffect_MediumScript[];
 /// Puffs rise from the roofs of the village while the storm is over.
 void Prox_PuffFromRoofs(void);
 
-#include "text/msg_ids.h"
-
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 /// Runs a child at its target while it is near and ahead, and says whether it
@@ -430,16 +426,11 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
     u32 facing = object->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      /* FAKEMATCH(temporary): the count and movementState's address held in
-       * locals before the test. */
-      s16 count = gFieldWork->blockedSteps;
-      u8 *movementState = &object->paused;
-
-      if (count > 120) {
-        *movementState = 0;
+      if (gFieldWork->blockedSteps > 120) {
+        object->paused = 0;
         Actor_SelectAnimation(object, 2);
       } else {
-        *movementState = 1;
+        object->paused = 1;
         Actor_SelectAnimation(object, 1);
         result = 1;
       }
@@ -659,13 +650,14 @@ void Prox_FearForWeyard(void) {
   }
 }
 
-/// The bytes of an actor these handlers use. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
+/// The bytes of an actor these handlers use: its facing, and the last of the
+/// four scene-owned bytes The Broken Seal's actors keep at this place, which
+/// holds the children still while one is talked to.
 struct TalkActor {
-  u8 unk00[6];
+  u8 beforeAngle[6];
   u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63; ///< Prox_ChaseTarget reads it
+  u8 beforeTalking[0x5b];
+  u8 talking; ///< Prox_ChaseTarget stops the chase while it is set
 };
 
 void Prox_TalkToPlayingChild(void) {
@@ -676,7 +668,7 @@ void Prox_TalkToPlayingChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -687,7 +679,7 @@ void Prox_TalkToPlayingChild(void) {
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 
@@ -699,7 +691,7 @@ void Prox_TalkToRestlessChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
@@ -710,7 +702,7 @@ void Prox_TalkToRestlessChild(void) {
   Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 
@@ -722,7 +714,7 @@ void Prox_TalkToTrainingChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -733,7 +725,7 @@ void Prox_TalkToTrainingChild(void) {
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 
@@ -754,7 +746,7 @@ void Prox_SearchForParents(void) {
       Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, px(520),
                                  px(360), y << 6);
     }
-    FIELD_AT((((s32)FieldCamera_GetActor()) + 0x55), u8, 0) = t0;
+    FieldCamera_GetActor()->motionFlags = t0;
     FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(552, CAMERA_KEEP, 388, 1);
     FieldEvent_Wait(10);
@@ -924,7 +916,7 @@ void Prox_DecideToGoToLighthouse(void) {
 }
 
 s32 Actor_MoveToObject();
-extern u32 gProx_IsaacStepsUpToPuelle[];
+extern s32 gProx_IsaacStepsUpToPuelle[];
 
 void Prox_MeetPuelle(void) {
   u32 i;
@@ -956,8 +948,8 @@ void Prox_MeetPuelle(void) {
                       0);
   Actor_SetSpeed(ACTOR_MOLD_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_ISAAC, 0.8);
-  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsUpToPuelle);
-  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, (s32)gProx_KradenStepsUpToPuelle);
+  Actor_SetScript(ACTOR_ISAAC, gProx_IsaacStepsUpToPuelle);
+  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, gProx_KradenStepsUpToPuelle);
   Actor_FaceDirection(ACTOR_ELDER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "It seems he has brought some allies with him."
@@ -1151,8 +1143,8 @@ test_wait:
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_StepBackFromPuelle);
-  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, (s32)gProx_StepBackFromPuelle);
+  Actor_SetScript(ACTOR_ISAAC, gProx_StepBackFromPuelle);
+  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, gProx_StepBackFromPuelle);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 154);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Actor_RunRepeatedMotion(ACTOR_PUELLE, 1);
@@ -1216,7 +1208,7 @@ void Prox_MoldHidesInSnow(void) {
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
   object = Actor_Get(ACTOR_MOLD);
-  object->priorityFlags |= 1;
+  object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
@@ -1224,10 +1216,13 @@ void Prox_MoldHidesInSnow(void) {
   Prox_EndEvent();
 }
 
+/// The raised trigger Prox_ScoopUpMold leaves for Prox_MoldJoins.
+enum ProxRaisedTrigger { RAISED_MOLD_JOINS = 200 };
+
 void Prox_ScoopUpMold(void) {
   if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 &&
       Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
-    u8 *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
@@ -1238,7 +1233,7 @@ void Prox_ScoopUpMold(void) {
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
     Actor_FaceActor(ACTOR_MOLD, gMainRoutineWork.leaderActorId, 0);
-    FIELD_AT(work, u16, 362) = 200;
+    work->raisedTrigger = RAISED_MOLD_JOINS;
     Prox_EndEvent();
   }
 }
@@ -1247,16 +1242,19 @@ void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
+/// A roof's puff as Prox_RisePuff reads the actor: its place, its scale, how
+/// far it drifts (the actor's timer) and the frames it has left (where an actor
+/// keeps its watched actor).
 struct RisingObject {
-  u8 unk00[8];
+  u8 beforeX[8];
   s32 x;
   s32 y;
-  u8 unk10[8];
+  u8 beforeScale[8];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[0x44];
+  u8 beforeDrift[0x44];
   s16 drift;
-  u8 unk66[2];
+  u8 afterDrift[2];
   s32 life;
 };
 
@@ -1265,8 +1263,8 @@ void Actor_Release(struct RisingObject *object);
 void Prox_RisePuff(struct RisingObject *object) {
   object->x += object->drift << 8;
   object->y += px(1) / 2;
-  object->scaleX += 0x51e;
-  object->scaleY += 0x51e;
+  object->scaleX += Q16_ONE / 50;
+  object->scaleY += Q16_ONE / 50;
   object->drift += 2;
   if (--object->life == 0)
     Actor_Release(object);
@@ -1276,7 +1274,7 @@ void Prox_RisePuff(struct RisingObject *object) {
 void Prox_AddPuff(s32 a0, s32 a1, s32 a2) {
   s32 t0;
 
-  t0 = FieldActor_Create(0x11d, a0, a1, a2);
+  t0 = FieldActor_Create(SPRITE_DUST_CLOUD, a0, a1, a2);
   if (t0 != 0) {
     FIELD_AT((t0 + 0x5c), u8, 0) = 2;
     FIELD_AT((t0 + 0x55), u8, 0) = 0;
@@ -1300,18 +1298,18 @@ void Prox_PuffFromRoofs(void) {
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(536 << 16, 40 << 16, 232 << 16);
+      Prox_AddPuff(px(536), px(40), px(232));
     if (((gFrameCount + 60) & 63) == 0)
-      Prox_AddPuff(168 << 16, 40 << 16, 296 << 16);
+      Prox_AddPuff(px(168), px(40), px(296));
     if (((gFrameCount + 20) & 63) == 0) {
-      Prox_AddPuff(280 << 16, 42 << 16, 184 << 16);
-      Prox_AddPuff(152 << 16, 48 << 16, 424 << 16);
+      Prox_AddPuff(px(280), px(42), px(184));
+      Prox_AddPuff(px(152), px(48), px(424));
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Prox_AddPuff(336 << 16, 42 << 16, 362 << 16);
+      Prox_AddPuff(px(336), px(42), px(362));
   } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(568 << 16, 104 << 16, 296 << 16);
+      Prox_AddPuff(px(568), px(104), px(296));
   }
 }
 
@@ -1671,7 +1669,7 @@ void Prox_GiveThanksForBeacon(void) {
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   }
-  FIELD_AT((((s32)FieldCamera_GetActor()) + 0x55), u8, 0) = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(158, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(ACTOR_CHILD_SENT_OUTSIDE, 4, 10);
@@ -1776,7 +1774,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
       Weather_StartRain(1);
     } else {
-      REG_BLDALPHA = 0xc08;
+      REG_BLDALPHA = BLEND_ALPHA(8, 12);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Prox_PuffFromRoofs, TASK_PASS_VBLANK);
       TilesetAnim_Pause(0);
@@ -1796,7 +1794,7 @@ s32 Scene_Initialize(void) {
       Prox_InitializeMold();
     }
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
-      PaletteFade_SetTarget(0x10004, 1);
+      PaletteFade_SetTarget(PALETTE_TINT_MUTED, 1);
       PaletteFade_StartInterpolation(16);
       wait(16);
     }
@@ -1806,11 +1804,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// A child playing tag as its handlers read the actor: whether it has reached
+/// its target, its frames left, and its update.
 struct Walker {
-  u8 unk00[0x63];
+  u8 beforeArrived[0x63];
   u8 arrived;
   u16 frames;
-  u8 unk66[6];
+  u8 beforeUpdate[6];
   void (*update)(void);
 };
 
@@ -1925,11 +1925,11 @@ void Prox_InitializeCaveHomes(void) {
 }
 
 s32 Actor_MoveToObject();
-extern u32 gProx_IsaacStepsForward[];
-extern u32 gProx_RightFileWalksSouth[];
-extern u32 gProx_GaretWalksSouth[];
-extern u32 gProx_IsaacWalksSouth[];
-extern u32 gProx_GaretRunsAhead[];
+extern s32 gProx_IsaacStepsForward[];
+extern s32 gProx_RightFileWalksSouth[];
+extern s32 gProx_GaretWalksSouth[];
+extern s32 gProx_IsaacWalksSouth[];
+extern s32 gProx_GaretRunsAhead[];
 
 void Prox_SayFarewell(void) {
   u32 i;
@@ -1958,9 +1958,8 @@ void Prox_SayFarewell(void) {
     System_Wait(1);
     Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);
-    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsForward);
-    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN,
-                           (s32)gProx_KradenStepsForward);
+    Actor_SetScript(ACTOR_ISAAC, gProx_IsaacStepsForward);
+    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, gProx_KradenStepsForward);
     Actor_SetAnimationAndWait(ACTOR_JENNAS_FATHER, 3);
     // "Don't worry about us, Felix... Puelle and the others took good care..."
     Event_ShowMessage(ACTOR_JENNAS_FATHER, 0);
@@ -2006,7 +2005,7 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH_SOUTHEAST, 20);
     // "Don't worry, Son. I'm sure Dora's doing fine. She's a strong woman."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KYLE, 0, 20);
-    if (Event_GetFlag(0x824) != 0) {
+    if (Event_GetFlag(FLAG_TRANSFERRED_VISITED_SICK_DORA) != 0) {
       Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
       Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
       Event_ShowMessage(ACTOR_ISAAC, 0);
@@ -2094,26 +2093,24 @@ void Prox_SayFarewell(void) {
     FieldActor_SetSpritePriority(ACTOR_GARET, 2);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
-    Actor_SetScript(ACTOR_JENNAS_FATHER, (s32)gProx_SecondParentWalksSouth);
-    Actor_SetScript(ACTOR_JENNAS_MOTHER, (s32)gProx_ThirdParentWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_FATHER, gProx_SecondParentWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_MOTHER, gProx_ThirdParentWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(ACTOR_KYLE, (s32)gProx_LeftFileWalksSouth);
-    Actor_SetScript(ACTOR_MIA, (s32)gProx_RightFileWalksSouth);
+    Actor_SetScript(ACTOR_KYLE, gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_MIA, gProx_RightFileWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(ACTOR_SHEBA, gProx_LeftFileWalksSouth);
-    Actor_SetScript(ACTOR_PIERS, (s32)gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_PIERS, gProx_LeftFileWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(ACTOR_IVAN, gProx_RightFileWalksSouth);
-    Actor_SetScript(ACTOR_GARET, (s32)gProx_GaretWalksSouth);
+    Actor_SetScript(ACTOR_GARET, gProx_GaretWalksSouth);
     FieldEvent_Wait(30);
-    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaWalksSouth);
+    Actor_SetScript(ACTOR_JENNA, gProx_JennaWalksSouth);
     FieldEvent_Wait(20);
-    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacWalksSouth);
-    Actor_SetScript(gMainRoutineWork.leaderActorId,
-                    (s32)gProx_LeaderWalksSouth);
+    Actor_SetScript(ACTOR_ISAAC, gProx_IsaacWalksSouth);
+    Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_LeaderWalksSouth);
     FieldEvent_Wait(10);
-    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN,
-                           (s32)gProx_KradenWalksSouth);
+    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, gProx_KradenWalksSouth);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION,
                     20);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST, 0);
@@ -2232,8 +2229,8 @@ void Prox_SayFarewell(void) {
     FieldEvent_Wait(10);
     Actor_SetSpeed(ACTOR_JENNA, 1.6);
     Actor_SetSpeed(ACTOR_GARET, 1.6);
-    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaRunsAhead);
-    Actor_RunScriptAndWait(ACTOR_GARET, (s32)gProx_GaretRunsAhead);
+    Actor_SetScript(ACTOR_JENNA, gProx_JennaRunsAhead);
+    Actor_RunScriptAndWait(ACTOR_GARET, gProx_GaretRunsAhead);
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
@@ -2403,32 +2400,11 @@ void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 #include "shared/particles_update_falling.h"
-
-/// One falling rock: where it is, how it moves and how long it has fallen.
-struct Rock {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2490,8 +2466,6 @@ UNUSED void Prox_EndFallingRocks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-#include "text/msg_ids.h"
-
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);
 void Prox_TalkAboutParents(void);
@@ -2545,9 +2519,9 @@ s16 gSlideOnIce_SteerAngles[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -1638
 s16 gSlideOnIce_AnglesByKey[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 u32 gProx_FirstChildRuns[] = {                                                               
@@ -2568,7 +2542,7 @@ u32 gProx_ThirdChildRuns[] = {
       0,  0x17c0000, 1,  39, 2,       4,  0x2340000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
   };
 
-u32 gProx_KradenStepsUpToPuelle[] = {
+s32 gProx_KradenStepsUpToPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(176, 0, 154),
     SC_SYNC,
@@ -2579,7 +2553,7 @@ u32 gProx_KradenStepsUpToPuelle[] = {
     SC_END,
 };
 
-u32 gProx_IsaacStepsUpToPuelle[] = {
+s32 gProx_IsaacStepsUpToPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(160, 0, 154),
     SC_SYNC,
@@ -2590,7 +2564,7 @@ u32 gProx_IsaacStepsUpToPuelle[] = {
     SC_END,
 };
 
-u32 gProx_StepBackFromPuelle[] = {
+s32 gProx_StepBackFromPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(144, 0, 154),
     SC_SYNC,
@@ -2656,9 +2630,9 @@ struct ActorPlacement gProx_SouthGatePlacements[] = {
 struct ActorPlacement gProx_SouthGateFarewellPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(62, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 248, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(60, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 248, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(61, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 248, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 248, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNAS_FATHER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 248, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNAS_MOTHER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 248, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -2688,8 +2662,8 @@ struct ActorPlacement gProx_TownPlacements[] = {
 struct ActorPlacement gProx_MoldPlacements[] = {
     ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 540, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(44, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 180, 0, 132, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(45, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 140, 0, 132, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 180, 0, 132, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 140, 0, 132, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2706,8 +2680,8 @@ struct ActorPlacement gProx_MoldPlacements[] = {
 struct ActorPlacement gProx_MoldPlacementsOnceLit[] = {
     ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(44, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(45, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 176, 0, 162, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
@@ -2760,8 +2734,8 @@ struct ActorPlacement gProx_HousesPlacementsOnceLit[] = {
     ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_WATER19), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(44, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 428, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(45, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 428, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 428, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 428, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2784,7 +2758,7 @@ struct ActorPlacement gProx_CaveHomesPlacementsOnceLit[] = {
 };
 
 struct ActorPlacement gProx_CavesPlacements[] = {
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 777, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 777, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2864,7 +2838,7 @@ struct Trigger gProx_MoldTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_BeginScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
-    {TRIGGER_RAISED, 200, 0xa3d, EVENT(Prox_MoldJoins)},
+    {TRIGGER_RAISED, RAISED_MOLD_JOINS, 0xa3d, EVENT(Prox_MoldJoins)},
     {TRIGGER_STEP, ACTOR_ELDER, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
     {TRIGGER_STEP, ACTOR_CLANSMAN_GUARDING_THE_ROAD, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
     {TRIGGER_STEP, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
@@ -3014,7 +2988,7 @@ struct Trigger gProx_CavesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gProx_IsaacStepsForward[] = {
+s32 gProx_IsaacStepsForward[] = {
     SC_ANIMATION(2),
     SC_MOVE(120, 0, 196),
     SC_SYNC,
@@ -3025,7 +2999,7 @@ u32 gProx_IsaacStepsForward[] = {
     SC_END,
 };
 
-u32 gProx_KradenStepsForward[] = {
+s32 gProx_KradenStepsForward[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 196),
     SC_SYNC,
@@ -3036,7 +3010,7 @@ u32 gProx_KradenStepsForward[] = {
     SC_END,
 };
 
-u32 gProx_SecondParentWalksSouth[] = {
+s32 gProx_SecondParentWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(136, 0, 348),
     SC_SYNC,
@@ -3047,7 +3021,7 @@ u32 gProx_SecondParentWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_ThirdParentWalksSouth[] = {
+s32 gProx_ThirdParentWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),
     SC_SYNC,
@@ -3058,7 +3032,7 @@ u32 gProx_ThirdParentWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_LeftFileWalksSouth[] = {
+s32 gProx_LeftFileWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(136, 0, 248),
     SC_SYNC,
@@ -3071,7 +3045,7 @@ u32 gProx_LeftFileWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_RightFileWalksSouth[] = {
+s32 gProx_RightFileWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 248),
     SC_SYNC,
@@ -3084,7 +3058,7 @@ u32 gProx_RightFileWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_GaretWalksSouth[] = {
+s32 gProx_GaretWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 248),
     SC_SYNC,
@@ -3095,7 +3069,7 @@ u32 gProx_GaretWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_JennaWalksSouth[] = {
+s32 gProx_JennaWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(168, 0, 272),
     SC_SYNC,
@@ -3104,7 +3078,7 @@ u32 gProx_JennaWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_IsaacWalksSouth[] = {
+s32 gProx_IsaacWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(120, 0, 220),
     SC_SYNC,
@@ -3121,7 +3095,7 @@ u32 gProx_IsaacWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_LeaderWalksSouth[] = {
+s32 gProx_LeaderWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(140, 0, 220),
     SC_SYNC,
@@ -3138,7 +3112,7 @@ u32 gProx_LeaderWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_KradenWalksSouth[] = {
+s32 gProx_KradenWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 240),
     SC_SYNC,
@@ -3147,7 +3121,7 @@ u32 gProx_KradenWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_JennaRunsAhead[] = {
+s32 gProx_JennaRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(168, 0, 348),
     SC_SYNC,
@@ -3158,7 +3132,7 @@ u32 gProx_JennaRunsAhead[] = {
     SC_END,
 };
 
-u32 gProx_GaretRunsAhead[] = {
+s32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),
     SC_SYNC,

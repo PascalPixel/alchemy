@@ -31,6 +31,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
+#include "djinn_ids.h"
 
 /// Loho, by the rows of gLoho_TownPlacements. Each digger is named for what he
 /// says before the cannon breaches the wall.
@@ -71,31 +72,33 @@ enum LohoInteriorsActorId {
   ACTOR_INNKEEPER,
   ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
 };
-#include "djinn_ids.h"
 
-extern u32 gLoho_VillagerMovesNorth[];
-extern u32 gLoho_VillagerMovesWest[];
+/// The Golem Core under the rock, dug up.
+#define FLAG_GOLEM_CORE_DUG 0xff7
 
-extern u32 gLoho_VillagerReturns[];
+extern s32 gLoho_VillagerMovesNorth[];
+extern s32 gLoho_VillagerMovesWest[];
+
+extern s32 gLoho_VillagerReturns[];
 
 void Loho_ClimbDownLadder(void);
 extern u32 gLoho_Regions[];
 extern struct ActorPlacement gLoho_TownPlacements[];
 extern struct ActorPlacement gLoho_InteriorsPlacements[];
-extern u32 gLoho_FirstMinerGoesToWall[];
+extern s32 gLoho_FirstMinerGoesToWall[];
 extern s32 gLoho_SecondMinerStepsUp[];
 
 extern s32 gLoho_ThirdMinerStepsUp[];
 
-extern u32 gLoho_FirstMinerWalksBack[];
-extern u32 gLoho_FirstMinerFetchesCannon[];
-extern u32 gLoho_FirstMinerReturns[];
+extern s32 gLoho_FirstMinerWalksBack[];
+extern s32 gLoho_FirstMinerFetchesCannon[];
+extern s32 gLoho_FirstMinerReturns[];
 extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
 extern struct Trigger gLoho_InteriorsTriggers[];
 extern struct LohoPicture gLoho_HouseDoor;
-extern u32 gLoho_VillagerPaces[];
+extern s32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
 
@@ -291,7 +294,7 @@ seedSparks:
   p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
     goto seedSparks;
-  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0,
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)&OBJ_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
@@ -473,7 +476,7 @@ nextSpark:
   t147 = Actor_GetById(ACTOR_MINER_BY_THE_CANNON);
   t147->motionFlags = zero;
   Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1.5);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerGoesToWall);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerGoesToWall);
   Actor_SetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.5);
   Actor_SetScript(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
                   (s32)gLoho_SecondMinerStepsUp);
@@ -510,13 +513,13 @@ askCannon:
   Event_Wait(30);
   Actor_FaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
   Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerWalksBack);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerWalksBack);
   FieldCamera_SetSpeed(1.8);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
   // "That boat's yours, isn't it?"
   Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0))
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
     goto answeredNo;
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
@@ -542,8 +545,7 @@ crewLeaves:
   Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH_NORTHEAST,
                       0);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON,
-                  (s32)gLoho_FirstMinerFetchesCannon);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerFetchesCannon);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
   Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
@@ -556,7 +558,7 @@ crewLeaves:
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MINER_BY_THE_CANNON);
   Actor_WalkTo(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 504, 370);
   Actor_WalkTo(ACTOR_MAN_KEEPING_THE_CANNON, 504, 352);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerReturns);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
   Actor_WaitForMoveById(ACTOR_MINER_PUZZLED_BY_THE_CANNON);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
@@ -625,11 +627,11 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopSecondTreasure, 65, 1)
 DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 
 /// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
-/// it is dug up (flag 0xff7).
+/// it is dug up (FLAG_GOLEM_CORE_DUG).
 void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
-  if (Event_GetFlag(0xff7) == 0)
+  if (Event_GetFlag(FLAG_GOLEM_CORE_DUG) == 0)
     Actor_SetPosition(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
 
@@ -717,12 +719,13 @@ static __inline__ void Loho_AnimateCells(const void *data, s32 a, s32 b) {
 }
 
 void Loho_OpenDoorAndEnter(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 *trigger;
   s32 i;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 loop:
   {
     struct Actor *object = Actor_GetById(i);
@@ -731,9 +734,9 @@ loop:
       object->motionFlags = 0;
   }
   i++;
-  if ((u32)i <= 63)
+  if ((u32)i < FIELD_TREASURE_ACTOR)
     goto loop;
-  work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
+  trigger = &work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -741,7 +744,7 @@ loop:
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
-  Import_EventSetExitRequest(*(s16 *)work);
+  Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -866,7 +869,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // clang-format off
-u32 gLoho_FirstMinerGoesToWall[] = {
+s32 gLoho_FirstMinerGoesToWall[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(539, 327),
     SC_SYNC,
@@ -909,7 +912,7 @@ s32 gLoho_ThirdMinerStepsUp[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerWalksBack[] = {
+s32 gLoho_FirstMinerWalksBack[] = {
     SC_ANIMATION(2),
     SC_MOVE(570, 0, 248),
     SC_SYNC,
@@ -922,7 +925,7 @@ u32 gLoho_FirstMinerWalksBack[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerFetchesCannon[] = {
+s32 gLoho_FirstMinerFetchesCannon[] = {
     SC_POSITION(583, 0, 327),
     SC_SET(SW_MOTION, 0),
     SC_POSITION(583, 0, 300),
@@ -934,7 +937,7 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerReturns[] = {
+s32 gLoho_FirstMinerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(472, 331),
     SC_SYNC,
@@ -957,7 +960,7 @@ s32 gLoho_ForemanComes[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerPaces[] = {
+s32 gLoho_VillagerPaces[] = {
     SC_LABEL(1),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_WEST),
@@ -971,7 +974,7 @@ u32 gLoho_VillagerPaces[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerReturns[] = {
+s32 gLoho_VillagerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE(128, 0, 120),
     SC_SYNC,
@@ -989,7 +992,7 @@ u32 gLoho_VillagerReturns[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerMovesWest[] = {                                                               
+s32 gLoho_VillagerMovesWest[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
       SC_MOVE(128, 0, 144),                                      
@@ -998,7 +1001,7 @@ u32 gLoho_VillagerMovesWest[] = {
       SC_END,                                                                  
   };
 
-u32 gLoho_VillagerMovesNorth[] = {                                                               
+s32 gLoho_VillagerMovesNorth[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
       SC_MOVE(159, 0, 128),                                      
@@ -1062,7 +1065,7 @@ struct ActorPlacement gLoho_TownPlacements[] = {
 };
 
 struct ActorPlacement gLoho_InteriorsPlacements[] = {
-    ACTOR_PLACEMENT(130, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},

@@ -4,6 +4,7 @@
 /// heroes, motes of light drifting round them.
 
 #include "types.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
@@ -25,6 +26,7 @@
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
+#include "text/msg_ids.h"
 
 void MercuryLighthouse_HearVoices(void);
 
@@ -32,8 +34,6 @@ extern s32 gMercuryLighthouse_MoteScript[];
 extern u32 gMercuryLighthouse_MoteFrames;
 
 void FieldPsynergy_StopMindReadWave(void);
-
-#include "text/msg_ids.h"
 
 /// A mote's script call: it flickers between colours 15 and 7 every other
 /// frame.
@@ -123,19 +123,19 @@ void MercuryLighthouse_SpawnMotes(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
-    object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
+    object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
     if (object != NULL) {
       sprite = object->sprite;
-      x = Random16() * 40 + 0x32c0000;
+      x = Random16() * 40 + px(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored. */
-      z = 0x2b80000;
+      z = px(696);
       object->motionFlags = phase;
       object->x.fixed = x;
       object->y.fixed = px(160);
       object->z.fixed = z;
       Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags &= ~1;
+      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       sprite->priority = 2;
       Actor_StartScript(object, gMercuryLighthouse_MoteScript);
       Actor_SelectAnimation(object, 1);
@@ -272,7 +272,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_ASCEND);
-    PaletteFade_SetTarget(0x7fff, 0);
+    PaletteFade_SetTarget(RGB_WHITE, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     Import_EventSetExitRequest(9);

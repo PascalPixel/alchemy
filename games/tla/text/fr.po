@@ -70778,7 +70778,7 @@ msgstr ""
 "Pourquoi ne puis-je pas\n"
 "déchaîner une simple tempête?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12551"
 msgstr "Qui êtes-vous?{end_wait}"
 

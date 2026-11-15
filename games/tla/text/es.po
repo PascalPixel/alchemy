@@ -70451,7 +70451,7 @@ msgstr ""
 "ilimitado... ¿Por qué no puedo\n"
 "provocar una simple tormenta?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12558"
 msgstr "¿Quién eres tú?{end_wait}"
 

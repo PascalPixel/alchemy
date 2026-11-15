@@ -4,6 +4,7 @@
 /// sail out.
 
 #include "types.h"
+#include "field/field_sprite.h"
 #include "sprite_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -24,8 +25,9 @@
 #include "window/window.h"
 #include "graphics/uiflow.h"
 #include "field/actor_script.h"
+#include "text/msg_ids.h"
 
-extern u32 gLemuriaEntrance_ShipSailsOut[];
+extern s32 gLemuriaEntrance_ShipSailsOut[];
 /// The way in's actors, by the rows of gActorPlacements.
 enum {
   /// The party's ship, placed blank; it sails out of the harbour
@@ -50,13 +52,21 @@ enum {
 /// their numbers, and Kraden as 8, who shows his own portrait.
 enum { SPEAKER_KRADEN = 8 };
 
+/// Unused: no exit leads here; it hands the ship to the player and enters again
+/// by entrance 1.
+enum { ENTRANCE_ABOARD_SHIP = 90 };
+
 void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames);
 
 void LemuriaEntrance_ShebaAsksPiersAge(void);
 
 extern s32 gLemuriaEntrance_ShipAtRest[];
 
-#include "text/msg_ids.h"
+/// Grind has broken up the rock in the way.
+#define FLAG_ROCK_GROUND_AWAY 0x909
+/// Set as Felix is taken in to King Hydros (lemuria_palace.c); cleared here as
+/// Sheba asks Piers his age.
+#define FLAG_SHEBA_TO_ASK_PIERS_AGE 0x96b
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
@@ -64,7 +74,7 @@ s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
 
 /// Starts an actor's animation from its first frame.
 s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *object) {
-  ((struct AnimationRecord26 *)object->sprite)->frame = 0;
+  ((struct FieldSprite *)object->sprite)->nextFrame = 0;
   return 1;
 }
 
@@ -85,7 +95,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
-  party->leaderActorId = 8;
+  party->leaderActorId = ACTOR_SHIP;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -98,7 +108,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
-  party->leaderActorId = 8;
+  party->leaderActorId = ACTOR_SHIP;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -106,15 +116,15 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   FieldEvent_SetExitRequest(arg);
 }
 
-/// Grind breaks up the rock in the way, for good (flag 0x909).
+/// Grind breaks up the rock in the way, for good (FLAG_ROCK_GROUND_AWAY).
 void LemuriaEntrance_GrindRock(void) {
-  Event_SetFlag(0x909);
+  Event_SetFlag(FLAG_ROCK_GROUND_AWAY);
   Actor_SetPosition(ACTOR_ROCK, 0, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Unused: once flag 0x800 is set, the party boards the ship (actor 8) and
+/// Unused: once flag 0x800 is set, the party boards the ship and
 /// sails it (render mode 6); otherwise the leader takes control again. Nothing
 /// calls it.
 UNUSED void LemuriaEntrance_BoardShip(void) {
@@ -144,14 +154,15 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
 /// reached by calls for.
 s32 Scene_Initialize(void) {
   s32 *screen = &gFieldWork->transition;
-  s32 effect = 0x204;
+  s32 effect = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
   *screen = effect;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);
-  if (Event_GetFlag(0x909))
+  if (Event_GetFlag(FLAG_ROCK_GROUND_AWAY))
     Actor_SetPosition(ACTOR_ROCK, 0, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_A), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_B), 0);
@@ -163,20 +174,21 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_D), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_E), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_F), 0);
-  if (gMainRoutineWork.entrance == 90) {
+  if (gMainRoutineWork.entrance == ENTRANCE_ABOARD_SHIP) {
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination(SCENE_LEMURIA_ENTRANCE, 1);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
-    gMainRoutineWork.leaderActorId = 8;
+    gMainRoutineWork.leaderActorId = ACTOR_SHIP;
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gMainRoutineWork.leaderActorId = 4;
+    gMainRoutineWork.leaderActorId = ACTOR_FELIX;
     gFieldWork->transition = effect;
   }
-  if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
-    Event_ClearFlag(0x96b);
+  if (gMainRoutineWork.entrance == 3 &&
+      Event_GetFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE)) {
+    Event_ClearFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE);
     LemuriaEntrance_ShebaAsksPiersAge();
   }
   return 0;
@@ -271,7 +283,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
 
 // clang-format off
 /// The ship's course out of the harbour.
-u32 gLemuriaEntrance_ShipSailsOut[] = {
+s32 gLemuriaEntrance_ShipSailsOut[] = {
     SC_MOVE(728, 0, 160),
     SC_SYNC,
     SC_MOVE(608, 0, 152),

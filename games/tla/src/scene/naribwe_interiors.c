@@ -5,6 +5,8 @@
 /// for the path to follow.
 
 #include "flags.h"
+#include "ability_ids.h"
+#include "djinn_ids.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_reg.h"
 #include "sprite_ids.h"
@@ -20,6 +22,16 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/actor.h"
+#include "version.h"
+#include "field/call.h"
+#include "system/ram_buffer.h"
+#include "item_ids.h"
+#include "text/msg_ids.h"
 
 /// Naribwe's houses, by the rows of gActorPlacements.
 enum NaribweInteriorsActorId {
@@ -44,15 +56,6 @@ enum NaribweInteriorsActorId {
   ACTOR_FORTUNE_FLAME,
   ACTOR_FORTUNE_SMOKE
 };
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
-#include "field/actor.h"
-#include "version.h"
-#include "field/call.h"
-#include "system/ram_buffer.h"
-#include "item_ids.h"
 
 extern struct Trigger gNaribweInteriors_Triggers[];
 extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
@@ -67,6 +70,13 @@ void NaribweInteriors_ReadWeapon(void);
 
 void NaribweInteriors_ReadArmor(void);
 
+/// Set once Poseidon is beaten: the fortune teller then sees "None in the
+/// eastern world can stand against the power you possess."
+#define FLAG_POSEIDON_DEFEATED 0x940
+
+/// "It costs 20 coins to hear what your future holds. Will you pay?"
+#define FORTUNE_PRICE 20
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -76,8 +86,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
-
-#include "text/msg_ids.h"
 
 /// "The items that one carries are filled with one's hopes and desires."
 s32 NaribweInteriors_MindReadFortuneTeller(void) {
@@ -220,7 +228,7 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
-      if ((u32)gMainRoutineWork.coins > 19) {
+      if ((u32)gMainRoutineWork.coins > FORTUNE_PRICE - 1) {
         NaribweInteriors_ReadFortune();
         Event_End();
       } else {
@@ -359,18 +367,21 @@ read:
 #if !TLA_PATCH_1
   item = unitData->items[slot];
 #else
-  item = unitData->items[slot] & 0x1ff;
+  item = unitData->items[slot] & INVENTORY_ITEM_ID_MASK;
 #endif
-  if ((u16)(item - 0x1b7) <= 2) {
+  if ((u16)(item - ITEM_RIGHT_PRONG) <= ITEM_CENTER_PRONG - ITEM_RIGHT_PRONG) {
     NaribweInteriors_ReadProng();
-  } else if ((u16)item == 326) {
+  } else if ((u16)item == ITEM_TRIDENT) {
     FieldEvent_SetMessageId(message + 29);
+    // "That object you have placed before me... It is a fearsome weapon to..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-    if (!Event_GetFlag(0x940)) {
+    if (!Event_GetFlag(FLAG_POSEIDON_DEFEATED)) {
       FieldEvent_SetMessageId(message + 30);
+      // "If you wield this weapon, you can defeat the legendary beast!"
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     } else {
       FieldEvent_SetMessageId(message + 31);
+      // "But there are no more beasts for you to fear in this part of the..."
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     }
   } else {
@@ -386,8 +397,41 @@ read:
       NaribweInteriors_ReadOtherItem();
   }
   Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
-  Party_AdjustCoins(-20);
+  Party_AdjustCoins(-FORTUNE_PRICE);
 }
+
+/// The fortune teller's readings, one numbering for all four kinds: the foe a
+/// weapon shows, the power a shining item shows, the path any other item shows
+/// and the prong a prong of the Trident shows.
+enum FortuneReading {
+  /// Before Gabomba's message is carried: "I see you inside a sacred icon."
+  READING_SACRED_ICON = 0,
+  READING_FOE_IN_MISTY_SEA = 1, ///< "In a misty sea, a mighty foe..."
+  READING_EAST_CONQUERED = 2,   ///< "None in the eastern world can stand..."
+  /// The first power still lacking: Reveal, Sand, Parch, the Burst Brooch, the
+  /// Grindstone, or none.
+  ///@{
+  READING_SEEK_REVEAL = 3,
+  READING_SEEK_SAND = 4,
+  READING_SEEK_PARCH = 5,
+  READING_SEEK_BURST_BROOCH = 6,
+  READING_SEEK_GRINDSTONE = 7,
+  READING_ALL_POWERS = 8,
+  ///@}
+  READING_FORGE_WEAPON = 9,     ///< "You must forge a weapon..."
+  READING_RAISE_COLUMN = 10,    ///< "You will raise a mighty column..."
+  READING_EASTERN_VILLAGE = 11, ///< "...help from a village on the eastern..."
+  READING_SEA_BEAST = 12,       ///< "You have the weapon you need..."
+  READING_WEST = 13,            ///< "The object that you seek lies...west."
+  /// Where the prongs not yet held lie: the ruins by the beach, the
+  /// moss-covered ruins, the icy cape's tower, or all held.
+  ///@{
+  READING_PRONG_BY_BEACH = 14,
+  READING_PRONG_IN_MOSSY_RUINS = 15,
+  READING_PRONG_IN_TOWER = 16,
+  READING_ALL_PRONGS = 17
+  ///@}
+};
 
 s32 Party_FindOwnerWithAction(s32 item);
 s32 NaribweInteriors_FoeAhead(void);
@@ -404,15 +448,15 @@ void NaribweInteriors_ReadWeapon(void) {
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweInteriors_FoeAhead()) {
-  case 0:
+  case READING_SACRED_ICON:
     FieldEvent_SetMessageId((s32)(message + 1));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 1:
+  case READING_FOE_IN_MISTY_SEA:
     FieldEvent_SetMessageId((s32)(message + 2));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 2:
+  case READING_EAST_CONQUERED:
     FieldEvent_SetMessageId((s32)(message + 3));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
@@ -427,28 +471,28 @@ void NaribweInteriors_ReadShiningItem(void) {
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweInteriors_NextPowerToGain()) {
-  case 3:
+  case READING_SEEK_REVEAL:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouAreLost);
     // "You are lost in your way... Another continent needs your attention..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 4:
+  case READING_SEEK_SAND:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsDistantIsleLiesFar);
     // "A distant isle lies far to the northeast... Sail there. High atop a..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 5:
+  case READING_SEEK_PARCH:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeParadiseAwaiting);
     // "I see a paradise awaiting you... An island in the east. But even..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 6:
+  case READING_SEEK_BURST_BROOCH:
     FieldEvent_SetMessageId(
         (s32)MsgNaribweInteriorsTinyFigureStandsAgainstWasteland);
     // "A tiny figure stands against a wasteland wrought in snow... The..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 7:
+  case READING_SEEK_GRINDSTONE:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeYouLost);
     // "I see you lost in mists, lost in time, lost in the seas... And..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -484,32 +528,32 @@ void NaribweInteriors_ReadOtherItem(void) {
   // "Beyond the item before me, I see a path for you to follow."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweInteriors_NextPath()) {
-  case 0:
+  case READING_SACRED_ICON:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeYouInsideSacred);
     // "I see you inside a sacred icon. By listening to the voices, you will..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 9:
+  case READING_FORGE_WEAPON:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouMustForgeWeapon);
     // "You must forge a weapon to defeat a mortal enemy. Seek out the pieces!"
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 10:
+  case READING_RAISE_COLUMN:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouWillRaiseMightyColumn);
     // "You will raise a mighty column and gain assistance where it is least..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 11:
+  case READING_EASTERN_VILLAGE:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouWillGainTremendousHelp);
     // "You will gain tremendous help from a village on the eastern reaches..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 12:
+  case READING_SEA_BEAST:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouHaveWeaponYouNeed);
     // "You have the weapon you need to defeat the sea beast. Go to the sea..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 13:
+  case READING_WEST:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsObjectThatYouSeekLies);
     // "The object that you seek lies somewhere in the west. Why do you..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -526,68 +570,70 @@ void NaribweInteriors_ReadProng(void) {
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweInteriors_ProngsHeld()) {
-  case 14:
+  case READING_PRONG_BY_BEACH:
     FieldEvent_SetMessageId((s32)(message + 1));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 15:
+  case READING_PRONG_IN_MOSSY_RUINS:
     FieldEvent_SetMessageId((s32)(message + 2));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 16:
+  case READING_PRONG_IN_TOWER:
     FieldEvent_SetMessageId((s32)(message + 3));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
-  case 17:
+  case READING_ALL_PRONGS:
     FieldEvent_SetMessageId((s32)(message + 4));
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   }
 }
 
-/// Which foe a weapon's reading names: 0 before the return with Piers, then 1,
-/// and 2 once flag 0x940 is set.
+/// Which foe a weapon's reading names: none before Gabomba's message is
+/// carried, then the foe in the misty sea, and none once Poseidon is beaten.
 s32 NaribweInteriors_FoeAhead(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
-    return 0;
-  return (Event_GetFlag(0x940) != 0) + 1;
+    return READING_SACRED_ICON;
+  return (Event_GetFlag(FLAG_POSEIDON_DEFEATED) != 0) +
+         READING_FOE_IN_MISTY_SEA;
 }
 
 /// The first power the party still lacks, for a shining item's reading: three
-/// Psynergy (abilities 144, 139 and 138) and two items (213, 214); 8 when it
+/// Psynergy (Reveal, Sand and Parch) and two items (the Burst Brooch and the
+/// Grindstone); 8 when it
 /// has them all.
 s32 NaribweInteriors_NextPowerToGain(void) {
-  if (Party_FindOwnerWithAction(144) == -1)
-    return 3;
-  if (Party_FindOwnerWithAction(139) == -1)
-    return 4;
-  if (Party_FindOwnerWithAction(138) == -1)
-    return 5;
+  if (Party_FindOwnerWithAction(ABILITY_REVEAL) == -1)
+    return READING_SEEK_REVEAL;
+  if (Party_FindOwnerWithAction(ABILITY_SAND) == -1)
+    return READING_SEEK_SAND;
+  if (Party_FindOwnerWithAction(ABILITY_PARCH) == -1)
+    return READING_SEEK_PARCH;
   if (FieldPartyInventory_FindMember(ITEM_BURST_BROOCH) == -1)
-    return 6;
+    return READING_SEEK_BURST_BROOCH;
   if (FieldPartyInventory_FindMember(ITEM_GRINDSTONE) == -1)
-    return 7;
-  return 8;
+    return READING_SEEK_GRINDSTONE;
+  return READING_ALL_POWERS;
 }
 
 /// The path an ordinary item's reading points along, by the story's flags and
 /// the Trident's prongs (items 439 to 441) and the Trident (item 326).
 s32 NaribweInteriors_NextPath(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
-    return 0;
+    return READING_SACRED_ICON;
   if (FieldPartyInventory_FindMember(ITEM_TRIDENT) == -1) {
-    if (Event_GetFlag(0x940) == 0) {
+    if (Event_GetFlag(FLAG_POSEIDON_DEFEATED) == 0) {
       if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 ||
           FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 ||
           FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
-        return 9;
-      return (Event_GetFlag(0x905) != 0) + 10;
+        return READING_FORGE_WEAPON;
+      return (Event_GetFlag(0x905) != 0) + READING_RAISE_COLUMN;
     }
   } else {
-    if (Event_GetFlag(0x940) == 0)
-      return 12;
+    if (Event_GetFlag(FLAG_POSEIDON_DEFEATED) == 0)
+      return READING_SEA_BEAST;
   }
-  return 13;
+  return READING_WEST;
 }
 
 /// Which of the three prongs the party carries, as the prong's reading tells
@@ -596,59 +642,59 @@ s32 NaribweInteriors_ProngsHeld(void) {
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 &&
       (FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1 ||
        FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1))
-    return 14;
+    return READING_PRONG_BY_BEACH;
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 &&
       FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
-    return 15;
+    return READING_PRONG_IN_MOSSY_RUINS;
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 &&
       FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1)
-    return 15;
+    return READING_PRONG_IN_MOSSY_RUINS;
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
-    return 16;
+    return READING_PRONG_IN_TOWER;
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1 &&
       FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1)
-    return 17;
+    return READING_ALL_PRONGS;
 }
 
 /// One past the last Djinni of an element group found, skipping the ones never
 /// hinted at, or -1 when none is.
 s32 NaribweInteriors_DjinniHintLimit(s32 group) {
-  s32 i = 17;
+  s32 i = DJINNI_INDEX(DJINNI_CRYSTAL);
 
 loop:
   {
-    s32 flag = group * 20 + i + 48;
+    s32 flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
 
     if (group == 0) {
-      if (i == 7)
+      if (i == DJINNI_INDEX(DJINNI_ECHO))
         goto next;
     }
     if (group == 1) {
-      if (i == 9)
+      if (i == DJINNI_INDEX(DJINNI_SPRING))
         goto next;
-      if (i == 10)
+      if (i == DJINNI_INDEX(DJINNI_SHADE))
         goto next;
     }
     if (Event_GetFlag(flag))
       return i + 1;
   }
 next:
-  if (--i > 6)
+  if (--i >= TRANSFERRED_DJINN_PER_ELEMENT)
     goto loop;
   return -1;
 }
 
-/// Lists the flags still unset for a group: from 7 up to the limit, skipping 7
-/// in group 0 and 9 and 10 in group 1, each flag group * 20 + i + 48 not yet
-/// set goes to the output; returns how many.
+/// Lists the Djinn flags of an element still unset, from the first Djinni not
+/// carried over from Isaac's party up to the limit and skipping Echo, Spring
+/// and Shade, which the fortune teller never hints at; returns how many.
 s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
   s32 count = 0;
-  s32 i = 7;
+  s32 i = TRANSFERRED_DJINN_PER_ELEMENT;
 
   if (i < limit) {
     s32 *cursor = out;
@@ -656,15 +702,15 @@ s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
     do {
       s32 flag;
 
-      if (group == 0 && i == 7)
+      if (group == 0 && i == DJINNI_INDEX(DJINNI_ECHO))
         goto next;
       if (group == 1) {
-        if (i == 9)
+        if (i == DJINNI_INDEX(DJINNI_SPRING))
           goto next;
-        if (i == 10)
+        if (i == DJINNI_INDEX(DJINNI_SHADE))
           goto next;
       }
-      flag = group * 20 + i + 48;
+      flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
       if (Event_GetFlag(flag) == 0) {
         *cursor++ = flag;
         count++;
@@ -702,138 +748,140 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
   }
   if (count == 0) {
     for (group = 0; group <= 3; group++)
-      count += NaribweInteriors_ListUnfoundDjinn(18, group, hints + count);
+      count += NaribweInteriors_ListUnfoundDjinn(
+          DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + count);
     if (count == 0) {
       HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
       return MsgNaribweInteriorsInItemYouHavePlaced;
     }
-    NaribweInteriors_ListUnfoundDjinn(18, lowestGroup, hints);
+    NaribweInteriors_ListUnfoundDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1,
+                                      lowestGroup, hints);
     index = 0;
   } else {
     index = Random16() % count;
   }
   switch (hints[index]) {
-  case 56:
+  case FLAG_DJINNI(DJINNI_IRON):
     message = MsgNaribweInteriorsToEastLiesContinentMoved;
     break;
-  case 57:
+  case FLAG_DJINNI(DJINNI_STEEL):
     message = MsgNaribweInteriorsToNorthInsideSacredIcon;
     break;
-  case 58:
+  case FLAG_DJINNI(DJINNI_MUD):
     message = MsgNaribweInteriorsToNorthBeneathSacredIcon;
     break;
-  case 59:
+  case FLAG_DJINNI(DJINNI_FLOWER):
     message = MsgNaribweInteriorsHeadEastBySoutheast;
     break;
-  case 60:
+  case FLAG_DJINNI(DJINNI_MELD):
     message = MsgNaribweInteriorsHeadEastByNortheast;
     break;
-  case 61:
+  case FLAG_DJINNI(DJINNI_PETRA):
     message = MsgNaribweInteriorsHeadNorthByNorthwest;
     break;
-  case 62:
+  case FLAG_DJINNI(DJINNI_SALT):
     message = MsgNaribweInteriorsToNorthwestInRuins;
     break;
-  case 63:
+  case FLAG_DJINNI(DJINNI_GEODE):
     message = MsgNaribweInteriorsHeadWestByNorthwest;
     break;
-  case 64:
+  case FLAG_DJINNI(DJINNI_MOLD):
     message = MsgNaribweInteriorsToNorthInVillage;
     break;
-  case 65:
+  case FLAG_DJINNI(DJINNI_CRYSTAL):
     message = MsgNaribweInteriorsHeadEastBySoutheastInDesert;
     break;
-  case 75:
+  case FLAG_DJINNI(DJINNI_FOG):
     message = MsgNaribweInteriorsHeadEastByNortheastInCave;
     break;
-  case 76:
+  case FLAG_DJINNI(DJINNI_SOUR):
     message = MsgNaribweInteriorsToSoutheastInPlains;
     break;
-  case 79:
+  case FLAG_DJINNI(DJINNI_CHILL):
     message = MsgNaribweInteriorsToSouthInForestOne;
     break;
-  case 80:
+  case FLAG_DJINNI(DJINNI_STEAM):
     message = MsgNaribweInteriorsToEastBesideBoulder;
     break;
-  case 81:
+  case FLAG_DJINNI(DJINNI_RIME):
     message = MsgHeadEastByNortheastInThe;
     break;
-  case 82:
+  case FLAG_DJINNI(DJINNI_GEL):
     message = MsgNaribweInteriorsToNorthSomewhereOnSmall;
     break;
-  case 83:
+  case FLAG_DJINNI(DJINNI_EDDY):
     message = MsgNaribweInteriorsHeadNorthByNorthwestInCave;
     break;
-  case 84:
+  case FLAG_DJINNI(DJINNI_BALM):
     message = MsgNaribweInteriorsToNorthInRuinsChilled;
     break;
-  case 85:
+  case FLAG_DJINNI(DJINNI_SERAC):
     message = MsgHeadEastByNortheastInA;
     break;
-  case 95:
+  case FLAG_DJINNI(DJINNI_CANNON):
     message = MsgNaribweInteriorsToEastInMountainPaths;
     break;
-  case 96:
+  case FLAG_DJINNI(DJINNI_SPARK):
     message = MsgNaribweInteriorsToSoutheastInVillageLulled;
     break;
-  case 97:
+  case FLAG_DJINNI(DJINNI_KINDLE):
     message = MsgNaribweInteriorsHeadSouthBySoutheast;
     break;
-  case 98:
+  case FLAG_DJINNI(DJINNI_CHAR):
     message = MsgNaribweInteriorsHeadEastBySoutheastInTown;
     break;
-  case 99:
+  case FLAG_DJINNI(DJINNI_COAL):
     message = MsgNaribweInteriorsHeadEastByNortheastOnIsland;
     break;
-  case 100:
+  case FLAG_DJINNI(DJINNI_REFLUX):
     message = MsgNaribweInteriorsHeadSouthBySoutheastInRuins;
     break;
-  case 101:
+  case FLAG_DJINNI(DJINNI_CORE):
     message = MsgNaribweInteriorsToNorthwestInForest;
     break;
-  case 102:
+  case FLAG_DJINNI(DJINNI_TINDER):
     message = MsgNaribweInteriorsToNorthwestAlongCoast;
     break;
-  case 103:
+  case FLAG_DJINNI(DJINNI_SHINE):
     message = MsgNaribweInteriorsToNorthwestBesideRuins;
     break;
-  case 104:
+  case FLAG_DJINNI(DJINNI_FURY):
     message = MsgNaribweInteriorsHeadNorthByNorthwestAtGreat;
     break;
-  case 105:
+  case FLAG_DJINNI(DJINNI_FUGUE):
     message = MsgNaribweInteriorsToNorthInRuinsChilledByIcy;
     break;
-  case 115:
+  case FLAG_DJINNI(DJINNI_BREATH):
     message = MsgHeadEastByNortheastInACave;
     break;
-  case 116:
+  case FLAG_DJINNI(DJINNI_BLITZ):
     message = MsgHeadEastBySoutheastInThe;
     break;
-  case 117:
+  case FLAG_DJINNI(DJINNI_ETHER):
     message = MsgHeadEastBySoutheastInA;
     break;
-  case 118:
+  case FLAG_DJINNI(DJINNI_WAFT):
     message = MsgToTheNorthInTheMountain;
     break;
-  case 119:
+  case FLAG_DJINNI(DJINNI_HAZE):
     message = MsgNaribweInteriorsToEastSomewhereOnTiny;
     break;
-  case 120:
+  case FLAG_DJINNI(DJINNI_WHEEZE):
     message = MsgNaribweInteriorsToEastInForest;
     break;
-  case 121:
+  case FLAG_DJINNI(DJINNI_AROMA):
     message = MsgNaribweInteriorsHeadNorthByNorthwestInVillage;
     break;
-  case 122:
+  case FLAG_DJINNI(DJINNI_WHORL):
     message = MsgNaribweInteriorsInNorthwestInRuins;
     break;
-  case 123:
+  case FLAG_DJINNI(DJINNI_GASP):
     message = MsgNaribweInteriorsHeadNorthByNorthwestNear;
     break;
-  case 124:
+  case FLAG_DJINNI(DJINNI_LULL):
     message = MsgToTheNorthInTheRuins;
     break;
-  case 125:
+  case FLAG_DJINNI(DJINNI_GALE):
     message = MsgNaribweInteriorsHeadNorthByNortheast;
     break;
   default:
@@ -850,7 +898,8 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_DisableById(ACTOR_FORTUNE_TABLE);
   Actor_DisableById(ACTOR_FORTUNE_MARKER);
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_TELLER, 2);
@@ -862,7 +911,8 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = -px(4);
   object->groundHeight = -px(4);
-  Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_MARKER, 1);
   Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
 
@@ -870,7 +920,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = px(12);
   object->groundHeight = px(12);
-  Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_FLAME, 1);
   Actor_SetPosition(ACTOR_FORTUNE_FLAME, 0, 0);
 
@@ -878,7 +928,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = px(12);
   object->groundHeight = px(12);
-  Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_SMOKE, 1);
   Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 0, 0);
 
@@ -908,24 +958,29 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 120, 0, 104,
-                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER, 120, 0, 104, FACING_SOUTHWEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360,
                     FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(25, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 94,
                     FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 651, 0, 106,
                     FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 693, 0, 106,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 104,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 424, 0, 360,
-                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 368,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 693, 0, 106, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 392, 0, 104, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 408, 0, 104, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER, 424, 0, 360, FACING_SOUTHWEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    328, 0, 368, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 112,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
@@ -933,8 +988,8 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLAME_AND_SMOKE, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 672, 0, 104, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(285, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_DUST_CLOUD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    672, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

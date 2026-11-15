@@ -12,6 +12,17 @@
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/sprite.h"
+#include "field/actor_script.h"
+#include "fixed_math.h"
+
+/// The villager has asked where the party comes from.
+#define FLAG_ASKED_WHERE_FROM 0x85e
+
+/// The villager has asked about the Kibombo expedition.
+#define FLAG_ASKED_ABOUT_EXPEDITION 0x85d
 
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
@@ -47,12 +58,7 @@ enum NaribweActorId {
   ACTOR_PILGRIM,
   ACTOR_STONE ///< Naribwe_HideStone, Naribwe_RevealStone
 };
-#include "field/event_inline.h"
-#include "field/field.h"
 #include "shared/tables.h"
-#include "field/sprite.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -96,10 +102,10 @@ const u8 *Scene_GetActorPlacements(void) {
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
 void Naribwe_PrepareBlaze(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
-  u8 *flag;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s8 *flag;
 
-  flag = work + 0xd38;
+  flag = &work->unkd38;
   *flag = 1;
   if (gMainRoutineWork.entrance != 10)
     *flag = 0;
@@ -112,19 +118,19 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// "The Kibombo went on an expedition to the east, but they've already
-/// returned." Asked once (flag 0x85d); afterwards the villager talks of
-/// Akafubu.
+/// returned." Asked once (FLAG_ASKED_ABOUT_EXPEDITION); afterwards the villager
+/// talks of Akafubu.
 void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
-  if (Event_GetFlag(0x85d) == 0) {
+  if (Event_GetFlag(FLAG_ASKED_ABOUT_EXPEDITION) == 0) {
     msg = (s32)MsgNaribweKibomboWentOnExpedition;
     Event_SetMessageId(msg);
     // "The Kibombo went on an expedition to the east, but they've already..."
     Event_OpenMessage(ACTOR_WOMAN_ON_THE_KIBOMBO_EXPEDITION, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
-      Event_SetFlag(0x85d);
+      Event_SetFlag(FLAG_ASKED_ABOUT_EXPEDITION);
     } else {
       Event_SetMessageId(msg + 2);
     }
@@ -136,18 +142,19 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   }
 }
 
-/// "Can you tell me where you have come from?" Asked once (flag 0x85e).
+/// "Can you tell me where you have come from?" Asked once
+/// (FLAG_ASKED_WHERE_FROM).
 void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
-  if (Event_GetFlag(0x85e) == 0) {
+  if (Event_GetFlag(FLAG_ASKED_WHERE_FROM) == 0) {
     msg = (s32)MsgNaribweCanYouTellMeWhere;
     Event_SetMessageId(msg);
     // "Can you tell me where you have come from?"
     Event_OpenMessage(ACTOR_WOMAN_ASKING_WHERE_FROM, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
-      Event_SetFlag(0x85d);
+      Event_SetFlag(FLAG_ASKED_ABOUT_EXPEDITION);
     } else {
       Event_SetMessageId(msg + 2);
     }
@@ -181,8 +188,9 @@ enum { SHOP_NARIBWE_ITEMS = 16 };
 /// "No one can see the future. Absolutely no one. Except for our
 /// fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
@@ -195,8 +203,9 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 }
 
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
@@ -211,8 +220,9 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
 /// "I am but a humble pilgrim, serving the greater good in the heart of
 /// Gondowan."
 void Naribwe_TalkToPilgrim(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Sanctum_Run(actor);
     return;
   }
@@ -225,8 +235,9 @@ void Naribwe_TalkToPilgrim(s32 actor) {
 }
 
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Sanctum_Run(actor);
     return;
   }
@@ -241,24 +252,24 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
 /// The party leader walks into one of Naribwe's doors, which opens with its
 /// cell animation, and leaves by the exit of the door's number.
 void Naribwe_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 *trigger;
   s32 index;
   u32 id;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  for (id = 8; id <= 63; id++) {
-    u8 *actor = (u8 *)Actor_GetById(id);
+  for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
+    struct Actor *actor = Actor_GetById(id);
 
     if (actor != NULL) {
-      u8 *flags = &actor[85];
-      s32 zero = 0;
+      u8 *flags = &actor->motionFlags;
 
-      *flags = zero;
+      *flags = 0;
     }
   }
-  work += 0x154;
-  index = *(s16 *)work;
+  trigger = &work->stepTrigger;
+  index = *trigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
@@ -266,7 +277,7 @@ void Naribwe_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Import_EventSetExitRequest(*(s16 *)work);
+  Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -294,7 +305,7 @@ UNUSED void Naribwe_SetRopeWork(void) {
 /// Reveal shows the stone that hides the Unicorn Ring.
 void Naribwe_RevealStone(void) {
   Actor_SetPosition(ACTOR_STONE, 0, 0);
-  TreasureSpot_SetPosition(65, 0x680000, 0x680000);
+  TreasureSpot_SetPosition(65, px(104), px(104));
 }
 
 void Naribwe_HideStone(void) {
@@ -307,7 +318,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVY), 0);
-  Actor_GetById(ACTOR_IVY)->scaleY = 0x19999;
+  Actor_GetById(ACTOR_IVY)->scaleY = Q16_ONE * 8 / 5;
   Actor_GetById(ACTOR_STONE)->scaleX = Q16_ONE / 2;
   Actor_GetById(ACTOR_STONE)->scaleY = Q16_ONE / 2;
   Naribwe_HideStone();
@@ -324,8 +335,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // Naribwe's data: its scripts, door, placements and triggers.
 
-#include "text/msg_ids.h"
-
 void Naribwe_PrepareBlaze(void);
 void Naribwe_AskAboutKibomboExpedition(void);
 
@@ -339,10 +348,10 @@ void Naribwe_BlowAwayIvy(void);
 
 void Naribwe_RevealStone(void);
 
-extern u32 gNaribwe_BrazierBurns[];
-extern u32 gNaribwe_FlameRises[];
+extern s32 gNaribwe_BrazierBurns[];
+extern s32 gNaribwe_FlameRises[];
 
-extern u32 gNaribwe_IvyAnimation[];
+extern s32 gNaribwe_IvyAnimation[];
 extern s16 gNaribwe_DoorOpening[];
 
 void Naribwe_HideStone(void);
@@ -350,18 +359,20 @@ void Naribwe_HideStone(void);
 /// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
-      ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
-                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(316), 0, px(132), \
+      ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS,                    \
+                      MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH,          \
+                      TALK_FACING_PARTY, 0),                                   \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(316), 0,    \
+       px(132), FACING_SOUTH, 0, 0},                                           \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(372), 0,    \
+       px(132), FACING_SOUTH, 0, 0},                                           \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(316), 0, px(132),        \
        FACING_SOUTH, 0, 0},                                                    \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(372), 0, px(132), \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(372), 0, px(132),        \
        FACING_SOUTH, 0, 0},                                                    \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(316), 0, px(132),   \
-       FACING_SOUTH, 0, 0},                                                    \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(372), 0, px(132),   \
-       FACING_SOUTH, 0, 0},                                                    \
-      ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 344, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
+                      MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
       ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
                       0, 296, FACING_EAST, TALK_FACING_PARTY, 0),              \
       ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 152, \
@@ -372,25 +383,29 @@ void Naribwe_HideStone(void);
                       FACING_SOUTHEAST, 1, 0),                                 \
       ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 224, \
                       FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),        \
-      ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 200, 0,     \
-                      200, FACING_NORTHEAST, TALK_FACING_PARTY, 0),            \
+      ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,            \
+                      MOVEMENT_TYPE_WANDER, 200, 0, 200, FACING_NORTHEAST,     \
+                      TALK_FACING_PARTY, 0),                                   \
       ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, \
                       FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),        \
       ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 56, 0, 232, \
                       FACING_EAST, TALK_FACING_PARTY, 0),                      \
-      ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 360, \
-                      FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
-      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
-       FACING_SOUTH, 2, 0},                                                    \
+      ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
+                      MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
+      {SPRITE_IVY, CONDITION_ALWAYS, gNaribwe_IvyAnimation, px(40), 0,         \
+       px(168), FACING_SOUTH, 2, 0},                                           \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
                       MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \
                       TALK_FACING_KEEP, 0),                                    \
       ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
                       FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
-      ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 168, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
-      ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 104, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,    \
+                      376, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK,   \
+                      0),                                                      \
+      ACTOR_PLACEMENT(SPRITE_ROCK_PILE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, \
+                      104, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK,   \
+                      0),                                                      \
       {SCENE_TABLE_END},                                                       \
   };
 
@@ -401,19 +416,19 @@ s16 gNaribwe_UnusedList[] = {
 };
 
 /// The braziers burn, the fire's flames rising above them.
-u32 gNaribwe_BrazierBurns[] = {
+s32 gNaribwe_BrazierBurns[] = {
     SC_ANIMATION(2),
     SC_END,
 };
 
-u32 gNaribwe_FlameRises[] = {
+s32 gNaribwe_FlameRises[] = {
     SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(24)),
     SC_END,
 };
 
-u32 gNaribwe_IvyAnimation[] = {
+s32 gNaribwe_IvyAnimation[] = {
     SC_ANIMATION(3),
     SC_END,
 };
@@ -450,7 +465,7 @@ u32 gSceneExits[] = {
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
 struct ActorPlacement gNaribwe_Entrance10Placements[] = {
-    ACTOR_PLACEMENT(364, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),

@@ -74,7 +74,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    i = 8;
+    i = ACTOR_FIRST_PLACED;
   loop:
     {
       struct Actor *object = Actor_Get(i);
@@ -85,7 +85,7 @@ void LemurianShipDeck_EnterCabin(void) {
       }
     }
     i++;
-    if (i <= 63)
+    if (i < FIELD_TREASURE_ACTOR)
       goto loop;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Event_PlaySound(SE_DOOR_OPEN);
@@ -121,32 +121,32 @@ void LemurianShipDeck_TryHeldDoor(void) {
   Event_End();
 }
 
-#define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+/// The background palette the deck's two colour cycles turn: its colours 12 to
+/// 15 (LemurianShipDeck_RotateHighColors) and 4 to 9 (..._RotateLowColors),
+/// every eighth frame.
+#define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-#define DEFINE_ROTATE_PALETTE_COLORS(name, n1, n2)                             \
+/// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
+/// up and the last round to first, every eighth frame.
+#define DEFINE_ROTATE_PALETTE_COLORS(name, last, first)                        \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \
-      s16 last = OBJ_PALETTE[n1];                                              \
+      s16 saved = DECK_PALETTE[last];                                          \
       s32 i;                                                                   \
                                                                                \
-      /* The loop is written with goto so that it carries no loop notes: the   \
-       * bytes */                                                              \
-      /* rebuild the palette base on every pass, and a for or do loop hoists   \
-       * it */                                                                 \
-      /* and steps two pointers (differ 30). */                                \
-      i = n1;                                                                  \
+      i = last;                                                                \
     loop:                                                                      \
-      OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];                                     \
+      DECK_PALETTE[i] = DECK_PALETTE[i - 1];                                   \
       i--;                                                                     \
-      if (i != n2)                                                             \
+      if (i != first)                                                          \
         goto loop;                                                             \
-      OBJ_PALETTE[n2] = last;                                                  \
+      DECK_PALETTE[first] = saved;                                             \
     }                                                                          \
   }
 
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors12To15, 15, 12)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHighColors, 15, 12)
 
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors4To9, 9, 4)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateLowColors, 9, 4)
 
 void TilesetAnim_Resume(s32 a);
 
@@ -156,7 +156,7 @@ void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
   TilesetAnim_Resume(13);
@@ -166,43 +166,39 @@ void LemurianShipDeck_ShowArrival(void) {
   Event_End();
 }
 
-#define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
-
 /// A task: scrolls the waves' layer half a pixel a frame.
 void LemurianShipDeck_ScrollWaves(void) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x108);
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   s32 phase = gLemurianShipDeck_WaveScroll;
 
-  layer[2] = phase;
-  phase += 0x8000;
+  layer->offsetX = phase;
+  phase += px(1) / 2;
   gLemurianShipDeck_WaveScroll = phase;
-  if (phase == 0x200000)
+  if (phase == px(32))
     gLemurianShipDeck_WaveScroll = 0;
 }
 
 /// A task: bobs the camera's actor and the first map layer together on a sine
-/// wave, its phase advancing 0x200 a frame.
+/// wave, a full wave every 128 frames.
 void LemurianShipDeck_BobDeck(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   struct Actor *object = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
   object->y.fixed += offset;
-  LAYER_WORD(layer, 12) += offset;
-  gLemurianShipDeck_BobPhase += 0x200;
+  layer->offsetY += offset;
+  gLemurianShipDeck_BobPhase += TRIG_TURN / 128;
 }
-
-#include "text/msg_ids.h"
 
 struct Actor;
 
-extern u32 gLemurianShipDeck_FirstCrewLooksAround[];
+extern s32 gLemurianShipDeck_FirstCrewLooksAround[];
 
-extern u32 gLemurianShipDeck_SecondCrewLooksAround[];
+extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
 
-extern u32 gLemurianShipDeck_ThirdCrewLooksAround[];
+extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
-void LemurianShipDeck_RotateColors12To15(void);
+void LemurianShipDeck_RotateHighColors(void);
 
 void LemurianShipDeck_ScrollWaves(void);
 
@@ -221,18 +217,18 @@ void LemurianShipDeck_ShowArrival(void);
 void FlagBlock_ApplyFlags(const void *data);
 
 extern u32 gLemurianShipDeck_SparkleFades[];
-extern u32 gLemurianShipDeck_ReturnToShipScript[];
+extern s32 gLemurianShipDeck_ReturnToShipScript[];
 
 void Actor_Release(struct Actor *object);
 
-extern u32 gLemurianShipDeck_ReachPiersShipScript[];
+extern s32 gLemurianShipDeck_ReachPiersShipScript[];
 extern u32 gLemurianShipDeck_SmokePuff[];
 
 void LemurianShipDeck_EnterCabin(void);
 
 void LemurianShipDeck_TryHeldDoor(void);
 
-void LemurianShipDeck_RotateColors4To9(void);
+void LemurianShipDeck_RotateLowColors(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
@@ -256,11 +252,12 @@ void LemurianShipDeck_TakeTheTiller(void) {
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
   LemurianShipDeck_PlaceFacing(gMainRoutineWork.leaderActorId, px(552), px(376),
                                FACING_EAST);
-  LemurianShipDeck_PlaceFacing(9, px(558), px(345), 0xd000);
-  LemurianShipDeck_PlaceFacing(7, px(534), px(404), FACING_EAST);
-  turn = 0x2000;
-  LemurianShipDeck_PlaceFacing(6, px(568), px(408), turn);
-  LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
+  LemurianShipDeck_PlaceFacing(ACTOR_KRADEN, px(558), px(345),
+                               FACING_NORTH_NORTHEAST);
+  LemurianShipDeck_PlaceFacing(ACTOR_PIERS, px(534), px(404), FACING_EAST);
+  turn = FACING_SOUTHEAST;
+  LemurianShipDeck_PlaceFacing(ACTOR_SHEBA, px(568), px(408), turn);
+  LemurianShipDeck_PlaceFacing(ACTOR_JENNA, px(546), px(440), FACING_SOUTH);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
@@ -367,7 +364,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   // "To the open sea, Felix!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_FinishScreenTransition();
@@ -378,8 +375,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldEvent_SetExitRequest(10);
 }
 
-/// Sends actor id to actor 4's spot at a run.
-static inline void RunToActor4(s32 id) {
+/// Sends actor id at a run to where Felix stands, and off the deck.
+static inline void RunToFelix(s32 id) {
   struct Actor *target;
 
   Actor_SetSpeed(id, 1.2);
@@ -503,7 +500,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "We won't be getting into Lemuria."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
@@ -512,22 +509,23 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_FaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(40);
-  RunToActor4(7);
-  RunToActor4(5);
-  RunToActor4(6);
-  RunToActor4(9);
+  RunToFelix(ACTOR_PIERS);
+  RunToFelix(ACTOR_JENNA);
+  RunToFelix(ACTOR_SHEBA);
+  RunToFelix(ACTOR_KRADEN);
   FieldEvent_SetExitRequest(1);
 }
 
 /// The deck at the tiller (SCENE_LEMURIAN_SHIP_TILLER): the colour rotations,
 /// and the tiller scenes of entrances 10 and 20.
 void LemurianShipDeck_SetUpTillerDeck(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 10)
     LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
@@ -542,14 +540,15 @@ s32 Scene_Initialize(void) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
-    FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
     if (gMainRoutineWork.entrance == 99)
       LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   }
   return 0;
 }
@@ -620,7 +619,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
-    Actor_SetAnimation(ACTOR_KRADEN, 3);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
@@ -635,10 +634,10 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
-  Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_KRADEN, 288, 144);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -646,14 +645,14 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   {
     struct Actor *target;
 
-    Actor_SetAnimation(ACTOR_KRADEN, 2);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
       Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].pixel,
@@ -704,7 +703,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     FieldEvent_SetMessageId(MsgLemurianShipDeckWellTheresNoPoint);
     // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    Actor_SetAnimation(ACTOR_KRADEN, 2);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
       Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
@@ -736,11 +735,12 @@ void LemurianShipDeck_EmitSparkle(void) {
 
   SET_VECTOR(position, px(360), px(64), px(424));
   FieldVector_AddPolarOffset(32, Random16(), position);
-  object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
+  object =
+      FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
-    *(s32 *)((u8 *)object + 0x30) = 0x20000;
-    *(s32 *)((u8 *)object + 0x34) = 0x8000;
+    object->speedLimit = px(2);
+    object->acceleration = px(1) / 2;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, 360, 64, 424);
@@ -916,7 +916,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "Piers...if you do not wish to take us, you do not have to. Just tell..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
@@ -1006,14 +1006,14 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "Is he OK!?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "Piers! Are you... Are you serious?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
@@ -1045,7 +1045,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
   // "I shall be leaving immediately, but I want you to come, Kraden."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
   // "Let us set sail, Felix! To my ship! And the Eastern Sea!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
@@ -1083,16 +1083,16 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   // "What do you say, Felix? Shall we go see the mayor?"
   Event_OpenMessage(ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 1) {
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     // "Don't worry about me. I've waited this long. I can wait a little..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message += 1;
   } else {
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     gFieldWork->message += 1;
     // "I have no objection, so why not? Let's go."
     Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -1107,7 +1107,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
@@ -1180,7 +1180,7 @@ s16 gLemurianShipDeck_Puddles[] = {
     8, 512, -1, 0,
 };
 
-u32 gLemurianShipDeck_ReachPiersShipScript[] = {
+s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(263, 0, 176),
     SC_SYNC,
@@ -1191,7 +1191,7 @@ u32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_END,
 };
 
-u32 gLemurianShipDeck_ReturnToShipScript[] = {
+s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(368, 0, 448),
     SC_SYNC,
@@ -1206,7 +1206,7 @@ u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-u32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
+s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
       SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(10),                        
@@ -1214,7 +1214,7 @@ u32 gLemurianShipDeck_FirstCrewLooksAround[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
+s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
@@ -1222,7 +1222,7 @@ u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
+s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),

@@ -7,11 +7,12 @@
 /// SeaOfTime_GrindLastRock) until it crosses to Lemuria
 /// (SeaOfTime_CrossToLemuria).
 
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
+#include "graphics/palette_buffers.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
 #include "flags.h"
@@ -23,28 +24,33 @@
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "field/actor.h"
+#include "field/map_grid.h"
 #include "system/field_effect.h"
+#include "field/field_sequence_event.h"
+#include "field/event_commands.h"
+#include "scene/scene.h"
+#include "field/scene_tables.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_ids.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "text/msg_ids.h"
 
 struct SeaOfTimeSprite {
   u8 unk00[0x1a];
   u8 visible;
 };
 
-struct SeaOfTimeMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct SeaOfTimeMapWork {
-  u8 unk000[0x108];
-  struct SeaOfTimeMapLayer layers[3];
-};
-
 extern volatile u32 gSeaOfTime_WaveStartFrame;
 extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
-extern u8 gMapGridCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
@@ -62,29 +68,6 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
-#include "field/field_sequence_event.h"
-#include "field/event_commands.h"
-#include "scene/scene.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_ids.h"
-#include "field/actor.h"
-#include "system/ram_buffer.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "system/field_effect.h"
-#include "system/iwram_call.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "field/map_grid.h"
 
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
@@ -95,7 +78,8 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
     object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 15);
-    object->priorityFlags |= 34;
+    object->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
     return object;
   }
   return NULL;
@@ -145,9 +129,8 @@ s32 SeaOfTime_HideSprite(struct Actor *object) {
 }
 
 s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
-  struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
 
   if (map == NULL)
     return 0;
@@ -155,14 +138,13 @@ s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
+  cell += x + (y << 7);
+  return (cell->collisionCode << 8) | cell->attributeB;
 }
 
 s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
-  struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapCell *cell;
   s32 old;
 
   if (map == NULL)
@@ -171,10 +153,10 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
   return old;
 }
 
@@ -211,6 +193,40 @@ enum {
   FLAG_LAST_ROCK_CLEARED
 };
 
+/// While the waves run (SeaOfTime_StartWaves), the channels and the lap cells
+/// do not answer.
+#define FLAG_WAVES_RUNNING FLAG_SCENE_TEMP_00
+/// Set the first time the sea sweeps the ship back, which then leaves by exit 4
+/// rather than 1, and on crossing to Lemuria.
+#define FLAG_SWEPT_BACK_ONCE 0x8dd
+
+/// The cell behaviors the Sea of Time's triggers answer: currents that carry
+/// the ship one way (eight headings), the swirl (which way it turns), the
+/// whirlpool, the channels (four headings), the cell that sweeps the ship back,
+/// and the cells around the whirlpool that count its laps.
+enum SeaOfTimeCellBehavior {
+  CELL_BEHAVIOR_CURRENT_NORTH = 30,
+  CELL_BEHAVIOR_CURRENT_NORTHWEST,
+  CELL_BEHAVIOR_CURRENT_WEST,
+  CELL_BEHAVIOR_CURRENT_SOUTHWEST,
+  CELL_BEHAVIOR_CURRENT_SOUTH,
+  CELL_BEHAVIOR_CURRENT_SOUTHEAST,
+  CELL_BEHAVIOR_CURRENT_EAST,
+  CELL_BEHAVIOR_CURRENT_NORTHEAST,
+  CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE = 40,
+  CELL_BEHAVIOR_SWIRL_CLOCKWISE,
+  CELL_BEHAVIOR_WHIRLPOOL = 44,
+  CELL_BEHAVIOR_CHANNEL_EAST,
+  CELL_BEHAVIOR_CHANNEL_SOUTH,
+  CELL_BEHAVIOR_CHANNEL_WEST,
+  CELL_BEHAVIOR_CHANNEL_NORTH,
+  CELL_BEHAVIOR_SWEPT_BACK,
+  CELL_BEHAVIOR_LAP_FIRST
+};
+
+/// The raised triggers of the waves: the laps counted, and the waves ended.
+enum SeaOfTimeRaisedTrigger { RAISED_START_WAVES = 200, RAISED_STOP_WAVES };
+
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_Room2Placements;
@@ -228,8 +244,8 @@ void SeaOfTime_CircleSwirl(void) {
   s32 x;
   s32 z;
 
-  center[0] = ((object->x.fixed >> 21) << 21) + 0x100000;
-  center[2] = ((object->z.fixed >> 21) << 21) + 0x100000;
+  center[0] = ((object->x.fixed >> 21) << 21) + px(16);
+  center[2] = ((object->z.fixed >> 21) << 21) + px(16);
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
@@ -240,7 +256,10 @@ void SeaOfTime_CircleSwirl(void) {
       object->z.fixed += 0x3333;
     else
       object->z.fixed -= 0x3333;
-    if (SeaOfTime_GetCellCode(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
+    if (SeaOfTime_GetCellCode(1, FIELD_CELL(center[0]),
+                              FIELD_CELL(center[2])) >>
+            8 ==
+        CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
       turn[0] = SeaOfTime_Cos(-0x200);
       sine = Trig_Sin(-0x200);
     } else {
@@ -284,41 +303,41 @@ void SeaOfTime_RideCurrent(void) {
   s32 pz;
 
   switch (work->stepTrigger) {
-  case 30:
+  case CELL_BEHAVIOR_CURRENT_NORTH:
     center.x = 0;
     center.z = -1;
     break;
-  case 32:
+  case CELL_BEHAVIOR_CURRENT_WEST:
     center.x = -1;
     center.z = 0;
     break;
-  case 34:
+  case CELL_BEHAVIOR_CURRENT_SOUTH:
     center.x = 0;
     center.z = 1;
     break;
-  case 36:
+  case CELL_BEHAVIOR_CURRENT_EAST:
     center.x = 1;
     center.z = 0;
     break;
-  case 31:
+  case CELL_BEHAVIOR_CURRENT_NORTHWEST:
     center.x = -1;
     center.z = -1;
     break;
-  case 33:
+  case CELL_BEHAVIOR_CURRENT_SOUTHWEST:
     center.x = -1;
     center.z = 1;
     break;
-  case 35:
+  case CELL_BEHAVIOR_CURRENT_SOUTHEAST:
     center.x = 1;
     center.z = 1;
     break;
-  case 37:
+  case CELL_BEHAVIOR_CURRENT_NORTHEAST:
     center.x = 1;
     center.z = -1;
     break;
   }
-  center.x = (((object->x.fixed >> 21) + center.x) << 21) + 0x100000;
-  center.z = (((object->z.fixed >> 21) + center.z) << 21) + 0x100000;
+  center.x = (((object->x.fixed >> 21) + center.x) << 21) + px(16);
+  center.z = (((object->z.fixed >> 21) + center.z) << 21) + px(16);
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
@@ -330,7 +349,9 @@ void SeaOfTime_RideCurrent(void) {
     else
       object->z.fixed -= px(1) / 2;
   }
-  if (SeaOfTime_GetCellCode(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
+  if (SeaOfTime_GetCellCode(1, FIELD_CELL(center.x), FIELD_CELL(center.z)) >>
+          8 ==
+      CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
     turn[0] = SeaOfTime_Cos(-0x200);
     s = Trig_Sin(-0x200);
   } else {
@@ -360,8 +381,8 @@ void SeaOfTime_RideCurrent(void) {
       Event_PlaySound(SE_CURRENT);
     spark.priority = 2;
     spark.palette = 7;
-    spark.startScaleX = 0xcccc;
-    spark.startScaleY = 0xcccc;
+    spark.startScaleX = Q16_ONE * 4 / 5;
+    spark.startScaleY = Q16_ONE * 4 / 5;
     c = Trig_Cos(object->facing);
     {
       s32 sine = Trig_Sin(object->facing);
@@ -384,13 +405,23 @@ void SeaOfTime_RideCurrent(void) {
     py = object->y.fixed;
     pz = ends[1];
     if (flip) {
-      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
       FieldEffect_Spawn(ends[2] - px(3), object->y.fixed, ends[3], -speed, 0, 0,
-                        0xb0000, &spark);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
     } else {
-      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
       FieldEffect_Spawn(ends[2] + px(3), object->y.fixed, ends[3], speed, 0, 0,
-                        0xb0000, &spark);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
     }
   }
 }
@@ -409,7 +440,7 @@ void SeaOfTime_FollowChannel(void) {
 
   work = Ram_HeapSlots->fieldWork;
   actor = Actor_GetById(ACTOR_SHIP);
-  angle = (work->stepTrigger - 45) << 14;
+  angle = (work->stepTrigger - CELL_BEHAVIOR_CHANNEL_EAST) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
   x = FIELD_CELL(actor->x.fixed);
@@ -444,8 +475,8 @@ void SeaOfTime_FollowChannel(void) {
         }
         spark.priority = 2;
         spark.palette = 7;
-        spark.startScaleX = 0x16666;
-        spark.startScaleY = 0x13333;
+        spark.startScaleX = Q16_ONE * 7 / 5;
+        spark.startScaleY = Q16_ONE * 6 / 5;
         cosine = Trig_Cos(actor->facing);
         sine = Trig_Sin(actor->facing);
         pos[0] = cosine * 12;
@@ -465,13 +496,23 @@ void SeaOfTime_FollowChannel(void) {
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -px(1) / 2,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0,
+                            EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                                EFFECT_USE_PALETTE,
+                            &spark);
+          FieldEffect_Spawn(
+              pos[2] - px(4), actor->y.fixed, pos[3], -px(1) / 2, 0, 0,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+              &spark);
         } else {
-          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], px(1) / 2,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0,
+                            EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                                EFFECT_USE_PALETTE,
+                            &spark);
+          FieldEffect_Spawn(
+              pos[2] + px(4), actor->y.fixed, pos[3], px(1) / 2, 0, 0,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+              &spark);
         }
       }
       wait(1);
@@ -479,8 +520,6 @@ void SeaOfTime_FollowChannel(void) {
   }
   Event_End();
 }
-
-#include "text/msg_ids.h"
 
 extern u16 gSeaOfTime_LapCount;
 extern s16 gSeaOfTime_LapTurn;
@@ -565,15 +604,14 @@ void SeaOfTime_CountLaps(void) {
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
                         spots.spot[(u16)index].z + z, 0, 0x13333, phase,
-                        0x120001, p);
+                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, p);
     }
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
-    s32 zero = 0;
 
-    work->raisedTrigger = 200;
-    gSeaOfTime_LapCount = zero;
-    gSeaOfTime_LapTurn = zero;
+    work->raisedTrigger = RAISED_START_WAVES;
+    gSeaOfTime_LapCount = 0;
+    gSeaOfTime_LapTurn = 0;
   }
 }
 
@@ -581,7 +619,7 @@ void SeaOfTime_TrackWaves(void) {
   u32 *state = gSceneState;
 
   if (gFrameCount - gSeaOfTime_WaveStartFrame > 120)
-    gFieldWork->raisedTrigger = 201;
+    gFieldWork->raisedTrigger = RAISED_STOP_WAVES;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
   *state = gFrameCount;
@@ -606,16 +644,16 @@ s32 SeaOfTime_StartWaves(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_WAVES_RUNNING);
   Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;
     for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 14; i++, palette++) {
       u16 color = *palette;
-      u16 r = color & 31;
-      u16 g = (color >> 5) & 31;
-      u16 b = (color >> 10) & 31;
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
 
       if (r < 11) {
         r++;
@@ -677,12 +715,12 @@ fade:
   for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
-    u16 r = color & 31;
-    u16 g = (color >> 5) & 31;
-    u16 b = (color >> 10) & 31;
-    u16 tr = target & 31;
-    u16 tg = (target >> 5) & 31;
-    u16 tb = (target >> 10) & 31;
+    u16 r = RGB_RED(color);
+    u16 g = RGB_GREEN(color);
+    u16 b = RGB_BLUE(color);
+    u16 tr = RGB_RED(target);
+    u16 tg = RGB_GREEN(target);
+    u16 tb = RGB_BLUE(target);
 
     if (r < tr) {
       r++;
@@ -713,7 +751,7 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  GameFlag_Clear(FLAG_WAVES_RUNNING);
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
    * its target Event_End returns nothing. */
   return Event_EndWithResult();
@@ -744,8 +782,8 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
       options.palette = 7;
-      options.startScaleX = 0x16666;
-      options.startScaleY = 0x13333;
+      options.startScaleX = Q16_ONE * 7 / 5;
+      options.startScaleY = Q16_ONE * 6 / 5;
       cosine = Trig_Cos(actor->facing);
       sine = Trig_Sin(actor->facing);
       sides[0] = cosine * 12;
@@ -794,9 +832,9 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
 void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (!Event_GetFlag(0x8dd)) {
+  if (!Event_GetFlag(FLAG_SWEPT_BACK_ONCE)) {
     Import_EventSetExitRequest(4);
-    Event_SetFlag(0x8dd);
+    Event_SetFlag(FLAG_SWEPT_BACK_ONCE);
   } else {
     Import_EventSetExitRequest(1);
   }
@@ -812,12 +850,14 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
   if (even == 0) {
     s32 dx = ((Random16() & 31) << 16) + -0xe0000;
 
-    spark.startScaleX = 0xb333;
-    spark.startScaleY = 0xb333;
+    spark.startScaleX = Q16_ONE * 7 / 10;
+    spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 7;
     spark.priority = 1;
-    FieldEffect_Spawn(object->x.fixed + dx, 0, object->z.fixed + px(16), 0,
-                      even, even, 0xb0000, &spark);
+    FieldEffect_Spawn(
+        object->x.fixed + dx, 0, object->z.fixed + px(16), 0, even, even,
+        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+        &spark);
   }
 }
 
@@ -834,7 +874,7 @@ void SeaOfTime_CrossToLemuria(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_Set(0x8dd);
+  GameFlag_Set(FLAG_SWEPT_BACK_ONCE);
   Actor_SetSpeed(ACTOR_SHIP, 1);
   Actor_GetById(ACTOR_SHIP)->facing = FACING_NORTH;
   Actor_WalkTo(ACTOR_SHIP, 352, 264);
@@ -860,12 +900,12 @@ fade:
   for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
-    u16 r = color & 31;
-    u16 g = (color >> 5) & 31;
-    u16 b = (color >> 10) & 31;
-    u16 tr = target & 31;
-    u16 tg = (target >> 5) & 31;
-    u16 tb = (target >> 10) & 31;
+    u16 r = RGB_RED(color);
+    u16 g = RGB_GREEN(color);
+    u16 b = RGB_BLUE(color);
+    u16 tr = RGB_RED(target);
+    u16 tg = RGB_GREEN(target);
+    u16 tb = RGB_BLUE(target);
 
     if (r < tr) {
       r++;
@@ -917,7 +957,8 @@ sparks:
 
     burst.palette = 7;
     FieldEffect_Spawn(((x & mask) << 16) + px(336), 0,
-                      ((z & mask) << 16) + px(176), 0, 0, 0, 0x10000, &burst);
+                      ((z & mask) << 16) + px(176), 0, 0, 0, EFFECT_USE_PALETTE,
+                      &burst);
     wait(1);
   }
 next:
@@ -934,19 +975,20 @@ next:
       s32 offsetZ = (z & mask) << 16;
       s32 offsetX = (x & mask) << 16;
 
-      rain.startScaleX = 0x18000;
-      rain.startScaleY = 0x18000;
+      rain.startScaleX = Q16_ONE * 3 / 2;
+      rain.startScaleY = Q16_ONE * 3 / 2;
       rain.palette = 7;
       rain.priority = 1;
       FieldEffect_Spawn(offsetX + px(336), 0, offsetZ + px(176), 0, px(1), 0,
-                        0xb0000, &rain);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &rain);
       wait(1);
     }
     i++;
   }
-  object = Import_ActorCreate(159, px(348), 0, px(184));
-  // The object's per-frame hook, struct Actor's update.
-  *(void (**)(struct Actor *))((u8 *)object + 0x6c) = SeaOfTime_UpdateSpray;
+  object = Import_ActorCreate(SPRITE_POSEIDON, px(348), 0, px(184));
+  object->update = (void (*)(void))SeaOfTime_UpdateSpray;
   Event_Wait(60);
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
@@ -957,8 +999,8 @@ next:
 }
 
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
-  s32 cx = x >> 20;
-  s32 cz = z >> 20;
+  s32 cx = FIELD_CELL(x);
+  s32 cz = FIELD_CELL(z);
 
   SeaOfTime_SetCellCode(1, cx - 1, cz - 1, 0);
   SeaOfTime_SetCellCode(1, cx, cz - 1, 0);
@@ -1056,47 +1098,33 @@ void SeaOfTime_AnimateSea(void) {
 
     if ((gFrameCount & 3) == 0) {
       u16 color = BG_PLTT[15];
-      s32 red = color & 31;
-      s32 green = (color >> 5) & 31;
-      s32 blue = (color >> 10) & 31;
-      s32 flag = GameFlag_Get(FLAG_SCENE_TEMP_00);
-      /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
-      u32 greenBits = green << 16;
-      u32 redBits = red << 16;
-      u32 blueBits = blue << 16;
+      u16 red = RGB_RED(color);
+      u16 green = RGB_GREEN(color);
+      u16 blue = RGB_BLUE(color);
 
-      if (flag == 0) {
-        u32 step = (u16)gSeaOfTime_RedPulseStep[0];
-        u32 sum = (u16)(redBits >> 16) + step;
-        red = (s16)sum;
-        if ((u16)sum < 18) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_00) == 0) {
+        red += gSeaOfTime_RedPulseStep[0];
+        if (red < 18) {
           red = 18;
           gSeaOfTime_RedPulseStep[0] = 1;
-        } else if ((u16)sum > 31) {
-          red = 31;
+        } else if (red > 31) {
+          red = RGB_LEVEL_MAX;
           gSeaOfTime_RedPulseStep[0] = -1;
         }
-      } else {
-        if (gFieldWork->raisedTrigger == 200) {
-          u16 current = redBits >> 16;
-          if (current != 0)
-            red = (s16)(u16)(current - 1);
-        } else if (gFieldWork->raisedTrigger == 201) {
-          u16 current = redBits >> 16;
-          if (current < 30)
-            red = current + 1;
-        }
+      } else if (gFieldWork->raisedTrigger == RAISED_START_WAVES) {
+        if (red != 0)
+          red--;
+      } else if (gFieldWork->raisedTrigger == RAISED_STOP_WAVES) {
+        if (red < 30)
+          red++;
       }
-      {
-        u16 last = red;
-        BG_PLTT[15] = (blueBits >> 6) | (greenBits >> 11) | (last & 31);
-      }
+      BG_PLTT[15] = RGB(red & RGB_LEVEL_MAX, green, blue);
     }
   }
 
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   *(s32 *)((u8 *)layer + 0x1c) = 0;
   for (i = 0; i != 160; i++)
     *line++ =
@@ -1126,22 +1154,24 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   s32 i;
 
   FieldCamera_SetSpeed(6);
-  px = (x << 19) + 0x80000;
-  pz = (z << 19) + 0x80000;
+  px = (x << 19) + px(8);
+  pz = (z << 19) + px(8);
   FieldCamera_MoveToFixed(px, -1, pz, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  spark.startScaleX = 0x13333;
-  spark.startScaleY = 0x18000;
+  spark.startScaleX = Q16_ONE * 6 / 5;
+  spark.startScaleY = Q16_ONE * 3 / 2;
   spark.priority = 1;
-  spark.type = 276;
-  FieldEffect_Spawn(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
-  Actor_GetById(actor)->scaleY = 0x1999;
+  spark.type = SPRITE_SPLASH;
+  FieldEffect_Spawn(
+      px, 0, pz, 0, 0, 0,
+      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
+  Actor_GetById(actor)->scaleY = Q16_ONE / 10;
   SeaOfTime_PlaceRock(x, z, actor);
   for (i = 0; i != 10; i++) {
-    Actor_GetById(actor)->scaleY += 0x1999;
+    Actor_GetById(actor)->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_GetById(actor)->scaleY = Q16_ONE;
@@ -1163,7 +1193,7 @@ void SeaOfTime_Open(void) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(MUS_SILENCE);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
-  actor = FieldActor_Create(159, px(348), 0, px(184));
+  actor = FieldActor_Create(SPRITE_POSEIDON, px(348), 0, px(184));
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
@@ -1178,8 +1208,8 @@ void SeaOfTime_Open(void) {
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
-  gFieldWork->raisedTrigger = 200;
+  Event_SetFlag(FLAG_WAVES_RUNNING);
+  gFieldWork->raisedTrigger = RAISED_START_WAVES;
   Event_PlaySound(SE_SEA_OF_TIME_OPENS);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
@@ -1198,14 +1228,16 @@ void SeaOfTime_Open(void) {
       s32 x = Random16();
       s32 y = Random16();
 
-      params.startScaleX = 0xcccc;
-      params.startScaleY = 0xcccc;
+      params.startScaleX = Q16_ONE * 4 / 5;
+      params.startScaleY = Q16_ONE * 4 / 5;
       params.priority = 1;
       params.palette = 7;
       x &= mask;
       x <<= 16;
-      x += 0x1500000;
-      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0, 0xb0000,
+      x += px(336);
+      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
                         &params);
       wait(1);
     }
@@ -1215,14 +1247,16 @@ void SeaOfTime_Open(void) {
     s32 x = Random16();
     s32 y = Random16();
 
-    burst.startScaleX = 0x18000;
-    burst.startScaleY = 0x18000;
+    burst.startScaleX = Q16_ONE * 3 / 2;
+    burst.startScaleY = Q16_ONE * 3 / 2;
     burst.palette = 7;
     burst.priority = 1;
     x &= mask;
     x <<= 16;
-    x += 0x1500000;
-    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0, 0xb0000,
+    x += px(336);
+    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE,
                       &burst);
     wait(1);
   }
@@ -1233,9 +1267,9 @@ void SeaOfTime_Open(void) {
     changed = 0;
     for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 14; i++, palette++) {
       u16 color = *palette;
-      u16 r = color & 31;
-      u16 g = (color >> 5) & 31;
-      u16 b = (color >> 10) & 31;
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
 
       if (r < 11) {
         r++;
@@ -1283,7 +1317,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
-    Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
+    Dma_Set((const void *)&BG_PLTT_COLOR(3, 1), gSeaOfTime_SavedColors.colors,
             DMA_COPY_HALFWORDS(14), REG_DMA3);
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       u32 *state = gSceneState;
@@ -1306,8 +1340,9 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Get(0x940)) {
-        Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
-                DMA_COPY_HALFWORDS(14), REG_DMA3);
+        Dma_Set((const void *)&BG_PLTT_COLOR(3, 1),
+                gSeaOfTime_SavedColors.colors, DMA_COPY_HALFWORDS(14),
+                REG_DMA3);
       } else {
         if (!GameFlag_Get(FLAG_ROCK_A_CLEARED))
           SeaOfTime_PlaceRock(21, 23, ACTOR_ROCK_A);
@@ -1323,7 +1358,7 @@ s32 Scene_Initialize(void) {
           BG_PLTT_COLOR(0, 15) &= 0xffe0;
           Dma_Set((const void *)BG_PLTT, block, DMA_COPY_WORDS(112), REG_DMA3);
         }
-        PaletteFade_SetTarget(0x10000, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
       }
       if (gMainRoutineWork.entrance == 4 &&
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1345,7 +1380,7 @@ s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->paletteFade;
 
   Dma_Fill32(-1, block, 0x1c0);
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   return 0;
 }
 
@@ -1460,32 +1495,58 @@ u32 gSeaOfTime_WaveState = 0;
 struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(SeaOfTime_SweptBack)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(SeaOfTime_SinkIntoWhirlpool)},
-    {TRIGGER_STEP, 45, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 46, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 47, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 48, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 51, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 52, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 53, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 54, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 55, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 56, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 57, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(SeaOfTime_StartWaves)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(SeaOfTime_StopWaves)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWEPT_BACK, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_SweptBack)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WHIRLPOOL, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_SinkIntoWhirlpool)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_EAST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_SOUTH, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_WEST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 1, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 2, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 3, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 4, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 5, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 6, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 7, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_RAISED, RAISED_START_WAVES, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_StartWaves)},
+    {TRIGGER_RAISED, RAISED_STOP_WAVES, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_StopWaves)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1494,16 +1555,26 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 5, 0x940, EVENT(SeaOfTime_CrossToLemuria)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindFirstRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_B, CONDITION_ALWAYS,
@@ -1520,10 +1591,14 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
 struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit4)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit5)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindLastRock)},
     {TRIGGER_TABLE_END},

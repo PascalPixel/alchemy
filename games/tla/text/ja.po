@@ -69333,7 +69333,7 @@ msgstr ""
 "すべての力を手に入れたはずです\n"
 "なのに あらしがおきませ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12402"
 msgstr "だ だれです・・・。{end_wait}"
 

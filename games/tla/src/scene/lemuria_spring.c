@@ -4,6 +4,7 @@
 /// moving obstacles, for coins or for items.
 
 #include "battle/battle.h"
+#include "field/map_grid.h"
 #include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -17,6 +18,24 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "window/window.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
+#include "system/main_routine_work.h"
+#include "version.h"
+#include "edition.h"
+#include "system/input.h"
+#include "field/actor.h"
+#include "field/call.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
+#include "system/task.h"
+#include "text/msg_ids.h"
 
 /// The spring's actors, as The Broken Seal numbers Tolbi's spring, by the
 /// rows of gActorPlacements.
@@ -52,23 +71,6 @@ enum LemuriaSpringActorId {
 /// The actor that draws toss->trail[n] of a tossed coin or medal, n from 1.
 #define LEMURIA_SPRING_COIN_TRAIL(n) (ACTOR_LEMURIA_SPRING_COIN_SHADOW - (n))
 #define LEMURIA_SPRING_MEDAL_TRAIL(n) (ACTOR_LEMURIA_SPRING_MEDAL_SHADOW - (n))
-#include "system/ram_buffer.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "window/window.h"
-#include "graphics/text_render.h"
-#include "graphics/uiflow.h"
-#include "system/main_routine_work.h"
-#include "version.h"
-#include "edition.h"
-#include "system/input.h"
-#include "field/actor.h"
-#include "field/call.h"
-#include "system/iwram_call.h"
-#include "system/vector3.h"
-#include "system/task.h"
 
 s32 LemuriaSpring_RunSpringGame(void);
 
@@ -95,8 +97,6 @@ void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 s32 Party_RestoreHpPp();
 s32 Class_GetSeries();
 
-#include "text/msg_ids.h"
-
 extern struct SpringTossMotion gLemuriaSpring_Toss;
 extern struct SpringObstacle gLemuriaSpring_Obstacles[];
 extern s32 gLemuriaSpring_TossDone;
@@ -114,13 +114,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// The party drinks from the spring and its HP and PP are restored.
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!"
@@ -136,14 +129,14 @@ extern u16 gLemuriaSpring_AlphaSteps[];
 /// Raises the spring's displayed layer and blends it into view, as Tolbi's
 /// does.
 void LemuriaSpring_RiseAndFadeIn(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *layer;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer;
   s32 i;
 
   Event_PlaySound(SE_BURST);
-  layer = (s32 *)(map + 0x178);
+  layer = &map->layers[2];
   for (i = 0; i < 16; i++) {
-    layer[3] -= px(1);
+    layer->offsetY -= px(1);
     wait(4);
   }
   for (i = 0; i < 8; i++) {
@@ -157,7 +150,7 @@ void LemuriaSpring_RiseAndFadeIn(void) {
 /// Searching the spring lets the party toss a coin into it. The spring rises
 /// into view the first time in the visit (flag 0x200), as Tolbi's does.
 void LemuriaSpring_TossCoin(void) {
-  s32 actor = FIELD_AT(&gMainRoutineWork, s32, 532);
+  s32 actor = gMainRoutineWork.leaderActorId;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -179,37 +172,37 @@ void LemuriaSpring_InitializeTossSimulation(void);
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
 /// 1 and flag 0x200 is set, it sets the blend's weights again.
 s32 Scene_Initialize(void) {
-  s32 t0;
+  struct Actor *leader;
   s32 blend;
   s32 alpha;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  t0 = (s32)Actor_Get(gMainRoutineWork.leaderActorId);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
-  blend = 0x3f42;
-  FIELD_AT(0x4000050, u16, 0) = blend;
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader->priorityFlags = ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
+  blend = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDCNT = blend;
+  /* FAKEMATCH(dead): the form kept; as no block, 5 of 80 instructions differ in
+   * tla-en. */
   do {
   } while (0);
-  alpha = 0x80c;
-  FIELD_AT(0x4000052, u16, 0) = alpha;
+  alpha = BLEND_ALPHA(12, 8);
+  REG_BLDALPHA = alpha;
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS, 2);
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, 2);
-  FIELD_AT(((s32)Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS) + 0x23), u8,
-           0) = 2;
-  FIELD_AT(((s32)Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS) + 0x23), u8,
-           0) = 2;
+  Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS)->priorityFlags =
+      ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS)->priorityFlags =
+      ACTOR_PRIORITY_UNDERFOOT;
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
     LemuriaSpring_InitializeTossSimulation();
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
-      FIELD_AT(0x4000050, u16, 0) = blend;
-      FIELD_AT(0x4000052, u16, 0) = 0x1000;
+      Io_Write16(blend, &REG_BLDCNT);
+      Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
     }
   }
   return 0;
 }
-
-#include "text/msg_ids.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -464,7 +457,7 @@ s32 Summon_ShowLearnedMessage();
 /// The spring's statue opens and gives the prize: an item, or, for the first
 /// medal to land in the middle (flag 0x90b), the special prize actor 29 brings.
 void LemuriaSpring_GivePrize(s32 a0) {
-  s32 t52;
+  struct Actor *prize;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -519,17 +512,17 @@ void LemuriaSpring_GivePrize(s32 a0) {
   FieldEvent_Wait(70);
   Event_PlaySound(SE_RECOVERY);
   if (a0 == -1) {
-    t52 = Actor_Get(ACTOR_LEMURIA_SPRING_PRIZE);
+    prize = Actor_Get(ACTOR_LEMURIA_SPRING_PRIZE);
     Actor_MoveToObject(ACTOR_LEMURIA_SPRING_PRIZE,
-                       FIELD_AT(&gMainRoutineWork, s32, 532));
-    FIELD_AT((t52 + 0x55), u8, 0) = 0;
-    FIELD_AT(t52, s32, 12) = 0x200000;
-    FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 0x1c);
+                       gMainRoutineWork.leaderActorId);
+    prize->motionFlags = 0;
+    prize->y.fixed = px(32);
+    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, 0x1c);
     SummonTablet_PlayRunes(0x1d);
     Summon_ShowLearnedMessage(0x16);
     Class_GetSeries(0x16);
     Actor_SetPosition(ACTOR_LEMURIA_SPRING_PRIZE, 0, 0);
-    FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   } else {
     Call2(ItemDisplay_ShowItem, a0, 3);
     Party_GiveItem(a0, 0);
@@ -588,15 +581,12 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *pos, s32 dir, s32 palette,
   s32 i;
 
   if (object != NULL) {
-    struct Half zero;
-
     object->x.fixed = *pos++;
     object->y.fixed = *pos++;
     object->z.fixed = *pos;
     object->facing = dir;
-    zero.v = 0;
-    object->motionFlags = zero.v;
-    ((u8 *)object->sprite)[26] = zero.v;
+    object->motionFlags = 0;
+    ((u8 *)object->sprite)[26] = 0;
     Actor_SetAnimationSpeed(object, value);
   }
   sprite = object->sprite;
@@ -674,8 +664,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         s32 deltaZ;
         s32 distance;
 
-        deltaX = 0x780000 - toss->trail[0].x;
-        deltaZ = 0x470000 - toss->trail[0].z;
+        deltaX = px(120) - toss->trail[0].x;
+        deltaZ = px(71) - toss->trail[0].z;
         deltaX >>= 8;
         deltaZ >>= 8;
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
@@ -709,8 +699,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (0x780000 - toss->trail[0].x) >> 16;
-            s32 deltaZ = (0x470000 - toss->trail[0].z) >> 16;
+            s32 deltaX = (px(120) - toss->trail[0].x) >> 16;
+            s32 deltaZ = (px(71) - toss->trail[0].z) >> 16;
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             gLemuriaSpring_TossDone = 1;
@@ -729,52 +719,52 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         }
       }
 
-      minX = 0x300000;
-      maxX = 0xc00000;
-      minZ = 0x180000;
-      maxZ = 0x780000;
+      minX = px(48);
+      maxX = px(192);
+      minZ = px(24);
+      maxZ = px(120);
       if (toss->trail[0].z < px(42)) {
-        edgeInset = (0x2a0000 - toss->trail[0].z) * 42 / 18;
+        edgeInset = (px(42) - toss->trail[0].z) * 42 / 18;
         minX += edgeInset;
-        if (minX > 0x5a0000) {
-          minX = 0x5a0000;
+        if (minX > px(90)) {
+          minX = px(90);
         }
         maxX -= edgeInset;
-        if (maxX < 0x960000) {
-          maxX = 0x960000;
+        if (maxX < px(150)) {
+          maxX = px(150);
         }
       }
       if (toss->trail[0].z > px(102)) {
-        edgeInset = (toss->trail[0].z * 42 - 0x660000 * 42) / 18;
-        minX = 0x300000 + edgeInset;
-        if (minX > 0x5a0000) {
-          minX = 0x5a0000;
+        edgeInset = (toss->trail[0].z * 42 - px(102) * 42) / 18;
+        minX = px(48) + edgeInset;
+        if (minX > px(90)) {
+          minX = px(90);
         }
-        maxX = 0xc00000 - edgeInset;
-        if (maxX < 0x960000) {
-          maxX = 0x960000;
+        maxX = px(192) - edgeInset;
+        if (maxX < px(150)) {
+          maxX = px(150);
         }
       }
       if (toss->trail[0].x < px(90)) {
-        edgeInset = (0x5a0000 - toss->trail[0].x) * 18 / 42;
-        minZ = 0x180000 + edgeInset;
-        if (minZ > 0x2a0000) {
-          minZ = 0x2a0000;
+        edgeInset = (px(90) - toss->trail[0].x) * 18 / 42;
+        minZ = px(24) + edgeInset;
+        if (minZ > px(42)) {
+          minZ = px(42);
         }
-        maxZ = 0x780000 - edgeInset;
-        if (maxZ < 0x660000) {
-          maxZ = 0x660000;
+        maxZ = px(120) - edgeInset;
+        if (maxZ < px(102)) {
+          maxZ = px(102);
         }
       }
       if (toss->trail[0].x > px(150)) {
-        edgeInset = (toss->trail[0].x * 18 - 0x960000 * 18) / 42;
-        minZ = 0x180000 + edgeInset;
-        if (minZ > 0x2a0000) {
-          minZ = 0x2a0000;
+        edgeInset = (toss->trail[0].x * 18 - px(150) * 18) / 42;
+        minZ = px(24) + edgeInset;
+        if (minZ > px(42)) {
+          minZ = px(42);
         }
-        maxZ = 0x780000 - edgeInset;
-        if (maxZ < 0x660000) {
-          maxZ = 0x660000;
+        maxZ = px(120) - edgeInset;
+        if (maxZ < px(102)) {
+          maxZ = px(102);
         }
       }
 
@@ -876,10 +866,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 3);
       } else {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + 0x700000;
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + 0x480000;
-        /* FAKEMATCH(temporary): the new heading held in cycleFrame, the local
-         * the last obstacle keeps its phase in. */
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + px(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + px(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
         obstacle->heading = cycleFrame;
         obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
@@ -897,8 +885,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       if (obstacle->reactionFrames > 0) {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 3);
       } else if (cycleFrame <= 383) {
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + 0x700000;
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + 0x480000;
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + px(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + px(72);
         obstacle->heading = obstacle->heading + motionStep;
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
       } else {
@@ -919,7 +907,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         s32 nextMode;
         s32 speed;
 
-        speed = 0x30000;
+        speed = px(3);
         if (index <= 1) {
 
           if (obstacle->heading == 0) {
@@ -1016,7 +1004,6 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     toss->launchFrame = toss->launchFrame + 1;
   }
 }
-#undef FIELD_AT
 #undef COUNT_WINDOW_WIDTH
 #undef COUNT_NUMBER_X
 #undef TOSS_WINDOW_X
@@ -1093,7 +1080,7 @@ s32 LemuriaSpring_RunToss(s32 side) {
     if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
       ride->hold = 0;
-      ride->velocity.x = 0x14ccc;
+      ride->velocity.x = px(13) / 10;
       ride->velocity.y = px(4);
       ride->velocity.z = -px(2);
       ride->trail[0].x = px(120);
@@ -1169,14 +1156,14 @@ struct ActorPlacement gActorPlacements[] = {
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TURTLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, 7, 176, 0, 144, FACING_SOUTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, 7, 72, 0, 144, FACING_SOUTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, 7, 176, 0, 168, FACING_SOUTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, 7, 72, 0, 168, FACING_SOUTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 176, 0, 144,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 72, 0, 144,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 176, 0, 168,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 72, 0, 168,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 48, 0, 136,
                     FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS,
@@ -1184,7 +1171,8 @@ struct ActorPlacement gActorPlacements[] = {
                     TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(165, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 96,
                     FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    {322, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_WEST, 1, 0},
+    ACTOR_PLACEMENT(SPRITE_STONE_TABLET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    -56, 0, -56, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 

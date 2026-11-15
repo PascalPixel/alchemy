@@ -83,8 +83,8 @@ void Shop_Run();
 
 void Scene_FadeInAndClearFlag(void);
 
-extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
-extern u32 gMikasallaInteriors_ClimbersWifePaces[];
+extern s32 gMikasallaInteriors_ExplorersWidowPaces[];
+extern s32 gMikasallaInteriors_ClimbersWifePaces[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -160,9 +160,9 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
 void MikasallaInteriors_TalkToMerchant(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Shop_Run(SHOP_MIKASALLA, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsWeOnlyHaveSmallShop);
@@ -177,9 +177,9 @@ void MikasallaInteriors_TalkToMerchant(s32 actor) {
 void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Inn_CheckIn(MIKASALLA_INN, actor);
   } else {
     Event_Start();
@@ -197,9 +197,9 @@ void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
 void MikasallaInteriors_TalkToHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -225,9 +225,9 @@ void MikasallaInteriors_TalkToHealer(s32 actor) {
 void MikasallaInteriors_TalkToApojiiHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -244,9 +244,9 @@ void MikasallaInteriors_TalkToApojiiHealer(s32 actor) {
 void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -260,11 +260,12 @@ void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
-    else if (!Event_GetFlag(0x821) ||
+    else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
               !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
              Event_GetFlag(34))
@@ -361,7 +362,7 @@ void MikasallaInteriors_MeetGalahad(void) {
 // clang-format off
 /// Two women pace the inn: the explorer's widow, whose father-in-law and husband
 /// explored, and the wife of the man who keeps trying to climb Air's Rock.
-u32 gMikasallaInteriors_ExplorersWidowPaces[] = {                                                               
+s32 gMikasallaInteriors_ExplorersWidowPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.1),                                                
       SC_SPEED(0.3),                                                
@@ -385,7 +386,7 @@ u32 gMikasallaInteriors_ExplorersWidowPaces[] = {
   };
 
 /// The climber's wife's script: she paces her house.
-u32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
+s32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.1),                                                
       SC_SPEED(0.3),                                                
@@ -430,11 +431,11 @@ u32 gSceneExits[] = {
 /// Mikasalla's houses and inn (enum MikasallaInteriorsActorId).
 struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, gMikasallaInteriors_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 136, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 120, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ClimbersWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(130, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, gMikasallaInteriors_ClimbersWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 408, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -445,11 +446,11 @@ struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
 
 /// The three sanctums (enum MikasallaInteriorsSanctumActorId).
 struct ActorPlacement gMikasallaInteriors_SanctumPlacements[] = {
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 147, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 466, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 147, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 466, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 520, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 536, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},

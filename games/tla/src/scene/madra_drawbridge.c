@@ -25,6 +25,9 @@
 #include "text/msg_ids.h"
 #include "field/sprite.h"
 
+/// The guards have let the permitted party over the bridge.
+#define FLAG_DRAWBRIDGE_GUARDS_GREETED 0x916
+
 /// What games/tla/src/field/map_*.c declare for the files that use it, written
 /// once.
 
@@ -89,8 +92,8 @@ void MadraDrawbridge_BlockBridge(void) {
       FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
       Actor_WalkTo(gMainRoutineWork.leaderActorId, 158, 316);
     }
-    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~1;
-    Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
+    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkTo(ACTOR_WEST_GUARD, 148, 252);
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 170, 252);
     Actor_WaitForMoveById(ACTOR_WEST_GUARD);
@@ -132,7 +135,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, ANIM_NOD);
   // "Alhafra is up along the northeast of Osenia... You'll see it eventually."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
-  Event_SetFlag(0x916);
+  Event_SetFlag(FLAG_DRAWBRIDGE_GUARDS_GREETED);
   Event_End();
 }
 
@@ -158,8 +161,9 @@ u32 gSceneExits[] = {
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 188, 0, 260,
                     FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 260,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAN_SOLDIER, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 132, 0, 260, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -167,7 +171,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x913, EVENT(MadraDrawbridge_BlockBridge)},
-    {TRIGGER_STEP, 10, 0x916, EVENT(MadraDrawbridge_GreetPermittedParty)},
+    {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_GREETED,
+     EVENT(MadraDrawbridge_GreetPermittedParty)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913,
      EVENT(MadraDrawbridge_AskGoingToOsenia)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,

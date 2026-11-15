@@ -70218,7 +70218,7 @@ msgstr ""
 "potere illimitato... Allora perché\n"
 "non posso evocare una tempesta?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12551"
 msgstr "Chi sei?{end_wait}"
 

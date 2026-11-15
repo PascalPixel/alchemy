@@ -4,14 +4,48 @@
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
+#include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "field/actor.h"
+#include "system/main_routine_work.h"
+#include "field/scene_tables.h"
+#include "system/iwram_call.h"
+#include "scene_ids.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "field/field_event.h"
+#include "field/field.h"
+#include "graphics/palette_snapshots.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/io_reg.h"
+#include "version.h"
+#include "system/io_write_queue.h"
+#include "system/irq_lock.h"
+#include "field/map_grid.h"
+#include "system/io_write.h"
+#include "system/field_effect.h"
+#include "field/field_effect.h"
+#include "scene/scene.h"
+#include "field/field_sequence_event.h"
+#include "field/call.h"
+#include "system/input.h"
+#include "text/msg_ids.h"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -22,13 +56,13 @@
 
 #undef EFFECT_SPAWN
 
-#include "flags.h"
-#include "item_ids.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/scene_tables.h"
+/// The apple, taken.
+#define FLAG_APPLE_TAKEN 0xf5d
+/// Kalt Island's rope, tied by Lash, for this visit.
+#define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
+
+/// The bush on the Gondowan Settlement's stairs is cut.
+#define FLAG_STAIRS_BUSH_CUT 0xa60
 
 /// The Gondowan Settlement, by the rows of
 /// gSettlements_GondowanSettlementPlacements.
@@ -105,15 +139,10 @@ enum AttekaIsletHousesActorId {
   /// "There's nothing to the west..."
   ACTOR_ISLANDER_ON_THE_WEST = ACTOR_FIRST_PLACED
 };
-#include "system/iwram_call.h"
-#include "scene_ids.h"
-#include "field/event_inline.h"
 
 s32 Trig_Cos(s32 angle);
 
 extern u8 MsgSettlementsDontTellMeYoureHere[];
-
-#include "system/frame.h"
 
 extern s16 gSettlements_FallsObjects[];
 
@@ -153,35 +182,6 @@ extern u32 gSettlements_GondowanSettlementCaveRegions[];
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
-#include "field/field_event.h"
-#include "field/field.h"
-#include "types.h"
-#include "graphics/palette_snapshots.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
-#include "system/irq_lock.h"
-#include "field/map_grid.h"
-#include "system/io_write.h"
-#include "system/field_effect.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "scene/scene.h"
-#include "field/field_sequence_event.h"
-#include "field/call.h"
-#include "system/input.h"
 #include "shared/tables.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
@@ -224,46 +224,51 @@ void Settlements_LiftBoulder(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern s32 gSettlements_BobScript[];
-extern u32 gSettlements_CrateBobScript[];
+extern s32 gSettlements_CrateBobScript[];
 
+/// The apple's sprite as Kalt Island sets it up: the high bytes of its OAM
+/// attributes 0 and 2, its VRAM block and its state, laid out as struct
+/// FieldSprite has them.
 struct OrbitSprite {
-  u8 unk00[5];
-  u8 flags05Low : 5;
-  u8 flags05Bit5 : 1;
-  u8 flags05High : 2;
-  u8 unk06[3];
-  u8 flags09Low : 2;
-  u8 flags09Mode : 2;
-  u8 flags09High : 4;
-  u8 unk0a[6];
-  u8 palette;
-  u8 unk11[10];
+  u8 beforeShape[5];
+  u8 affine : 2;
+  u8 blendMode : 2;
+  u8 mosaic : 1;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  u8 beforePriority[3];
+  u8 tileHigh : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 beforeVramBlock[6];
+  u8 vramBlock;
+  u8 beforeState[10];
   u8 state;
 };
 
 struct OrbitObject {
-  u8 unk00[8];
+  u8 beforeX[8];
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[15];
-  u8 flags23;
-  u8 unk24[12];
+  u8 beforePriorityFlags[15];
+  u8 priorityFlags;
+  u8 beforeOrbitAngle[12];
   s32 orbitAngle;
-  u8 unk34[4];
+  u8 beforeOrbitCenter[4];
   s32 orbitCenterX;
   s32 orbitCenterY;
   s32 orbitCenterZ;
-  u8 unk44[12];
+  u8 beforeSprite[12];
   struct OrbitSprite *sprite;
-  u8 unk54;
+  u8 beforeMode;
   u8 mode;
   u8 state;
-  u8 unk57[5];
+  u8 beforeActive[5];
   u8 active;
-  u8 unk5d[4];
+  u8 beforeVisible[4];
   u8 visible;
-  u8 unk62[10];
+  u8 beforeCallback[10];
   u32 callback;
 };
 
@@ -271,19 +276,6 @@ struct SettlementsVector {
   s32 x;
   s32 y;
   s32 z;
-};
-
-struct SettlementsSpawn {
-  s32 unk00;
-  s32 unk04;
-  s32 scaleX;
-  s32 scaleY;
-  s32 speed;
-  s32 acceleration;
-  u16 kind;
-  const u8 *script;
-  s32 unk20;
-  void *update;
 };
 
 void Rope_Initialize(void);
@@ -376,7 +368,7 @@ void Settlements_CatchApple(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
-  Event_SetFlag(0xf5d);
+  Event_SetFlag(FLAG_APPLE_TAKEN);
   ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
   Party_GiveItem(ITEM_APPLE, mode);
@@ -413,7 +405,7 @@ void Settlements_CutStairsBush(void) {
   TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
   MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
-  Event_SetFlag(0xa60);
+  Event_SetFlag(FLAG_STAIRS_BUSH_CUT);
 }
 
 void Settlements_ClimbDownLadder(void) {
@@ -512,7 +504,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
 }
 
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *object = FieldActor_Create(0x11d, x, y, z);
+  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (object != NULL) {
     s8 *animation;
@@ -520,7 +512,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= 0xfe;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
@@ -565,10 +557,12 @@ s32 Settlements_CircleCentre(s32 *p) {
   return 0;
 }
 
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
-  Rope_Place(a, b, c, d);
+/// Rope_Place, from an event.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
+                                   s32 otherPost) {
+  Rope_Place(index, flag, post, otherPost);
 }
 
 void Settlements_SetUpKaltIsland(void) {
@@ -576,7 +570,7 @@ void Settlements_SetUpKaltIsland(void) {
   struct OrbitSprite *sprite;
   u8 *transfer;
 
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;
@@ -585,28 +579,28 @@ void Settlements_SetUpKaltIsland(void) {
   }
   Rope_Initialize();
   Rope_Initialize();
-  Settlements_Func_02002180(1, 0x203, 8, 9);
-  if (Event_GetFlag(0xf5d)) {
+  FieldRope_Place(1, FLAG_KALT_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  if (Event_GetFlag(FLAG_APPLE_TAKEN)) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
   }
   actor = (struct OrbitObject *)Actor_Get(ACTOR_APPLE);
   sprite = actor->sprite;
-  sprite->flags09Mode = 1;
-  sprite->flags05Bit5 = 0;
-  sprite->flags09High = 0;
+  sprite->priority = 1;
+  sprite->fullColor = 0;
+  sprite->palette = 0;
   sprite->state = 0;
   Actor_SetSpriteFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += px(16);
-  actor->flags23 &= 0xfe;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Item_LoadIcon(ITEM_APPLE);
   transfer += 0x400;
-  Vram_Load(sprite->palette, 128, transfer);
+  Vram_Load(sprite->vramBlock, 128, transfer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
@@ -629,7 +623,7 @@ s32 Scene_Initialize(void) {
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
-    Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= 2;
+    Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_RIVER_STONE_H, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_I, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_K, 2);
@@ -684,7 +678,7 @@ s32 Scene_PrepareMap(void) {
 #endif
   }
   if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT) {
-    if (Event_GetFlag(0xa60)) {
+    if (Event_GetFlag(FLAG_STAIRS_BUSH_CUT)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
       MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
@@ -704,7 +698,7 @@ void Settlements_EnterCave(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 loop:
   {
     struct Actor *object = Actor_Get(i);
@@ -713,7 +707,7 @@ loop:
       object->motionFlags = 0;
   }
   i++;
-  if (i <= 63)
+  if (i < FIELD_TREASURE_ACTOR)
     goto loop;
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
@@ -731,8 +725,8 @@ loop:
 }
 
 void Settlements_LashRope(void) {
-  Rope_Lash(1, 8, 9);
-  Event_SetFlag(FLAG_SCENE_TEMP_03);
+  Rope_Lash(1, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Event_SetFlag(FLAG_KALT_ROPE_TIED);
 }
 
 extern s32 gSettlements_WaterColorFrame;
@@ -749,7 +743,7 @@ void Settlements_CycleWaterColors(void) {
     u16 *colors = gSettlements_WaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)0x5000060, 32);
+    copy(colors, (void *)&BG_PLTT_COLOR(3, 0), 32);
     copy(gSettlements_WaterColorsSaved, colors, 32);
     *frame = 0;
   }
@@ -795,8 +789,8 @@ void Scroll_HBlank(void) {
     REG_BLDCNT = 0;
   } else {
     Io_Write16(gSettlements_WaterfallScrollBelow, &REG_BG1HOFS);
-    REG_BLDALPHA = 0x100c;
-    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = BLEND_ALPHA(12, 16);
+    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
 }
 
@@ -818,7 +812,8 @@ void Settlements_UnblockFallsObjects(void) {
 }
 
 void Settlements_BlockFallsObject(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
@@ -1041,24 +1036,26 @@ void Settlements_BlockCrate(void) {
   Settlements_DropCrate();
 }
 
-extern u32 gSettlements_SmokeScript[];
+extern s32 gSettlements_SmokeScript[];
 
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves. */
   UNUSED struct SettlementsVector velocity;
-  struct SettlementsSpawn spawn;
+  struct EffectOptions spawn;
   struct Actor *object = Actor_Get(id);
 
-  spawn.kind = 0x115;
-  spawn.scaleX = 0xcccc;
-  spawn.scaleY = 0xcccc;
-  spawn.speed = 0x10000;
-  spawn.acceleration = px(1);
+  spawn.type = SPRITE_WATER_SPRAY;
+  spawn.startScaleX = Q16_ONE * 4 / 5;
+  spawn.startScaleY = Q16_ONE * 4 / 5;
+  spawn.targetScaleX = Q16_ONE;
+  spawn.targetScaleY = Q16_ONE;
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
-                    0x1c0000, &spawn);
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_SCALE_TO_TARGET,
+                    &spawn);
 }
 
 #include "../field/field_effect_advance_motion.c"
@@ -1094,7 +1091,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
     x += x / 3;
     vec.x = x;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, 0x01000001, &params);
+                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
   }
 }
 
@@ -1125,8 +1122,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
-
-#include "text/msg_ids.h"
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
@@ -1203,12 +1198,12 @@ s32 gSettlements_BobScript[] = {
     SC_END,
 };
 
-u32 gSettlements_SmokeScript[] = {
+s32 gSettlements_SmokeScript[] = {
     SC_ANIMATION(2),
     SC_END,
 };
 
-u32 gSettlements_CrateBobScript[] = {
+s32 gSettlements_CrateBobScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -1278,7 +1273,7 @@ struct ActorPlacement gSettlements_Placements[] = {
 };
 
 struct ActorPlacement gSettlements_GondowanSettlementPlacements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
@@ -1291,7 +1286,7 @@ struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[] = {
 struct ActorPlacement gSettlements_HesperiaSettlementPlacements[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -1303,9 +1298,9 @@ struct ActorPlacement gSettlements_HesperiaSettlementHousesPlacements[] = {
 };
 
 struct ActorPlacement gSettlements_AttekaIsletPlacements[] = {
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -1323,7 +1318,7 @@ struct ActorPlacement gSettlements_AttekaIsletPlacements[] = {
 };
 
 struct ActorPlacement gSettlements_AttekaIsletHousesPlacements[] = {
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 816, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 816, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1436,10 +1431,10 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_STEP, ACTOR_APPLE, CONDITION_ALWAYS,
      EVENT(Settlements_StepOffIce)},
     {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x203,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, 0xf5d,
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, FLAG_APPLE_TAKEN,
      EVENT(Settlements_CatchApple)},
     {TRIGGER_TABLE_END},
 };

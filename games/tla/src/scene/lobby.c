@@ -32,6 +32,7 @@
 #include "system/task.h"
 #include "system/input.h"
 #include "scene_ids.h"
+#include "text/msg_ids.h"
 
 extern u16 gData_02003a74[];
 
@@ -44,6 +45,11 @@ void Serial_Initialize(void);
 void Event_Start(void);
 void Event_End(void);
 void Sanctum_Run(s32 value);
+void GameFlag_SetByte(s32 flag, s32 value);
+
+static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
+  GameFlag_SetByte(flag, value);
+}
 
 void LinkLobby_InitializeSerial(void) {
   volatile u16 *ime = &REG_IME;
@@ -60,6 +66,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// The lobby's people, by the rows of gActorPlacements, as The Broken Seal's
 /// Battle Arena keeps them where it has the same ones; the party's rows go to
 /// their party slots.
+// Byte flags, as The Broken Seal names them: the party members the linked
+// opponent sent, and the Monster Battles won in a row (-1 after the series
+// ends).
+#define FLAG_LINK_PARTY_COUNT 0x3f0
+#define FLAG_MONSTER_BATTLE_WINS 0x3f8
+
 enum LinkLobbyActorId {
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle
   ACTOR_LINKED_WINS_TELLER,             ///< reports the linked battles won
@@ -111,7 +123,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   } else {
     Event_ClearFlag(FLAG_AREA_TEMP_03);
   }
-  /* FAKEMATCH(dead): a once-only loop, which places the test after the body. */
+  // At most one pass: a match returns 1, anything else breaks out.
   while (id >= 0 && Event_GetFlag(FLAG_AREA_TEMP_03)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
@@ -154,7 +166,7 @@ s32 LinkLobby_PollPeerReady(void) {
   result = 1;
   z = Actor_GetById(ACTOR_FELIX)->z.fixed;
 
-  if (z > 0xe00000)
+  if (z > px(224))
     Event_ClearFlag(FLAG_AREA_TEMP_04);
   if (work->raisedTrigger != 2) {
     LinkLobby_PeerSlotMatches(0);
@@ -206,8 +218,6 @@ s32 LinkLobby_PollPeerReady(void) {
     work->raisedTrigger = 2;
   return result;
 }
-
-#include "text/msg_ids.h"
 
 extern s32 gLinkLobby_CallFrames;
 
@@ -536,19 +546,17 @@ done:
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
-  u32 zero;
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  zero = 0;
   state = &gSerialTransfer;
   state->status = 0x80;
-  *(u8 *)&state->peerFlags = zero;
-  gSerialSendSource = zero;
-  *(u8 *)&state->flags = zero;
-  gSerialSendSize = zero;
-  gSerialReceiveDestination = zero;
-  gSerialReceivedSize = zero;
+  *(u8 *)&state->peerFlags = 0;
+  gSerialSendSource = 0;
+  *(u8 *)&state->flags = 0;
+  gSerialSendSize = 0;
+  gSerialReceiveDestination = 0;
+  gSerialReceivedSize = 0;
   IRQ_UNLOCK(saved);
 }
 
@@ -587,7 +595,7 @@ s32 LinkLobby_ExchangePartyRecords(void) {
     if (result < 0)
       goto fail;
   }
-  GameFlag_SetByte(0x3f0, first);
+  FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, first);
   result = first;
 check:
   if (first < 0) {
@@ -614,8 +622,6 @@ s32 LinkLobby_EnterBattle(void) {
   u8 *src;
   u16 *table;
   u32 i;
-  s32 scene;
-  s32 set;
 
   failed = 0;
   window = 0;
@@ -710,16 +716,12 @@ s32 LinkLobby_EnterBattle(void) {
       Actor_SetSpeed(ACTOR_FELIX, 0.5);
       Actor_WaitForMoveById(ACTOR_FELIX);
     }
-    /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
-     * is loaded once for both branches. */
-    set = Event_GetFlag(FLAG_MONSTER_BATTLE);
-    scene = SCENE_LOBBY;
-    if (set) {
-      Event_SetAfterBattleDestination(scene, 8);
-      Event_SetDefeatDestination(scene, 9);
+    if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
+      Event_SetAfterBattleDestination(SCENE_LOBBY, 8);
+      Event_SetDefeatDestination(SCENE_LOBBY, 9);
     } else {
-      Event_SetAfterBattleDestination(scene, 10);
-      Event_SetDefeatDestination(scene, 11);
+      Event_SetAfterBattleDestination(SCENE_LOBBY, 10);
+      Event_SetDefeatDestination(SCENE_LOBBY, 11);
     }
     gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
@@ -771,9 +773,9 @@ s32 LinkLobby_ChooseBattleMode(void) {
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
       if (answer == 0) {
-        GameFlag_SetByte(1000, 0);
+        FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
-        Event_ClearFlag(0x172);
+        Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
         Event_ClearFlag(FLAG_LINK_BATTLE);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
         line = msg + 7;
@@ -821,7 +823,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(0)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
-          Event_SetFlag(0x172);
+          Event_SetFlag(FLAG_LINK_BATTLE_ARRANGED);
           if (Event_GetFlag(FLAG_SCENE_TEMP_01))
             Event_SetMessageId(msg + 3);
           else
@@ -966,13 +968,13 @@ void LinkLobby_OpenSanctum(s32 value) {
 }
 
 /// Whether owner is one of the first three active owners, or the first four
-/// while flag 370 is clear; an 0xff entry ends the list.
+/// while FLAG_LINK_BATTLE_ARRANGED is clear; an 0xff entry ends the list.
 s32 LinkLobby_PartyContains(s32 owner) {
   s32 count = Party_CountMembers();
   s32 limit = 3;
   s32 i;
 
-  if (!Event_GetFlag(370))
+  if (!Event_GetFlag(FLAG_LINK_BATTLE_ARRANGED))
     limit = 4;
   if (count > limit)
     count = limit;
@@ -1020,7 +1022,8 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_ShowMessage(actor, 0);
   song = 0;
   all = 0;
-  if ((gInput.held & (KEY_START | KEY_UP | KEY_L)) == 0x248)
+  if ((gInput.held & (KEY_START | KEY_UP | KEY_L)) ==
+      (KEY_START | KEY_UP | KEY_L))
     all = 1;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   for (;;) {
@@ -1281,13 +1284,6 @@ void Sound_LoadReverbCode(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void GameFlag_SetByte(s32 flag, s32 value);
-
-static inline void Flag_SetByte(s32 flag, s32 value) {
-  /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline. */
-  GameFlag_SetByte(flag, value);
-}
-
 /// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
 /// up.
 s32 LinkLobby_Initialize(void) {
@@ -1335,17 +1331,17 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(5);
     gMainRoutineWork.linkTallies[0]++;
     gMainRoutineWork.linkTallies[3]++;
-    wins = (s8)GameFlag_GetByte(0x3f8);
+    wins = (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     msg = wins * 2 + 2;
     if (msg > 14)
       msg = 14;
-    v = FieldGameFlag_GetByte(1000);
+    v = FieldGameFlag_GetByte(FLAG_AREA_TEMP_E8);
     if (v == 2) {
-      GameFlag_SetByte(1000, 0);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
       wins++;
       msg++;
     } else {
-      Flag_SetByte(1000, v + 1);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId((s32)MsgLobbyNotBadWouldYouLike + msg);
@@ -1353,10 +1349,10 @@ s32 LinkLobby_Initialize(void) {
     if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       if (wins > 90)
         wins = 90;
-      GameFlag_SetByte(0x3f8, wins);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
-      GameFlag_SetByte(0x3f8, -1);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       // score holds the row's address, then the score read through it.
       score = (u32)&gMainRoutineWork.linkTallies[3];
       MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
@@ -1400,7 +1396,7 @@ s32 LinkLobby_Initialize(void) {
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
-    GameFlag_SetByte(0x3f8, -1);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(0);
     Event_End();
   } else if (gMainRoutineWork.entrance == 10) {
@@ -1453,8 +1449,8 @@ s32 LinkLobby_Initialize(void) {
     Event_End();
   } else {
     Serial_Initialize();
-    Event_ClearFlag(0x172);
-    GameFlag_SetByte(0x3f8, -1);
+    Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gMainRoutineWork.idleSleepEnabled != 0) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -1538,7 +1534,7 @@ u32 gSceneExits[] = {
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 272, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 380, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 252, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1568,7 +1564,7 @@ struct ActorPlacement gActorPlacements[] = {
 struct ActorPlacement gLinkLobby_UnusedPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 272, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, 0x0, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),

@@ -56,6 +56,9 @@
 #include "field/field_effect.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
+#include "tla_edition.h"
+#include "text/msg_ids.h"
+#include "system/io_write.h"
 
 /// A sprite with no tiles of its own: the code loads an item's icon into it,
 /// or the frame of another sprite.
@@ -81,6 +84,17 @@
 /// The way in from the cracked floor above, landing below the crack.
 #define ENTRANCE_FROM_CRACK 11
 
+/// A flame thrower's flags (the flame thrower tables): the flame's reach in the
+/// low four bits, and which flame it sends, or none.
+enum FlameThrowerFlags {
+  FLAME_FORWARD = 0x00,          ///< Ride_SpawnForward
+  FLAME_LANDING_FORWARD = 0x10,  ///< Ride_SpawnLandingForward
+  FLAME_LANDING_BACKWARD = 0x20, ///< Ride_SpawnLandingBackward
+  FLAME_BACKWARD = 0x30,         ///< Ride_SpawnBackward
+  FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
+  FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
+};
+
 enum {
   /// The dragon statue before the statue with the face, in two halves; Blaze
   /// is cast at the east half and hits the west one.
@@ -102,14 +116,11 @@ enum {
   ACTOR_WEST_FIREBALL_ROLL = 20
 };
 
+/// The ride work seen from one flame thrower's entry: the work's header, then
+/// the entry, as the getters below index it.
 struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
+  u8 beforeEntries[20];
+  struct RideEntry entry;
 };
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -151,14 +162,6 @@ void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
 #ifndef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 #define TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "system/input.h"
-
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Trig_Cos(s32 angle);
@@ -167,9 +170,6 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
-#include "system/main_routine_work.h"
-#include "field/field_sprite.h"
-#include "tla_edition.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
@@ -205,11 +205,11 @@ next:
       /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
       do {
       } while (0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = Q16_ONE / 2;
@@ -235,11 +235,11 @@ void MarsLighthouseStarRoom_WestFireballCracksIce(void) {
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
-    object->x.fixed = object->timer << 16;
-    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->homeX << 16;
+    object->z.fixed = object->homeZ << 16;
     if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
-      object->scaleX = 0x9999;
-      object->scaleY = 0x9999;
+      object->scaleX = Q16_ONE * 3 / 5;
+      object->scaleY = Q16_ONE * 3 / 5;
     }
   }
 }
@@ -260,8 +260,8 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
     Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
-    object->x.fixed = object->timer << 16;
-    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->homeX << 16;
+    object->z.fixed = object->homeZ << 16;
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
     Event_SetFlag(FLAG_DRAGON_ICE_CRACKED);
@@ -331,9 +331,9 @@ s32 Scene_Initialize(void) {
       struct Actor *other;
       s32 x;
 
-      x = (column << 20) + 0x80000;
+      x = FIELD_CELL_CENTER(column);
       leader->x.fixed = x;
-      leader->z.fixed = (row << 20) - 0x1280000;
+      leader->z.fixed = (row << 20) - px(296);
       other = work->camera;
       other->x.fixed = x;
       other->z.fixed = leader->z.fixed;
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
       if (!Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
         FieldActor_SetSpritePriority(ACTOR_AGATIO_DRAGON, 3);
         FieldActor_SetSpritePriority(ACTOR_KARST_DRAGON, 3);
-        Actor_GetById(ACTOR_KARST_DRAGON)->scaleX = 0xffff0000;
+        Actor_GetById(ACTOR_KARST_DRAGON)->scaleX = -Q16_ONE;
       }
       if (Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN)) {
         MarsLighthouseStarRoom_ClearDragonIce();
@@ -407,7 +407,8 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   MarsLighthouseStarRoom_ClearDragonIce();
   Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -653,8 +654,6 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   }
 }
 
-#include "text/msg_ids.h"
-
 void Event_Start(void);
 void Event_End(void);
 
@@ -694,7 +693,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   if (!Event_GetFlag(FLAG_MARS_STAR_TAKEN)) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
     object = gMarsLighthouseStarRoom_MarsStar;
     object->motionFlags = 0;
     object->speedLimit = px(4);
@@ -764,7 +763,7 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
   Actor_SetSpriteFlags(Actor_Get(id), 0);
   FieldActor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->collisionFlags = 0;
   if (id == ACTOR_AGATIO) {
     Actor_SetPosition(ACTOR_AGATIO, 700, 224);
@@ -777,12 +776,8 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
   }
 }
 
-struct EventNote {
-  u8 unk000[0x15a];
-  u16 unk15a;
-};
-
-/// "There's a space for you to place something."
+/// "There's a space for you to place something." Then the field menu opens,
+/// for the party to choose what to place.
 void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -790,7 +785,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   // "There's a space for you to place something."
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
-  ((struct EventNote *)work)->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -829,7 +824,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->motionFlags = 0;
     object->retainSpriteCache = 1;
     sprite->unk1b[0] = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
@@ -954,7 +949,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       object->motionFlags = 0;
       object->retainSpriteCache = 1;
       sprite->unk1b[0] = 0;
-      object->priorityFlags |= 2;
+      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
@@ -1018,7 +1013,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStarSprite->priority = 2;
     placedStar->motionFlags = 0;
     placedStar->retainSpriteCache = 1;
-    placedStar->priorityFlags |= 2;
+    placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(placedStarSprite->vramBlock, 128, placedStarGlyphs + 0x400);
@@ -1107,8 +1102,10 @@ L_020093b0:
 
 #endif
 
+/// A rising spark as its update reads the actor: its frames, kept where an
+/// actor keeps its watched actor.
 struct RiseTimer {
-  u8 unk00[0x68];
+  u8 beforeFrames[0x68];
   s32 frames;
 };
 
@@ -1166,15 +1163,16 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
   x += column;
   z = (u32)z >> 16;
   z <<= 16;
-  z += 0x1cc0000;
-  object = ObjectCreate_(SPARK_SPRITE, x, 0x200000, z);
+  z += px(460);
+  object = ObjectCreate_(SPARK_SPRITE, x, px(32), z);
   if (object != NULL) {
-    /* FAKEMATCH(barrier): an empty asm clobbering r0. */
+    /* FAKEMATCH(barrier): the form kept; as without the asm, 1 of 91
+     * instructions differ in tla-en. */
     asm("" : : : "r0");
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= 0xfe;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite = object->sprite;
     sprite->priority = 2;
     Actor_SetSpriteFlags(object, 0);
@@ -1208,7 +1206,7 @@ extern u8 gInventorySnapshot[];
 
 #include "shared/ride_update_carried.h"
 
-extern u32 gScriptedPart_Script[];
+extern s32 gScriptedPart_Script[];
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
@@ -1292,19 +1290,12 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 
 #include "shared/ride_update_drift.h"
 
-extern u32 gScriptedPart_Script[];
+extern s32 gScriptedPart_Script[];
 
-#include "shared/actor_setup_scripted.h"
+#include "shared/actor_setup_scripted_for.h"
 
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 void Ride_UpdateDrift();
-/* VIEW(s1b78): routine Actor_SetupScripted as void Actor_SetupScripted(struct
- * Actor *object, s32 priority); the definition has void
- * Actor_SetupScripted(struct Actor *object); not tried: Actor_SetupScripted's
- * declaration holds a FAKEMATCH tag. */
-extern void
-Actor_SetupScripted__s1b78(struct Actor *object,
-                           s32 priority) __asm__("Actor_SetupScripted");
 
 void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
   struct Actor *object = ObjectCreate_(SPARK_SPRITE, position[0], position[1],
@@ -1317,7 +1308,7 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
     object->riseBaseY = (u16)(Random16() << 1) + base;
     spin = (u16)Random16() - 0x8000;
     object->timer = spin;
-    Actor_SetupScripted__s1b78(object, 2);
+    Actor_SetupScriptedFor(object, 2);
     object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
   }
@@ -1325,80 +1316,72 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
 
 typedef struct Actor Actor;
 
+/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;
-  s16 timer;
-  u16 flags;
-  s16 unk_6;
-  Actor *actor;
-  s32 unk_c;
+  s16 timer; ///< frames to its next puff
+  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
+  /// Puffs even off screen, and its flames keep their sprites.
+  s16 offScreen;
+  struct Actor *actor;
+  s32 reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
+/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
+/// sets stopped, which calls back once.
 typedef struct State {
-  u8 pad0[6];
-  s16 unk_6;
-  s16 unk_8;
-  u8 pada[4];
-  s16 unk_e;
-  void (*callback)();
+  u8 unusedBeforeStopped[6];
+  s16 stopped;
+  s16 wasStopped;
+  u8 unusedAfterWasStopped[4];
+  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
+  void (*onStopped)();
   Entry entries[4];
 } State;
 
-void Ride_SpawnForward();
-void Ride_SpawnBackward();
-void Ride_SpawnLandingForward();
-void Ride_SpawnLandingBackward();
-extern u8 gInventorySnapshot[];
-
-typedef struct Position {
-  s32 x;
-  s32 z;
-} Position;
-
-typedef struct Camera {
-  u8 pad0[228];
-  Position position;
-} Camera;
-
-typedef struct IwramGlobals {
-  u8 pad0[32];
-  Camera *camera;
-  u8 pad24[108 - 36];
+/// The heap slots as FlameThrowers_Puff reads them: the field work through a
+/// union, which keeps its read after the stores before it.
+typedef struct HeapSlotsView {
+  u8 unusedBeforeMapGrid[32];
+  struct MapWork *mapGrid;
+  u8 unusedBeforeFieldWork[108 - 36];
   union {
     s32 word;
     void *pointer;
-  } unk_6c;
-} IwramGlobals;
+  } fieldWork;
+} HeapSlotsView;
 
-#define IWRAM ((IwramGlobals *)Ram_HeapSlots)
-
+/// Each frame, every flame thrower in view sends its flame: forward, landing
+/// forward or back, back, or a spark, by its flags, every ninth frame. They
+/// pause while a menu is open, or a Psynergy is used unless the ride work runs
+/// them through it; reaching a stop calls the stop's callback once.
 void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
-  Camera *camera;
-  Position *position;
+  struct MapWork *map;
+  s32 *view;
   s32 cameraX, cameraZ;
   s32 v;
   s32 i;
 
-  state = (State *)(gInventorySnapshot + 0x188);
-  camera = IWRAM->camera;
+  state = (State *)RIDE_WORK;
+  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
   entry = state->entries;
-  position = &camera->position;
-  cameraX = position->x;
-  cameraX &= 0xffff0000;
-  cameraZ = position->z & 0xffff0000;
-  saved[1] = (*(s32 **)camera)[1];
-  saved[0] = IWRAM->unk_6c.word;
-  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
-    state->callback();
-  v = (u16)state->unk_6;
-  state->unk_8 = v;
-  state->unk_6 = 0;
+  view = &map->viewX;
+  cameraX = view[0];
+  cameraX &= FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
+  saved[1] = map->origin[1];
+  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
+  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
+    state->onStopped();
+  v = (u16)state->stopped;
+  state->wasStopped = v;
+  state->stopped = 0;
   for (i = 3; i >= 0; i--, entry++) {
-    Actor *actor;
-    s32 flag, x, y, unk6, value, dx, dz;
+    struct Actor *actor;
+    s32 flag, x, y, offScreen, value, dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -1407,21 +1390,21 @@ void FlameThrowers_Puff(void) {
     if (actor == 0)
       continue;
     flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (*(s16 *)(saved[0] + 358) != 0)
+    if (((struct FieldWork *)saved[0])->psynergy != 0)
       flag |= 1;
     mark = &actor->paused;
     *mark = flag;
-    if (state->unk_e != 0)
+    if (state->runsDuringPsynergy != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
     dz = actor->z.fixed;
     dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
-    unk6 = entry->unk_6;
+    offScreen = entry->offScreen;
     x = dx >> 16;
     y = (y >> 16) - 8;
-    if (unk6 == 0) {
+    if (offScreen == 0) {
       if ((u32)(x + 7) > 334)
         continue;
       if (y <= -48)
@@ -1431,22 +1414,24 @@ void FlameThrowers_Puff(void) {
     }
     y = (u16)entry->timer;
     if (entry->timer <= 0) {
-      y = entry->flags & 240;
+      y = entry->flags & 0xf0;
       switch (y) {
-      case 128:
-        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
+      case FLAME_SPARK:
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
         break;
-      case 48:
-        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_BACKWARD:
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
-      case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_BACKWARD:
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
+                                  offScreen);
         break;
-      case 16:
-        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_LANDING_FORWARD:
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
+                                 offScreen);
         break;
-      case 0:
-        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
+      case FLAME_FORWARD:
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
       }
       value = 8;
@@ -1456,31 +1441,31 @@ void FlameThrowers_Puff(void) {
     entry->timer = value;
   }
 }
-#undef IWRAM
 
+/// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
+/// keeps the block cached.
 struct RideAnimation {
-  u8 unk00[0x10];
-  u8 value10;
-  u8 flag11 : 1;
+  u8 beforeVramBlock[0x10];
+  u8 vramBlock;
+  u8 keepEntry : 1;
 };
 
 extern u8 gInventorySnapshot[];
 
 void Ride_Create(void) {
-  struct FlameHitWork *work =
-      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
-  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
   object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->value10;
-  animation->flag11 = 1;
+  work->value0c = animation->vramBlock;
+  animation->keepEntry = 1;
 }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -1488,18 +1473,15 @@ void Actor_Release(struct Actor *object);
 
 #include "shared/ride_release_handle.h"
 
-void Ride_SetMode(s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->value0e = value;
-}
+void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 
-/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
- * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition; not
- * tried: struct MarsLighthouseBeam__ride_handle was not found. */
-struct MarsLighthouseBeam__ride_handle {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
+/// The ride work as FlameThrowers_Start fills it: the hit trigger and the stop
+/// callback, then the flame throwers and their stops.
+struct FlameThrowerBeam {
+  u8 beforeHitTrigger[10];
+  u16 hitTrigger; ///< the step trigger a flame that hits the leader raises
+  u8 beforeOnStopped[4];
+  s32 onStopped; ///< called once a flame reaches its stop
   struct MarsLighthouseBeamTarget targets[4];
   struct MarsLighthouseBeamStop {
     u16 kind;
@@ -1507,9 +1489,9 @@ struct MarsLighthouseBeam__ride_handle {
   } stops[4];
 };
 
-void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
-  struct MarsLighthouseBeam__ride_handle *beam =
-      (struct MarsLighthouseBeam__ride_handle *)(gInventorySnapshot + 0x188);
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
+                         s32 hitTrigger) {
+  struct FlameThrowerBeam *beam = (struct FlameThrowerBeam *)RIDE_WORK;
   struct MarsLighthouseBeamTarget *target = beam->targets;
   s32 id;
   s32 i;
@@ -1547,8 +1529,8 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       }
     }
   }
-  beam->unk10 = a2;
-  beam->unk0a = a3;
+  beam->onStopped = onStopped;
+  beam->hitTrigger = hitTrigger;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = 0xc08;
@@ -1563,28 +1545,25 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
 }
 
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a;
 }
 
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.a = value;
 }
 
-s32 Ride_GetCounter(void) {
-  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->counter;
-}
+s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_advance_counter.h"
 
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c =
-      value;
+  RIDE_WORK->entries[index].c = value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.b;
 }
 
 #include "shared/ride_set_slot.h"
@@ -1617,7 +1596,7 @@ extern u8 gInventorySnapshot[];
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseStarRoom_KnockBackIfHit(void) {
-  if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active)
+  if (RIDE_WORK->active)
     Leader_KnockBack();
 }
 
@@ -1653,7 +1632,7 @@ s32 Fireball_CarryLeader(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  ride = RIDE_WORK;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1668,9 +1647,9 @@ s32 Fireball_CarryLeader(void) {
       leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;
     System_Wait(1);
@@ -1686,12 +1665,12 @@ s32 Fireball_CarryLeader(void) {
 
 #include "shared/ride_if_active.h"
 
-s32 MarsLighthouseStarRoom_IsSliding(void) {
-  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
-}
+s32 MarsLighthouseStarRoom_IsSliding(void) { return RIDE_WORK->active; }
 
+/// A sprite as the crumbs copy it from the flame's: its OAM attributes, scale,
+/// VRAM block, size and layer count, and its animation record.
 struct SpriteView {
-  u8 unk00[4];
+  u8 beforeOam[4];
   u16 y : 8;
   u16 affine : 2;
   u16 blendMode : 2;
@@ -1703,36 +1682,38 @@ struct SpriteView {
   u16 size : 2;
   u16 tile : 10;
   u16 attr2Rest : 6;
-  u8 unk0a[2];
+  u8 afterOam[2];
   s32 scale; ///< as field_sprite.h's FieldSprite has it
   u8 vramBlock;
   u8 keepEntry : 1;
-  u8 unk11 : 7;
+  u8 otherFlags : 7;
   u16 rotation;
-  u8 unk14[2];
-  u8 unk16[5];
-  u8 unk1b;
-  u8 unk1c[12];
+  u8 dimensions[2]; ///< width and height
+  u8 beforeLayerCount[5];
+  u8 layerCount;
+  u8 beforeRecord[12];
   void *record;
 };
 
+/// The ride work as the crumbs read it: the VRAM block of the flame Ride_Create
+/// makes, whose sprite the crumbs share, and that flame.
 struct Work {
-  u8 unk00[12];
+  u8 beforeVramBlock[12];
   u16 vramBlock;
-  u8 unk0e[98];
-  struct Actor *owner;
+  u8 beforeFlame[98];
+  struct Actor *flame;
 };
 
 extern u32 gMarsLighthouseStarRoom_CrumbScript[];
 
-#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
+#define WORK ((struct Work *)RIDE_WORK)
 
 /// A crumb breaks from the rolling actor as it shrinks away.
 void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
   struct Work *work = WORK;
   s32 i;
 
-  if (work->owner == NULL)
+  if (work->flame == NULL)
     return;
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
@@ -1764,26 +1745,26 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gMarsLighthouseStarRoom_CrumbScript);
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + px(2);
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->velocityX = velocity;
       object->acceleration = 0;
       object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
-      source = work->owner->sprite;
+      source = work->flame->sprite;
       VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
       SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
-      sprite->unk1b = 0;
-      sprite->unk14[0] = source->unk14[0];
-      sprite->unk14[1] = source->unk14[1];
+      sprite->layerCount = 0;
+      sprite->dimensions[0] = source->dimensions[0];
+      sprite->dimensions[1] = source->dimensions[1];
       sprite->shape = source->shape;
       sprite->size = source->size;
 
@@ -1798,7 +1779,7 @@ extern u32 gEmbers_Script[];
 
 /// An attached actor holds still while an event runs.
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(260);
+  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1844,9 +1825,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
-      actor->targetZ = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetX = 0x80000000;
+      actor->targetZ = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetX = TARGET_UNSET;
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
@@ -1861,10 +1842,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileZ = FIELD_CELL(actor->z.fixed);
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = map->layers[1].offsetX >> 20;
-    heightA = map->layers[1].offsetY >> 20;
-    widthB = map->layers[2].offsetX >> 20;
-    heightB = map->layers[2].offsetY >> 20;
+    widthA = FIELD_CELL(map->layers[1].offsetX);
+    heightA = FIELD_CELL(map->layers[1].offsetY);
+    widthB = FIELD_CELL(map->layers[2].offsetX);
+    heightB = FIELD_CELL(map->layers[2].offsetY);
 
     for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
         zA = tileZ + heightA - 1;
@@ -1879,8 +1860,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -1888,8 +1869,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
       }
     }
@@ -1903,7 +1884,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     fieldWork = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->active = 2;
@@ -1942,7 +1923,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 kind, s32 value,
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Actor_SelectAnimation(object, 1);
-  *(struct Actor **)((u8 *)object + 0x68) = source;
+  object->watchedActor = source;
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
   *(u8 *)((u8 *)object + 0x62) = kind;
@@ -2017,7 +1998,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -2041,7 +2023,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -2091,7 +2073,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-#include "system/io_write.h"
 #include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect_advance_motion.c"
@@ -2148,8 +2129,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = ((dx + x) << 20) + 0x80000;
-    leader->z.fixed = ((dz + z) << 20) + 0x80000;
+    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
+    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;
@@ -2158,8 +2139,6 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     gFieldWork->transition = effect;
   }
 }
-
-#include "text/msg_ids.h"
 
 void MarsLighthouseStarRoom_ExamineStatue(void);
 
@@ -2341,7 +2320,7 @@ s32 gMarsLighthouseStarRoom_EastFireballRoute[] = {
     17,
 };
 
-u32 gScriptedPart_Script[] = {                                                               
+s32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
@@ -2462,14 +2441,14 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS,
                     (s32)gMarsLighthouseStarRoom_StatueScript, 648, 0, 264,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(291, CONDITION_ALWAYS, 7, 680, 0, 240, FACING_SOUTH,
-                    TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(181, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 664, 0, 216,
+    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 680, 0, 240,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(181, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 696, 0, 216,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLAME_DRAGON, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 664, 0,
+                    216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLAME_DRAGON, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 696, 0,
+                    216, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
@@ -2480,9 +2459,9 @@ struct ActorPlacement gActorPlacements[] = {
                     TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -2528,7 +2507,7 @@ struct Trigger gSceneEvents[] = {
 };
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };

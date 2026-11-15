@@ -11,18 +11,6 @@
 #include "field/map_grid.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-#define U16_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-struct SceneWork {
-  u8 unk000[0x166];
-  u16 unk166;
-  u8 unk168[0x44];
-  s32 unk1ac;
-  u8 unk1b0[0xb88];
-  u8 unkd38;
-};
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -36,10 +24,6 @@ struct SpriteParts {
   u16 unk12;
 };
 
-struct Box {
-  s32 word[6];
-};
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
@@ -47,8 +31,6 @@ s32 Ride_GetEntryFlags(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
 void ObjectTable_Snapshot(void);
 s32 Trig_Cos(s32 angle);
-
-void Func_02001e1c(struct Actor *object, s32 part);
 
 static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3,
                                               s32 a4, s32 a5) {

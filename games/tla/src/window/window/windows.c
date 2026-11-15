@@ -90,6 +90,8 @@ void WindowSystem_InitField(void) {
   WindowSystem_StartFieldUpdate();
 }
 
+/// Sets up the window system for battle, as WindowSystem_InitField does for the
+/// field.
 void WindowSystem_InitBattle(s32 kind) {
   struct WindowWork *work;
   s32 i;

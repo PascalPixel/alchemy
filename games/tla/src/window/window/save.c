@@ -278,6 +278,9 @@ u32 Save_FindFreeFile(void) {
   return 999;
 }
 
+/// Returns how many save files there are, leaving out those whose summary has
+/// its send flag set when flag is nonzero, or -9 when the backup memory cannot
+/// be read. It opens and releases the save workspace itself.
 s32 Save_CountFilesExcludingSent(s32 flag) {
   s32 i;
   s32 cnt;

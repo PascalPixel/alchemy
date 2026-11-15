@@ -711,6 +711,8 @@ s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 #define Portrait_Create Portrait_Create__window
 
+/// Marks both portrait slots free (resource 999). Only the window system's
+/// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 index = 0;

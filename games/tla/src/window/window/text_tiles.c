@@ -336,6 +336,9 @@ struct WindowTileWork {
   u8 table[256];
 };
 
+/// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
+/// to 639), and with alt set lets text tiles take that range too; the first
+/// range's tiles keep their state.
 void Text_UseExtraTiles(s32 alt) {
   struct WindowTileWork *work =
       (struct WindowTileWork *)Ram_HeapSlots->windowWork;

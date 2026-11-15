@@ -264,6 +264,8 @@ s32 Window_IsClosed(struct Window *window) {
   return 0;
 }
 
+/// Resets the text style glyphs are drawn with: colour 15, no outline, line
+/// spacing 10 and letter spacing 9.
 void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
@@ -296,6 +298,9 @@ void WindowSystem_StartFieldUpdate(void) {
 void WindowSystem_Update(void);
 void WindowSystem_UpdateBattle(void);
 
+/// Resets the text style and starts the per-frame window update
+/// (WindowSystem_Update), reserving the glyph sprites' tiles first when
+/// initialize is set.
 void WindowSystem_StartBattleUpdate(s32 initialize) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 

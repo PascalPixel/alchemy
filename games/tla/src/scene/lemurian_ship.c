@@ -1915,8 +1915,8 @@ struct ActorPlacement gLemurianShip_TwoJellyRoomPlacements[] = {
        0},                                                                     
       {248, CONDITION_ALWAYS, 1, px(104), 0, px(536), FACING_SOUTH, 0,   
        0},                                                                     
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
+      ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),               
+      ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),               
       {SCENE_TABLE_END},                                                       
   };
 
@@ -1977,16 +1977,16 @@ struct ActorPlacement gLemurianShip_PillarRoomPlacements[] = {
        0},                                                                     
       {314, CONDITION_ALWAYS, 1, px(472), 0, px(152), FACING_SOUTH, 2,   
        0},                                                                     
-      {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               
-      {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               
+      ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),               
+      ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),               
       {SCENE_TABLE_END},                                                       
   };
 
 struct ActorPlacement gLemurianShip_EngineRoomPlacements[] = {                                             
-      {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),                
+      ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),                
+      ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),                
+      ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),                
       {SCENE_TABLE_END},                                                       
   };
 

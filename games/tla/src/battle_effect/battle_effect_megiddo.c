@@ -7,21 +7,6 @@
 
 struct StripQuad;
 
-/* VIEW(megiddo): tag struct RenderModel as struct RenderModel__megiddo;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMegiddo moves: 1 of 1354 instructions in
- * tla-en. */
-struct RenderModel__megiddo {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  u8 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define MEGIDDO_DUST_BLOB_PICTURES 0x2400
 
@@ -66,7 +51,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
   s32 m;
-  struct RenderModel__megiddo *model;
+  struct RenderModel *model;
   void *verts;
   struct Particle *p;
   struct ScreenPoint pos;

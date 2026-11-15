@@ -8,28 +8,6 @@
 
 #define KIND125_FRAMES 114
 
-// A texture for the ARM model renderer: its size as powers of two and the
-// address of its pixels.
-
-// A model for the ARM renderer (Render_DrawModelList). A textured model (kind
-// 7) takes a shade; a flat one the address of its colour.
-/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_odyssey.c:364: structure has no
- * member named `look'. */
-struct RenderModel__f190b74 {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  union {
-    s32 shade;
-    u8 *color;
-  } look;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
 
@@ -60,7 +38,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct MotionObject *caster;
   struct BattlePresentationTransition *transition;
   s32 savedScrollX;
-  struct RenderModel__f190b74 *model;
+  struct RenderModel *model;
   void *projected;
   struct Particle *step;
   s32 frame;
@@ -334,7 +312,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
-          model->look.shade = shade;
+          model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
           Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -360,7 +338,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 11) {
         s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
-        model->look.shade = 0;
+        model->shade = 0;
         Transform_Reset();
         Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
         Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -381,7 +359,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
-          model->look.shade = shade;
+          model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(to.x / 2 - 64), 0, 0);
           Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -411,7 +389,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
       for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
         color[0] = (i & 7) + 32;
-        model->look.color = color;
+        model->shade = (long)color;
         Transform_Reset();
         x = step->x;
         y = step->y;

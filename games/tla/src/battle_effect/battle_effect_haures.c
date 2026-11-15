@@ -437,7 +437,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               gHaures_WingShades[i * 2 + 1] = v;
             }
           }
-          model->shade = (s32)shades;
+          model->shade = (long)shades;
           Render_TransformVertices(gHaures_WingCorners, buffer, 64);
           Render_DrawModelList(model);
           Heap_Release(model);
@@ -691,7 +691,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->kind = MODEL_SOLID;
         model->texture = &wideTexture;
         model->vertices = verts;
-        model->shade = (s32)shades;
+        model->shade = (long)shades;
         {
           /* FAKEMATCH(dead): a never-true test of the byte scroll. */
           s32 scroll = model->scrollU;

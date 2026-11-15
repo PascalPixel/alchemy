@@ -36,12 +36,13 @@ struct ModelTexture {
 /// it, its faces and their transformed corners, its texture and its shade.
 /// Render_AllocateModelList ends the list with a cleared entry.
 struct RenderModel {
-  s32 kind;        ///< the rasterizer kernel that draws it; 0 ends the list
+  long kind;       ///< the rasterizer kernel that draws it; 0 ends the list
   s32 flags;       ///< MODEL_TEXTURE_IN_PLACE keeps the texture where it is
   const u16 *mesh; ///< the faces, as the effect tables write them
   s16 *vertices;   ///< the corners Render_TransformVertices wrote
   struct ModelTexture *texture;
-  long shade; ///< a textured model's brightness
+  long shade; ///< a textured model's brightness; a solid model's face colours,
+              ///< by address
   u8 scrollU; ///< how far the texture is scrolled across
   u8 scrollV; ///< how far the texture is scrolled down
 };

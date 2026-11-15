@@ -7,21 +7,6 @@
 
 struct StripQuad;
 
-/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in
- * tla-ja. */
-struct RenderModel__f17bd88 {
-  long kind; // long: see the tag at the model's stores
-  s32 flags;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  long shade; // long: see the tag at the model's stores
-  u8 scrollU;
-  u8 scrollV;
-};
-
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
 /// The last particle keeps the target's position, and its scale in velocityX
@@ -48,7 +33,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   struct MotionObject *target;
   struct ScreenPoint pos;
   struct ModelTexture texture;
-  struct RenderModel__f17bd88 *model;
+  struct RenderModel *model;
   s32 endX;
   s32 endY;
   s32 i;
@@ -162,8 +147,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
-      /* FAKEMATCH(signature): RenderModel's kind and shade typed long, whose
-       * alias set. */
       model->kind = MODEL_SHADED_MAX;
       model->mesh = buffer;
       model->vertices = projected;

@@ -18,21 +18,6 @@ struct MeteorStar {
 
 extern const struct Scale gMeteorBlow_DoubleScale;
 
-/* VIEW(meteor_blow): tag struct RenderModel as struct RenderModel__meteor_blow;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
- * tla-en. */
-struct RenderModel__meteor_blow {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
 
@@ -445,7 +430,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
-    struct RenderModel__meteor_blow *model;
+    struct RenderModel *model;
     s32 angle;
     s32 back;
     s32 shade;

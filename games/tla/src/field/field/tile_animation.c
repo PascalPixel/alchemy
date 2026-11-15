@@ -553,7 +553,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     perspective->tintRegion = region;
     if (region == 9)
       perspective->tintTarget = 12;
-    else if (region == 18 && !GameFlag_Get(0x8ef))
+    else if (region == 18 && !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED))
       perspective->tintTarget = -6;
     else
       perspective->tintTarget = 0;

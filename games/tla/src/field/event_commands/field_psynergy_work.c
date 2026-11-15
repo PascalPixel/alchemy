@@ -231,7 +231,7 @@ void EventObject_Initialize(void) {
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = zero;
   }
-  if (GameFlag_Get(320)) {
+  if (GameFlag_Get(0x140)) {
     if (work->visible != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
     Actor_SelectAnimationFar(object, 21);

@@ -36,7 +36,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_Clear(FLAG_ITEM_USE);
   if (userId == 15)
     userId = 0;
-  if (GameFlag_Get(382)) {
+  if (GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
     FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
@@ -48,7 +48,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (abilityId == 153) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
-        GameFlag_Set(327);
+        GameFlag_Set(0x147);
         event->raisedTrigger = 253;
         return 0;
       }
@@ -127,16 +127,16 @@ s32 Field_UsePsynergy(u32 code) {
       during = NULL;
     }
   }
-  GameFlag_Set(320);
-  GameFlag_Clear(321);
+  GameFlag_Set(0x140);
+  GameFlag_Clear(0x141);
   target = -1;
   if (before != NULL || after != NULL || during != NULL) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
-    GameFlag_Set(321);
+    GameFlag_Set(0x141);
     if (after != NULL && (after->flags & 0x400)) {
-      GameFlag_Clear(320);
-      GameFlag_Clear(321);
+      GameFlag_Clear(0x140);
+      GameFlag_Clear(0x141);
     }
   }
   BattleEffect_LoadActionEffectResources(abilityId, 0);
@@ -163,8 +163,8 @@ s32 Field_UsePsynergy(u32 code) {
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   EventObject_Initialize();
   Field_RunPsynergyEvent(before, userId, target);
-  if (GameFlag_Get(320)) {
-    if (GameFlag_Get(321))
+  if (GameFlag_Get(0x140)) {
+    if (GameFlag_Get(0x141))
       FieldPsynergy_Dispatch();
     else
       FieldPsynergy_Run();
@@ -178,12 +178,12 @@ s32 Field_UsePsynergy(u32 code) {
       Field_RunPsynergyEvent(pending, userId, event->unkd30);
   }
   Field_RunPsynergyEvent(after, userId, target);
-  if (GameFlag_Get(320))
+  if (GameFlag_Get(0x140))
     FieldPsynergy_FinishMindRead();
   event->psynergyActing = 0;
   BattleEffect_CleanupSceneObjects();
-  GameFlag_Clear(320);
-  GameFlag_Clear(321);
+  GameFlag_Clear(0x140);
+  GameFlag_Clear(0x141);
   return 0;
 }
 

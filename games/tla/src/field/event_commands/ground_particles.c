@@ -192,7 +192,7 @@ void FieldMotes_Update(void) {
       u32 firstJitterDraw;
       u32 secondJitterDraw;
 
-      if (GameFlag_Get(0x166)) {
+      if (GameFlag_Get(FLAG_WEATHER_HELD)) {
         mote->timer++;
         mote->delay--;
       }

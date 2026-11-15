@@ -5,6 +5,7 @@
 
 #include "../field_internal.h"
 #include "flag_call.h"
+#include "flags.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
@@ -931,7 +932,7 @@ s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
-/// chosen (flag 363) the sprites are drawn at 1.0 scale.
+/// chosen (FLAG_CHOOSING_COMMANDS) the sprites are drawn at 1.0 scale.
 void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
   const s32 *scale = &actor->scaleX;
   s32 *point;
@@ -939,7 +940,7 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
   void **sprites;
   s32 remaining;
 
-  if (GameFlag_Get(363))
+  if (GameFlag_Get(FLAG_CHOOSING_COMMANDS))
     scale = gActorSprite_FullScale;
   switch (actor->spriteStorageKind & 15) {
   case 1:
@@ -964,8 +965,8 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
 }
 
 /// Each frame, with the fixed camera: places every active object, from the
-/// 64th down. While battle commands are chosen (flag 363) it uses the fixed
-/// view matrix and turns the objects by an eighth of a turn less.
+/// 64th down. While battle commands are chosen (FLAG_CHOOSING_COMMANDS) it uses
+/// the fixed view matrix and turns the objects by an eighth of a turn less.
 void ActorSystem_ProjectSprites(void) {
   struct ActorCameraFixed *camera = Ram_HeapSlots->cameraWork;
   struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
@@ -995,7 +996,7 @@ void ActorSystem_ProjectSprites(void) {
     target = camera->followPosition;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
-  if (GameFlag_Get(363)) {
+  if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     Transform_Reset();
     angle += 0xffffe000;
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);

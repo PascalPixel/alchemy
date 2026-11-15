@@ -115,7 +115,7 @@ s32 FieldSequence_Run(void) {
     OVERLAY_CALL(13);
     MapGrid_CenterOnFollowedPointFar();
   }
-  GameFlag_Clear(287);
+  GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(0x10000, 0);
   work->transition = 0x100;
@@ -442,7 +442,7 @@ s32 FieldSequence_Run(void) {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
-          if (!GameFlag_Get(382)) {
+          if (!GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
             u8 *objects = (u8 *)Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;

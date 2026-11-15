@@ -128,7 +128,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->fieldWork;
-  if (GameFlag_Get(351) == 0) {
+  if (GameFlag_Get(0x15f) == 0) {
     if (GameFlag_Get(FLAG_NO_ENCOUNTERS) != 0 ||
         GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;

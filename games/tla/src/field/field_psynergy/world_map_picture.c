@@ -832,7 +832,8 @@ s32 WorldPicture_Show(s32 mode) {
     Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                    DISPCNT_OBJ_ON,
                &REG_DISPCNT);
-    if ((GameFlag_Get(284) || GameFlag_Get(286)) && !messageShown) {
+    if ((GameFlag_Get(FLAG_WORLD_MAP_LEFT) || GameFlag_Get(0x11e)) &&
+        !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
     }

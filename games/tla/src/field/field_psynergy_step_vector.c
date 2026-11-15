@@ -470,7 +470,7 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= TRIG_TURN / 16;
+        object->facing -= FACING_STEP;
         object->scaleX = frame << 10;
         if (object->scaleX > Q16_ONE)
           object->scaleX = Q16_ONE;

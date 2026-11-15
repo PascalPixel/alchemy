@@ -660,15 +660,15 @@ s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
-  s32 x = owner->x.fixed >> 20;
-  s32 y = owner->y.fixed >> 20;
-  s32 z = owner->z.fixed >> 20;
-  s32 firstX = first->x.fixed >> 20;
-  s32 firstY = first->y.fixed >> 20;
-  s32 firstZ = first->z.fixed >> 20;
-  s32 secondX = second->x.fixed >> 20;
-  s32 secondY = second->y.fixed >> 20;
-  s32 secondZ = second->z.fixed >> 20;
+  s32 x = FIELD_CELL(owner->x.fixed);
+  s32 y = FIELD_CELL(owner->y.fixed);
+  s32 z = FIELD_CELL(owner->z.fixed);
+  s32 firstX = FIELD_CELL(first->x.fixed);
+  s32 firstY = FIELD_CELL(first->y.fixed);
+  s32 firstZ = FIELD_CELL(first->z.fixed);
+  s32 secondX = FIELD_CELL(second->x.fixed);
+  s32 secondY = FIELD_CELL(second->y.fixed);
+  s32 secondZ = FIELD_CELL(second->z.fixed);
 
   if (y == firstY) {
     if (x == firstX) {
@@ -1561,7 +1561,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     return;
 
   // Clear the collision codes of the five cells above the object.
-  x = object->x >> 20;
+  x = FIELD_CELL(object->x);
   z = (object->z - object->y) >> 20;
   cells = map->layers[2].cells;
   for (i = 0; i < 5; i++) {

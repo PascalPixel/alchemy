@@ -219,8 +219,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
-      facing =
-          gAnimationFacing_EightPictures[((dir + TRIG_TURN / 16) >> 13) & 7];
+      facing = gAnimationFacing_EightPictures[((dir + FACING_STEP) >> 13) & 7];
       break;
     default:
       facing = 0;

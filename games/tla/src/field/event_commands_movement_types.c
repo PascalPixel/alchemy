@@ -346,7 +346,7 @@ s32 Field_TryJumpForward(void) {
     return result;
   if (gMainRoutineWork.movementMode == 3)
     return result;
-  if ((angle + TRIG_TURN / 16) & TRIG_TURN / 8) // not facing a quarter turn
+  if ((angle + FACING_STEP) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
   angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   positionWords = position;
@@ -383,9 +383,9 @@ again:
         continue;
       if (entry == leader)
         continue;
-      if ((position[0] - entry->x.fixed + px(8)) >> 20 != 0)
+      if (FIELD_CELL(position[0] - entry->x.fixed + px(8)) != 0)
         continue;
-      if ((position[2] - entry->z.fixed + px(8)) >> 20 != 0)
+      if (FIELD_CELL(position[2] - entry->z.fixed + px(8)) != 0)
         continue;
       delta = position[1] - entry->y.fixed;
       dy = delta - px(16);
@@ -408,8 +408,8 @@ again:
   for (i = 0; i < 64; i++, entry++) {
     if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
         entry != leader && entry->collisionFlags != 0 &&
-        (position[0] - entry->x.fixed + px(8)) >> 20 == 0 &&
-        (position[2] - entry->z.fixed + px(8)) >> 20 == 0) {
+        FIELD_CELL(position[0] - entry->x.fixed + px(8)) == 0 &&
+        FIELD_CELL(position[2] - entry->z.fixed + px(8)) == 0) {
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
@@ -448,8 +448,8 @@ again:
     map = Ram_HeapSlots->mapGrid;
     attr = map->groundEffects;
     if (attr & 12) {
-      s32 cellX = leader->x.fixed >> 20;
-      s32 cellZ = leader->z.fixed >> 20;
+      s32 cellX = FIELD_CELL(leader->x.fixed);
+      s32 cellZ = FIELD_CELL(leader->z.fixed);
       struct MapCell *cells;
 
       if (map == NULL)
@@ -513,9 +513,9 @@ s32 Field_ClimbDown(void) {
   s32 position[3];
 
   spriteFlags = 1;
-  gridX = 8 + ((leader->x.fixed >> 16) & 0xfff0);
-  gridY = 8 + ((leader->y.fixed >> 16) & 0xfff0);
-  gridZ = 8 + ((leader->z.fixed >> 16) & 0xfff0);
+  gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
+  gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & 0xfff0);
+  gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   Event_Start();
   if (leader->spriteStorageKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
@@ -605,9 +605,9 @@ s32 Field_ClimbUp(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 spriteFlags = 1;
   struct MapCell *ground;
-  s32 gridX = 8 + ((leader->x.fixed >> 16) & 0xfff0);
-  s32 gridY = 8 + ((leader->y.fixed >> 16) & ~15);
-  s32 gridZ = 8 + ((leader->z.fixed >> 16) & 0xfff0);
+  s32 gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
+  s32 gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & ~15);
+  s32 gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   s32 position[3];
   s32 result;
 

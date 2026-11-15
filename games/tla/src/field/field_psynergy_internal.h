@@ -53,6 +53,7 @@
 #include "field/canvas_sprite.h"
 #include "system/io_reg.h"
 #include "field/map_grid.h"
+#include "field/field_sequence.h"
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 

@@ -26,18 +26,18 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       ((struct TouchMap *)Ram_HeapSlots->mapGrid)->layers;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 lift;
-  s32 scrollX = layer->x >> 20;
-  s32 scrollZ = layer->z >> 20;
+  s32 scrollX = FIELD_CELL(layer->x);
+  s32 scrollZ = FIELD_CELL(layer->z);
   s32 layerX, layerZ;
   s32 left, top, i;
 
   if (layerIndex <= 2)
     layer += layerIndex;
-  layerX = layer->x >> 20;
-  layerZ = layer->z >> 20;
+  layerX = FIELD_CELL(layer->x);
+  layerZ = FIELD_CELL(layer->z);
   left = x - layerX;
   top = z - layerZ;
-  lift = -(owner->groundHeight >> 20);
+  lift = -(FIELD_CELL(owner->groundHeight));
 
   /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
    * copies. */
@@ -94,7 +94,7 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
-    object->facing += TRIG_TURN / 16;
+    object->facing += FACING_STEP;
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = Q16_ONE;
   Actor_SelectAnimationFar(owner, 1);

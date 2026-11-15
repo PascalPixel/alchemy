@@ -806,7 +806,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *object) {
   u32 step;
 
   step = object->timer * 0x50;
-  object->facing += step + TRIG_TURN / 16;
+  object->facing += step + FACING_STEP;
   if (step < 0x1000)
     object->timer++;
 }
@@ -1886,7 +1886,7 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
-  s32 ownerHeight = owner->groundHeight >> 20;
+  s32 ownerHeight = FIELD_CELL(owner->groundHeight);
   struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapGrid;
   struct TouchLayer *layer = &map->layers[layerIndex];
   s32 i;
@@ -1895,8 +1895,8 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
     s32 x = cell[i].x - windowX;
     s32 z = cell[i].z - windowZ - ownerHeight;
 
-    x += layer->x >> 20;
-    z += layer->z >> 20;
+    x += FIELD_CELL(layer->x);
+    z += FIELD_CELL(layer->z);
 
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;

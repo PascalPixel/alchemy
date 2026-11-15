@@ -209,7 +209,7 @@ void Teleport_PlaySparks(void) {
   Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->facing += spin + TRIG_TURN / 16;
+    object->facing += spin + FACING_STEP;
     wait(1);
   }
 

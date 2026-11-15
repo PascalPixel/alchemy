@@ -201,13 +201,13 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
     struct Actor *object = event->actors[i];
 
     if (checkY) {
-      if (position[0] >> 20 == object->x.fixed >> 20 &&
+      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
           position[1] / Q16_ONE == object->y.fixed / Q16_ONE &&
-          position[2] >> 20 == object->z.fixed >> 20)
+          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
         return object;
     } else {
-      if (position[0] >> 20 == object->x.fixed >> 20 &&
-          position[2] >> 20 == object->z.fixed >> 20)
+      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
+          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
         return object;
     }
   }

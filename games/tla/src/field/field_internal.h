@@ -33,6 +33,11 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/ram_code.h"
+#include "field/field_sequence.h"
+
+/// How far off its heading the leader's pad movement probes for a clear way:
+/// a sixteenth of a turn, 22.5 degrees, and three times that.
+#define FIELD_PROBE_ANGLE (TRIG_TURN / 16)
 
 struct Actor;
 struct FieldPosition;

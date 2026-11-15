@@ -172,10 +172,10 @@ void Actor_UpdateAllMotion(void) {
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
         facingStep = (s16)(ArcTan2(z, x) - actor->facing);
-        if (facingStep > TRIG_TURN / 16)
-          facingStep = TRIG_TURN / 16;
-        if (facingStep < -TRIG_TURN / 16)
-          facingStep = -TRIG_TURN / 16;
+        if (facingStep > FACING_STEP)
+          facingStep = FACING_STEP;
+        if (facingStep < -FACING_STEP)
+          facingStep = -FACING_STEP;
         actor->facing += facingStep;
       }
     }

@@ -271,9 +271,9 @@ void Actor_UpdateAllThumb(void) {
                 continue;
               if (other == object)
                 continue;
-              if (((velocityX - other->x + px(8)) >> 20) != 0)
+              if ((FIELD_CELL(velocityX - other->x + px(8))) != 0)
                 continue;
-              if (((velocityZ - other->z + px(8)) >> 20) != 0)
+              if ((FIELD_CELL(velocityZ - other->z + px(8))) != 0)
                 continue;
               dy = y - other->y;
               if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
@@ -418,7 +418,7 @@ void Actor_UpdateAllThumb(void) {
         maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -TRIG_TURN / 16;
+        maximumFacingStep = -FACING_STEP;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         object->angle += facingStep;

@@ -396,7 +396,7 @@ void FieldPsynergy_Cyclone(void) {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
-      owner->facing += TRIG_TURN / 16;
+      owner->facing += FACING_STEP;
       canvas->angle += 0x400;
       canvas->command = 3;
       wait(1);
@@ -612,8 +612,8 @@ void Blaze_UpdateSpray(void) {
         break;
       }
     }
-    if ((particle->x >> 20) != (work->origin[0] >> 20) ||
-        (particle->z >> 20) != (work->origin[2] >> 20)) {
+    if ((FIELD_CELL(particle->x)) != (work->origin[0] >> 20) ||
+        (FIELD_CELL(particle->z)) != (work->origin[2] >> 20)) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;

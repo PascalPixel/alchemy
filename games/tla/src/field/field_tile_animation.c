@@ -953,7 +953,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
 
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
-  shape += (x >> 20) + ((z >> 20) << 7);
+  shape += (FIELD_CELL(x)) + ((FIELD_CELL(z)) << 7);
   *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
 }
 

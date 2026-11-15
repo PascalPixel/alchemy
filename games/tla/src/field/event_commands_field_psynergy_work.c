@@ -166,7 +166,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   target = Actor_Lookup((s16)targetId);
   scene->angle = (user->facing + TRIG_TURN / 8) &
                  TRIG_TURN * 3 / 4; // Round to four directions.
-  scene->angle8 = (user->facing + TRIG_TURN / 16) & 0xe000;
+  scene->angle8 = (user->facing + FACING_STEP) & 0xe000;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;

@@ -138,11 +138,11 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   if (!MapGrid_CheckCollision(object, &position)) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), angle + FIELD_PROBE_ANGLE, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), angle - TRIG_TURN / 16, &testPosition);
+      Vector_AddPolarOffset(px(8), angle - FIELD_PROBE_ANGLE, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
@@ -162,12 +162,12 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   {
     s32 headingCount = 0;
 
-    angleOffsets[headingCount++] = angle + TRIG_TURN / 16;
-    angleOffsets[headingCount++] = angle - TRIG_TURN / 16;
+    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
+    angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
     angleOffsets[headingCount++] = angle + TRIG_TURN / 8;
     angleOffsets[headingCount++] = angle - TRIG_TURN / 8;
-    angleOffsets[headingCount++] = angle + TRIG_TURN * 3 / 16;
-    angleOffsets[headingCount++] = angle - TRIG_TURN * 3 / 16;
+    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
+    angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE * 3;
     /* FAKEMATCH(dead): a test of headingCount that is never true. */
     if (headingCount == 0)
       goto clear;
@@ -180,13 +180,13 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
         continue;
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
+      Vector_AddPolarOffset(px(8), (u16)heading + FIELD_PROBE_ANGLE,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
+      Vector_AddPolarOffset(px(8), (u16)heading - FIELD_PROBE_ANGLE,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
@@ -540,11 +540,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   if (!MapGrid_CheckCollision(object, &position)) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)angle + FIELD_PROBE_ANGLE, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle - FIELD_PROBE_ANGLE,
+                            &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
@@ -564,12 +565,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   }
   direction = angle;
   headingCount = 0;
-  angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
   angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
-  angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -578,12 +579,14 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading - FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,

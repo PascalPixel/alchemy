@@ -24,7 +24,7 @@
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  u16 name[15];
+  u16 name[UNIT_NAME_SIZE];
   s32 i;
   u32 index;
   s32 q;
@@ -62,20 +62,20 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseActionCount = enemy->actionCount;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
-  Message_DecodeRawFar(index + (s32)MsgEnemyName, name, 15);
-  for (i = 0; i < 14 && name[i] != 0; i++)
+  Message_DecodeRawFar(index + (s32)MsgEnemyName, name, UNIT_NAME_SIZE);
+  for (i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
     unit->name[i] = name[i];
   if (suffix <= SUFFIX_COUNT - 1) {
     unit->name[i] = SUFFIX_BASE + suffix;
     i++;
   }
   unit->name[i] = 0;
-  unit->name[14] = 0;
+  unit->name[UNIT_NAME_SIZE - 1] = 0;
   count = 0;
   for (i = 0; i < 4; i++) {
     if (enemy->items[i] != 0) {
       for (q = 0; q < enemy->counts[i]; q++) {
-        if (count < 15)
+        if (count < INVENTORY_SLOTS)
           unit->inventory[count++] = enemy->items[i];
       }
     }

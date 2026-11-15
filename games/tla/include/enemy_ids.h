@@ -309,14 +309,20 @@ enum EnemyId {
   ENEMY_SENTINEL_2,
   ENEMY_SENTINEL_3,
   ENEMY_VERMIN,
-  ENEMY_VERMIN_2,
+  /// The Broken Seal's ENEMY_VERMIN_WORLD_MAP, row for row the same stats; no
+  /// formation here lists it.
+  ENEMY_VERMIN_WORLD_MAP,
   ENEMY_MAD_VERMIN,
   ENEMY_BAT,
-  ENEMY_BAT_2,
+  /// The Broken Seal's ENEMY_BAT_WORLD_MAP, the same stats; no formation here
+  /// lists it.
+  ENEMY_BAT_WORLD_MAP,
   ENEMY_RABID_BAT,
   ENEMY_GIANT_BAT,
   ENEMY_WILD_MUSHROOM,
-  ENEMY_WILD_MUSHROOM_2,
+  /// The Broken Seal's ENEMY_WILD_MUSHROOM_WORLD_MAP, the same stats; no
+  /// formation here lists it.
+  ENEMY_WILD_MUSHROOM_WORLD_MAP,
   ENEMY_DEATH_CAP,
   ENEMY_SLIME,
   ENEMY_SLIME_2,
@@ -325,7 +331,9 @@ enum EnemyId {
   ENEMY_GHOST,
   ENEMY_GHOST_MAGE,
   ENEMY_HORNED_GHOST,
-  ENEMY_LICH_2,
+  /// Unused: The Broken Seal's ENEMY_LICH, the same stats, in no formation
+  /// here; ENEMY_LICH is this game's own.
+  ENEMY_UNUSED_LICH,
   ENEMY_ZOMBIE,
   ENEMY_UNDEAD,
   ENEMY_WIGHT,
@@ -410,8 +418,11 @@ enum EnemyId {
   ENEMY_CHIMERA,
   ENEMY_CHIMERA_MAGE,
   ENEMY_GRAND_CHIMERA,
-  ENEMY_AMAZE,
-  ENEMY_AMAZE_2,
+  /// The Broken Seal's ENEMY_AMAZE_SOL_SANCTUM, the same stats; no formation
+  /// here lists it.
+  ENEMY_AMAZE_SOL_SANCTUM,
+  /// The Amaze of the Kandorean Temple's encounters (zones 16 to 18).
+  ENEMY_AMAZE_KANDOREAN_TEMPLE,
   ENEMY_CREEPER,
   ENEMY_SPIRIT,
   ENEMY_LIZARD_MAN,
@@ -452,7 +463,8 @@ enum EnemyId {
   ENEMY_MIMIC_7,
   ENEMY_MIMIC_8,
   ENEMY_MIMIC_9,
-  ENEMY_ZOMBIE_2,
+  /// The Broken Seal's ENEMY_ZOMBIE_DJINN_LESSON, the same stats.
+  ENEMY_ZOMBIE_DJINN_LESSON,
   ENEMY_DOOM_DRAGON,
   ENEMY_DOOM_DRAGON_2,
   ENEMY_DOOM_DRAGON_3,

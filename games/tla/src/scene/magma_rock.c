@@ -1053,13 +1053,14 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       part->motionFlags = 0;
       Actor_SetSpriteFlags(part, 0);
       Actor_SelectAnimation(parts[i], 3);
-      /* FAKEMATCH(dead): part set again to parts[i], which it holds. */
-      part = parts[i];
-      // Byte 98 lies in actor.h's callback.
-      part->riseCounter = 3 - i;
-      part->watchedActor = object;
-      part->update = MagmaRock_RaiseFlamePart;
-      FieldActor_SetSpriteColor(part, 3);
+      {
+        struct Actor *flame = parts[i];
+
+        flame->riseCounter = 3 - i;
+        flame->watchedActor = object;
+        flame->update = MagmaRock_RaiseFlamePart;
+        FieldActor_SetSpriteColor(flame, 3);
+      }
     }
     {
       struct Actor *part = parts[0];
@@ -1068,12 +1069,14 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       Actor_SetSpriteFlags(part, 0);
       Actor_SelectAnimation(parts[0], 3);
       Scene_SetActorSpritePriority(parts[0], 3);
-      /* FAKEMATCH(dead): part set again to parts[0], which it holds. */
-      part = parts[0];
-      part->riseCounter = 3;
-      part->watchedActor = object;
-      part->update = MagmaRock_RaiseFlamePart;
-      FieldActor_SetSpriteColor(part, 3);
+      {
+        struct Actor *flame = parts[0];
+
+        flame->riseCounter = 3;
+        flame->watchedActor = object;
+        flame->update = MagmaRock_RaiseFlamePart;
+        FieldActor_SetSpriteColor(flame, 3);
+      }
     }
     id = 0;
     if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {

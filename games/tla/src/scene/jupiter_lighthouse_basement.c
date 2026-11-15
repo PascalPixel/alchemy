@@ -198,10 +198,6 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
   if (object->userValue == 0)
     JupiterLighthouse_RestartSpark(object);
   object->userValue--;
-  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block. */
-  do {
-  } while (0);
   object->x.fixed +=
       Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
   object->y.fixed += object->speedLimit;

@@ -334,10 +334,6 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       i++;
       object->y.fixed = object->groundHeight;
     } while (i <= 5);
-    /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
-     * from being threaded to the function's end. */
-    do {
-    } while (0);
   } else {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
